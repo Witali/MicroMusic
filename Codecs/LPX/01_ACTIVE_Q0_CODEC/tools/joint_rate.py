@@ -20,14 +20,17 @@ def trellis(target,co,history,deemph,clip,pre,bright,step,bits,qhistory,mode,lam
     n=len(target);typ,lag,gain,k=mode
     hs=np.zeros((beam,10),np.int64);hs[0]=history
     ds=np.zeros(beam,np.int64);ds[0]=deemph;cs=np.zeros(beam,np.int64);cs[0]=clip
-    codes=np.zeros((beam,n),np.int64);scores=np.full(beam,np.inf);scores[0]=0.
+    codes=np.zeros((beam,n),np.int64)
     pulse_counts=np.zeros(beam,np.int64);rates=np.zeros(beam,np.int64);losses=np.zeros(beam)
     count=1;lo=-(1<<(bits-1)) if bits else 0;hi=(1<<(bits-1))-1 if bits else 0
+    # Scratch storage is overwritten before every read. Keep it across sample
+    # steps rather than allocating eight candidate arrays at each step.
+    maximum=beam*6
+    nh=np.empty((maximum,10),np.int64);nd=np.empty(maximum,np.int64);nc=np.empty(maximum,np.int64)
+    nq=np.empty((maximum,n),np.int64);ns=np.empty(maximum);npulses=np.empty(maximum,np.int64)
+    nr=np.empty(maximum,np.int64);nl=np.empty(maximum);seen=np.empty(6,np.int64)
     for j in range(n):
-        maximum=beam*6
-        nh=np.empty((maximum,10),np.int64);nd=np.empty(maximum,np.int64);nc=np.empty(maximum,np.int64)
-        nq=np.empty((maximum,n),np.int64);ns=np.full(maximum,np.inf);npulses=np.empty(maximum,np.int64)
-        nr=np.empty(maximum,np.int64);nl=np.empty(maximum);used=0
+        used=0
         for path in range(count):
             acc=0
             for t in range(10):acc+=(co[j,t]*hs[path,t])>>12
@@ -38,9 +41,8 @@ def trellis(target,co,history,deemph,clip,pre,bright,step,bits,qhistory,mode,lam
             if typ:
                 x=qhistory[145-lag+j] if j<lag else codes[path,j-lag]
                 predicted=min(hi,max(lo,(gain*x+8)>>4)) if bits else 0
-            candidates=np.asarray([center,center-1,center+1,0,predicted,predicted+1],np.int64)
-            seen=np.empty(6,np.int64);seen_count=0
-            for value in candidates:
+            seen_count=0
+            for value in (center,center-1,center+1,0,predicted,predicted+1):
                 q=min(hi,max(lo,value))
                 duplicate=False
                 for z in range(seen_count):
@@ -64,13 +66,18 @@ def trellis(target,co,history,deemph,clip,pre,bright,step,bits,qhistory,mode,lam
                 ns[used]=loss/energy+lam*rate;nl[used]=loss;nr[used]=rate;npulses[used]=pc
                 nh[used,0]=pred
                 for t in range(1,10):nh[used,t]=hs[path,t-1]
-                nd[used]=dd;nc[used]=cc;nq[used]=codes[path];nq[used,j]=q;used+=1
+                nd[used]=dd;nc[used]=cc
+                # Only the initialized prefix can feed later short-pitch
+                # recursion. Future columns are neither copied nor read.
+                for z in range(j):nq[used,z]=codes[path,z]
+                nq[used,j]=q;used+=1
         count=min(beam,used)
         if not count:return np.zeros(n,np.int64),history,deemph,clip,np.inf,0,False
         # Selection sort is deterministic and avoids full O(N log N) arrays.
         for path in range(count):
-            at=int(np.argmin(ns[:used]));scores[path]=ns[at];ns[at]=np.inf
-            hs[path]=nh[at];ds[path]=nd[at];cs[path]=nc[at];codes[path]=nq[at]
+            at=int(np.argmin(ns[:used]));ns[at]=np.inf
+            hs[path]=nh[at];ds[path]=nd[at];cs[path]=nc[at]
+            for z in range(j+1):codes[path,z]=nq[at,z]
             losses[path]=nl[at];rates[path]=nr[at];pulse_counts[path]=npulses[at]
     return codes[0],hs[0],ds[0],cs[0],losses[0],rates[0],True
 

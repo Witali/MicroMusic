@@ -1,0 +1,1369 @@
+{
+  "schema": 1,
+  "producer_commit": "22a7f722",
+  "producer_revision": "d0132904464b1a9b65460db6c60dc9fef13c61c423b46dfc748be22f08b0f43b",
+  "case_count": 27,
+  "points": 81,
+  "native_full_waveform_checks": 162,
+  "historical8_cases": 5,
+  "new8_baselines": 22,
+  "physical_hardware_measured": false,
+  "human_listening_scores_collected": false,
+  "groups": {
+    "all": {
+      "8000": {
+        "cases": 27,
+        "changed_streams": 15,
+        "baseline": {
+          "pooled_ser_db": 11.450763347502459,
+          "stoi": {
+            "mean": 0.7247794446890937,
+            "min": 0.16189062759369258,
+            "max": 0.9338304328382102
+          },
+          "max_abs_error_pcm16": 11105,
+          "file_bps": {
+            "mean": 7225.111111111111,
+            "min": 916.0,
+            "max": 8030.0
+          },
+          "payload_bps": {
+            "mean": 7185.111111111111,
+            "min": 876.0,
+            "max": 7990.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 11.855137672641478,
+          "stoi": {
+            "mean": 0.7440858461058586,
+            "min": 0.3988531915167949,
+            "max": 0.9377641123341636
+          },
+          "max_abs_error_pcm16": 11105,
+          "file_bps": {
+            "mean": 7350.888888888889,
+            "min": 916.0,
+            "max": 8032.0
+          },
+          "payload_bps": {
+            "mean": 7310.888888888889,
+            "min": 876.0,
+            "max": 7992.0
+          }
+        },
+        "lower_sse": 15,
+        "equal_sse": 12,
+        "larger_sse": 0,
+        "peak_increases": 6,
+        "pwm_peak_increases": 4
+      },
+      "12000": {
+        "cases": 27,
+        "changed_streams": 6,
+        "baseline": {
+          "pooled_ser_db": 16.750909909976166,
+          "stoi": {
+            "mean": 0.8269574142283187,
+            "min": 0.6860431621511716,
+            "max": 0.975554969311602
+          },
+          "max_abs_error_pcm16": 6925,
+          "file_bps": {
+            "mean": 11075.925925925925,
+            "min": 916.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 11035.925925925925,
+            "min": 876.0,
+            "max": 12000.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 16.890803722913898,
+          "stoi": {
+            "mean": 0.8292226339828239,
+            "min": 0.6860431621511716,
+            "max": 0.975554969311602
+          },
+          "max_abs_error_pcm16": 6925,
+          "file_bps": {
+            "mean": 11105.851851851852,
+            "min": 916.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 11065.851851851852,
+            "min": 876.0,
+            "max": 12000.0
+          }
+        },
+        "lower_sse": 6,
+        "equal_sse": 21,
+        "larger_sse": 0,
+        "peak_increases": 3,
+        "pwm_peak_increases": 4
+      },
+      "16000": {
+        "cases": 27,
+        "changed_streams": 10,
+        "baseline": {
+          "pooled_ser_db": 20.00974606328958,
+          "stoi": {
+            "mean": 0.8930489508503117,
+            "min": 0.7873537037225485,
+            "max": 0.9843388708905605
+          },
+          "max_abs_error_pcm16": 5361,
+          "file_bps": {
+            "mean": 14846.814814814816,
+            "min": 916.0,
+            "max": 16040.0
+          },
+          "payload_bps": {
+            "mean": 14806.814814814816,
+            "min": 876.0,
+            "max": 16000.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 20.055731701796468,
+          "stoi": {
+            "mean": 0.8948387883535748,
+            "min": 0.7873537037225485,
+            "max": 0.9860252163327679
+          },
+          "max_abs_error_pcm16": 4177,
+          "file_bps": {
+            "mean": 14838.148148148148,
+            "min": 916.0,
+            "max": 16036.0
+          },
+          "payload_bps": {
+            "mean": 14798.148148148148,
+            "min": 876.0,
+            "max": 15996.0
+          }
+        },
+        "lower_sse": 10,
+        "equal_sse": 17,
+        "larger_sse": 0,
+        "peak_increases": 1,
+        "pwm_peak_increases": 1
+      }
+    },
+    "clean_speech": {
+      "8000": {
+        "cases": 16,
+        "changed_streams": 9,
+        "baseline": {
+          "pooled_ser_db": 10.348747835835347,
+          "stoi": {
+            "mean": 0.7791934819416111,
+            "min": 0.6474742463438586,
+            "max": 0.9338304328382102
+          },
+          "max_abs_error_pcm16": 11105,
+          "file_bps": {
+            "mean": 7904.0,
+            "min": 7528.0,
+            "max": 8030.0
+          },
+          "payload_bps": {
+            "mean": 7864.0,
+            "min": 7488.0,
+            "max": 7990.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 10.825778167942492,
+          "stoi": {
+            "mean": 0.7859412302171855,
+            "min": 0.6474742463438586,
+            "max": 0.9377641123341636
+          },
+          "max_abs_error_pcm16": 11105,
+          "file_bps": {
+            "mean": 7973.625,
+            "min": 7776.0,
+            "max": 8032.0
+          },
+          "payload_bps": {
+            "mean": 7933.625,
+            "min": 7736.0,
+            "max": 7992.0
+          }
+        },
+        "lower_sse": 9,
+        "equal_sse": 7,
+        "larger_sse": 0,
+        "peak_increases": 3,
+        "pwm_peak_increases": 2
+      },
+      "12000": {
+        "cases": 16,
+        "changed_streams": 4,
+        "baseline": {
+          "pooled_ser_db": 16.40441032877263,
+          "stoi": {
+            "mean": 0.8567569027160417,
+            "min": 0.7115771275922107,
+            "max": 0.975554969311602
+          },
+          "max_abs_error_pcm16": 6925,
+          "file_bps": {
+            "mean": 12009.125,
+            "min": 11856.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 11969.125,
+            "min": 11816.0,
+            "max": 12000.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 16.568590205308624,
+          "stoi": {
+            "mean": 0.8595884274091733,
+            "min": 0.7115771275922107,
+            "max": 0.975554969311602
+          },
+          "max_abs_error_pcm16": 6925,
+          "file_bps": {
+            "mean": 11985.75,
+            "min": 11856.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 11945.75,
+            "min": 11816.0,
+            "max": 12000.0
+          }
+        },
+        "lower_sse": 4,
+        "equal_sse": 12,
+        "larger_sse": 0,
+        "peak_increases": 2,
+        "pwm_peak_increases": 3
+      },
+      "16000": {
+        "cases": 16,
+        "changed_streams": 7,
+        "baseline": {
+          "pooled_ser_db": 20.178244906279204,
+          "stoi": {
+            "mean": 0.9142940032521903,
+            "min": 0.8155508195444715,
+            "max": 0.9843388708905605
+          },
+          "max_abs_error_pcm16": 5361,
+          "file_bps": {
+            "mean": 15953.5,
+            "min": 15648.0,
+            "max": 16036.0
+          },
+          "payload_bps": {
+            "mean": 15913.5,
+            "min": 15608.0,
+            "max": 15996.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 20.255682707291804,
+          "stoi": {
+            "mean": 0.9165313001312693,
+            "min": 0.8155508195444715,
+            "max": 0.9860252163327679
+          },
+          "max_abs_error_pcm16": 3969,
+          "file_bps": {
+            "mean": 15945.625,
+            "min": 15648.0,
+            "max": 16036.0
+          },
+          "payload_bps": {
+            "mean": 15905.625,
+            "min": 15608.0,
+            "max": 15996.0
+          }
+        },
+        "lower_sse": 7,
+        "equal_sse": 9,
+        "larger_sse": 0,
+        "peak_increases": 1,
+        "pwm_peak_increases": 1
+      }
+    },
+    "historical8_subset": {
+      "8000": {
+        "cases": 5,
+        "changed_streams": 2,
+        "baseline": {
+          "pooled_ser_db": 10.1349862545558,
+          "stoi": {
+            "mean": 0.7608466403168468,
+            "min": 0.6894117051844636,
+            "max": 0.8912588052076277
+          },
+          "max_abs_error_pcm16": 11105,
+          "file_bps": {
+            "mean": 7994.0,
+            "min": 7958.0,
+            "max": 8030.0
+          },
+          "payload_bps": {
+            "mean": 7954.0,
+            "min": 7918.0,
+            "max": 7990.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 10.29748430132231,
+          "stoi": {
+            "mean": 0.7769381540218987,
+            "min": 0.7215388710076711,
+            "max": 0.8912588052076277
+          },
+          "max_abs_error_pcm16": 11105,
+          "file_bps": {
+            "mean": 7988.0,
+            "min": 7954.0,
+            "max": 8018.0
+          },
+          "payload_bps": {
+            "mean": 7948.0,
+            "min": 7914.0,
+            "max": 7978.0
+          }
+        },
+        "lower_sse": 2,
+        "equal_sse": 3,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      },
+      "12000": {
+        "cases": 5,
+        "changed_streams": 3,
+        "baseline": {
+          "pooled_ser_db": 15.428123878253023,
+          "stoi": {
+            "mean": 0.842369770383794,
+            "min": 0.8045374070397437,
+            "max": 0.9394248301939765
+          },
+          "max_abs_error_pcm16": 6925,
+          "file_bps": {
+            "mean": 12034.4,
+            "min": 12026.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 11994.4,
+            "min": 11986.0,
+            "max": 12000.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 15.51732853931638,
+          "stoi": {
+            "mean": 0.8445029919142861,
+            "min": 0.8046106263192961,
+            "max": 0.9394248301939765
+          },
+          "max_abs_error_pcm16": 6925,
+          "file_bps": {
+            "mean": 11991.6,
+            "min": 11888.0,
+            "max": 12038.0
+          },
+          "payload_bps": {
+            "mean": 11951.6,
+            "min": 11848.0,
+            "max": 11998.0
+          }
+        },
+        "lower_sse": 3,
+        "equal_sse": 2,
+        "larger_sse": 0,
+        "peak_increases": 2,
+        "pwm_peak_increases": 3
+      },
+      "16000": {
+        "cases": 5,
+        "changed_streams": 3,
+        "baseline": {
+          "pooled_ser_db": 19.26399794154243,
+          "stoi": {
+            "mean": 0.8913137135728245,
+            "min": 0.8547642268602273,
+            "max": 0.9684117823311339
+          },
+          "max_abs_error_pcm16": 3969,
+          "file_bps": {
+            "mean": 16002.8,
+            "min": 15982.0,
+            "max": 16034.0
+          },
+          "payload_bps": {
+            "mean": 15962.8,
+            "min": 15942.0,
+            "max": 15994.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 19.299994731514314,
+          "stoi": {
+            "mean": 0.895654360492534,
+            "min": 0.8547642268602273,
+            "max": 0.9684117823311339
+          },
+          "max_abs_error_pcm16": 3969,
+          "file_bps": {
+            "mean": 15984.8,
+            "min": 15898.0,
+            "max": 16020.0
+          },
+          "payload_bps": {
+            "mean": 15944.8,
+            "min": 15858.0,
+            "max": 15980.0
+          }
+        },
+        "lower_sse": 3,
+        "equal_sse": 2,
+        "larger_sse": 0,
+        "peak_increases": 1,
+        "pwm_peak_increases": 0
+      }
+    },
+    "new8_baseline_subset": {
+      "8000": {
+        "cases": 22,
+        "changed_streams": 13,
+        "baseline": {
+          "pooled_ser_db": 11.971005370146099,
+          "stoi": {
+            "mean": 0.7157626457821554,
+            "min": 0.16189062759369258,
+            "max": 0.9338304328382102
+          },
+          "max_abs_error_pcm16": 9894,
+          "file_bps": {
+            "mean": 7050.363636363636,
+            "min": 916.0,
+            "max": 8018.0
+          },
+          "payload_bps": {
+            "mean": 7010.363636363636,
+            "min": 876.0,
+            "max": 7978.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 12.49820675867397,
+          "stoi": {
+            "mean": 0.7358727691268485,
+            "min": 0.3988531915167949,
+            "max": 0.9377641123341636
+          },
+          "max_abs_error_pcm16": 8789,
+          "file_bps": {
+            "mean": 7206.090909090909,
+            "min": 916.0,
+            "max": 8032.0
+          },
+          "payload_bps": {
+            "mean": 7166.090909090909,
+            "min": 876.0,
+            "max": 7992.0
+          }
+        },
+        "lower_sse": 13,
+        "equal_sse": 9,
+        "larger_sse": 0,
+        "peak_increases": 6,
+        "pwm_peak_increases": 4
+      },
+      "12000": {
+        "cases": 22,
+        "changed_streams": 3,
+        "baseline": {
+          "pooled_ser_db": 17.274568559477267,
+          "stoi": {
+            "mean": 0.8231043251894499,
+            "min": 0.6860431621511716,
+            "max": 0.975554969311602
+          },
+          "max_abs_error_pcm16": 4550,
+          "file_bps": {
+            "mean": 10858.09090909091,
+            "min": 916.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 10818.09090909091,
+            "min": 876.0,
+            "max": 12000.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 17.43941783643519,
+          "stoi": {
+            "mean": 0.8254025444999584,
+            "min": 0.6860431621511716,
+            "max": 0.975554969311602
+          },
+          "max_abs_error_pcm16": 4550,
+          "file_bps": {
+            "mean": 10904.545454545454,
+            "min": 916.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 10864.545454545454,
+            "min": 876.0,
+            "max": 12000.0
+          }
+        },
+        "lower_sse": 3,
+        "equal_sse": 19,
+        "larger_sse": 0,
+        "peak_increases": 1,
+        "pwm_peak_increases": 1
+      },
+      "16000": {
+        "cases": 22,
+        "changed_streams": 7,
+        "baseline": {
+          "pooled_ser_db": 20.27738436331557,
+          "stoi": {
+            "mean": 0.8934827601696834,
+            "min": 0.7873537037225485,
+            "max": 0.9843388708905605
+          },
+          "max_abs_error_pcm16": 5361,
+          "file_bps": {
+            "mean": 14584.09090909091,
+            "min": 916.0,
+            "max": 16040.0
+          },
+          "payload_bps": {
+            "mean": 14544.09090909091,
+            "min": 876.0,
+            "max": 16000.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 20.32740067127817,
+          "stoi": {
+            "mean": 0.894634895318835,
+            "min": 0.7873537037225485,
+            "max": 0.9860252163327679
+          },
+          "max_abs_error_pcm16": 4177,
+          "file_bps": {
+            "mean": 14577.545454545454,
+            "min": 916.0,
+            "max": 16036.0
+          },
+          "payload_bps": {
+            "mean": 14537.545454545454,
+            "min": 876.0,
+            "max": 15996.0
+          }
+        },
+        "lower_sse": 7,
+        "equal_sse": 15,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 1
+      }
+    },
+    "group_acoustic_music": {
+      "8000": {
+        "cases": 3,
+        "changed_streams": 2,
+        "baseline": {
+          "pooled_ser_db": 12.150029190647514,
+          "stoi": null,
+          "max_abs_error_pcm16": 1642,
+          "file_bps": {
+            "mean": 7925.333333333333,
+            "min": 7802.0,
+            "max": 8018.0
+          },
+          "payload_bps": {
+            "mean": 7885.333333333333,
+            "min": 7762.0,
+            "max": 7978.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 12.221038175918238,
+          "stoi": null,
+          "max_abs_error_pcm16": 1884,
+          "file_bps": {
+            "mean": 8000.0,
+            "min": 7976.0,
+            "max": 8018.0
+          },
+          "payload_bps": {
+            "mean": 7960.0,
+            "min": 7936.0,
+            "max": 7978.0
+          }
+        },
+        "lower_sse": 2,
+        "equal_sse": 1,
+        "larger_sse": 0,
+        "peak_increases": 1,
+        "pwm_peak_increases": 1
+      },
+      "12000": {
+        "cases": 3,
+        "changed_streams": 1,
+        "baseline": {
+          "pooled_ser_db": 15.466979470721027,
+          "stoi": null,
+          "max_abs_error_pcm16": 1242,
+          "file_bps": {
+            "mean": 12014.666666666666,
+            "min": 11970.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 11974.666666666666,
+            "min": 11930.0,
+            "max": 12000.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 15.472579220507392,
+          "stoi": null,
+          "max_abs_error_pcm16": 1242,
+          "file_bps": {
+            "mean": 12010.0,
+            "min": 11970.0,
+            "max": 12034.0
+          },
+          "payload_bps": {
+            "mean": 11970.0,
+            "min": 11930.0,
+            "max": 11994.0
+          }
+        },
+        "lower_sse": 1,
+        "equal_sse": 2,
+        "larger_sse": 0,
+        "peak_increases": 1,
+        "pwm_peak_increases": 1
+      },
+      "16000": {
+        "cases": 3,
+        "changed_streams": 3,
+        "baseline": {
+          "pooled_ser_db": 18.702501636325238,
+          "stoi": null,
+          "max_abs_error_pcm16": 933,
+          "file_bps": {
+            "mean": 16014.0,
+            "min": 15996.0,
+            "max": 16040.0
+          },
+          "payload_bps": {
+            "mean": 15974.0,
+            "min": 15956.0,
+            "max": 16000.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 18.724154558244468,
+          "stoi": null,
+          "max_abs_error_pcm16": 929,
+          "file_bps": {
+            "mean": 15978.0,
+            "min": 15894.0,
+            "max": 16026.0
+          },
+          "payload_bps": {
+            "mean": 15938.0,
+            "min": 15854.0,
+            "max": 15986.0
+          }
+        },
+        "lower_sse": 3,
+        "equal_sse": 0,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      }
+    },
+    "group_clean": {
+      "8000": {
+        "cases": 16,
+        "changed_streams": 9,
+        "baseline": {
+          "pooled_ser_db": 10.348747835835347,
+          "stoi": {
+            "mean": 0.7791934819416111,
+            "min": 0.6474742463438586,
+            "max": 0.9338304328382102
+          },
+          "max_abs_error_pcm16": 11105,
+          "file_bps": {
+            "mean": 7904.0,
+            "min": 7528.0,
+            "max": 8030.0
+          },
+          "payload_bps": {
+            "mean": 7864.0,
+            "min": 7488.0,
+            "max": 7990.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 10.825778167942492,
+          "stoi": {
+            "mean": 0.7859412302171855,
+            "min": 0.6474742463438586,
+            "max": 0.9377641123341636
+          },
+          "max_abs_error_pcm16": 11105,
+          "file_bps": {
+            "mean": 7973.625,
+            "min": 7776.0,
+            "max": 8032.0
+          },
+          "payload_bps": {
+            "mean": 7933.625,
+            "min": 7736.0,
+            "max": 7992.0
+          }
+        },
+        "lower_sse": 9,
+        "equal_sse": 7,
+        "larger_sse": 0,
+        "peak_increases": 3,
+        "pwm_peak_increases": 2
+      },
+      "12000": {
+        "cases": 16,
+        "changed_streams": 4,
+        "baseline": {
+          "pooled_ser_db": 16.40441032877263,
+          "stoi": {
+            "mean": 0.8567569027160417,
+            "min": 0.7115771275922107,
+            "max": 0.975554969311602
+          },
+          "max_abs_error_pcm16": 6925,
+          "file_bps": {
+            "mean": 12009.125,
+            "min": 11856.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 11969.125,
+            "min": 11816.0,
+            "max": 12000.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 16.568590205308624,
+          "stoi": {
+            "mean": 0.8595884274091733,
+            "min": 0.7115771275922107,
+            "max": 0.975554969311602
+          },
+          "max_abs_error_pcm16": 6925,
+          "file_bps": {
+            "mean": 11985.75,
+            "min": 11856.0,
+            "max": 12040.0
+          },
+          "payload_bps": {
+            "mean": 11945.75,
+            "min": 11816.0,
+            "max": 12000.0
+          }
+        },
+        "lower_sse": 4,
+        "equal_sse": 12,
+        "larger_sse": 0,
+        "peak_increases": 2,
+        "pwm_peak_increases": 3
+      },
+      "16000": {
+        "cases": 16,
+        "changed_streams": 7,
+        "baseline": {
+          "pooled_ser_db": 20.178244906279204,
+          "stoi": {
+            "mean": 0.9142940032521903,
+            "min": 0.8155508195444715,
+            "max": 0.9843388708905605
+          },
+          "max_abs_error_pcm16": 5361,
+          "file_bps": {
+            "mean": 15953.5,
+            "min": 15648.0,
+            "max": 16036.0
+          },
+          "payload_bps": {
+            "mean": 15913.5,
+            "min": 15608.0,
+            "max": 15996.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 20.255682707291804,
+          "stoi": {
+            "mean": 0.9165313001312693,
+            "min": 0.8155508195444715,
+            "max": 0.9860252163327679
+          },
+          "max_abs_error_pcm16": 3969,
+          "file_bps": {
+            "mean": 15945.625,
+            "min": 15648.0,
+            "max": 16036.0
+          },
+          "payload_bps": {
+            "mean": 15905.625,
+            "min": 15608.0,
+            "max": 15996.0
+          }
+        },
+        "lower_sse": 7,
+        "equal_sse": 9,
+        "larger_sse": 0,
+        "peak_increases": 1,
+        "pwm_peak_increases": 1
+      }
+    },
+    "group_noise15": {
+      "8000": {
+        "cases": 2,
+        "changed_streams": 2,
+        "baseline": {
+          "pooled_ser_db": 7.020869966803201,
+          "stoi": {
+            "mean": 0.6426790226311812,
+            "min": 0.5764015133467543,
+            "max": 0.7089565319156079
+          },
+          "max_abs_error_pcm16": 8736,
+          "file_bps": {
+            "mean": 7781.0,
+            "min": 7584.0,
+            "max": 7978.0
+          },
+          "payload_bps": {
+            "mean": 7741.0,
+            "min": 7544.0,
+            "max": 7938.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 7.191070955123386,
+          "stoi": {
+            "mean": 0.6519600185150645,
+            "min": 0.5918906880053865,
+            "max": 0.7120293490247424
+          },
+          "max_abs_error_pcm16": 8789,
+          "file_bps": {
+            "mean": 7684.0,
+            "min": 7502.0,
+            "max": 7866.0
+          },
+          "payload_bps": {
+            "mean": 7644.0,
+            "min": 7462.0,
+            "max": 7826.0
+          }
+        },
+        "lower_sse": 2,
+        "equal_sse": 0,
+        "larger_sse": 0,
+        "peak_increases": 2,
+        "pwm_peak_increases": 1
+      },
+      "12000": {
+        "cases": 2,
+        "changed_streams": 0,
+        "baseline": {
+          "pooled_ser_db": 10.51266944336896,
+          "stoi": {
+            "mean": 0.70834288438944,
+            "min": 0.6860431621511716,
+            "max": 0.7306426066277085
+          },
+          "max_abs_error_pcm16": 4499,
+          "file_bps": {
+            "mean": 11295.0,
+            "min": 10670.0,
+            "max": 11920.0
+          },
+          "payload_bps": {
+            "mean": 11255.0,
+            "min": 10630.0,
+            "max": 11880.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 10.51266944336896,
+          "stoi": {
+            "mean": 0.70834288438944,
+            "min": 0.6860431621511716,
+            "max": 0.7306426066277085
+          },
+          "max_abs_error_pcm16": 4499,
+          "file_bps": {
+            "mean": 11295.0,
+            "min": 10670.0,
+            "max": 11920.0
+          },
+          "payload_bps": {
+            "mean": 11255.0,
+            "min": 10630.0,
+            "max": 11880.0
+          }
+        },
+        "lower_sse": 0,
+        "equal_sse": 2,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      },
+      "16000": {
+        "cases": 2,
+        "changed_streams": 0,
+        "baseline": {
+          "pooled_ser_db": 12.690385171315102,
+          "stoi": {
+            "mean": 0.8269455480944834,
+            "min": 0.8123336851590122,
+            "max": 0.8415574110299547
+          },
+          "max_abs_error_pcm16": 4177,
+          "file_bps": {
+            "mean": 15608.0,
+            "min": 15300.0,
+            "max": 15916.0
+          },
+          "payload_bps": {
+            "mean": 15568.0,
+            "min": 15260.0,
+            "max": 15876.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 12.690385171315102,
+          "stoi": {
+            "mean": 0.8269455480944834,
+            "min": 0.8123336851590122,
+            "max": 0.8415574110299547
+          },
+          "max_abs_error_pcm16": 4177,
+          "file_bps": {
+            "mean": 15608.0,
+            "min": 15300.0,
+            "max": 15916.0
+          },
+          "payload_bps": {
+            "mean": 15568.0,
+            "min": 15260.0,
+            "max": 15876.0
+          }
+        },
+        "lower_sse": 0,
+        "equal_sse": 2,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      }
+    },
+    "group_quiet": {
+      "8000": {
+        "cases": 2,
+        "changed_streams": 2,
+        "baseline": {
+          "pooled_ser_db": 8.291098749705192,
+          "stoi": {
+            "mean": 0.37156756872686736,
+            "min": 0.16189062759369258,
+            "max": 0.5812445098600422
+          },
+          "max_abs_error_pcm16": 211,
+          "file_bps": {
+            "mean": 3536.0,
+            "min": 2834.0,
+            "max": 4238.0
+          },
+          "payload_bps": {
+            "mean": 3496.0,
+            "min": 2794.0,
+            "max": 4198.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 9.529010802852577,
+          "stoi": {
+            "mean": 0.5013686008060368,
+            "min": 0.3988531915167949,
+            "max": 0.6038840100952788
+          },
+          "max_abs_error_pcm16": 126,
+          "file_bps": {
+            "mean": 4662.0,
+            "min": 4492.0,
+            "max": 4832.0
+          },
+          "payload_bps": {
+            "mean": 4622.0,
+            "min": 4452.0,
+            "max": 4792.0
+          }
+        },
+        "lower_sse": 2,
+        "equal_sse": 0,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      },
+      "12000": {
+        "cases": 2,
+        "changed_streams": 0,
+        "baseline": {
+          "pooled_ser_db": 14.379249685335084,
+          "stoi": {
+            "mean": 0.7071760361654131,
+            "min": 0.698953098574188,
+            "max": 0.7153989737566383
+          },
+          "max_abs_error_pcm16": 107,
+          "file_bps": {
+            "mean": 11026.0,
+            "min": 10738.0,
+            "max": 11314.0
+          },
+          "payload_bps": {
+            "mean": 10986.0,
+            "min": 10698.0,
+            "max": 11274.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 14.379249685335084,
+          "stoi": {
+            "mean": 0.7071760361654131,
+            "min": 0.698953098574188,
+            "max": 0.7153989737566383
+          },
+          "max_abs_error_pcm16": 107,
+          "file_bps": {
+            "mean": 11026.0,
+            "min": 10738.0,
+            "max": 11314.0
+          },
+          "payload_bps": {
+            "mean": 10986.0,
+            "min": 10698.0,
+            "max": 11274.0
+          }
+        },
+        "lower_sse": 0,
+        "equal_sse": 2,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      },
+      "16000": {
+        "cases": 2,
+        "changed_streams": 0,
+        "baseline": {
+          "pooled_ser_db": 15.742286456656181,
+          "stoi": {
+            "mean": 0.7891919343911101,
+            "min": 0.7873537037225485,
+            "max": 0.7910301650596717
+          },
+          "max_abs_error_pcm16": 103,
+          "file_bps": {
+            "mean": 14667.0,
+            "min": 13384.0,
+            "max": 15950.0
+          },
+          "payload_bps": {
+            "mean": 14627.0,
+            "min": 13344.0,
+            "max": 15910.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 15.742286456656181,
+          "stoi": {
+            "mean": 0.7891919343911101,
+            "min": 0.7873537037225485,
+            "max": 0.7910301650596717
+          },
+          "max_abs_error_pcm16": 103,
+          "file_bps": {
+            "mean": 14667.0,
+            "min": 13384.0,
+            "max": 15950.0
+          },
+          "payload_bps": {
+            "mean": 14627.0,
+            "min": 13344.0,
+            "max": 15910.0
+          }
+        },
+        "lower_sse": 0,
+        "equal_sse": 2,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      }
+    },
+    "group_synthetic": {
+      "8000": {
+        "cases": 4,
+        "changed_streams": 0,
+        "baseline": {
+          "pooled_ser_db": 23.503064962416296,
+          "stoi": null,
+          "max_abs_error_pcm16": 1361,
+          "file_bps": {
+            "mean": 5551.0,
+            "min": 916.0,
+            "max": 7960.0
+          },
+          "payload_bps": {
+            "mean": 5511.0,
+            "min": 876.0,
+            "max": 7920.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 23.503064962416296,
+          "stoi": null,
+          "max_abs_error_pcm16": 1361,
+          "file_bps": {
+            "mean": 5551.0,
+            "min": 916.0,
+            "max": 7960.0
+          },
+          "payload_bps": {
+            "mean": 5511.0,
+            "min": 876.0,
+            "max": 7920.0
+          }
+        },
+        "lower_sse": 0,
+        "equal_sse": 4,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      },
+      "12000": {
+        "cases": 4,
+        "changed_streams": 1,
+        "baseline": {
+          "pooled_ser_db": 25.236193351650197,
+          "stoi": null,
+          "max_abs_error_pcm16": 1361,
+          "file_bps": {
+            "mean": 6554.5,
+            "min": 916.0,
+            "max": 11974.0
+          },
+          "payload_bps": {
+            "mean": 6514.5,
+            "min": 876.0,
+            "max": 11934.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 26.024422465105722,
+          "stoi": null,
+          "max_abs_error_pcm16": 1361,
+          "file_bps": {
+            "mean": 6853.5,
+            "min": 916.0,
+            "max": 11974.0
+          },
+          "payload_bps": {
+            "mean": 6813.5,
+            "min": 876.0,
+            "max": 11934.0
+          }
+        },
+        "lower_sse": 1,
+        "equal_sse": 3,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      },
+      "16000": {
+        "cases": 4,
+        "changed_streams": 0,
+        "baseline": {
+          "pooled_ser_db": 28.606621033323524,
+          "stoi": null,
+          "max_abs_error_pcm16": 1361,
+          "file_bps": {
+            "mean": 9254.0,
+            "min": 916.0,
+            "max": 15828.0
+          },
+          "payload_bps": {
+            "mean": 9214.0,
+            "min": 876.0,
+            "max": 15788.0
+          }
+        },
+        "selected": {
+          "pooled_ser_db": 28.606621033323524,
+          "stoi": null,
+          "max_abs_error_pcm16": 1361,
+          "file_bps": {
+            "mean": 9254.0,
+            "min": 916.0,
+            "max": 15828.0
+          },
+          "payload_bps": {
+            "mean": 9214.0,
+            "min": 876.0,
+            "max": 15788.0
+          }
+        },
+        "lower_sse": 0,
+        "equal_sse": 4,
+        "larger_sse": 0,
+        "peak_increases": 0,
+        "pwm_peak_increases": 0
+      }
+    }
+  },
+  "final_recipe": "unroll1-tune0-lto-call-relax",
+  "final_decoder_sources": {
+    "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "9a000d56400422e5bc4e79347ed46f2e2c66d0221d5e7e2f3bccb5c29374cd35",
+    "Lpx4HybridCore.h": "a16a665fa2c872456eaa907cff10b91e7c6449b171243b737b38327de1e1e640",
+    "Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "resources": {
+    "8000": {
+      "default_selected_cycles": {
+        "mean": 804.6283599537038,
+        "min": 699.7058125,
+        "max": 919.45671875
+      },
+      "small_selected_cycles": {
+        "mean": 705.2700023148149,
+        "min": 618.20909375,
+        "max": 811.94775
+      },
+      "program_flash_bytes": {
+        "mean": 6513.2962962962965,
+        "min": 6512.0,
+        "max": 6514.0
+      },
+      "static_sram_bytes": {
+        "mean": 1102.0,
+        "min": 1102.0,
+        "max": 1102.0
+      },
+      "stack_margin_bytes": {
+        "mean": 837.4444444444445,
+        "min": 828.0,
+        "max": 843.0
+      },
+      "observed_stack_bytes_after_ready": {
+        "mean": 108.55555555555556,
+        "min": 103.0,
+        "max": 118.0
+      },
+      "underruns": 0
+    },
+    "12000": {
+      "default_selected_cycles": {
+        "mean": 835.1596828703704,
+        "min": 699.7058125,
+        "max": 942.42140625
+      },
+      "small_selected_cycles": {
+        "mean": 730.1759837962964,
+        "min": 618.20909375,
+        "max": 826.70040625
+      },
+      "program_flash_bytes": {
+        "mean": 6513.222222222223,
+        "min": 6512.0,
+        "max": 6514.0
+      },
+      "static_sram_bytes": {
+        "mean": 1102.0,
+        "min": 1102.0,
+        "max": 1102.0
+      },
+      "stack_margin_bytes": {
+        "mean": 837.4444444444445,
+        "min": 828.0,
+        "max": 843.0
+      },
+      "observed_stack_bytes_after_ready": {
+        "mean": 108.55555555555556,
+        "min": 103.0,
+        "max": 118.0
+      },
+      "underruns": 0
+    },
+    "16000": {
+      "default_selected_cycles": {
+        "mean": 865.2553113425927,
+        "min": 699.7058125,
+        "max": 961.24775
+      },
+      "small_selected_cycles": {
+        "mean": 753.6615844907408,
+        "min": 618.20909375,
+        "max": 838.51071875
+      },
+      "program_flash_bytes": {
+        "mean": 6513.37037037037,
+        "min": 6512.0,
+        "max": 6514.0
+      },
+      "static_sram_bytes": {
+        "mean": 1102.0,
+        "min": 1102.0,
+        "max": 1102.0
+      },
+      "stack_margin_bytes": {
+        "mean": 837.4444444444445,
+        "min": 828.0,
+        "max": 843.0
+      },
+      "observed_stack_bytes_after_ready": {
+        "mean": 108.55555555555556,
+        "min": 103.0,
+        "max": 118.0
+      },
+      "underruns": 0
+    }
+  },
+  "default_unique_images": 107,
+  "small_unique_images": 77,
+  "continuous_images": 18
+}

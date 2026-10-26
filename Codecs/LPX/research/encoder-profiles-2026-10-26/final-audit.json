@@ -1,0 +1,39 @@
+{
+  "complete": true,
+  "criteria": {
+    "profile_selection_and_separate_ownership": "Documented 4/6 v5 versus 8/12/16 legacy; published Flash work integrated.",
+    "pinned_baseline_and_profile": "Frozen LPC/trellis and complete paired benchmarks retained.",
+    "exact_host_speed": "Old/new complete proposal and stream/PCM hashes agree; reproduced PWM also agrees.",
+    "bounded_quality_search": "All 81 points retain cap and PCM/PWM SSE/STOI floors; peak tradeoffs retained.",
+    "full_prior_corpus": "27 full cases, historical8 separated from 22 new baselines; 162 CSV records.",
+    "avr_admission": "107 default and 77 small-code unique full images, 18 continuous IRQ/C controls audited.",
+    "reproducible_results_and_listening": "All local links, 7 full tracks and all 27 per-case listening sources verified."
+  },
+  "exact_speed_reduction_percent": [
+    69.92914806758492,
+    67.71528903516176
+  ],
+  "report_artifact_sha256": {
+    "default-avr.json": "727b01e0a3de3b2ad0eccc0507631689b16da7017551c70d66065603524cff57",
+    "default-stress.json": "d052608f12ae758cae76dc677a80cc852cc6c7b2795f488705d01c6f95e85116",
+    "default-token-equivalence.json": "7f02e50185bf24dc3141fdbdf0afe2a36db672917f53d5f547e41d248a44e6b0",
+    "factory-default-flags.json": "ebce3d53734a112ed2130f7deb88e8bb0ec32d5a2039bd2a2f9122345628ba2c",
+    "listening.json": "c67486493cbbe81e2658ea497cf7b18cc8ad3e7ce94072ca8f0ea9793d769b62",
+    "measurements.csv": "162f1475837e855ef9c12a8de10fb2c63c70a3517b8d713dd4ae92bfa62871ee",
+    "measurements.json": "0eb81e37c1bd75a87a1191df8156b81e740bc856806c974994b02b8747b19543",
+    "quality-gains.png": "b4d636566f75957125cd0c831085c8b64f1a3b2ed3000305e28003099da817fa",
+    "README.md": "fce84f2aa2c3b50ca6fbd7d6bc5475d429e1d5074355c98cac2e753f30af5606",
+    "small-avr.json": "050eb054d6ceec6bd86285d7775af7bb211bb884eefb712126ccc8e859e4127b",
+    "speed-coefficients.json": "6981978c2dfc12cc141d4ad51250d53cb7fc00e9855c92dca5492bdd15a52f41",
+    "speed-full-search-reproduced.json": "f8c88822dbd9e65fd9cf6b89290daa7e460e8af59e4b976c00682d931bb2421e",
+    "speed-full-search.json": "0a456b1ee622d0248d3f6f8c35dd0fab09d47f55f4b759faff7e0f4d0098bf90",
+    "speed-trellis-isolated.json": "deeb68664640a5eac532872b67fa929741d8993746040366d0b2739525644e33",
+    "speed-trellis.json": "9105bbc13633efd0b4e5ff8b86ef15d0ebb66e30e36879541b835668602beaa9",
+    "summary.json": "27e2c3e3c834a0da6f3adc2d240cd1712bbf2324854e0cd02bc80997654e8202",
+    "tests.json": "23361666cb692bcbecb427f22046bd81fe80fdc4d5bd6621d7b1dbd70d9c4f83",
+    "validation-coefficients.json": "b4f7355a7d707282793cf49fdbf7c8b8f045712f69a267db326e5ac3d077abab"
+  },
+  "local_audio_retained_in_git": false,
+  "physical_board_measured": false,
+  "human_scores_collected": false
+}

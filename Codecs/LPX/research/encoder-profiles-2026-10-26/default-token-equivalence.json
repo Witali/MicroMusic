@@ -1,0 +1,36 @@
+{
+  "baseline_commit": "d1e8984e",
+  "current_commit": "c9d854896380345a94b3ba19fd5144d63525e75c",
+  "profiles": {
+    "c": {
+      "tokens": 7235,
+      "sha256": "3ebef344b06d349380ecd8e9330c5fa940e32242cd5302f871d8e7f2040cfe14",
+      "equal": true,
+      "compiler_flags": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_AVR_DOT_UNROLL=9",
+        "-DLPX4_FUNCTION_TUNING=7",
+        "-DLPX4_ENABLE_ASM=0"
+      ]
+    },
+    "asm": {
+      "tokens": 7563,
+      "sha256": "25132da5c5da3fdec4c70db031883e703c4ec54d802acfaaa02930df2b8d90cc",
+      "equal": true,
+      "compiler_flags": [
+        "-mmcu=atmega328p",
+        "-DF_CPU=16000000UL",
+        "-Os",
+        "-std=gnu++11",
+        "-DLPX4_V3_FEATURES=24",
+        "-DLPX4_AVR_DOT_UNROLL=9",
+        "-DLPX4_FUNCTION_TUNING=7",
+        "-DLPX4_ENABLE_ASM=1"
+      ]
+    }
+  }
+}
