@@ -57,7 +57,14 @@ test(`changed-only pin propagation matches all six input updates: delay=${delay}
     if(n%71===0)c.reset_cpu();
     if(n%37===0){c.write(IO.PRR,0);c.write(IO.ADMUX,random()&3);c.write(IO.ADCSRB,(random()%7)|(random()&0x40));
       c.write(IO.ADCSRA,[0,0x80,0xc0,0xe0][random()&3]);}
-    if(n%29===0)c.write(IO.PRR,random()&3);
+    if(n%29===0){
+      const reduction=random()&3;
+      // PRADC requires ADEN=0 (DS40002307A7.5.3). Ungate first if a previous
+      // iteration stopped ADC register access; invalid sequences have their
+      // own rejection tests rather than becoming a paused-conversion oracle.
+      if(reduction&1){c.write(IO.PRR,0);c.write(IO.ADCSRA,0);}
+      c.write(IO.PRR,reduction);
+    }
     const levels=random()&63,mask=random()&63,vcc=[1800000,3300000,5000000][random()%3];
     const uv=Array.from({length:6},()=>[0,-100,1100000,2500000,5000000][random()%5]);
     assert.equal(c.check_pins(levels,mask,vcc,...uv),1,`new voltages at operation ${n}`);

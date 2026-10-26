@@ -29,6 +29,15 @@ flags acknowledge only written bits. ADCL/ADCH side effects happen on actual
 bus reads. Canonical data mirrors are updated directly and never acquire ADC
 result locks just by being mirrored. SREG/SPL are caller-owned passthroughs.
 
+Section7.5.3 requires clearing ADEN before setting PRR.PRADC. A PRR write
+that requests PRADC while ADEN is set stops with `DEVICE_FAULT_ANALOG`, detail16,
+before applying either PRR bit or changing timer/ADC state. The model does not
+claim that real silicon traps: the forbidden sequence has no specified paused-
+conversion outcome. Clear ADEN while the ADC register block is accessible,
+set PRADC, then clear PRADC before accessing/re-enabling the ADC. Disabled ADC
+status/control bits and independent Timer0 gating remain supported. See the
+[power-sequencing note](../../../docs/avr-asm-cookbook/peripheral-power-sequencing.md).
+
 ADCSRA follows section14.12.2's explicit warning that SBI/CBI may clear an
 already-set ADIF through read/modify/write. The same data sheet's register
 summary note2 says that this chip's SBI/CBI affect only the selected bit even

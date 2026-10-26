@@ -1,0 +1,89 @@
+{
+  "schema": "micromusic-adc-power-sequence-v1",
+  "hardwareTested": false,
+  "baselineCommit": "8b813c70",
+  "beforeSha256": "9f1eefa094f9003419251408953309e3b3c4050fc217234b9b95ed0275d87778",
+  "afterSha256": "bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715",
+  "sourceSha256": "cf4e681b206a30988adc1c7d149958d74d91678313dd074dd77678b2a639eecd",
+  "records": [
+    {
+      "clock": "compatible",
+      "before": {
+        "prr": 1,
+        "adcsra": 128,
+        "sentinel": 165,
+        "fault": 0,
+        "error": null
+      },
+      "after": {
+        "prr": 0,
+        "adcsra": 128,
+        "sentinel": 0,
+        "fault": 4,
+        "error": "ATtiny13A peripheral fault 4, detail 16"
+      }
+    },
+    {
+      "clock": "physical",
+      "before": {
+        "prr": 1,
+        "adcsra": 128,
+        "sentinel": 165,
+        "fault": 0,
+        "error": null
+      },
+      "after": {
+        "prr": 0,
+        "adcsra": 128,
+        "sentinel": 0,
+        "fault": 4,
+        "error": "ATtiny13A peripheral fault 4, detail 16"
+      }
+    },
+    {
+      "clock": "clki",
+      "before": {
+        "prr": 1,
+        "adcsra": 128,
+        "sentinel": 165,
+        "fault": 0,
+        "error": null
+      },
+      "after": {
+        "prr": 0,
+        "adcsra": 128,
+        "sentinel": 0,
+        "fault": 4,
+        "error": "ATtiny13A peripheral fault 4, detail 16"
+      }
+    }
+  ],
+  "runtime": {
+    "bytes": 119010,
+    "sha256": "bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715",
+    "gitBlob": "b77ed8ed8a409777676374797a29be8e455cad1c",
+    "imports": [],
+    "functionExports": 109,
+    "memoryBytes": 131072
+  },
+  "tests": {
+    "command": "node --test web-player/tests/*.test.mjs tools/music-startup.test.mjs tools/avr-music-target-core.test.mjs",
+    "passed": 1919,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 119163.8953,
+    "logSha256": "576528b140037531808d94d8889a0ab0c2bc1a3d2ac0a1e7c39592c2b0917c9d"
+  },
+  "sources": {
+    "web-player/native/peripherals/device.c": "cf4e681b206a30988adc1c7d149958d74d91678313dd074dd77678b2a639eecd",
+    "web-player/tests/device-adc-power-sequence.test.mjs": "122d6d1f540e968741f0abd912156fb30d0b41c448d8f01724b316459dab079f",
+    "web-player/tests/device-analog-propagation.test.mjs": "8cf27876ebcd267d76f3678afe867fb9de1fd81030ed9c6bd1769e3409ee7e2f"
+  },
+  "documentation": {
+    "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf",
+    "section": "7.5.3",
+    "bytes": 3128073,
+    "sha256": "7c363e5deb94b5527a3ebfe9ac98338ce38e7d4499fe481100b7ede44bf37445"
+  },
+  "interpretation": "Explicit emulator diagnostic for a forbidden ADC power sequence; no silicon trap, resumable invalid-conversion behavior, or speedup is claimed."
+}

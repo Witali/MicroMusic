@@ -910,6 +910,12 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
    }
   }
  } else if (io==TIMER0_PRR) {
+  /* DS40002307A7.5.3 requires ADEN=0 before PRADC shuts the ADC down.
+   * Do not invent resumable conversion state for an invalid power sequence,
+   * or partially apply PRTIM0 from the same rejected PRR transaction. */
+  if ((merged&AT13_MASK_PRADC) && (board.analog.adc.adcsra&ANALOG_ADEN)) {
+   fail(DEVICE_FAULT_ANALOG,16);return 0;
+  }
   board.prr=merged&3;
   int error=timer0_write(&board.timer,cpu_cycle(),io,board.prr);
   if (error) fail(DEVICE_FAULT_TIMER,(uint32_t)error);
