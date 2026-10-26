@@ -3059,8 +3059,8 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 ## Micronucleus EEPROM stream reuse
 
 [EEPROM reads through an existing CRC copier](micronucleus-eeprom-stream.md):
-bounded cursors that preserve carry, source selection from proven zero,
-shared full-address guards, a callable copier, and bounded ACK acquisition.
-The corrected native-read loader is 1310 bytes; 540 DATA-to-ACK digital
-waveforms cover host ACK acquisition. No MicroMusic runtime changes or
-physical-board result are implied.
+bounded cursors that preserve carry, shared address guards and protocol
+state, a callable full-length CRC copier, and bounded ACK acquisition.
+The current native-read loader is 1308 bytes; digital ACK and whole-call CRC
+checks are recorded separately from the larger staging-only write probes.
+No MicroMusic runtime changes or physical-board result are implied.
