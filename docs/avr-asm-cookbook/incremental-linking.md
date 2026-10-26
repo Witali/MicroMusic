@@ -6,6 +6,12 @@ step or instruction-counted/block run. Keep the active-instruction/IRQ guard,
 and test the first call's effects and exact cycles, not just eventual output
 after a timed runner happens to repair the translation.
 
+Also exercise a Flash generation change during a suspended IRQ. Finishing its
+four-cycle entry does not retire a CPU instruction. Retry the remaining count
+after rebinding; for a single step, check the monotonic native retirement counter
+before deciding whether another fetch is needed. Keep zero-count, RESET and
+newly erased instruction faults covered, including pauses after stack writes.
+
 Applies to full ATtiny13A AVR25 emission, the discovered native device ABI,
 ordinary/resumable/CLKI execution and WebAssembly MVP modules. Original project
 implementation; no adapted vendor assembly. Device page geometry comes from

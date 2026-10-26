@@ -108,6 +108,15 @@ backend, avoiding retirement bypass. Disabled mode preserves the old fast path.
 
 ## Generated WASM and JavaScript entry points
 
+If SPM completes while the native wait path starts an IRQ, a host deadline can
+leave that IRQ partially entered and the Flash generation still unbound. A
+manual CPU call must finish the IRQ, bind current code, and then satisfy the
+requested instruction count. IRQ completion and Flash rebinding do not retire
+an instruction. `run` retains any completed prefix and retries only its remaining
+count after a successful rebind. `step` retries after a rebind only if the native
+uint64 retirement count did not change. Zero-count calls and held RESET still
+stop without fetching an instruction. No extra native IRQ entry is requested.
+
 `ATtiny13A` accepts `resumable:true` together with an explicit `osccalHz` physical
 clock table for the internal source, or a `clkiProfile` for CKSEL00. CLKI enables
 physical time without a dummy RC table. This optional mode is disabled by default;

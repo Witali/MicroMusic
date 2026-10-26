@@ -60,6 +60,12 @@ before fetching and checks again on return. This applies to ordinary and
 incremental compilation, including precompiled packages. It preserves the
 active-phase guard; raw time advancement alone does not fetch an instruction.
 
+A suspended IRQ can defer rebinding until its entry completes. Manual `run`
+then continues with the remaining instruction limit; `step` uses the native
+retirement counter to distinguish IRQ completion from its requested instruction.
+It retries only after an actual Flash rebind, never merely because the CPU is
+halted or waiting. Already completed stack writes and source phases stay intact.
+
 The runtime identity, exact padded image, ABI and compiler policy separate
 whole-image cache entries, including the incremental option. At most eight
 entries/16MiB of encoded artifacts/templates are retained per native module;

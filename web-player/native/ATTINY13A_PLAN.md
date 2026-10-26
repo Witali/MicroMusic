@@ -23,6 +23,14 @@ historical checkpoints. Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+SPM/IRQ continuation checkpoint: if Flash completes while entering an IRQ,
+manual `step`/`run` now finish that IRQ, rebind code, then satisfy the requested
+instruction count. Zero-count, held RESET, erased IRQ vectors and C0/C2/C3
+pauses are covered for both compilation policies. The same28-case regression
+fails22 cases on04699008 and passes all28 after the repair. All2000 default/
+shared-tool checks pass. Native timing and the23/30 checklist count are
+unchanged; see [the evidence](../reports/spm-irq-resume-20261026.md).
+
 Manual-clock SPM correctness checkpoint: `step`, instruction-counted `run` and
 compatible `runBlock` now refresh completed Flash changes before fetching, even
 when programming completed through public `clock()` outside the timed runner.

@@ -112,8 +112,22 @@ export class ATtiny13A extends TranslatedCore {
     // latched instruction or IRQ. The timed runners retain their own retry loop.
     if(name!=='step'&&name!=='run'&&name!=='block')return super._execute(name,...args);
     this._refreshFlash();
-    const result=super._execute(name,...args);
-    this._refreshFlash();return result;
+    if(name==='run'){
+      const limit=args[0];let count=0;
+      do{
+        count+=super._execute(name,limit-count);
+        if(!this._refreshFlash())break;
+      }while(count<limit);
+      return count;
+    }
+    // Readiness can finish a suspended IRQ, then yield for Flash rebinding
+    // before fetching its first instruction. That IRQ is not a CPU retirement.
+    const retired=name==='step'&&this._phaseABI?
+      new DataView(this._exports.memory.buffer,this._phaseABI.retired,8):null;
+    for(;;){
+      const before=retired?.getBigUint64(0,true),result=super._execute(name,...args);
+      if(!this._refreshFlash()||!retired||retired.getBigUint64(0,true)!==before)return result;
+    }
   }
   _refreshFlash(){
     const generation=this._exports.avr_device_generation();
