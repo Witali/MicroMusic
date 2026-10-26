@@ -52,6 +52,31 @@
 #ifndef LPX3_LPC_SEGMENTS
 #define LPX3_LPC_SEGMENTS 2
 #endif
+// Optional local O2 tuning; arithmetic/Flash backend selection is separate.
+#ifndef LPX4_FUNCTION_TUNING
+#define LPX4_FUNCTION_TUNING 7
+#endif
+#if LPX4_FUNCTION_TUNING < 0 || LPX4_FUNCTION_TUNING > 7
+#error LPX4_FUNCTION_TUNING must be 0..7
+#endif
+#define LPX4_TUNE_SAMPLE
+#define LPX4_TUNE_CODES
+#define LPX4_TUNE_READERS
+#if defined(__AVR_ARCH__) && __AVR_ARCH__==5 && defined(__GNUC__) && !defined(__clang__)
+#if LPX4_FUNCTION_TUNING&1
+#undef LPX4_TUNE_SAMPLE
+#define LPX4_TUNE_SAMPLE __attribute__((optimize("O2")))
+#endif
+#if LPX4_FUNCTION_TUNING&2
+#undef LPX4_TUNE_CODES
+#define LPX4_TUNE_CODES __attribute__((optimize("O2")))
+#endif
+#if LPX4_FUNCTION_TUNING&4
+#undef LPX4_TUNE_READERS
+#define LPX4_TUNE_READERS __attribute__((optimize("O2")))
+#endif
+#endif
+
 // v6/v7: small on-device profile: 10-bit LSF, 80-sample Rice blocks.
 // ROM-backed stream only (no callbacks, no LSF8 or legacy Huffman).
 class Lpx4HybridCore {
@@ -59,7 +84,7 @@ public:
     enum Error : uint8_t { NONE=0, BAD_HEADER, UNSUPPORTED, CORRUPT_STREAM, END_OF_ROM };
     Lpx4HybridCore();
     bool begin(const uint8_t* bytesInProgmem, uint16_t size);
-    bool next(uint8_t& pcm);  // legacy 8-bit PWM sample
+    LPX4_TUNE_SAMPLE bool next(uint8_t& pcm);  // legacy 8-bit PWM sample
 #if !defined(__AVR__) || defined(LPX4_ENABLE_PCM16)
     bool nextQ14(int16_t& out); // signed Q14 postfilter (no PWM)
     bool nextS16(int16_t& out); // signed PCM16 = saturated(2*Q14)
@@ -90,20 +115,20 @@ public:
     uint32_t romByteCalls() const {return romByteCalls_;}
 #endif
 private:
-    uint8_t readByte();
+    LPX4_TUNE_READERS uint8_t readByte();
     uint16_t read16();
     uint32_t read32();
-    uint8_t readBits(uint8_t n);
-    __attribute__((noinline)) uint8_t readOne();
+    LPX4_TUNE_READERS uint8_t readBits(uint8_t n);
+    __attribute__((noinline)) LPX4_TUNE_READERS uint8_t readOne();
     __attribute__((always_inline)) inline int8_t readHuffman3();
     bool readFrame();
     bool readBlock();
     bool readSubframe();
     __attribute__((always_inline)) inline int16_t pitchPredict() const;
     __attribute__((always_inline)) inline bool readUnary8(uint8_t& high);
-    bool decodeCode(int8_t& q);
+    LPX4_TUNE_CODES bool decodeCode(int8_t& q);
 #if !defined(__AVR__) || defined(LPX4_ENABLE_PCM16)
-    bool nextCore(int16_t& postfilterQ14);
+    LPX4_TUNE_SAMPLE bool nextCore(int16_t& postfilterQ14);
 #endif
     void interpolate(uint8_t sub);
     void interpolateLsf(uint8_t sub);
@@ -152,3 +177,7 @@ private:
     uint32_t lsfConverts_,bitCalls_,romByteCalls_;
 #endif
 };
+
+#undef LPX4_TUNE_SAMPLE
+#undef LPX4_TUNE_CODES
+#undef LPX4_TUNE_READERS

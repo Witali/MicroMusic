@@ -1,0 +1,12 @@
+{
+  "host_tests_passed": 98,
+  "host_seconds": 93.36,
+  "quality_audit": "round-16-quality.json",
+  "unchanged_math_validation": {
+    "report": "round-13-tests.json",
+    "sha256": "e69a68ec4a1fade96ded7731705c6e8c1bd9cf257b1e06565780b3d46f3b65c4",
+    "math_header_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "reason": "Math header/fixture unchanged. Only AVR5 GCC function attributes changed; C fallback remains selectable. Full firmware golden91 tests exercise the changed caller/register allocation."
+  },
+  "fuzz_scope": "No fresh fuzz claimed. Round15 fuzz covers unchanged core.cpp/math bytes; new attributes are excluded on native non-AVR builds."
+}

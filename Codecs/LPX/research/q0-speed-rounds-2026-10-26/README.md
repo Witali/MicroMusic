@@ -33,6 +33,8 @@ prefill384, unroll9, v3 mask24 и активные IRQ фиксированы.
 
 | 15 | ROM pointer и остаток bytes вместо base/cursor/size | 0,098639% | -20 Б Flash, RAM1101 Б | 1 |
 
+| 16 | локальный O2 для горячих AVR функций | 1,404252% | +146 Б Flash, RAM1101 Б | 0 |
+
 ## Раунд 1: точное Q4-накопление
 
 Исходный LPC сдвигал каждое signed32-произведение вправо на 12, затем
@@ -408,6 +410,17 @@ Scale step0..4016 умножается на16 один раз на80 samples и 
 
 Результаты round-15.json, round-15-controls.json, round-15-tests.json.
 Слабых подряд **1**. Первый слабый раунд после14. Далее исследовать O2 для отдельных горячих функций при прежних общих AVR-GCC -Os/options; проверить скорость, размер, stack и IRQ, не менять профиль измерения.
+
+## Раунд 16: локальный O2 для горячих AVR функций
+
+Общие AVR-GCC7.3 -Os и все настройки измерения прежние. Только настоящие AVR5 GCC функции next/nextCore (bit1), decodeCode (bit2) и readByte/readBits/readOne (bit4) получают optimize(O2). Default LPX4_FUNCTION_TUNING=7,0 возвращает исходный Os,1..7 позволяют повторить группы. Non-AVR/Clang остаются без атрибутов; C/ASM и memory model выбираются независимо, C fallback на самом AVR доступен. Проверены пять O2 сочетаний и все группыO3; O3 больше на924 Б при лишь≈0,16% дополнительного ускорения двух screening потоков, поэтому выбран O2.
+
+2535457558 →2499853336 cycles, **1,404252%**, Flash +146 Б на всех91 ELF, RAM1101 Б, stack margin≥821 Б. Все91 native PCM16/PWM и AVR PWM точны, underrun=0.
+
+98 host-тестов за93,360 с; native attributеs выключены, PCM16/PWM прежние. Все шесть длинных IRQ-контролей без пропусков: standard1167,866 →1153,515, +100 IRQ1200,851 →1185,521 cycles/sample. Свежий quality audit round-16-quality.json подтверждает91 поток/2912000 samples без отличий от frozen decoder. Arithmetic bytes/fixture не менялись, девять math-сборок раунда13 переиспользованы явно; отдельный свежий fuzz не заявляется (раунд15 имеет тот же core.cpp/math, native AVR attributes исключены). Распределение коэффициентов сохранено в coefficient-distribution.json:630640 из2912000 samples имеют все10 LPC coefficients в signed8; нулевые taps редки, отдельная zero-ветвь не оправдана.
+
+Результаты round-16.json, round-16-controls.json, round-16-tests.json.
+Слабых подряд **0**. Далее проверить точную signed8 специализацию LPC для целиком узких vectors; сравнить classifier/branch overhead, Flash и варианты unroll, сохранив общий signed16 путь.
 
 ## Воспроизведение
 
