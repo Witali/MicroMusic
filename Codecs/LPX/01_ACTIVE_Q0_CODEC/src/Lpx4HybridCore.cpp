@@ -515,9 +515,8 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     lastQ_=q;
 #endif
     const uint16_t step=blockStep_;
-    // The retained scale table is 0..4016, hence signed 16-bit multiplication
-    // is exact here even though the Flash table's storage type is uint16_t.
-    int32_t excitation=lpx4Mul16(q,(int16_t)step), acc=lpx4DotQ12(a_,hist_);
+    // q is signed8 and the exact reconstructed step is 0..4016.
+    int32_t excitation=lpx4Excitation(q,step), acc=lpx4DotQ12(a_,hist_);
     int16_t pred=clamp(excitation-acc,-32767,32767);
     hist_[0]=pred;
     int16_t deemph=preQ14_?clamp((int32_t)pred+lpx4MulQ14((int16_t)preQ14_,prevDeemph_),-32767,32767):pred;

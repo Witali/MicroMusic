@@ -51,6 +51,11 @@ int main(){
     TCCR1A=TCCR1B=0;OCR1A=1999;
     TIMSK1=_BV(OCIE1A);TCCR1B=_BV(WGM12)|_BV(CS10);sei();
 #endif
+    for(int16_t x=-128;x<128;x++)for(uint16_t y=0;y<4096;y++){
+        const int32_t actual=lpx4Excitation((int8_t)x,y);checkZero(actual);
+        if(actual!=product(x,y))math_error=8;
+        ++math_cases;
+    }
     const int16_t edges[]={-32768,-32767,-16385,-16384,-1,0,1,4095,16384,32766,32767};
     for(uint8_t i=0;i<11;i++)for(uint8_t j=0;j<11;j++)
         scalar(edges[i],edges[j],(int32_t)((uint32_t)(uint16_t)edges[i]<<16 | (uint16_t)edges[j]));

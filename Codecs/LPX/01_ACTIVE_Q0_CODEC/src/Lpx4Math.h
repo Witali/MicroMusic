@@ -62,6 +62,24 @@ static inline __attribute__((always_inline)) int32_t lpx4Shift14(int32_t v){
 }
 #undef LPX4_SHIFT_BODY
 
+// Exact signed8 x unsigned12 excitation product. y must be 0..4095;
+// the decoder's reconstructed step is 0..4016. Keep full-range Mul16 separate.
+static inline __attribute__((always_inline)) int32_t lpx4Excitation(int8_t x,uint16_t y){
+#if LPX4_USE_AVR_ASM
+    int32_t result;
+    __asm__(
+        "mulsu %1,%A2\n\tmovw %A0,r0\n\t"
+        "mov %C0,r1\n\tlsl %C0\n\tsbc %C0,%C0\n\t"
+        "mulsu %1,%B2\n\tadd %B0,r0\n\tadc %C0,r1\n\t"
+        "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\t"
+        "clr __zero_reg__\n\t"
+        : "=&r"(result) : "a"(x),"a"(y) : "r0","r1","cc");
+    return result;
+#else
+    return (int32_t)x*y;
+#endif
+}
+
 static inline __attribute__((always_inline)) int32_t lpx4Mul16(int16_t x,int16_t y){
 #if LPX4_USE_AVR_ASM
     int32_t result;
