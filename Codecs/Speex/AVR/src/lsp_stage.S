@@ -4,8 +4,11 @@
  * are in nb3_lsp_stage.h. Read p[stage..1] once, write p[stage+1..1].
  * The stages share their descending tail. Twelve saved bytes (r8..17/Y),
  * no extra RAM, hardware IO or interrupt masking; preserve ABI and clear r1.
- * Q14 macro arithmetic matches the existing value kernels byte-for-byte;
- * independent rounding and wrap occur at each original product/update. */
+ * Private general products retain the MUL result in r1 until the final P1
+ * product clears it before the p0 addition. No intervening instruction
+ * treats r1 as zero or calls C; the remaining tail preserves that zero.
+ * Default value kernels stay byte-identical. Independent rounding and wrap
+ * occur at each original product/update. IRQs must preserve interrupted r1. */
 #include "q14_macros.S"
 .section .text.speex_avr_lsp_stages,"ax",@progbits
 .macro STAGE_LOAD base,offset
@@ -63,7 +66,7 @@
     movw r16,r22
 .endm
 .macro STAGE_Q14
-    SPEEX_LSP_Q14_BODY 16
+    SPEEX_LSP_Q14_BODY 16,0
 .endm
 .macro STAGE_P1
     SPEEX_LSP_P1_BODY 16
@@ -132,6 +135,5 @@ speex_avr_lsp_stage2:
 .irp r,29,28,17,16,15,14,13,12,11,10,9,8
     pop \r
 .endr
-    clr r1
     ret
 .size speex_avr_lsp_stage2,.-speex_avr_lsp_stage2

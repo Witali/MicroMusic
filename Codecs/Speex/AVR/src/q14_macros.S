@@ -2,13 +2,16 @@
  * Original project Q14 arithmetic shared by GNU-ABI and fused-stage entries.
  * Enhanced AVR5, hardware MUL. a is the low register number of a signed16
  * operand (16 or 18); b enters r23:r20, result r25:r22. Clobbers r0/r1,
- * r20..27/Z, preserves a and r2..17/Y, and clears r1. No stack, IO or CLI.
+ * r20..27/Z, preserves a and r2..17/Y. Default bodies clear r1. The private
+ * general-body clear_zero=0 form leaves r1 clobbered: its caller must not
+ * consume it as zero or cross an ABI boundary before restoring it.
+ * Neither body requires r1 zero on entry. No stack, IO or CLI.
  * General body requires signed30 b; aligned body also requires b%64==0.
  * The C equations remain in nb3_c_math.h; use speex_platform.h opt-in. */
 #ifndef MICROMUSIC_Q14_ASM_MACROS
 #define MICROMUSIC_Q14_ASM_MACROS
 
-.macro SPEEX_LSP_Q14_BODY a
+.macro SPEEX_LSP_Q14_BODY a,clear_zero=1
 
     movw r30, r22       /* original high word of b */
     clr r26             /* low product's temporary zero */
@@ -60,7 +63,9 @@
     .endr
     movw r22, r24
     movw r24, r26
+.if \clear_zero
     clr r1
+.endif
 .endm
 
 .macro SPEEX_LSP_P1_BODY a
