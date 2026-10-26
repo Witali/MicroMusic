@@ -7,11 +7,11 @@
 ## План и критерии
 
 - [x] Проверить ветку, чистоту, правила, исходный decoder и round19 evidence.
-- [ ] Реализовать прототип компактного речевого формата с явным compile-time
+- [x] Реализовать прототип компактного речевого формата с явным compile-time
   opt-in и отдельной версией. Сохранить v2/v3 и старые 8/12/16 профили.
   Сначала проверить scalar LSF и pitch/sparse excitation без новых таблиц,
   поиска и floating point на MCU. 40 мс: 160 бит при 4 кбит/с, 240 при 6.
-- [ ] Реализовать offline encoder: LPC analysis, квантование спектра,
+- [x] Реализовать offline encoder: LPC analysis, квантование спектра,
   поиск pitch/energy и замкнутый поиск импульсов по фактической integer
   synthesis. Честно зафиксировать ухудшение качества; LPX8 — прежний encoder.
 - [ ] Проверить независимую модель, native C, truncation, malformed headers,
@@ -42,3 +42,8 @@ staged content на секреты и личные сведения. Никак�
 не поддерживает этот обычный worktree; все команды используют явный путь.
 Изучены v2/v3 parser, integer synthesis, encoder model, AVR harness и round19.
 Новые аудио, caches и ELF будут изолированы в build/lpx-speech/.
+
+Прототип v4 реализован: 5/6-bit scalar LSF, 40 ms packet, 20 ms energy/pitch,
+2,5 ms sparse pulses, прежний integer synthesis. Общий suite: 104 tests,
+один прежний optional skip. Начальные измерения показывают различия между
+голосами; итоговые выводы будут по всему набору.

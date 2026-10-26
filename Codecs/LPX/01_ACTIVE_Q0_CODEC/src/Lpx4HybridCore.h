@@ -4,6 +4,17 @@
 #define LPX4_ALLOW_SPARSE 1
 #endif
 #define LPX4_MAX_PULSES 10
+// Experimental fixed-rate speech v4. Explicit opt-in; v2/v3 stay unchanged.
+// Uses the same integer synthesis and C/ASM arithmetic backends.
+#ifndef LPX4_ENABLE_SPEECH
+#define LPX4_ENABLE_SPEECH 0
+#endif
+#if LPX4_ENABLE_SPEECH != 0 && LPX4_ENABLE_SPEECH != 1
+#error LPX4_ENABLE_SPEECH must be 0 or 1
+#endif
+#if LPX4_ENABLE_SPEECH && !LPX4_ALLOW_SPARSE
+#error Speech v4 requires LPX4_ALLOW_SPARSE
+#endif
 // Mirrored LPC history removes per-sample history shifts, spending 20 B RAM.
 // Zero retains the smaller linear history with identical output on C/ASM.
 #ifndef LPX4_LPC_RING
@@ -161,6 +172,9 @@ private:
     uint8_t quantLimit_;
     uint8_t mode_,blockScale_,bitBuffer_,bitsLeft_,riceK_;
     uint8_t subType_,lag_,gain_,ringCursor_;
+#if LPX4_ENABLE_SPEECH
+    uint8_t speechProfile_,speechHalf_;
+#endif
 #if LPX4_V3_FEATURES
     uint8_t formatFeatures_;
 #endif

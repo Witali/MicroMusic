@@ -71,6 +71,9 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
 #endif
  quantLimit_(0),mode_(0),blockScale_(0),
  bitBuffer_(0),bitsLeft_(0),riceK_(0),subType_(0),lag_(0),gain_(0),ringCursor_(0),
+#if LPX4_ENABLE_SPEECH
+ speechProfile_(0),speechHalf_(0),
+#endif
 #if LPX4_V3_FEATURES
  formatFeatures_(0),
 #endif
@@ -131,6 +134,9 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
  bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;blockStep_=0;
  subType_=lag_=gain_=ringCursor_=quantLimit_=0;
+#if LPX4_ENABLE_SPEECH
+ speechProfile_=speechHalf_=0;
+#endif
 #if LPX4_V3_FEATURES
  formatFeatures_=0;
 #endif
@@ -155,19 +161,37 @@ prevDeemph_=prevBright_=0;
   error_=BAD_HEADER;return false;
  }
  const uint8_t version=readByte(),flags=readByte();
+#if LPX4_ENABLE_SPEECH
+ if(version==4 && (flags==4 || flags==6))speechProfile_=flags;
+ else
+#endif
+ {
 #if LPX4_V3_FEATURES
  if(version==3 && (flags&3)==3 && !(flags&~(3|LPX4_V3_FEATURES)))formatFeatures_=flags&124;
  else if(version!=2||flags!=3){error_=UNSUPPORTED;return false;}
 #else
  if(version!=2||flags!=3){error_=UNSUPPORTED;return false;}
 #endif
+ }
  sampleRate_=read16();sampleCount_=read32();preQ14_=read16();brightQ14_=read16();
  remaining_=sampleCount_;
 #if LPX4_BATCHED_REMAINING
  subEnd_=remaining_<20?(uint8_t)remaining_:20;
 #endif
  const uint16_t frames=read16(),blocks=read16();
- if(error_||sampleRate_!=8000||!sampleCount_||frames!=160||blocks!=80||
+ bool geometry=frames==160 && blocks==80;
+#if LPX4_ENABLE_SPEECH
+ if(speechProfile_){
+  geometry=frames==320 && blocks==160;
+  // Full final packet is mandatory, even for a partial sample tail. Bound
+  // the count before addition/multiplication; reject truncation at begin().
+  if(sampleCount_>64000 || !sampleCount_ ||
+     (uint32_t)size!=20+((sampleCount_+319)/320)*(speechProfile_==4?20:30)){
+   error_=BAD_HEADER;return false;
+  }
+ }
+#endif
+ if(error_||sampleRate_!=8000||!sampleCount_||!geometry||
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
  return true;
 }
@@ -226,6 +250,31 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
 }
 bool Lpx4HybridCore::readFrame(){
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+#if LPX4_ENABLE_SPEECH
+ if(speechProfile_){
+  staticSpectrum_=true;
+  if(!speechHalf_){
+   const uint8_t bits=speechProfile_==4?5:6,shift=10-bits;
+   for(uint8_t i=0;i<10;i++){
+    const int16_t v=((uint16_t)readBits(bits)<<shift)+(1u<<(shift-1));
+    if(i && v<=cur_[i-1]){error_=CORRUPT_STREAM;return false;}
+    if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
+    cur_[i]=v;
+   }
+   if(speechProfile_==6 && readBits(6)){error_=CORRUPT_STREAM;return false;}
+  }
+  if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+  initializedFrame_=true;speechHalf_^=1;
+  mode_=6;quantLimit_=32;
+  blockScale_=readBits(5)<<3;
+  lag_=18+readBits(7);gain_=readBits(3)<<1;
+  blockStep_=scaleStep(blockScale_);
+#if LPX4_EXCITATION_Q4
+  blockStep_<<=4;
+#endif
+  return !error_;
+ }
+#endif
  if(!readOne()){
   if(!initializedFrame_){error_=CORRUPT_STREAM;return false;}
   staticSpectrum_=true;
@@ -283,6 +332,9 @@ bool Lpx4HybridCore::readFrame(){
  initializedFrame_=true;return true;
 }
 bool Lpx4HybridCore::readBlock(){
+#if LPX4_ENABLE_SPEECH
+ if(speechProfile_)return !error_;
+#endif
 #if LPX4_V3_FEATURES & 8
  if(!(formatFeatures_&8) || readOne())
 #endif
@@ -314,6 +366,26 @@ bool Lpx4HybridCore::readBlock(){
  return !error_;
 }
 bool Lpx4HybridCore::readSubframe(){
+#if LPX4_ENABLE_SPEECH
+ if(speechProfile_){
+  subType_=2;pulseIndex_=0;pulseCount_=2;
+  for(uint8_t i=0;i<2;i++){
+   uint8_t pos;
+   int8_t amp;
+   if(speechProfile_==4){
+    pos=readBits(4);pos+=(pos+2)>>2;
+    amp=readOne()?8:-8;
+   }else{
+    pos=readBits(5);
+    const uint8_t raw=readBits(4);
+    amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
+    if(pos>=20){error_=CORRUPT_STREAM;return false;}
+   }
+   pulsePos_[i]=pos+i*20;pulseAmp_[i]=amp;
+  }
+  return !error_;
+ }
+#endif
 #if LPX4_V3_FEATURES & 32
  if((formatFeatures_&32) && !mode_){
   subType_=riceK_=0;
