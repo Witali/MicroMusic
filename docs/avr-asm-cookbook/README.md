@@ -2701,3 +2701,36 @@ is 29,508,800. A 20-ms frame at 16 MHz permits 320,000 cycles, before IRQ
 and I/O, so these gains do not establish real-time feasibility. No active
 IRQ, underrun, physical board or live-speech admission is claimed.
 [Complete evidence](../../Codecs/Codec2/reports/matrix-decoder.json).
+
+### Evaluate an optional algorithm stage against a matching oracle
+
+The [LPC-postfilter-off experiment](../../Codecs/Codec2/NOPOST_RU.md) uses
+the existing upstream pf=0 option. Remove gamma-weighted spectrum, spectral
+postfilter gain and its bass boost; retain the base LPC denominator, phases,
+interpolation, all ten LPC coefficients and separate background phase filter.
+The pinned upstream `quantise.c` explains the inter-formant suppression;
+disabling it changes timbre, so the original pf=1 PCM is not a same-algorithm
+numerical oracle. Compare implementation error to upstream pf=0, then compare
+perceived quality separately to pf=1. A low waveform SNR between different
+postfilters alone does not measure intelligibility or listening preference.
+
+Reselect precision after removing a stage. All 30 old-layout fixed16
+Q9..14/guard14..18 choices fail the unchanged 50-dB/max-256 implementation
+gate. Of 42 tested choices including wide-last and fixed24 alternatives,
+fixed16/Q12/wide-last/guard14 passes with mixed-corpus 58.74 dB/max 254.
+It is the first passing choice under the documented precision ordering,
+not a measured global speed optimum. Retain failed choices and the
+independent conditioning regression. No new same-option RNG claim is made.
+
+Measured on ATmega64A AVR5/MUL, AVR-GCC 7.3.0 `-Os`, ordinary ABI, avr8js
+0.21.1: all 389 frames complete, same-option SNR 61.50/61.80/60.71 dB,
+max error 20/13/30. Mean EN/RU cycles fall 35.95%/35.66%; Flash
+51,146→43,580 B, static SRAM 711 B, peak stack 3045 B leaves 340/4096 B.
+But four extreme frames slow down and the maximum grows 10.72% to
+32,672,654 cycles because the lower guard invokes more faithful work.
+Thus average throughput improvement does not establish a deadline bound.
+These are portable C source selections, not an assembly backend. Prior
+algorithms remain selectable; real CPU macros and ROM access are retained.
+There is no listening-panel, active-IRQ, underrun, board, Arm or real-time
+qualification. [Full measurements](../../Codecs/Codec2/reports/nopost-decoder.json),
+[precision search](../../Codecs/Codec2/reports/nopost-precision.json).

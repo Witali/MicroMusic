@@ -1,0 +1,1997 @@
+{
+  "baseline_report_sha256": "2c70bd104fb895105c5f6d2aba0290f897ffe6a5cb27562e0239c3a79fa4f7ae",
+  "selection": {
+    "fixed_bits": 16,
+    "wide_last": 1,
+    "twiddle_q": 12,
+    "guard_bits": 14
+  },
+  "results": [
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 9,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 17373,
+          "max_absolute_error": 31,
+          "rmse": 2.8721465696289235,
+          "snr_db": 57.070013793650105,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "ecd6aa723b0ccd2ddc6eba38ca0b5be1a6ce67c86ff84a920bc9905ad45c6421",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 9241,
+          "max_absolute_error": 22,
+          "rmse": 2.036403392137767,
+          "snr_db": 57.235082666301,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "603db2eeaf53fad15c73adb1fa64cede58a3200bdda9e67fbe53701323ab39f0",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1265860,
+          "max_absolute_error": 370,
+          "rmse": 9.233991240956742,
+          "snr_db": 54.293373210028165,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "04a24c4658179e6780aebebc0dddef0195a89f757413c90c98fb40f63f857321",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 9,
+      "guard_bits": 15,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 17373,
+          "max_absolute_error": 31,
+          "rmse": 2.8721465696289235,
+          "snr_db": 57.070013793650105,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "ecd6aa723b0ccd2ddc6eba38ca0b5be1a6ce67c86ff84a920bc9905ad45c6421",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 9241,
+          "max_absolute_error": 22,
+          "rmse": 2.036403392137767,
+          "snr_db": 57.235082666301,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "603db2eeaf53fad15c73adb1fa64cede58a3200bdda9e67fbe53701323ab39f0",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1266139,
+          "max_absolute_error": 420,
+          "rmse": 9.30958774980376,
+          "snr_db": 54.22255337845197,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "60440392b0a3a9d41b16cdc83005fe3e9002dc7830e29d2f4dd5d027e1815390",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 9,
+      "guard_bits": 16,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 17373,
+          "max_absolute_error": 31,
+          "rmse": 2.8721465696289235,
+          "snr_db": 57.070013793650105,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "ecd6aa723b0ccd2ddc6eba38ca0b5be1a6ce67c86ff84a920bc9905ad45c6421",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 9241,
+          "max_absolute_error": 22,
+          "rmse": 2.036403392137767,
+          "snr_db": 57.235082666301,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "603db2eeaf53fad15c73adb1fa64cede58a3200bdda9e67fbe53701323ab39f0",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1266301,
+          "max_absolute_error": 420,
+          "rmse": 9.338366335250903,
+          "snr_db": 54.19574423741289,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "1da778e010c4201b8e9429486bc4df48668727ae004005150d219b902c914a07",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 9,
+      "guard_bits": 17,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 17373,
+          "max_absolute_error": 31,
+          "rmse": 2.8721465696289235,
+          "snr_db": 57.070013793650105,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "ecd6aa723b0ccd2ddc6eba38ca0b5be1a6ce67c86ff84a920bc9905ad45c6421",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 9241,
+          "max_absolute_error": 22,
+          "rmse": 2.036403392137767,
+          "snr_db": 57.235082666301,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "603db2eeaf53fad15c73adb1fa64cede58a3200bdda9e67fbe53701323ab39f0",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1266847,
+          "max_absolute_error": 420,
+          "rmse": 9.413655900304386,
+          "snr_db": 54.12599598746233,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "a97b6de046fb016ba24093c7cdb0b26f906805e541087eee7a52e81ef23575e3",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 9,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 17373,
+          "max_absolute_error": 31,
+          "rmse": 2.8721465696289235,
+          "snr_db": 57.070013793650105,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "ecd6aa723b0ccd2ddc6eba38ca0b5be1a6ce67c86ff84a920bc9905ad45c6421",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 9241,
+          "max_absolute_error": 22,
+          "rmse": 2.036403392137767,
+          "snr_db": 57.235082666301,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "603db2eeaf53fad15c73adb1fa64cede58a3200bdda9e67fbe53701323ab39f0",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1267948,
+          "max_absolute_error": 420,
+          "rmse": 9.531568496391966,
+          "snr_db": 54.017874911695635,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "4498cb6092647089e73fc372556eabf6e015d81a07cd4b8f557be4483f297244",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 10,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15524,
+          "max_absolute_error": 24,
+          "rmse": 1.990199611951737,
+          "snr_db": 60.25621302488712,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "cc2b36cfa4513077723f7158f2b508b3ba3978eee9e79e28942f546d3e0ec862",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7976,
+          "max_absolute_error": 18,
+          "rmse": 1.448359968598779,
+          "snr_db": 60.19482864630106,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f58741305906ee0dec01e1e48c4ad901f957769b3f447a7dc1731c3a097f2566",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1170242,
+          "max_absolute_error": 339,
+          "rmse": 6.587413313447187,
+          "snr_db": 57.22686411132596,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "1f08287597d43dc94e50a2b864e3c060aca3198b02783a40b45fa25cbf001fc1",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 10,
+      "guard_bits": 15,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15524,
+          "max_absolute_error": 24,
+          "rmse": 1.990199611951737,
+          "snr_db": 60.25621302488712,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "cc2b36cfa4513077723f7158f2b508b3ba3978eee9e79e28942f546d3e0ec862",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7976,
+          "max_absolute_error": 18,
+          "rmse": 1.448359968598779,
+          "snr_db": 60.19482864630106,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f58741305906ee0dec01e1e48c4ad901f957769b3f447a7dc1731c3a097f2566",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1170726,
+          "max_absolute_error": 339,
+          "rmse": 6.635549950108619,
+          "snr_db": 57.16362392041685,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "b9a5c736256763e2fddc554cad6a0f3e22163ccf90e1a4199f651d77e5d3f58c",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 10,
+      "guard_bits": 16,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15524,
+          "max_absolute_error": 24,
+          "rmse": 1.990199611951737,
+          "snr_db": 60.25621302488712,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "cc2b36cfa4513077723f7158f2b508b3ba3978eee9e79e28942f546d3e0ec862",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7976,
+          "max_absolute_error": 18,
+          "rmse": 1.448359968598779,
+          "snr_db": 60.19482864630106,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f58741305906ee0dec01e1e48c4ad901f957769b3f447a7dc1731c3a097f2566",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1171387,
+          "max_absolute_error": 339,
+          "rmse": 6.6779200643445895,
+          "snr_db": 57.10833805154962,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "4040c898bd8014924a7e2f56fdf735d02e30f4dfe1d56754f41cf1b512872838",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 10,
+      "guard_bits": 17,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15524,
+          "max_absolute_error": 24,
+          "rmse": 1.990199611951737,
+          "snr_db": 60.25621302488712,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "cc2b36cfa4513077723f7158f2b508b3ba3978eee9e79e28942f546d3e0ec862",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7976,
+          "max_absolute_error": 18,
+          "rmse": 1.448359968598779,
+          "snr_db": 60.19482864630106,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f58741305906ee0dec01e1e48c4ad901f957769b3f447a7dc1731c3a097f2566",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1172469,
+          "max_absolute_error": 367,
+          "rmse": 6.828325859078916,
+          "snr_db": 56.914877611341495,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "cebdfe14f3d8d7347aa769eb71f818eeef9e46a57f5e3dc3a013e042739d78bb",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 10,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15524,
+          "max_absolute_error": 24,
+          "rmse": 1.990199611951737,
+          "snr_db": 60.25621302488712,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "cc2b36cfa4513077723f7158f2b508b3ba3978eee9e79e28942f546d3e0ec862",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7976,
+          "max_absolute_error": 18,
+          "rmse": 1.448359968598779,
+          "snr_db": 60.19482864630106,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f58741305906ee0dec01e1e48c4ad901f957769b3f447a7dc1731c3a097f2566",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1174138,
+          "max_absolute_error": 367,
+          "rmse": 6.977346239080864,
+          "snr_db": 56.727356882248145,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "8d299d5a66b5a5ce11371f8d79d4beeddac733d6707b60d8f515b9da81ebbf52",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 11,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15362,
+          "max_absolute_error": 24,
+          "rmse": 1.948895535255661,
+          "snr_db": 60.4383745558095,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "9fbd3ad41b2a9338af38d1241816f336cc08782f13888f4b04300f80bca025c2",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7946,
+          "max_absolute_error": 20,
+          "rmse": 1.4077349491558522,
+          "snr_db": 60.44194104684983,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "5e10c7b589ed1303b4fe67fde117a4ef533c604c08702a83c4fc660eda0c2a35",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1158509,
+          "max_absolute_error": 300,
+          "rmse": 6.4649349187696075,
+          "snr_db": 57.389879229578476,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "ea849089ed53da0c71c1482db381e91ec14e1cdd90f810c7a1a4564204a605eb",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 11,
+      "guard_bits": 15,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15362,
+          "max_absolute_error": 24,
+          "rmse": 1.948895535255661,
+          "snr_db": 60.4383745558095,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "9fbd3ad41b2a9338af38d1241816f336cc08782f13888f4b04300f80bca025c2",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7946,
+          "max_absolute_error": 20,
+          "rmse": 1.4077349491558522,
+          "snr_db": 60.44194104684983,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "5e10c7b589ed1303b4fe67fde117a4ef533c604c08702a83c4fc660eda0c2a35",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1159169,
+          "max_absolute_error": 326,
+          "rmse": 6.557068091205435,
+          "snr_db": 57.266968503666895,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "62f23673db60f23a78ec6a0f7fad6edfbd376a9bb4d4fbd8b959e909f5cf33ef",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 11,
+      "guard_bits": 16,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15362,
+          "max_absolute_error": 24,
+          "rmse": 1.948895535255661,
+          "snr_db": 60.4383745558095,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "9fbd3ad41b2a9338af38d1241816f336cc08782f13888f4b04300f80bca025c2",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7946,
+          "max_absolute_error": 20,
+          "rmse": 1.4077349491558522,
+          "snr_db": 60.44194104684983,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "5e10c7b589ed1303b4fe67fde117a4ef533c604c08702a83c4fc660eda0c2a35",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1159634,
+          "max_absolute_error": 326,
+          "rmse": 6.590833948933621,
+          "snr_db": 57.222354974047995,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "9686a772111dca9424a72fcc0cb8fd296c34292cb0b74dcd4d92811e19a8d61f",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 11,
+      "guard_bits": 17,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15362,
+          "max_absolute_error": 24,
+          "rmse": 1.948895535255661,
+          "snr_db": 60.4383745558095,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "9fbd3ad41b2a9338af38d1241816f336cc08782f13888f4b04300f80bca025c2",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7946,
+          "max_absolute_error": 20,
+          "rmse": 1.4077349491558522,
+          "snr_db": 60.44194104684983,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "5e10c7b589ed1303b4fe67fde117a4ef533c604c08702a83c4fc660eda0c2a35",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1160897,
+          "max_absolute_error": 331,
+          "rmse": 6.7350095890672925,
+          "snr_db": 57.034398007351534,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "ba190d212a3ae1003d22f37c6f83db735a09912e89a40da5c8a1d9978c1c479f",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 11,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15362,
+          "max_absolute_error": 24,
+          "rmse": 1.948895535255661,
+          "snr_db": 60.4383745558095,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "9fbd3ad41b2a9338af38d1241816f336cc08782f13888f4b04300f80bca025c2",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7946,
+          "max_absolute_error": 20,
+          "rmse": 1.4077349491558522,
+          "snr_db": 60.44194104684983,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "5e10c7b589ed1303b4fe67fde117a4ef533c604c08702a83c4fc660eda0c2a35",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1162604,
+          "max_absolute_error": 331,
+          "rmse": 6.888413252653155,
+          "snr_db": 56.83877850302791,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "ec99cb8531daa20b3ccff9e1f0635a87cf6bb89376709061d88af7493223a264",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 12,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15031,
+          "max_absolute_error": 23,
+          "rmse": 1.847582414891556,
+          "snr_db": 60.902069368941916,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "c6a6aa20148c808487d9e6b4a2f4850c88a8b3fbce83676a36edae3304532cc1",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7731,
+          "max_absolute_error": 17,
+          "rmse": 1.3293360574894133,
+          "snr_db": 60.93966320406544,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "27701ded071624ed5ec87c9afc993294d48ba510b08bfc491c1ccf7f937b45b8",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1134937,
+          "max_absolute_error": 277,
+          "rmse": 5.933105421352347,
+          "snr_db": 58.13552107336098,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "7f8faea8cde7719c5f7547b7072baa851e764255f16b33798274838284af04bb",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 12,
+      "guard_bits": 15,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15031,
+          "max_absolute_error": 23,
+          "rmse": 1.847582414891556,
+          "snr_db": 60.902069368941916,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "c6a6aa20148c808487d9e6b4a2f4850c88a8b3fbce83676a36edae3304532cc1",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7731,
+          "max_absolute_error": 17,
+          "rmse": 1.3293360574894133,
+          "snr_db": 60.93966320406544,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "27701ded071624ed5ec87c9afc993294d48ba510b08bfc491c1ccf7f937b45b8",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1135694,
+          "max_absolute_error": 277,
+          "rmse": 5.989622061808838,
+          "snr_db": 58.05317397966633,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "5228e53a3530003529f16e3db554cd95cc0221bb1e2d8ef3e94106c076c64892",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 12,
+      "guard_bits": 16,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15031,
+          "max_absolute_error": 23,
+          "rmse": 1.847582414891556,
+          "snr_db": 60.902069368941916,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "c6a6aa20148c808487d9e6b4a2f4850c88a8b3fbce83676a36edae3304532cc1",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7731,
+          "max_absolute_error": 17,
+          "rmse": 1.3293360574894133,
+          "snr_db": 60.93966320406544,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "27701ded071624ed5ec87c9afc993294d48ba510b08bfc491c1ccf7f937b45b8",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1136097,
+          "max_absolute_error": 277,
+          "rmse": 6.046360085695423,
+          "snr_db": 57.97128222238855,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "2247e5dd93d135de068a9aaf31f4d1c90d2e3e764c6d218520f8572a2b3c2ebf",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 12,
+      "guard_bits": 17,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15031,
+          "max_absolute_error": 23,
+          "rmse": 1.847582414891556,
+          "snr_db": 60.902069368941916,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "c6a6aa20148c808487d9e6b4a2f4850c88a8b3fbce83676a36edae3304532cc1",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7731,
+          "max_absolute_error": 17,
+          "rmse": 1.3293360574894133,
+          "snr_db": 60.93966320406544,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "27701ded071624ed5ec87c9afc993294d48ba510b08bfc491c1ccf7f937b45b8",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1137460,
+          "max_absolute_error": 295,
+          "rmse": 6.1825176280622625,
+          "snr_db": 57.777855108633354,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "534f07a5efd3d426e8864268d1830d857d17a38605bc8bf65b26b213259367d1",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 12,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15031,
+          "max_absolute_error": 23,
+          "rmse": 1.847582414891556,
+          "snr_db": 60.902069368941916,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "c6a6aa20148c808487d9e6b4a2f4850c88a8b3fbce83676a36edae3304532cc1",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7731,
+          "max_absolute_error": 17,
+          "rmse": 1.3293360574894133,
+          "snr_db": 60.93966320406544,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "27701ded071624ed5ec87c9afc993294d48ba510b08bfc491c1ccf7f937b45b8",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1139358,
+          "max_absolute_error": 295,
+          "rmse": 6.337797255295939,
+          "snr_db": 57.56239553332105,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "eb2d9444b07246acda6585e0d608850e479b962e86bd1a587f290240e0d86405",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 13,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15170,
+          "max_absolute_error": 19,
+          "rmse": 1.907989599533133,
+          "snr_db": 60.62262570874346,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "0c49211760b04dba226b7e3436de4c8692fac3e15526c32bd704ef850bd267ac",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7780,
+          "max_absolute_error": 17,
+          "rmse": 1.3786361938894687,
+          "snr_db": 60.6233653818302,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "e46374a2e66c41f54d03b3de621f3828b84b89ef3477ae4ef587f1d95a285feb",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1139551,
+          "max_absolute_error": 276,
+          "rmse": 6.019770124916235,
+          "snr_db": 58.00956422906994,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "1998870caf35bcb211247db9c96a78d778318263b2187dc5d2f0e7113fa8c8d7",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 13,
+      "guard_bits": 15,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15170,
+          "max_absolute_error": 19,
+          "rmse": 1.907989599533133,
+          "snr_db": 60.62262570874346,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "0c49211760b04dba226b7e3436de4c8692fac3e15526c32bd704ef850bd267ac",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7780,
+          "max_absolute_error": 17,
+          "rmse": 1.3786361938894687,
+          "snr_db": 60.6233653818302,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "e46374a2e66c41f54d03b3de621f3828b84b89ef3477ae4ef587f1d95a285feb",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1140134,
+          "max_absolute_error": 276,
+          "rmse": 6.0724016600467765,
+          "snr_db": 57.93395256879465,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "34c10b79d827d5f1122013a3f4c6262fb40ecfe3fa08f7ed3e04e519c1db1c54",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 13,
+      "guard_bits": 16,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15170,
+          "max_absolute_error": 19,
+          "rmse": 1.907989599533133,
+          "snr_db": 60.62262570874346,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "0c49211760b04dba226b7e3436de4c8692fac3e15526c32bd704ef850bd267ac",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7780,
+          "max_absolute_error": 17,
+          "rmse": 1.3786361938894687,
+          "snr_db": 60.6233653818302,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "e46374a2e66c41f54d03b3de621f3828b84b89ef3477ae4ef587f1d95a285feb",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1140986,
+          "max_absolute_error": 276,
+          "rmse": 6.112383326156841,
+          "snr_db": 57.87695072819933,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "5abe706f2aadcbddfaaa99e00eb19efd2ce8b5476876da2b8aac410f640d9c09",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 13,
+      "guard_bits": 17,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15170,
+          "max_absolute_error": 19,
+          "rmse": 1.907989599533133,
+          "snr_db": 60.62262570874346,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "0c49211760b04dba226b7e3436de4c8692fac3e15526c32bd704ef850bd267ac",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7780,
+          "max_absolute_error": 17,
+          "rmse": 1.3786361938894687,
+          "snr_db": 60.6233653818302,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "e46374a2e66c41f54d03b3de621f3828b84b89ef3477ae4ef587f1d95a285feb",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1142480,
+          "max_absolute_error": 314,
+          "rmse": 6.278656004370075,
+          "snr_db": 57.6438285843843,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "91d287a56c3ce754709183b8c7494365a3b39396997dd3391737ce782ca62f54",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 13,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15170,
+          "max_absolute_error": 19,
+          "rmse": 1.907989599533133,
+          "snr_db": 60.62262570874346,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "0c49211760b04dba226b7e3436de4c8692fac3e15526c32bd704ef850bd267ac",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7780,
+          "max_absolute_error": 17,
+          "rmse": 1.3786361938894687,
+          "snr_db": 60.6233653818302,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "e46374a2e66c41f54d03b3de621f3828b84b89ef3477ae4ef587f1d95a285feb",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1144232,
+          "max_absolute_error": 314,
+          "rmse": 6.428762926449619,
+          "snr_db": 57.43861416369886,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "c0adf87936e54b9a2873c904876bc2755a11e6f355b6970d4fbf0bc4712740de",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 14,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15100,
+          "max_absolute_error": 19,
+          "rmse": 1.8966260482689985,
+          "snr_db": 60.67451155205546,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "1cdf2302f29a573cec3da56ad23984f32f87e8b0205ff5d3a61cdb261ca04e70",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7687,
+          "max_absolute_error": 20,
+          "rmse": 1.3576127006248724,
+          "snr_db": 60.756841058053396,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f96a6482bd47891978dddbf01970bb3d014c1cdfab11f4bd85ca6c6f0ebb9b42",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1137499,
+          "max_absolute_error": 277,
+          "rmse": 5.97303600113502,
+          "snr_db": 58.07725972785023,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "bba557c756695960820b4c8ce0b7e2de09bfadb41cb77f2d13a19e72cbbbac5d",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 14,
+      "guard_bits": 15,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15100,
+          "max_absolute_error": 19,
+          "rmse": 1.8966260482689985,
+          "snr_db": 60.67451155205546,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "1cdf2302f29a573cec3da56ad23984f32f87e8b0205ff5d3a61cdb261ca04e70",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7687,
+          "max_absolute_error": 20,
+          "rmse": 1.3576127006248724,
+          "snr_db": 60.756841058053396,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f96a6482bd47891978dddbf01970bb3d014c1cdfab11f4bd85ca6c6f0ebb9b42",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1137936,
+          "max_absolute_error": 277,
+          "rmse": 6.039635512466361,
+          "snr_db": 57.98094777397405,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "4dc5f94ff535ed8b28e2a28573598ce1bd2e13d99387f66fdd38155a15a745e5",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 14,
+      "guard_bits": 16,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15100,
+          "max_absolute_error": 19,
+          "rmse": 1.8966260482689985,
+          "snr_db": 60.67451155205546,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "1cdf2302f29a573cec3da56ad23984f32f87e8b0205ff5d3a61cdb261ca04e70",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7687,
+          "max_absolute_error": 20,
+          "rmse": 1.3576127006248724,
+          "snr_db": 60.756841058053396,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f96a6482bd47891978dddbf01970bb3d014c1cdfab11f4bd85ca6c6f0ebb9b42",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1138717,
+          "max_absolute_error": 277,
+          "rmse": 6.079891706618689,
+          "snr_db": 57.92324549907821,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "15957eb177d98ecd83af1b8d877a1fd406bc1e4106dad21dcecb3c7b065ad9d2",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 14,
+      "guard_bits": 17,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15100,
+          "max_absolute_error": 19,
+          "rmse": 1.8966260482689985,
+          "snr_db": 60.67451155205546,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "1cdf2302f29a573cec3da56ad23984f32f87e8b0205ff5d3a61cdb261ca04e70",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7687,
+          "max_absolute_error": 20,
+          "rmse": 1.3576127006248724,
+          "snr_db": 60.756841058053396,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f96a6482bd47891978dddbf01970bb3d014c1cdfab11f4bd85ca6c6f0ebb9b42",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1140320,
+          "max_absolute_error": 315,
+          "rmse": 6.248073778881885,
+          "snr_db": 57.68623939196472,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "ba8b7db89a99c723bc29612297782d9d51a210251a590d458588b8df0c39629e",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 0,
+      "twiddle_q": 14,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15100,
+          "max_absolute_error": 19,
+          "rmse": 1.8966260482689985,
+          "snr_db": 60.67451155205546,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "1cdf2302f29a573cec3da56ad23984f32f87e8b0205ff5d3a61cdb261ca04e70",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7687,
+          "max_absolute_error": 20,
+          "rmse": 1.3576127006248724,
+          "snr_db": 60.756841058053396,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f96a6482bd47891978dddbf01970bb3d014c1cdfab11f4bd85ca6c6f0ebb9b42",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1142283,
+          "max_absolute_error": 315,
+          "rmse": 6.406787409424178,
+          "snr_db": 57.46835610652625,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "f74c094b75378df176c98acaca9bb793f54eeda4050f49e35f6a5de5cdd469a4",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 1,
+      "twiddle_q": 9,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 17018,
+          "max_absolute_error": 29,
+          "rmse": 2.751433112818105,
+          "snr_db": 57.442966577349985,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "db65701aa0a49842a4b94fdc6b2e8d86560ea91a7c0f027a1482a86aa5082858",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 9033,
+          "max_absolute_error": 22,
+          "rmse": 1.9359207410548238,
+          "snr_db": 57.6746074462735,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "842a8ddbf79853b44f5fbdf6ee3e12e3e04ce153e6a117ceb19c35b8d6e4ca36",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1253234,
+          "max_absolute_error": 331,
+          "rmse": 8.953956206750426,
+          "snr_db": 54.56086305630144,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "1c9c61226400fcb2ea91c937e71273f703785ace2e32866e934bced6c4d111df",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 1,
+      "twiddle_q": 10,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 14956,
+          "max_absolute_error": 24,
+          "rmse": 1.8535237950227659,
+          "snr_db": 60.874182454316916,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "3ffb1ad496e307e5d730489dbfd1638d3cf2c782cc2ea9f8002019eaa15af900",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7710,
+          "max_absolute_error": 16,
+          "rmse": 1.3292401031042813,
+          "snr_db": 60.94029019321268,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "816fbb2991f00448b6d4f99a1cf3e707d22dc5e9dc8281e658c192b85d1f888e",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1147301,
+          "max_absolute_error": 308,
+          "rmse": 6.234733892516303,
+          "snr_db": 57.70480393736423,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "1f16dff97f2446c9ba6964531f9433cf426cb5bae3fe103af80465243de31bc0",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 1,
+      "twiddle_q": 11,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 14695,
+          "max_absolute_error": 20,
+          "rmse": 1.7662093343780167,
+          "snr_db": 61.293302255924246,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "3115611c713e7af435ba7ceddf94a38246b3b21d0edb8723e3c29a9de27032ba",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7442,
+          "max_absolute_error": 19,
+          "rmse": 1.2637508957585795,
+          "snr_db": 61.37912937351067,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "fee58da7d84ce1e4fbf5670477afdbe7ec2826f0fc1a81f53be6a47d642a6ede",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1126547,
+          "max_absolute_error": 280,
+          "rmse": 5.98834615239231,
+          "snr_db": 58.05502444515828,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "64b3665d7a27a36aa10c36e1bb4217a2af71e17033c5df76aadf6c2eb025a4e4",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 1,
+      "twiddle_q": 12,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 14436,
+          "max_absolute_error": 22,
+          "rmse": 1.6738254131663397,
+          "snr_db": 61.75994262278845,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "4ddedc04ae91f413ae2de34566777b9e16fbd9a4193ffcd3ae2d8002e29d6bd0",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7304,
+          "max_absolute_error": 15,
+          "rmse": 1.185603121581907,
+          "snr_db": 61.93357222026612,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "da317c151b984f6758d0b31c4107d26a77a407d702cb753479518dbfefa86a7e",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1101613,
+          "max_absolute_error": 254,
+          "rmse": 5.536607743213779,
+          "snr_db": 58.73628725982003,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "585779609e2fd8738dd5fa18b586490ff166fdbdbf8e87de5a43502dc8c4b898",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 1,
+      "twiddle_q": 13,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 14467,
+          "max_absolute_error": 19,
+          "rmse": 1.7047138504530914,
+          "snr_db": 61.601115974934544,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "dbda8b37b8d866cbb404b34d869567b67688a96c0af0784db2e2ddbc56576049",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7307,
+          "max_absolute_error": 17,
+          "rmse": 1.203982902674275,
+          "snr_db": 61.799952507999876,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "b98322113874c481b67cef85f9f63d8e11e5b14510aa6315ffa627bd6f1ed202",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1103975,
+          "max_absolute_error": 257,
+          "rmse": 5.577946994751311,
+          "snr_db": 58.67167471513212,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "e32a8c18c904ab87e806be12bf406b7600abe4f11ae964146e01b94bdb5497b5",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 16,
+      "wide_last": 1,
+      "twiddle_q": 14,
+      "guard_bits": 14,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 14501,
+          "max_absolute_error": 19,
+          "rmse": 1.6881773190487008,
+          "snr_db": 61.685784546335924,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "1ac79388a37cc639c16bf4aadfb49bbb315299e6700e6a3589e637f16ec0a219",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7226,
+          "max_absolute_error": 17,
+          "rmse": 1.2012606756588486,
+          "snr_db": 61.81961369635911,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "92df2c70d9e627b390cbd0954fc9f4183c8099a1a8fe780669ec81d30fc2cc21",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1102431,
+          "max_absolute_error": 257,
+          "rmse": 5.546256268364312,
+          "snr_db": 58.7211637239339,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "7269e259f3387ccde47dad4a67de0c9bccc516fe27c3293964b7f640ee721047",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 24,
+      "wide_last": 0,
+      "twiddle_q": 9,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 15602,
+          "max_absolute_error": 19,
+          "rmse": 2.1381004709445275,
+          "snr_db": 59.633583585865715,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "f2260946d2a1b551f6defef000c319cb5a2f98765dda05ec7f6523c2f557521e",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 7968,
+          "max_absolute_error": 23,
+          "rmse": 1.565383393954346,
+          "snr_db": 59.51994445443064,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "6f7e30cf97566d13ab01d6e8518701dbaa4d5fcc7f2e47c22cc93de88693ee70",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1166398,
+          "max_absolute_error": 320,
+          "rmse": 7.295416718140658,
+          "snr_db": 56.34016029373712,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "c43467df784908f6f46565ff625836afb33f3796dbbef867c98e6869e7b3cd69",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "fixed_bits": 24,
+      "wide_last": 0,
+      "twiddle_q": 10,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 11270,
+          "max_absolute_error": 10,
+          "rmse": 0.9770737767116743,
+          "snr_db": 66.43559861764248,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "0f8dd5a9b4c4b8d46bc2646dd434f6db6b8d42f227e283597bfd267d1e3b7e2e",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 5241,
+          "max_absolute_error": 8,
+          "rmse": 0.7691434408828182,
+          "snr_db": 65.69221208595937,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "1683da45bf227905cc8a09bbc5b26d4b8abe5064a069b827a2d0dc086f3f82cd",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 935841,
+          "max_absolute_error": 236,
+          "rmse": 3.819453521795113,
+          "snr_db": 61.96113778422655,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "a4f4df658309de74ae97fc866d9084821206c40eaf18b6fbd0700e4d16683b97",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "fixed_bits": 24,
+      "wide_last": 0,
+      "twiddle_q": 11,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 8335,
+          "max_absolute_error": 5,
+          "rmse": 0.6256189595662901,
+          "snr_db": 70.30794773591806,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "9fbe8d162dc00bf3daba670c9daf49af58891f023b2b655c8ca2a070def4cd35",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 3682,
+          "max_absolute_error": 5,
+          "rmse": 0.4760416434079096,
+          "snr_db": 69.85945998590996,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "ba49b6c418aa8eda5a7e2d2a760e72966e3cdcdd21aa38cdf7527f51fc1db4f4",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 780383,
+          "max_absolute_error": 223,
+          "rmse": 2.964516784896714,
+          "snr_db": 64.16208410251353,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "9953b82bb3008dd945f9a6cfe75674f25ee385487662f7106ca039e24e926ca0",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "fixed_bits": 24,
+      "wide_last": 0,
+      "twiddle_q": 12,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 5449,
+          "max_absolute_error": 3,
+          "rmse": 0.41461267434169286,
+          "snr_db": 73.88129429022166,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "d98b553115056890b1dbeab20a8da2535b422f4f31fc543635bc9d35ed2b8b14",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 2373,
+          "max_absolute_error": 3,
+          "rmse": 0.3327375628243462,
+          "snr_db": 72.97032227721414,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "f72f5acf48b33e3b9900c8cfdea27ac1fbd8c6a04bebeb3a7e1e2ed2710a40b5",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 610948,
+          "max_absolute_error": 192,
+          "rmse": 2.3886212674184044,
+          "snr_db": 66.0382164794877,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "36431707db7fc32907b5788b0b3ec29ce5592b4eda1dd64cf4754b57e24439e1",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "fixed_bits": 24,
+      "wide_last": 0,
+      "twiddle_q": 13,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 2960,
+          "max_absolute_error": 2,
+          "rmse": 0.29145907859494247,
+          "snr_db": 76.94259401718357,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "0b44ce3a9813568d4a2a6f501d61040807362347567c100f0716f552ea42502f",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 1268,
+          "max_absolute_error": 2,
+          "rmse": 0.2324631490070168,
+          "snr_db": 76.0852765706356,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "adfda32a2611143d5a0315a80368304e7bc166e70948721ef1854f26804aa6fc",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 453649,
+          "max_absolute_error": 204,
+          "rmse": 2.2466703551339666,
+          "snr_db": 66.57037527883175,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "b7becdb0bf4c6502007bf57ef68d5ba097a5f62e125a24b960f7bf18e32de168",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "fixed_bits": 24,
+      "wide_last": 0,
+      "twiddle_q": 14,
+      "guard_bits": 18,
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 1176,
+          "max_absolute_error": 1,
+          "rmse": 0.18361807190545062,
+          "snr_db": 80.95583731458288,
+          "packet_sha256": "2aa5e19875d49f4da2ccbf66eef1a35c0c858efdb442f0d189e510b7516668cf",
+          "oracle_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+          "output_sha256": "0c5cd9b21e186b84c0e7c4a316de50d00861e21f9ba12dcee24a64a664e79cd4",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 551,
+          "max_absolute_error": 1,
+          "rmse": 0.15305838999643018,
+          "snr_db": 79.71521608765784,
+          "packet_sha256": "ba9f08830a0d3da9dd7c7dda848eee449452d47ef69c556476ac5918ec219065",
+          "oracle_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+          "output_sha256": "249b96513d268b72bc094ddb45a84c6c33020ff314c2a7c47eab68691b036c31",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 338670,
+          "max_absolute_error": 207,
+          "rmse": 2.2177230609050014,
+          "snr_db": 66.68301612532312,
+          "packet_sha256": "e2c413565e6d71d8682f9c0b21cdc3f0685b1178c1ad08bc1342ddc516fde51e",
+          "oracle_sha256": "bf77d6ea38f9b59485048b7212efe407ead866ebd61550d4bac77a02c3954ccc",
+          "output_sha256": "ccc402435bb04ff1de4b84a1aaf577eff24e9ee9f9d3361ed2b719a8dddd365a",
+          "passes": true
+        }
+      ],
+      "passes": true
+    }
+  ],
+  "sources": {
+    "include/codec2_compact.h": "c7483de6f2ffc35bdb1b4840ef7cee9d667fec8e5af82060ae98886b77578574",
+    "src/compact_decoder.c": "ca604c814353ce0e5c77a7b9834b0cd54705b7e47aade01891507285e6db44e0",
+    "src/compact_fft.c": "da2622cfe24606865ffe6e69c613d7ed83d7d3919b693901bedfb4ec6b09b911",
+    "src/compact_fft.h": "d273ca03e0b91469fff92f469c64fe96dd839c1548630c9b66348fe54b489c8e",
+    "src/compact_tables.inc": "27a849815e7fec552e84a3c328e029b637f4edf3a86a5aeb93721beaef445a21",
+    "src/float_table_access.h": "e7bdd7c214fa3235ceb7b247c5b7ca7b5e8bee607adb9bd8475170cd4b33d20c",
+    "src/decoder_control.h": "22d0c77513d2a68c3e581c8be8baf499ae69da55b0d51d783313de6c6018e775",
+    "src/parameters.c": "52f1777d7a1c2539de1889a3788d6c17a6f03121e51daf8aaff39cb30af3e6b4",
+    "tests/compact_fft.c": "c121e6ed1ac2ec86ab54cf509d3a5e68397843b8846980aea167f8f975f9b9e0",
+    "tests/compact_tables.c": "bc8c236f76c3eefb6d645a5536c0418c1113234a701ac95063d863c3cbf05b1a",
+    "tests/compact_api.c": "9775b05257d29cd0ebb65b2c580aee15b67ad57756338c43cfde6fe34efa86f9",
+    "tests/decoder_api.c": "044d55f11d2b9a88ca4f63fecb8545fc2da27d9cfe15e815873208e204733513",
+    "tests/compact_decode.c": "c1173dae28b4f82abc31ac5d646588ae0ba675494c4a6d6cea24155e9d001622",
+    "tests/avr_compact.c": "5ac846edc8281f6522c230f2811a84c9abe323031df819be29a1008b6a689fcd",
+    "tests/verify_compact_avr.mjs": "b07c09d0fbdefd945690147a464178b8b6b0661204434920175743c8424a5284",
+    "tools/verify_compact.py": "373a9751b6bb3651cc01b5c5fcd462ba28051be61373f60ac091e0f886898754",
+    "tools/generate_compact_tables.py": "16f2c647cfc3dc569944c26301c21b58cd3d1d46670ecd6887ff2e10c2af20ed",
+    "vendor/codec2-1.2.0/UPSTREAM.json": "4120cfe95f7d131623f045cabb137a352e45c208a3181e01f265a726f94a00e0",
+    "include/codec2_hybrid.h": "b79591ad2ea2258deb1afd1f436e4cf12efe6f0feeca9ae7f9630ac3982c03e6",
+    "src/hybrid_decoder.c": "527c9dfe82aa202d85be36fc37891fd23e3b26c6621fca15ce5e02b257398fd4",
+    "src/fixed_inverse.c": "58901896484d5c92120ee9ea809efce76cd27383c6589b09b7c91b7d855ceaef",
+    "src/fixed_inverse.h": "02d0834067538874e47dbc2ff5eaf014a01eddb4979f27537c64b1aa6e0dc6b4",
+    "src/fixed_inverse_tables.inc": "2353e666c74a22426fcadc3333b2c502ae634c37a6fa168ec3b1e3194affad10",
+    "src/fixed_table_access.h": "bf9f74bf01bbf960832c3d85b5f451fea79f0073ffa161f394f9836870d90b21",
+    "src/table_access.h": "4b91e061fdccc831974298c05becb6623d1dd13a7f0ffc7c07bc6192b7cc7f0f",
+    "tests/fixed_inverse_fft.c": "65b7efdb77b6d7a62fbb49294b5ea3012e3bd801b0e4e5b7a341bf59d157b75c",
+    "tests/hybrid_api.c": "4ef08cebf059cfd060f46b586020a50107b3679420f5f6955896e7043130347c",
+    "tests/hybrid_decode.c": "7aee722446cb9c1532a5123a62366ee5e023b64b67e53cad0a2ef40d6341d831",
+    "tests/avr_hybrid.c": "b4baa8e63b71ecaf7870895442f5f895aaa9f427b19323171ba65e3132d115d7",
+    "tests/verify_hybrid_avr.mjs": "817803691a0b59702789fae96f98347ad19862a1a0ca268a44a32b6677da9b44",
+    "tools/verify_hybrid.py": "58b064e6a7f609fea0db57814820cf3f12bf7fbf2ab5e7fc79d5d2e3ebacf2c7",
+    "tools/generate_fixed_tables.py": "f4ca575c8c3da45e5a3f789478f112807f01b136dceec2b177a79e3ce644ec80",
+    "src/fixed_fifth.c": "d5ec27c13dcffc08efa37163ec4c4108279a280cefcc4a845481a62550a507e3",
+    "src/fixed_fifth.h": "10ce4d501b4eb3d49764de673d2a6f8f1290d5f46deda8e5c6e757c3e9cc9ad3",
+    "src/fixed_fifth_tables.inc": "6a76d03986808661f16bee354e2c0d1c9ddf1366a37cb5cb099626254f78a91d",
+    "src/hybrid_postfilter.c": "eb4895c03a787b47a1ec402b3d205e56e3db261823642e3ef6af0a5632e363cf",
+    "tests/fixed_fifth.c": "e5effdee6f87d6222a99a7d03dca3017dcf90fc1ef2b5cc2fc671971e00281dd",
+    "tests/verify_postfilter_avr.mjs": "bbbbe78e2095eeb6f6c15582b534e1db4c8bd44ee744a13008425f05402791d7",
+    "tools/generate_fifth_tables.py": "7c74b43ad4f9441b24c41e348381037ed9b09a7170f959c43f4cea6495d90171",
+    "tools/verify_postfilter.py": "21bcb39b6955d4e5317f63bc0ad8ec387db485d40633529ec1afe1e36386c7a6",
+    "src/fixed_weight.c": "a77f7cd8f4667fe5da0960c5ed6ed5ca3918c9e193728c9fe46038aea7fd091d",
+    "src/fixed_weight.h": "c3289522169b9c0975c0765ec88bb6092ef0993082d7de8912a6d902e3228e17",
+    "src/fixed_weight_tables.inc": "d6f40be411404b6c65888d5c3e62d6c87ffbf18c26aad9a0a6e83f73dcf2a293",
+    "src/weight_mul24.h": "aa95a862b68a95f82ca94224aabf2002a0e7d4a5793215a7b024f3ba6151eea9",
+    "src/weight_round.h": "ee6ff4c5c3f80f8be31e26f58c8d35c648c5592e156b78e8830ed24b37d1e339",
+    "src/spectral_table_access.h": "c5caa69b6dcb0d1c7746dfb382ecc55625a5c3a7fb8a3c9fc59a98e34bbda6f1",
+    "src/spectral_decoder.c": "b8ca36499b4b3bf1304f065df07f8b65ce79301dbc0bd08bb4dd1c5faa2207ed",
+    "tests/fixed_weight.c": "73920b9f2d986d098638bd6bbbf3a444e3b2d481475395db18a1c034ec53454e",
+    "tests/weight_mul24.c": "2d8d32f9f75be7e7e216dc83a0f479b597e9ae733fde77f6a077590b861e20d3",
+    "tests/weight_round.c": "6e39ead5582a7216c0a15a0807d2b16eb158d9274954a79fe54dac50c0c9f93f",
+    "tests/verify_spectral_avr.mjs": "930ab1a042a8325e9b6fd2f082ff7b4d06a618a8f10b11e983ed9c409518d7d0",
+    "tools/verify_spectral.py": "4d1f1e54bcc45c05a814c6d5395a2bbb130d756443d98bffc18c125f18f9e82f",
+    "src/fixed_analysis.h": "d19c6803d4e633f23a6b18e265ffafa0a20f690fa69c25de92b34a2ecad2bc97",
+    "src/analysis_decoder.c": "4bf1547c4312ad874720ab3bd88702411c14172a8d1ec5e5fc388634ff09e7a4",
+    "src/faithful_analysis.c": "8b60caf2fc4911d064f84c64da464412f5b1316260bfa0bcdad50b54a4f458a5",
+    "src/analysis_table_access.h": "c10732913bb420e3aa0ecc1ef30be330ac3c93709b0010988b4bc81cdcea9d64",
+    "tests/analysis_variant.c": "629a5aa91e3e87a61a97730a187309b701e74f6f17eb700ea07c28d89f2f46b5",
+    "tests/analysis_compare.c": "58088877354626ab876bd8351a1473b65527619c3d841deca94af68fd8d5a1f9",
+    "tools/study_faithful_precision.py": "9b42795575dec7caf3b94808d50e8e649b5454ddc3c196b660537b166e7a23d1",
+    "src/adaptive_analysis.c": "645c8504fc8dd6dc867afc1becb0b351bc0730c9e3fbf1a71d5c14d35cccc311",
+    "src/compact_analysis_helpers.inc": "592e83976d9533926686c1c996f8805eba6ec73bdc9d885dd607aae279463151",
+    "src/fast_analysis.c": "a4aea35bc675e6a60eac1636de8cfe806d5e5b15aedd2558a9b336cce6f06a8c",
+    "src/fixed_analysis.c": "75035cd2996c6e20067edab669b86c53fe65dd9b9eb8c226238c33bbd13912ac",
+    "tests/adaptive_compare.c": "16eebbd940ee7badcb08d32db101decf32a62cf9a2be174a981e47eab99e245b",
+    "tools/study_adaptive_precision.py": "a0b7d595c1cdbd21a50925935b4dce572bc9fcef892beb643541c0b31b6d64c3",
+    "tools/verify_canonical.py": "c332286f1bbe04de8dbbe451492fc65e176a8e59d9fbc35020d54d984df2b259",
+    "tests/verify_canonical_avr.mjs": "98dd01b828b0223ab3e6a5fafe4474d4ab42101a87282d8069ecdead458c3eef",
+    "tests/compact_analysis_helpers.c": "b2c09c5e57d13eb6c958c0fe528826eef65784380077010768b98c7625d8118c",
+    "tests/upstream_decode.c": "44f03566b61d9ee3f2d97f1d51b60a1b820bd6eb0bc2d07c91626e5a65a0b020",
+    "tools/verify_decoder.py": "1831321502775ff53e9cbfdec16ef9213c5b57cead97daad3c8c86394c4d8f5a",
+    "src/canonical_decoder.c": "78706d88afa2e7604fd26b43819f3c7aed9af6641bf8f442530f63f657323a02",
+    "src/canonical_lpc.c": "2cac13001683d28af035535e9ed46e020dac57359890f50d493f0ea0b5224ed6",
+    "src/lpc_math.c": "e89b2f02a93cb3ec29429764b5be0059312a9614528668cfa64e12840e20803b",
+    "src/lpc_math.h": "997bd140cbcd0784dbec05fcc74bfad4bf33666bd331c0475e76904dded44669",
+    "src/lpc_math_tables.inc": "bb6d761fc09e265caae2a63046615bfe258d69df4b0689374eb94c25346681dd",
+    "src/lpc_math_compat.inc": "b6caf82b98391baa7d7f199a184f48bc5703db3caee14d9fa8fd6bd0ff4f0baa",
+    "tests/lpc_math.c": "7cc6a8549c966f2f0eb4e1aa9c30b234e7ce1f116e4e636c71b4b7b4b4237fef",
+    "tools/generate_lpc_math.py": "0ec9087d69c1a934d05cf8a376c63153f002eeea6606e3d936ae978d148130f9",
+    "tools/generate_lpc_compat.py": "a28f180e8472f37fa123dddbdc96a93d3665d9c196c7226e8ce7d882efc467cf",
+    "tools/generate_canonical_decoder.py": "947a54b74dc01d56cd5768a99d74f131c5bb92e51d64d79bff1769604ee68afe",
+    "src/matrix_analysis.c": "542f2b165cadabf4e9d097ee9a15684d84e5762a97518006262efeddad21023c",
+    "src/fixed_weight_sums32.c": "d096c0b6f6070f3d070b2856a3340c8fad58053bd9f168d8d48737aceca6c690",
+    "src/weight_sum32.h": "5e69d5f66515b9c08f3b7eb0279cb8c87741304f658012d39e0087e02fdc5d36",
+    "tools/generate_narrow_spectrum.py": "86c9fdca3ceaa872da6ae5df8291d5e7e9dcea22415d94ed1e303c7a3e1a6a35",
+    "tools/study_matrix_precision.py": "8cf6c2b89ee09a250e2d55b91a6fe20f1bcec5680fa066da2cc807d517ec36f6",
+    "tools/verify_matrix.py": "ba02367bb12667c631cfb3ace6e00da6e4df3c4bba5bfaf1fbfd845aaf3fdacc",
+    "tests/verify_matrix_avr.mjs": "a25594d90cb7c0cd0328f3d713faba1aa73ed21dff82935cf5309e13652f3a50",
+    "src/fast_analysis_sums32.c": "d228a08a2af350a9bb6f2babb7faf719cf0f3af8dd3008d4546fec06fa95c4e2",
+    "tests/weight_sum32.c": "fefd0672cf488707921d15644afa9dd62bf427ce4a03a75980fa04bd03633424",
+    "tools/study_nopost_precision.py": "996700d59e106ed986579dc346072684cd2182d4416861099ab800e28054c8af",
+    "src/nopost_decoder.c": "6eab7dfbbd3d363be6592bb20c6332150cb08f123ed461794e09301320c191c1",
+    "tests/upstream_nopost.c": "98b6d0dc63b74b0d7d7446ff0841757b9794eca14344c67feeb37a5bef497ed7",
+    "tools/generate_nopost.py": "616e31cbce79f4afd07c1cd701d35d8cfb58c0c7ae7befaea7a26553b8da02f2"
+  },
+  "scope": "Native implementation precision to upstream pf=0. 42 choices: fixed16 Q9..14 guard14..18; fixed16 wide-last Q9..14 guard14; fixed24 Q9..14 guard18. Select lowest passing bits, wide-last, Q then highest guard; not a measured speed optimum. Other formats fixed. Not subjective quality, global precision minimum or AVR admission."
+}

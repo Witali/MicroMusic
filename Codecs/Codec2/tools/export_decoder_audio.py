@@ -18,12 +18,13 @@ def main():
     profile.add_argument('--spectral', action='store_true', help='Use the completed integer weighted-spectrum verification')
     profile.add_argument('--canonical', action='store_true', help='Use the completed integer main-spectrum and canonical LPC verification')
     profile.add_argument('--matrix', action='store_true', help='Use the completed shared in-place main-spectrum verification')
+    profile.add_argument('--nopost', action='store_true', help='Use the experimental LPC-postfilter-off verification; its oracle also has the filter off')
     args = parser.parse_args()
-    name = 'matrix' if args.matrix else 'canonical' if args.canonical else 'spectral' if args.spectral else 'postfilter' if args.postfilter else 'hybrid' if args.hybrid else 'compact' if args.compact else 'full'
+    name = 'nopost' if args.nopost else 'matrix' if args.matrix else 'canonical' if args.canonical else 'spectral' if args.spectral else 'postfilter' if args.postfilter else 'hybrid' if args.hybrid else 'compact' if args.compact else 'full'
     profiles = {'full': ('decoder', 'full-decoder'), 'compact': ('compact', 'compact-decoder'),
                 'hybrid': ('hybrid', 'hybrid-decoder'), 'postfilter': ('postfilter', 'postfilter-decoder'),
                 'spectral': ('spectral', 'spectral-decoder'), 'canonical': ('canonical', 'canonical-decoder'),
-                'matrix': ('matrix', 'matrix-decoder')}
+                'matrix': ('matrix', 'matrix-decoder'), 'nopost': ('nopost', 'nopost-decoder')}
     folder, report_name = profiles[name]
     build = ROOT.parents[1] / ('build/codec2/' + folder)
     out = ROOT / ('validation/' + name + '-3200')
@@ -51,6 +52,8 @@ def main():
                   'verification': '../../' + report_path,
                   'avr_mcu': report['avr_execution']['mcu'] + ' instruction simulation; no analog hardware recording.',
                   'files': results}
+    if name == 'nopost':
+        provenance['decoder_options'] = 'Both AVR and upstream WAVs have the optional LPC postfilter and its bass boost disabled. Subjective quality is unqualified. Default-filter references are in ../matrix-3200/.'
     (out / 'PROVENANCE.json').write_bytes((json.dumps(provenance, indent=2) + '\n').encode('utf-8'))
     print('Retained four unnormalized PCM16/8kHz WAVs from verified outputs')
 

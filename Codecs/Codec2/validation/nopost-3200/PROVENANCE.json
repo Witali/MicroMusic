@@ -1,0 +1,36 @@
+{
+  "source": "Synthetic test speech from the user-supplied R3 archive; no new voice recording.",
+  "verification": "../../reports/nopost-decoder.json",
+  "avr_mcu": "ATmega64A instruction simulation; no analog hardware recording.",
+  "files": [
+    {
+      "path": "english_avr.wav",
+      "packet_fixture": "speech.c2zx",
+      "frames": 218,
+      "pcm_sha256": "e79de344dba025e7f6be36cde3e394a71e2a2d5908d20a3ebf0a6e2fb5ed942f",
+      "wav_sha256": "08dc7b3b373aeee4bdfe5ae56309411fb13b3feeb2bfa6484dff2b1f1fc5519a"
+    },
+    {
+      "path": "english_upstream.wav",
+      "packet_fixture": "speech.c2zx",
+      "frames": 218,
+      "pcm_sha256": "7fce741756bd83209fcfd580e9399163e1beb6c518ab27a4d62c9c7411f67055",
+      "wav_sha256": "85c54b94b51e98e9d67e73093af15fad993b1c7e055263068be0af1e5214558e"
+    },
+    {
+      "path": "russian_avr.wav",
+      "packet_fixture": "codec2_3200_8byte_frames.bin",
+      "frames": 147,
+      "pcm_sha256": "c5bf128afeb7511fe7f67584d8267970b2ae9e52eda89d35d191cf6410b18398",
+      "wav_sha256": "70e82765cec3fa066acd43c2cfc7dd9d37d6758d7e1f13633a942e19258d07b5"
+    },
+    {
+      "path": "russian_upstream.wav",
+      "packet_fixture": "codec2_3200_8byte_frames.bin",
+      "frames": 147,
+      "pcm_sha256": "f16c321589f397490bc4d4dc30934cf357e2405d1dd52c47fbeb9e215ebe22f1",
+      "wav_sha256": "8364d1e9e1bcdad1ab9d8c115bf58ec51ed19f2835169fd572f75f3ed281314f"
+    }
+  ],
+  "decoder_options": "Both AVR and upstream WAVs have the optional LPC postfilter and its bass boost disabled. Subjective quality is unqualified. Default-filter references are in ../matrix-3200/."
+}

@@ -52,3 +52,9 @@ compile the selectable portable C arithmetic without faking target macros,
 verify the same full PCM/RNG corpus and conditioning holdout, then measure
 the linked binary with actual memory wait states. Finally measure stack,
 interrupt output timing and underruns before claiming real-time support.
+
+A separate [LPC-postfilter-off experiment](../../Codecs/Codec2/NOPOST_RU.md)
+now reduces AVR mean EN/RU costs to about 9 million cycles, but makes four
+extreme frames slower. Its timbre change is unqualified. Neither the roughly
+36% AVR average gain nor its new cycle counts are an Arm timing measurement;
+compare both profiles on the actual MCU before selecting one.
