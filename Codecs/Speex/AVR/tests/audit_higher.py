@@ -12,13 +12,15 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
 import build,build_wb
 
 def digest(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def text_digest(p):return hashlib.sha256(p.read_bytes().replace(b'\r\n',b'\n')).hexdigest()
 def read(name):return json.loads((ROOT/'reports'/name).read_text(encoding='utf-8'))
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--avr-gcc',help='Also rebuild eight C/ASM/feature combinations');args=p.parse_args()
     admission=read('higher-admission.json')
-    for name,sha in admission['sourceSha256'].items():assert digest(ROOT/name)==sha,name
-    for name,sha in admission['reportSha256'].items():assert digest(ROOT/'reports'/name)==sha,name
+    assert admission['textHashNormalization']=='CRLF to LF; firmware images remain raw bytes'
+    for name,sha in admission['sourceSha256'].items():assert text_digest(ROOT/name)==sha,name
+    for name,sha in admission['reportSha256'].items():assert text_digest(ROOT/'reports'/name)==sha,name
     assert all(read('higher-minimal-identity.json').values())
     assert len(read('higher-legacy-player-identity.json'))==6
     assert all(row['byteIdentical'] for row in read('higher-legacy-player-identity.json'))
