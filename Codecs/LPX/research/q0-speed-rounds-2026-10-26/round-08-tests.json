@@ -1,0 +1,57 @@
+{
+  "host_tests_passed": 97,
+  "host_seconds": 46.263,
+  "excitation_reference_flags": [
+    0,
+    7
+  ],
+  "v3_masks": [
+    0,
+    24,
+    32,
+    124
+  ],
+  "instrumented_counters_exact": true,
+  "fuzz": {
+    "cases": 566610,
+    "rejected": 136722,
+    "sample_capped": 0,
+    "reset_exact": true,
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "compiler_options": [
+      "-O1",
+      "-g",
+      "-std=c++11",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-DLPX4_V3_FEATURES=124"
+    ],
+    "seeds": [
+      20261101,
+      20261102,
+      20261103,
+      20261104,
+      20261105,
+      20261106,
+      20261107,
+      20261108,
+      20261109,
+      20261110,
+      20261111,
+      20261112
+    ],
+    "input_streams": 384,
+    "v3_features": 124,
+    "max_samples_per_decode": 4096,
+    "core_sha256": "31b1f5b0dd49feb4c42c3aeb03d7f4c89f3921d49eee00daa03ab4021e8b7cbf",
+    "math_header_sha256": "d54b30c732850823e96be55d5ea0ea9debd84be3696edd805c40d234b5ea06ce",
+    "harness_sha256": "50b2bf5c1ac59ceffdb8dbe1ac3210a0d2aea1193234b47978153cf0c7f07449"
+  },
+  "unchanged_math_validation": {
+    "report": "round-07-tests.json",
+    "sha256": "4e392c0f2bfde90f418916bcc4e36b0a95f99e7047c1149ab12236c90f6d81b2",
+    "math_header_sha256": "d54b30c732850823e96be55d5ea0ea9debd84be3696edd805c40d234b5ea06ce",
+    "reason": "No arithmetic helper or math fixture changed in round8; the nine previous C/ASM/generic x unroll builds apply to identical bytes."
+  }
+}

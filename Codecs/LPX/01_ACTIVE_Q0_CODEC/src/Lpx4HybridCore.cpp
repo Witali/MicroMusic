@@ -12,6 +12,15 @@
 #error LPX4_PWM_GAIN out of tested bounds
 #endif
 #define LPX3_FAST_LPC_INTERP 1
+// Optional simple excitation paths:1 raw/zero,2 exhausted sparse,4 cached
+// zero-delta pitch Rice k0. Zero retains the complete reference decodeCode.
+#ifndef LPX4_FAST_EXCITATION
+#define LPX4_FAST_EXCITATION 7
+#endif
+#if LPX4_FAST_EXCITATION < 0 || (LPX4_FAST_EXCITATION & ~7)
+#error Unsupported LPX4_FAST_EXCITATION
+#endif
+
 #ifdef __AVR__
 #include <avr/pgmspace.h>
 #define LP_READ_U16(ptr) pgm_read_word((ptr))
@@ -554,7 +563,33 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
         }
 #endif
     }
-    int8_t q=0;if(!decodeCode(q))return false;
+    int8_t q=0;
+#if LPX4_FAST_EXCITATION
+    bool simple=false;
+    if((LPX4_FAST_EXCITATION&1) && subType_==0 && (!mode_ || !riceK_)){
+        q=mode_?(int8_t)((int16_t)readBits(mode_)-quantLimit_):0;
+        if(error_)return false;
+        // A raw code is already within the validated source bit width.
+        simple=true;
+    }
+#if LPX4_ALLOW_SPARSE
+    else if((LPX4_FAST_EXCITATION&2) && subType_==2 && pulseIndex_>=pulseCount_){
+        // No pulse remains: pitchPredict has already performed saturation.
+        q=(int8_t)pitchPredict();simple=true;
+    }
+#endif
+    else if((LPX4_FAST_EXCITATION&4) && subType_==1 && !riceK_ && bitsLeft_ && (bitBuffer_&1)){
+        // Unary terminator1 with k0 is exactly delta0; consume only that bit.
+        bitBuffer_>>=1;--bitsLeft_;
+#ifdef LPX3_COST_INSTRUMENT
+        ++bitCalls_;
+#endif
+        q=(int8_t)pitchPredict();simple=true;
+    }
+    if(simple)ringQ_[ringCursor_++]=q;
+    else
+#endif
+    if(!decodeCode(q))return false;
 #ifdef LPX3_Q_DIAG
     lastQ_=q;
 #endif

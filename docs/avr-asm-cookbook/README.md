@@ -2791,6 +2791,24 @@ not a timing estimate; its actual corpus counts identify62.88% simple excitation
 cases for the next measured round.
 [Bounds, RAM tradeoff, full vectors and route counts](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: dispatch common excitation cases before the general decoder
+
+AVR5/GCC7.3 -Os, portable C dispatch with independent arithmetic selection:
+raw/zero codes are validated by the header, exhausted sparse pulses have
+delta0, and a cached unary terminator1 at Rice k0 is exactly delta0. Consume
+that one bit, retain the instrumented counter, use the already-clipped pitch
+predictor, and update the q-ring exactly once. Keep empty-cache, residual and
+remaining-pulse cases in the reference decoder. LPX4_FAST_EXCITATION=0
+explicitly selects the old path; bits1/2/4 select the three specializations.
+
+Measured round8:2876590582 ->2804033000 wall cycles across91 active-IRQ
+images,2.522347% less time,+258 B Flash/image, unchanged1102 B SRAM,
+minimum stack margin815 B. Golden PCM16/PWM and AVR PWM exact, zero underruns;
+all six long controls, including +100 IRQ cycles, pass.97 host tests and
+566610 ASan/UBSan mutation/reset cases pass. Unchanged math bytes reuse the
+explicitly hashed round7 validation; no new arithmetic benchmark is claimed.
+[Full corpus and retained evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
