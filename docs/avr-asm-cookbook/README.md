@@ -2623,6 +2623,36 @@ cases each with IRQ, history and r1 checks; 92 host tests pass. The long
 old standard +100-IRQ workload improves 1855 ->25 underruns but still fails.
 [Protocol, bounds, full measurements and continuing rounds](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: bounded Q14 attenuation and two-product PWM
+
+Same AVR5/GCC7.3 `-Os`/ABI and explicit-ASM selector as above; arithmetic C
+fallback and generic full-range MulQ14 stay selectable on AVR itself.
+For coefficient 0..16384 and signed16 state, floor(product/16384) fits signed16.
+After reconstructing the full product, shift its high three bytes left twice
+and return bits 14..29. This replaces six three-byte right shifts and signed32
+sign extension. Coefficient high <=64 times an unsigned low byte is <32768,
+so that partial product needs no negative sign correction. Keep the correction
+for signed state high times coefficient low. Do not extend these bounds to
+arbitrary signed16 coefficients.
+
+Rounded PWM has a separate exact helper for any signed16 sample and gain0..255.
+Use two byte products to build floor(sample*gain/256); its signed16 value plus
+32, arithmetic >>6, plus128 and byte saturation equals the old Q14 formula
+with +8192 rounding. The omitted low byte cannot affect the quotient. The
+high-word addition is safe over the whole helper domain. Codec gain120..136
+and the separate truncating LPX4_PWM_ROUND=0 branch retain their semantics.
+
+Measured round 2, fixed 91 full ELF with active IRQ: summed wall cycles
+3787977431 ->3597011184, 5.041378% less time, Flash -78 B/image, RAM unchanged,
+zero underruns and golden native PCM16/PWM plus useful AVR PWM exact.
+The intermediate attenuation-only candidate measured 1.011924% and -34 B.
+All nine C/ASM/generic x unroll1/3/9 math builds pass 3,065,985 cases each,
+including 851,976 bounded-Q14 and 1,116,160 PWM pairs, with IRQ/r1 checks.
+The old eight-second standard +100-IRQ workload now passes: 25 ->0 underruns,
+1906.860 ->1796.874 cycles/sample relative to round 1. Physical hardware and
+arbitrary interrupt workloads remain unmeasured.
+[Derivation, per-stream evidence and continuing-round criterion](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

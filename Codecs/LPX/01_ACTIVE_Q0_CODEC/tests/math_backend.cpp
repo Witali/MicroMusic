@@ -46,11 +46,35 @@ static void scalar(int16_t x,int16_t y,int32_t v){
     if(actual!=(v>>14))math_error=4;
     ++math_cases;
 }
+static void attenuation(uint16_t coefficient,int16_t state){
+    const int16_t actual=lpx4AttenuateQ14(coefficient,state);checkZero(actual);
+    if(actual!=(product((int16_t)coefficient,state)>>14))math_error=12;
+    ++math_cases;
+}
+static void pwm(int16_t sample,uint8_t gain){
+    const uint8_t actual=lpx4PwmQ14(sample,gain);checkZero(actual);
+    int32_t expected=128+((product(sample,gain)+8192)>>14);
+    if(expected<0)expected=0;if(expected>255)expected=255;
+    if(actual!=expected)math_error=13;
+    ++math_cases;
+}
 int main(){
 #ifdef __AVR__
     TCCR1A=TCCR1B=0;OCR1A=1999;
     TIMSK1=_BV(OCIE1A);TCCR1B=_BV(WGM12)|_BV(CS10);sei();
 #endif
+    const uint16_t coefficients[]={0,1,127,128,255,256,4095,8192,11469,16383,16384};
+    for(uint8_t c=0;c<11;c++){
+        uint16_t bits=0;
+        do{attenuation(coefficients[c],(int16_t)bits);}while(++bits);
+    }
+    const int16_t states[]={-32768,-32767,-1,0,1,16383,32766,32767};
+    for(uint16_t c=0;c<=16384;c++)for(uint8_t i=0;i<8;i++)attenuation(c,states[i]);
+    for(uint8_t gain=120;gain<=136;gain++){
+        uint16_t bits=0;
+        do{pwm((int16_t)bits,gain);}while(++bits);
+    }
+    for(uint16_t gain=0;gain<256;gain++)for(uint8_t i=0;i<8;i++)pwm(states[i],gain);
     for(int16_t x=-128;x<128;x++)for(uint16_t y=0;y<4096;y++){
         const int32_t actual=lpx4Excitation((int8_t)x,y);checkZero(actual);
         if(actual!=product(x,y))math_error=8;

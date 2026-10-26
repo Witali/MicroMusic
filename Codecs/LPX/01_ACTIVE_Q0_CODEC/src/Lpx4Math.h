@@ -214,6 +214,57 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 #undef LPX4_STRING
 #undef LPX4_STRING_
 
+// Rounded legacy PWM, exact for signed16 sample and gain 0..255.
+// floor((sample*gain+8192)/16384)+128, saturated to uint8.
+static inline __attribute__((always_inline)) uint8_t lpx4PwmQ14(int16_t sample,uint8_t gain){
+#if LPX4_USE_AVR_ASM
+    uint8_t result;
+    int16_t high;
+    __asm__(
+        "clr %0\n\t"
+        "mulsu %B2,%3\n\tmovw %A1,r0\n\t"
+        "mul %A2,%3\n\tadd %A1,r1\n\tadc %B1,%0\n\t"
+        // The discarded product low byte cannot affect the Q14 quotient.
+        "subi %A1,224\n\tsbci %B1,255\n\t"
+        ".rept 6\n\tasr %B1\n\tror %A1\n\t.endr\n\t"
+        "subi %A1,128\n\tsbci %B1,255\n\t"
+        "mov %0,%A1\n\ttst %B1\n\tbreq 1f\n\t"
+        "ldi %0,255\n\tsbrc %B1,7\n\tclr %0\n\t1:\n\t"
+        "clr __zero_reg__\n\t"
+        : "=&d"(result),"=&a"(high) : "a"(sample),"a"(gain) : "r0","r1","cc");
+    return result;
+#else
+    const int32_t duty=128+(((int32_t)sample*gain+8192)>>14);
+    return duty<0?0:(duty>255?255:(uint8_t)duty);
+#endif
+}
+
+// Bounded attenuation: coefficient 0..16384, signed16 state, exact floor Q14.
+// The result fits signed16. Keep the generic full-range MulQ14 below.
+static inline __attribute__((always_inline)) int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
+#if LPX4_USE_AVR_ASM
+    int16_t result;
+    int32_t wide;
+    __asm__(
+        "clr %A0\n\t"
+        "muls %B2,%B3\n\tmovw %C1,r0\n\t"
+        "mul %A2,%A3\n\tmovw %A1,r0\n\t"
+        // coefficient high <=64: its product with state low has bit15 clear.
+        "mulsu %B2,%A3\n\t"
+        "add %B1,r0\n\tadc %C1,r1\n\tadc %D1,%A0\n\t"
+        "mulsu %B3,%A2\n\tsbc %D1,%A0\n\t"
+        "add %B1,r0\n\tadc %C1,r1\n\tadc %D1,%A0\n\t"
+        // Bits 14..29 are the entire signed16 result: shift left twice and
+        // take the high word, avoiding six 24-bit arithmetic right shifts.
+        ".rept 2\n\tlsl %B1\n\trol %C1\n\trol %D1\n\t.endr\n\t"
+        "movw %A0,%C1\n\tclr __zero_reg__\n\t"
+        : "=&r"(result),"=&r"(wide) : "a"(coefficient),"a"(state) : "r0","r1","cc");
+    return result;
+#else
+    return (int16_t)(((int32_t)coefficient*state)>>14);
+#endif
+}
+
 static inline __attribute__((always_inline)) int32_t lpx4MulQ14(int16_t x,int16_t y){
 #if LPX4_USE_AVR_ASM
     int32_t result;

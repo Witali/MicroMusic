@@ -519,10 +519,10 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     const int32_t excitation=lpx4Excitation(q,step);
     int16_t pred=clamp(lpx4SynthesisQ12(excitation,a_,hist_),-32767,32767);
     hist_[0]=pred;
-    int16_t deemph=preQ14_?clamp((int32_t)pred+lpx4MulQ14((int16_t)preQ14_,prevDeemph_),-32767,32767):pred;
+    int16_t deemph=preQ14_?clamp((int32_t)pred+lpx4AttenuateQ14(preQ14_,prevDeemph_),-32767,32767):pred;
     prevDeemph_=deemph;
     int16_t clipped=clamp(deemph,-16384,16384);
-    int16_t b=brightQ14_?clamp((int32_t)clipped-lpx4MulQ14((int16_t)brightQ14_,prevBright_),-16384,16384):clipped;
+    int16_t b=brightQ14_?clamp((int32_t)clipped-lpx4AttenuateQ14(brightQ14_,prevBright_),-16384,16384):clipped;
     prevBright_=clipped;
     // Preserve the signed post-deemphasis/post-brightness output BEFORE PWM.
     // This is the exact integer sample used by both optional 16-bit output
@@ -530,12 +530,11 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #if defined(__AVR__) && !defined(LPX4_ENABLE_PCM16)
     // Original PWM transfer function for the existing ATmega328P firmware.
 #if LPX4_PWM_ROUND
-    const int32_t scaled=(int32_t)b*LPX4_PWM_GAIN+8192;
-    int16_t duty=(int16_t)(128+lpx4Shift14(scaled));
+    pcm=lpx4PwmQ14(b,LPX4_PWM_GAIN);
 #else
     int16_t duty=(int16_t)(128+((int32_t)b*LPX4_PWM_GAIN)/16384);
-#endif
     pcm=(uint8_t)clamp(duty,0,255);
+#endif
 #else
     postfilterQ14 = b;
 #endif
@@ -552,12 +551,11 @@ bool Lpx4HybridCore::next(uint8_t& pcm){
     int16_t b;
     if(!nextCore(b))return false;
 #if LPX4_PWM_ROUND
-    const int32_t scaled=(int32_t)b*LPX4_PWM_GAIN+8192;
-    const int16_t duty=(int16_t)(128+lpx4Shift14(scaled));
+    pcm=lpx4PwmQ14(b,LPX4_PWM_GAIN);
 #else
     const int16_t duty=(int16_t)(128+((int32_t)b*LPX4_PWM_GAIN)/16384);
-#endif
     pcm=(uint8_t)clamp(duty,0,255);
+#endif
     return true;
 }
 

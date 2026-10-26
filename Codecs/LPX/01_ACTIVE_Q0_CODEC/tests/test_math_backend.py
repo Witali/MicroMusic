@@ -15,7 +15,7 @@ class MathBackendTests(unittest.TestCase):
             subprocess.run(['g++','-O2','-std=c++11','-I'+str(ROOT/'src'),*flags,
                 str(ROOT/'tests/math_backend.cpp'),'-o',str(output)], check=True, capture_output=True)
             result = json.loads(subprocess.check_output([str(output)],text=True))
-        self.assertEqual(result['cases'], 1097849)
+        self.assertEqual(result['cases'], 3065985)
         self.assertEqual(result['error'], 0)
         self.assertEqual(result['backend'], 0)
 
