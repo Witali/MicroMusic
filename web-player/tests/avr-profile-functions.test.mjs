@@ -3,7 +3,26 @@ import assert from 'node:assert/strict';
 import {AVRCore} from '../lib/avr-transpiled.js';
 import {ATtiny13A} from '../lib/attiny13a.js';
 import {avr,flash} from './fixtures/attiny13a-system-firmware.mjs';
-import {generatedFunctions} from '../scripts/lib/avr-profile-functions.mjs';
+import {generatedFunctions,profileObjectName,profileLinkMap} from '../scripts/lib/avr-profile-functions.mjs';
+
+test('profile object metadata retains ownership without local account paths',()=>{
+  for(const separator of ['/', '\\']){
+    const path=['C:','Users','fixture-account','temporary','system_gpio-123abc.o'].join(separator);
+    assert.equal(profileObjectName(path),'system_gpio-123abc.o');
+  }
+  assert.equal(profileObjectName('optimizer-generated'),'optimizer-generated');
+  assert.equal(profileObjectName(['','home','fixture-account','timer0.o'].join('/')),'timer0.o');
+});
+test('retained link maps preserve symbols and addresses while removing compiler object directories',()=>{
+  for(const separator of ['/', '\\'])for(const newline of ['\n','\r\n']){
+    const object=['C:','Users','fixture-account','temporary','device-123abc.o'].join(separator);
+    const symbol=' - 00000001 00000002 device_advance';
+    const text=['Address Size Input',' - 00000001 00000002 '+object+':(.text.device_advance)',symbol,''].join(newline);
+    const expected=['Address Size Input',' - 00000001 00000002 device-123abc.o:(.text.device_advance)',symbol,''].join(newline);
+    assert.equal(profileLinkMap(text),expected);
+    assert.equal(profileLinkMap(expected),expected);
+  }
+});
 
 // Independently read the actual export indices and element dispatch targets;
 // names must describe what the binary calls, not just its metadata's counts.

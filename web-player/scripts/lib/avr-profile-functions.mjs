@@ -1,5 +1,15 @@
 import assert from 'node:assert/strict';
 
+// Compiler temporary paths can contain the local account name. The basename
+// retains object/source ownership without publishing a personal home directory.
+export function profileObjectName(path){
+  return path.replaceAll('\\','/').split('/').at(-1);
+}
+export function profileLinkMap(text){
+  return text.replace(/^(\s*-\s+[0-9a-f]+\s+[0-9a-f]+\s+)(.+)(:\([^)]+\))$/gim,
+    (_,prefix,path,suffix)=>prefix+profileObjectName(path)+suffix);
+}
+
 // The emitter's unoptimized function order. Fail closed if that ABI changes;
 // profiler names must never silently attribute a region to an empty fallback.
 export function generatedFunctions(core,layout){

@@ -4,7 +4,7 @@ MIDI binaries are not retained. source-events.json preserves all SMF events, tra
 ==========================
 
 source-events.json — структурированное представление предоставленного пользователем файла
-C:/Users/rudol/Downloads/Robert Miles - Children.mid.
+<local-home>/Downloads/Robert Miles - Children.mid.
 
 SMF format 1, PPQN 120, 23 дорожки, 4/4. В MIDI 6872 события нот;
 последняя дорожка заканчивается на 560-й четверти. Основная мелодия

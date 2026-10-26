@@ -1,0 +1,67 @@
+{
+  "schema": "micromusic-profile-path-normalization-v1",
+  "date": "2026-10-26",
+  "meaning": "Only personal home prefixes were replaced by <local-home>; dependent retained-byte hashes were updated. This does not rewrite Git history or change runtime or measured results.",
+  "files": [
+    {
+      "path": "ATtiny13A/Music/IMPORT_HISTORY_RU.txt",
+      "matches": 1,
+      "oldSha256": "975a15b392a8af3023288c9f7b6aca4272e9266b127e17386dae7ac6f3cc5827",
+      "newSha256": "5426df15b257c822388e2cbf0d4f27db5ce75831044fb1d717f25fa55d0a3d14"
+    },
+    {
+      "path": "ATtiny13A/Music/reference/children/README.txt",
+      "matches": 1,
+      "oldSha256": "5ca815f115b870e229ece32196af81fc2b5093fe620acface00d9bda8af87307",
+      "newSha256": "90205972677a07de75e0436206590eff4c0ec0a91ea146af6e574b967bf65036"
+    },
+    {
+      "path": "web-player/reports/gpio-idle-20261025/baseline-runtime-link.map",
+      "matches": 435,
+      "oldSha256": "d3b2ee464d31489e2ec2cc672b7b72baec08ad3d9984009528f5806fa54b79d9",
+      "newSha256": "78f1c0a4291e8e0ac7ef84fda201f6ed73d80ab18ddf088d0564b98584372af4"
+    },
+    {
+      "path": "web-player/reports/gpio-idle-20261025/candidate-runtime-link.map",
+      "matches": 435,
+      "oldSha256": "f03e0f7c4ab5e686d1b219a5db829bd3e193f70df137353e0a3b7407fd5380f6",
+      "newSha256": "23da390e44e985639274bb610f30a7bbeed805c4f6b4d14d3ac1c3bea2a86f68"
+    },
+    {
+      "path": "web-player/reports/gpio-idle-20261025/v1/baseline-runtime-link.map",
+      "matches": 435,
+      "oldSha256": "579e0693477eac7fe2fb4f7ad5e03164cb4a676047769f5a90a15332663e54d5",
+      "newSha256": "b205dbbee998b52d60b00de45226607411449c4a3921d76a820478c0b77a4e47"
+    },
+    {
+      "path": "web-player/reports/gpio-idle-20261025/v1/candidate-runtime-link.map",
+      "matches": 436,
+      "oldSha256": "9809aa955c7b6b04e2ce518ab59e1777132b83f4db6bbedf7fa02ea1fd77c1e4",
+      "newSha256": "a730348dbaf5594d1276533a6b0925e74ada8b0ef26817db0f56e2954290ee3c"
+    },
+    {
+      "path": "web-player/reports/pin-observation-20261024/baseline-profile/runtime-functions.json",
+      "matches": 184,
+      "oldSha256": "b3622ada275398394bfe5f350dd8567e4899cc16a840334fc16abfec8f1051d6",
+      "newSha256": "170720ed0dcc0778d7884a6c34ccd50588995eb4f37347ae1647bba83e7d2e55"
+    },
+    {
+      "path": "web-player/reports/post-gpio-profile-20261025/clki/runtime-functions.json",
+      "matches": 196,
+      "oldSha256": "8f9686f392732001eb71169f55674e37e3d7e5a407285fe44337c742d4f075bb",
+      "newSha256": "c7fa7b9cbbcb314f7a70c1f9411ab6d9b03c3ecd8bc9db3740a71ce514be0080"
+    },
+    {
+      "path": "web-player/reports/post-gpio-profile-20261025/music/runtime-functions.json",
+      "matches": 196,
+      "oldSha256": "95441fb70a224655332cc3f22b64bee3635ffc0bdcbe43477a8f202160c00c6c",
+      "newSha256": "abd21281917ed3a18e1358e786ea5b07c49074228548950f5d27b62119de63e3"
+    },
+    {
+      "path": "web-player/reports/runtime-profile-20261023/runtime-functions.json",
+      "matches": 185,
+      "oldSha256": "fa5f62b081bf273a96bca1ceb64c47b7896abebd17ce24dd568a0e96d105c2e5",
+      "newSha256": "f218d57fd395cf8c59b5e1a3fb8cdc5006a173a01771661c3c4d06a88d252b21"
+    }
+  ]
+}

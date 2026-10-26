@@ -11,7 +11,7 @@ import {parseArgs} from 'node:util';
 import {ATtiny13A} from '../lib/attiny13a-runtime.js';
 import {parseHex} from '../lib/hex.js';
 import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
-import {generatedFunctions} from './lib/avr-profile-functions.mjs';
+import {generatedFunctions,profileObjectName,profileLinkMap} from './lib/avr-profile-functions.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{frames:{type:'string',default:'48000'},
@@ -151,9 +151,11 @@ const originalNames=new Map(optimized.stdout.split(/\r?\n/).filter(line=>/^\d+:/
 const runtimeLayout=wasmLayout(production),symbols=new Map();
 const owners=manifest.sources.map(path=>basename(path,'.c'));
 let object='unknown';
-for(const line of readFileSync(mapPath,'utf8').split(/\r?\n/)){
+const linkMap=profileLinkMap(readFileSync(mapPath,'utf8'));
+writeFileSync(mapPath,linkMap);
+for(const line of linkMap.split(/\r?\n/)){
   const input=line.match(/^\s+-\s+[0-9a-f]+\s+[0-9a-f]+\s+(.+):\(([^)]+)\)$/i);
-  if(input)object=input[1];
+  if(input)object=profileObjectName(input[1]);
   const match=line.match(/^\s+-\s+([0-9a-f]+)\s+([0-9a-f]+)\s+([A-Za-z_$][A-Za-z0-9_.$]*)\s*$/i);
   if(match)symbols.set(match[3],{symbol:match[3],object});
 }
