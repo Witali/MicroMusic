@@ -10,7 +10,7 @@ separate explicit ASM-enable define must both permit an optimized backend;
 otherwise use C. Hardware memory access stays independent of arithmetic.
 
 The latest implementation and measurements are described in README.md and
-`reports/twin-admission.json`. Earlier
+`reports/angle-admission.json`. Earlier
 reports are stage baselines, not current
 binary measurements. Vendor and R4 files remain unmodified.
 
@@ -19,15 +19,30 @@ The optional NB11/WB12.8 extension is recorded separately in
 It shares the bounded short-pitch controller for 4 x 10 and 5 x 8 vectors,
 reuses existing variable-count ASM/C primitives, and fuses NB4 innovation
 with HB1 folding. The fusion screening saves 3,248 cycles/frame and 16 B
-stack on two clips. Final WB12.8 voice averages 78.61% CPU; active-IRQ PWM
+stack on two clips. At the initial higher-profile stage, WB12.8 voice averaged 78.61% CPU; active-IRQ PWM
 passes 6,467 frames without underruns. Default minimum decoder images stay
 byte-identical, so those new-profile figures do not replace NB3 baselines.
 
-[Paired polynomial stages](TWIN_LSP.md) are the latest ASM change:
+[Paired polynomial stages](TWIN_LSP.md) preceded the current cosine change:
 NB8/NB11 improve about 0.27% and WB9.8/WB12.8 about 0.21%. A single prologue
 retains the second pointer/root; T selects private return versus final
 epilogue. All 134 ASM PWM images pass again, while four C decoder images and
 62 C player images rebuild byte-identically. See `reports/twin-admission.json`.
+
+[The exact cosine leaf](EXACT_ANGLE.md) now saves 3.04–3.10% NB and
+2.37–2.38% WB mean cycles versus that paired baseline, with 414–432 B less
+Flash and unchanged observed whole-decoder stack/static SRAM. It implements
+the original rounded fixed-point polynomial using bounded partial products
+and a stackless call-clobbered register allocation. All 65,536 signed16 inputs
+and 1,533 instruction-boundary IRQ injections pass; 47,735 complete decoder
+frames remain exact. The paired-entry layout is admitted separately alongside
+it. All 198 fresh ASM PWM images pass; both WB modes additionally pass every
+natural recording with 8% foreground work. Two RAM-input test images also
+pass 10,563 uninterrupted-history frames per WB mode with the production
+ISR/queue and the same 8% work; no input transport delay is modeled.
+The C decoder/player binaries
+remain identical. See `reports/angle-admission.json` and the reusable
+[AVR recipe](../../../docs/avr-asm-cookbook/speex-angle.md).
 
 ## Completed, measured
 
@@ -1382,17 +1397,17 @@ constructor audit at ddd4f01e.
 
 ## Next candidates (not yet measured/admitted)
 
-The previously listed C40 long-pitch entry shipped in commit 9813583 and is
-no longer an outstanding candidate.
+The previously listed C40 long-pitch entry, paired polynomial prologue and
+descending entry layout have shipped. They are no longer outstanding candidates.
 
 1. **Inspect call/control and section layout.** Measure shared NB LPC-copy
    work, assembler call distances and compiler-supported leaf annotations.
    Preserve the coefficient age, exact output and portable interface.
 
-2. **Share prologue work across both polynomials.** A paired constant-stage
-   entry might retain the second pointer/root while reusing register saves.
-   Account for extra argument storage, code size and C fallback; no gain is
-   admitted before direct arithmetic/ABI/IRQ and complete decoder/player tests.
+2. **Shorten reflected cosine negation.** `COM high; NEG low; SBCI high,255`
+   may replace two COMs and ADIW, saving one reflected-path cycle without
+   increasing size. This is unmeasured; prove all low-byte carry cases and
+   rerun scalar/IRQ, decoder and active-player admission before selecting it.
 
 No claim of a global speed optimum has been established. Do not mark the
 ongoing optimization goal complete while useful candidates remain untested.

@@ -117,13 +117,23 @@ ASM PWM-образов с IRQ точны и без underrun; +40% NB/+5% WB CPU 
 **Paired LSP stages: admitted after the original screening (2026-10-26).**
 [One prologue, two polynomial passes](speex-lsp-twin.md) explains the GNU AVR
 T-bit phase contract, shared source, explicitly selectable C pair and stack
-cost. Current NB8 saves 0.2690% mean cycles for 78 extra Flash bytes and four
+cost. At that stage NB8 saved 0.2690% mean cycles for 78 extra Flash bytes and four
 peak stack bytes; WB9.8 saves 0.2082% for 80 bytes, with unchanged observed
 stack. Independent arithmetic/ABI tests, 30,870 IRQ injections and 134 fresh
 ASM PWM images now pass; 62 rebuilt C player images are byte-identical.
 The [five old prototypes](../../Codecs/Speex/AVR/reports/twin-candidates.json)
 remain historical screening evidence, separate from the full
-[current admission](../../Codecs/Speex/AVR/reports/twin-admission.json).
+[paired-stage admission](../../Codecs/Speex/AVR/reports/twin-admission.json).
+
+**Exact bounded cosine leaf (2026-10-26).**
+[Three-product square, bounded coefficient and folded rounding biases](speex-angle.md)
+preserve every Xiph fixed-point result while avoiding callee-save overhead.
+MULSU operands stay in r16..23; the explicit C fallback is selectable on AVR.
+All 65,536 signed16 inputs and 1,533 IRQ boundaries pass. Current NB8 saves
+3.0443% mean cycles and 426 B Flash versus the paired-stage baseline; WB12.8
+saves 2.3730% and 432 B. All 198 new ASM PWM images pass active interrupts,
+including both WB modes' voice corpora with 8% extra foreground work.
+[Current source/image/corpus admission](../../Codecs/Speex/AVR/EXACT_ANGLE.md).
 
 ## Как проверять пользу для Speex
 
