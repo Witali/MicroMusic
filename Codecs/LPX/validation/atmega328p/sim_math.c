@@ -24,7 +24,7 @@ int main(int argc,char** argv){
     const uint32_t zero=symbol(&fw,"math_zero_error"),cases=symbol(&fw,"math_cases");
     const uint32_t irq=symbol(&fw,"math_irqs"),backend=symbol(&fw,"math_backend");
     int state=cpu_Running;
-    while(cpu->cycle<UINT64_C(2000000000)&&!cpu->data[done]&&state!=cpu_Crashed&&state!=cpu_Done)
+    while(cpu->cycle<UINT64_C(3000000000)&&!cpu->data[done]&&state!=cpu_Crashed&&state!=cpu_Done)
         state=avr_run(cpu);
     printf("{\"done\":%u,\"error\":%u,\"zero_error\":%u,\"cases\":%u,\"irqs\":%u,\"backend\":%u,\"cycles\":%llu}\n",
         cpu->data[done],cpu->data[error],cpu->data[zero],read32(cpu,cases),read32(cpu,irq),

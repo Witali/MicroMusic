@@ -1,0 +1,57 @@
+{
+  "host_tests_passed": 98,
+  "host_seconds": 56.719,
+  "reader_cases_per_rom_layout": 4718592,
+  "rom_layouts": [
+    0,
+    1
+  ],
+  "unary_states_per_build": 784896,
+  "unary_builds": 6,
+  "bit_code_states_per_build": 526843,
+  "bit_code_builds": 3,
+  "instrumented_pcm_comparisons": "ROM0/1, excitation0/7, pitch0/1/3/7, v3 masks0/24/32/124",
+  "fuzz": {
+    "cases": 566610,
+    "rejected": 136722,
+    "sample_capped": 0,
+    "reset_exact": true,
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "compiler_options": [
+      "-O1",
+      "-g",
+      "-std=c++11",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-DLPX4_V3_FEATURES=124"
+    ],
+    "seeds": [
+      20261101,
+      20261102,
+      20261103,
+      20261104,
+      20261105,
+      20261106,
+      20261107,
+      20261108,
+      20261109,
+      20261110,
+      20261111,
+      20261112
+    ],
+    "input_streams": 384,
+    "v3_features": 124,
+    "max_samples_per_decode": 4096,
+    "core_sha256": "ad7a6c75b9212b7c5931b45a13979f1982d0c7b71aaf51a9053a29881827b6d3",
+    "math_header_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "harness_sha256": "50b2bf5c1ac59ceffdb8dbe1ac3210a0d2aea1193234b47978153cf0c7f07449"
+  },
+  "quality_audit": "round-15-quality.json",
+  "unchanged_math_validation": {
+    "report": "round-13-tests.json",
+    "sha256": "e69a68ec4a1fade96ded7731705c6e8c1bd9cf257b1e06565780b3d46f3b65c4",
+    "math_header_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "reason": "Arithmetic header and fixture unchanged; reuse nine round13 math builds explicitly."
+  }
+}

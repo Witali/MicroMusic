@@ -96,6 +96,8 @@ def run(source, output, avr_bin, sim_runner, sim_lib_dir=None, wsl=None, enable_
                   core_sha256=hashlib.sha256((ROOT / 'src/Lpx4HybridCore.cpp').read_bytes()).hexdigest(),
                   core_header_sha256=hashlib.sha256((ROOT / 'src/Lpx4HybridCore.h').read_bytes()).hexdigest(),
                   math_header_sha256=hashlib.sha256((ROOT / 'src/Lpx4Math.h').read_bytes()).hexdigest(),
+                  tables_sha256={name:hashlib.sha256((ROOT/'src'/name).read_bytes()).hexdigest()
+                      for name in ('cos_table.inc','scale_table.inc','cos_half_table.inc') if (ROOT/'src'/name).exists()},
                   harness_sha256=hashlib.sha256((HARNESS / 'profile.cpp').read_bytes()).hexdigest(),
                   runner_sha256=hashlib.sha256((HARNESS / 'sim_profile.c').read_bytes()).hexdigest(),
                   elf_sha256=hashlib.sha256(elf.read_bytes()).hexdigest(), hex_sha256=hashlib.sha256(hexfile.read_bytes()).hexdigest(),

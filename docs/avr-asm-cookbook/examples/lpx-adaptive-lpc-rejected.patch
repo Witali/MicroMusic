@@ -1,0 +1,150 @@
+diff --git a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+index c8384424..e8ccd189 100644
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -86,6 +86,9 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
+  lsfConverts_=bitCalls_=romByteCalls_=0;
+ #endif
+  lsfCached_=false;staticSpectrum_=false;
++#if LPX4_ADAPTIVE_LPC && LPX4_LPC_RING
++ narrowLpc_=false;
++#endif
+  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0;
+ #if LPX4_LPC_RING
+  for(uint8_t i=10;i<20;i++)hist_[i]=0;
+@@ -134,6 +137,9 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
+  pulseCount_=pulseIndex_=0;
+ #endif
+  lsfCached_=false;staticSpectrum_=false;prevDeemph_=prevBright_=0;
++#if LPX4_ADAPTIVE_LPC && LPX4_LPC_RING
++ narrowLpc_=false;
++#endif
+ #ifdef LPX3_COST_INSTRUMENT
+  lsfConverts_=bitCalls_=romByteCalls_=0;
+ #endif
+@@ -648,6 +654,10 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
+             weight=(uint16_t)(((int32_t)weight*LPX3_BANDWIDTH_EXPAND_Q14+8192)>>14);
+             a_[k]=clamp(((int32_t)a_[k]*weight+8192)>>14,-32767,32767);
+         }
++#endif
++#if LPX4_ADAPTIVE_LPC && LPX4_LPC_RING
++        narrowLpc_=true;
++        for(uint8_t i=0;i<10;i++)if(a_[i]!=(int8_t)a_[i]){narrowLpc_=false;break;}
+ #endif
+     }
+     int8_t q=0;
+@@ -690,7 +700,11 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
+ #if LPX4_LPC_RING
+     // subPos already repeats every20 samples; no separate ring cursor is needed.
+     int16_t* history=hist_+(subPos_<10?subPos_:subPos_-10)+10;
++#if LPX4_ADAPTIVE_LPC
++    int16_t pred=lpx4Clip15From24(lpx4SynthesisRingAdaptiveQ12<LPX4_EXCITATION_Q4>(excitation,a_,history,narrowLpc_));
++#else
+     int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,a_,history));
++#endif
+     history[0]=history[10]=pred;
+ #else
+     int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,a_,hist_));
+diff --git a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+index 52a59032..4128e90a 100644
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -40,6 +40,14 @@
+ #error LPX4_ROM_POINTER must be 0 or 1
+ #endif
+ 
++// Optional all-signed8 LPC specialization, retaining the full signed16 path.
++#ifndef LPX4_ADAPTIVE_LPC
++#define LPX4_ADAPTIVE_LPC 1
++#endif
++#if LPX4_ADAPTIVE_LPC != 0 && LPX4_ADAPTIVE_LPC != 1
++#error LPX4_ADAPTIVE_LPC must be 0 or1
++#endif
++
+ // Optional compact-container parser. Zero keeps the original v2-only build.
+ // 4 scale repeat, 8 width repeat, 16 subheader repeat, 32 zero headers,
+ // 64 small LSF Rice deltas. The stream may only use compiled feature bits.
+@@ -161,6 +169,9 @@ private:
+     Error error_;
+     bool initializedFrame_;
+     bool lsfCached_,staticSpectrum_;
++#if LPX4_ADAPTIVE_LPC && LPX4_LPC_RING
++    bool narrowLpc_;
++#endif
+     int16_t a_[10],hist_[LPX4_LPC_RING?20:10];
+     int8_t ringQ_[256];
+ #if LPX4_ALLOW_SPARSE
+diff --git a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h
+index c3e7c7dd..0815ce56 100644
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h
+@@ -329,6 +329,69 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
+     return result;
+ #endif
+ }
++// Prototype: narrow=true requires every coefficient to fit signed8.
++#ifndef LPX4_AVR_NARROW_UNROLL
++#define LPX4_AVR_NARROW_UNROLL 9
++#endif
++#if LPX4_AVR_NARROW_UNROLL!=1 && LPX4_AVR_NARROW_UNROLL!=3 && LPX4_AVR_NARROW_UNROLL!=9
++#error LPX4_AVR_NARROW_UNROLL must be1,3 or9
++#endif
++#define LPX4_SYNTH_NARROW_MUL \
++    "mulsu r18,r20\n\tmov r23,r1\n\tlsl r1\n\tsbc r24,r24\n\t" \
++    "muls r18,r21\n\tadd r23,r0\n\tadc r24,r1\n\t" \
++    "mov r25,r24\n\tlsl r25\n\tsbc r25,r25\n\t" \
++    "andi r23,0xf0\n\t" \
++    "sub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\tsbc %D0,r16\n\t" \
++    "sbrc r25,7\n\tinc %D0\n\t"
++template<bool excitationQ4=false> static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingAdaptiveQ12(int32_t excitation,const int16_t* a,int16_t*& h,bool narrow){
++#if LPX4_USE_AVR_ASM
++    int32_t result=excitation;
++    __asm__(
++        "clr r16\n\t"
++        ".if %4\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
++        "tst %3\n\tbrne 8f\n\trjmp 4f\n\t8:\n\t"
++        "ld r18,X+\n\tld r19,X+\n\tld r21,-Z\n\tld r20,-Z\n\t"
++        LPX4_SYNTH_NARROW_MUL
++#if LPX4_AVR_NARROW_UNROLL!=9
++        "ldi r17," LPX4_STRING(9/LPX4_AVR_NARROW_UNROLL) "\n\t6:\n\t"
++#endif
++        ".rept " LPX4_STRING(LPX4_AVR_NARROW_UNROLL) "\n\t"
++        "ld r18,X+\n\tld r19,X+\n\tld r21,-Z\n\tld r20,-Z\n\t"
++        LPX4_SYNTH_NARROW_MUL
++        ".endr\n\t"
++#if LPX4_AVR_NARROW_UNROLL!=9
++        "dec r17\n\tbreq 7f\n\trjmp 6b\n\t7:\n\t"
++#endif
++        "rjmp 5f\n\t4:\n\t"
++        "ld r18,X+\n\tld r19,X+\n\tld r21,-Z\n\tld r20,-Z\n\t"
++        LPX4_SYNTH_MUL
++#if LPX4_AVR_DOT_UNROLL!=9
++        "ldi r17," LPX4_STRING(9/LPX4_AVR_DOT_UNROLL) "\n\t1:\n\t"
++#endif
++        ".rept " LPX4_STRING(LPX4_AVR_DOT_UNROLL) "\n\t"
++        "ld r18,X+\n\tld r19,X+\n\tld r21,-Z\n\tld r20,-Z\n\t"
++        LPX4_SYNTH_MUL
++        ".endr\n\t"
++#if LPX4_AVR_DOT_UNROLL!=9
++        "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
++#endif
++        "5:\n\t.rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\tclr __zero_reg__\n\t"
++        : "+&r"(result),"+z"(h),"+x"(a)
++        : "r"(narrow),"I"(!excitationQ4)
++        : "r0","r1","r16","r18","r19","r20","r21","r22","r23","r24","r25",
++#if LPX4_AVR_DOT_UNROLL!=9 || LPX4_AVR_NARROW_UNROLL!=9
++          "r17",
++#endif
++          "cc","memory");
++    return result;
++#else
++    (void)narrow;
++    int32_t result=excitationQ4?excitation/16:excitation;
++    for(uint8_t i=0;i<10;i++)result-=((int32_t)a[i]*h[-1-i])>>12;
++    h-=10;return result;
++#endif
++}
++#undef LPX4_SYNTH_NARROW_MUL
+ #undef LPX4_SYNTH_MUL
+ #undef LPX4_DOT_PRODUCT
+ #undef LPX4_DOT_PRODUCT_BYTES

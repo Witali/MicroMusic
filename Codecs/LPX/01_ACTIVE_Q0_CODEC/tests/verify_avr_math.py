@@ -42,7 +42,7 @@ def run(output, avr_bin, runner, lib=None, wsl=None,dot_unroll=9):
             if lib: env['LD_LIBRARY_PATH'] = str(Path(lib).resolve())
             result = subprocess.check_output([str(runner.resolve()),str(target.resolve())],text=True,env=env)
         report = json.loads(next(line for line in result.splitlines() if line.startswith('{')))
-        if report['cases'] != 32889 or report['backend'] != expected or report['irqs'] < 100:
+        if report['cases'] != 5768584 or report['backend'] != expected or report['irqs'] < 100:
             raise AssertionError(report)
         if not report['done'] or report['error'] or report['zero_error']:
             raise AssertionError(report)

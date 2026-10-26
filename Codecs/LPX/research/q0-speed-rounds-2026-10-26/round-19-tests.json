@@ -1,0 +1,65 @@
+{
+  "host_tests_passed": 99,
+  "host_seconds": 94.526,
+  "anchor_rotation_flags": [
+    0,
+    1
+  ],
+  "lpc_segments": [
+    1,
+    2,
+    4
+  ],
+  "v3_masks": [
+    0,
+    24,
+    32,
+    124
+  ],
+  "snapshot_copy": "Copy constructor and assignment after1/19/20/39/40/79/80/159/160/161/half/last samples; original reset, copied tails/produced checked independently.",
+  "partial_restart_pcm_reference_exact": true,
+  "fuzz": {
+    "cases": 566610,
+    "rejected": 136722,
+    "sample_capped": 0,
+    "reset_exact": true,
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "compiler_options": [
+      "-O1",
+      "-g",
+      "-std=c++11",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-DLPX4_V3_FEATURES=124"
+    ],
+    "seeds": [
+      20261101,
+      20261102,
+      20261103,
+      20261104,
+      20261105,
+      20261106,
+      20261107,
+      20261108,
+      20261109,
+      20261110,
+      20261111,
+      20261112
+    ],
+    "input_streams": 384,
+    "v3_features": 124,
+    "max_samples_per_decode": 4096,
+    "core_sha256": "04022e6417ed961dce544f49768fe4df49cd5691eb011707f12ff876ed6bd99d",
+    "math_header_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "harness_sha256": "50b2bf5c1ac59ceffdb8dbe1ac3210a0d2aea1193234b47978153cf0c7f07449"
+  },
+  "core_header_sha256": "b4d36cca5f6b8b458023faab9cfb06129d654b0886ca1925096f95d87b2af411",
+  "quality_audit": "round-19-quality.json",
+  "unchanged_math_validation": {
+    "report": "round-13-tests.json",
+    "sha256": "e69a68ec4a1fade96ded7731705c6e8c1bd9cf257b1e06565780b3d46f3b65c4",
+    "math_header_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "reason": "Only LPC cache storage/selection changes, arithmetic helpers and fixtures are byte-identical. Reuse round13 nine math builds explicitly."
+  }
+}
