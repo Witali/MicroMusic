@@ -126,7 +126,7 @@ const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
 const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
 const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 
-export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false,boundedRegions=false}={}) {
+export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false,boundedRegions=false,_linkage=false,_previousEmission}={}) {
   if(typeof boundedRegions!=='boolean'||boundedRegions&&!resumable)throw Error('Bounded regions require resumable execution');
   if(typeof optimizePhaseLocals!=='boolean'||optimizePhaseLocals&&!resumable)throw Error('Phase-local optimization requires resumable execution');
   const {get,set,condition,conditionValue}=optimizePhaseLocals?annotatePhaseLocals(phaseEmit):phaseEmit;
@@ -135,6 +135,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   // Resumable blocks initially cover register-only operations. Memory accesses
   // retain their individual bus phases until block-wide alias guards exist.
   const full=!!abi.device,canBatch=i=>resumable?pure.has(i.name):batchable(i)&&(!full||i.name!=='LPM');
+  if(_linkage&&(!full||!profile.flashPageBytes))throw Error('Incremental compilation requires the full ATtiny13A runtime');
   if(full&&device!==DEFAULT_DEVICE)throw Error('Full-device runtime supports only ATtiny13A');
   if(resumable&&(!full||!abi.phase||abi.phase.bytes!==80))throw Error('Resumable CPU requires its full-device phase ABI');
   if(resumable){
@@ -344,17 +345,33 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     return fail(2);
   }
+  const body=(code,locals)=>{const content=bytes(vector(locals),optimizePhaseLocals?stripLocalEffects(code):code,0x0b);
+    const encoded=bytes(uleb(content.length),content);return _linkage?Uint8Array.from(encoded):encoded;};
+  const emissionIdentity=_linkage?JSON.stringify([abi,device,optimizeFlags,maxBlockInstructions,resumable,optimizePhaseLocals,boundedRegions]):null;
+  const oldEmission=_linkage&&_previousEmission?.identity===emissionIdentity?_previousEmission:null;
+  const emission=_linkage?{identity:emissionIdentity,instructions:[],blocks:new Map(),regions:new Map(),
+    emittedInstructions:0,emittedBlocks:0,emittedRegions:0}:null;
   const phaseLocalStats={waitSites:0,fullSlots:0,liveSlots:0};
   const instructionBodies=decoded.map(i=>{
+    const old=oldEmission?.instructions[i.pc],nextWord=word(i.pc+1);
+    if(old&&old.word===i.word&&old.nextWord===nextWord){
+      for(const key of Object.keys(phaseLocalStats))phaseLocalStats[key]+=old.stats[key];
+      emission.instructions.push(old);return old.code;
+    }
+    const localStats={waitSites:0,fullSlots:0,liveSlots:0};
     inInstruction=true;
     const code=bytes(set(5,load8(flagsAddress)),set(7,constant(1)),put('errorPC',constant(i.pc)),
       put('pc',constant((i.pc+1)&pcMask)),effects(i),resumable?[]:store8(flagsAddress,flags()),finish());
     inInstruction=false;
-    return resumable?emitInstructionPhases(code,{context:abi.phase,pc:i.pc,clockImport:PHASE_CLOCK,
+    const phased=resumable?emitInstructionPhases(code,{context:abi.phase,pc:i.pc,clockImport:PHASE_CLOCK,
       emit:phaseEmit,optimizeLocals:optimizePhaseLocals,onLiveness:optimizePhaseLocals?masks=>{
-        phaseLocalStats.waitSites+=masks.length;phaseLocalStats.fullSlots+=10*masks.length;
-        phaseLocalStats.liveSlots+=masks.reduce((n,mask)=>n+popcount(mask),0);
+        localStats.waitSites+=masks.length;localStats.fullSlots+=10*masks.length;
+        localStats.liveSlots+=masks.reduce((n,mask)=>n+popcount(mask),0);
       }:undefined}):code;
+    for(const key of Object.keys(phaseLocalStats))phaseLocalStats[key]+=localStats[key];
+    const encoded=body(phased,[[9,0x7f],[1,0x7c],...(resumable?[[1,0x7f]]:[])]);
+    if(emission){emission.emittedInstructions++;emission.instructions.push({word:i.word,nextWord,stats:localStats,code:encoded});}
+    return encoded;
   });
 
   // SRAM/Flash accesses use guards before observable I/O, alias faults or
@@ -405,6 +422,8 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   }
   // Rebuild block functions with remapped i32 locals (arguments precede them).
   blocks.forEach((block,index)=>{
+    const key=emission?JSON.stringify([block.start,block.end,block.masks,block.sequence.map(i=>[i.pc,i.word,i.k])]):null;
+    if(oldEmission?.blocks.has(key)){blockBodies[index]=oldEmission.blocks.get(key);emission.blocks.set(key,blockBodies[index]);return;}
     const elapsed=binary(0xa0,stateF('cyc'),float(block.cycles));
     // No IRQ can occur inside an accepted block. Timer state advances by the
     // exact number of original CPU cycles, including the prescaler phase.
@@ -453,18 +472,24 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     code.push(...store8(flagsAddress,get(7)),put('pc',constant(block.end)),put('errorPC',constant((block.end-1)&pcMask)),
       resumable?bytes(storeI64(constant(abi.phase.retired),binary(0x7c,loadI64(constant(abi.phase.retired)),constantI64(block.instructions-1))),call(PHASE_RETIRE)):
         call(CLOCK,float(block.cycles)),constant(block.instructions));
-    blockBodies[index]=code;
+    blockBodies[index]=body(code,[[9,0x7f]]);
+    if(emission){emission.emittedBlocks++;emission.blocks.set(key,blockBodies[index]);}
   });
 
   const regions=boundedRegions?planRegions(decoded,{pure,pcMask,width,cycles:instructionCycles}):[];
   const regionBodies=regions.map(region=>{
+    const key=emission?JSON.stringify([region.nodes.map(i=>[i.pc,i.word,i.k,width(word(i.pc+1))]),region.maxCost]):null;
+    if(oldEmission?.regions.has(key)){const cached=oldEmission.regions.get(key);emission.regions.set(key,cached);return cached;}
     regionRegisters=new Map();regionWritten=new Set();
     const body=emitRegion(region,{abi:{...abi,sreg},pcMask,width,decoded,pure,cycles:instructionCycles,
       emitALU:i=>remapLocals(alu(i,writes[i.name]||0),2),readRegister:n=>remapLocals(reg(n),2),
       registers:()=>[...regionRegisters.keys()],written:()=>[...regionWritten],state,stateF,put,
       emit:{...phaseEmit,uleb,binary,add,sub,and,shr,ge,float,asFloat,load8,store8,loadI64,storeI64,constantI64}});
-    regionRegisters=null;regionWritten=null;return body;
+    regionRegisters=null;regionWritten=null;
+    const encoded={...body,code:encodeRegion(body)};
+    if(emission){emission.emittedRegions++;emission.regions.set(key,encoded);}return encoded;
   });
+  function encodeRegion(item){return body(item.code,[[item.locals,0x7f],[item.floatLocals,0x7c]]);}
   const regionByPc=new Map(regions.flatMap((region,index)=>region.nodes.map(i=>[i.pc,index])));
   const regionFirst=firstFunction+flashWords+blocks.length;
   const baseRegionWrappers=blocks.flatMap((block,index)=>regionByPc.has(block.start)?[{pc:block.start,block:index,region:regionByPc.get(block.start)}]:[]);
@@ -577,9 +602,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   for(const [pc,index]of regionByPc)blockIndex.set(pc,regionFirst+regions.length+index);
   baseRegionWrappers.forEach((item,index)=>blockIndex.set(item.pc,regionFirst+2*regions.length+index));
   for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length+extraFunctions);
-  const body=(code,locals)=>{const content=bytes(vector(locals),optimizePhaseLocals?stripLocalEffects(code):code,0x0b);return bytes(uleb(content.length),content);};
-  const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c],...(resumable?[[1,0x7f]]:[])])),
-    ...blockBodies.map(code=>body(code,[[9,0x7f]])),...regionBodies.map(item=>body(item.code,[[item.locals,0x7f],[item.floatLocals,0x7c]])),
+  const codes=[...instructionBodies,...blockBodies,...regionBodies.map(item=>item.code),
     ...[...regionWrappers,...baseRegionBodies].map(code=>body(code,[[1,0x7f]])),
     body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
   const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled','captureFault'].map((name,index)=>bytes(string(name),3,index)),
@@ -595,7 +618,18 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     blocks:blocks.map(({sequence,...block})=>block),mapping};
   const output=Uint8Array.from(bytes([0,97,115,109,1,0,0,0],section(1,vector(types)),section(2,importSection),section(3,vector(functionTypes.map(uleb))),
     section(4,[1,0x70,1,...uleb(flashWords*2),...uleb(flashWords*2)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
-    section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),
+    section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes.map(c=>Array.isArray(c)?c:Array.from(c)))),
     section(0,bytes(string('micromusic.avr'),Array.from(new TextEncoder().encode(JSON.stringify(manifest)))))));
-  return {bytes:output,manifest};
+  if(!_linkage)return {bytes:output,manifest};
+  // Construction-only metadata. The portable monolithic artifact is unchanged.
+  const units=[...decoded.map(i=>({id:'instruction/'+i.pc,pc:i.pc,tier:0})),
+    ...blocks.map(b=>({id:'block/'+b.start,pc:b.start,tier:0})),
+    ...regions.map(r=>({id:'region/'+r.nodes[0].pc,pc:r.nodes[0].pc,tier:0})),
+    ...regions.map(r=>({id:'wrapper/'+r.nodes[0].pc,pc:r.nodes[0].pc,tier:1})),
+    ...baseRegionWrappers.map(w=>({id:'fallback/'+w.pc,pc:w.pc,tier:1})),
+    ...['emptyBlock','step','block','run','nextDuty','capturePWM',...(full?['runUntil','capturePhysical']:[])]
+      .map(id=>({id,tier:2}))];
+  emission.byteLength=codes.reduce((n,c)=>n+c.length,0);
+  return {bytes:output,manifest,emission,linkage:{types,imports,firstFunction,functionTypes,codes,units,table,identity:emissionIdentity,moduleBytes:output,
+    flashWords,pageWords:profile.flashPageBytes/2,memoryPages:abi.memoryPages||1}};
 }

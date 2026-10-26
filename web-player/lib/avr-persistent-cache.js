@@ -5,7 +5,7 @@ const encoder=new TextEncoder(),defaultStore=createIndexedDBTranslationStore();
 const nativeModules=new Map();
 const MAX_RECORD_BYTES=16*1024*1024;
 const hardwareKeys=Object.keys(DEFAULT_CONFIGURATION);
-const executionDefaults={fastIdle:true,fastBlocks:false,optimizeFlags:true,maxBlockInstructions:32,optimizePhaseLocals:false,boundedRegions:false};
+const executionDefaults={fastIdle:true,fastBlocks:false,optimizeFlags:true,maxBlockInstructions:32,optimizePhaseLocals:false,boundedRegions:false,incrementalCompilation:false};
 const supported=new Set([...hardwareKeys,...Object.keys(executionDefaults),'target','cpuHz','cacheTranslation']);
 const canonical=value=>value===null||typeof value!=='object'?JSON.stringify(value):Array.isArray(value)
   ?'['+value.map(canonical).join(',')+']':'{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+canonical(value[k])).join(',')+'}';

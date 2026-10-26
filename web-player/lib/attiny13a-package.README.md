@@ -38,6 +38,12 @@ and both registered CPU profiles with their generated register maps (including
 this shared profile metadata does not load a default WASM artifact. Historical
 packages retain their own runtime memory layout and decode-operand width.
 
+The standalone JavaScript loader also requires `avr-incremental-compiler.js`.
+`fromPackage(pkg,{incrementalCompilation:true})` retains the original packaged
+module initially and enables selective dynamic linking on later CPU SPM
+refreshes. This host choice does not change the package format or device
+configuration. See [the linking contract](../native/INCREMENTAL_COMPILATION.md).
+
 The loader rejects unsupported identities, missing/unknown envelope fields,
 invalid configuration, noncanonical base64, changed bytes/hashes, inconsistent
 Flash instruction words, differing embedded/outer manifests and incompatible

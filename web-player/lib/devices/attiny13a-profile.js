@@ -4,6 +4,7 @@ import {AT13_DATA,AT13_MEMORY,AT13_CONST,AT13_MASK} from '../attiny13a-registers
 // Peripheral behavior lives in the native ATtiny13A runtime, not in the emitter.
 export const ATtiny13AProfile=Object.freeze({
   name:'ATtiny13A',flashBytes:AT13_MEMORY.FLASHEND+1,
+  flashPageBytes:AT13_CONST.FLASH_PAGE_BYTES,
   flashWords:(AT13_MEMORY.FLASHEND+1)/2,pcMask:(AT13_MEMORY.FLASHEND+1)/2-1,
   ioStart:AT13_CONST.IO_DATA_OFFSET,ioEnd:AT13_MEMORY.RAMSTART,
   ramStart:AT13_MEMORY.RAMSTART,ramEnd:AT13_MEMORY.RAMEND,

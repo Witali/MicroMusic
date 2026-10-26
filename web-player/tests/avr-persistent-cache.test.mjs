@@ -50,7 +50,7 @@ test('Flash, EEPROM, compiler, runtime, clock/fuses and compiler policy partitio
     {flash:sequential([avr.ldi(20,0xa5)])},{eeprom},
     {compilerIdentity:(AVR_CACHE_COMPILER_ID[0]==='0'?'1':'0')+AVR_CACHE_COMPILER_ID.slice(1)},
     {runtimeBytes:changedRuntime},{options:{fuseLow:0x6a}},{options:{optimizeFlags:false}},
-    {options:{maxBlockInstructions:2}},{options:{fastIdle:false}},
+    {options:{maxBlockInstructions:2}},{options:{fastIdle:false}},{options:{incrementalCompilation:true}},
     {options:{oscillatorHz:1000000,osccalHz:table(),fuseLow:0x72,resumable:true}},
   ]){
     const c=await make(store,extra);assert.equal(c.persistentTranslationCache.hit,false);
@@ -131,7 +131,7 @@ test('Buffer and option mutations during async lookup cannot change the captured
   assert.equal(c.state().oscillatorHz,1000000);
 });
 
-for(const clock of ['compatible','physical','clki'])test(`a persistent ${clock} hit retranslates real self-programmed Flash before execution`,async()=>{
+for(const incrementalCompilation of [false,true])for(const clock of ['compatible','physical','clki'])test(`a persistent ${clock} hit retranslates real self-programmed Flash before execution, incremental${incrementalCompilation}`,async()=>{
   const write=(io,v)=>[...avr.ldi(16,v),...avr.out(io,16)];
   const target=0x100,newWords=[avr.ldi(20,0x5a)[0],0xcfff];
   const words=[...avr.ldi(30,0),...avr.ldi(31,1),...write(IO.SPMCSR,3),0x95e8];
@@ -140,7 +140,7 @@ for(const clock of ['compatible','physical','clki'])test(`a persistent ${clock} 
   words.push(...avr.ldi(30,0),...write(IO.SPMCSR,5),0x95e8);
   words.push(avr.rjmp(words.length,target/2)[0]);
   const rom=segments({instructions:[words]},{at:target/2,instructions:[avr.ldi(20,0x11),[0xcfff]]});
-  const options={fuseHigh:0xef,spmCommandCycles:4,...(clock==='physical'?{
+  const options={fuseHigh:0xef,spmCommandCycles:4,incrementalCompilation,...(clock==='physical'?{
     oscillatorHz:1000000,osccalHz:table(),fuseLow:0x72,resumable:true,nvmClockProfile:1,nvmCalibrationReferenceHz:1000000,
   }:clock==='clki'?{resumable:true,fuseLow:0x70,clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1},
     nvmClockProfile:1,nvmCalibrationReferenceHz:1000000}:{})},store=memoryStore();
@@ -157,6 +157,7 @@ for(const clock of ['compatible','physical','clki'])test(`a persistent ${clock} 
   }
   assert.equal(c.r[20],0x5a);assert.notEqual(c._translatedModule,original);
   assert.equal(c._exports.avr_device_generation(),2n);assert.equal(c.state().deviceFault,0);
+  if(incrementalCompilation)assert.ok(c.incrementalCompilation.reusedModules>0,'SPM selected the regional compiler after loading a portable cache hit');
   const reset=await make(store,{flash:rom,options});assert.equal(reset.persistentTranslationCache.hit,true);
   assert.equal(reset.rom[target],0x41,'The original immutable image, not another chip\'s modified Flash');
 });

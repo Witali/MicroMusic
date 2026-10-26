@@ -473,6 +473,12 @@ runtime. Device memory and peripheral configuration are always fresh. Use
 `cacheTranslation:false` to bypass this library cache; `translationCacheHit`
 reports reuse. Self-programming selects a new image key before execution.
 
+The optional [incremental compiler and dynamic linker](INCREMENTAL_COMPILATION.md)
+retain the original compiled runner and unchanged functions while replacing
+affected page fragments after SPM. `incrementalCompilation:true` includes full
+dependency invalidation and deferred replacement of active instructions. The
+default ordinary path and portable complete artifact remain available.
+
 The CLI can save an initial device package containing both WASM modules,
 Flash/EEPROM, all configuration values and integrity metadata. The browser's
 **Открыть пакет ATtiny13A** control loads it with its embedded runtime.

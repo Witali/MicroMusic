@@ -17,6 +17,7 @@ boundary rules and event/deadline work.
 |---|---|---|
 | AVR decoder and WASM emitter | `lib/avr-transpiler.js` | Decode machine instructions, lower effects and flags, emit WASM functions and instruction blocks |
 | CPU continuation lowering | `lib/avr-wasm-phases.js` | Split generation-time clock barriers into saved phases; emit native WASM control and local spills without an opcode interpreter |
+| Optional incremental linker | `lib/avr-incremental-compiler.js` | Retain the initial compiled module/table; link changed page fragments to native WASM memory, shared CPU globals and updated callees after SPM |
 | Phase temporary analysis | `lib/avr-phase-locals.js` | Optional generation-time local/branch annotations and backward liveness; strip annotations before serialization, retaining the full-context oracle |
 | Target registry | `lib/devices/profiles.js` | Select a supported device explicitly and reject unregistered targets |
 | ATtiny13A profile | `lib/devices/attiny13a-profile.js` | Flash/data geometry, PC wrapping, register placement and legacy hardware hooks |

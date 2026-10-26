@@ -2,12 +2,13 @@ import {AVRCore as PeripheralRuntime} from './avr-runtime.js';
 import {runtimeABI,transpileAVR} from './avr-transpiler.js';
 import {deviceProfile,DEFAULT_DEVICE} from './devices/profiles.js';
 import {resolveAVRProfile} from './avr-profiles.js?v=20261025-board-um88-pipeline';
+import {compileIncremental,instantiateIncremental} from './avr-incremental-compiler.js';
 const littleEndian=new Uint8Array(Uint16Array.of(1).buffer)[0]===1;
 const runtimeCaches=new WeakMap(),legacyCache=new Map();
 const abiKey=abi=>JSON.stringify([abi.data,abi.rom,abi.idle,abi.frames,abi.pwm,
   abi.memoryPages,!!abi.device,Object.entries(abi.state).sort(([a],[b])=>a.localeCompare(b)),
   abi.phase?Object.entries(abi.phase).sort(([a],[b])=>a.localeCompare(b)):null]);
-function compileTranslation(binary,abi,options) {
+function compileTranslation(binary,abi,options,previous) {
   const runtime=options.runtimeModule;
   let cache=legacyCache;
   if(runtime){if(!runtimeCaches.has(runtime))runtimeCaches.set(runtime,new Map());cache=runtimeCaches.get(runtime);}
@@ -15,18 +16,18 @@ function compileTranslation(binary,abi,options) {
   const padded=new Uint8Array(profile.flashBytes).fill(255);padded.set(binary);
   // Exact image keys avoid hash collisions. Configuration does not enter the
   // lowering: live clocks/fuses are supplied by this runtime instance's bus.
-  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,options.boundedRegions??false,Array.from(padded)]);
+  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,options.boundedRegions??false,!!options.incrementalCompilation,Array.from(padded)]);
   if(options.cacheTranslation!==false&&cache.has(key)) {
     const cached=cache.get(key);cache.delete(key);cache.set(key,cached);
     return {...cached,cacheHit:true};
   }
-  const generated=transpileAVR(binary,abi,options);
-  const compiled={...generated,module:new WebAssembly.Module(generated.bytes),cacheHit:false};
+  const {linkage,...generated}=transpileAVR(binary,abi,{...options,_linkage:!!options.incrementalCompilation,_previousEmission:previous?.emission});
+  const compiled={...generated,...(linkage?compileIncremental(linkage,previous?.incremental):{module:new WebAssembly.Module(generated.bytes)}),cacheHit:false};
   if(options.cacheTranslation!==false) {
     cache.set(key,compiled);
     // Bounded per runtime identity; instances and mutable device memory are
     // never cached. Changed Flash naturally selects a different image key.
-    while(cache.size>8||[...cache.values()].reduce((n,v)=>n+v.bytes.length,0)>16*1024*1024)
+    while(cache.size>8||[...cache.values()].reduce((n,v)=>n+v.bytes.length+(v.incremental?.byteLength??0)+(v.emission?.byteLength??0),0)>16*1024*1024)
       cache.delete(cache.keys().next().value);
   }
   return compiled;
@@ -36,6 +37,8 @@ function compileTranslation(binary,abi,options) {
 // use the existing C/WASM peripheral runtime, sharing its linear memory.
 export class AVRCore extends PeripheralRuntime {
   constructor(binary,eeprom,options={}) {
+    if(options.incrementalCompilation!==undefined&&typeof options.incrementalCompilation!=='boolean')
+      throw Error('incrementalCompilation must be a boolean');
     if(options.boundedRegions!==undefined&&(typeof options.boundedRegions!=='boolean'||options.boundedRegions&&!options.resumable))
       throw Error('Bounded regions require resumable execution');
     if(options.optimizePhaseLocals!==undefined&&(typeof options.optimizePhaseLocals!=='boolean'||options.optimizePhaseLocals&&!options.resumable))
@@ -57,26 +60,31 @@ export class AVRCore extends PeripheralRuntime {
       if((generated.manifest.executionMode==='resumable-v1')!==!!options.resumable)throw Error('Packaged translation execution mode mismatch');
       if(abiKey(generated.manifest.abi)!==abiKey(abi))throw Error('Packaged translation runtime ABI mismatch');
       generated={...generated,module:new WebAssembly.Module(generated.bytes),cacheHit:false};
-    } else generated=compileTranslation(binary,abi,options);
-    // Public diagnostics must not mutate a module cached for another device.
-    this.transpilation=structuredClone(generated.manifest);
-    this._phaseABI=generated.manifest.abi.phase?{...generated.manifest.abi.phase}:null;
-    this.transpiledBytes=new Uint8Array(generated.bytes);
-    this.translationCacheHit=generated.cacheHit;this._translatedModule=generated.module;
-    this._translated=new WebAssembly.Instance(generated.module,{avr:{
+    } else generated=compileTranslation(binary,abi,options,this._compiledTranslation);
+    const avr={
       memory:this._exports.memory,clock:this._exports.avr_clock,
       interrupt:this._exports.avr_interrupt,writeIO:this._exports.avr_write_io,idle:this._exports.avr_idle,
       readIO:this._exports.avr_read_io,writeMasked:this._exports.avr_write_io_masked,
       ready:this._exports.avr_device_ready,time:this._exports.avr_device_time,wait:this._exports.avr_device_wait,
       control:this._exports.avr_device_control,lpm:this._exports.avr_device_lpm,
       audioDeadline:this._exports.avr_device_audio_deadline,audioSample:this._exports.avr_device_audio_sample,
-      pending:this._exports.avr_device_pending,
-      cpuDeadline:this._exports.avr_device_cpu_deadline,
-      idleUntil:this._exports.avr_device_idle,
-      phaseClock:this._exports.avr_device_phase_clock,
-      phaseDeadline:this._exports.avr_device_phase_deadline,
-      phaseRetire:this._exports.avr_device_phase_retire,
-    }}).exports;
+      pending:this._exports.avr_device_pending,cpuDeadline:this._exports.avr_device_cpu_deadline,idleUntil:this._exports.avr_device_idle,
+      phaseClock:this._exports.avr_device_phase_clock,phaseDeadline:this._exports.avr_device_phase_deadline,phaseRetire:this._exports.avr_device_phase_retire,
+    };
+    const linked=generated.incremental?instantiateIncremental(generated.incremental,avr,this._incremental):null;
+    const translated=linked?.exports??new WebAssembly.Instance(generated.module,{avr}).exports;
+    // Public diagnostics must not mutate a module cached for another device.
+    this.transpilation=structuredClone(generated.manifest);
+    this._phaseABI=generated.manifest.abi.phase?{...generated.manifest.abi.phase}:null;
+    this.transpiledBytes=new Uint8Array(generated.bytes);
+    this.translationCacheHit=generated.cacheHit;this._translatedModule=generated.module;
+    this._compiledTranslation=generated;this._incremental=linked;this._translated=translated;
+    this.incrementalCompilation=linked?{...linked.diagnostics,
+      compiled:generated.cacheHit?0:generated.incremental.compiledCount,
+      reusedModules:generated.cacheHit?generated.incremental.groups.size:generated.incremental.reusedCount,
+      emittedInstructions:generated.cacheHit?0:generated.emission.emittedInstructions,
+      emittedBlocks:generated.cacheHit?0:generated.emission.emittedBlocks,
+      emittedRegions:generated.cacheHit?0:generated.emission.emittedRegions}:null;
     this._bridges=Object.fromEntries(Object.entries(this._translated).filter(([,fn])=>typeof fn==='function').map(([name,fn])=>[name,{...this._exports,translated:fn}]));
     const pwm=generated.manifest.abi.pwm;
     this._pwm8=new Uint8Array(this._exports.memory.buffer,pwm,8192);

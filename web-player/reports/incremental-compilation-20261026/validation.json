@@ -1,0 +1,46 @@
+{
+  "schema": "micromusic-incremental-validation-v1",
+  "compilerIdentity": "423f5bb9dd8aa5f53c176d1f24bf7aab2c85aaf9b6c954ce2d978ebd64cfa7cc",
+  "baselineCommit": "9b1073f9cdab11abb2ef0d1be66f4f318e835ddb",
+  "native": {
+    "bytes": 119010,
+    "sha256": "bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715"
+  },
+  "host": {
+    "cpu": "AMD Ryzen 5 5600X 6-Core Processor",
+    "os": "10.0.26300",
+    "node": "v22.22.3",
+    "v8": "12.4.254.21-node.56",
+    "arch": "x64"
+  },
+  "tests": {
+    "command": "node --test web-player/tests/*.test.mjs tools/music-startup.test.mjs tools/avr-music-target-core.test.mjs",
+    "passed": 1957,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 103035.0155
+  },
+  "instructionPhaseCases": 984,
+  "browserChecks": 2,
+  "observationsPerExperiment": 192,
+  "artifactParity": 36,
+  "hardwareTested": false,
+  "realtimeTested": false,
+  "harnessSources": {
+    "web-player/scripts/verify-incremental-benchmark.mjs": "e457144e63cff61427e9c2f128d30161b74c10c60df847e80d058155d0339923",
+    "web-player/tests/avr-incremental-compiler.test.mjs": "9a0dbe8ab9fd3dd0ea5778dc9bbe7a57a7507916817a06b31f7bc986dcfb7b62",
+    "web-player/tests/avr-persistent-cache.test.mjs": "90c3409a70ff48e33883334c20800053e8265d251f1789f9e02b0df497a96c4f",
+    "web-player/tests/attiny13a-package-runtime.test.mjs": "2f080cc9148ca4d9e39358c73261af800e4eaed233ea57fce38169993691764e",
+    "web-player/tests/incremental-browser.html": "da16b3f14d287fc926b1cd4758869fe0eb1766138b78810e70d4517006410cbf",
+    "web-player/tests/incremental-browser.mjs": "45b8321c4c9e64129c93c425b65af172607d5bd42d2dd512cf3194a98f15249d",
+    "web-player/tests/incremental-browser-worker.mjs": "6fbbc56087bafbdd2e011f78642ee5f8d65c5aa5a7b837b81ad2baee66aab5de"
+  },
+  "artifactHashEncoding": "ZIP: raw bytes; UTF-8 text: CRLF normalized to LF",
+  "artifacts": {
+    "browser.json": "f1bff87daba9680aaf6745578a1e345f0678272adc2f31f54ccdcec43e9c75c7",
+    "eager-page-benchmark.json": "0dbe9ee3b2b88279a01058a26708381d92e6234a42ccc265ac01ad122845b06b",
+    "eager-page-source.zip": "c6f8bc545a1e09ff2e075db04bd2f12c976a731f53b6f4e70cc26cedb558bd3e",
+    "seeded-benchmark.json": "72670f7e66621dd81b1771f1860cab6716e381fad4db6af5523a2dddfb5994b5",
+    "test-summary.txt": "be13270f58279abb77ba6762e12e9e96864ba21609e2c44661bbafb3b13a54f6"
+  }
+}

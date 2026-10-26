@@ -45,8 +45,11 @@ components; they do not authenticate arbitrary executable code.
 
 A hit bypasses translation but constructs a fresh complete chip. CPU SPM keeps
 its existing generation/image invalidation and retranslation behavior; the
-durable record retains only the original immutable image. Region-level
-retranslation remains planned.
+durable record retains only the original immutable image.
+`incrementalCompilation:true` now partitions the cache identity too. Portable
+hits preserve their initial module and use the
+[incremental linker](../native/INCREMENTAL_COMPILATION.md) for subsequent SPM
+refreshes; no live fragment/function reference enters IndexedDB.
 
 ## Limits and fallback
 

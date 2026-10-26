@@ -16,12 +16,12 @@ limited to the common core/Timer1. The user's two-configuration request replaces
 the earlier website-wide full-engine-default criterion; it does not reduce the
 full verification model's hardware requirements or change site/WASM defaults.
 
-Current status, 2026-10-26: **22/30 checklist items complete, eight open**.
-The newly completed item is explicit verification/site delivery (`8b813c70`),
-not a newly measured hardware feature. Earlier21/30 counts below are historical
-checkpoints. Timer0 TOP=0, debugWIRE, physical measurements, exclusive profiling,
-register-traffic optimization and region translation caching remain
-open under their original acceptance criteria.
+Current status, 2026-10-26: **23/30 checklist items complete, seven open**.
+The latest completed item is persistent/region translation caching, including
+optional dynamic linking after CPU SPM. Earlier21/30 and22/30 counts below are
+historical checkpoints. Timer0 TOP=0, debugWIRE, physical measurements,
+exclusive profiling and register-traffic optimization remain open under their
+original acceptance criteria. Caching changes no hardware coverage claim.
 
 ADC power-sequencing audit, `9b9015b4`: the full device now diagnoses PRADC
 requests while ADEN is set, before changing either PRR bit. It no longer treats
@@ -197,7 +197,7 @@ not a completed refactor or a reason to close remaining hardware items.
   optimization-parity checkpoints; capture throughput was 0.29–0.95x real time.
 - [ ] Reduce repeated register-memory traffic and WASM helper calls where the
   event deadline proves a block safe; preserve live SREG bits at every exit.
-- [ ] Cache translation using firmware, translator, runtime and configuration
+- [x] Cache translation using firmware, translator, runtime and configuration
   identities; invalidate changed Flash regions after self-programming.
   A bounded in-process module cache now uses the exact padded Flash image,
   compiler options, ABI and runtime module identity. Clocks/fuses stay in each
@@ -211,7 +211,18 @@ not a completed refactor or a reason to close remaining hardware items.
   improves warm construction by paired median3.10–3.13x on two firmwares;
   first-use validation/storage costs extra. See the
   [measurement and rejected JSON format](../reports/persistent-cache-20261026.md).
-  Region-level retranslation remains open; the combined item is not closed.
+  The [incremental compiler and dynamic linker](INCREMENTAL_COMPILATION.md)
+  now reuse encoded instruction/block/region templates and retain the original
+  compiled instance, replacing affected page fragments after SPM. Dependencies
+  cover operand/skip boundaries, remote leaders and cross-page cyclic regions;
+  old static wrappers detach when their callees change. All1957 tests pass,
+  including984 adjacent-phase instruction cases, real SPM in three clocks,
+  self-erasing the current SPM page and package/persistent-cache hits. The browser
+  verifies798 active IRQs and40001 CLKI pin observations. In192 serial measured
+  runs, coupled SPM gains paired median1.37–1.89x; cold construction costs extra
+  and ordinary audio has no established gain. Keep `incrementalCompilation:true`
+  explicit; the monolithic default is retained. All36 portable artifact cases
+  match baseline byte for byte. See [the evidence](../reports/incremental-compilation-20261026.md).
 - [x] Evaluate moving audio filters into WASM using measured costs.
   JS DSP took 0.17–0.29 ms per 250 ms audio, compared with 262–872 ms capture.
   Keep the filters in JS while optimizing the coupled native execution path.

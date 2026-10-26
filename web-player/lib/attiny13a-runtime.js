@@ -18,13 +18,13 @@ const timestampPs=value=>{
   return value;
 };
 export class ATtiny13A extends TranslatedCore {
-  static async fromPackage(input,{fastIdle=true,verification=false}={}){
+  static async fromPackage(input,{fastIdle=true,verification=false,incrementalCompilation=false}={}){
     const {decodePackage,assertPackageRuntimeABI}=await import('./attiny13a-package.js');
     const decoded=await decodePackage(input);
     if(typeof verification!=='boolean')throw Error('verification must be a boolean');
     if(verification&&(!decoded.options.resumable||(!decoded.options.osccalHz&&!decoded.options.clkiProfile)))
       throw Error('Verification requires a resumable package with a physical clock profile; package hardware settings are preserved');
-    const core=new this(decoded.flash,decoded.eeprom,{...decoded.options,fastIdle,_packageVersion:decoded.version,
+    const core=new this(decoded.flash,decoded.eeprom,{...decoded.options,fastIdle,incrementalCompilation,_packageVersion:decoded.version,
       runtimeModule:await WebAssembly.compile(decoded.runtime),
       ...(!verification?{precompiled:{bytes:decoded.translated,manifest:decoded.manifest}}:{}),
       optimizeFlags:decoded.manifest.optimizeFlags,maxBlockInstructions:decoded.manifest.maxBlockInstructions,
