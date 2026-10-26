@@ -74,7 +74,7 @@ error in verification mode. The standalone JS loader now also includes
 `emulation-configurations.js`; no default WASM download is introduced.
 
 Full-device verification is the most detailed available digital model, not a
-claim of complete silicon validation. Remaining nine ATtiny13A checklist items,
+claim of complete silicon validation. Remaining eight ATtiny13A checklist items,
 including hardware measurements, stay open. Virtual ISP/HVSP/programmer
 interfaces remain excluded. See [scope](EMULATION_SCOPE.md),
 [the support plan](ATTINY13A_PLAN.md), [the simplification plan](MODEL_SIMPLIFICATION.md)
@@ -102,3 +102,10 @@ running. This is functional evidence only; verification mode has no real-time
 audio acceptance claim. The screenshot stays in ignored
 `build/emulation-config-verification.png`. No native WASM, firmware or vendor
 definition bytes change in this configuration split.
+
+Plan reconciliation: explicit verification/site delivery closes the updated
+delivery criterion, replacing the former full-model website default as requested
+by the user. The count is22/30, eight open; hardware/performance requirements are
+unchanged. The subsequent ADC sequencing correction `9b9015b4` passes1919
+default/shared-tool checks and rebuilds only the full-device native runtime.
+The browser observation above belongs to the earlier configuration split.

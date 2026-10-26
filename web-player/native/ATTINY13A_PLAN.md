@@ -12,8 +12,24 @@ criteria, as explicitly requested by the user. See
 The player now offers explicit [verification and site configurations](EMULATION_CONFIGURATIONS.md).
 Full ATtiny13A verification uses the retained physical board and resumable CPU;
 the site keeps its existing music-oriented model. Tiny88 verification is still
-limited to the common core/Timer1. This separation closes no silicon checklist
-item and does not change the default site/WASM selection.
+limited to the common core/Timer1. The user's two-configuration request replaces
+the earlier website-wide full-engine-default criterion; it does not reduce the
+full verification model's hardware requirements or change site/WASM defaults.
+
+Current status, 2026-10-26: **22/30 checklist items complete, eight open**.
+The newly completed item is explicit verification/site delivery (`8b813c70`),
+not a newly measured hardware feature. Earlier21/30 counts below are historical
+checkpoints. Timer0 TOP=0, debugWIRE, physical measurements, exclusive profiling,
+register-traffic optimization and persistent/region translation caching remain
+open under their original acceptance criteria.
+
+ADC power-sequencing audit, `9b9015b4`: the full device now diagnoses PRADC
+requests while ADEN is set, before changing either PRR bit. It no longer treats
+the prohibited sequence as a supported paused conversion. Legal disable/gate/
+ungate/restart, retained status flags and independent Timer0 gating pass new
+native and generated-CPU tests, including physical and external CLKI clocks.
+All1919 default/shared-tool checks pass. This correctness fix closes no
+additional hardware item; see [the evidence](../reports/adc-power-sequence-20261026.json).
 
 The current implementation lowers all 123 instruction-summary forms, connects
 the device bus and peripheral scheduler, retranslates modified Flash, and
@@ -129,8 +145,15 @@ Hardware-dependent checks remain open until actual measurements are available.
   timing configuration in a versioned artifact with integrity checks.
 - [x] Load and validate that artifact in the CLI and browser worker.
 - [x] Verify self-programming and cache invalidation after loading a package.
-- [ ] Make the full ATtiny13A engine the default after integration and parity
-  checks pass; retain explicit engine selection for comparisons.
+- [x] Provide an explicit full ATtiny13A verification configuration and a
+  simplified site configuration, retaining compatible backend selection.
+  The user-requested split supersedes the earlier full-engine website default.
+  `8b813c70` connects the physical/resumable verification model, conservative
+  CPU policy, UI/URL selection, package hardware preservation and Worker/audio
+  recreation. Tests cover exact partial-instruction stops, physical audio block
+  partitioning and Tiny88's limited core/Timer1 reference. Existing site output
+  and independent full-device fixtures remain covered. No real-time or silicon
+  fidelity gate is inferred from the configuration switch.
 
 Acceptance: a package reproduces the configured device without implicit host
 defaults; CLI and browser execute the same firmware and physical output.
@@ -142,8 +165,11 @@ support, including retained original v1/v3 runtime regressions. A standalone
 loader test runs with no default WASM files; Worker tests cover audio restart
 and SPM.
 The browser can open a local package and observes both PWM pins as stereo.
-The default switch is additionally gated on real-time performance: browser
-verification initially measured about 0.4x audio throughput on this host.
+The earlier full-engine site-default proposal was gated on real-time performance;
+the initial browser observation was about0.4x audio throughput on this host.
+The current user-requested deployment keeps the simplified site default and
+uses the full model for verification. Performance/underrun acceptance and
+complete hardware fidelity remain separate outstanding work.
 
 ## 5 Performance without loss of timing accuracy
 
