@@ -176,7 +176,7 @@
     "node_passed": 31,
     "node_failed": 0
   },
-  "current_validation": "voice_pwm82_experiment_validation",
+  "current_validation": "voice_pwm82_player_validation",
   "voice32_validation": {
     "date": "2026-10-25",
     "engine_commit": "66709bc",
@@ -851,5 +851,98 @@
       "cutoff_hz": 4500,
       "poles": 4
     }
+  },
+  "voice_pwm82_player_validation": {
+    "date": "2026-10-26",
+    "branch": "codex/i8080-music-pwm",
+    "main_updated_by_this_task": false,
+    "pushed": false,
+    "rom_validation": "voice_pwm82_experiment_validation",
+    "rom_bytes_unchanged_since": "28885cc5",
+    "optimized_voices_selected_in_catalog": true,
+    "selected_ids": [
+      "voice32",
+      "owl32",
+      "uniform26-fluid-pwm108"
+    ],
+    "default_id": "voice32",
+    "catalog_families": 3,
+    "catalog_variants": 9,
+    "voice_period_t": 82,
+    "pulses_per_voice_sample": 2,
+    "maximum_grid_error_t": 0,
+    "maximum_width_error_t": 0,
+    "pulses_verified": 606184,
+    "cpu_hz": [
+      2000000,
+      2500000,
+      3500000
+    ],
+    "music_roms_unchanged": true,
+    "player_source_rate_hz": 192000,
+    "output_resampler": "Blackman-windowed sinc, cutoff0.45*deviceRate;193taps at192kHz;0.5ms lookahead",
+    "coefficients_prepared_before_audio_callbacks": true,
+    "alias_measurements": [
+      {
+        "source_rate_hz": 96000,
+        "device_rate_hz": 48000,
+        "cutoff_hz": 10000,
+        "rc_poles": 1,
+        "alias_hz": 5317.07317073171,
+        "alias_dbfs": -131.558196
+      },
+      {
+        "source_rate_hz": 192000,
+        "device_rate_hz": 44100,
+        "cutoff_hz": 10000,
+        "rc_poles": 1,
+        "alias_hz": 1417.07317073171,
+        "alias_dbfs": -132.82262
+      },
+      {
+        "source_rate_hz": 192000,
+        "device_rate_hz": 44100,
+        "cutoff_hz": 4500,
+        "rc_poles": 4,
+        "alias_hz": 1417.07317073171,
+        "alias_dbfs": -200.650859
+      },
+      {
+        "source_rate_hz": 192000,
+        "device_rate_hz": 48000,
+        "cutoff_hz": 10000,
+        "rc_poles": 1,
+        "alias_hz": 5317.07317073171,
+        "alias_dbfs": -132.458808
+      },
+      {
+        "source_rate_hz": 192000,
+        "device_rate_hz": 48000,
+        "cutoff_hz": 4500,
+        "rc_poles": 4,
+        "alias_hz": 5317.07317073171,
+        "alias_dbfs": -153.389684
+      }
+    ],
+    "passband_test_hz": [
+      1000,
+      10000
+    ],
+    "passband_amplitude_error_limit": 0.0001,
+    "live_worker_all_six_roms_at_192khz": true,
+    "device_stream_rate_hz": 48000,
+    "live_chunk_order_and_final_duration_checked": true,
+    "starvation_and_arbitrary_chunk_boundaries_checked": true,
+    "node_test_groups": 68,
+    "node_passed": 68,
+    "node_failed": 0,
+    "standalone_build_check": true,
+    "http_served_sources_match_current_files": true,
+    "http_files_verified": 13,
+    "http_rom_sha256_verified": 9,
+    "browser_suite": null,
+    "browser_status": "Not run: built-in browser unavailable in the current tool inventory; browser test source updated. Node VM/Worker tests do not establish browser sound or visual behavior.",
+    "hardware_tested": false,
+    "active_interrupts_supported": false
   }
 }

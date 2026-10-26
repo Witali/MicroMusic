@@ -3,23 +3,56 @@
   "period_t": 82,
   "constant_pcm_level": 7,
   "high_width_t": 32,
-  "source_rate_hz": 96000,
-  "device_rate_hz": 48000,
   "volume": 0.65,
   "normalize": false,
-  "measurement": "1s Hann amplitude at Fs_device-carrier after 0.25s settling; current AudioBus and StreamingAudio, no hardware",
+  "measurement": "1s Hann amplitude at Fs_device-carrier after 0.25s settling; AudioBus and band-limited StreamingAudio, no hardware",
+  "baseline_linear_96_to_48": {
+    "cutoff_hz": 10000,
+    "rc_poles": 1,
+    "alias_hz": 5317.07317073171,
+    "alias_dbfs": -15.097138,
+    "revision": "28885cc5"
+  },
   "results": [
     {
+      "source_rate_hz": 96000,
+      "device_rate_hz": 48000,
       "cutoff_hz": 10000,
       "rc_poles": 1,
       "alias_hz": 5317.07317073171,
-      "alias_dbfs": -15.097138
+      "alias_dbfs": -131.558196
     },
     {
+      "source_rate_hz": 192000,
+      "device_rate_hz": 44100,
+      "cutoff_hz": 10000,
+      "rc_poles": 1,
+      "alias_hz": 1417.07317073171,
+      "alias_dbfs": -132.82262
+    },
+    {
+      "source_rate_hz": 192000,
+      "device_rate_hz": 44100,
+      "cutoff_hz": 4500,
+      "rc_poles": 4,
+      "alias_hz": 1417.07317073171,
+      "alias_dbfs": -200.650859
+    },
+    {
+      "source_rate_hz": 192000,
+      "device_rate_hz": 48000,
+      "cutoff_hz": 10000,
+      "rc_poles": 1,
+      "alias_hz": 5317.07317073171,
+      "alias_dbfs": -132.458808
+    },
+    {
+      "source_rate_hz": 192000,
+      "device_rate_hz": 48000,
       "cutoff_hz": 4500,
       "rc_poles": 4,
       "alias_hz": 5317.07317073171,
-      "alias_dbfs": -71.49601
+      "alias_dbfs": -153.389684
     }
   ],
   "hardware_measured": false

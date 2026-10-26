@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import { CPU8080, AudioBus } from '../core8080.mjs';
+import { StreamingAudio } from '../stream-audio.mjs';
 
 // Execute the actual worker handler, including asynchronous chunks, without browser globals.
 const source = readFileSync(new URL('../worker.mjs', import.meta.url), 'utf8').replace(/^import .*\n/, '');
@@ -88,12 +89,29 @@ test('82T / two-pulse voices at every CPU clock: full live audio equals ordered 
     const name=(profile==='owl'?'owl':'dualcrc')+'-voice-pwm82';
     const rom=Uint8Array.from(readFileSync(new URL(path+name+'.bin',import.meta.url)));
     const audit=JSON.parse(readFileSync(new URL(path+'AUDIT.json',import.meta.url)));
-    const {result,messages}=await run(rom,{hz,seconds:12,realtime:true});
+    const rate=192000;
+    const {result,messages}=await run(rom,{hz,rate,seconds:12,realtime:true});
     assert.equal(result.kind,'done');assert.equal(result.stopReason,'HLT');assert.equal(result.t,audit.t_states);
     assert.equal(result.steps,audit.instructions);assert.equal(result.memWrites,0);assert.equal(result.inte,0);
     if(profile==='owl')assert.equal(result.edges,audit.pulses*2);
     const chunks=messages.filter(m=>m.kind==='audio').map(m=>Buffer.from(m.audio));
     assert.deepEqual(Buffer.concat(chunks),Buffer.from(result.audio));
-    assert.equal(result.audio.byteLength/4,Math.ceil(result.t/hz*96000));
+    assert.equal(result.audio.byteLength/4,Math.ceil(result.t/hz*rate));
+    const stream=new StreamingAudio(48000,{rate,cutoff:10000,poles:1,normalize:false,volume:.65});
+    let frames=0,energy=0;
+    // Feed actual asynchronous Worker chunks to the real device-rate renderer.
+    for(const chunk of chunks){
+      stream.push(new Float32Array(chunk.buffer,chunk.byteOffset,chunk.length/4));
+      for(;;){
+        const before=stream.outputFrames,block=new Float32Array(128);stream.render(block);
+        for(const value of block){assert.ok(Number.isFinite(value)&&Math.abs(value)<=1);energy+=value*value;}
+        frames+=stream.outputFrames-before;
+        if(stream.outputFrames-before<block.length)break;
+      }
+    }
+    stream.finished=true;
+    while(!stream.ended){const before=stream.outputFrames;stream.render(new Float32Array(128));frames+=stream.outputFrames-before;}
+    assert.equal(frames,Math.ceil(result.audio.byteLength/4*48000/rate));
+    assert.equal(stream.seconds,result.audio.byteLength/4/rate);assert.ok(energy>1);
   }
 });

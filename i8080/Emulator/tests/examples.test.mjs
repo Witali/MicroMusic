@@ -22,7 +22,8 @@ test('Example library: only the selected voice and music ROMs are listed and emb
       assert.equal(createHash('sha256').update(rom).digest('hex'),variant.sha256);
       assert.ok(html.includes(rom.toString('base64')),`${entry.id} at ${variant.hz} embedded`);
       assert.deepEqual(parseIntelHex(readFileSync(new URL(variant.rom.replace(/\.bin$/,'.hex'),new URL('../',import.meta.url)),'utf8')),new Uint8Array(rom));
-      assert.equal(variant.carrier_hz,variant.hz/(entry.id.includes('fluid')?108:109));
+      assert.equal(variant.carrier_hz,variant.hz/(entry.id.includes('fluid')?108:82));
+      assert.equal(variant.sample_rate_hz,variant.carrier_hz/(entry.id.includes('fluid')?4:2));
     }
     const rom = readFileSync(new URL(entry.rom, new URL('../', import.meta.url)));
     assert.equal(rom.length, entry.bytes); assert.equal(rom.length, 32768);
