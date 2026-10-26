@@ -2543,3 +2543,38 @@ for a claimed streaming system. [Partial baseline](../../Codecs/Codec2/reports/a
 Reduce wide temporary lifetimes/ABI spills and investigate selective faithful
 rounding, then qualify complete AVR streams. No IRQ, board, live-speech or
 real-time support is established by this candidate.
+
+### Refine only cancellation-sensitive LPC pairs, then test the whole input chain
+
+The [adaptive integer spectrum](../../Codecs/Codec2/ADAPTIVE_SPECTRUM_RU.md)
+first uses the narrow paired integer graph. Refine both paired bins if either
+has max(|real|,|imag|)<=2^(e-g), where L1(coefficients)<2^e. Compare positive
+binary32 magnitude bits to a power-of-two threshold, avoiding per-bin float
+arithmetic. Prepare wide coefficients lazily. Both arithmetic paths remain
+portable C, explicitly selected by source; actual AVR headers handle ROM.
+
+Of 36 tested combinations (24/32 narrow bits, Q22/Q30, g=8,10,..24), 32/Q30,
+g=18, wide40 minimizes counted refined bins under the existing full PCM/RNG
+gate. It refines 107,324/5,825,162 bins (1.842%) in the native mixed corpus,
+giving 56.97 dB/max 222. g=20 fails with max 895. All tested narrow24 cases
+fail. Guard admission is not monotonic: Q22/g10 changes RNG although g8/g12
+pass. Do not assume a binary threshold search is sufficient.
+
+Load faithful input pairs only when consumed, reuse the c2/c3 slot and store
+scalar outputs while only sum/product remain live. A 65,536-output integer
+comparison matches the original graph; rerunning all 36 configurations
+retains identical PCM hashes, RNG histories, errors and refinement counts.
+On ATmega64A AVR5/MUL, AVR-GCC 7.3.0 `-Os`, ordinary ABI, all 64 standalone
+native/AVR vector outputs match byte-for-byte. Mean cost is 2,549,507 cycles
+versus 19,292,650 for the prior wide kernel on the same inputs; stack is
+751 versus 1020 B. The algorithms' spectra differ, so the speed comparison
+is a fidelity-gated approximation, not a bit-exact algorithm speedup.
+[Kernel evidence](../../Codecs/Codec2/reports/adaptive-kernel.json).
+
+An independent 24-packet extreme/transition holdout passes native PCM but
+fails the first two full-decoder AVR packets (max 8925). The frozen full
+float reference also fails (max 8838) on an actual ATmega1284P diagnostic;
+LSP/LPC already differ before FFT. This is neither an ATmega64A fit claim
+nor a reason to weaken the numerical gate. Fix the input boundary first.
+[Negative full-decoder evidence](../../Codecs/Codec2/reports/adaptive-cold-failure.json),
+[earlier-stage trace](../../Codecs/Codec2/reports/cold-float-diagnostic.json).
