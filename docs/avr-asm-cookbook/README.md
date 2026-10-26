@@ -2624,3 +2624,37 @@ Next investigate int32 additions/rounded averages where headroom proves them
 safe, preserving a wide C reference and byte equality. Do not infer a speedup
 from that idea before assembling and measuring it.
 [Verified prefix profile](../../Codecs/Codec2/reports/canonical-profile.json).
+
+### Keep proven sums narrow, retain wide products and exact 33-bit averages
+
+The [narrow-sum profile](../../Codecs/Codec2/SUMS32_RU.md) changes only the
+paired weighted24/Q22 and analysis32/Q30 arithmetic. Block normalization keeps
+coefficient L1 near S=2^(B-3), with signedB limit 4S. Pair components are
+bounded near S, their sums/differences near 2S, and the rotated difference
+near 2*sqrt(2)*S plus small quantization error. Thus those additions fit
+int32. Native assertions compute/check the wide result before narrowing.
+Products/MAC accumulations remain int64; faithful40 remains unchanged.
+
+The final half-sum numerator can exceed int32. For unsigned words ua/ub and
+s=ua+ub, the sign of the mathematical signed33 sum is
+`negative=((ua&ub)|((ua^ub)&s))>>31`. Form floor(sum/2) with
+`(s>>1)|(negative<<31)`, then add one for a positive odd numerator. This
+preserves nearest/ties-away rounding without signed overflow or a negative
+signed shift. The half-difference uses its own sign formula and never negates
+INT32_MIN. Its rounded result must fit int32. The independent int64 reference
+matches 196 boundary and one million random operand pairs.
+
+ATmega64A AVR5/MUL, GNU AVR-GCC 7.3.0 `-Os`, ordinary ABI: new native and AVR
+outputs equal the frozen wide C bytes on 512x256 weighted and 64x257 adaptive
+vectors. Standalone mean cycles are 2,061,088→1,956,420 (-5.08%) and
+2,549,507→2,444,176 (-4.13%); stack 222→216 B and 751→751 B.
+[Kernel measurements](../../Codecs/Codec2/reports/sums32-kernels.json).
+
+All 389 full-decoder AVR frames remain byte-identical to the preceding
+verified PCM; native also retains the full 11,333-packet hashes. Mean EN/RU
+cost drops about 2.7%, Flash 49,618→48,768 B, ordinary-phrase stack
+2756→2738 B. The extreme-sequence peak remains 3009 B, leaving 376 B SRAM.
+Worst frame is still 30,768,431 cycles /1.923 s at 16 MHz. This is portable C,
+with explicit old wide C source selection; no new assembly, hardware macro
+overrides, IRQ or real-time admission.
+[Complete verification](../../Codecs/Codec2/reports/sums32-decoder.json).
