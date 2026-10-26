@@ -79,6 +79,12 @@ is observable separately from analog supply-threshold behavior.
 
 ## 3 Timing ambiguities and hardware validation
 
+Availability checkpoint, 2026-10-26: the user confirms that hardware acquisition
+equipment is currently unavailable. Keep actual capture/calibration items open;
+software fixtures and probe decoders do not establish silicon outcomes. Continue
+independent model, correctness and simplification work. Do not request the same
+equipment availability again unless the user changes that situation.
+
 - [x] Retain explicit choices for the conflicting first ADC sample timing and
   ADIF behavior under SBI/CBI until measured on ATtiny13A hardware.
 - [ ] Validate CLKPR transition timing and external RESET recognition/recovery.
@@ -131,6 +137,14 @@ The default switch is additionally gated on real-time performance: browser
 verification initially measured about 0.4x audio throughput on this host.
 
 ## 5 Performance without loss of timing accuracy
+
+The first [I/O ownership simplification](../reports/io-owners-20261026.md),
+`7adcc851`, centralizes 35 distinct official I/O byte owners, 31 publication
+bindings and eight generated Timer0 routes. The runtime rebuild is byte-identical
+to baseline. All 1892 default/shared-tool tests pass; all 64 I/O slots, aliases,
+256 synthetic publication states and isolated reconstruction are verified.
+This reduces duplicated source rules without changing timing, state or hardware
+coverage. Next audit common bus-boundary behavior before further consolidation.
 
 User-requested model simplification is saved in
 [MODEL_SIMPLIFICATION.md](MODEL_SIMPLIFICATION.md): one scheduler with independent
