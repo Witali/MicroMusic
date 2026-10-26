@@ -149,7 +149,8 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   }
   if(!(image instanceof Uint8Array)||!image.length||image.length>flashBytes)throw new Error(`${profile.name} Flash must contain 1–${flashBytes} bytes`);
   if(!Number.isInteger(maxBlockInstructions)||maxBlockInstructions<2||maxBlockInstructions>64)throw new Error('Block size must be 2–64 instructions');
-  for(const field of ['pc','cyc','error','errorPC','irqDelay','overflowAt','writes','frameCount'])
+  for(const field of ['pc','cyc','error','errorPC','irqDelay','overflowAt','writes','frameCount',
+    ...(!full&&profile.legacy.watchdogStartupReset?['watchdogResetAt','watchdogResets']:[])])
     if(!Number.isInteger(abi?.state?.[field]))throw new Error('Invalid AVR runtime ABI: '+field);
   const flash=new Uint8Array(flashBytes).fill(255);flash.set(image);
   const word=p=>flash[(p&pcMask)*2]|(flash[(p&pcMask)*2+1]<<8);
@@ -264,6 +265,14 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       if(name==='SPM')return bytes(constant(2),0x24,0,store8(flagsAddress,flags()),0x0f);
       if(name==='SLEEP')return condition(and(reg(profile.legacy.sleepControl),constant(profile.legacy.sleepEnableMask)),bytes(constant(1),0x24,0));
       if(name==='BREAK')return condition([0x23,2],bytes(constant(4),0x24,0));
+      // The shared Tiny88 music runtime accepts WDR during a protected
+      // bootloader-watchdog disable sequence. Match its diagnostic state;
+      // enabled watchdog reconfiguration still fails in the peripheral bus.
+      if(profile.legacy.watchdogStartupReset)return bytes(
+        binary(0xa0,stateF('cyc'),float(1)),0x24,1,
+        putF('watchdogResetAt',binary(0xa0,stateF('cyc'),float(1))),
+        condition(binary(0x62,stateF('watchdogResets'),stateF('watchdogResets')),
+          putF('watchdogResets',float(1)),putF('watchdogResets',binary(0xa0,stateF('watchdogResets'),float(1)))));
       return bytes(binary(0xa0,stateF('cyc'),float(1)),0x24,1,condition(and(reg(profile.legacy.watchdogControl),constant(profile.legacy.watchdogRunMask)),bytes(constant(3),0x24,0)));
     }
     if(name==='RJMP')return bytes(put('pc',constant((next+k)&pcMask)),set(7,constant(2)));

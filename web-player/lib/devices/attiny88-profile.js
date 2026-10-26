@@ -10,5 +10,6 @@ export const ATtiny88Profile=Object.freeze({
   dataAddressBits:16,programCounterBytes:2,
   legacy:Object.freeze({sleepControl:R.SMCR,sleepEnableMask:1<<B.SE,
     irqFlags:R.TIFR1,irqFlagMask:1<<B.TOV1,
-    watchdogControl:R.WDTCSR,watchdogRunMask:(1<<B.WDE)|(1<<B.WDIE)}),
+    watchdogControl:R.WDTCSR,watchdogRunMask:(1<<B.WDE)|(1<<B.WDIE),
+    watchdogStartupReset:true}),
 });

@@ -46,6 +46,31 @@ test('ATtiny88 calls and stack cross SPL boundaries and preserve a high Flash re
   for(let n=0;n<6;n++){a.step();b.step();sameCPU(a,b);}
   assert.equal(a.r[18],0x34);assert.equal(a.r[19],0x12);assert.equal(a.sp,0x200);assert.equal(a.pc,0x605);
 });
+
+test('ATtiny88 WDR resets inherited watchdog state before protected startup disable',()=>{
+  // CLI; WDR; LDI r17,0; OUT MCUSR,r17; LDS r16,WDTCSR;
+  // ORI r16,WDCE|WDE; STS WDTCSR,r16; STS WDTCSR,r17; WDR.
+  const code=[0x94f8,0x95a8,0xe010,0xbf14,0x9100,R.WDTCSR,
+    0x6108,0x9300,R.WDTCSR,0x9310,R.WDTCSR,0x95a8];
+  for(const prescaler of [0,1,7,0x20,0x21]){
+    const [a,b]=pair(code);
+    for(const c of [a,b]){c.data[R.MCUSR]=8;c.data[R.WDTCSR]=8|prescaler;c.sreg=0x75;}
+    for(let n=0;n<9;n++){
+      a.step();b.step();sameCPU(a,b);
+      for(const key of ['watchdogResetAt','watchdogResets','wdtUntil'])assert.equal(a[key],b[key],key);
+      assert.equal(a.controlRequest,0);
+    }
+    assert.equal(a.data[R.WDTCSR],0);assert.equal(a.watchdogResets,2);
+    assert.equal(a.watchdogResetCycle,a.cyc);assert.equal(a.watchdogResetAt,a.cyc);
+  }
+});
+
+test('ATtiny88 startup WDR support retains rejection of enabled watchdog configuration',()=>{
+  const [a,b]=pair([0x95a8,0x95a8]);
+  for(const c of [a,b]){c.data[R.WDTCSR]=8;c.step();c.step();
+    assert.throws(()=>c.writeData(R.WDTCSR,9),/Enabled watchdog/);}
+  sameCPU(a,b);assert.equal(a.watchdogResets,2);assert.equal(a.watchdogResets,b.watchdogResets);
+});
 test('ATtiny88 rejects a conflicting target and isolates its cached CPU from ATtiny13A',()=>{
   const image=Uint8Array.of(0,0);
   const a=new AVRCore(image,null,{target:'attiny88'}),b=new AVRCore(image,null,{device:'ATtiny88',cpuHz:16000000});
