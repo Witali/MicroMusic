@@ -46,7 +46,11 @@ static void trigger_change(analog_adc_t *adc, int previous) {
         request(adc, 1);
 }
 
-static void sample(analog_adc_t *adc) {
+static int sample(analog_adc_t *adc) {
+    if (!adc->bandgap_ready) {
+        adc->reference_unsettled = 1;
+        return 0;
+    }
     uint32_t reference = adc->selected_reference ? adc->bandgap_uv : adc->vcc_uv;
     int32_t voltage = adc->channel_uv[adc->selected_mux];
     adc->invalid_reference = reference == 0;
@@ -57,9 +61,10 @@ static void sample(analog_adc_t *adc) {
     }
     adc->sampled_at = adc->half_cycle;
     adc->sampled = 1;
+    return 1;
 }
 
-static void half_edge(analog_adc_t *adc) {
+static int half_edge(analog_adc_t *adc) {
     if (adc->phase == WAIT_START) begin(adc, 0);
     else if (adc->phase == AUTO_SYNC) {
         /* Prescaler phase restarts after trigger synchronization. */
@@ -71,7 +76,7 @@ static void half_edge(analog_adc_t *adc) {
         uint8_t complete_phase = adc->conversion_first ? 50 :
             (adc->auto_conversion ? 27 : 26);
         ++adc->elapsed;
-        if (!adc->sampled && adc->elapsed == sample_phase) sample(adc);
+        if (!adc->sampled && adc->elapsed == sample_phase && !sample(adc)) return 0;
         if (adc->elapsed == complete_phase) {
             if (adc->data_locked) ++adc->discarded_results;
             else adc->result = adc->sampled_result;
@@ -87,6 +92,7 @@ static void half_edge(analog_adc_t *adc) {
         }
     }
     if (adc->phase != IDLE) adc->next_half_edge = next_edge(adc, adc->half_cycle);
+    return 1;
 }
 
 void analog_adc_reset(analog_adc_t *adc, uint32_t vcc_uv, uint32_t bandgap_uv,
@@ -95,17 +101,24 @@ void analog_adc_reset(analog_adc_t *adc, uint32_t vcc_uv, uint32_t bandgap_uv,
     adc->vcc_uv = vcc_uv;
     adc->bandgap_uv = bandgap_uv;
     adc->clock_running = 1;
+    adc->bandgap_ready = 1;
     adc->first = 1;
     adc->first_sample_half_adc = first_sample_half_adc == 29 ? 29 : 27;
     adc->half_cycle = adc->origin = half_cycle;
 }
 
 uint64_t analog_adc_next_event(const analog_adc_t *adc) {
-    return adc->clock_running && adc->phase != IDLE ? adc->next_half_edge : UINT64_MAX;
+    return !adc->reference_unsettled && adc->clock_running && adc->phase != IDLE ? adc->next_half_edge : UINT64_MAX;
+}
+
+int analog_adc_bandgap_ready(analog_adc_t *adc, int ready) {
+    if (ready != 0 && ready != 1) return 0;
+    adc->bandgap_ready = (uint8_t)ready;
+    return !adc->reference_unsettled;
 }
 
 int analog_adc_advance(analog_adc_t *adc, uint64_t half_cycle) {
-    if (half_cycle < adc->half_cycle) return 0;
+    if (adc->reference_unsettled || half_cycle < adc->half_cycle) return 0;
     if (!adc->clock_running) {
         uint64_t stopped = half_cycle - adc->half_cycle;
         adc->origin += stopped;
@@ -113,7 +126,7 @@ int analog_adc_advance(analog_adc_t *adc, uint64_t half_cycle) {
     }
     while (adc->clock_running && adc->phase != IDLE && adc->next_half_edge <= half_cycle) {
         adc->half_cycle = adc->next_half_edge;
-        half_edge(adc);
+        if (!half_edge(adc)) return 0;
     }
     adc->half_cycle = half_cycle;
     return 1;

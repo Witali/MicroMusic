@@ -40,14 +40,16 @@ function changeComparatorExport(bytes,{remove=false,wrongSignature=false}={}){
   assert.fail('Missing runtime export section');
 }
 
-test('v6 package preserves explicit physical comparator configuration and reconstruction',async()=>{
-  assert.equal(PACKAGE_VERSION,6);
+// Comparator timing was introduced in v6; these use the current writer. The
+// genuine committed v6 package/runtime is retained separately and exercised by
+// attiny13a-bandgap-package.test.mjs without rewriting its historical envelope.
+test('current package preserves independent physical comparator configuration and reconstruction',async()=>{
   const external={resumable:true,fuseLow:0x70,clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}};
   for(const clock of [physical,external]){
     const configuration={...clock,comparatorTimingProfile:profile};
     const pkg=await createPackage({...input(phased),configuration});
     const decoded=await decodePackage(pkg);
-    assert.equal(pkg.version,6);assert.deepEqual(decoded.options.comparatorTimingProfile,profile);
+    assert.equal(pkg.version,PACKAGE_VERSION);assert.deepEqual(decoded.options.comparatorTimingProfile,profile);
     assert.notEqual(decoded.options.comparatorTimingProfile,decoded.configuration.comparatorTimingProfile);
     const restored=await ATtiny13A.fromPackage(pkg);
     assert.deepEqual(restored._translationOptions.comparatorTimingProfile,profile);
@@ -58,7 +60,7 @@ test('v6 package preserves explicit physical comparator configuration and recons
   }
 });
 
-test('v6 null profile does not require the comparator capability export',async()=>{
+test('current null comparator profile does not require the comparator capability export',async()=>{
   const oldRuntime=changeComparatorExport(runtime,{remove:true});
   const pkg=await createPackage({...input(plain),runtime:oldRuntime});
   assert.equal(pkg.configuration.comparatorTimingProfile,null);
@@ -78,7 +80,7 @@ for(const kind of ['missing','wrong-signature'])test('package rejects '+kind+' c
   }finally{WebAssembly.Instance=original;}
 });
 
-test('resealed v6 profiles cannot bypass physical/resumable or legacy-unit validation',async()=>{
+test('resealed current comparator profiles cannot bypass physical/resumable or legacy-unit validation',async()=>{
   const original=await createPackage({...input(phased),configuration:{...physical,comparatorTimingProfile:profile}});
   for(const patch of [{resumable:false},{osccalHz:null},{comparatorPropagationHalf:1},{bandgapStartupHalf:1},
     {comparatorTimingProfile:{domain:profile.domain,propagationNs:0}},
@@ -94,7 +96,7 @@ test('resealed v6 profiles cannot bypass physical/resumable or legacy-unit valid
 test('historical v1-v5 configuration schemas remain exact and reject the later comparator field',async()=>{
   const original=await createPackage(input(plain));
   const introduced={osccalHz:2,nvmClockProfile:2,nvmCalibrationReferenceHz:2,powerResetProfile:3,
-    resetInputProfile:4,resumable:5,clkiProfile:5,comparatorTimingProfile:6};
+    resetInputProfile:4,resumable:5,clkiProfile:5,comparatorTimingProfile:6,bandgapProfile:7};
   for(let version=1;version<=5;version++){
     const old=structuredClone(original);old.version=version;
     for(const [name,since] of Object.entries(introduced))if(version<since)delete old.configuration[name];

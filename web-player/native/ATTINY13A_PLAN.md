@@ -16,12 +16,24 @@ limited to the common core/Timer1. The user's two-configuration request replaces
 the earlier website-wide full-engine-default criterion; it does not reduce the
 full verification model's hardware requirements or change site/WASM defaults.
 
-Current status, 2026-10-26: **23/30 checklist items complete, seven open**.
-The latest completed item is persistent/region translation caching, including
-optional dynamic linking after CPU SPM. Earlier21/30 and22/30 counts below are
-historical checkpoints. Timer0 TOP=0, debugWIRE, physical measurements,
+Current status, 2026-10-26: **24/31 checklist items complete, seven open**.
+The new item explicitly covers the shared ADC/comparator/BOD internal reference
+identified during the official section8.3.1 audit. Its explicit physical profile
+is implemented and tested; no original open item was reclassified as complete.
+Earlier21/30,22/30 and23/30 counts below are historical checkpoints.
+Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
+
+Shared reference checkpoint, 2026-10-26: package v7 connects enabled ADC,
+software ACBG/ACD and BOD demand to one explicit physical startup. Continuous
+handoff and BOD-kept warm resets retain readiness; qualified POR or complete
+loss of demand invalidates it. Readiness precedes a tied sample without
+advancing ADC during publication. BOD receiver/recovery remains independent.
+Null-profile and original v1–v6 package semantics are preserved. These are
+software/profile checks, not silicon calibration or official-simulator results.
+See the [contract](devices/attiny13a/shared-reference.md) and
+[integration evidence](../reports/shared-reference-20261026.md).
 
 Physical comparator checkpoint, 2026-10-26: an explicit ns profile separates
 analog propagation/reference startup from delivered digital clock phases. It
@@ -157,6 +169,10 @@ stack-phase convention; the hardware phase audit remains part of stage 3.
   while retaining integer absolute timestamps. A measured per-chip table and
   analog settling behavior remain hardware-validation work.
 - [x] Implement the BODCR timed sleep-disable sequence.
+- [x] Connect ADC, comparator and BOD internal-reference demand to a shared
+  explicit physical startup and readiness controller; preserve continuous
+  handoff/warm-reset state and diagnose samples before readiness. This item
+  was added during the official section8.3.1 audit, increasing the total to31.
 - [x] Apply fuse-dependent oscillator startup and reset recovery delays.
   `fuseStartupProfile:1` enables source-clock and watchdog-pulse delays,
   external RESET release/reassertion and mode-dependent wake startup. The
@@ -233,10 +249,11 @@ Hardware-dependent checks remain open until actual measurements are available.
 Acceptance: a package reproduces the configured device without implicit host
 defaults; CLI and browser execute the same firmware and physical output.
 
-Format v6 includes per-asset and envelope SHA-256, explicit clock/supply/RESET
+Format v7 includes per-asset and envelope SHA-256, explicit clock/supply/RESET
 configuration, optional CPU continuation/CLKI and physical comparator timing,
-embedded manifest and ABI validation. Readers retain v1/v2/v3/v4/v5
-support, including retained original v1/v3 runtime regressions. A standalone
+shared internal-reference timing, embedded manifest and ABI validation.
+Readers retain v1/v2/v3/v4/v5/v6 support, including retained original v1/v3
+runtimes and an original v6 comparator package. A standalone
 loader test runs with no default WASM files; Worker tests cover audio restart
 and SPM.
 The browser can open a local package and observes both PWM pins as stereo.

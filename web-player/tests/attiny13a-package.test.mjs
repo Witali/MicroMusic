@@ -89,26 +89,26 @@ test('default configuration, erased EEPROM and serialization are deterministic',
 
 test('version1 preserves its original configuration contract',async()=>{
   const pkg=copy(original);pkg.version=1;
-  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile','resumable','clkiProfile','comparatorTimingProfile'])delete pkg.configuration[key];
+  for(const key of ['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile','resumable','clkiProfile','comparatorTimingProfile','bandgapProfile'])delete pkg.configuration[key];
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,1);
   assert.deepEqual(decoded.configuration,pkg.configuration);assert.equal(Object.keys(decoded.options).length,17);
 });
 
 test('version2 preserves its calibrated-clock configuration contract',async()=>{
   const pkg=copy(original);pkg.version=2;delete pkg.configuration.powerResetProfile;delete pkg.configuration.resetInputProfile;
-  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;delete pkg.configuration.comparatorTimingProfile;
+  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;delete pkg.configuration.comparatorTimingProfile;delete pkg.configuration.bandgapProfile;
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,2);assert.deepEqual(decoded.configuration,pkg.configuration);
 });
 
 test('version3 preserves its power-profile contract without requiring the later RESET profile',async()=>{
   const pkg=copy(original);pkg.version=3;delete pkg.configuration.resetInputProfile;
-  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;delete pkg.configuration.comparatorTimingProfile;
+  delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;delete pkg.configuration.comparatorTimingProfile;delete pkg.configuration.bandgapProfile;
   const decoded=await decodePackage(seal(pkg));assert.equal(decoded.version,3);
   assert.deepEqual(decoded.configuration,pkg.configuration);
 });
 
 test('version4 retains its RESET contract and rejects later continuation/CLKI fields',async()=>{
-  const pkg=copy(original);pkg.version=4;delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;delete pkg.configuration.comparatorTimingProfile;
+  const pkg=copy(original);pkg.version=4;delete pkg.configuration.resumable;delete pkg.configuration.clkiProfile;delete pkg.configuration.comparatorTimingProfile;delete pkg.configuration.bandgapProfile;
   const decoded=await decodePackage(seal(pkg));assert.deepEqual(decoded.configuration,pkg.configuration);
   assert.equal(decoded.options.resumable,undefined);assert.equal(decoded.options.clkiProfile,undefined);
   for(const [key,value] of [['resumable',false],['clkiProfile',null]]){
@@ -128,7 +128,7 @@ test('packages reject DWEN without requiring an analog RESET profile',async()=>{
 
 test('the DWEN admission boundary also covers historical package versions',async()=>{
   const introduced={osccalHz:2,nvmClockProfile:2,nvmCalibrationReferenceHz:2,
-    powerResetProfile:3,resetInputProfile:4,resumable:5,clkiProfile:5,comparatorTimingProfile:6};
+    powerResetProfile:3,resetInputProfile:4,resumable:5,clkiProfile:5,comparatorTimingProfile:6,bandgapProfile:7};
   for(let version=1;version<=PACKAGE_VERSION;version++){
     const pkg=copy(original);pkg.version=version;
     for(const [key,since] of Object.entries(introduced))if(version<since)delete pkg.configuration[key];
@@ -146,6 +146,7 @@ const phaseInput={...input,translated:phased.bytes,manifest:phased.manifest,conf
 test('version5 preserves continuation without the later physical comparator profile',async()=>{
   const pkg=copy(await createPackage(phaseInput));pkg.version=5;
   delete pkg.configuration.comparatorTimingProfile;
+  delete pkg.configuration.bandgapProfile;
   const decoded=await decodePackage(seal(pkg));
   assert.equal(decoded.version,5);assert.equal(decoded.options.resumable,true);
   assert.equal(decoded.options.comparatorTimingProfile,undefined);

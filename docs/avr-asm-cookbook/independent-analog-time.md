@@ -31,3 +31,13 @@ pending propagation/reference startup at CLKPR /1 and /8, quantized edge ties,
 zero-delta service and held external CLKI. It derives expected deadlines without
 production timing helpers. All eight groups pass; these checks validate the
 selected digital convention and do not measure silicon oscillator settling.
+
+Reference enable is a separate shared resource. Keep an owner mask for ADC,
+software ACBG/ACD and BOD, retain one physical startup across continuous owner
+handoffs, and qualify loss of power using current POR rather than aggregate
+RESET or sticky flags. Automatic peripheral clock gating need not release its
+analog request. Publish readiness before a tied sample without advancing the
+consumer during publication. The [implemented shared profile](../../web-player/native/devices/attiny13a/shared-reference.md)
+keeps BOD recovery independent and diagnoses unavailable ADC samples. Explicit
+startup fixtures and generated-CPU lifecycle tests validate the selected digital
+contract; they establish no calibrated analog startup or performance benefit.

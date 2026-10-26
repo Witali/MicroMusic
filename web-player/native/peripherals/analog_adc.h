@@ -31,12 +31,18 @@ typedef struct {
     uint8_t phase, elapsed, first, conversion_first, auto_conversion;
     uint8_t selected_mux, selected_reference, sampled, data_locked;
     uint8_t clock_running, first_sample_half_adc, invalid_reference;
+    /* Shared-reference connection defaults ready. An unavailable sample is a
+     * sticky diagnostic, independent of REFS; no conversion result is invented. */
+    uint8_t bandgap_ready, reference_unsettled;
 } analog_adc_t;
 
 /* Supply/reference are explicit fixture parameters; no nominal analog values
  * are invented. first_sample_half_adc must be 27 or 29: see README ambiguity. */
 void analog_adc_reset(analog_adc_t *adc, uint32_t vcc_uv, uint32_t bandgap_uv,
                       uint8_t first_sample_half_adc, uint64_t half_cycle);
+/* Publish BEFORE a tied ADC sample. This delivers no clock or conversion work.
+ * reference_unsettled is sticky until reset, even after readiness returns. */
+int analog_adc_bandgap_ready(analog_adc_t *adc, int ready);
 /* All timestamped calls advance events THROUGH the timestamp before mutation.
  * Equal-time voltage injection therefore follows sampling at that timestamp.
  * Calls with time earlier than the current time are rejected (return zero). */

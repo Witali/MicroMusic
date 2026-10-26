@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 export function compileAnalog(name, sources, fixture, {fixedMemoryPages}={}) {
+  sources=sources.map(path=>path.replaceAll('\\','/'));
   // device.c owns the supply observer even when the selected fixture leaves it
   // disabled. Keep its linked dependency common to all standalone board tests.
   if(sources.includes('web-player/native/peripherals/device.c')&&!sources.includes('web-player/native/peripherals/power_reset.c'))
@@ -13,8 +14,9 @@ export function compileAnalog(name, sources, fixture, {fixedMemoryPages}={}) {
   if((sources.includes('web-player/native/peripherals/device.c')||fixture.includes('#include "device.c"'))&&
     !sources.includes('web-player/native/devices/attiny13a/reset_input.c'))
     sources=[...sources,'web-player/native/devices/attiny13a/reset_input.c'];
-  if(sources.includes('web-player/native/peripherals/device.c')||fixture.includes('#include "device.c"')){
-    for(const name of ['clki_input','clki_clock','clki_validation','clki_periodic']){
+  if(sources.some(path=>path.endsWith('web-player/native/peripherals/device.c'))||
+    fixture.includes('#include "device.c"')||fixture.includes('static device_t board;')){
+    for(const name of ['clki_input','clki_clock','clki_validation','clki_periodic','bandgap']){
       const source=`web-player/native/devices/attiny13a/${name}.c`;
       if(!sources.includes(source))sources=[...sources,source];
     }

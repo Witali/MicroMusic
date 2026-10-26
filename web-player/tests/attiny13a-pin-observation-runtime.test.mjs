@@ -185,7 +185,7 @@ async function historicalPackage(version){
   }).map(([name,bytes])=>[name,{encoding:'base64',bytes:bytes.length,sha256:hash(bytes),data:Buffer.from(bytes).toString('base64')}]));
   const configuration={...DEFAULT_CONFIGURATION};
   for(const name of version===1?['osccalHz','nvmClockProfile','nvmCalibrationReferenceHz','powerResetProfile','resetInputProfile']:['resetInputProfile'])delete configuration[name];
-  delete configuration.resumable;delete configuration.clkiProfile;delete configuration.comparatorTimingProfile;
+  delete configuration.resumable;delete configuration.clkiProfile;delete configuration.comparatorTimingProfile;delete configuration.bandgapProfile;
   const pkg={format:PACKAGE_FORMAT,version,device:'ATtiny13A',abi:{id:PACKAGE_ABI,layout},configuration,manifest:generated.manifest,assets};
   const canonical=v=>v===null||typeof v!=='object'?JSON.stringify(v):Array.isArray(v)?'['+v.map(canonical).join(',')+']':'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}';
   pkg.integrity={algorithm:'SHA-256',sha256:hash(canonical(pkg))};return pkg;

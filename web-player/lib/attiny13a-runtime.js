@@ -2,6 +2,7 @@ import {AVRCore as TranslatedCore} from './avr-transpiled-runtime.js';
 import {resetInputProfileFields,normalizeResetInputProfile} from './devices/attiny13a-reset-profile.js';
 import {normalizeClkiProfile} from './devices/attiny13a-clki-profile.js';
 import {normalizeComparatorTimingProfile,validateComparatorTimingOptions} from './devices/attiny13a-comparator-profile.js';
+import {normalizeBandgapProfile,validateBandgapOptions} from './devices/attiny13a-bandgap-profile.js';
 import {AT13_FUSE_MASK as FUSE,AT13_IO as IO,AT13_MASK as MASK} from './attiny13a-registers.js';
 import {executionOptions} from './emulation-configurations.js';
 const configuration={oscillatorHz:1,watchdogHz:2,vccMicrovolts:3,bandgapMicrovolts:4,
@@ -55,7 +56,12 @@ export class ATtiny13A extends TranslatedCore {
     if(clkiProfile&&((options.wakeStartupHalf??0)%2))throw Error('clkiProfile requires whole source CK wake startup');
     const comparatorTimingProfile=normalizeComparatorTimingProfile(options.comparatorTimingProfile??null);
     validateComparatorTimingOptions(comparatorTimingProfile,{...options,clkiProfile});
+    const bandgapProfile=normalizeBandgapProfile(options.bandgapProfile??null);
+    validateBandgapOptions(bandgapProfile,{...options,clkiProfile,comparatorTimingProfile});
     super(binary,eeprom,{...options,fastIdle:false,runtimeModule:options.runtimeModule,configureRuntime:exports=>{
+      if(bandgapProfile&&['configure_bandgap','bandgap_enabled','bandgap_active','bandgap_powered',
+        'bandgap_ready','bandgap_owners','bandgap_deadline_ps'].some(name=>typeof exports['avr_device_'+name]!=='function'))
+        throw Error('Runtime has no shared bandgap profile');
       if(comparatorTimingProfile&&typeof exports.avr_device_configure_comparator!=='function')
         throw Error('Runtime has no comparator physical timing profile');
       if(options.resumable!==undefined&&typeof options.resumable!=='boolean')throw Error('resumable must be a boolean');
@@ -104,6 +110,8 @@ export class ATtiny13A extends TranslatedCore {
         if(!configure(1,comparatorTimingProfile.propagationNs)||!configure(2,comparatorTimingProfile.bandgapStartupNs)||
           !configure(0,1))throw Error('Comparator physical timing profile unavailable');
       }
+      if(bandgapProfile&&(!exports.avr_device_configure_bandgap(1,bandgapProfile.startupNs)||
+        !exports.avr_device_configure_bandgap(0,1)))throw Error('Shared bandgap profile unavailable');
     }});
     this._exports.avr_device_bind_generation();
     this._generation=this._exports.avr_device_generation();
@@ -112,6 +120,7 @@ export class ATtiny13A extends TranslatedCore {
     this._ps=!!this._exports.avr_device_physical_mode?.();
     this._clki=!!this._exports.avr_device_clki_enabled?.();
     if(comparatorTimingProfile&&!this._ps)throw Error('Comparator physical timing profile requires physical time');
+    if(bandgapProfile&&!this._exports.avr_device_bandgap_enabled())throw Error('Shared bandgap profile unavailable');
     if(clkiProfile&&!this._clki)throw Error('CLKI profile unavailable');
     if(clkiProfile?.electricalValidation==='datasheet-ideal-v1'&&!this._exports.avr_device_clki_validation_enabled?.())
       throw Error('CLKI electrical validation unavailable');
@@ -340,6 +349,9 @@ export class ATtiny13A extends TranslatedCore {
     const resetInput=exports.avr_device_reset_input_enabled?.()?{resetInputEnabled:true,
       resetInputAsserted:!!exports.avr_device_reset_input_asserted(),
       resetInputDeadlinePs:BigInt.asUintN(64,exports.avr_device_reset_input_deadline_ps())}:{};
+    const bandgap=exports.avr_device_bandgap_enabled?.()?{bandgap:{active:!!exports.avr_device_bandgap_active(),
+      powered:!!exports.avr_device_bandgap_powered(),ready:!!exports.avr_device_bandgap_ready(),
+      owners:exports.avr_device_bandgap_owners(),deadlinePs:BigInt.asUintN(64,exports.avr_device_bandgap_deadline_ps())}}:{};
     const p=this._phaseABI,phase=p?new DataView(exports.memory.buffer,p.pointer,p.bytes):null;
     const continuation=phase?{cpuPhase:{active:phase.getUint32(p.active-p.pointer,true),
       execPc:phase.getUint32(p.execPc-p.pointer,true),stage:phase.getUint32(p.stage-p.pointer,true),
@@ -349,7 +361,7 @@ export class ATtiny13A extends TranslatedCore {
       periodicRemaining:BigInt.asUintN(64,exports.avr_device_clki_periodic_remaining()),
       status:['COMPLETE','WAIT_CLOCK','WAIT_INPUT'][exports.avr_device_clki_status()],
       aligned:!!exports.avr_device_clki_aligned(),startupCK:BigInt.asUintN(64,exports.avr_device_clki_startup_ck())}}:{};
-    return {...super.state(),...time,...power,...resetInput,...continuation,...clki,clockDivisor:exports.avr_device_divisor(),
+    return {...super.state(),...time,...power,...resetInput,...bandgap,...continuation,...clki,clockDivisor:exports.avr_device_divisor(),
       halted:!!exports.avr_device_halted(),sleeping:!!exports.avr_device_sleep_phase(),resetHeld:!!exports.avr_device_reset_held(),
       starting:!!exports.avr_device_starting?.(),
       bodDisabled:!!exports.avr_device_bod_disabled?.(),bodRecovering:!!exports.avr_device_bod_recovering?.(),

@@ -1,20 +1,34 @@
 #include "analog.h"
 
-static void advance_adc(analog_t *a, uint64_t time) {
+static int advance_adc(analog_t *a, uint64_t time) {
     /* No conversion edge exists while idle. Preserve the running prescaler's
      * origin and publish exactly the same timestamp as the ordinary path.
      * Gated clocks still need the module's origin/deadline shift. */
-    if (a->adc.clock_running && a->adc.phase == ANALOG_ADC_IDLE && time >= a->adc.half_cycle)
+    if (a->adc.reference_unsettled) return 0;
+    /* Direct component clock controls may already have advanced this owner.
+     * Catching up its peer must not backdate ADC time or mask a real fault. */
+    if (time < a->adc.half_cycle) return 1;
+    if (a->adc.clock_running && a->adc.phase == ANALOG_ADC_IDLE && time >= a->adc.half_cycle) {
         a->adc.half_cycle = time;
-    else analog_adc_advance(&a->adc, time);
+        return 1;
+    }
+    return analog_adc_advance(&a->adc, time);
 }
 
-static void connect_sources(analog_t *a, uint64_t time) {
+static int advance_comparator(analog_t *a, uint64_t time) {
+    if (a->comparator.physical_fault) return 0;
+    return time < a->comparator.half_cycle ||
+        analog_comparator_advance(&a->comparator, time);
+}
+
+static int connect_sources(analog_t *a, uint64_t time) {
     uint8_t comparator_flag = (a->comparator.acsr & ANALOG_ACI) ? 2 : 0;
     uint8_t flags = a->external_flags | comparator_flag;
     /* Every caller has already advanced the ADC through time. Register writes
      * handle changes to ADTS/ADATE themselves; a held flag has no new edge. */
-    if (flags != a->adc.source_flags) analog_adc_sources(&a->adc, flags, time);
+    if (a->adc.reference_unsettled) return 0;
+    return time < a->adc.half_cycle || flags == a->adc.source_flags ||
+        analog_adc_sources(&a->adc, flags, time);
 }
 
 void analog_reset(analog_t *a, uint32_t vcc_uv, uint32_t bandgap_uv,
@@ -35,13 +49,10 @@ int analog_advance(analog_t *a, uint64_t time) {
     if (time < a->adc.half_cycle || time < a->comparator.half_cycle) return 0;
     uint64_t next;
     while ((next = analog_next_event(a)) != UINT64_MAX && next <= time) {
-        advance_adc(a, next);
-        analog_comparator_advance(&a->comparator, next);
-        connect_sources(a, next);
+        if (!advance_adc(a, next) || !advance_comparator(a, next) ||
+            !connect_sources(a, next)) return 0;
     }
-    advance_adc(a, time);
-    analog_comparator_advance(&a->comparator, time);
-    return 1;
+    return advance_adc(a, time) && advance_comparator(a, time);
 }
 
 int analog_read(analog_t *a, uint8_t io, uint8_t *value, uint64_t time) {
@@ -56,33 +67,29 @@ int analog_write(analog_t *a, uint8_t io, uint8_t value, uint64_t time) {
     if (io == ANALOG_ACSR) result = analog_comparator_write(&a->comparator, io, value, time);
     else {
         result = analog_adc_write(&a->adc, io, value, time);
-        if (result) analog_comparator_adc(&a->comparator, a->adc.adcsra, a->adc.adcsrb,
-                                           a->adc.admux, time);
+        if (result && !analog_comparator_adc(&a->comparator, a->adc.adcsra, a->adc.adcsrb,
+                                             a->adc.admux, time)) return 0;
     }
-    connect_sources(a, time);
-    return result;
+    return connect_sources(a, time) && result;
 }
 
 int analog_input(analog_t *a, uint8_t pin, int32_t microvolts, uint64_t time) {
     if (pin > 5 || !analog_advance(a, time)) return 0;
     static const uint8_t channel[] = {0xff,0xff,1,3,2,0};
-    analog_comparator_input(&a->comparator, pin, microvolts, time);
-    if (channel[pin] != 0xff) analog_adc_input(&a->adc, channel[pin], microvolts, time);
-    return 1;
+    if (!analog_comparator_input(&a->comparator, pin, microvolts, time)) return 0;
+    return channel[pin] == 0xff || analog_adc_input(&a->adc, channel[pin], microvolts, time);
 }
 
 int analog_reference(analog_t *a, uint32_t vcc_uv, uint32_t bandgap_uv, uint64_t time) {
     if (!analog_advance(a, time)) return 0;
-    analog_adc_reference(&a->adc, vcc_uv, bandgap_uv, time);
-    analog_comparator_reference(&a->comparator, bandgap_uv, time);
-    return 1;
+    return analog_adc_reference(&a->adc, vcc_uv, bandgap_uv, time) &&
+        analog_comparator_reference(&a->comparator, bandgap_uv, time);
 }
 
 int analog_sources(analog_t *a, uint8_t flags, uint64_t time) {
     if (!analog_advance(a, time)) return 0;
     a->external_flags = flags & 0x7c;
-    connect_sources(a, time);
-    return 1;
+    return connect_sources(a, time);
 }
 
 uint16_t analog_pending(const analog_t *a) {
@@ -92,9 +99,11 @@ uint16_t analog_pending(const analog_t *a) {
 
 int analog_ack(analog_t *a, uint8_t vector, uint64_t time) {
     if (!analog_advance(a, time)) return 0;
-    if (vector == 5) analog_comparator_ack(&a->comparator, time);
-    else if (vector == 9) analog_adc_ack(&a->adc, time);
+    if (vector == 5) {
+        if (!analog_comparator_ack(&a->comparator, time)) return 0;
+    } else if (vector == 9) {
+        if (!analog_adc_ack(&a->adc, time)) return 0;
+    }
     else return 0;
-    connect_sources(a, time);
-    return 1;
+    return connect_sources(a, time);
 }

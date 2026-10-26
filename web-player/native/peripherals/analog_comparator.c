@@ -41,7 +41,8 @@ static void sync_needed(analog_comparator_t *c) {
 static void compare(analog_comparator_t *c) {
     uint64_t *at = propagation_deadline(c);
     if (c->physical_fault) return;
-    if (disabled(c) || *bandgap_deadline(c) != UINT64_MAX) {
+    if (disabled(c) || *bandgap_deadline(c) != UINT64_MAX ||
+        ((c->acsr & ANALOG_ACBG) && !c->bandgap_ready)) {
         *at = UINT64_MAX;
         return;
     }
@@ -84,6 +85,7 @@ void analog_comparator_reset(analog_comparator_t *c, const analog_comparator_con
     c->raw = c->sync1 = config->initial_output != 0;
     c->acsr = c->raw ? ANALOG_ACO : 0;
     c->clock_running = 1;
+    c->bandgap_ready = 1;
     c->propagation_at = c->synchronize_at = c->bandgap_ready_at = UINT64_MAX;
     c->propagation_at_ps = c->bandgap_ready_at_ps = UINT64_MAX;
     c->physical_configurable = 1;
@@ -227,6 +229,14 @@ int analog_comparator_reference(analog_comparator_t *c, uint32_t bandgap_uv,
                                 uint64_t half_cycle) {
     if (!analog_comparator_advance(c, half_cycle)) return 0;
     c->bandgap_uv = bandgap_uv;
+    compare(c);
+    return !c->physical_fault;
+}
+
+int analog_comparator_bandgap_ready(analog_comparator_t *c, int ready,
+                                   uint64_t half_cycle) {
+    if ((ready != 0 && ready != 1) || !analog_comparator_advance(c, half_cycle)) return 0;
+    c->bandgap_ready = (uint8_t)ready;
     compare(c);
     return !c->physical_fault;
 }

@@ -1,4 +1,4 @@
-# ATtiny13A package format v6
+# ATtiny13A package format v7
 
 `attiny13a-package.js` creates and verifies a self-contained initial device image.
 It has no Node imports and uses asynchronous WebCrypto SHA-256, so the same
@@ -24,7 +24,7 @@ const decoded = await decodePackage(savedJSON);
 translation's embedded `micromusic.avr` manifest. No files or URLs are referenced
 by the saved package.
 
-The envelope identifies format `micromusic-attiny13a-package`, version `6`,
+The envelope identifies format `micromusic-attiny13a-package`, version `7`,
 device `ATtiny13A`, and ABI `micromusic-attiny13a-device-v1`. Each of the four
 binary assets records its length, canonical base64 and SHA-256. The envelope
 hash covers all fields except `integrity`, including configuration, manifests
@@ -54,7 +54,7 @@ Limits are 1024-byte Flash, 64-byte EEPROM, 4 MiB translation, 2 MiB runtime,
 512 KiB embedded manifest and 16 MiB JSON. These are format limits, not device
 performance promises.
 
-The decoder also accepts versions 1, 2, 3, 4 and 5 with their original configuration and
+The decoder also accepts versions 1, 2, 3, 4, 5 and 6 with their original configuration and
 runtime contracts. Version 2 added the physical-clock bridge and calibration
 profile. Version 3 added the optional supply profile and its bridge exports.
 Version 4 added an optional analog RESET input profile and four receiver bridge
@@ -64,6 +64,10 @@ Version 6 adds `comparatorTimingProfile:null`. A non-null profile requires the
 new `avr_device_configure_comparator(i32,i32)->i32` runtime capability; null
 retains the existing half-clock behavior without requiring that export.
 Versions 1 through 5 reject this later configuration field, including null.
+Version 7 adds `bandgapProfile:null`. A selected shared-reference profile
+requires all seven new native configuration/state exports with exact signatures.
+Versions 1 through 6 reject this later field, including null; a genuine retained
+v6 package preserves its independent comparator startup semantics.
 Historical versions do not require these new fields or exports;
 retained original v1/v3 runtimes exercise that compatibility.
 Resumable translations declare `executionMode:'resumable-v1'`, an80-byte `phase`
@@ -124,6 +128,7 @@ it does not assert complete silicon behavior or measured oscillator calibration.
 | `adcFirstSample` | 27 | 27 or 29 (half ADC periods) |
 | `comparatorPropagationHalf`, `bandgapStartupHalf` | 0 | uint32, runtime half-clock domain |
 | `comparatorTimingProfile` | null | null, or the explicit physical-time comparator profile below |
+| `bandgapProfile` | null | null, or the explicit shared-reference profile below (v7) |
 | `comparatorInitial` | 0 | integer 0 or 1 |
 | `wakeStartupHalf` | 0 | uint32, base half ticks; even for CLKI's explicit source-CK count |
 | `spmCommandCycles` | 0 | uint32; 0 keeps missing timing explicit |
@@ -138,7 +143,6 @@ it does not assert complete silicon behavior or measured oscillator calibration.
 | `resetInputProfile` | null | null, or the complete six-field RESET receiver profile below |
 | `resumable` | false | boolean; optional CPU continuation mode, requiring physical time |
 | `clkiProfile` | null | null, or the exact digital fixture described below |
-| `comparatorTimingProfile` | null | null, or the explicit physical comparator timing profile below (v6) |
 
 The optional `comparatorTimingProfile` has exactly three fields:
 `{domain:'physical-ns-v1', propagationNs, bandgapStartupNs}`. Both delays must be
@@ -151,6 +155,31 @@ phases; synchronized ACO visibility still depends on its enabled clock. The
 loader configures this capability before initializing the virtual chip and
 rejects an older runtime that lacks it before guest execution. No profile
 means the original half-clock options retain their original semantics.
+
+The optional `bandgapProfile` has exactly two own data fields:
+`{domain:'physical-ns-v1', startupNs}`. Startup is an explicit uint32 nanosecond
+duration, including zero for a stable/ideal fixture. It requires resumable
+physical execution and an explicit `comparatorTimingProfile` whose
+`bandgapStartupNs` is zero; `bandgapStartupHalf` must also be zero. The shared
+profile owns reference startup once, rather than adding another comparator
+startup delay. Comparator propagation and clocked synchronization retain their
+separate timing. A null shared profile retains the v6 comparator contract.
+
+This selected fixture drops readiness when no reference owner remains or a
+qualified POR removes reference power. It does not reinterpret earlier package
+versions or imply a measured chip-wide startup curve. Its native configuration
+export is `avr_device_configure_bandgap(i32,i32)->i32` (field1 startup ns, then
+field0 enable). Selected profiles also require `avr_device_bandgap_enabled`,
+`avr_device_bandgap_active`, `avr_device_bandgap_powered`,
+`avr_device_bandgap_ready` and `avr_device_bandgap_owners` returning i32, plus
+`avr_device_bandgap_deadline_ps()->i64`.
+
+Only while the native profile-enabled observer is true, `state()` adds
+`bandgap:{active,powered,ready,owners,deadlinePs}`. The first three values are
+booleans, `owners` is the native owner bitmask, and `deadlinePs` is an unsigned
+64-bit bigint; `0xffffffffffffffffn` means no pending deadline. An enabled but
+ownerless profile still exposes this state. Null-profile and historical runtime
+snapshots omit `bandgap` entirely. This observation adds no per-edge host call.
 
 A non-null `osccalHz` table selects a physical picosecond clock domain. Its
 factory CAL entry must be supplied and, for the internal calibrated RC source,

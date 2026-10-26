@@ -45,6 +45,7 @@ const nativeFiles = readdirSync(join(root, peripheralDir)).sort()
 // Select device-owned modules explicitly; adding another MCU must not silently
 // link its implementation into the ATtiny13A board.
 const deviceFiles=['web-player/native/devices/attiny13a/reset_input.c',
+  'web-player/native/devices/attiny13a/bandgap.c','web-player/native/devices/attiny13a/bandgap.h',
   'web-player/native/devices/attiny13a/reset_input.h',
   'web-player/native/devices/attiny13a/clki_input.c','web-player/native/devices/attiny13a/clki_input.h',
   'web-player/native/devices/attiny13a/clki_clock.c','web-player/native/devices/attiny13a/clki_clock.h',

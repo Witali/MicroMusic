@@ -13,11 +13,15 @@ import {nominalVerificationDeviceOptions} from '../lib/emulation-configurations.
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{'out-file':{type:'string',default:'build/comparator-physical-verification.json'},
   'full-tap':{type:'string',default:'build/comparator-physical-full-suite.log'},
-  'additional-tap':{type:'string',default:'build/comparator-physical-additional-suite.log'}}});
+  'additional-tap':{type:'string',default:'build/comparator-physical-additional-suite.log'},
+  feature:{type:'string',default:'comparator'}}});
+assert.ok(['comparator','shared-reference'].includes(values.feature),'Unknown verification feature');
+const shared=values.feature==='shared-reference';
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
-const baselineCommit=execFileSync('git',['rev-parse','--verify','23ef393d^{commit}'],{cwd:root,encoding:'utf8'}).trim();
+const baselineCommit=execFileSync('git',['rev-parse','--verify',(shared?'d9e31cda':'23ef393d')+'^{commit}'],{cwd:root,encoding:'utf8'}).trim();
 const baseline=execFileSync('git',['show',baselineCommit+':web-player/wasm/attiny13a.wasm'],{cwd:root,maxBuffer:2*1024*1024});
-assert.equal(hash(baseline),'bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715');
+assert.equal(hash(baseline),shared?'4183c8b0d0b71e720307d7d8dc7959b4c880ea78ec8286dbcbb719f944a93000':
+  'bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715');
 const current=readFileSync(resolve(root,'web-player/wasm/attiny13a.wasm'));
 const modules=[baseline,current].map(bytes=>new WebAssembly.Module(bytes));
 const catalog=JSON.parse(readFileSync(resolve(root,'web-player/firmware.json'))),audio=[];
@@ -52,14 +56,15 @@ function suite(path){
   return {...result,tapSha256:hash(tap)};
 }
 const fullSuite=suite(values['full-tap']),additionalSuite=suite(values['additional-tap']);
-const report={schema:'micromusic-comparator-physical-verification-v1',baseline:{commit:baselineCommit,bytes:baseline.length,sha256:hash(baseline)},
+const sources=shared?['bandgap-controller','analog-bandgap-readiness','attiny13a-bandgap-runtime',
+  'attiny13a-bandgap-profile','attiny13a-bandgap-package','device-bandgap-profile'].map(name=>`web-player/tests/${name}.test.mjs`):
+  ['web-player/tests/analog-comparator-physical.test.mjs','web-player/tests/attiny13a-comparator-timing-runtime.test.mjs',
+    'web-player/tests/device-comparator-profile.test.mjs','web-player/tests/attiny13a-comparator-irq-sleep.test.mjs',
+    'web-player/tests/attiny13a-comparator-profile.test.mjs','web-player/tests/attiny13a-comparator-package.test.mjs'];
+const report={schema:shared?'micromusic-shared-reference-verification-v1':'micromusic-comparator-physical-verification-v1',baseline:{commit:baselineCommit,bytes:baseline.length,sha256:hash(baseline)},
   current:{bytes:current.length,sha256:hash(current),imports:WebAssembly.Module.imports(modules[1]),
     exports:WebAssembly.Module.exports(modules[1]).length},
-  sources:Object.fromEntries(['web-player/scripts/verify-comparator-timing.mjs',
-    'web-player/tests/analog-comparator-physical.test.mjs','web-player/tests/attiny13a-comparator-timing-runtime.test.mjs',
-    'web-player/tests/device-comparator-profile.test.mjs',
-    'web-player/tests/attiny13a-comparator-irq-sleep.test.mjs',
-    'web-player/tests/attiny13a-comparator-profile.test.mjs','web-player/tests/attiny13a-comparator-package.test.mjs'].map(path=>
+  sources:Object.fromEntries(['web-player/scripts/verify-comparator-timing.mjs',...sources].map(path=>
     [path,hash(readFileSync(resolve(root,path),'utf8').replaceAll('\r\n','\n'))])),
   fullSuite,additionalSuite,audio,
   meaning:'Current null-profile output/state parity against retained native baseline, with active IRQs. New physical-delay tests use explicit synthetic delays; no silicon calibration, official-simulator execution, speed or real-time support claim.'};

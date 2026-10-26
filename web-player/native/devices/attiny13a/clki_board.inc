@@ -138,7 +138,7 @@ static void clki_reset_inputs(void) {
     (external_reset_asserted()?POWER_RESET_EXTRF:0));
    power_reset_set_inputs(&board.power,board.base,board.vcc_uv,board.raw_other_reset);power_sync();
    if(!analog_reference(&board.analog,(uint32_t)board.vcc_uv,board.config[DEVICE_CFG_BANDGAP_UV],board.half))
-    fail(DEVICE_FAULT_ANALOG,15);
+    analog_fail(15);
   }
  }
 }
@@ -209,7 +209,7 @@ static void clki_service(uint64_t previous_half) {
    if(first_rise && board.comparator_config[DEVICE_COMPARATOR_TIMING_ENABLE] &&
       board.analog.comparator.clock_running &&
       !analog_comparator_arm_first_rise(&board.analog.comparator))
-    fail(DEVICE_FAULT_ANALOG,0x100u|board.analog.comparator.physical_fault);
+    analog_fail(0x100u|board.analog.comparator.physical_fault);
   }
   board.divisor=board.clki_clock.divisor;
   board.pending_divisor=board.clki_clock.pending_divisor;

@@ -83,7 +83,9 @@ historical runtimes, invalid native admission and overflow. See the
 [integration evidence](../../../reports/comparator-physical-20261026.md).
 
 Delay values remain explicit profile inputs. Shared ADC/BOD reference enable
-retention is not inferred from them; callers that establish a stable reference
-use zero startup as documented by the standalone module. Input offset, noise,
+retention is not inferred from the local comparator delay. The separately
+selected [shared reference profile](shared-reference.md) connects those owners
+and requires zero local startup. Without it, callers that establish a stable
+reference use zero startup as documented by the standalone module. Input offset, noise,
 hysteresis, voltage-dependent trajectories and silicon measurements remain
 outside this digital timing fixture. No official simulator has been executed.

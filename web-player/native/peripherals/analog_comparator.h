@@ -30,6 +30,7 @@ typedef struct {
     int32_t pin_uv[6];
     uint8_t acsr, adc_enabled, acme, mux;
     uint8_t raw, propagation_level, sync1, clock_running, sleep_disabled;
+    uint8_t bandgap_ready; /* Shared connection; reset defaults ready. */
     /* Optional separate wall domain. UINT64_MAX remains the no-event sentinel.
      * Faults are sticky until reset, including rejected late configuration. */
     uint64_t physical_time_ps, propagation_at_ps, bandgap_ready_at_ps;
@@ -76,6 +77,12 @@ int analog_comparator_input(analog_comparator_t *comparator, uint8_t pin,
                             int32_t microvolts, uint64_t half_cycle);
 int analog_comparator_reference(analog_comparator_t *comparator,
                                 uint32_t bandgap_uv, uint64_t half_cycle);
+/* ACBG comparisons wait for shared readiness; AIN0 comparisons do not.
+ * Existing captured digital stages and the last known raw value are retained.
+ * Physical callers advance_ps first, then publish readiness at the pre-edge
+ * anchor, then settle any new zero-delay physical event before clock delivery. */
+int analog_comparator_bandgap_ready(analog_comparator_t *comparator, int ready,
+                                   uint64_t half_cycle);
 /* ADC owns these registers. Forward its current state after writes; only
  * ADEN, ACME and MUX[1:0] affect comparator input selection. */
 int analog_comparator_adc(analog_comparator_t *comparator, uint8_t adcsra,

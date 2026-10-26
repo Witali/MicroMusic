@@ -2606,3 +2606,10 @@ backend selectors are unchanged; this is not an arithmetic speedup or a
 ## UM88: flag-neutral PWM interrupt
 
 [Flag-neutral IRQ and explicit GPIOR backup](um88-flag-neutral-irq.md): preserve SREG without saving it on the normal path, use a balanced power-of-two wrap, and optionally reserve three GPIOR registers to replace stack backup.
+
+## ATtiny13A: shared analog reference lifetime
+
+[Independent analog time](independent-analog-time.md) now also records the ADC,
+comparator and BOD owner mask, continuous startup handoff, POR-qualified power
+and readiness publication before a tied sample. This is a tested digital-model
+correctness technique; physical calibration and performance remain unmeasured.

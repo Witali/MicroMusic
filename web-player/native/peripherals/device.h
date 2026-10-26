@@ -63,6 +63,18 @@ enum { DEVICE_COMPARATOR_TIMING_ENABLE=0, DEVICE_COMPARATOR_PROPAGATION_NS=1,
  * Raw analog deadlines continue through CLKI holds; synchronization still
  * requires actual enabled clkI/O rising edges. Configure only before init. */
 int device_configure_comparator(uint32_t field,uint32_t value);
+enum { DEVICE_BANDGAP_ENABLE=0, DEVICE_BANDGAP_STARTUP_NS=1 };
+/* Optional shared-reference lifetime fixture. Requires physical time and the
+ * physical comparator profile with zero local reference startup. Configure
+ * explicit startup ns then enable before init. Consumers retain shared warm-up
+ * across owner handoffs; loss of all owners/qualified POR invalidates ready. */
+int device_configure_bandgap(uint32_t field,uint32_t value);
+uint8_t device_bandgap_enabled(void);
+uint8_t device_bandgap_active(void);
+uint8_t device_bandgap_powered(void);
+uint8_t device_bandgap_ready(void);
+uint8_t device_bandgap_owners(void);
+uint64_t device_bandgap_deadline_ps(void);
 /* Opt-in physical1ps supply profile. field0 enables; all fields1..9 must be
  * explicitly provided before init. field0=0 clears the profile selection.
  * Thresholds are selected digital-profile microvolts, timings nanoseconds;
