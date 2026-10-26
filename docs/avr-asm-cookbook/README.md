@@ -2306,3 +2306,56 @@ linked image and checks its PCM and total cycles against qualification. The
 retained two-frame prefixes identify the sparse stage as 50.67–52.09% before
 and about 26–28% after; these prefixes guide optimization, not full-stream
 admission. Inclusive function costs overlap and must not be added.
+
+### Select fixed-point precision from complete PCM, with block-scaled IFFT
+
+The [Codec2 fixed-point study](../../Codecs/Codec2/FIXED_POINT_RU.md) introduces
+an explicit hybrid C API with integer real/radix-four inverse FFT; the remaining
+stages still use float. The unchanged compact and original full float paths
+remain selectable references. This is not yet a complete integer decoder.
+
+Precision is selected against the full output, not just coefficient error:
+SNR >=50 dB and max error <=256 s16 units on 11,333 packets / 1,813,280 samples,
+plus two separately reset archived streams. All narrowed native intermediates
+are range-checked. Of 22 studied configurations, 8-bit components fail badly;
+16-bit/Q8 also fails (50.07 dB but max error 466). The smallest passing tested
+configuration is **16-bit components, Q9 twiddles, no wide final output**:
+54.64 dB/max 248. A wider final output is available but unnecessary for that
+gate; 24/32-bit components with Q14 achieve about 83.6 dB/max 5 at extra
+precision. This is a corpus-specific minimum, not a universal speech bound.
+[All configurations and source hashes](../../Codecs/Codec2/reports/fixed-precision.json).
+
+The integer IFFT keeps a block exponent. Before each stage, an L1 scan and
+rounded global shift bound the largest complex |r|+|i| to 7680 for int16.
+This leaves headroom for four terms and quantized twiddles. int16 component
+products/sums use int32 containers; right shifts operate on nonnegative
+magnitudes with explicit symmetric rounding. Float inputs pack forward into
+the same buffer; integer samples expand backward into float, preserving unread
+narrow cells. The quarter-wave ROM has 129 values/258 B for Q9. Device reads
+remain separate from arithmetic, using actual AVR headers; no CPU/memory-model
+macro overrides or handwritten assembly were introduced. Broader fixed-point
+conversion must recheck near-resonance errors and full PCM at each stage.
+
+CPU/ABI/toolchain: ATmega64A AVR5 with MUL, ordinary GNU C ABI, AVR-GCC 7.3.0
+`-Os -std=c99 -fno-strict-aliasing -ffunction-sections -fdata-sections`, pinned
+device RAM/Flash limits. Native Clang 24 enables range checks; release AVR
+disables only those local checks, not all test assertions. The generated
+integer twiddles retain KISS copyright/BSD conditions; Codec2 stages retain
+LGPL-2.1 notices and vendor provenance. This is portable C with an explicit
+float API fallback; arithmetic precision does not select hardware access.
+
+Measured kernel evidence: 512 identical zero/basis/random spectra spanning
+2^-16..2^16 produce byte-identical checked native integer and release AVR
+outputs. The float comparator matches original KISS float values. Mean IFFT
+cost drops 1,441,477→1,000,050 cycles (-30.62%); max 1,604,740→1,070,069.
+Separate harness Flash is 6470→4068 B, static SRAM stays 2058 B, stack
+106→120 B. [Kernel binaries, vectors, hashes and per-vector cycles](../../Codecs/Codec2/reports/fixed-kernel.json).
+
+Complete hybrid decoding on 365 archived frames / 58,400 samples gives
+57.05/57.06 dB to upstream, max error 41/45 s16 units. Mean decoder cycles
+fall only 6.38% EN / 6.23% RU, since other stages are unchanged. Flash rises
+22,516→24,634 B; live SRAM remains 3263/4096 B including observed stack, with
+833 B free. Max frame cost 15,941,454 cycles is 0.996 s at 16 MHz, still well
+above 20 ms. [Complete hybrid qualification](../../Codecs/Codec2/reports/hybrid-decoder.json).
+No active IRQ, human-speech corpus, analog board or real-time admission is
+claimed. Standalone kernel savings must not be attributed to the full decoder.
