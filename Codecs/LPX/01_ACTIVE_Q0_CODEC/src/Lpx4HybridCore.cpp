@@ -1,5 +1,6 @@
 #include "Lpx4HybridCore.h"
 #include "Lpx4Math.h"
+#include <stddef.h>
 // Compile-time amplitude calibration: same compressed bits, same decoder path.
 #ifndef LPX4_PWM_GAIN
 #define LPX4_PWM_GAIN 130
@@ -49,9 +50,9 @@ static int16_t cosineAt(uint16_t index){
 }
 
 
-Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),position_(0),
+Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),remaining_(0),
  sampleRate_(0),preQ14_(0),brightQ14_(0),blockStep_(0),prevDeemph_(0),prevBright_(0),
- framePos_(0),blockPos_(0),subPos_(0),subIndex_(0),quantLimit_(0),mode_(0),blockScale_(0),
+ subPos_(0),subIndex_(0),quantLimit_(0),mode_(0),blockScale_(0),
  bitBuffer_(0),bitsLeft_(0),riceK_(0),subType_(0),lag_(0),gain_(0),ringCursor_(0),
 #if LPX4_V3_FEATURES
  formatFeatures_(0),
@@ -60,6 +61,10 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),
  pulseCount_(0),pulseIndex_(0),
 #endif
  error_(NONE),initializedFrame_(false) {
+#ifdef __AVR__
+ static_assert(offsetof(Lpx4HybridCore,staticSpectrum_)<64,"Hot state exceeds AVR short displacement");
+ static_assert(offsetof(Lpx4HybridCore,error_)<64,"Error flag must retain short displacement");
+#endif
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
@@ -86,7 +91,7 @@ uint32_t Lpx4HybridCore::read32(){
 }
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  data_=input;bytes_=size;cursor_=0;error_=NONE;initializedFrame_=false;
- position_=0;framePos_=blockPos_=subPos_=subIndex_=0;
+ remaining_=sampleCount_;subPos_=subIndex_=0;
  bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;blockStep_=0;
  subType_=lag_=gain_=ringCursor_=quantLimit_=0;
 #if LPX4_V3_FEATURES
@@ -113,6 +118,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  if(version!=2||flags!=3){error_=UNSUPPORTED;return false;}
 #endif
  sampleRate_=read16();sampleCount_=read32();preQ14_=read16();brightQ14_=read16();
+ remaining_=sampleCount_;
  const uint16_t frames=read16(),blocks=read16();
  if(error_||sampleRate_!=8000||!sampleCount_||frames!=160||blocks!=80||
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
@@ -302,7 +308,7 @@ bool Lpx4HybridCore::readSubframe(){
 #if LPX4_ALLOW_SPARSE
      pulseCount_=readBits(4);
      if(pulseCount_>LPX4_MAX_PULSES){error_=CORRUPT_STREAM;return false;}
-     const uint8_t remaining=(uint8_t)((sampleCount_-position_)>=40?40:(sampleCount_-position_));
+     const uint8_t remaining=(uint8_t)(remaining_>=40?40:remaining_);
      for(uint8_t i=0;i<pulseCount_;i++){
        pulsePos_[i]=readBits(6);
        const uint8_t z=readBits(5);
@@ -357,7 +363,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
      }
    }
 #if LPX4_ALLOW_SPARSE
-   else if(pulseIndex_<pulseCount_ && pulsePos_[pulseIndex_]==(blockPos_<40?blockPos_:blockPos_-40)){
+   else if(pulseIndex_<pulseCount_ && pulsePos_[pulseIndex_]==(subPos_+((subIndex_&1)?20:0))){
        d=pulseAmp_[pulseIndex_++];
    }
 #endif
@@ -516,11 +522,12 @@ bool Lpx4HybridCore::next(uint8_t& pcm){
 #else
 bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #endif
-    if(error_||position_>=sampleCount_)return false;
-    if(framePos_==0&&!readFrame())return false;
-    if(blockPos_==0&&!readBlock())return false;
-    if((blockPos_==0 || blockPos_==40) && !readSubframe())return false;
+    if(error_||!remaining_)return false;
     if(subPos_==0){
+        // All frame/block/excitation headers coincide with a 20-sample boundary.
+        if(subIndex_==0&&!readFrame())return false;
+        if(!(subIndex_&3)&&!readBlock())return false;
+        if(!(subIndex_&1)&&!readSubframe())return false;
         interpolate(subIndex_);
 #ifdef LPX3_BANDWIDTH_EXPAND_Q14
         // Bandwidth expansion a[k] *= gamma^(k+1), once per 20 samples.
@@ -559,10 +566,8 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #else
     postfilterQ14 = b;
 #endif
-    ++position_;++framePos_;++blockPos_;++subPos_;
-    if(subPos_==20){subPos_=0;++subIndex_;}
-    if(blockPos_==80)blockPos_=0;
-    if(framePos_==160){framePos_=0;subIndex_=0;}
+    --remaining_;++subPos_;
+    if(subPos_==20){subPos_=0;if(++subIndex_==8)subIndex_=0;}
     return true;
 }
 

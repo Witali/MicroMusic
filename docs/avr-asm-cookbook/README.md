@@ -2678,6 +2678,33 @@ cycles/sample. This is one weak round under the user's <=1% stopping rule.
 93 host tests and 566,610 ASan/UBSan mutation/reset cases pass.
 [Alternatives, fixed-corpus evidence and continuing criterion](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: short-displacement state and shared sample phases
+
+ATmega328P/AVR5, GCC7.3 `-Os`, AVR ABI: group frequently used scalar fields
+within the first 64 object bytes. This lets Y/Z `ldd/std` address counters,
+bit cache, mode and error flags directly. Large arrays remain pointer-addressed
+and frame-only polynomial/LSF storage follows. AVR-only offsetof assertions
+enforce the range, without replacing CPU/memory-model macros. Rebuild all users
+with the matching header: private object layout changes, public methods do not.
+
+The initial layout-only variant measured 10.319482% less time on the frozen
+91 active-IRQ images and -594 B Flash. In the same state/control round,
+remove redundant frame/block counters: all headers coincide with the existing
+20-sample phase. Read the frame at subIndex0, block at indices0/4, excitation
+header at0/2/4/6; wrap the eight 20-sample phases. Sparse pulse position is
+subPos plus20 for odd phases. A uint32 remaining count replaces position,
+with produced()=total-remaining and the previous begin/error/reset behavior.
+Do not replace the public uint32 duration with an implicit 16-bit limit.
+
+Full round 4: 3593851806 ->3099393628 summed wall cycles, 13.758446% less time,
+-638 B Flash and -2 B SRAM (1082 B) per image, golden PCM16/PWM and AVR PWM
+exact, zero underruns. The old eight-second +100-IRQ standard improves
+1785.862 ->1557.391 cycles/sample without underruns. 94 host tests and
+566,610 ASan/UBSan reset/mutation cases pass. The public counter oracle covers
+every produced()/finished() step and durations through131073 on host; the
+active-IRQ AVR controls cover64000, not an arbitrary playback duration.
+[Fixed matrix, intermediate variant and reset/phase proof](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
