@@ -47,8 +47,11 @@ checks and 30,870 IRQ injections include both T phases and internal RET.
 All 134 fresh ASM PWM images pass with active interrupts and no underruns.
 [Workloads, exact-output proofs and reproduction](../../Codecs/Speex/AVR/TWIN_LSP.md).
 
-Unmeasured follow-up: place stage-2/3 entry blocks before stage 4 so its
-shared descending tail falls through. Static instruction counting suggests
-one extra stage-2 jump can replace two stage-4 jumps. Measure both NB and WB:
-HB1 uses stages 2/3 without stage 4, so a local NB improvement can cost HB
-time. This layout has not been assembled or admitted.
+The entry-layout follow-up is now assembled and admitted: stage-2/3 entry
+blocks precede stage 4 so its descending tail falls through. Primitive cycles
+change from 456/634/812 to 460/634/804. Screening saves 12.110 NB8 cycles/frame
+over 1,456 frames, and 0.412 WB9.8 cycles/frame over 544 frames, with no linked
+Flash reduction. HB1 uses stages 2/3 without stage 4, so the NB benefit cannot
+be transferred directly to WB. The layout passes independent arithmetic/ABI
+and 30,828 IRQ injections; its combined full-decoder/PWM admission with the
+cosine leaf is recorded in [EXACT_ANGLE.md](../../Codecs/Speex/AVR/EXACT_ANGLE.md).

@@ -1,5 +1,9 @@
 # Paired LSP polynomial stages
 
+Historical stage: current sources also include the [exact cosine leaf and
+entry-layout follow-up](EXACT_ANGLE.md). The measurements and source-bound
+audit below describe the paired-stage baseline, not current binaries.
+
 The AVR ASM backend now constructs the p and q polynomials through paired
 stage-2/3/4 entries. One prologue saves r4..17/Y; r4..7 retain the second
 pointer/root while the shared arithmetic body processes p, then q. Direct
@@ -93,4 +97,5 @@ corpora, widths and extra-load settings recorded in the admission report.
 restores a pinned decoder-only replay tree from the admitted baseline and
 source payloads. It keeps the historical five screening choices available.
 Earlier `audit_higher.py` is bound to the pre-pair higher-profile admission;
-use the current paired audit after this optimization.
+use this paired audit at its recorded revision. Current sources use
+`tests/audit_lsp_angle.py`.

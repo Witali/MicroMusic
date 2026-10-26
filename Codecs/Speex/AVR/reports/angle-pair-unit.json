@@ -1,0 +1,44 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "backend": "asm",
+  "binarySha256": "0229c57f242e9e7b77af72b83d97d857d5eff2ede98b2b2c4c66d20e1761fc7e",
+  "cases": 257790,
+  "calls": 515580,
+  "perStage": {
+    "2": 85930,
+    "3": 85930,
+    "4": 85930
+  },
+  "outputsPerPath": 2062320,
+  "addressCases": 3840,
+  "all65536Signed16RootsAtBothInputs": true,
+  "independentBigIntProductOracle": true,
+  "selectedAndForcedCExact": true,
+  "guardsAndUntouchedWordsPreserved": true,
+  "calleeSavedRegistersAndR1AtRet": true,
+  "retChecks": 773370,
+  "exactAsmReadAndWriteAddresses": true,
+  "asmCalls": 257790,
+  "readBytes": 6186960,
+  "writtenBytes": 8249280,
+  "stackBytesInsideAsm": 18,
+  "initialTStates": [
+    0,
+    1
+  ],
+  "primitiveCyclesIncludingRet": {
+    "2": [
+      460
+    ],
+    "3": [
+      634
+    ],
+    "4": [
+      804
+    ]
+  },
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

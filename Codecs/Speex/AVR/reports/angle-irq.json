@@ -1,0 +1,107 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "backend": "asm",
+  "binarySha256": "e44bc18040727d4886853f971bb7b0b33566911c03d09e2171ba34e5d2c3b188",
+  "cases": 14,
+  "calls": 1575,
+  "asmCalls": 1547,
+  "retChecks": 3122,
+  "fullSigned16Domain": false,
+  "selectedForcedCAndUntouchedXiphExact": true,
+  "independentBigIntOracle": true,
+  "inputPreserved": true,
+  "calleeSavedRegistersAndR1AtRet": true,
+  "initialTStates": [
+    0,
+    1
+  ],
+  "ownStackBytes": 0,
+  "ramReadsInsideAsm": 0,
+  "ramWritesInsideAsm": 0,
+  "primitiveCyclesIncludingRet": [
+    {
+      "cycles": 123,
+      "calls": 9
+    },
+    {
+      "cycles": 131,
+      "calls": 5
+    }
+  ],
+  "includesInterrupts": true,
+  "physicalBoardTested": false,
+  "boundaries": [
+    {
+      "value": -32768,
+      "instructions": 106
+    },
+    {
+      "value": -32767,
+      "instructions": 107
+    },
+    {
+      "value": -30000,
+      "instructions": 107
+    },
+    {
+      "value": -16385,
+      "instructions": 107
+    },
+    {
+      "value": -16384,
+      "instructions": 107
+    },
+    {
+      "value": -1,
+      "instructions": 106
+    },
+    {
+      "value": 0,
+      "instructions": 106
+    },
+    {
+      "value": 1,
+      "instructions": 106
+    },
+    {
+      "value": 12867,
+      "instructions": 106
+    },
+    {
+      "value": 12868,
+      "instructions": 115
+    },
+    {
+      "value": 16384,
+      "instructions": 115
+    },
+    {
+      "value": 25735,
+      "instructions": 115
+    },
+    {
+      "value": 25736,
+      "instructions": 115
+    },
+    {
+      "value": 32767,
+      "instructions": 115
+    }
+  ],
+  "injections": 1533,
+  "nonzeroR1Interrupts": 737,
+  "t0Interrupts": 968,
+  "t1Interrupts": 565,
+  "isrMulInstructions": 1533,
+  "all32RegistersAndSregRestoredAtReti": true,
+  "interruptReturnPcAndSpExact": true,
+  "everyInstructionBoundaryPreempted": true,
+  "modelsHardwareEntryLatency": false,
+  "deviceHeaders": {
+    "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+    "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+  }
+}

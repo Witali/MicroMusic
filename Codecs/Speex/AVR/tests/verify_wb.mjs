@@ -23,7 +23,7 @@ assert.equal(metadata.backend,backend);assert.ok(binary.length<=32768);
 assert.equal(createHash('sha256').update(binary).digest('hex'),metadata.binarySha256);
 for(const table of ['high_lsp_cdbk','high_lsp_cdbk2','nb3_gain_table'])assert.ok(symbols.get(table)<32768,table+' in Flash');
 for(const name of ['malloc','calloc','realloc','free'])assert.ok(!symbols.has(name),'No heap');
-if(backend==='c')for(const name of ['speex_wb_iir40_avr','speex_wb_fold40_avr','speex_wb_excitation40_avr','speex_wb_excitation8_40_avr','speex_wb_qmf40_avr','speex_avr_iir40','speex_avr_long_innovation40'])assert.ok(!symbols.has(name),'No ASM in C build');
+if(backend==='c')for(const name of ['speex_wb_iir40_avr','speex_wb_fold40_avr','speex_wb_excitation40_avr','speex_wb_excitation8_40_avr','speex_wb_qmf40_avr','speex_avr_iir40','speex_avr_long_innovation40','speex_avr_lsp_pair2','speex_avr_lsp_pair3','speex_avr_lsp_pair4','speex_avr_lsp_angle'])assert.ok(!symbols.has(name),'No ASM in C build');
 const report={backend,binarySha256:metadata.binarySha256,includesInterrupts:false,physicalBoardTested:false,flashBytes:binary.length,staticSramBytes:end-256,frames:0,maxCycles:0,minSP:2303,streams:[]};
 let totalCycles=0;
 for(const name of readdirSync(streams).filter(s=>s.endsWith('.spxraw')).sort()){
