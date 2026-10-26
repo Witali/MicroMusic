@@ -6,7 +6,7 @@
 #endif
 #include "nb3_indices.h"
 #include "nb3_interpolate.h"
-/* Restricted NB3 body adapted from Xiph Speex 1.2.1 nb_celp.c.
+/* Restricted NB3/NB4 body adapted from Xiph Speex 1.2.1 nb_celp.c.
  * Copyright (C) 2002-2006 Jean-Marc Valin; BSD terms in vendor/speex-1.2.1/COPYING.
  * Preserve the original excitation, interpolation, rounding and 40-sample
  * synthesis delay. Remove bookkeeping used only by unsupported PLC/enhancer
@@ -15,6 +15,9 @@
 #include "pitch24.h"
 #include "long_pitch.h"
 #include "short_pitch.h"
+#if SPEEX_ENABLE_NB4
+#include "nb4_excitation.h"
+#endif
 #if SPEEX_NB3_USE_AVR_ASM
 static SPEEX_NB3_NOINLINE
 #else
@@ -78,7 +81,14 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
    qe=speex_nb3_frame_gain(packet);
    /* The validated packet map supplies the complete 33-bit group once.
     * This four-byte slot is dead when LPC synthesis reuses offset 20. */
+#if SPEEX_ENABLE_NB4
+   ALLOC(indices,5,uint8_t);
+   if((packet[0]>>3)==4)speex_nb4_excitation_frame(frame_exc,packet,qe,indices);
+   else
+#else
    ALLOC(indices,4,uint8_t);
+#endif
+   {
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *exc=frame_exc+NB_SUBFRAME_SIZE*sub;
@@ -100,6 +110,7 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
       } else {
          speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,indices,ener,index);
       }
+   }
    }
    /* Release the excitation indices. C shares the next 20 B between angles
     * and LPC; ASM uses only three temporary center angles in that slot.
@@ -145,7 +156,11 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
          /* Interpolated angles are dead once LPC is ready. HB consumes the
           * reconstructed indices synchronously, before the next quarter. */
          indices=(uint8_t *)interp_qlsp;
+#if SPEEX_ENABLE_NB4
+         header=(packet[0]>>3)==4?speex_nb4_unpack_subframe(packet,(uint8_t)sub,indices):speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);
+#else
          header=speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);
+#endif
          speex_wb_low_ready(sp,st->interp_qlpc,indices,
              AVR_READ_I32(nb3_gain_table+(qe<<1)+(header&1)));
       }

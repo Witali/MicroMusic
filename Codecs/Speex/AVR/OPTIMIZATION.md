@@ -14,6 +14,15 @@ The latest implementation and measurements are described in README.md,
 reports are stage baselines, not current
 binary measurements. Vendor and R4 files remain unmodified.
 
+The optional NB11/WB12.8 extension is recorded separately in
+[HIGHER_BITRATES.md](HIGHER_BITRATES.md) and `reports/higher-admission.json`.
+It shares the bounded short-pitch controller for 4 x 10 and 5 x 8 vectors,
+reuses existing variable-count ASM/C primitives, and fuses NB4 innovation
+with HB1 folding. The fusion screening saves 3,248 cycles/frame and 16 B
+stack on two clips. Final WB12.8 voice averages 78.61% CPU; active-IRQ PWM
+passes 6,467 frames without underruns. Default minimum decoder images stay
+byte-identical, so those new-profile figures do not replace NB3 baselines.
+
 ## Completed, measured
 
 - Carry/byte-aware signed shifts and narrow intermediate results.

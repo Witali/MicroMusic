@@ -100,7 +100,7 @@ def apply(source: Path):
 
     # Tables are marked at their definitions. Every decoder access uses an
     # explicit width/sign read, while parameter structs retain ordinary pointers.
-    for name in ['lsp_tables_nb.c', 'gain_table_lbr.c', 'exc_10_32_table.c']:
+    for name in ['lsp_tables_nb.c', 'gain_table_lbr.c', 'exc_10_32_table.c', 'exc_8_128_table.c']:
         path = lib / name
         text = path.read_text()
         text, n = re.subn(r'(const signed char \w+\[\d+\])\s*=', r'\1 AVR_TABLE =', text)

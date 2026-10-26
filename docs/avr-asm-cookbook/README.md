@@ -114,6 +114,21 @@ ASM PWM-образов с IRQ точны и без underrun; +40% NB/+5% WB CPU 
 [Отчёт](../../Codecs/Speex/AVR/reports/zero-admission.json) фиксирует область
 доказательства; переносить цифры на другой CPU/ABI без измерений нельзя.
 
+**Парные LSP-стадии: только измеренный прототип (2026-10-26).**
+Один пролог сохраняет r4..17/Y; r4..7 удерживают второй указатель и корень.
+Общее арифметическое ядро обрабатывает полиномы последовательно. Вариант с
+T использует его как временный флаг первого/второго прохода; ни одна
+инструкция ядра не меняет T, ISR обязан восстановить SREG. Это соответствует
+[GNU AVR convention](https://avrdudes.github.io/avr-libc/avr-libc-user-manual-2.2.0/FAQ.html#faq_reg_usage),
+но отдельное доказательство нового ABI/IRQ ещё требуется.
+На 1 058 кадрах все пять вариантов дают точный Xiph PCM/reset. Прямой
+вызов T-варианта быстрее C-обёртки; общий пролог на 64 Б меньше, но медленнее
+прямого варианта. `leaf` не меняет измеренный бинарник. Эти результаты не
+являются допуском профиля: полные paired arithmetic/ABI/IRQ/corpus/PWM
+проверки не проведены. [Точные варианты](../../Codecs/Speex/AVR/reports/twin-candidates.json)
+и [восстановление](../../Codecs/Speex/AVR/tools/prepare_lsp_twin_candidate.py)
+сохраняют исходники, компилятор и измерения; production не изменён.
+
 ## Как проверять пользу для Speex
 
 Снять дизассемблирование `avr-objdump -d -S firmware.elf` и размеры
@@ -2554,3 +2569,30 @@ backend selectors are unchanged; this is not an arithmetic speedup or a
 ## UM88: flag-neutral PWM interrupt
 
 [Flag-neutral IRQ and explicit GPIOR backup](um88-flag-neutral-irq.md): preserve SREG without saving it on the normal path, use a balanced power-of-two wrap, and optionally reserve three GPIOR registers to replace stack backup.
+
+## Speex: share vector geometry and fuse reconstruction with folding
+
+Measured on classic AVR5/ATmega328P with hardware MUL, GNU ABI, AVR GCC 7.3.0,
+`-Os -flto -mcall-prologues -mrelax`. NB3 uses 4 x 10-sample vectors; NB4 uses
+5 x 8. Keep a shared source template with compile-time geometry checks, then
+call the existing variable-count pitch kernels with count 8. This avoids
+duplicating subtle short-pitch boundary rules while keeping constant inner
+loop sizes. [C controller](../../Codecs/Speex/AVR/src/short_pitch_kernel.inc).
+
+For HB1, combine innovation reconstruction and folding so each value stays in
+registers between the two rounded transforms. Keep both rounding steps exact;
+the bias register is **4 even when vector count is 5**. Source factoring must
+not accidentally couple mathematical constants to loop geometry. MUL indexes
+the 8/10-byte Flash vectors; LPM access remains separate from backend selection.
+[Shared GNU assembler macro](../../Codecs/Speex/AVR/src/wb_excitation_kernel.inc),
+[explicit C fallback](../../Codecs/Speex/AVR/src/wb_fold.c).
+
+The WB12.8 two-clip/808-frame screening saves 3,248 cycles/frame and 16 B stack
+versus separate reconstruction/fold, with four extra Flash bytes. Independent
+BigInt/AVR C/ASM checks cover 63,360 cases; the final WB12.8 player passes 6,467
+frames with active timers/IRQ, zero underruns, 430 B free SRAM, plus two chunks
+with 5% extra CPU work. Minimum NB3/WB9.8 decoder images stay byte-identical.
+These are simulator measurements for the compact 16-tap QMF profile, not full
+Xiph synthesis or a board measurement. Original project optimization; Xiph
+algorithm/table provenance and BSD notices remain in the codec/vendor files.
+[Admission, bounds, workload and reproduction](../../Codecs/Speex/AVR/HIGHER_BITRATES.md).

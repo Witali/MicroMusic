@@ -38,7 +38,12 @@ void speex_avr_init(void)
 
 int speex_avr_decode(const uint8_t *packet, size_t bytes, int16_t *pcm)
 {
+#if SPEEX_ENABLE_NB4
+    if (!packet || !pcm) return -1;
+    if((bytes!=20 || (packet[0]>>3)!=3) && (bytes!=28 || (packet[0]>>3)!=4)) return -1;
+#else
     if (!packet || !pcm || bytes != 20 || (packet[0] >> 3) != 3) return -1;
+#endif
     return nb_decode(&decoder, packet, pcm);
 }
 

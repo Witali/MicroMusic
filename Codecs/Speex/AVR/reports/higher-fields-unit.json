@@ -1,0 +1,22 @@
+{
+  "mcu": "ATmega328P",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "binarySha256": "9ebbea670e2e768412d7fbd243e5319381f2e2d185d38a7bd76768e41e0bf782",
+  "cases": 304192,
+  "fields": 1825152,
+  "all8192HeadersAtEachSubframe": true,
+  "all16384AdjacentIndexPairsAtEveryBoundaryAndSubframe": true,
+  "addressCases": 1024,
+  "paddingCases": 64,
+  "all256PointerLowBytes": true,
+  "exactSevenInputBytesOnce": true,
+  "readBytes": 2129344,
+  "inputAndGuardsPreserved": true,
+  "indexTailPreserved": true,
+  "calleeSavedRegistersAndR1AtRet": true,
+  "retChecks": 304192,
+  "independentBitByBitOracle": true,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

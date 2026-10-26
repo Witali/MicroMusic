@@ -1,7 +1,7 @@
-/* Restricted NB3 + HB1 folding from Xiph Speex 1.2.1 sb_celp.c.
+/* Restricted NB3/NB4 + HB1 folding from Xiph Speex 1.2.1 sb_celp.c.
  * Copyright (C) 2002-2006 Jean-Marc Valin.
  * BSD terms: vendor/speex-1.2.1/COPYING.
- * No heap, PLC, enhancer or general mode switching. Synthesis QMF is a
+ * No heap, PLC, enhancer or other submode combinations. Synthesis QMF is a
  * deliberately shorter 16-tap approximation; HB excitation/LPC remain exact. */
 #include "speex_wb1.h"
 #include "speex_avr.h"
@@ -19,6 +19,9 @@ typedef struct {
     int32_t mem[12];
     int16_t low[40],pcm[80];
     uint8_t qmf[64],gain[4],first,sub,error,repeat_lsp;
+#if SPEEX_ENABLE_NB4
+    uint8_t mode4;
+#endif
     speex_wb1_output_fn output;
     void *context;
 } WbState;
@@ -36,11 +39,26 @@ size_t speex_wb1_state_bytes(void)
 int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn output,void *context)
 {
     unsigned a,b,i;
+#if SPEEX_ENABLE_NB4
+    if(!packet || !output)return -1;
+    if((bytes!=25 || (packet[0]>>3)!=3 || (packet[20]>>4)!=9) &&
+       (bytes!=32 || (packet[0]>>3)!=4 || (packet[27]&15)!=9))return -1;
+    wb.mode4=(uint8_t)(bytes==32);
+#else
     if(!packet || !output || bytes!=25 || (packet[0]>>3)!=3 || (packet[20]>>4)!=9)return -1;
+#endif
     /* Validated HB1 layout: 6+6 LSP bits, then four 5-bit gains.
      * Direct byte windows need no generic cursor or cursor stack frame. */
-    a=(((unsigned)(packet[20]&15)<<2)|(packet[21]>>6))*8;
-    b=(unsigned)(packet[21]&63)*8;
+#if SPEEX_ENABLE_NB4
+    if(wb.mode4) {
+        a=(unsigned)(packet[28]>>2)*8;
+        b=(unsigned)(((packet[28]&3)<<4)|(packet[29]>>4))*8;
+    } else
+#endif
+    {
+        a=(((unsigned)(packet[20]&15)<<2)|(packet[21]>>6))*8;
+        b=(unsigned)(packet[21]&63)*8;
+    }
     wb.repeat_lsp=1;
     for(i=0;i<8;i++) {
         wb.lsp[i]=(int16_t)(6144+2560*i+32*(int16_t)AVR_READ_I8(high_lsp_cdbk+a+i)+16*(int16_t)AVR_READ_I8(high_lsp_cdbk2+b+i));
@@ -48,10 +66,20 @@ int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn outp
         if(wb.first)wb.old_lsp[i]=wb.lsp[i];
     }
     if(wb.first)wb.repeat_lsp=1;
+#if SPEEX_ENABLE_NB4
+    if(wb.mode4) {
+        wb.gain[0]=((packet[29]&15)<<1)|(packet[30]>>7);
+        wb.gain[1]=(packet[30]>>2)&31;
+        wb.gain[2]=((packet[30]&3)<<3)|(packet[31]>>5);
+        wb.gain[3]=packet[31]&31;
+    } else
+#endif
+    {
     wb.gain[0]=packet[22]>>3;
     wb.gain[1]=((packet[22]&7)<<2)|(packet[23]>>6);
     wb.gain[2]=(packet[23]>>1)&31;
     wb.gain[3]=((packet[23]&1)<<4)|(packet[24]>>4);
+    }
     wb.output=output;wb.context=context;wb.sub=0;wb.error=0;
     int result=speex_wb_decode_low(packet);
     memcpy(wb.old_lsp,wb.lsp,sizeof(wb.lsp));wb.first=0;
@@ -104,6 +132,10 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
     if(ratio<=0) {wb.error=1;return;}
     g=PDIV32(AVR_READ_I32(exp_gain+wb.gain[wb.sub]),ratio);
     speex_wb_iir40(wb.exc,wb.den,wb.pcm+40,wb.mem);
+#if SPEEX_ENABLE_NB4
+    if(wb.mode4)speex_wb_excitation8_40(wb.exc,indices,scale,g);
+    else
+#endif
     speex_wb_excitation40(wb.exc,indices,scale,g);
     if(update_lpc)memcpy(wb.den,ak,sizeof(ak));
     speex_wb_qmf40(low,wb.pcm+40,wb.pcm,wb.qmf);

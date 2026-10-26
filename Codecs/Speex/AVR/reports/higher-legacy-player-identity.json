@@ -1,0 +1,50 @@
+[
+  {
+    "profile": "NB8",
+    "backend": "asm",
+    "load": 0,
+    "baseline": "build/zero-nb-asm-normal/ru_pushkin_a/speex-player.bin",
+    "sha256": "4b4b8cc63a829e1a14cae56e8b48c09cf0c82b0ffb2e42d71562032bae9be938",
+    "byteIdentical": true
+  },
+  {
+    "profile": "NB8",
+    "backend": "asm",
+    "load": 128000,
+    "baseline": "build/zero-nb-asm-load40/ru_pushkin_a/speex-player.bin",
+    "sha256": "67a01734709cc6f8b1e085e1544d966f767326568bd1d38aacaf0ce67fd1f9d8",
+    "byteIdentical": true
+  },
+  {
+    "profile": "NB8",
+    "backend": "c",
+    "load": 0,
+    "baseline": "build/first-nb-c-normal/ru_pushkin_a/speex-player.bin",
+    "sha256": "44a50632e30ad0d3b2978c2f76a2b4dc6243be534e82d76885fbdfc8e0d1654c",
+    "byteIdentical": true
+  },
+  {
+    "profile": "NB8",
+    "backend": "c",
+    "load": 32000,
+    "baseline": "build/first-nb-c-load10/ru_pushkin_a/speex-player.bin",
+    "sha256": "92c1aa6f2c595bec906648db8f4e3c9cb9e45cd8bc8aae8829106daddfa5210e",
+    "byteIdentical": true
+  },
+  {
+    "profile": "WB9.8",
+    "backend": "asm",
+    "load": 0,
+    "baseline": "build/zero-wb-normal/ru_pushkin_a/wb.bin",
+    "sha256": "faacbc457dcce4c4557fa1eef9b4daacf4a6363e4eb7c5f4c416390c97369a7d",
+    "byteIdentical": true
+  },
+  {
+    "profile": "WB9.8",
+    "backend": "asm",
+    "load": 16000,
+    "baseline": "build/zero-wb-load5/ru_pushkin_a/wb.bin",
+    "sha256": "d64a7857697a4710916ae5e3713fcbfa0ab8fb11ffbaa0034d385bf6eedbdb07",
+    "byteIdentical": true
+  }
+]
