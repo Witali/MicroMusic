@@ -45,3 +45,23 @@ Official basis: [Microchip instruction manual](https://ww1.microchip.com/downloa
 The implementation and fixture are original project code; no vendor source
 was copied or modified. Existing vendor register definitions retain their
 separate pinned provenance and license.
+
+## Extend the rule to partial flag writes
+
+The following checkpoint covers all 123 ATtiny13A summary forms. Retain a flag
+snapshot only for operations that consume flags or compute new ones. An
+individual resumable instruction commits `(current & ~mask) | (computed & mask)`;
+no-write forms omit that store. Explicit OUT/STS/ST aliases remain bus writes.
+For example, ADD preserves current I/T, INC also preserves H/C, and RETI sets
+only I. BLD and BRxx preserve latched operands without restoring all flags.
+Keep existing clock/RESET guards, SEI/RETI delay and safe-block boundaries.
+
+All 123 write masks were independently extracted from the pinned official PDF;
+296 regressions fail 243 cases before and none after. All 2322 default/shared
+checks pass. The two firmware captures above retain identical PCM/pin timestamps
+with active IRQs against baseline 47fe829b. Conservative modules grow 656/719
+bytes for the extra merge; live-local modules shrink 3664/3547 bytes in these
+two workloads. This is a correctness repair with static-size observations,
+without a measured speedup. Earlier size numbers above describe the preceding
+five-operation checkpoint. The native C/WASM fallback is unchanged.
+See [the full audit and evidence](../../web-player/reports/sreg-retirement-20261026.md).

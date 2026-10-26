@@ -121,9 +121,10 @@ export function runtimeABI(exports,{resumable=false}={}) {
 const writes={ADD:63,ADC:63,SUB:63,CP:63,CPI:63,SUBI:63,NEG:63,SBC:63,SBCI:63,CPC:63,ADIW:31,SBIW:31,BST:64,AND:30,ANDI:30,OR:30,ORI:30,EOR:30,INC:30,DEC:30,COM:31,LSR:31,ASR:31,ROR:31};
 const reads={ADC:1,ROR:1,SBC:3,SBCI:3,CPC:3,BLD:64};
 const pure=new Set(['NOP','LDI','MOV','MOVW','SWAP','BLD',...Object.keys(writes)]);
-// These operations neither consume nor modify SREG. Do not latch and restore
-// flags across a resumable clock phase, where the debugger can edit them.
+// Blocks containing only these operations need no SREG snapshot at all.
 const flagNeutralPure=new Set(['NOP','LDI','MOV','MOVW','SWAP']);
+const flagWriteMask=i=>writes[i.name]||(['CLI','SEI','RETI'].includes(i.name)?128:i.name==='FLAG'?1<<i.d:0);
+const needsFlagSnapshot=i=>!!(flagWriteMask(i)||reads[i.name]||i.name==='BRANCH');
 const guardedMemory=new Set(['LD','ST','LPM']);
 const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
 const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
@@ -185,9 +186,13 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const PHASE_CLOCK=16,PHASE_DEADLINE=17,PHASE_RETIRE=18;
   const clock=value=>resumable?bytes(clockPhase(asFloat(value))):bytes(call(CLOCK,asFloat(value)),guard());
   const clockHalf=cycles=>resumable?bytes(clockPhase(float(cycles))):bytes(call(CLOCK,float(cycles)),guard());
-  const finish=(commitFlags=true)=>resumable?bytes(guard(),clock(get(7)),
+  // A debugger can edit untouched SREG bits while a clock phase is paused.
+  // Read operands stay latched, but retirement commits only architectural writes.
+  const commitFlags=mask=>mask?store8(flagsAddress,resumable?
+    or(and(load8(flagsAddress),constant(255^mask)),and(flags(),constant(mask))):flags()):[];
+  const finish=mask=>resumable?bytes(guard(),clock(get(7)),
     putF('pc',asFloat(and(load32(constant(abi.phase.nextPc)),constant(pcMask)))),
-    commitFlags?store8(flagsAddress,flags()):[],call(PHASE_RETIRE)):
+    commitFlags(mask),call(PHASE_RETIRE)):
     bytes(guard(),put('pc',and(state('pc'),constant(pcMask))),clock(get(7)),call(IRQ));
 
   // Locals: x,y,carry,total,value,flags,address,cycles,temp (i32); f64 temporaries.
@@ -266,7 +271,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       if(full&&name!=='BREAK')return bytes(name==='SPM'?[]:clock(constant(1)),set(7,call(CONTROL,constant({SLEEP:1,SPM:2,WDR:3}[name]),or(reg(30),shl(reg(31),8)),or(reg(0),shl(reg(1),8)))),guard());
       // Device requests are exported globals, not calls from WASM into JS.
       // SPM cannot invent a fixed latency; its controller completes it later.
-      if(name==='SPM')return bytes(constant(2),0x24,0,store8(flagsAddress,flags()),0x0f);
+      if(name==='SPM')return bytes(constant(2),0x24,0,0x0f);
       if(name==='SLEEP')return condition(and(reg(profile.legacy.sleepControl),constant(profile.legacy.sleepEnableMask)),bytes(constant(1),0x24,0));
       if(name==='BREAK')return condition([0x23,2],bytes(constant(4),0x24,0));
       // The shared Tiny88 music runtime accepts WDR during a protected
@@ -316,12 +321,12 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       return code;
     }
     if(name==='IN')return bytes(full?bytes(clockHalf(.5),set(0,call(READ,constant(k))),clockHalf(.5),writeReg(d,X)):bytes(clock(constant(1)),writeReg(d,reg(ioStart+k))),set(7,constant(0)));
-    if(name==='OUT'||name==='SBI'||name==='CBI')return bytes(clock(constant(name==='OUT'?1:2)),set(7,full?call(MASKED,constant(name==='OUT'?k:d),name==='OUT'?reg(d):constant(name==='SBI'?1<<k:0),constant(name==='OUT'?255:1<<k)):call(IO,constant(name==='OUT'?k:d),name==='SBI'?or(reg(ioStart+d),constant(1<<k)):name==='CBI'?and(reg(ioStart+d),constant(255^(1<<k))):reg(d))),guard(),set(5,load8(flagsAddress)));
+    if(name==='OUT'||name==='SBI'||name==='CBI')return bytes(clock(constant(name==='OUT'?1:2)),set(7,full?call(MASKED,constant(name==='OUT'?k:d),name==='OUT'?reg(d):constant(name==='SBI'?1<<k:0),constant(name==='OUT'?255:1<<k)):call(IO,constant(name==='OUT'?k:d),name==='SBI'?or(reg(ioStart+d),constant(1<<k)):name==='CBI'?and(reg(ioStart+d),constant(255^(1<<k))):reg(d))),guard());
     if(name==='LDS'||name==='STS'){
       if(k>ramEnd)return fail(16);
       if(full&&name==='LDS')return bytes(put('pc',constant((p+2)&pcMask)),clockHalf(1.5),set(0,k>=ioStart&&k<ioEnd?call(READ,constant(k-ioStart)):reg(k)),clockHalf(.5),writeReg(d,X),set(7,constant(0)));
       return bytes(set(0,reg(d)),put('pc',constant((p+2)&pcMask)),clock(constant(2)),set(7,constant(0)),
-        name==='LDS'?writeReg(d,full&&k>=ioStart&&k<ioEnd?call(READ,constant(k-ioStart)):reg(k)):k>=ioStart&&k<ioEnd?bytes(set(7,call(IO,constant(k-ioStart),X)),guard(),set(5,load8(flagsAddress))):writeReg(k,X));
+        name==='LDS'?writeReg(d,full&&k>=ioStart&&k<ioEnd?call(READ,constant(k-ioStart)):reg(k)):k>=ioStart&&k<ioEnd?bytes(set(7,call(IO,constant(k-ioStart),X)),guard()):writeReg(k,X));
     }
     if(name==='LD'||name==='ST'){
       if(k<2&&(d===s||d===s+1))return fail(name==='LD'?19:17);
@@ -334,8 +339,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       if(name==='LD')code.push(...writeReg(d,full?X:load8(dataAt(Z))));
       else code.push(...condition(and(ge(Z,constant(ioStart)),lt(Z,constant(ioEnd))),bytes(set(7,call(IO,sub(Z,constant(ioStart)),X)),guard()),store8(dataAt(Z),X)));
       if(k===1)code.push(...writePointer(s,and(add(Z,constant(1)),constant(pointerMask))));
-      // Indirect stores can alias SREG, just like OUT or STS.
-      if(name==='ST')code.push(...set(5,load8(flagsAddress)));
+      // SREG aliases are written by the bus itself, with no retirement mirror.
       return code;
     }
     if(name==='LPM'){
@@ -363,9 +367,9 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     const localStats={waitSites:0,fullSlots:0,liveSlots:0};
     inInstruction=true;
-    const touchesFlags=!flagNeutralPure.has(i.name);
-    const code=bytes(touchesFlags?set(5,load8(flagsAddress)):[],set(7,constant(1)),put('errorPC',constant(i.pc)),
-      put('pc',constant((i.pc+1)&pcMask)),effects(i),resumable||!touchesFlags?[]:store8(flagsAddress,flags()),finish(touchesFlags));
+    const mask=flagWriteMask(i);
+    const code=bytes(needsFlagSnapshot(i)?set(5,load8(flagsAddress)):[],set(7,constant(1)),put('errorPC',constant(i.pc)),
+      put('pc',constant((i.pc+1)&pcMask)),effects(i),resumable?[]:commitFlags(mask),finish(mask));
     inInstruction=false;
     const phased=resumable?emitInstructionPhases(code,{context:abi.phase,pc:i.pc,clockImport:PHASE_CLOCK,
       emit:phaseEmit,optimizeLocals:optimizePhaseLocals,onLiveness:optimizePhaseLocals?masks=>{

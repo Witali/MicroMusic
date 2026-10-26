@@ -138,6 +138,13 @@ returns to the host with saved operands; resuming skips completed bus effects.
 Reset cancels that context before it can be spilled back. PC/SREG retirement
 and a zero-length trailing phase can commit at the exact observation deadline.
 
+Instruction retirement writes only the instruction's documented SREG mask.
+Unchanged bits retain their current value, including public edits during WAIT;
+carry/T/branch inputs remain latched according to the existing read phases.
+No-write forms have no retirement flag store, while explicit OUT/STS/ST aliases
+write SREG through the bus. This is independent of flag-liveness elimination;
+see the [official-mask audit](../reports/sreg-retirement-20261026.md).
+
 `optimizePhaseLocals:true` is an explicit optional resumable-emitter setting;
 the default remains the original full-context path. Generation-time read/write
 and branch annotations identify locals needed after each WAIT, including the

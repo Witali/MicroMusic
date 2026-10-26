@@ -1,0 +1,1092 @@
+{
+  "schema": "micromusic-sreg-retirement-v1",
+  "baselineCommit": "47fe829b05ebce0b8bc51b09fd08094f4d39e18f",
+  "compilerIdentity": "88eaad819aeb1e5ef35029276a0caa4c59724f4fa29b998076e8fdccc06a43b2",
+  "sourceSha256": "0bcb504e8c044e37f3b12c8ef0f6232f63ad70855bf5e0f247eef426309e6afb",
+  "baselineSourceSha256": "658b3337ef7713164cde0daa74d6996bc6421874e0d7bb6c418116fc8eb842ab",
+  "harnessSha256": "30e00a0559757e4b971153b0ecab06ccc41a491487abee0e3f45fcb44695c527",
+  "auditHarnessSha256": "ef6cd500adfc31b5b442e08a0336c99528c99c8c8472fa02627c56ab36c05e4c",
+  "regressionSha256": "b4d552b0f3fa7d06939ca373cfb906fe3404e8718b7f5e7967048d5f4bf9f5fa",
+  "catalogSha256": "84ebe8568a2e9ca714f4c413dbbf33ffa050c3ec80a4ad0abd4ab15d96a83c80",
+  "native": {
+    "bytes": 119010,
+    "sha256": "bea029bf125c9f8f6ee3e63197e9a9e15556f35d59464ec3ccd5199c137e0715"
+  },
+  "node": "v22.22.3",
+  "v8": "12.4.254.21-node.56",
+  "hardwareTested": false,
+  "realtimeTested": false,
+  "executionSpeedMeasured": false,
+  "manualAudit": {
+    "schema": "micromusic-avr-sreg-manual-v1",
+    "source": "https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf",
+    "manualSha256": "d8e75ad7cc92de2b86c718495ed9392096e0192a08269a4dba8da16075be1e00",
+    "catalogSha256": "548e7d6bf5b12e1ec3bc96c913ef59d59a5355028cfe8aea0b8f19f310a6d94f",
+    "meaning": "Union of potentially written bits; BSET/BCLR select only the decoded operand bit.",
+    "rows": [
+      {
+        "form": "ADD",
+        "section": "5.2",
+        "pdfPage": 24,
+        "writeMask": 63
+      },
+      {
+        "form": "ADC",
+        "section": "5.1",
+        "pdfPage": 23,
+        "writeMask": 63
+      },
+      {
+        "form": "ADIW",
+        "section": "5.3",
+        "pdfPage": 25,
+        "writeMask": 31
+      },
+      {
+        "form": "SUB",
+        "section": "5.119",
+        "pdfPage": 141,
+        "writeMask": 63
+      },
+      {
+        "form": "SUBI",
+        "section": "5.120",
+        "pdfPage": 142,
+        "writeMask": 63
+      },
+      {
+        "form": "SBC",
+        "section": "5.93",
+        "pdfPage": 114,
+        "writeMask": 63
+      },
+      {
+        "form": "SBCI",
+        "section": "5.94",
+        "pdfPage": 115,
+        "writeMask": 63
+      },
+      {
+        "form": "SBIW",
+        "section": "5.98",
+        "pdfPage": 119,
+        "writeMask": 31
+      },
+      {
+        "form": "AND",
+        "section": "5.4",
+        "pdfPage": 26,
+        "writeMask": 30
+      },
+      {
+        "form": "ANDI",
+        "section": "5.5",
+        "pdfPage": 27,
+        "writeMask": 30
+      },
+      {
+        "form": "OR",
+        "section": "5.82",
+        "pdfPage": 103,
+        "writeMask": 30
+      },
+      {
+        "form": "ORI",
+        "section": "5.83",
+        "pdfPage": 104,
+        "writeMask": 30
+      },
+      {
+        "form": "EOR",
+        "section": "5.54",
+        "pdfPage": 73,
+        "writeMask": 30
+      },
+      {
+        "form": "COM",
+        "section": "5.44",
+        "pdfPage": 63,
+        "writeMask": 31
+      },
+      {
+        "form": "NEG",
+        "section": "5.80",
+        "pdfPage": 101,
+        "writeMask": 63
+      },
+      {
+        "form": "SBR",
+        "section": "5.99",
+        "pdfPage": 120,
+        "writeMask": 30
+      },
+      {
+        "form": "CBR",
+        "section": "5.34",
+        "pdfPage": 55,
+        "writeMask": 30
+      },
+      {
+        "form": "INC",
+        "section": "5.61",
+        "pdfPage": 81,
+        "writeMask": 30
+      },
+      {
+        "form": "DEC",
+        "section": "5.49",
+        "pdfPage": 68,
+        "writeMask": 30
+      },
+      {
+        "form": "TST",
+        "section": "5.122",
+        "pdfPage": 144,
+        "writeMask": 30
+      },
+      {
+        "form": "CLR",
+        "section": "5.39",
+        "pdfPage": 59,
+        "writeMask": 30
+      },
+      {
+        "form": "SER",
+        "section": "5.106",
+        "pdfPage": 126,
+        "writeMask": 0
+      },
+      {
+        "form": "RJMP",
+        "section": "5.90",
+        "pdfPage": 111,
+        "writeMask": 0
+      },
+      {
+        "form": "IJMP",
+        "section": "5.59",
+        "pdfPage": 80,
+        "writeMask": 0
+      },
+      {
+        "form": "RCALL",
+        "section": "5.87",
+        "pdfPage": 108,
+        "writeMask": 0
+      },
+      {
+        "form": "ICALL",
+        "section": "5.58",
+        "pdfPage": 79,
+        "writeMask": 0
+      },
+      {
+        "form": "RET",
+        "section": "5.88",
+        "pdfPage": 109,
+        "writeMask": 0
+      },
+      {
+        "form": "RETI",
+        "section": "5.89",
+        "pdfPage": 110,
+        "writeMask": 128
+      },
+      {
+        "form": "CPSE",
+        "section": "5.48",
+        "pdfPage": 67,
+        "writeMask": 0
+      },
+      {
+        "form": "CP",
+        "section": "5.45",
+        "pdfPage": 64,
+        "writeMask": 63
+      },
+      {
+        "form": "CPC",
+        "section": "5.46",
+        "pdfPage": 65,
+        "writeMask": 63
+      },
+      {
+        "form": "CPI",
+        "section": "5.47",
+        "pdfPage": 66,
+        "writeMask": 63
+      },
+      {
+        "form": "SBRC",
+        "section": "5.100",
+        "pdfPage": 121,
+        "writeMask": 0
+      },
+      {
+        "form": "SBRS",
+        "section": "5.101",
+        "pdfPage": 122,
+        "writeMask": 0
+      },
+      {
+        "form": "SBIC",
+        "section": "5.96",
+        "pdfPage": 117,
+        "writeMask": 0
+      },
+      {
+        "form": "SBIS",
+        "section": "5.97",
+        "pdfPage": 118,
+        "writeMask": 0
+      },
+      {
+        "form": "BRBS",
+        "section": "5.10",
+        "pdfPage": 32,
+        "writeMask": 0
+      },
+      {
+        "form": "BRBC",
+        "section": "5.9",
+        "pdfPage": 31,
+        "writeMask": 0
+      },
+      {
+        "form": "BREQ",
+        "section": "5.14",
+        "pdfPage": 36,
+        "writeMask": 0
+      },
+      {
+        "form": "BRNE",
+        "section": "5.23",
+        "pdfPage": 44,
+        "writeMask": 0
+      },
+      {
+        "form": "BRCS",
+        "section": "5.12",
+        "pdfPage": 34,
+        "writeMask": 0
+      },
+      {
+        "form": "BRCC",
+        "section": "5.11",
+        "pdfPage": 33,
+        "writeMask": 0
+      },
+      {
+        "form": "BRSH",
+        "section": "5.25",
+        "pdfPage": 46,
+        "writeMask": 0
+      },
+      {
+        "form": "BRLO",
+        "section": "5.20",
+        "pdfPage": 41,
+        "writeMask": 0
+      },
+      {
+        "form": "BRMI",
+        "section": "5.22",
+        "pdfPage": 43,
+        "writeMask": 0
+      },
+      {
+        "form": "BRPL",
+        "section": "5.24",
+        "pdfPage": 45,
+        "writeMask": 0
+      },
+      {
+        "form": "BRGE",
+        "section": "5.15",
+        "pdfPage": 37,
+        "writeMask": 0
+      },
+      {
+        "form": "BRLT",
+        "section": "5.21",
+        "pdfPage": 42,
+        "writeMask": 0
+      },
+      {
+        "form": "BRHS",
+        "section": "5.17",
+        "pdfPage": 38,
+        "writeMask": 0
+      },
+      {
+        "form": "BRHC",
+        "section": "5.16",
+        "pdfPage": 38,
+        "writeMask": 0
+      },
+      {
+        "form": "BRTS",
+        "section": "5.27",
+        "pdfPage": 48,
+        "writeMask": 0
+      },
+      {
+        "form": "BRTC",
+        "section": "5.26",
+        "pdfPage": 47,
+        "writeMask": 0
+      },
+      {
+        "form": "BRVS",
+        "section": "5.29",
+        "pdfPage": 50,
+        "writeMask": 0
+      },
+      {
+        "form": "BRVC",
+        "section": "5.28",
+        "pdfPage": 49,
+        "writeMask": 0
+      },
+      {
+        "form": "BRIE",
+        "section": "5.19",
+        "pdfPage": 40,
+        "writeMask": 0
+      },
+      {
+        "form": "BRID",
+        "section": "5.18",
+        "pdfPage": 39,
+        "writeMask": 0
+      },
+      {
+        "form": "SBI",
+        "section": "5.95",
+        "pdfPage": 116,
+        "writeMask": 0
+      },
+      {
+        "form": "CBI",
+        "section": "5.33",
+        "pdfPage": 54,
+        "writeMask": 0
+      },
+      {
+        "form": "LSL",
+        "section": "5.73",
+        "pdfPage": 94,
+        "writeMask": 63
+      },
+      {
+        "form": "LSR",
+        "section": "5.74",
+        "pdfPage": 96,
+        "writeMask": 31
+      },
+      {
+        "form": "ROL",
+        "section": "5.91",
+        "pdfPage": 112,
+        "writeMask": 63
+      },
+      {
+        "form": "ROR",
+        "section": "5.92",
+        "pdfPage": 113,
+        "writeMask": 31
+      },
+      {
+        "form": "ASR",
+        "section": "5.6",
+        "pdfPage": 28,
+        "writeMask": 31
+      },
+      {
+        "form": "SWAP",
+        "section": "5.121",
+        "pdfPage": 143,
+        "writeMask": 0
+      },
+      {
+        "form": "BSET",
+        "section": "5.30",
+        "pdfPage": 51,
+        "writeMask": 255
+      },
+      {
+        "form": "BCLR",
+        "section": "5.7",
+        "pdfPage": 29,
+        "writeMask": 255
+      },
+      {
+        "form": "BST",
+        "section": "5.31",
+        "pdfPage": 52,
+        "writeMask": 64
+      },
+      {
+        "form": "BLD",
+        "section": "5.8",
+        "pdfPage": 30,
+        "writeMask": 0
+      },
+      {
+        "form": "SEC",
+        "section": "5.102",
+        "pdfPage": 123,
+        "writeMask": 1
+      },
+      {
+        "form": "CLC",
+        "section": "5.35",
+        "pdfPage": 56,
+        "writeMask": 1
+      },
+      {
+        "form": "SEN",
+        "section": "5.105",
+        "pdfPage": 126,
+        "writeMask": 4
+      },
+      {
+        "form": "CLN",
+        "section": "5.38",
+        "pdfPage": 58,
+        "writeMask": 4
+      },
+      {
+        "form": "SEZ",
+        "section": "5.110",
+        "pdfPage": 129,
+        "writeMask": 2
+      },
+      {
+        "form": "CLZ",
+        "section": "5.43",
+        "pdfPage": 62,
+        "writeMask": 2
+      },
+      {
+        "form": "SEI",
+        "section": "5.104",
+        "pdfPage": 125,
+        "writeMask": 128
+      },
+      {
+        "form": "CLI",
+        "section": "5.37",
+        "pdfPage": 57,
+        "writeMask": 128
+      },
+      {
+        "form": "SES",
+        "section": "5.107",
+        "pdfPage": 127,
+        "writeMask": 16
+      },
+      {
+        "form": "CLS",
+        "section": "5.40",
+        "pdfPage": 60,
+        "writeMask": 16
+      },
+      {
+        "form": "SEV",
+        "section": "5.109",
+        "pdfPage": 129,
+        "writeMask": 8
+      },
+      {
+        "form": "CLV",
+        "section": "5.42",
+        "pdfPage": 61,
+        "writeMask": 8
+      },
+      {
+        "form": "SET",
+        "section": "5.108",
+        "pdfPage": 128,
+        "writeMask": 64
+      },
+      {
+        "form": "CLT",
+        "section": "5.41",
+        "pdfPage": 61,
+        "writeMask": 64
+      },
+      {
+        "form": "SEH",
+        "section": "5.103",
+        "pdfPage": 124,
+        "writeMask": 32
+      },
+      {
+        "form": "CLH",
+        "section": "5.36",
+        "pdfPage": 56,
+        "writeMask": 32
+      },
+      {
+        "form": "MOV",
+        "section": "5.75",
+        "pdfPage": 97,
+        "writeMask": 0
+      },
+      {
+        "form": "MOVW",
+        "section": "5.76",
+        "pdfPage": 97,
+        "writeMask": 0
+      },
+      {
+        "form": "LDI",
+        "section": "5.69",
+        "pdfPage": 90,
+        "writeMask": 0
+      },
+      {
+        "form": "LD Rd,X",
+        "section": "5.66",
+        "pdfPage": 86,
+        "writeMask": 0
+      },
+      {
+        "form": "LD Rd,X+",
+        "section": "5.66",
+        "pdfPage": 86,
+        "writeMask": 0
+      },
+      {
+        "form": "LD Rd,-X",
+        "section": "5.66",
+        "pdfPage": 86,
+        "writeMask": 0
+      },
+      {
+        "form": "LD Rd,Y",
+        "section": "5.67",
+        "pdfPage": 88,
+        "writeMask": 0
+      },
+      {
+        "form": "LD Rd,Y+",
+        "section": "5.67",
+        "pdfPage": 88,
+        "writeMask": 0
+      },
+      {
+        "form": "LD Rd,-Y",
+        "section": "5.67",
+        "pdfPage": 88,
+        "writeMask": 0
+      },
+      {
+        "form": "LDD Rd,Y+q",
+        "section": "5.67",
+        "pdfPage": 88,
+        "writeMask": 0
+      },
+      {
+        "form": "LD Rd,Z",
+        "section": "5.68",
+        "pdfPage": 89,
+        "writeMask": 0
+      },
+      {
+        "form": "LD Rd,Z+",
+        "section": "5.68",
+        "pdfPage": 89,
+        "writeMask": 0
+      },
+      {
+        "form": "LD Rd,-Z",
+        "section": "5.68",
+        "pdfPage": 89,
+        "writeMask": 0
+      },
+      {
+        "form": "LDD Rd,Z+q",
+        "section": "5.68",
+        "pdfPage": 89,
+        "writeMask": 0
+      },
+      {
+        "form": "LDS",
+        "section": "5.70",
+        "pdfPage": 91,
+        "writeMask": 0
+      },
+      {
+        "form": "ST X,Rr",
+        "section": "5.114",
+        "pdfPage": 135,
+        "writeMask": 0
+      },
+      {
+        "form": "ST X+,Rr",
+        "section": "5.114",
+        "pdfPage": 135,
+        "writeMask": 0
+      },
+      {
+        "form": "ST -X,Rr",
+        "section": "5.114",
+        "pdfPage": 135,
+        "writeMask": 0
+      },
+      {
+        "form": "ST Y,Rr",
+        "section": "5.115",
+        "pdfPage": 136,
+        "writeMask": 0
+      },
+      {
+        "form": "ST Y+,Rr",
+        "section": "5.115",
+        "pdfPage": 136,
+        "writeMask": 0
+      },
+      {
+        "form": "ST -Y,Rr",
+        "section": "5.115",
+        "pdfPage": 136,
+        "writeMask": 0
+      },
+      {
+        "form": "STD Y+q,Rr",
+        "section": "5.115",
+        "pdfPage": 136,
+        "writeMask": 0
+      },
+      {
+        "form": "ST Z,Rr",
+        "section": "5.116",
+        "pdfPage": 138,
+        "writeMask": 0
+      },
+      {
+        "form": "ST Z+,Rr",
+        "section": "5.116",
+        "pdfPage": 138,
+        "writeMask": 0
+      },
+      {
+        "form": "ST -Z,Rr",
+        "section": "5.116",
+        "pdfPage": 138,
+        "writeMask": 0
+      },
+      {
+        "form": "STD Z+q,Rr",
+        "section": "5.116",
+        "pdfPage": 138,
+        "writeMask": 0
+      },
+      {
+        "form": "STS",
+        "section": "5.117",
+        "pdfPage": 139,
+        "writeMask": 0
+      },
+      {
+        "form": "LPM",
+        "section": "5.72",
+        "pdfPage": 94,
+        "writeMask": 0
+      },
+      {
+        "form": "LPM Rd,Z",
+        "section": "5.72",
+        "pdfPage": 94,
+        "writeMask": 0
+      },
+      {
+        "form": "LPM Rd,Z+",
+        "section": "5.72",
+        "pdfPage": 94,
+        "writeMask": 0
+      },
+      {
+        "form": "SPM",
+        "section": "5.112",
+        "pdfPage": 131,
+        "writeMask": 0
+      },
+      {
+        "form": "IN",
+        "section": "5.60",
+        "pdfPage": 81,
+        "writeMask": 0
+      },
+      {
+        "form": "OUT",
+        "section": "5.84",
+        "pdfPage": 105,
+        "writeMask": 0
+      },
+      {
+        "form": "PUSH",
+        "section": "5.86",
+        "pdfPage": 107,
+        "writeMask": 0
+      },
+      {
+        "form": "POP",
+        "section": "5.85",
+        "pdfPage": 106,
+        "writeMask": 0
+      },
+      {
+        "form": "NOP",
+        "section": "5.81",
+        "pdfPage": 103,
+        "writeMask": 0
+      },
+      {
+        "form": "SLEEP",
+        "section": "5.111",
+        "pdfPage": 130,
+        "writeMask": 0
+      },
+      {
+        "form": "WDR",
+        "section": "5.123",
+        "pdfPage": 145,
+        "writeMask": 0
+      },
+      {
+        "form": "BREAK",
+        "section": "5.13",
+        "pdfPage": 35,
+        "writeMask": 0
+      }
+    ]
+  },
+  "regression": {
+    "tests": 296,
+    "beforePass": 53,
+    "beforeFailures": [
+      "ADD retires only its documented SREG bits, locals=false",
+      "ADC retires only its documented SREG bits, locals=false",
+      "ADIW retires only its documented SREG bits, locals=false",
+      "SUB retires only its documented SREG bits, locals=false",
+      "SUBI retires only its documented SREG bits, locals=false",
+      "SBC retires only its documented SREG bits, locals=false",
+      "SBCI retires only its documented SREG bits, locals=false",
+      "SBIW retires only its documented SREG bits, locals=false",
+      "AND retires only its documented SREG bits, locals=false",
+      "ANDI retires only its documented SREG bits, locals=false",
+      "OR retires only its documented SREG bits, locals=false",
+      "ORI retires only its documented SREG bits, locals=false",
+      "EOR retires only its documented SREG bits, locals=false",
+      "COM retires only its documented SREG bits, locals=false",
+      "NEG retires only its documented SREG bits, locals=false",
+      "SBR retires only its documented SREG bits, locals=false",
+      "CBR retires only its documented SREG bits, locals=false",
+      "INC retires only its documented SREG bits, locals=false",
+      "DEC retires only its documented SREG bits, locals=false",
+      "TST retires only its documented SREG bits, locals=false",
+      "CLR retires only its documented SREG bits, locals=false",
+      "RJMP retires only its documented SREG bits, locals=false",
+      "IJMP retires only its documented SREG bits, locals=false",
+      "RCALL retires only its documented SREG bits, locals=false",
+      "ICALL retires only its documented SREG bits, locals=false",
+      "RET retires only its documented SREG bits, locals=false",
+      "RETI retires only its documented SREG bits, locals=false",
+      "CPSE retires only its documented SREG bits, locals=false",
+      "CP retires only its documented SREG bits, locals=false",
+      "CPC retires only its documented SREG bits, locals=false",
+      "CPI retires only its documented SREG bits, locals=false",
+      "SBRC retires only its documented SREG bits, locals=false",
+      "SBRS retires only its documented SREG bits, locals=false",
+      "SBIC retires only its documented SREG bits, locals=false",
+      "SBIS retires only its documented SREG bits, locals=false",
+      "BRBS retires only its documented SREG bits, locals=false",
+      "BRBC retires only its documented SREG bits, locals=false",
+      "BREQ retires only its documented SREG bits, locals=false",
+      "BRNE retires only its documented SREG bits, locals=false",
+      "BRCS retires only its documented SREG bits, locals=false",
+      "BRCC retires only its documented SREG bits, locals=false",
+      "BRSH retires only its documented SREG bits, locals=false",
+      "BRLO retires only its documented SREG bits, locals=false",
+      "BRMI retires only its documented SREG bits, locals=false",
+      "BRPL retires only its documented SREG bits, locals=false",
+      "BRGE retires only its documented SREG bits, locals=false",
+      "BRLT retires only its documented SREG bits, locals=false",
+      "BRHS retires only its documented SREG bits, locals=false",
+      "BRHC retires only its documented SREG bits, locals=false",
+      "BRTS retires only its documented SREG bits, locals=false",
+      "BRTC retires only its documented SREG bits, locals=false",
+      "BRVS retires only its documented SREG bits, locals=false",
+      "BRVC retires only its documented SREG bits, locals=false",
+      "BRIE retires only its documented SREG bits, locals=false",
+      "BRID retires only its documented SREG bits, locals=false",
+      "LSL retires only its documented SREG bits, locals=false",
+      "LSR retires only its documented SREG bits, locals=false",
+      "ROL retires only its documented SREG bits, locals=false",
+      "ROR retires only its documented SREG bits, locals=false",
+      "ASR retires only its documented SREG bits, locals=false",
+      "BSET retires only its documented SREG bits, locals=false",
+      "BCLR retires only its documented SREG bits, locals=false",
+      "BST retires only its documented SREG bits, locals=false",
+      "BLD retires only its documented SREG bits, locals=false",
+      "SEC retires only its documented SREG bits, locals=false",
+      "CLC retires only its documented SREG bits, locals=false",
+      "SEN retires only its documented SREG bits, locals=false",
+      "CLN retires only its documented SREG bits, locals=false",
+      "SEZ retires only its documented SREG bits, locals=false",
+      "CLZ retires only its documented SREG bits, locals=false",
+      "SEI retires only its documented SREG bits, locals=false",
+      "CLI retires only its documented SREG bits, locals=false",
+      "SES retires only its documented SREG bits, locals=false",
+      "CLS retires only its documented SREG bits, locals=false",
+      "SEV retires only its documented SREG bits, locals=false",
+      "CLV retires only its documented SREG bits, locals=false",
+      "SET retires only its documented SREG bits, locals=false",
+      "CLT retires only its documented SREG bits, locals=false",
+      "SEH retires only its documented SREG bits, locals=false",
+      "CLH retires only its documented SREG bits, locals=false",
+      "LD Rd,X retires only its documented SREG bits, locals=false",
+      "LD Rd,X+ retires only its documented SREG bits, locals=false",
+      "LD Rd,-X retires only its documented SREG bits, locals=false",
+      "LD Rd,Y retires only its documented SREG bits, locals=false",
+      "LD Rd,Y+ retires only its documented SREG bits, locals=false",
+      "LD Rd,-Y retires only its documented SREG bits, locals=false",
+      "LDD Rd,Y+q retires only its documented SREG bits, locals=false",
+      "LD Rd,Z retires only its documented SREG bits, locals=false",
+      "LD Rd,Z+ retires only its documented SREG bits, locals=false",
+      "LD Rd,-Z retires only its documented SREG bits, locals=false",
+      "LDD Rd,Z+q retires only its documented SREG bits, locals=false",
+      "LDS retires only its documented SREG bits, locals=false",
+      "STS retires only its documented SREG bits, locals=false",
+      "LPM retires only its documented SREG bits, locals=false",
+      "LPM Rd,Z retires only its documented SREG bits, locals=false",
+      "LPM Rd,Z+ retires only its documented SREG bits, locals=false",
+      "SPM retires only its documented SREG bits, locals=false",
+      "IN retires only its documented SREG bits, locals=false",
+      "PUSH retires only its documented SREG bits, locals=false",
+      "POP retires only its documented SREG bits, locals=false",
+      "SLEEP retires only its documented SREG bits, locals=false",
+      "WDR retires only its documented SREG bits, locals=false",
+      "BREAK retires only its documented SREG bits, locals=false",
+      "ADD retires only its documented SREG bits, locals=true",
+      "ADC retires only its documented SREG bits, locals=true",
+      "ADIW retires only its documented SREG bits, locals=true",
+      "SUB retires only its documented SREG bits, locals=true",
+      "SUBI retires only its documented SREG bits, locals=true",
+      "SBC retires only its documented SREG bits, locals=true",
+      "SBCI retires only its documented SREG bits, locals=true",
+      "SBIW retires only its documented SREG bits, locals=true",
+      "AND retires only its documented SREG bits, locals=true",
+      "ANDI retires only its documented SREG bits, locals=true",
+      "OR retires only its documented SREG bits, locals=true",
+      "ORI retires only its documented SREG bits, locals=true",
+      "EOR retires only its documented SREG bits, locals=true",
+      "COM retires only its documented SREG bits, locals=true",
+      "NEG retires only its documented SREG bits, locals=true",
+      "SBR retires only its documented SREG bits, locals=true",
+      "CBR retires only its documented SREG bits, locals=true",
+      "INC retires only its documented SREG bits, locals=true",
+      "DEC retires only its documented SREG bits, locals=true",
+      "TST retires only its documented SREG bits, locals=true",
+      "CLR retires only its documented SREG bits, locals=true",
+      "RJMP retires only its documented SREG bits, locals=true",
+      "IJMP retires only its documented SREG bits, locals=true",
+      "RCALL retires only its documented SREG bits, locals=true",
+      "ICALL retires only its documented SREG bits, locals=true",
+      "RET retires only its documented SREG bits, locals=true",
+      "RETI retires only its documented SREG bits, locals=true",
+      "CPSE retires only its documented SREG bits, locals=true",
+      "CP retires only its documented SREG bits, locals=true",
+      "CPC retires only its documented SREG bits, locals=true",
+      "CPI retires only its documented SREG bits, locals=true",
+      "SBRC retires only its documented SREG bits, locals=true",
+      "SBRS retires only its documented SREG bits, locals=true",
+      "SBIC retires only its documented SREG bits, locals=true",
+      "SBIS retires only its documented SREG bits, locals=true",
+      "BRBS retires only its documented SREG bits, locals=true",
+      "BRBC retires only its documented SREG bits, locals=true",
+      "BREQ retires only its documented SREG bits, locals=true",
+      "BRNE retires only its documented SREG bits, locals=true",
+      "BRCS retires only its documented SREG bits, locals=true",
+      "BRCC retires only its documented SREG bits, locals=true",
+      "BRSH retires only its documented SREG bits, locals=true",
+      "BRLO retires only its documented SREG bits, locals=true",
+      "BRMI retires only its documented SREG bits, locals=true",
+      "BRPL retires only its documented SREG bits, locals=true",
+      "BRGE retires only its documented SREG bits, locals=true",
+      "BRLT retires only its documented SREG bits, locals=true",
+      "BRHS retires only its documented SREG bits, locals=true",
+      "BRHC retires only its documented SREG bits, locals=true",
+      "BRTS retires only its documented SREG bits, locals=true",
+      "BRTC retires only its documented SREG bits, locals=true",
+      "BRVS retires only its documented SREG bits, locals=true",
+      "BRVC retires only its documented SREG bits, locals=true",
+      "BRIE retires only its documented SREG bits, locals=true",
+      "BRID retires only its documented SREG bits, locals=true",
+      "LSL retires only its documented SREG bits, locals=true",
+      "LSR retires only its documented SREG bits, locals=true",
+      "ROL retires only its documented SREG bits, locals=true",
+      "ROR retires only its documented SREG bits, locals=true",
+      "ASR retires only its documented SREG bits, locals=true",
+      "BSET retires only its documented SREG bits, locals=true",
+      "BCLR retires only its documented SREG bits, locals=true",
+      "BST retires only its documented SREG bits, locals=true",
+      "BLD retires only its documented SREG bits, locals=true",
+      "SEC retires only its documented SREG bits, locals=true",
+      "CLC retires only its documented SREG bits, locals=true",
+      "SEN retires only its documented SREG bits, locals=true",
+      "CLN retires only its documented SREG bits, locals=true",
+      "SEZ retires only its documented SREG bits, locals=true",
+      "CLZ retires only its documented SREG bits, locals=true",
+      "SEI retires only its documented SREG bits, locals=true",
+      "CLI retires only its documented SREG bits, locals=true",
+      "SES retires only its documented SREG bits, locals=true",
+      "CLS retires only its documented SREG bits, locals=true",
+      "SEV retires only its documented SREG bits, locals=true",
+      "CLV retires only its documented SREG bits, locals=true",
+      "SET retires only its documented SREG bits, locals=true",
+      "CLT retires only its documented SREG bits, locals=true",
+      "SEH retires only its documented SREG bits, locals=true",
+      "CLH retires only its documented SREG bits, locals=true",
+      "LD Rd,X retires only its documented SREG bits, locals=true",
+      "LD Rd,X+ retires only its documented SREG bits, locals=true",
+      "LD Rd,-X retires only its documented SREG bits, locals=true",
+      "LD Rd,Y retires only its documented SREG bits, locals=true",
+      "LD Rd,Y+ retires only its documented SREG bits, locals=true",
+      "LD Rd,-Y retires only its documented SREG bits, locals=true",
+      "LDD Rd,Y+q retires only its documented SREG bits, locals=true",
+      "LD Rd,Z retires only its documented SREG bits, locals=true",
+      "LD Rd,Z+ retires only its documented SREG bits, locals=true",
+      "LD Rd,-Z retires only its documented SREG bits, locals=true",
+      "LDD Rd,Z+q retires only its documented SREG bits, locals=true",
+      "LDS retires only its documented SREG bits, locals=true",
+      "STS retires only its documented SREG bits, locals=true",
+      "LPM retires only its documented SREG bits, locals=true",
+      "LPM Rd,Z retires only its documented SREG bits, locals=true",
+      "LPM Rd,Z+ retires only its documented SREG bits, locals=true",
+      "SPM retires only its documented SREG bits, locals=true",
+      "IN retires only its documented SREG bits, locals=true",
+      "PUSH retires only its documented SREG bits, locals=true",
+      "POP retires only its documented SREG bits, locals=true",
+      "SLEEP retires only its documented SREG bits, locals=true",
+      "WDR retires only its documented SREG bits, locals=true",
+      "BREAK retires only its documented SREG bits, locals=true",
+      "IN latches its SREG operand but never restores it as flags",
+      "LDS latches its SREG operand but never restores it as flags",
+      "LD X latches its SREG operand but never restores it as flags",
+      "ADD preserves edited I for a tied IRQ, locals=false",
+      "BLD preserves edited I for a tied IRQ, locals=false",
+      "BRNE preserves edited I for a tied IRQ, locals=false",
+      "RJMP preserves edited I for a tied IRQ, locals=false",
+      "RCALL preserves edited I for a tied IRQ, locals=false",
+      "RET preserves edited I for a tied IRQ, locals=false",
+      "PUSH preserves edited I for a tied IRQ, locals=false",
+      "POP preserves edited I for a tied IRQ, locals=false",
+      "IN preserves edited I for a tied IRQ, locals=false",
+      "LDS preserves edited I for a tied IRQ, locals=false",
+      "STS preserves edited I for a tied IRQ, locals=false",
+      "LD X preserves edited I for a tied IRQ, locals=false",
+      "LPM preserves edited I for a tied IRQ, locals=false",
+      "WDR preserves edited I for a tied IRQ, locals=false",
+      "SLEEP preserves edited I for a tied IRQ, locals=false",
+      "BREAK preserves edited I for a tied IRQ, locals=false",
+      "SPM preserves edited I for a tied IRQ, locals=false",
+      "ADD preserves edited I for a tied IRQ, locals=true",
+      "BLD preserves edited I for a tied IRQ, locals=true",
+      "BRNE preserves edited I for a tied IRQ, locals=true",
+      "RJMP preserves edited I for a tied IRQ, locals=true",
+      "RCALL preserves edited I for a tied IRQ, locals=true",
+      "RET preserves edited I for a tied IRQ, locals=true",
+      "PUSH preserves edited I for a tied IRQ, locals=true",
+      "POP preserves edited I for a tied IRQ, locals=true",
+      "IN preserves edited I for a tied IRQ, locals=true",
+      "LDS preserves edited I for a tied IRQ, locals=true",
+      "STS preserves edited I for a tied IRQ, locals=true",
+      "LD X preserves edited I for a tied IRQ, locals=true",
+      "LPM preserves edited I for a tied IRQ, locals=true",
+      "WDR preserves edited I for a tied IRQ, locals=true",
+      "SLEEP preserves edited I for a tied IRQ, locals=true",
+      "BREAK preserves edited I for a tied IRQ, locals=true",
+      "SPM preserves edited I for a tied IRQ, locals=true"
+    ],
+    "afterPass": 296
+  },
+  "fullSuite": {
+    "tests": 2322,
+    "pass": 2322,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 122654.901
+  },
+  "audio": [
+    {
+      "id": "rhythmic",
+      "policy": "verification",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "fd0eac13d5e765450ee764558ed7b6580bb223b72677892ea596341bda0dd74e",
+      "pinsSha256": "481596e0beb417a35e99d6fa68f9538a69fe39f9c81b3be0e0e45323a8b12e26",
+      "pinCount": 1597,
+      "irqs": 798,
+      "retired": "147325",
+      "timePs": "85333333333",
+      "generatedBytes": {
+        "before": 423369,
+        "after": 424025
+      }
+    },
+    {
+      "id": "rhythmic",
+      "policy": "bounded-phase-locals",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "fd0eac13d5e765450ee764558ed7b6580bb223b72677892ea596341bda0dd74e",
+      "pinsSha256": "481596e0beb417a35e99d6fa68f9538a69fe39f9c81b3be0e0e45323a8b12e26",
+      "pinCount": 1597,
+      "irqs": 798,
+      "retired": "147325",
+      "timePs": "85333333333",
+      "generatedBytes": {
+        "before": 294424,
+        "after": 290760
+      }
+    },
+    {
+      "id": "lumiere-stereo",
+      "policy": "verification",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "9dc6184d625d57de8d51d5dae80b6196d7f87ce1af75f0cc62ad9382e8cd63a2",
+      "pinsSha256": "0a5d2fec9ed6a88aace170ef872d52bf688e88853afd2caef814198cdd3a71c7",
+      "pinCount": 1877,
+      "irqs": 798,
+      "retired": "146090",
+      "timePs": "85333333333",
+      "generatedBytes": {
+        "before": 427890,
+        "after": 428609
+      }
+    },
+    {
+      "id": "lumiere-stereo",
+      "policy": "bounded-phase-locals",
+      "frames": 4096,
+      "sampleRate": 48000,
+      "pcmSha256": "9dc6184d625d57de8d51d5dae80b6196d7f87ce1af75f0cc62ad9382e8cd63a2",
+      "pinsSha256": "0a5d2fec9ed6a88aace170ef872d52bf688e88853afd2caef814198cdd3a71c7",
+      "pinCount": 1877,
+      "irqs": 798,
+      "retired": "146090",
+      "timePs": "85333333333",
+      "generatedBytes": {
+        "before": 297425,
+        "after": 293878
+      }
+    }
+  ]
+}

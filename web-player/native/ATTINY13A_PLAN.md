@@ -23,6 +23,17 @@ historical checkpoints. Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Complete instruction-family SREG audit: all 123 write masks match the detailed
+tables extracted from the pinned official Microchip PDF. Individual resumable
+instructions now merge only their written bits with current SREG, preserving
+host edits to unaffected flags; BRxx/BLD keep latched inputs without a full
+SREG restore. Explicit data-bus aliases still write SREG normally. The same
+296-case regression fails 243 cases on 47fe829b and passes after repair; all
+2322 default/shared-tool checks pass. IRQ-active PCM and pin timestamps match
+in four real-firmware/policy spans. This establishes no new hardware timing
+or performance-profile acceptance; the seven open items remain open. See
+[the audit, code-size costs and evidence](../reports/sreg-retirement-20261026.md).
+
 Flag-neutral SREG checkpoint: NOP/LDI/MOV/MOVW/SWAP no longer restore an old
 SREG snapshot after a resumable clock phase. Public debugger edits, including
 I for a tied Timer0 IRQ, now survive; RESET still cancels pending register
