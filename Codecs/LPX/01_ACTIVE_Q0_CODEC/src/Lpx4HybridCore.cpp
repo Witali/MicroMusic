@@ -29,16 +29,28 @@ static inline __attribute__((always_inline)) int32_t truncShift(int32_t v,uint8_
 
 static const uint8_t LP_PROGMEM bitMasks[9]={0,1,3,7,15,31,63,127,255};
 
-static const int16_t LP_PROGMEM cosineQ13[257]={
-#include "cos_table.inc"
+static const int16_t LP_PROGMEM cosineHalfQ13[129]={
+#include "cos_half_table.inc"
 };
-static const uint16_t LP_PROGMEM stepQ14[256]={
-#include "scale_table.inc"
+static const uint16_t LP_PROGMEM scaleMantissa[16]={
+ 4194,4380,4573,4776,4987,5208,5439,5680,
+ 5931,6194,6468,6754,7053,7366,7692,8032
 };
+// Exact integer reconstruction of all 256 original scale entries (0..4016).
+// Decode once per 80-sample block, including zero aliases; no floating point.
+static uint16_t scaleStep(uint8_t index){
+ const uint16_t mantissa=LP_READ_U16(&scaleMantissa[index&15]);
+ return ((mantissa>>(15-(index>>4)))+1)>>1;
+}
+// The endpoint 256 must remain 16-bit, rather than wrapping to index zero.
+static int16_t cosineAt(uint16_t index){
+ if(index<=128)return (int16_t)LP_READ_U16(&cosineHalfQ13[index]);
+ return -(int16_t)LP_READ_U16(&cosineHalfQ13[256-index]);
+}
 
 
 Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),position_(0),
- sampleRate_(0),preQ14_(0),brightQ14_(0),prevDeemph_(0),prevBright_(0),
+ sampleRate_(0),preQ14_(0),brightQ14_(0),blockStep_(0),prevDeemph_(0),prevBright_(0),
  framePos_(0),blockPos_(0),subPos_(0),subIndex_(0),quantLimit_(0),mode_(0),blockScale_(0),
  bitBuffer_(0),bitsLeft_(0),riceK_(0),subType_(0),lag_(0),gain_(0),ringCursor_(0),
 #if LPX4_V3_FEATURES
@@ -75,7 +87,7 @@ uint32_t Lpx4HybridCore::read32(){
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  data_=input;bytes_=size;cursor_=0;error_=NONE;initializedFrame_=false;
  position_=0;framePos_=blockPos_=subPos_=subIndex_=0;
- bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;
+ bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;blockStep_=0;
  subType_=lag_=gain_=ringCursor_=quantLimit_=0;
 #if LPX4_V3_FEATURES
  formatFeatures_=0;
@@ -215,6 +227,7 @@ bool Lpx4HybridCore::readBlock(){
   if(target<0||target>255){error_=CORRUPT_STREAM;return false;}
   blockScale_=(uint8_t)target;
  }
+ blockStep_=scaleStep(blockScale_);
  return !error_;
 }
 bool Lpx4HybridCore::readSubframe(){
@@ -391,8 +404,8 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
             const int32_t weighted=(int32_t)prev_[i+j]*(16-t)+(int32_t)cur_[i+j]*t;
             const uint16_t norm=(uint16_t)(weighted>>2);
             const uint8_t idx=(uint8_t)(norm>>4),frac=(uint8_t)(norm&15);
-            const int16_t lo=(int16_t)LP_READ_U16(&cosineQ13[idx]);
-            const int16_t hi=(int16_t)LP_READ_U16(&cosineQ13[(uint16_t)idx+1]);
+            const int16_t lo=cosineAt(idx);
+            const int16_t hi=cosineAt((uint16_t)idx+1);
             const int16_t cosQ13=(int16_t)(lo+(((int32_t)(hi-lo)*frac)>>4));
             cc[j]=(int16_t)(-cosQ13);
         }
@@ -452,8 +465,8 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
             // normalize encoded LSF (Q8/Q10) to Q12 without division.
             const uint16_t norm=(uint16_t)((weighted*(coeffBits_==8?16:4))>>4);
             const uint8_t idx=(uint8_t)(norm>>4),frac=(uint8_t)(norm&15);
-            const int16_t lo=(int16_t)LP_READ_U16(&cosineQ13[idx]);
-            const int16_t hi=(int16_t)LP_READ_U16(&cosineQ13[(uint16_t)idx+1]);
+            const int16_t lo=cosineAt(idx);
+            const int16_t hi=cosineAt((uint16_t)idx+1);
             const int16_t cosQ13=(int16_t)(lo+(((int32_t)(hi-lo)*frac)>>4));
             cc[j]=(int16_t)(-cosQ13); // -2cos(pi*lsf), Q12
         }
@@ -493,7 +506,7 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #ifdef LPX3_Q_DIAG
     lastQ_=q;
 #endif
-    const uint16_t step=LP_READ_U16(&stepQ14[blockScale_]);
+    const uint16_t step=blockStep_;
     // The retained scale table is 0..4016, hence signed 16-bit multiplication
     // is exact here even though the Flash table's storage type is uint16_t.
     int32_t excitation=lpx4Mul16(q,(int16_t)step), acc=lpx4DotQ12(a_,hist_);

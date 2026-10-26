@@ -31,7 +31,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def cost_probe():
     """Compile a host-only instrumented executable from the portable C backend."""
     sources = [ROOT / 'src/Lpx4HybridCore.cpp', ROOT / 'src/Lpx4HybridCore.h', ROOT / 'src/Lpx4Math.h',
-               ROOT / 'src/cos_table.inc', ROOT / 'src/scale_table.inc', ROOT / 'tests/decode_metrics.cpp']
+               ROOT / 'src/cos_half_table.inc', ROOT / 'src/cos_table.inc', ROOT / 'src/scale_table.inc', ROOT / 'tests/decode_metrics.cpp']
     compiler = shutil.which('g++')
     if compiler is None:
         raise FileNotFoundError('g++ required for native decode-cost checks')

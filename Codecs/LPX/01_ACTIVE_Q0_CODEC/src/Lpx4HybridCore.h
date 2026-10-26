@@ -63,7 +63,7 @@ private:
     const uint8_t* data_;
     uint16_t bytes_,cursor_;
     uint32_t sampleCount_,position_;
-    uint16_t sampleRate_,preQ14_,brightQ14_;
+    uint16_t sampleRate_,preQ14_,brightQ14_,blockStep_;
     int16_t prev_[10],cur_[10],a_[10],hist_[10];
     int16_t prevLpc_[10],curLpc_[10];
     bool lsfCached_,staticSpectrum_;

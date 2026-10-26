@@ -123,7 +123,7 @@ class BatchDecoder:
 def cached_library(v3_features=0) -> Path:
     """Content-keyed cache: compile once per C++ source revision and platform."""
     srcs = [ROOT/'src'/'Lpx4HybridCore.cpp', ROOT/'src'/'Lpx4HybridCore.h', ROOT/'src'/'Lpx4Math.h',
-            ROOT/'src'/'native_batch_decoder.cpp', ROOT/'src'/'cos_table.inc',
+            ROOT/'src'/'native_batch_decoder.cpp', ROOT/'src'/'cos_half_table.inc', ROOT/'src'/'cos_table.inc',
             ROOT/'src'/'scale_table.inc']
     h = hashlib.sha256()
     h.update(str(v3_features).encode())
