@@ -661,6 +661,23 @@ and [budget proof](region-budget-audit.md). Next profile the updated opt-in
 policy/remaining bridge paths before choosing another native or generator
 optimization. The main count remains 21/30 with nine open; default stays wasm.
 
+#### Adaptive-region sampling checkpoint
+
+The [updated opt-in profile](../reports/bounded-profile-20261026.md) at `298a9b6f`
+retains 15 runs / 14,031 work samples on the merged 118,969-byte runtime.
+Region bodies/entries/fallbacks have distinct checked indices; six tests inspect
+the real dispatch tables and reject incompatible layouts. All runs match full
+production PCM/state/memory/IRQ/tail pins. Frozen raw-sample replay and five fresh
+execution replays pass. Phase-local liveness stays disabled in this study.
+
+Phase-clock descendants still contain 70–72% of real-firmware samples; event
+scanner, ratio/duration and I/O publication remain visible. These are overlapping
+frame observations, not exclusive subsystem times or speed comparisons. Next
+audit derived-deadline ownership across a CPU barrier before an isolated native
+experiment; preserve strict physical endpoint rounding and all public/bus state.
+Do not repeat the rejected scoped publication or product guards without new
+evidence. No hardware/default gate closes: 21/30 complete, nine open, default wasm.
+
 #### Watchdog clock checkpoint (period cache rejected; lazy sync audited)
 
 Exact period reduction passes1681 tests and15 parity cases, but four screened

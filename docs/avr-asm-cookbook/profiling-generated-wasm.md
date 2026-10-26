@@ -51,3 +51,8 @@ real-time audio additionally requires active interrupts and underrun checks.
 This changes no native ABI, production CPU bytes, memory geometry, or engine
 default. The C/WASM and JS engines remain selectable. No handwritten AVR
 assembly is introduced.
+
+Verified example: [adaptive-region study, 2026-10-26](../../web-player/reports/bounded-profile-20261026.md),
+15 profiles / 14,031 work samples with all five production execution replays.
+It identifies remaining clock/scheduler work; it is not a speed measurement or
+a supported real-time audio claim.
