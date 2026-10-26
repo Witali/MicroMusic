@@ -11,12 +11,12 @@ Baseline: общий v2/v3/v4/v5 binary около9172 байт без encoded s
 
 - [x] Зафиксировать готовый quality/packing этап и immutable build snapshot
   source из `d2f79e15` отдельно от активных изменений.
-- [ ] Измерить Flash по функциям и разделам ELF; отдельно учесть постоянную
+- [x] Измерить Flash по функциям и разделам ELF; отдельно учесть постоянную
   profiling/hardware обвязку и размер самого codec, не считать audio за код.
-- [ ] Проверить ограниченную матрицу compiler/link/unroll/O2 settings при
+- [x] Проверить ограниченную матрицу compiler/link/unroll/O2 settings при
   неизменном source snapshot. Не экономить на обязательных runner symbols
   или измерительной обвязке; сохранять точные flags и dependencies.
-- [ ] Реализовать явно выбираемый compact-only build: только v5 speech,
+- [x] Реализовать явно выбираемый compact-only build: только v5 speech,
   без удаления старых форматов из default build. Portable C fallback и
   аппаратное чтение Flash независимы от arithmetic selection.
 - [ ] Проверить выбранные минимальные сборки: full PWM equality на8 потоках,
@@ -29,3 +29,22 @@ Baseline: общий v2/v3/v4/v5 binary около9172 байт без encoded s
 измеренных условиях ATmega328P16MHz/8kHz, queue512/prefill384. Не утверждать,
 что самый маленький неподходящий по timing вариант поддержан. Отдельный
 profile с меньшим набором форматов явно маркируется и не заменяет default.
+
+## Журнал
+
+Атрибуция исходного9172B:7728B core,299B tables,778B playback/profiling,
+367B runtime/vectors/data. Таблицы не основной резерв.
+Проверены20 первоначальных и4 обоснованных сочетания лучших настроек
+(24 configurations для каждого source profile). Лучший representative:
+общий8030B, v5-only5910B. Рецепт:unroll1/tune0,Os,LTO,call-prologues,relax.
+Source snapshot неизменен; текущий default preprocess совпал с ним по tokens.
+Compact-only явно исключает legacy, class storage сокращён, max pulses3.
+
+125 host tests:124 passed,1 optional hard-link skip. Common/only ASan/UBSan:
+по613391 случая на464 inputs, в том числе8 enhanced speech prefixes;
+sample_capped=0, reset exact. Шесть новых profile-specific tests прошли.
+Выбранные сборки сохранили все8 frozen speech streams и прошли длинные
+normal/+100IRQ/C controls; C точен, но не realtime. Общий optimized build
+прошёл91 legacy stream с полным frozen PCM/PWM и нулём underrun.
+Arithmetic unroll1 + selected global flags: C/ASM/forced-generic, каждый
+по5768584 cases с активными IRQ, error/zero_error=0.
