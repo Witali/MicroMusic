@@ -61,6 +61,14 @@ static void pwm(int16_t sample,uint8_t gain){
 __attribute__((noinline)) static uint16_t referenceLsf(int16_t p,int16_t c,uint8_t t){
     return (uint16_t)(((int32_t)p*(16-t)+(int32_t)c*t)>>2);
 }
+__attribute__((noinline)) static int16_t referenceClip15(int32_t value){
+    return value<-32767?-32767:(value>32767?32767:(int16_t)value);
+}
+static void clip24(int32_t value){
+    const int16_t actual=lpx4Clip15From24(value);checkZero(actual);
+    if(actual!=referenceClip15(value))math_error=16;
+    ++math_cases;
+}
 int main(){
 #ifdef __AVR__
     TCCR1A=TCCR1B=0;OCR1A=1999;
@@ -90,6 +98,24 @@ int main(){
         ++math_cases;
     }
     const int16_t edges[]={-32768,-32767,-16385,-16384,-1,0,1,4095,16384,32766,32767};
+    for(uint8_t i=0;i<11;i++){
+        uint16_t bits=0;
+        do{
+            const int16_t actual=lpx4AddClip15(edges[i],(int16_t)bits);checkZero(actual);
+            if(actual!=referenceClip15((int32_t)edges[i]+(int16_t)bits))math_error=17;
+            ++math_cases;
+        }while(++bits);
+    }
+    for(int32_t v=-65536;v<65536;v++)clip24(v);
+    const uint16_t lowEdges[]={0,1,32767,32768,32769,65535};
+    for(int16_t high=-128;high<128;high++)for(uint8_t j=0;j<6;j++)clip24((int32_t)high*65536L+lowEdges[j]);
+    uint16_t bits=0;
+    do{
+        const int16_t value=(int16_t)bits,actual=lpx4ClipQ14(value);checkZero(actual);
+        const int16_t expected=value<-16384?-16384:(value>16384?16384:value);
+        if(actual!=expected)math_error=18;
+        ++math_cases;
+    }while(++bits);
     const int8_t byteEdges[]={-128,-127,-64,-1,0,1,64,127};
     for(uint8_t i=0;i<8;i++){
         uint16_t bits=0;
@@ -125,6 +151,7 @@ int main(){
             (int32_t)(random32()&1048575UL)-524288L;
         const int32_t synthesized=lpx4SynthesisQ12(excitation,a,h);checkZero(synthesized);
         if(synthesized!=excitation-expected)math_error=9;
+        clip24(synthesized);
         if(h[0]!=original[0])math_error=10;
         for(uint8_t i=1;i<10;i++)if(h[i]!=original[i-1])math_error=11;
         ++math_cases;

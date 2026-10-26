@@ -234,6 +234,49 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 #undef LPX4_STRING
 #undef LPX4_STRING_
 
+// Saturate a signed24 value to the synthesis range -32767..32767.
+// Synthesis is bounded by +/-3145728, so its upper byte is sign extension.
+static inline __attribute__((always_inline)) int16_t lpx4Clip15From24(int32_t value){
+#if LPX4_USE_AVR_ASM
+    int16_t result;
+    __asm__(
+        // Compare byte C to the sign of the low word, then restore byte B.
+        "lsl %B1\n\tsbc %A0,%A0\n\tcp %C1,%A0\n\tbrne 1f\n\t"
+        "lsl %A0\n\tror %B1\n\tmovw %A0,%A1\n\t"
+        // The exact signed16 minimum is excluded from the synthesis range.
+        "cpi %B0,128\n\tbrne 2f\n\ttst %A0\n\tbrne 2f\n\t"
+        "inc %A0\n\trjmp 2f\n\t"
+        "1:\n\tldi %A0,255\n\tldi %B0,127\n\tsbrs %C1,7\n\trjmp 2f\n\t"
+        "ldi %A0,1\n\tldi %B0,128\n\t2:\n\t"
+        : "=&d"(result),"+r"(value) : : "cc");
+    return result;
+#else
+    return value<-32767?-32767:(value>32767?32767:(int16_t)value);
+#endif
+}
+
+// Full signed16 addition with the same non-minimum saturation range.
+static inline __attribute__((always_inline)) int16_t lpx4AddClip15(int16_t a,int16_t b){
+#if LPX4_USE_AVR_ASM
+    __asm__(
+        "add %A0,%A1\n\tadc %B0,%B1\n\tbrvc 1f\n\tbrmi 2f\n\t"
+        // Negative overflow has a nonnegative wrapped sum; positive reverses it.
+        "ldi %A0,1\n\tldi %B0,128\n\trjmp 3f\n\t"
+        "2:\n\tldi %A0,255\n\tldi %B0,127\n\trjmp 3f\n\t"
+        "1:\n\tcpi %B0,128\n\tbrne 3f\n\ttst %A0\n\tbrne 3f\n\t"
+        "inc %A0\n\t3:\n\t"
+        : "+&d"(a) : "r"(b) : "cc");
+    return a;
+#else
+    const int32_t sum=(int32_t)a+b;
+    return sum<-32767?-32767:(sum>32767?32767:(int16_t)sum);
+#endif
+}
+
+static inline __attribute__((always_inline)) int16_t lpx4ClipQ14(int16_t value){
+    return value<-16384?-16384:(value>16384?16384:value);
+}
+
 // Rounded legacy PWM, exact for signed16 sample and gain 0..255.
 // floor((sample*gain+8192)/16384)+128, saturated to uint8.
 static inline __attribute__((always_inline)) uint8_t lpx4PwmQ14(int16_t sample,uint8_t gain){

@@ -2738,6 +2738,29 @@ reference and the actual narrowed helper now compare the correct4096 results.
 Production PCM/PWM and the independent Python integer proof were unaffected.
 [Exact bounds, variants, complete measurements and next untested candidates](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: bounded saturation instead of signed32 compare chains
+
+AVR5/GCC7.3 `-Os`, same explicit ASM selector, C fallback and real memory
+access: synthesis magnitude<=3145728 permits a signed24-to-S15 clamp. Compare
+byte C with sign extension of the low word, restoring the shifted byte B;
+handle exact -32768 separately because the codec's low bound is -32767.
+Keep the generic signed32 clamp outside this explicit contract.
+
+For full signed16 addition, ADD/ADC's V flag detects overflow. Positive
+overflow has a negative wrapped sum, negative overflow a nonnegative sum.
+Again map exact -32768 to -32767. These helpers do not multiply or change r1.
+The portable implementation uses a signed32 sum and the original bounds.
+Brightness coefficient<=11469 and clipped state<=16384 prove the pre-clamp
+difference is within+/-27853; its signed16 cast and Q14 clamp are safe.
+
+Measured round6:3083330283 ->2969411557 wall cycles over91 active-IRQ ELF,
+3.694665% less time,-118 B Flash/image, unchanged1082 B SRAM, golden PCM16/PWM
+and useful AVR PWM exact, zero underruns. Old eight-second standard+100 IRQ:
+1490.638 ->1422.088 cycles/sample, zero underruns. Nine C/ASM/generic x
+unroll1/3/9 builds pass4,946,305 arithmetic cases each with IRQ/r1, including
+935,424 dense/edge saturation cases;95 host tests pass.
+[Contracts, real route counts and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.
