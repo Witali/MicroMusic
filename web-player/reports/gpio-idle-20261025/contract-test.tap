@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: settled internal GPIO suppresses recurring calls and preserves every phase: mode=0
+ok 1 - settled internal GPIO suppresses recurring calls and preserves every phase: mode=0
+  ---
+  duration_ms: 24.3728
+  type: 'test'
+  ...
+# Subtest: settled internal GPIO suppresses recurring calls and preserves every phase: mode=1
+ok 2 - settled internal GPIO suppresses recurring calls and preserves every phase: mode=1
+  ---
+  duration_ms: 17.4765
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=0
+ok 3 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=0
+  ---
+  duration_ms: 60.5307
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=1
+ok 4 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=1
+  ---
+  duration_ms: 15.705
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=2
+ok 5 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=2
+  ---
+  duration_ms: 16.465
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=0
+ok 6 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=0
+  ---
+  duration_ms: 3.904
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=1
+ok 7 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=1
+  ---
+  duration_ms: 39.7628
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=2
+ok 8 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=2
+  ---
+  duration_ms: 3.2351
+  type: 'test'
+  ...
+# Subtest: power reset assertion and preapplied acknowledgement clear settled ownership
+ok 9 - power reset assertion and preapplied acknowledgement clear settled ownership
+  ---
+  duration_ms: 2.6747
+  type: 'test'
+  ...
+# Subtest: CLKI keeps its original GPIO path and all source-edge observations
+ok 10 - CLKI keeps its original GPIO path and all source-edge observations
+  ---
+  duration_ms: 13.913
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=0
+ok 11 - queued input before/at/after a falling edge retains PINB latency: mode=0
+  ---
+  duration_ms: 29.3407
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=1
+ok 12 - queued input before/at/after a falling edge retains PINB latency: mode=1
+  ---
+  duration_ms: 16.8002
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=2
+ok 13 - queued input before/at/after a falling edge retains PINB latency: mode=2
+  ---
+  duration_ms: 6.6023
+  type: 'test'
+  ...
+# Subtest: a settled certificate cannot hide reversed GPIO time
+ok 14 - a settled certificate cannot hide reversed GPIO time
+  ---
+  duration_ms: 1.213
+  type: 'test'
+  ...
+# Subtest: stable and pending GPIO pipelines retain phase across CLKPR and OSCCAL changes
+ok 15 - stable and pending GPIO pipelines retain phase across CLKPR and OSCCAL changes
+  ---
+  duration_ms: 9.3409
+  type: 'test'
+  ...
+# Subtest: a gated clock cannot certify an unsettled GPIO pipeline from an infinite deadline
+ok 16 - a gated clock cannot certify an unsettled GPIO pipeline from an infinite deadline
+  ---
+  duration_ms: 1.7166
+  type: 'test'
+  ...
+# Subtest: the raw GPIO time-limit sentinel does not certify an unsettled pipeline
+ok 17 - the raw GPIO time-limit sentinel does not certify an unsettled pipeline
+  ---
+  duration_ms: 2.0817
+  type: 'test'
+  ...
+# Subtest: seeded GPIO register/input changes match original dispatch at odd, even and zero spans
+ok 18 - seeded GPIO register/input changes match original dispatch at odd, even and zero spans
+  ---
+  duration_ms: 362.5029
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 35887.0345

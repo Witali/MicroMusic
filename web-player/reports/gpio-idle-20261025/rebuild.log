@@ -1,0 +1,137 @@
+Built import-free ATtiny13A device C/WASM: 118946 bytes; 16 sources; 109 exports
+TAP version 13
+# Subtest: settled internal GPIO suppresses recurring calls and preserves every phase: mode=0
+ok 1 - settled internal GPIO suppresses recurring calls and preserves every phase: mode=0
+  ---
+  duration_ms: 18.8943
+  type: 'test'
+  ...
+# Subtest: settled internal GPIO suppresses recurring calls and preserves every phase: mode=1
+ok 2 - settled internal GPIO suppresses recurring calls and preserves every phase: mode=1
+  ---
+  duration_ms: 12.851
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=0
+ok 3 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=0
+  ---
+  duration_ms: 15.8466
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=1
+ok 4 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=1
+  ---
+  duration_ms: 12.1113
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=2
+ok 5 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=2
+  ---
+  duration_ms: 11.8527
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=0
+ok 6 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=0
+  ---
+  duration_ms: 3.6938
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=1
+ok 7 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=1
+  ---
+  duration_ms: 4.5873
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=2
+ok 8 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=2
+  ---
+  duration_ms: 2.4095
+  type: 'test'
+  ...
+# Subtest: power reset assertion and preapplied acknowledgement clear settled ownership
+ok 9 - power reset assertion and preapplied acknowledgement clear settled ownership
+  ---
+  duration_ms: 1.8869
+  type: 'test'
+  ...
+# Subtest: CLKI keeps its original GPIO path and all source-edge observations
+ok 10 - CLKI keeps its original GPIO path and all source-edge observations
+  ---
+  duration_ms: 12.3216
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=0
+ok 11 - queued input before/at/after a falling edge retains PINB latency: mode=0
+  ---
+  duration_ms: 5.5489
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=1
+ok 12 - queued input before/at/after a falling edge retains PINB latency: mode=1
+  ---
+  duration_ms: 7.2946
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=2
+ok 13 - queued input before/at/after a falling edge retains PINB latency: mode=2
+  ---
+  duration_ms: 4.5117
+  type: 'test'
+  ...
+# Subtest: a settled certificate cannot hide reversed GPIO time
+ok 14 - a settled certificate cannot hide reversed GPIO time
+  ---
+  duration_ms: 0.8286
+  type: 'test'
+  ...
+# Subtest: stable and pending GPIO pipelines retain phase across CLKPR and OSCCAL changes
+ok 15 - stable and pending GPIO pipelines retain phase across CLKPR and OSCCAL changes
+  ---
+  duration_ms: 5.7694
+  type: 'test'
+  ...
+# Subtest: a gated clock cannot certify an unsettled GPIO pipeline from an infinite deadline
+ok 16 - a gated clock cannot certify an unsettled GPIO pipeline from an infinite deadline
+  ---
+  duration_ms: 1.2552
+  type: 'test'
+  ...
+# Subtest: the raw GPIO time-limit sentinel does not certify an unsettled pipeline
+ok 17 - the raw GPIO time-limit sentinel does not certify an unsettled pipeline
+  ---
+  duration_ms: 0.7135
+  type: 'test'
+  ...
+# Subtest: seeded GPIO register/input changes match original dispatch at odd, even and zero spans
+ok 18 - seeded GPIO register/input changes match original dispatch at odd, even and zero spans
+  ---
+  duration_ms: 130.6857
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9377.8731
+4-way rhythmic-compatible
+4-way rhythmic-physical
+4-way lumiere-stereo-compatible
+4-way lumiere-stereo-physical
+4-way hq4-chego-auto-compatible
+4-way hq4-chego-auto-physical
+4-way kernel-compatible-direct
+4-way kernel-physical-direct
+4-way kernel-clki-20m-div1
+4-way kernel-clki-20m-div256
+4-way kernel-internal-20m-div1
+4-way kernel-internal-20m-div1-adc-active
+4-way kernel-clki-20m-div1-adc-active
+4-way kernel-internal-20m-div1-watchdog-active
+4-way kernel-clki-20m-div1-watchdog-active
+Exact controls passed: C:\Work\MicroMusic\.worktree\avr-to-wasm\build\replays\gpio-idle-v2-ap8f6x\parity-replay.json
+Isolated replay: C:\Work\MicroMusic\.worktree\avr-to-wasm\build\replays\gpio-idle-v2-ap8f6x
+{"variants":{"v1":{"timings":384,"warmups":192,"snapshots":7184,"comparisons":6950,"contractTests":16},"v2":{"timings":192,"warmups":96,"snapshots":5648,"comparisons":5446,"contractTests":18}},"tracePairs":7,"fullRegressionTests":1722}

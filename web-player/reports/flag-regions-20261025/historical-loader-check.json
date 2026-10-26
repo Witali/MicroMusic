@@ -1,0 +1,97 @@
+{
+  "schema": "micromusic-generated-wasm-benchmark-v1",
+  "complete": true,
+  "revision": "90207573208db69826a760fcdc8d8c12935ccb17",
+  "mode": "validation",
+  "transform": "phase-locals",
+  "baseline": {
+    "revision": "ae265f746a55841c2d182538739b9fbe67a3e3cb",
+    "sourceSha256": {
+      "web-player/lib/avr-transpiler.js": "febb8abbaaae2a25b874ff9a2e33b4e711dd9a35865da9fd42201dfb9fde1f65",
+      "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+      "web-player/lib/avr-phase-locals.js": "3b2d94294149c4e376a8857420d277f2248343dd0fefa7f0553e96fe5feeeab7"
+    },
+    "adaptation": "Only import URLs are redirected: historical phase module as data URL, unchanged device profiles/phase-local dependency as file URLs."
+  },
+  "cpuModulePolicy": "production-translation-cache",
+  "gcBeforeRun": false,
+  "node": "v22.22.3",
+  "platform": "win32",
+  "cpu": "AMD Ryzen 5 5600X 6-Core Processor             ",
+  "trials": 8,
+  "warmups": 4,
+  "rate": 48000,
+  "frames": 12000,
+  "instructions": 1000,
+  "levels": [
+    "live-locals"
+  ],
+  "sourceSha256": {
+    "web-player/lib/avr-transpiler.js": "febb8abbaaae2a25b874ff9a2e33b4e711dd9a35865da9fd42201dfb9fde1f65",
+    "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+    "web-player/lib/avr-phase-locals.js": "3b2d94294149c4e376a8857420d277f2248343dd0fefa7f0553e96fe5feeeab7",
+    "web-player/lib/avr-transpiled-runtime.js": "54611069d4be4dc76fe002e3bc3a359420f26d2d966908f5f57f533a3837b0ec",
+    "web-player/lib/attiny13a-runtime.js": "5c79fdcfcacac149ec535ebc0b9d173d12f7fe75a5bea27f9997b5e214681869",
+    "web-player/scripts/benchmark-generated-wasm.mjs": "02226d92647d62d3adba961bcd7d610539f4cb12f7c02e6fd9ff414ce7f70456",
+    "web-player/scripts/lib/optimize-avr-wasm.mjs": "144c2c0c0740b0cdd4203c8ff2a5dc186f4dcb0e668f74244c83d18025de2951",
+    "web-player/scripts/lib/runtime-control-design.mjs": "9a52ba1ab6bf6c1e9864bddf5413eacaae81899f73dfb859617777e8d7d59e43"
+  },
+  "runtimeSha256": "111f314fdbab5bd7a8f1c0c4d8891811676e436bd7aa78681d6c62728ef0fba6",
+  "method": "Timing mode: balanced four-label trials; oldA/oldB identical raw CPU bytes, newA/newB identical optimized bytes; one unchanged native Module. Phase-local runs use the production translation cache and assert CPU Module sharing within identity pairs; Binaryen runs use fresh precompiled CPU Modules. Instances/memories are always fresh. Equal warmups; construction, optimization and snapshots excluded from execution timing. Validation mode: one raw and one optimized run; no speed inference. Exact PCM, full architectural/diagnostic state and pins checked after every audio block or direct run. Ratios above1 favor optimized CPU. Generation/optimizer-process and compile observations are single observations, not cold-start medians or browser guarantees.",
+  "cases": [
+    {
+      "id": "kernel-compatible-direct",
+      "level": "live-locals",
+      "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+      "eepromSha256": null,
+      "generationMs": 22.460500000000025,
+      "compileAfterValidationMs": {
+        "raw": 0.5187000000000239,
+        "optimized": 0.15730000000002065
+      },
+      "optimization": {
+        "tool": "generation-time phase-local liveness",
+        "flags": [],
+        "inputSha256": "925a156ff88efe0ab870e0fe8c328a7585b1f997d6b1fe40e197748eb0dd4987",
+        "outputSha256": "925a156ff88efe0ab870e0fe8c328a7585b1f997d6b1fe40e197748eb0dd4987",
+        "inputBytes": 110967,
+        "outputBytes": 110967,
+        "elapsedMs": 0.20109999999999673,
+        "phaseLocals": null
+      },
+      "rawLayout": {
+        "codeSectionBytes": 59493,
+        "functions": 522,
+        "customSectionBytes": 48491
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 59493,
+        "functions": 522,
+        "customSectionBytes": 48491
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 1.1333000000000197,
+          "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stateSha256": "505e84e7f50604f10fc66ce13cd3c1df50b3a42a451ee3b83c9067fb6f45ef62",
+          "pinSha256": "c76cc9098cb5c0bb03f7f0d82cad967338482b49628b54c47ed38586e7c55348",
+          "checkpoints": 1
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 0.3211000000000013,
+          "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stateSha256": "505e84e7f50604f10fc66ce13cd3c1df50b3a42a451ee3b83c9067fb6f45ef62",
+          "pinSha256": "c76cc9098cb5c0bb03f7f0d82cad967338482b49628b54c47ed38586e7c55348",
+          "checkpoints": 1
+        }
+      ],
+      "warmups": []
+    }
+  ]
+}

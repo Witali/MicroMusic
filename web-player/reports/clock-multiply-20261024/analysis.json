@@ -1,0 +1,63 @@
+{
+  "schema": "micromusic-clock-multiply-experiment-v1",
+  "baseline": "bb5f329",
+  "decision": "rejected",
+  "screenComplete": true,
+  "selectedCases": 2,
+  "fullAcceptanceMatrixRun": false,
+  "reason": "Both completed audio screening cases regress with identity controls near1. No need to run the remaining acceptance matrix.",
+  "candidateSha256": "dfca64f8abdbc7c9fd22eff41cd6d963f7299128c695c2fde32c723ed21dc1af",
+  "correctness": {
+    "passed": 1634,
+    "failed": 0
+  },
+  "cases": [
+    {
+      "id": "rhythmic-compatible",
+      "oldIdentity": 1.000069137676351,
+      "newIdentity": 0.9971563437367212,
+      "crossVersion": 0.9446485201890553,
+      "fasterTrials": 0,
+      "trials": 8,
+      "measuredRuns": 32,
+      "warmups": 16,
+      "checkpoints": 564
+    },
+    {
+      "id": "rhythmic-physical",
+      "oldIdentity": 1.0001808757965251,
+      "newIdentity": 0.9965980128923363,
+      "crossVersion": 0.9470052941645575,
+      "fasterTrials": 0,
+      "trials": 8,
+      "measuredRuns": 32,
+      "warmups": 16,
+      "checkpoints": 564
+    }
+  ],
+  "measuredRuns": 64,
+  "warmups": 32,
+  "checkpoints": 1128,
+  "staticComparison": {
+    "counts": {
+      "identical": 201,
+      "relocation-only": 0,
+      "body-changed": 2,
+      "added": 0,
+      "removed": 0
+    },
+    "changes": [
+      {
+        "symbol": "duration",
+        "beforeBytes": 526,
+        "afterBytes": 543
+      },
+      {
+        "symbol": "ratio",
+        "beforeBytes": 464,
+        "afterBytes": 495
+      }
+    ]
+  },
+  "method": "Eight balanced four-label trials, four warmups per label, identical native Module sharing within null pairs; exact recorded PCM/state/pin equality. Cross ratios above1 favor candidate. A complete two-case screen is not the full13-case acceptance matrix."
+}

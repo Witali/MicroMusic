@@ -1,0 +1,430 @@
+TAP version 13
+# Subtest: original v1 runtime loads default legacy options and supplies missing state observers
+ok 1 - original v1 runtime loads default legacy options and supplies missing state observers
+  ---
+  duration_ms: 308.5564
+  type: 'test'
+  ...
+# Subtest: original v3 runtime loads without requiring later analog RESET exports
+ok 2 - original v3 runtime loads without requiring later analog RESET exports
+  ---
+  duration_ms: 66.719
+  type: 'test'
+  ...
+# Subtest: original v1 runtime cannot bypass DWEN admission
+ok 3 - original v1 runtime cannot bypass DWEN admission
+  ---
+  duration_ms: 32.4713
+  type: 'test'
+  ...
+# Subtest: original v3 runtime cannot bypass DWEN admission
+ok 4 - original v3 runtime cannot bypass DWEN admission
+  ---
+  duration_ms: 26.3992
+  type: 'test'
+  ...
+# Subtest: package executes the supplied translation and reproduces explicit initial EEPROM/configuration
+ok 5 - package executes the supplied translation and reproduces explicit initial EEPROM/configuration
+  ---
+  duration_ms: 84.524
+  type: 'test'
+  ...
+# Subtest: calibrated clock package executes its supplied CPU and physical audio path
+ok 6 - calibrated clock package executes its supplied CPU and physical audio path
+  ---
+  duration_ms: 152.2502
+  type: 'test'
+  ...
+# Subtest: corrupt package fails before any runtime or translated instance is created
+ok 7 - corrupt package fails before any runtime or translated instance is created
+  ---
+  duration_ms: 49.4541
+  type: 'test'
+  ...
+# Subtest: package loader runs with only JavaScript loader files and no default WASM artifacts
+ok 8 - package loader runs with only JavaScript loader files and no default WASM artifacts
+  ---
+  duration_ms: 401.4172
+  type: 'test'
+  ...
+# Subtest: SPM after package loading invalidates the supplied compiled image before execution
+ok 9 - SPM after package loading invalidates the supplied compiled image before execution
+  ---
+  duration_ms: 140.2243
+  type: 'test'
+  ...
+# Subtest: package renderer preserves physical samples, DSP and controls across batches
+ok 10 - package renderer preserves physical samples, DSP and controls across batches
+  ---
+  duration_ms: 140.9827
+  type: 'test'
+  ...
+# Subtest: browser import derives display memory and fuses from the verified package
+ok 11 - browser import derives display memory and fuses from the verified package
+  ---
+  duration_ms: 97.7444
+  type: 'test'
+  ...
+# Subtest: real Worker loads the package and restarts it for the audio port
+ok 12 - real Worker loads the package and restarts it for the audio port
+  ---
+  duration_ms: 399.6988
+  type: 'test'
+  ...
+# Subtest: roundtrip contains complete Flash, EEPROM, runtime, translation, fuses and explicit timing options
+ok 13 - roundtrip contains complete Flash, EEPROM, runtime, translation, fuses and explicit timing options
+  ---
+  duration_ms: 152.4735
+  type: 'test'
+  ...
+# Subtest: default configuration, erased EEPROM and serialization are deterministic
+ok 14 - default configuration, erased EEPROM and serialization are deterministic
+  ---
+  duration_ms: 130.9708
+  type: 'test'
+  ...
+# Subtest: version1 preserves its original configuration contract
+ok 15 - version1 preserves its original configuration contract
+  ---
+  duration_ms: 45.7187
+  type: 'test'
+  ...
+# Subtest: version2 preserves its calibrated-clock configuration contract
+ok 16 - version2 preserves its calibrated-clock configuration contract
+  ---
+  duration_ms: 47.056
+  type: 'test'
+  ...
+# Subtest: version3 preserves its power-profile contract without requiring the later RESET profile
+ok 17 - version3 preserves its power-profile contract without requiring the later RESET profile
+  ---
+  duration_ms: 48.218
+  type: 'test'
+  ...
+# Subtest: version4 retains its RESET contract and rejects later continuation/CLKI fields
+ok 18 - version4 retains its RESET contract and rejects later continuation/CLKI fields
+  ---
+  duration_ms: 60.8509
+  type: 'test'
+  ...
+# Subtest: packages reject DWEN without requiring an analog RESET profile
+ok 19 - packages reject DWEN without requiring an analog RESET profile
+  ---
+  duration_ms: 163.1525
+  type: 'test'
+  ...
+# Subtest: the DWEN admission boundary also covers historical package versions
+ok 20 - the DWEN admission boundary also covers historical package versions
+  ---
+  duration_ms: 324.5392
+  type: 'test'
+  ...
+# Subtest: v5 binds the resumable execution mode, phase layout and configuration
+ok 21 - v5 binds the resumable execution mode, phase layout and configuration
+  ---
+  duration_ms: 94.5784
+  type: 'test'
+  ...
+# Subtest: v5 rejects malformed/overlapping phase metadata before any instantiation
+ok 22 - v5 rejects malformed/overlapping phase metadata before any instantiation
+  ---
+  duration_ms: 188.1615
+  type: 'test'
+  ...
+# Subtest: v5 verifies every phase import and native phase observer signature
+ok 23 - v5 verifies every phase import and native phase observer signature
+  ---
+  duration_ms: 111.7117
+  type: 'test'
+  ...
+# Subtest: CLKI profile is an exact digital fixture and requires CKSEL00 plus resumable mode
+ok 24 - CLKI profile is an exact digital fixture and requires CKSEL00 plus resumable mode
+  ---
+  duration_ms: 1.3923
+  type: 'test'
+  ...
+# Subtest: v5 checks CLKI exports only for the selected source and verifies their exact signatures
+ok 25 - v5 checks CLKI exports only for the selected source and verifies their exact signatures
+  ---
+  duration_ms: 404.2757
+  type: 'test'
+  ...
+# Subtest: CLI generates a matching v5 continuation when configuration requests resumable execution
+ok 26 - CLI generates a matching v5 continuation when configuration requests resumable execution
+  ---
+  duration_ms: 388.5208
+  type: 'test'
+  ...
+# Subtest: package binds a calibrated clock table and programming profile
+ok 27 - package binds a calibrated clock table and programming profile
+  ---
+  duration_ms: 185.9673
+  type: 'test'
+  ...
+# Subtest: power profiles are complete, copied and validated before constructing a runtime
+ok 28 - power profiles are complete, copied and validated before constructing a runtime
+  ---
+  duration_ms: 59.1598
+  type: 'test'
+  ...
+# Subtest: v4 RESET profiles reject invalid fields and unsupported clocks/fuses in writers and resealed packages
+ok 29 - v4 RESET profiles reject invalid fields and unsupported clocks/fuses in writers and resealed packages
+  ---
+  duration_ms: 101.219
+  type: 'test'
+  ...
+# Subtest: decoding compiles and inspects WASM without constructing any instance
+ok 30 - decoding compiles and inspects WASM without constructing any instance
+  ---
+  duration_ms: 33.8596
+  type: 'test'
+  ...
+# Subtest: format version, device and ABI identities are mandatory
+ok 31 - format version, device and ABI identities are mandatory
+  ---
+  duration_ms: 26.0273
+  type: 'test'
+  ...
+# Subtest: integrity covers configuration and metadata as well as all binary components
+ok 32 - integrity covers configuration and metadata as well as all binary components
+  ---
+  duration_ms: 163.9991
+  type: 'test'
+  ...
+# Subtest: Flash is bound to all 512 decoded instruction words even with recalculated checksums
+ok 33 - Flash is bound to all 512 decoded instruction words even with recalculated checksums
+  ---
+  duration_ms: 35.2181
+  type: 'test'
+  ...
+# Subtest: outer and embedded translation manifests and ABI layout must agree
+ok 34 - outer and embedded translation manifests and ABI layout must agree
+  ---
+  duration_ms: 109.6129
+  type: 'test'
+  ...
+# Subtest: invalid configuration, unknown options and omitted defaults are rejected
+ok 35 - invalid configuration, unknown options and omitted defaults are rejected
+  ---
+  duration_ms: 7.4449
+  type: 'test'
+  ...
+# Subtest: Flash, EEPROM, WASM and JSON sizes are bounded before use
+ok 36 - Flash, EEPROM, WASM and JSON sizes are bounded before use
+  ---
+  duration_ms: 30.1579
+  type: 'test'
+  ...
+# Subtest: base64 must be canonical and asset fields cannot be silently ignored
+ok 37 - base64 must be canonical and asset fields cannot be silently ignored
+  ---
+  duration_ms: 105.9054
+  type: 'test'
+  ...
+# Subtest: runtime imports/start sections and truncated or mismatched WASM are rejected before execution
+ok 38 - runtime imports/start sections and truncated or mismatched WASM are rejected before execution
+  ---
+  duration_ms: 17.3519
+  type: 'test'
+  ...
+# Subtest: v4 requires every RESET runtime export even when the profile is disabled
+ok 39 - v4 requires every RESET runtime export even when the profile is disabled
+  ---
+  duration_ms: 200.8047
+  type: 'test'
+  ...
+# Subtest: v4 rejects a RESET observer with an i64 result behind its expected i32 export name
+ok 40 - v4 rejects a RESET observer with an i64 result behind its expected i32 export name
+  ---
+  duration_ms: 44.6095
+  type: 'test'
+  ...
+# Subtest: CLI pack/verify/unpack preserves bytes and refuses tampered packages or existing outputs
+ok 41 - CLI pack/verify/unpack preserves bytes and refuses tampered packages or existing outputs
+  ---
+  duration_ms: 1176.9975
+  type: 'test'
+  ...
+# Subtest: independent binary decoder matches every official supported opcode pattern
+ok 42 - independent binary decoder matches every official supported opcode pattern
+  ---
+  duration_ms: 47.84
+  type: 'test'
+  ...
+# Subtest: all 123 official forms have a lowering, documented timing/flags and explicit device-service boundaries
+ok 43 - all 123 official forms have a lowering, documented timing/flags and explicit device-service boundaries
+  ---
+  duration_ms: 82.1086
+  type: 'test'
+  ...
+# Subtest: all byte pairs for ADD/ADC/SUB/CP and all input flags for unary shifts match independent execution
+ok 44 - all byte pairs for ADD/ADC/SUB/CP and all input flags for unary shifts match independent execution
+  ---
+  duration_ms: 218.388
+  type: 'test'
+  ...
+# Subtest: backward flag liveness removes overwritten flags but preserves carry consumers and exact block exits
+ok 45 - backward flag liveness removes overwritten flags but preserves carry consumers and exact block exits
+  ---
+  duration_ms: 43.4549
+  type: 'test'
+  ...
+# Subtest: event boundaries prevent block execution across timer overflows, SEI delay, EEPROM stall and SREG reads
+ok 46 - event boundaries prevent block execution across timer overflows, SEI delay, EEPROM stall and SREG reads
+  ---
+  duration_ms: 81.6805
+  type: 'test'
+  ...
+# Subtest: direct memory operations and I/O aliases preserve SREG, pointer updates, diagnostics and return addresses
+ok 47 - direct memory operations and I/O aliases preserve SREG, pointer updates, diagnostics and return addresses
+  ---
+  duration_ms: 40.1286
+  type: 'test'
+  ...
+# Subtest: CLI output validates and executes with the recorded ABI, Flash and provenance
+ok 48 - CLI output validates and executes with the recorded ABI, Flash and provenance
+  ---
+  duration_ms: 319.6143
+  type: 'test'
+  ...
+# Subtest: rhythmic: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 49 - rhythmic: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 96.698
+  type: 'test'
+  ...
+# Subtest: alicia: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 50 - alicia: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 67.3423
+  type: 'test'
+  ...
+# Subtest: turkish-march: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 51 - turkish-march: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 69.7501
+  type: 'test'
+  ...
+# Subtest: children: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 52 - children: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 105.399
+  type: 'test'
+  ...
+# Subtest: greensleeves: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 53 - greensleeves: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 85.8648
+  type: 'test'
+  ...
+# Subtest: lumiere-stereo: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 54 - lumiere-stereo: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 50.6334
+  type: 'test'
+  ...
+# Subtest: cancion-del-mariachi: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 55 - cancion-del-mariachi: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 69.6876
+  type: 'test'
+  ...
+# Subtest: cancion-del-mariachi-ensemble: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 56 - cancion-del-mariachi-ensemble: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 75.1154
+  type: 'test'
+  ...
+# Subtest: cancion-del-mariachi-sparse: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 57 - cancion-del-mariachi-sparse: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 115.8131
+  type: 'test'
+  ...
+# Subtest: hq4-chego-tiny: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 58 - hq4-chego-tiny: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 371.4953
+  type: 'test'
+  ...
+# Subtest: hq4-otvechaesh-tiny: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 59 - hq4-otvechaesh-tiny: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 185.3274
+  type: 'test'
+  ...
+# Subtest: hq4-vinni: translated firmware preserves PWM, full memory, cycles and IRQ state
+ok 60 - hq4-vinni: translated firmware preserves PWM, full memory, cycles and IRQ state
+  ---
+  duration_ms: 253.8256
+  type: 'test'
+  ...
+# Subtest: optimizer rejects unsupported levels without invoking a tool
+ok 61 - optimizer rejects unsupported levels without invoking a tool
+  ---
+  duration_ms: 1.476
+  type: 'test'
+  ...
+# Subtest: O3: all123 forms preserve instruction effects and cycle counts
+ok 62 - O3: all123 forms preserve instruction effects and cycle counts
+  ---
+  duration_ms: 414.4053
+  type: 'test'
+  ...
+# Subtest: O3: all123 forms preserve unequal CLKI half phases and WAIT
+ok 63 - O3: all123 forms preserve unequal CLKI half phases and WAIT
+  ---
+  duration_ms: 574.7667
+  type: 'test'
+  ...
+# Subtest: Oz: all123 forms preserve instruction effects and cycle counts
+ok 64 - Oz: all123 forms preserve instruction effects and cycle counts
+  ---
+  duration_ms: 288.4816
+  type: 'test'
+  ...
+# Subtest: Oz: all123 forms preserve unequal CLKI half phases and WAIT
+ok 65 - Oz: all123 forms preserve unequal CLKI half phases and WAIT
+  ---
+  duration_ms: 648.7749
+  type: 'test'
+  ...
+# Subtest: optimized SPM under a held CLKI invalidates Flash before the next fetch
+ok 66 - optimized SPM under a held CLKI invalidates Flash before the next fetch
+  ---
+  duration_ms: 434.2574
+  type: 'test'
+  ...
+# Subtest: CLI emits optimized legacy/device WASM and an executable full-device package
+ok 67 - CLI emits optimized legacy/device WASM and an executable full-device package
+  ---
+  duration_ms: 1291.8164
+  type: 'test'
+  ...
+# Subtest: control schedule balances every position and every directed adjacent pair
+ok 68 - control schedule balances every position and every directed adjacent pair
+  ---
+  duration_ms: 3.1008
+  type: 'test'
+  ...
+# Subtest: identity controls remain one while a known cross-version cost is recovered
+ok 69 - identity controls remain one while a known cross-version cost is recovered
+  ---
+  duration_ms: 0.6332
+  type: 'test'
+  ...
+# Subtest: invalid observations and ordering cannot silently produce a benchmark summary
+ok 70 - invalid observations and ordering cannot silently produce a benchmark summary
+  ---
+  duration_ms: 2.2025
+  type: 'test'
+  ...
+1..70
+# tests 70
+# suites 0
+# pass 70
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4643.5229

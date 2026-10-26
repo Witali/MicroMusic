@@ -1,0 +1,57 @@
+{
+  "schema": "micromusic-device-function-comparison-v1",
+  "scriptSha256": "8e53ef6424a7c2042856d8cd32f144223bb8c92a821f47c0e1a94ec9d1c1c166",
+  "tools": {
+    "clang": {
+      "path": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\clang.exe",
+      "sha256": "79921ba704246e961c2160eee475726210863e19b55f244830ec91ff26b7648f",
+      "version": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)\nTarget: x86_64-pc-windows-msvc\nThread model: posix\nInstalledDir: C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin"
+    },
+    "wasm-opt": {
+      "path": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\wasm-opt.exe",
+      "sha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+      "version": "wasm-opt version 133 (version_133-60-g93d6e9de7)"
+    },
+    "wasm-dis": {
+      "path": "C:\\Work\\MicroMusic\\build\\toolchains\\emscripten-6.0.12\\upstream\\bin\\wasm-dis.exe",
+      "sha256": "09eda1badc865853f18b8bc530cfedf2711e6056fa957a97af3fd1df00ec983b",
+      "version": "wasm-dis version 133 (version_133-60-g93d6e9de7)"
+    }
+  },
+  "canonicalizerChecks": {
+    "typeLocalLabelCollision": true,
+    "typeIndexPermutation": true,
+    "changedOperand": true,
+    "changedType": true,
+    "preservedNesting": true
+  },
+  "counts": {
+    "identical": 202,
+    "relocation-only": 0,
+    "body-changed": 1,
+    "added": 0,
+    "removed": 0
+  },
+  "changed": [
+    {
+      "symbol": "duration",
+      "status": "body-changed",
+      "rawEqual": false,
+      "normalizedEqual": false,
+      "before": {
+        "index": 142,
+        "bytes": 526,
+        "rawSha256": "6ad452c03e3b5a061cfb0d3384233f370dc4e628c7a12fe7f2b577216f59eae7",
+        "normalizedSha256": "3bc39bf15e640ac5904a4a367ce0c5a2c6eafbb3b2e17727fb264147f2cc7889"
+      },
+      "after": {
+        "index": 142,
+        "bytes": 576,
+        "rawSha256": "52226dcdbccdc71dcb1c30484c959db3180aa8e249c50e35d5d78a430f4350f5",
+        "normalizedSha256": "ca6d9853a74b56a17db050ba8604ff845e89ddf90d39f73dff27bd0f9cce65c8"
+      },
+      "historicalProfiles": [],
+      "diff": "function-diffs-Z5SQkk\\duration.diff"
+    }
+  ]
+}

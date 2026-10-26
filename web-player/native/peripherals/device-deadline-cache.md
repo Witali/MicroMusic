@@ -21,6 +21,13 @@ zero-time servicing are unchanged. Pin history consumption and dirty-page
 consumption may retain the entry because neither changes a scanner dependency.
 There is no reuse across elapsed time and no analog same-time shortcut.
 
+Code-placement checkpoint, 2026-10-25: the small lookup is now forced inline
+while the full scanner stays separate. Cache state, invalidation and scanner
+statements are unchanged. The final Clang/Binaryen image preserves this placement;
+rhythmic measures 1.088x/1.086x on one host, with other gains unproven. All 1,704
+regressions pass. See the [current audit](../deadline-dispatch-audit.md) and
+[retained measurements](../../reports/deadline-dispatch-20261025.md).
+
 The useful reuse is the endpoint scan immediately followed by the CPU bridge's
 deadline publication, plus repeated same-state queries and the halted-wait loop's
 initial scan. Each subsequent hardware service still performs a full scan.

@@ -1,0 +1,202 @@
+TAP version 13
+# Subtest: settled internal GPIO suppresses recurring calls and preserves every phase: mode=0
+ok 1 - settled internal GPIO suppresses recurring calls and preserves every phase: mode=0
+  ---
+  duration_ms: 65.7934
+  type: 'test'
+  ...
+# Subtest: settled internal GPIO suppresses recurring calls and preserves every phase: mode=1
+ok 2 - settled internal GPIO suppresses recurring calls and preserves every phase: mode=1
+  ---
+  duration_ms: 19.0652
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=0
+ok 3 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=0
+  ---
+  duration_ms: 64.2145
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=1
+ok 4 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=1
+  ---
+  duration_ms: 15.5182
+  type: 'test'
+  ...
+# Subtest: GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=2
+ok 5 - GPIO mutations, Timer0 overrides and T0 preserve full canonical state: mode=2
+  ---
+  duration_ms: 87.2469
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=0
+ok 6 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=0
+  ---
+  duration_ms: 5.0949
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=1
+ok 7 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=1
+  ---
+  duration_ms: 4.9521
+  type: 'test'
+  ...
+# Subtest: same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=2
+ok 8 - same-time inputs, clock gating and IRQ acknowledgement refresh GPIO: mode=2
+  ---
+  duration_ms: 6.9924
+  type: 'test'
+  ...
+# Subtest: power reset assertion and preapplied acknowledgement clear settled ownership
+ok 9 - power reset assertion and preapplied acknowledgement clear settled ownership
+  ---
+  duration_ms: 3.2583
+  type: 'test'
+  ...
+# Subtest: CLKI keeps its original GPIO path and all source-edge observations
+ok 10 - CLKI keeps its original GPIO path and all source-edge observations
+  ---
+  duration_ms: 69.1174
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=0
+ok 11 - queued input before/at/after a falling edge retains PINB latency: mode=0
+  ---
+  duration_ms: 6.9561
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=1
+ok 12 - queued input before/at/after a falling edge retains PINB latency: mode=1
+  ---
+  duration_ms: 7.0236
+  type: 'test'
+  ...
+# Subtest: queued input before/at/after a falling edge retains PINB latency: mode=2
+ok 13 - queued input before/at/after a falling edge retains PINB latency: mode=2
+  ---
+  duration_ms: 8.6608
+  type: 'test'
+  ...
+# Subtest: a settled certificate cannot hide reversed GPIO time
+ok 14 - a settled certificate cannot hide reversed GPIO time
+  ---
+  duration_ms: 1.3781
+  type: 'test'
+  ...
+# Subtest: seeded GPIO register/input changes match original dispatch at odd, even and zero spans
+ok 15 - seeded GPIO register/input changes match original dispatch at odd, even and zero spans
+  ---
+  duration_ms: 707.3071
+  type: 'test'
+  ...
+# Subtest: GPIO module compiles to WASM without any host imports
+ok 16 - GPIO module compiles to WASM without any host imports
+  ---
+  duration_ms: 2.0208
+  type: 'test'
+  ...
+# Subtest: GPIO direction, reserved bits, pull-up and PUD truth table
+ok 17 - GPIO direction, reserved bits, pull-up and PUD truth table
+  ---
+  duration_ms: 0.5415
+  type: 'test'
+  ...
+# Subtest: PINB write-one toggle works for both input pull-ups and driven outputs
+ok 18 - PINB write-one toggle works for both input pull-ups and driven outputs
+  ---
+  duration_ms: 0.1648
+  type: 'test'
+  ...
+# Subtest: masked SBI/CBI touch only selected PINB and flag bits
+ok 19 - masked SBI/CBI touch only selected PINB and flag bits
+  ---
+  duration_ms: 0.3624
+  type: 'test'
+  ...
+# Subtest: external levels override weak pull-ups and contention is explicit
+ok 20 - external levels override weak pull-ups and contention is explicit
+  ---
+  duration_ms: 0.3659
+  type: 'test'
+  ...
+# Subtest: RSTDISBL chooses GPIO PB5 versus reset pull-up and disabled digital input
+ok 21 - RSTDISBL chooses GPIO PB5 versus reset pull-up and disabled digital input
+  ---
+  duration_ms: 0.214
+  type: 'test'
+  ...
+# Subtest: PINB sampling distinguishes changes before and after the falling edge
+ok 22 - PINB sampling distinguishes changes before and after the falling edge
+  ---
+  duration_ms: 0.2942
+  type: 'test'
+  ...
+# Subtest: digital disable bits follow PB pin order and do not alter physical drive
+ok 23 - digital disable bits follow PB pin order and do not alter physical drive
+  ---
+  duration_ms: 1.3639
+  type: 'test'
+  ...
+# Subtest: Timer0 OC overrides affect PB0/PB1 only when DDRB enables outputs
+ok 24 - Timer0 OC overrides affect PB0/PB1 only when DDRB enables outputs
+  ---
+  duration_ms: 0.5073
+  type: 'test'
+  ...
+# Subtest: INT0 level is live and INTF0 stays clear, edge flags latch without GIMSK
+ok 25 - INT0 level is live and INTF0 stays clear, edge flags latch without GIMSK
+  ---
+  duration_ms: 0.663
+  type: 'test'
+  ...
+# Subtest: INT0 change/rising/falling modes and interrupt acknowledge
+ok 26 - INT0 change/rising/falling modes and interrupt acknowledge
+  ---
+  duration_ms: 0.3036
+  type: 'test'
+  ...
+# Subtest: PCINT masks, software-generated output edges, W1C and vector acknowledgement
+ok 27 - PCINT masks, software-generated output edges, W1C and vector acknowledgement
+  ---
+  duration_ms: 0.1986
+  type: 'test'
+  ...
+# Subtest: stopped clkI/O retains PINB and accepts asynchronous PCINT and INT0 level
+ok 28 - stopped clkI/O retains PINB and accepts asynchronous PCINT and INT0 level
+  ---
+  duration_ms: 0.1566
+  type: 'test'
+  ...
+# Subtest: T0 edge detector returns pulses after 2.5–3.5 clkI/O cycles
+ok 29 - T0 edge detector returns pulses after 2.5–3.5 clkI/O cycles
+  ---
+  duration_ms: 0.1394
+  type: 'test'
+  ...
+# Subtest: PB4 trace output or external input cannot clock T0 on PB2
+ok 30 - PB4 trace output or external input cannot clock T0 on PB2
+  ---
+  duration_ms: 0.3129
+  type: 'test'
+  ...
+# Subtest: bounded GPIO advance timestamps T0 and skips a trillion settled half-cycles
+ok 31 - bounded GPIO advance timestamps T0 and skips a trillion settled half-cycles
+  ---
+  duration_ms: 0.1624
+  type: 'test'
+  ...
+# Subtest: seeded bounded advancement matches every clock edge across GPIO mutations
+ok 32 - seeded bounded advancement matches every clock edge across GPIO mutations
+  ---
+  duration_ms: 63.9578
+  type: 'test'
+  ...
+1..32
+# tests 32
+# suites 0
+# pass 32
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 39426.0243

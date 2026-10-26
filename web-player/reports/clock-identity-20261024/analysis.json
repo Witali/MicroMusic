@@ -1,0 +1,86 @@
+{
+  "schema": "micromusic-clock-identity-experiment-v1",
+  "baseline": "464add5",
+  "decision": "rejected",
+  "stoppedEarly": true,
+  "stopReason": "Two completed real-firmware physical cases regress with identity controls near one. Remaining performance cases are unnecessary to reject this candidate; no complete-matrix claim is made. Any unpersisted in-progress case is discarded.",
+  "plannedCases": 13,
+  "completedCases": 6,
+  "candidateSha256": "74b1dde3ef4ffb04110ef3e337a8b70aa19f93623ce1f19ed0b861bf62f8c430",
+  "cases": [
+    {
+      "id": "rhythmic-compatible",
+      "oldIdentity": 1.0023404558826088,
+      "newIdentity": 0.9983928265049334,
+      "crossVersion": 0.9960262974925964,
+      "fasterTrials": 6,
+      "trials": 16,
+      "measuredRuns": 64,
+      "warmups": 16,
+      "exactCheckpoints": 948
+    },
+    {
+      "id": "rhythmic-physical",
+      "oldIdentity": 1.0002681910305227,
+      "newIdentity": 0.9978098589110547,
+      "crossVersion": 0.9666515570521479,
+      "fasterTrials": 0,
+      "trials": 16,
+      "measuredRuns": 64,
+      "warmups": 16,
+      "exactCheckpoints": 948
+    },
+    {
+      "id": "lumiere-stereo-compatible",
+      "oldIdentity": 1.0012485192458196,
+      "newIdentity": 0.9975310312125576,
+      "crossVersion": 0.9955018744104409,
+      "fasterTrials": 3,
+      "trials": 16,
+      "measuredRuns": 64,
+      "warmups": 16,
+      "exactCheckpoints": 948
+    },
+    {
+      "id": "lumiere-stereo-physical",
+      "oldIdentity": 0.9916920082261544,
+      "newIdentity": 0.993106321449704,
+      "crossVersion": 0.9597597407493776,
+      "fasterTrials": 1,
+      "trials": 16,
+      "measuredRuns": 64,
+      "warmups": 16,
+      "exactCheckpoints": 948
+    },
+    {
+      "id": "hq4-chego-auto-compatible",
+      "oldIdentity": 0.9948644958849878,
+      "newIdentity": 1.0072488242826054,
+      "crossVersion": 1.0017888354256588,
+      "fasterTrials": 9,
+      "trials": 16,
+      "measuredRuns": 64,
+      "warmups": 16,
+      "exactCheckpoints": 948
+    },
+    {
+      "id": "hq4-chego-auto-physical",
+      "oldIdentity": 1.0046950078182015,
+      "newIdentity": 0.9921355745373157,
+      "crossVersion": 0.980108692706336,
+      "fasterTrials": 0,
+      "trials": 16,
+      "measuredRuns": 64,
+      "warmups": 16,
+      "exactCheckpoints": 948
+    }
+  ],
+  "measuredRuns": 384,
+  "warmups": 96,
+  "exactCheckpoints": 5688,
+  "correctness": {
+    "passed": 1633,
+    "failed": 0
+  },
+  "method": "Four labels with equal native Module sharing inside old/old and new/new pairs; fresh memory/instances, four warmups per label, 16 balanced trials. Cross ratio above1 favors candidate. Exact PCM/state/pin parity verified. Timings are coupled Node execution, not exclusive subsystem costs."
+}

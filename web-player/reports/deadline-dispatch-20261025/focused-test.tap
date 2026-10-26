@@ -1,0 +1,214 @@
+TAP version 13
+# Subtest: legacy half-clock current-time analog input interrupts a generated block at the step-oracle boundary
+ok 1 - legacy half-clock current-time analog input interrupts a generated block at the step-oracle boundary
+  ---
+  duration_ms: 267.9561
+  type: 'test'
+  ...
+# Subtest: legacy half-clock future analog input interrupts a generated block at the step-oracle boundary
+ok 2 - legacy half-clock future analog input interrupts a generated block at the step-oracle boundary
+  ---
+  duration_ms: 5.386
+  type: 'test'
+  ...
+# Subtest: physical ps current-time analog input interrupts a generated block at the step-oracle boundary
+ok 3 - physical ps current-time analog input interrupts a generated block at the step-oracle boundary
+  ---
+  duration_ms: 5.3359
+  type: 'test'
+  ...
+# Subtest: physical ps future analog input interrupts a generated block at the step-oracle boundary
+ok 4 - physical ps future analog input interrupts a generated block at the step-oracle boundary
+  ---
+  duration_ms: 118.9217
+  type: 'test'
+  ...
+# Subtest: cached infinity, repeated public budgets and output-history queries retain an unchanged state
+ok 5 - cached infinity, repeated public budgets and output-history queries retain an unchanged state
+  ---
+  duration_ms: 4.4747
+  type: 'test'
+  ...
+# Subtest: elapse and service invalidate even at zero time; normal endpoints republish current state
+ok 6 - elapse and service invalidate even at zero time; normal endpoints republish current state
+  ---
+  duration_ms: 0.7474
+  type: 'test'
+  ...
+# Subtest: timer, GPIO, ADC, comparator, PRR, protected clock and reset bus transactions dirty same-base state
+ok 7 - timer, GPIO, ADC, comparator, PRR, protected clock and reset bus transactions dirty same-base state
+  ---
+  duration_ms: 61.0289
+  type: 'test'
+  ...
+# Subtest: CLKPR transition and OSCCAL rate changes with retained phase cannot reuse an old absolute event
+ok 8 - CLKPR transition and OSCCAL rate changes with retained phase cannot reuse an old absolute event
+  ---
+  duration_ms: 1.0502
+  type: 'test'
+  ...
+# Subtest: future/current digital and analog inputs invalidate insertion, head consumption and source propagation
+ok 9 - future/current digital and analog inputs invalidate insertion, head consumption and source propagation
+  ---
+  duration_ms: 1.4207
+  type: 'test'
+  ...
+# Subtest: special LPM consumes a cached fuse window and NVM programming replaces CPU windows with wall deadlines
+ok 10 - special LPM consumes a cached fuse window and NVM programming replaces CPU windows with wall deadlines
+  ---
+  duration_ms: 1.343
+  type: 'test'
+  ...
+# Subtest: watchdog WDR/ACK, sleep entry and exact wake events invalidate their future deadlines
+ok 11 - watchdog WDR/ACK, sleep entry and exact wake events invalidate their future deadlines
+  ---
+  duration_ms: 1.1122
+  type: 'test'
+  ...
+# Subtest: power input reset is preapplied at assertion and acknowledgment invalidates its same-time cache
+ok 12 - power input reset is preapplied at assertion and acknowledgment invalidates its same-time cache
+  ---
+  duration_ms: 1.7447
+  type: 'test'
+  ...
+# Subtest: same-time supply uncertainty removes an earlier NVM completion and is never cached as a healthy state
+ok 13 - same-time supply uncertainty removes an earlier NVM completion and is never cached as a healthy state
+  ---
+  duration_ms: 1.0798
+  type: 'test'
+  ...
+# Subtest: fault during a scan cannot publish its result or revive a stale answer
+ok 14 - fault during a scan cannot publish its result or revive a stale answer
+  ---
+  duration_ms: 1.2106
+  type: 'test'
+  ...
+# Subtest: read/input validation faults clear a primed cache without replacing their first fault
+ok 15 - read/input validation faults clear a primed cache without replacing their first fault
+  ---
+  duration_ms: 1.4522
+  type: 'test'
+  ...
+# Subtest: actual baseline raw PCM/CPU/peripheral parity: rhythmic
+ok 16 - actual baseline raw PCM/CPU/peripheral parity: rhythmic
+  ---
+  duration_ms: 1548.8499
+  type: 'test'
+  ...
+# Subtest: actual baseline raw PCM/CPU/peripheral parity: lumiere-stereo
+ok 17 - actual baseline raw PCM/CPU/peripheral parity: lumiere-stereo
+  ---
+  duration_ms: 1676.4586
+  type: 'test'
+  ...
+# Subtest: actual baseline raw PCM/CPU/peripheral parity: hq4-chego-auto
+ok 18 - actual baseline raw PCM/CPU/peripheral parity: hq4-chego-auto
+  ---
+  duration_ms: 1304.114
+  type: 'test'
+  ...
+# Subtest: actual baseline physical phase/OSCCAL/CLKPR, queued inputs and pin traces match
+ok 19 - actual baseline physical phase/OSCCAL/CLKPR, queued inputs and pin traces match
+  ---
+  duration_ms: 323.0524
+  type: 'test'
+  ...
+# Subtest: actual baseline supply reset abort/hold/release, BOD filtering and physical capture match
+ok 20 - actual baseline supply reset abort/hold/release, BOD filtering and physical capture match
+  ---
+  duration_ms: 460.7457
+  type: 'test'
+  ...
+# Subtest: internal buffered span: watermark before either endpoint
+ok 21 - internal buffered span: watermark before either endpoint
+  ---
+  duration_ms: 7.4444
+  type: 'test'
+  ...
+# Subtest: internal buffered span: watermark exactly at the wall
+ok 22 - internal buffered span: watermark exactly at the wall
+  ---
+  duration_ms: 2.4629
+  type: 'test'
+  ...
+# Subtest: internal buffered span: watermark exactly at request completion
+ok 23 - internal buffered span: watermark exactly at request completion
+  ---
+  duration_ms: 2.2478
+  type: 'test'
+  ...
+# Subtest: internal buffered span: watermark, wall and completion together
+ok 24 - internal buffered span: watermark, wall and completion together
+  ---
+  duration_ms: 2.0863
+  type: 'test'
+  ...
+# Subtest: fractional wall one picosecond before the watermark retains its final half and phase
+ok 25 - fractional wall one picosecond before the watermark retains its final half and phase
+  ---
+  duration_ms: 6.9119
+  type: 'test'
+  ...
+# Subtest: a prefilled watermark yields consumed=0, then draining resumes the unchanged request
+ok 26 - a prefilled watermark yields consumed=0, then draining resumes the unchanged request
+  ---
+  duration_ms: 82.5419
+  type: 'test'
+  ...
+# Subtest: ordinary short spans preserve the original path even with an existing watermark
+ok 27 - ordinary short spans preserve the original path even with an existing watermark
+  ---
+  duration_ms: 7.3752
+  type: 'test'
+  ...
+# Subtest: same-time input changes settle and coalesce before the watermark is exposed
+ok 28 - same-time input changes settle and coalesce before the watermark is exposed
+  ---
+  duration_ms: 4.9451
+  type: 'test'
+  ...
+# Subtest: same-time asynchronous RESET wins over pressure and preserves its exact prefix
+ok 29 - same-time asynchronous RESET wins over pressure and preserves its exact prefix
+  ---
+  duration_ms: 4.3084
+  type: 'test'
+  ...
+# Subtest: wrapped total occupancy yields even when its contiguous head is below the watermark
+ok 30 - wrapped total occupancy yields even when its contiguous head is below the watermark
+  ---
+  duration_ms: 6.291
+  type: 'test'
+  ...
+# Subtest: a CLKPR transition inside a long span preserves physical time, all records and fractional state
+ok 31 - a CLKPR transition inside a long span preserves physical time, all records and fractional state
+  ---
+  duration_ms: 4.2633
+  type: 'test'
+  ...
+# Subtest: retained host history alone is not an undrainable internal BUFFER_READY condition
+ok 32 - retained host history alone is not an undrainable internal BUFFER_READY condition
+  ---
+  duration_ms: 1.1073
+  type: 'test'
+  ...
+# Subtest: an ordinary NVM fault after the first drainage retains the original unbuffered endpoint
+ok 33 - an ordinary NVM fault after the first drainage retains the original unbuffered endpoint
+  ---
+  duration_ms: 75.3123
+  type: 'test'
+  ...
+# Subtest: zero trailing spans retire during actual BOD wake recovery while nonzero spans wait
+ok 34 - zero trailing spans retire during actual BOD wake recovery while nonzero spans wait
+  ---
+  duration_ms: 0.9699
+  type: 'test'
+  ...
+1..34
+# tests 34
+# suites 0
+# pass 34
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 70695.0933

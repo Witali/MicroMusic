@@ -100,8 +100,8 @@ test('package loader runs with only JavaScript loader files and no default WASM 
   const dir=await mkdtemp(join(tmpdir(),'micromusic-package-loader-'));
   t.after(()=>rm(dir,{recursive:true,force:true}));
   await mkdir(join(dir,'devices'));
-  for(const name of ['avr-profiles.js','avr-runtime.js','avr-transpiler.js','avr-wasm-phases.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js',
-    'devices/profiles.js','devices/attiny13a-profile.js','devices/attiny13a-reset-profile.js','devices/attiny13a-clki-profile.js'])
+  for(const name of ['avr-profiles.js','avr-runtime.js','avr-transpiler.js','avr-wasm-phases.js','avr-phase-locals.js','avr-wasm-regions.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js','attiny88-registers.js',
+    'devices/profiles.js','devices/attiny13a-profile.js','devices/attiny88-profile.js','devices/attiny13a-reset-profile.js','devices/attiny13a-clki-profile.js'])
     await copyFile(new URL('../lib/'+name,import.meta.url),join(dir,name));
   await writeFile(join(dir,'package.json'),'{"type":"module"}');
   await writeFile(join(dir,'firmware.json'),JSON.stringify(pkg));
@@ -125,7 +125,8 @@ test('SPM after package loading invalidates the supplied compiled image before e
 
 test('package renderer preserves physical samples, DSP and controls across batches',async()=>{
   const entry={devicePackage:pkg,pwmHz:37500,audioChannels:1};
-  const a=await createRenderer(entry,48000,{},'device'),b=await createRenderer(entry,48000,{},'device');
+  const a=await createRenderer(entry,48000,{},'transpiled'),b=await createRenderer(entry,48000,{},'device');
+  assert.equal(a.engine,'transpiled');
   a.setAudioControls({cutoff:9000,volume:.3});b.setAudioControls({cutoff:9000,volume:.3});
   const expected=a.render(4096),actual=new Float32Array(4096);
   actual.set(b.render(127));actual.set(b.render(3969),127);

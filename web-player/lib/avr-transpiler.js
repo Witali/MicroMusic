@@ -3,6 +3,8 @@
 // AVR semantics: Microchip DS40002198A. Device placement comes from its profile.
 import {deviceProfile,DEFAULT_DEVICE} from './devices/profiles.js';
 import {clockPhase,assertAtomicPhase,emitInstructionPhases} from './avr-wasm-phases.js';
+import {annotatePhaseLocals,stripLocalEffects} from './avr-phase-locals.js';
+import {planRegions,emitRegion} from './avr-wasm-regions.js';
 const uleb = value => {
   const out = []; do { const byte = value & 127; value >>>= 7; out.push(byte | (value ? 128 : 0)); } while (value);
   return out;
@@ -48,6 +50,7 @@ const call = (index,...args) => bytes(args,0x10,uleb(index));
 const condition = (test,yes,no=[]) => {assertAtomicPhase(test,yes,no);return bytes(test,0x04,0x40,yes,no.length ? bytes(0x05,no) : [],0x0b);};
 const conditionValue = (test,yes,no) => {assertAtomicPhase(test,yes,no);return bytes(test,0x04,0x7f,yes,0x05,no,0x0b);};
 const sign = (v,bit) => v & bit ? v - 2*bit : v;
+const phaseEmit={bytes,constant,get,set,call,condition,conditionValue,eq,eqz,lt,load32,store32,load64,store64};
 const width = w => (w&0xfe0f)===0x9000 || (w&0xfe0f)===0x9200 || (w&0xfe0e)===0x940c || (w&0xfe0e)===0x940e ? 2 : 1;
 
 // Decode independently of the interpreter. Aliases (CLR, TST, LSL, ROL, SER,
@@ -123,12 +126,16 @@ const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
 const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
 const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 
-export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false}={}) {
+export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false,boundedRegions=false}={}) {
+  if(typeof boundedRegions!=='boolean'||boundedRegions&&!resumable)throw Error('Bounded regions require resumable execution');
+  if(typeof optimizePhaseLocals!=='boolean'||optimizePhaseLocals&&!resumable)throw Error('Phase-local optimization requires resumable execution');
+  const {get,set,condition,conditionValue}=optimizePhaseLocals?annotatePhaseLocals(phaseEmit):phaseEmit;
   const profile=deviceProfile(device),{flashBytes,flashWords,pcMask,ioStart,ioEnd,ramStart,ramEnd,sreg,stackPointer}=profile;
-  if(profile.dataAddressBits!==8||profile.programCounterBytes!==2)throw Error('Unsupported AVR emitter memory geometry');
+  if(![8,16].includes(profile.dataAddressBits)||profile.programCounterBytes!==2)throw Error('Unsupported AVR emitter memory geometry');
   // Resumable blocks initially cover register-only operations. Memory accesses
   // retain their individual bus phases until block-wide alias guards exist.
   const full=!!abi.device,canBatch=i=>resumable?pure.has(i.name):batchable(i)&&(!full||i.name!=='LPM');
+  if(full&&device!==DEFAULT_DEVICE)throw Error('Full-device runtime supports only ATtiny13A');
   if(resumable&&(!full||!abi.phase||abi.phase.bytes!==80))throw Error('Resumable CPU requires its full-device phase ABI');
   if(resumable){
     const p=abi.phase,limit=(abi.memoryPages||1)*65536;
@@ -151,7 +158,14 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   let inInstruction=false;
   const putF=(name,value)=>store64(S(name),value), put=(name,value)=>resumable&&inInstruction&&name==='pc'?
     store32(constant(abi.phase.nextPc),value):putF(name,asFloat(value));
-  const reg=n=>load8(constant(abi.data+n)), writeReg=(n,value)=>store8(constant(abi.data+n),value);
+  let regionRegisters=null,regionWritten=null;
+  const cachedRegister=n=>{if(!regionRegisters.has(n))regionRegisters.set(n,16+regionRegisters.size);return regionRegisters.get(n);};
+  const reg=n=>regionRegisters&&n>=0&&n<32?get(cachedRegister(n)):load8(constant(abi.data+n));
+  const writeReg=(n,value)=>{
+    if(!regionRegisters)return store8(constant(abi.data+n),value);
+    regionWritten.add(n);return set(cachedRegister(n),and(value,constant(255)));
+  };
+  const signedReg=n=>regionRegisters?binary(0x75,shl(reg(n),24),constant(24)):load8Signed(constant(abi.data+n));
   const dataAt=address=>add(constant(abi.data),address);
   const flagsAddress=constant(abi.data+sreg), flags=()=>get(5);
   const fail=(code,result=false)=>bytes(put('error',constant(code)),result?constant(0):[],0x0f);
@@ -196,7 +210,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       code.push(...updateFlags(mask,bit=>[subtract?lt(T,constant(0)):binary(0x4b,T,constant(65535)),eqz(V),n,overflow,xor(n,overflow)][bit]),...writeReg(d,V),...writeReg(d+1,shr(V,8)));
       return code;
     }
-    code.push(...set(0,name==='ASR'?load8Signed(constant(abi.data+d)):reg(d)));
+    code.push(...set(0,name==='ASR'?signedReg(d):reg(d)));
     if(['ADD','ADC','SUB','CP','CPI','SUBI','NEG','SBC','SBCI','CPC'].includes(name)){
       const subtract=['SUB','CP','CPI','SUBI','NEG','SBC','SBCI','CPC'].includes(name),chained=['SBC','SBCI','CPC'].includes(name);
       code.push(...set(1,['CPI','SUBI','SBCI'].includes(name)?constant(k):name==='NEG'?X:reg(s)));
@@ -225,14 +239,19 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     return code;
   }
+  const wide=profile.dataAddressBits===16,pointerMask=wide?65535:255;
+  const pointer=s=>wide?or(reg(s),shl(reg(s+1),8)):reg(s);
+  const writePointer=(s,value)=>bytes(writeReg(s,value),wide?writeReg(s+1,shr(value,8)):[]);
+  const sp=()=>wide?or(reg(stackPointer),shl(reg(profile.stackPointerHigh),8)):reg(stackPointer);
+  const writeSP=value=>bytes(writeReg(stackPointer,value),wide?writeReg(profile.stackPointerHigh,and(shr(value,8),constant(profile.stackPointerHighMask))):[]);
   function push(value) {
-    return bytes(set(6,reg(stackPointer)),condition(or(lt(Z,constant(ramStart)),binary(0x4b,Z,constant(ramEnd))),fail(3)),
-      store8(dataAt(Z),value),writeReg(stackPointer,sub(Z,constant(1))),
-      condition(lt(reg(stackPointer),state('minSP')),put('minSP',reg(stackPointer))));
+    return bytes(set(6,sp()),condition(or(lt(Z,constant(ramStart)),binary(0x4b,Z,constant(ramEnd))),fail(3)),
+      store8(dataAt(Z),value),writeSP(sub(Z,constant(1))),
+      condition(lt(sp(),state('minSP')),put('minSP',sp())));
   }
   function pop(local) {
-    return bytes(set(6,reg(stackPointer)),condition(or(lt(Z,constant(ramStart-1)),ge(Z,constant(ramEnd))),fail(4)),
-      set(6,add(Z,constant(1))),writeReg(stackPointer,Z),set(local,load8(dataAt(Z))));
+    return bytes(set(6,sp()),condition(or(lt(Z,constant(ramStart-1)),ge(Z,constant(ramEnd))),fail(4)),
+      set(6,add(Z,constant(1))),writeSP(Z),set(local,load8(dataAt(Z))));
   }
   function effects(i) {
     const {name,d,s,k,pc:p}=i,next=(p+1)&pcMask;
@@ -293,15 +312,15 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     if(name==='LD'||name==='ST'){
       if(k<2&&(d===s||d===s+1))return fail(name==='LD'?19:17);
-      // DS40002198A 5.66-68/5.114-116: for <=256-byte data spaces only
-      // the low pointer byte participates; XH/YH/ZH remain general registers.
-      const code=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),condition(ge(Z,constant(ramEnd+1)),fail(name==='LD'?20:18)),
-        !full&&k<0?writeReg(s,Z):[],set(0,reg(d)),
+      // DS40002198A 5.66-68/5.114-116: tiny13 uses the low pointer byte;
+      // tiny88 uses the complete X/Y/Z pair, including carry and borrow.
+      const code=bytes(set(6,and(add(pointer(s),constant(k<0?-1:k>=2?k-2:0)),constant(pointerMask))),condition(ge(Z,constant(ramEnd+1)),fail(name==='LD'?20:18)),
+        !full&&k<0?writePointer(s,Z):[],set(0,reg(d)),
         full&&name==='LD'?bytes(clockHalf(1.5),set(0,conditionValue(and(ge(Z,constant(ioStart)),lt(Z,constant(ioEnd))),call(READ,sub(Z,constant(ioStart))),load8(dataAt(Z)))),clockHalf(.5)):clock(constant(2)),
-        set(7,constant(0)),full&&k<0?writeReg(s,Z):[]);
+        set(7,constant(0)),full&&k<0?writePointer(s,Z):[]);
       if(name==='LD')code.push(...writeReg(d,full?X:load8(dataAt(Z))));
       else code.push(...condition(and(ge(Z,constant(ioStart)),lt(Z,constant(ioEnd))),bytes(set(7,call(IO,sub(Z,constant(ioStart)),X)),guard()),store8(dataAt(Z),X)));
-      if(k===1)code.push(...writeReg(s,and(add(Z,constant(1)),constant(255))));
+      if(k===1)code.push(...writePointer(s,and(add(Z,constant(1)),constant(pointerMask))));
       // Indirect stores can alias SREG, just like OUT or STS.
       if(name==='ST')code.push(...set(5,load8(flagsAddress)));
       return code;
@@ -316,13 +335,17 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     }
     return fail(2);
   }
+  const phaseLocalStats={waitSites:0,fullSlots:0,liveSlots:0};
   const instructionBodies=decoded.map(i=>{
     inInstruction=true;
     const code=bytes(set(5,load8(flagsAddress)),set(7,constant(1)),put('errorPC',constant(i.pc)),
       put('pc',constant((i.pc+1)&pcMask)),effects(i),resumable?[]:store8(flagsAddress,flags()),finish());
     inInstruction=false;
     return resumable?emitInstructionPhases(code,{context:abi.phase,pc:i.pc,clockImport:PHASE_CLOCK,
-      emit:{bytes,constant,get,set,call,condition,eq,eqz,lt,load32,store32,load64,store64}}):code;
+      emit:phaseEmit,optimizeLocals:optimizePhaseLocals,onLiveness:optimizePhaseLocals?masks=>{
+        phaseLocalStats.waitSites+=masks.length;phaseLocalStats.fullSlots+=10*masks.length;
+        phaseLocalStats.liveSlots+=masks.reduce((n,mask)=>n+popcount(mask),0);
+      }:undefined}):code;
   });
 
   // SRAM/Flash accesses use guards before observable I/O, alias faults or
@@ -356,6 +379,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   // Function local remapping is performed while emitting block ALU below.
   // Separate emitters make the local types and their indices explicit.
   function remapLocals(code, shift) {
+    if(optimizePhaseLocals)code=stripLocalEffects(code);
     const out=[];
     for(let p=0;p<code.length;){
       const op=code[p++];out.push(op);
@@ -409,10 +433,10 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
             writeReg(d,load8(add(constant(abi.rom),Z))),k?bytes(set(6,add(Z,constant(1))),writeReg(30,Z),writeReg(31,shr(Z,8))):[]);
         }else{
           const alias=k<2&&(d===s||d===s+1);
-          effects=bytes(set(6,and(add(reg(s),constant(k<0?-1:k>=2?k-2:0)),constant(255))),
+          effects=bytes(set(6,and(add(pointer(s),constant(k<0?-1:k>=2?k-2:0)),constant(pointerMask))),
             condition(alias?constant(1):or(lt(Z,constant(ramStart)),ge(Z,constant(ramEnd+1))),bailout),
-            k<0?writeReg(s,Z):[],name==='LD'?writeReg(d,load8(dataAt(Z))):store8(dataAt(Z),reg(d)),
-            k===1?writeReg(s,and(add(Z,constant(1)),constant(255))):[]);
+            k<0?writePointer(s,Z):[],name==='LD'?writeReg(d,load8(dataAt(Z))):store8(dataAt(Z),reg(d)),
+            k===1?writePointer(s,and(add(Z,constant(1)),constant(pointerMask))):[]);
         }
       }else effects=alu(i,block.masks[n]);
       code.push(...remapLocals(effects,2));elapsedCycles+=instructionCycles(i);
@@ -423,7 +447,25 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     blockBodies[index]=code;
   });
 
-  const STEP=firstFunction+flashWords+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4, UNTIL=STEP+5, PHYSICAL=STEP+6;
+  const regions=boundedRegions?planRegions(decoded,{pure,pcMask,width,cycles:instructionCycles}):[];
+  const regionBodies=regions.map(region=>{
+    regionRegisters=new Map();regionWritten=new Set();
+    const body=emitRegion(region,{abi:{...abi,sreg},pcMask,width,decoded,pure,cycles:instructionCycles,
+      emitALU:i=>remapLocals(alu(i,writes[i.name]||0),2),readRegister:n=>remapLocals(reg(n),2),
+      registers:()=>[...regionRegisters.keys()],written:()=>[...regionWritten],state,stateF,put,
+      emit:{...phaseEmit,uleb,binary,add,sub,and,shr,ge,float,asFloat,load8,store8,loadI64,storeI64,constantI64}});
+    regionRegisters=null;regionWritten=null;return body;
+  });
+  const regionByPc=new Map(regions.flatMap((region,index)=>region.nodes.map(i=>[i.pc,index])));
+  const regionFirst=firstFunction+flashWords+blocks.length;
+  const baseRegionWrappers=blocks.flatMap((block,index)=>regionByPc.has(block.start)?[{pc:block.start,block:index,region:regionByPc.get(block.start)}]:[]);
+  const regionWrapper=(index,fallback)=>bytes(set(2,call(regionFirst+index,get(0),get(1))),
+    condition(lt(get(2),constant(0)),bytes(constant(0),0x0f)),
+    fallback===undefined?get(2):bytes(condition(get(2),bytes(get(2),0x0f)),call(firstFunction+flashWords+fallback,get(0),get(1))));
+  const regionWrappers=regions.map((_,index)=>regionWrapper(index));
+  const baseRegionBodies=baseRegionWrappers.map(item=>regionWrapper(item.region,item.block));
+  const extraFunctions=regionBodies.length+regionWrappers.length+baseRegionBodies.length;
+  const STEP=firstFunction+flashWords+blocks.length+extraFunctions+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4, UNTIL=STEP+5, PHYSICAL=STEP+6;
   const emptyBlock=bytes(constant(0));
   const phaseActive=()=>load32(constant(abi.phase.active));
   const retired=()=>load32(constant(abi.phase.retired));
@@ -520,20 +562,28 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     bytes(string('avr'),string('memory'),2,1,...uleb(abi.memoryPages||1),...uleb(abi.memoryPages||1)),
     ...imports.map(([name,type])=>bytes(string('avr'),string(name),0,uleb(type))),
   ]);
-  const functionTypes=[...Array(flashWords).fill(1),...Array(blocks.length+1).fill(3),1,3,4,5,2,...(full?[9,4]:[])];
+  const functionTypes=[...Array(flashWords).fill(1),...Array(blocks.length+extraFunctions+1).fill(3),1,3,4,5,2,...(full?[9,4]:[])];
   const table=Array.from({length:flashWords},(_,p)=>firstFunction+p);
   const blockIndex=new Map(blocks.map((b,n)=>[b.start,firstFunction+flashWords+n]));
-  for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length);
-  const body=(code,locals)=>{const content=bytes(vector(locals),code,0x0b);return bytes(uleb(content.length),content);};
+  for(const [pc,index]of regionByPc)blockIndex.set(pc,regionFirst+regions.length+index);
+  baseRegionWrappers.forEach((item,index)=>blockIndex.set(item.pc,regionFirst+2*regions.length+index));
+  for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length+extraFunctions);
+  const body=(code,locals)=>{const content=bytes(vector(locals),optimizePhaseLocals?stripLocalEffects(code):code,0x0b);return bytes(uleb(content.length),content);};
   const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c],...(resumable?[[1,0x7f]]:[])])),
-    ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
+    ...blockBodies.map(code=>body(code,[[9,0x7f]])),...regionBodies.map(item=>body(item.code,[[item.locals,0x7f],[item.floatLocals,0x7c]])),
+    ...[...regionWrappers,...baseRegionBodies].map(code=>body(code,[[1,0x7f]])),
+    body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
   const exports=vector([...['controlRequest','watchdogResetCycle','debugEnabled','captureFault'].map((name,index)=>bytes(string(name),3,index)),
     ...[['step',STEP],['block',BLOCK],['run',RUN],['nextDuty',NEXT],['capturePWM',CAPTURE],...(full?[['runUntil',UNTIL],['capturePhysical',PHYSICAL]]:[])].map(([name,index])=>bytes(string(name),0,uleb(index)))]);
   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
   const stats={decodableWords:decoded.filter(i=>i.name!=='unsupported').length,unsupportedWords:decoded.filter(i=>i.name==='unsupported').length,
-    blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0)};
+    blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0),
+    ...(optimizePhaseLocals?{phaseLocals:phaseLocalStats}:{}),...(boundedRegions?{boundedRegions:{regions:regions.length,words:regionByPc.size}}:{})};
   const manifest={schema:'micromusic-avr-transpiled-v1',device:profile.name,abi,optimizeFlags,maxBlockInstructions,stats,
-    ...(resumable?{executionMode:'resumable-v1'}:{}),blocks:blocks.map(({sequence,...block})=>block),mapping};
+    ...(resumable?{executionMode:'resumable-v1'}:{}),...(optimizePhaseLocals?{optimizePhaseLocals:true}:{}),
+    ...(boundedRegions?{boundedRegions:true,regions:regions.map((region,n)=>({pcs:region.nodes.map(i=>i.pc),maxCost:region.maxCost,
+      registers:regionBodies[n].registers,written:regionBodies[n].written})),regionFallbacks:baseRegionWrappers}:{}),
+    blocks:blocks.map(({sequence,...block})=>block),mapping};
   const output=Uint8Array.from(bytes([0,97,115,109,1,0,0,0],section(1,vector(types)),section(2,importSection),section(3,vector(functionTypes.map(uleb))),
     section(4,[1,0x70,1,...uleb(flashWords*2),...uleb(flashWords*2)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
     section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),

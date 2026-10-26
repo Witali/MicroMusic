@@ -1,0 +1,230 @@
+diff --git a/web-player/lib/avr-transpiled-runtime.js b/web-player/lib/avr-transpiled-runtime.js
+index 47a83b9..0c1e2a9 100644
+--- a/web-player/lib/avr-transpiled-runtime.js
++++ b/web-player/lib/avr-transpiled-runtime.js
+@@ -14,7 +14,7 @@ function compileTranslation(binary,abi,options) {
+   const padded=new Uint8Array(profile.flashBytes).fill(255);padded.set(binary);
+   // Exact image keys avoid hash collisions. Configuration does not enter the
+   // lowering: live clocks/fuses are supplied by this runtime instance's bus.
+-  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,Array.from(padded)]);
++  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,options.fuseFlagBlocks??false,Array.from(padded)]);
+   if(options.cacheTranslation!==false&&cache.has(key)) {
+     const cached=cache.get(key);cache.delete(key);cache.set(key,cached);
+     return {...cached,cacheHit:true};
+@@ -35,6 +35,8 @@ function compileTranslation(binary,abi,options) {
+ // use the existing C/WASM peripheral runtime, sharing its linear memory.
+ export class AVRCore extends PeripheralRuntime {
+   constructor(binary,eeprom,options={}) {
++    if(options.fuseFlagBlocks!==undefined&&(typeof options.fuseFlagBlocks!=='boolean'||options.fuseFlagBlocks&&!options.resumable))
++      throw Error('Flag-region fusion requires resumable execution');
+     if(options.optimizePhaseLocals!==undefined&&(typeof options.optimizePhaseLocals!=='boolean'||options.optimizePhaseLocals&&!options.resumable))
+       throw Error('Phase-local optimization requires resumable execution');
+     const profile=deviceProfile(options.device??DEFAULT_DEVICE);
+diff --git a/web-player/lib/avr-transpiler.js b/web-player/lib/avr-transpiler.js
+index aa5d5b5..4a4faf2 100644
+--- a/web-player/lib/avr-transpiler.js
++++ b/web-player/lib/avr-transpiler.js
+@@ -125,7 +125,8 @@ const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
+ const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
+ const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
+ 
+-export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false}={}) {
++export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false,fuseFlagBlocks=false}={}) {
++  if(typeof fuseFlagBlocks!=='boolean'||fuseFlagBlocks&&!resumable)throw Error('Flag-region fusion requires resumable execution');
+   if(typeof optimizePhaseLocals!=='boolean'||optimizePhaseLocals&&!resumable)throw Error('Phase-local optimization requires resumable execution');
+   const {get,set,condition,conditionValue}=optimizePhaseLocals?annotatePhaseLocals(phaseEmit):phaseEmit;
+   const profile=deviceProfile(device),{flashBytes,flashWords,pcMask,ioStart,ioEnd,ramStart,ramEnd,sreg,stackPointer}=profile;
+@@ -341,12 +342,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+     if(['RJMP','RCALL','BRANCH'].includes(i.name))leaders.add((i.pc+1+i.k)&pcMask);
+     if(['SKIP','CPSE','SBIC','SBIS'].includes(i.name))leaders.add((i.pc+1+width(word(i.pc+1)))&pcMask);
+   }
+-  const blocks=[];
+-  for(let p=0;p<flashWords;){
+-    if(!canBatch(decoded[p])){p++;continue;}
+-    const sequence=[decoded[p++]];
+-    while(p<flashWords&&canBatch(decoded[p])&&!leaders.has(p)&&sequence.length<maxBlockInstructions)sequence.push(decoded[p++]);
+-    if(sequence.length<2)continue;
++  function planFlags(sequence){
+     let live=255,removed=0,computed=0;
+     const masks=new Array(sequence.length);
+     for(let n=sequence.length-1;n>=0;n--){
+@@ -358,8 +354,27 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+       if(i.name==='CPC'&&!needed)read=0;
+       live=(live&~written)|read;
+     }
+-    blocks.push({start:sequence[0].pc,end:p&pcMask,instructions:sequence.length,cycles:sequence.reduce((n,i)=>n+instructionCycles(i),0),masks,removed,computed,sequence});
++    return {masks,removed,computed};
++  }
++  const blocks=[];
++  for(let p=0;p<flashWords;){
++    if(!canBatch(decoded[p])){p++;continue;}
++    const sequence=[decoded[p++]];
++    while(p<flashWords&&canBatch(decoded[p])&&!leaders.has(p)&&sequence.length<maxBlockInstructions)sequence.push(decoded[p++]);
++    if(sequence.length<2)continue;
++    blocks.push({start:sequence[0].pc,end:p&pcMask,instructions:sequence.length,cycles:sequence.reduce((n,i)=>n+instructionCycles(i),0),...planFlags(sequence),sequence});
++  }
++  const regions=[];
++  if(fuseFlagBlocks&&optimizeFlags)for(let n=0;n+1<blocks.length;n++){
++    const first=blocks[n],second=blocks[n+1];
++    if(first.end!==second.start||first.instructions+second.instructions>64)continue;
++    const sequence=[...first.sequence,...second.sequence],plan=planFlags(sequence);
++    const extra=plan.removed-first.removed-second.removed;
++    if(extra<=0)continue;
++    regions.push({start:first.start,end:second.end,instructions:sequence.length,cycles:first.cycles+second.cycles,
++      ...plan,sequence,fallback:n,extraFlagBitsEliminated:extra});
+   }
++  const emittedBlocks=[...blocks,...regions];
+   const blockBodies=[];
+   // Function local remapping is performed while emitting block ALU below.
+   // Separate emitters make the local types and their indices explicit.
+@@ -380,7 +395,11 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+     return out;
+   }
+   // Rebuild block functions with remapped i32 locals (arguments precede them).
+-  blocks.forEach((block,index)=>{
++  emittedBlocks.forEach((block,index)=>{
++    // Only guard rejection may use the ordinary entry. Once native clock work
++    // starts, reset/fault/WAIT exits retain the existing fail-closed behavior.
++    const reject=block.fallback===undefined?bytes(constant(0),0x0f):
++      bytes(call(firstFunction+flashWords+block.fallback,get(0),get(1)),0x0f);
+     const elapsed=binary(0xa0,stateF('cyc'),float(block.cycles));
+     // No IRQ can occur inside an accepted block. Timer state advances by the
+     // exact number of original CPU cycles, including the prescaler phase.
+@@ -388,14 +407,14 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+       and(reg(profile.legacy.irqFlags),constant(profile.legacy.irqFlagMask));
+     const blocked=or(or(state('irqDelay'),pending),or(lt(get(1),constant(block.instructions)),
+       or(binary(0x66,elapsed,stateF('overflowAt')),resumable?constant(0):binary(0x64,elapsed,get(0)))));
+-    const code=bytes(condition(blocked,bytes(constant(0),0x0f)));
++    const code=bytes(condition(blocked,reject));
+     if(resumable){
+       // cpuDeadline rounds UP to a whole half phase. A strict comparison of
+       // integer-cycle spans cannot cross the physical observation deadline.
+       // Infinity asks for the native physical timestamp capacity instead.
+-      code.push(...condition(binary(0x66,elapsed,float(4503599627370496)),bytes(constant(0),0x0f)),
+-        ...condition(binary(0x66,elapsed,call(14,get(0))),bytes(constant(0),0x0f)),
+-        ...condition(binary(0x56,loadI64(constant(abi.phase.retired)),constantI64(0xffffffffffffffffn-BigInt(block.instructions))),bytes(constant(0),0x0f)),
++      code.push(...condition(binary(0x66,elapsed,float(4503599627370496)),reject),
++        ...condition(binary(0x66,elapsed,call(14,get(0))),reject),
++        ...condition(binary(0x56,loadI64(constant(abi.phase.retired)),constantI64(0xffffffffffffffffn-BigInt(block.instructions))),reject),
+         ...store32(constant(abi.phase.active),constant(1)),
+         ...store32(constant(abi.phase.execPc),constant(block.sequence.at(-1).pc)),
+         ...store32(constant(abi.phase.nextPc),constant(block.end)),
+@@ -432,7 +451,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+     blockBodies[index]=code;
+   });
+ 
+-  const STEP=firstFunction+flashWords+blocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4, UNTIL=STEP+5, PHYSICAL=STEP+6;
++  const STEP=firstFunction+flashWords+emittedBlocks.length+1, BLOCK=STEP+1, RUN=STEP+2, NEXT=STEP+3, CAPTURE=STEP+4, UNTIL=STEP+5, PHYSICAL=STEP+6;
+   const emptyBlock=bytes(constant(0));
+   const phaseActive=()=>load32(constant(abi.phase.active));
+   const retired=()=>load32(constant(abi.phase.retired));
+@@ -529,10 +548,10 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+     bytes(string('avr'),string('memory'),2,1,...uleb(abi.memoryPages||1),...uleb(abi.memoryPages||1)),
+     ...imports.map(([name,type])=>bytes(string('avr'),string(name),0,uleb(type))),
+   ]);
+-  const functionTypes=[...Array(flashWords).fill(1),...Array(blocks.length+1).fill(3),1,3,4,5,2,...(full?[9,4]:[])];
++  const functionTypes=[...Array(flashWords).fill(1),...Array(emittedBlocks.length+1).fill(3),1,3,4,5,2,...(full?[9,4]:[])];
+   const table=Array.from({length:flashWords},(_,p)=>firstFunction+p);
+-  const blockIndex=new Map(blocks.map((b,n)=>[b.start,firstFunction+flashWords+n]));
+-  for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+blocks.length);
++  const blockIndex=new Map(emittedBlocks.map((b,n)=>[b.start,firstFunction+flashWords+n]));
++  for(let p=0;p<flashWords;p++)table.push(blockIndex.get(p)??firstFunction+flashWords+emittedBlocks.length);
+   const body=(code,locals)=>{const content=bytes(vector(locals),optimizePhaseLocals?stripLocalEffects(code):code,0x0b);return bytes(uleb(content.length),content);};
+   const codes=[...instructionBodies.map(code=>body(code,[[9,0x7f],[1,0x7c],...(resumable?[[1,0x7f]]:[])])),
+     ...blockBodies.map(code=>body(code,[[9,0x7f]])),body(emptyBlock,[]),body(step,[]),body(block,[]),body(run,[[resumable?3:2,0x7f]]),body(resumable?fail(24,true):next,[[2,0x7c]]),body(resumable?fail(24,true):capture,[[3,0x7f],[1,0x7c]]),...(full?[body(until,[[resumable?3:2,0x7f]]),body(physical,[[1,0x7f]])]:[])];
+@@ -541,9 +560,11 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
+   const stats={decodableWords:decoded.filter(i=>i.name!=='unsupported').length,unsupportedWords:decoded.filter(i=>i.name==='unsupported').length,
+     blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0),
+-    ...(optimizePhaseLocals?{phaseLocals:phaseLocalStats}:{})};
++    ...(optimizePhaseLocals?{phaseLocals:phaseLocalStats}:{}),
++    ...(fuseFlagBlocks?{flagRegions:{regions:regions.length,extraFlagBitsEliminated:regions.reduce((n,r)=>n+r.extraFlagBitsEliminated,0)}}:{})};
+   const manifest={schema:'micromusic-avr-transpiled-v1',device:profile.name,abi,optimizeFlags,maxBlockInstructions,stats,
+-    ...(resumable?{executionMode:'resumable-v1'}:{}),...(optimizePhaseLocals?{optimizePhaseLocals:true}:{}),blocks:blocks.map(({sequence,...block})=>block),mapping};
++    ...(resumable?{executionMode:'resumable-v1'}:{}),...(optimizePhaseLocals?{optimizePhaseLocals:true}:{}),
++    ...(fuseFlagBlocks?{fuseFlagBlocks:true,flagRegions:regions.map(({sequence,...region})=>region)}:{}),blocks:blocks.map(({sequence,...block})=>block),mapping};
+   const output=Uint8Array.from(bytes([0,97,115,109,1,0,0,0],section(1,vector(types)),section(2,importSection),section(3,vector(functionTypes.map(uleb))),
+     section(4,[1,0x70,1,...uleb(flashWords*2),...uleb(flashWords*2)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
+     section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),
+diff --git a/web-player/scripts/benchmark-generated-wasm.mjs b/web-player/scripts/benchmark-generated-wasm.mjs
+index de04b2a..e3e8893 100644
+--- a/web-player/scripts/benchmark-generated-wasm.mjs
++++ b/web-player/scripts/benchmark-generated-wasm.mjs
+@@ -23,9 +23,11 @@ const {values}=parseArgs({options:{level:{type:'string',multiple:true},case:{typ
+ const integer=(s,min,max)=>{const n=Number(s);assert.ok(Number.isInteger(n)&&n>=min&&n<=max);return n;};
+ const trials=integer(values.trials,8,32),schedule=controlSchedule(trials),warmups=integer(values.warmups,1,8),
+   frames=integer(values.frames,1024,48000),instructions=integer(values.instructions,1000,10000000),rate=48000,block=1024;
+-const phaseLocals=values.transform==='phase-locals';assert.ok(phaseLocals||values.transform==='binaryen');
+-const levels=values.level??(phaseLocals?['live-locals']:['O3','Oz']);assert.equal(new Set(levels).size,levels.length);
+-assert.ok(levels.length&&levels.every(level=>(phaseLocals?['live-locals']:['O2','O3','Os','Oz']).includes(level)));
++const phaseLocals=values.transform==='phase-locals',flagRegions=values.transform==='flag-regions',compilerTransform=phaseLocals||flagRegions;
++assert.ok(compilerTransform||values.transform==='binaryen');
++const allowedLevels=phaseLocals?['live-locals']:flagRegions?['flag-regions']:['O2','O3','Os','Oz'];
++const levels=values.level??(compilerTransform?allowedLevels:['O3','Oz']);assert.equal(new Set(levels).size,levels.length);
++assert.ok(levels.length&&levels.every(level=>allowedLevels.includes(level)));
+ const sha=b=>createHash('sha256').update(b).digest('hex');
+ const stringify=v=>JSON.stringify(v,(_,n)=>typeof n==='bigint'?n.toString():n,2)+'\n';
+ const source=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
+@@ -35,11 +37,20 @@ if(values['baseline-ref']){
+   const paths=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js'];
+   const originals=paths.map(p=>execFileSync('git',['show',revision+':'+p],{cwd:root,encoding:'utf8'}).replaceAll('\r\n','\n'));
+   const url=source=>'data:text/javascript;base64,'+Buffer.from(source).toString('base64');
++  let phaseSource=originals[1];
++  if(originals.some(s=>s.includes("'./avr-phase-locals.js'"))){
++    const dependency='web-player/lib/avr-phase-locals.js';
++    const historical=execFileSync('git',['show',revision+':'+dependency],{cwd:root,encoding:'utf8'}).replaceAll('\r\n','\n');
++    assert.equal(historical,source(dependency),'Historical phase-local dependency must be unchanged');
++    phaseSource=phaseSource.replace("'./avr-phase-locals.js'",JSON.stringify(new URL('../lib/avr-phase-locals.js',import.meta.url).href));
++    paths.push(dependency);originals.push(historical);
++  }
+   const compiler=originals[0].replace("'./devices/profiles.js'",JSON.stringify(new URL('../lib/devices/profiles.js',import.meta.url).href))
+-    .replace("'./avr-wasm-phases.js'",JSON.stringify(url(originals[1])));
++    .replace("'./avr-wasm-phases.js'",JSON.stringify(url(phaseSource)))
++    .replace("'./avr-phase-locals.js'",JSON.stringify(new URL('../lib/avr-phase-locals.js',import.meta.url).href));
+   previousGenerator=(await import(url(compiler))).transpileAVR;
+   baseline={revision,sourceSha256:Object.fromEntries(paths.map((p,n)=>[p,sha(originals[n])])),
+-    adaptation:'Only import URLs are redirected: historical phase module as data URL, unchanged current device profiles as file URL.'};
++    adaptation:'Only import URLs are redirected: historical phase module as data URL, unchanged device profiles/phase-local dependency as file URLs.'};
+ }
+ const catalogs=['web-player/firmware.json','web-player/hq4-firmware.json'].map(p=>JSON.parse(source(p)));
+ const catalog=catalogs.flatMap(c=>c.entries),aliases=Object.assign({},...catalogs.map(c=>c.aliases));
+@@ -70,10 +81,10 @@ function layout(bytes){
+ function construct(item,generated){
+   // The phase-local experiment uses the normal production translation cache:
+   // identical labels must share a CPU Module, as well as the native Module.
+-  const c=new ATtiny13A(item.binary,item.eeprom,{...item.options,optimizePhaseLocals:generated.manifest.optimizePhaseLocals??false,runtimeModule,
+-    ...phaseLocals?{}:{precompiled:generated}});
++  const c=new ATtiny13A(item.binary,item.eeprom,{...item.options,optimizePhaseLocals:generated.manifest.optimizePhaseLocals??false,
++    fuseFlagBlocks:generated.manifest.fuseFlagBlocks??false,runtimeModule,...compilerTransform?{}:{precompiled:generated}});
+   assert.equal(sha(c.transpiledBytes),sha(generated.bytes));
+-  if(phaseLocals){
++  if(compilerTransform){
+     item.cpuModules??=new Map();const key=sha(generated.bytes);
+     if(item.cpuModules.has(key))assert.equal(c._translatedModule,item.cpuModules.get(key),'Identity labels must reuse the CPU Module');
+     else item.cpuModules.set(key,c._translatedModule);
+@@ -110,7 +121,7 @@ const support=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phase
+ const report={schema:'micromusic-generated-wasm-benchmark-v1',complete:false,revision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),
+   mode:values['validate-only']?'validation':'timing',
+   transform:values.transform,...baseline?{baseline}: {},
+-  cpuModulePolicy:phaseLocals?'production-translation-cache':'fresh-precompiled',
++  cpuModulePolicy:compilerTransform?'production-translation-cache':'fresh-precompiled',
+   gcBeforeRun:typeof globalThis.gc==='function',
+   node:process.version,platform:platform(),cpu:cpus()[0].model,trials,warmups,rate,frames,instructions,levels,
+   sourceSha256:Object.fromEntries(support.map(p=>[p,sha(source(p))])),runtimeSha256:sha(readFileSync(new URL('../wasm/attiny13a.wasm',import.meta.url))),
+@@ -121,11 +132,12 @@ for(const item of selected){
+   if(previousGenerator)assert.deepEqual(raw.bytes,previousGenerator(item.binary,raw.manifest.abi,item.options).bytes,item.id+' must preserve baseline bytes');
+   for(const level of levels){
+     let optimized;
+-    if(phaseLocals){
+-      const start=performance.now(),generated=item.options.resumable?transpileAVR(item.binary,raw.manifest.abi,{...item.options,optimizePhaseLocals:true}):raw;
+-      optimized={...generated,optimization:{tool:'generation-time phase-local liveness',flags:item.options.resumable?['optimizePhaseLocals=true']:[],
++    if(compilerTransform){
++      const setting=phaseLocals?{optimizePhaseLocals:true}:{fuseFlagBlocks:true};
++      const start=performance.now(),generated=item.options.resumable?transpileAVR(item.binary,raw.manifest.abi,{...item.options,...setting}):raw;
++      optimized={...generated,optimization:{tool:'generation-time '+values.transform,flags:item.options.resumable?[Object.keys(setting)[0]+'=true']:[],
+         inputSha256:sha(raw.bytes),outputSha256:sha(generated.bytes),inputBytes:raw.bytes.length,outputBytes:generated.bytes.length,elapsedMs:performance.now()-start,
+-        phaseLocals:generated.manifest.stats.phaseLocals??null}};
++        phaseLocals:generated.manifest.stats.phaseLocals??null,...flagRegions?{flagRegions:generated.manifest.stats.flagRegions??null}:{}}};
+     }else optimized=optimizeAVRWasm(raw,{level,wasmOpt:values['wasm-opt']});
+     const compiled={};
+     for(const [name,generated]of [['raw',raw],['optimized',optimized]]){const t=performance.now();new WebAssembly.Module(generated.bytes);compiled[name]=performance.now()-t;}

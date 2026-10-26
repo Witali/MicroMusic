@@ -1,10 +1,10 @@
-# Pinned Microchip ATtiny13A device definitions
+# Pinned Microchip ATtiny13A and ATtiny88 device definitions
 
 Source: [Microchip.ATtiny_DFP.3.4.278.atpack](https://packs.download.microchip.com/Microchip.ATtiny_DFP.3.4.278.atpack),
 from the [official Microchip Packs Repository](https://packs.download.microchip.com/).
 The downloaded archive is 33,433,639 bytes, SHA-256
 `41f09d5825abaa764c9000f4488f8ba3fab152afe6229b359de4a5efe9a21eda`.
-Only the following four package members are retained, byte for byte, with their
+The following seven package members are retained, byte for byte, with their
 original paths and line endings:
 
 - `include/avr/iotn13a.h`: manufacturer C register/bit/vector definitions.
@@ -13,6 +13,8 @@ original paths and line endings:
 - `atdf/ATtiny13A.atdf`: manufacturer data-space addresses, CPU flags, geometry,
   fuse masks and vector metadata.
 - `LICENSE.txt`: original package license notice.
+- `include/avr/iotn88.h`, `avrasm/inc/tn88def.inc`, `atdf/ATtiny88.atdf`:
+  ATtiny88 definitions from the same verified archive (added 2026-10-26).
 
 `iotn13a.h` carries its own complete BSD-style three-clause license notice, kept
 inside the unmodified file. The package license notice identifies Apache-2.0 for
@@ -21,10 +23,16 @@ header's own notice. A full Apache-2.0 license copy is additionally retained as
 `LICENSE.Apache-2.0.txt`, downloaded from
 [Apache's license text](https://www.apache.org/licenses/LICENSE-2.0.txt), not
 extracted from the device pack. `provenance.json` distinguishes that additional
-file and pins all five source/license byte hashes. This README and provenance
+file and pins all retained source/license byte hashes. This README and provenance
 are project-maintained additions.
 
 ## Project adaptation
+
+`scripts/generate-attiny88-registers.mjs` emits `lib/attiny88-registers.js` for
+the ATtiny88 CPU lowerer. It checks original hashes, C/ATDF register addresses,
+assembler CPU register offsets and Flash/SRAM geometry. Run with `--check` to
+verify the committed generated file. This adds no physical ATtiny88 peripheral
+model; playback retains the shared music runtime's Timer1/audio contract.
 
 `native/attiny13a-registers.h` includes the original C header using numeric
 `_SFR_IO8`/`_SFR_IO16` definitions. It materializes `AT13_*` enums, then undefines

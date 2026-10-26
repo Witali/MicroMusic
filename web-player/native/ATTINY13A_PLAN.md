@@ -411,12 +411,91 @@ generated-code separation and add no per-instruction JavaScript callbacks.
 Saved follow-up priorities, 2026-10-24. These are separate experiments, not a
 promise of speedup or additional completed checklist items.
 
+Post-merge sampling checkpoint: [24 current-runtime profiles](../reports/post-main-profile-20261024.md)
+retain exact production PCM/state parity across six real-firmware and two direct
+kernel cases (20,231 work-stack samples). The real-firmware hotspots include
+`next_event`, `ratio` and `duration`; try reducing repeated event/time conversion
+as the next isolated native experiment, preserving integer residues and event
+boundaries. Kernel sample counts are small. Sampling is not exclusive timing or
+a speedup claim; balanced uninstrumented controls, CLKI and enabled-ADC cases
+remain mandatory before acceptance. Continuation liveness stays separate.
+
+Equal-rate arithmetic checkpoint: the [identity fast path](../reports/clock-identity-20261024.md)
+passes 1633 tests but fails the real-firmware speed gate. Six completed cases
+retain 384 timed runs, 96 warmups and 5688 exact checkpoints; physical medians
+are 0.967x/0.960x/0.980x. The remaining performance cases were stopped, with the
+incomplete marker preserved. Production was restored exactly. Keep the added
+full-width arithmetic boundary coverage and do not repeat this condition-only
+guard. Next, test avoiding the overflow-check division when both multiplicands
+fit 32 bits, with a separate addition-overflow check for a 64-bit carry and the
+unchanged wide fallback. This is a hypothesis, not a retained optimization;
+acceptance still needs CLKI/active-ADC and balanced identity controls.
+
+Bounded-multiplier checkpoint: that [32-bit product candidate](../reports/clock-multiply-20261024.md)
+passes all 1634 checks but regresses in both screening cases (0.945x/0.947x,
+64 timed runs, 32 warmups, 1128 exact checkpoints). Production is restored;
+the remaining timing matrix was not run. Keep the independent boundary tests.
+Next inspect automatic Binaryen optimization of generated CPU modules, separately
+from the C runtime already built with optimization. Check ABI/dispatch geometry,
+embedded manifest, traps, exact state/PCM/pins and half-phase observations before
+measuring warmed execution and cold optimization/compilation costs separately.
+
+Automatic generated-WASM checkpoint: [Binaryen133 O3/Oz](../reports/generated-wasm-opt-20261025.md)
+passes1641/1641 tests, including all123 forms at actual CLKI half phases and
+adjacent1ps stops, public package/CLI paths and SPM invalidation during a hold.
+Oz preserves exact PCM/state/pins in all13 workloads (26 parity runs,
+168 checkpoints) and reduces physical firmware CPU modules by69–70%.
+The four-row timing screen retains128 timed runs,64 warmups and2304 checkpoints;
+physical speed gains are unproven. Retain explicit offline `--optimize` only,
+with full bridge imports and manifest preserved. Default generation and native
+runtime stay unchanged. Compilation observations are validation-warmed, not
+cold-start measurements. Next implement per-phase temporary liveness against
+the full-context oracle; automatic size optimization does not remove that work.
+The checklist remains21/30, with nine open items.
+
+Phase-local checkpoint: [generation-time temporary liveness](../reports/phase-locals-20261025.md)
+is implemented as explicit `optimizePhaseLocals:true`, with the full-context
+default retained. All1649 tests pass; all123 forms/four C/Z combinations match
+at internal/external half phases and1ps observations. Thirteen workloads retain
+exact PCM/state/pins and byte-identical default translations against `c8cf6bd`.
+Physical firmware CPU modules shrink23.8–23.9%; native80-byte context allocation
+and hardware timing are unchanged. Two controlled timing screens retain192
+timed runs,96 warmups and3456 checkpoints. Even the shared-CPU-Module/GC-outside
+screen remains too variable to prove a speedup, so default activation and the
+full performance gate stay open. Next compiler experiment: cross-block SREG
+liveness with every externally observable exit preserved. This closes no new
+hardware checklist item; the count remains21/30.
+
+Inter-block SREG checkpoint: [guarded two-block fusion](../reports/flag-regions-20261025.md)
+passes1662 candidate checks and the13-case parity matrix. Untimed million-
+instruction traces prove1/1789/15614 accepted regions on rhythmic/Lumiere/HQ4,
+with11698 exact state/pin checkpoints and active IRQs. The two-case timing screen
+does not show a speed gain (0.993x/0.958x with noisy identity controls), while
+modules grow1.2–1.6%. The prototype is rejected and archived, not retained as
+an option. Compiler/runtime sources are restored exactly to `ae265f7`; three
+new SREG-observability regressions remain and all1652 restored tests pass.
+The historical-generator loader additionally handles its phase-local dependency.
+Next compiler experiment: constant/short-sequence folding within the existing
+guards, preserving original cycles and all observable register/SREG exits.
+Default activation, hardware evidence and the full performance gate remain open.
+
+Constant-fold checkpoint: [the straight-line symbolic pass](../reports/block-constants-20261025.md)
+passes1660 tests and all13 PCM/state/pin workloads, including fixed-width numeric
+oracles and200 mixed expression trees against actual WASM. Whole physical modules
+shrink only0.19–0.29%; after Binaryen Oz, additional savings are52–471 bytes.
+The64-run timing screen gives1.022x/1.011x with identity variation larger than
+those gains. The dedicated pass/dependency is rejected and archived. Compiler,
+runtime and loader inventory are restored to `106d92a`; three constant-chain
+regressions remain and all1655 restored tests pass. Next investigate bounded
+direct-flow regions with staged register writes to amortize native calls.
+No new hardware checklist item closes;21/30 remain complete.
+
 | Priority | Candidate | Evidence required before keeping it |
 | --- | --- | --- |
-| 1 | Refresh the current profile of the retained runtime, including CPU dispatch, continuation saves and enabled/idle peripheral service. Pin/PCM ownership and buffered long spans are implemented; broader activity gating remains open. | Balanced identical-runtime controls, independent pin/PCM parity, source-entry counts and uninstrumented paired timings. Inspect the exact optimized WASM when testing an inlining/layout hypothesis; reduced entries or changed C alone do not prove speed. |
-| 2 | Reduce continuation saves using per-phase temporary liveness. | The full-context path remains an oracle; partial execution, reset, faults and resume must not repeat bus effects or protected operations. Measure module size and warmed execution separately. |
-| 3 | Extend SREG liveness between connected blocks, then try constant and short-sequence folding as independent changes. | Exact C/chained-Z dependencies, all observable SREG values and original AVR cycle/phase boundaries; compare with full flags and the unchanged generated instruction path. |
-| 4 | Generate direct WASM control flow for proven regions and loops; reconsider register locals only when these larger regions can amortize their cost. | Safe indirect/external-entry fallback, coherent register aliases and visible AVR stack state; real-firmware gains in addition to synthetic-loop results. |
+| 1 | Physical ns and running-idle ADC aggregator shortcuts are retained. Scoped I/O publication is tested and rejected; the compiler already caches the mirror pointer. Deadline lookup inlining is retained for the measured rhythmic workload. Settled internal GPIO suppresses proven redundant dispatch; its elapsed-time gain remains unproven. The post-GPIO profile still identifies the clock bridge/scanner/time conversion as substantial work. Profile the updated optional region policy before another native scheduler change. Watchdog-period caching, lazy watchdog conversion, equal-rate, bounded-multiply and native-delay guards are also rejected. | Preserve public shadow restoration and zero-work/partial/fault/reset behavior. Retain same-base cache invalidation and every GPIO dependency-owner hook. Keep phase, PINB/INT0/PCINT/T0/CLKI, sleep/PRR and reactivation correct. Require complete state/pin/PCM parity, enabled-watchdog/ADC and CLKI controls and balanced identical-runtime timing. Do not turn source-entry reductions into elapsed-speed claims. Retain the documented 0.942x ADC kernel limitation. Repeat IRQ-active browser audio/underrun checks before default activation. |
+| 2 | Adaptive bounded-region instruction budgets are retained for measured HQ4 improvement. Next evaluate remaining bridge/region coverage and interactions with phase-local optimization independently. Separate inter-block fusion and constant folding are rejected. | Keep full flags, strict event bounds, clock-before-commit, external entries and original fallback. Against the same native, adaptive HQ4 gains1.764x/1.628x in two intervals; other real-firmware gains are unproven. CLKI's possible small loss remains recorded. All six new browser audio cases still underrun. Measure further generator changes separately from native scheduling. |
+| 3 | Validate optional phase-local liveness for default activation when stable performance measurements are available. | The full-context path remains an oracle. Size/parity are established; do not treat noisy median gains as speed evidence. Keep partial execution, reset/faults, SPM and IRQ effects exactly once. |
+| 4 | Extend proven direct WASM regions only where measured coverage justifies it; evaluate region SREG liveness independently. | The bounded cyclic register-local path is implemented. Preserve all observable SREG exits, indirect/external-entry fallback, aliases and visible AVR stack state; require real-firmware gains for extensions. |
 | 5 | Evaluate reachable-code generation, Flash-region replacement and persistent caching separately from execution optimizations. | Correct dynamic targets and code/data handling, complete SPM dependency invalidation, exact cache identities and independent cold-start/compilation measurements. |
 
 For each candidate, retain the exact baseline and sources, a correctness oracle,
@@ -433,6 +512,231 @@ internal/CLKI and enabled-ADC controls. Sampling/instrumented runs remain
 separate from speed measurements. The rejected single-service inline hint in
 `reports/runtime-controls-20261024.md` is recorded evidence, not a pending
 production change or an implemented optimization.
+
+#### Physical nanosecond clock checkpoint (retained)
+
+Physical mode now retains the nanosecond fractional remainder as0..999ps,
+denormalizing it for the existing NVM deadline formula. Legacy and watchdog
+remainders retain their previous units. All1677 tests and13 parity cases pass;
+608 timing runs/304 warmups retain5952 exact snapshots. HQ4 physical gains
+1.103x/1.164x across two screens, faster in all16 pairs. Other gains are not
+established; a small internal20MHz-kernel loss remains possible under noisy
+controls. The longer negative kernel median weakens to0.987x.
+Runtime grows74 bytes to117975, with fixed two-page memory and no host imports.
+The browser gate is not rerun for this native revision; default engine stays
+`wasm`. The model/hardware checklist stays21/30 with nine open. See
+[exact sources, measurements and caveats](../reports/physical-ns-remainder-20261025.md).
+The separate watchdog-period experiment below did not establish a gain.
+
+#### ADC idle dispatch checkpoint (retained with a synthetic penalty)
+
+Running, idle ADC service now publishes its timestamp directly while preserving
+origin and all other state. Converting/gated clocks retain the original path;
+comparator and physical source events are unchanged. No model state is added.
+All1693 tests and15 integrated parity cases pass; seven activity traces prove
+music ADC entries drop4.41–4.60M→about37.5K, with active conversions unchanged.
+Only analog_advance changes in optimized WASM (318→414 bytes); native grows96
+bytes to118071, with the same109 exports, no host imports and fixed two pages.
+
+The complete matrix plus longer confirmation retain672 timings/336 warmups and
+11712 exact snapshots. Longer rhythmic/HQ4 physical rows measure1.028x/1.107x;
+the synthetic internal20MHz /1 row remains0.942x, seven of eight pairs slower.
+Retain this workload-specific tradeoff explicitly; broader/default performance
+and browser underrun gates remain open. Native/tests:14da787; tools:befa0d7.
+See [exact evidence and controls](../reports/adc-idle-20261025.md) and the
+[updated ADC audit](adc-activity-audit.md). No hardware checklist item closes:
+21/30 complete, nine open.
+
+#### Matched ADC profiling and I/O publication audit
+
+Twelve profiles retain 13,723 work samples across the old/new kernel and HQ4
+workloads. Both cases match the longer benchmark's generated CPU hash, final
+state and PCM. The profiler now supports pinned historical runtimes and matching
+benchmark inputs/configuration; pooled output retains exact frame identities.
+Sampling does not explain the synthetic 0.942x result or establish another gain.
+See [raw profiles, verification and replay](../reports/adc-regression-profile-20261025.md).
+
+The exact mirror body has one pointer load and 31 byte stores: pointer caching
+is already performed by the compiler. The [ownership audit](io-publication-audit.md)
+identifies 16 configuration bytes, but three new clock-service tests prove that
+their public memory shadows are restored even after direct host mutation.
+Do not remove these stores unconditionally. The prototype evaluated below had to establish
+an explicit execution scope, retain full publication outside it and at every
+configuration/reset mutation, and preserve zero-work, partial/fault, package and
+direct-native behavior. Do not eagerly normalize memory at scope entry/exit.
+No native code changes at this checkpoint; the runtime remains 118,071 bytes.
+The focused tests pass 3/3; the previous full 1,693-test result is not a new
+complete-suite run. Hardware/default-engine gates and the 21/30 count are unchanged.
+
+#### Scoped I/O publication checkpoint (rejected)
+
+The prototype keeps the first ordinary publication full, skips unchanged
+configuration inside one synchronous execution scope and retains full mutation
+and public API publication. All 1,711 candidate tests and the 15-case parity
+matrix pass. Seven paired counter traces confirm configuration publication falls
+2.27M to 25.6K for HQ4 without changing service/dynamic counts, state or PCM/pins.
+However, 320 timings/160 warmups do not justify keeping it: longer music gains
+are noisy, CLKI's initial 1.076x disappears (1.001x), and the watchdog-active
+kernel is 0.920x, slower in seven of eight pairs. Native/host/package changes are
+restored; eight public I/O boundary tests and diagnostic controls remain.
+See [sources, replay and results](../reports/io-publication-scope-20261025.md).
+Do not retry the same scope implementation as an untested pending task. Next
+audit repeated event/deadline scanning independently. The 118,071-byte runtime,
+default engine, unresolved ADC penalty and 21/30 checklist are unchanged.
+
+#### Deadline lookup placement checkpoint (retained, workload-specific evidence)
+
+The same-state cache already removes about two thirds of complete scans. The
+new placement inlines its small lookup and outlines the large scanner, retaining
+all statements, invalidation/fault behavior, CPU ABI and peripheral clocks.
+Exact rebuilt WASM confirms the transformation survives Binaryen: four callers
+change, the scanner replaces the old combined wrapper, and 198 bodies are
+identical. Native is now 118,742 bytes (+671), with no new state or host imports.
+
+All 1,704 regression checks and 15 parity cases pass. Across 384 timings and 192
+warmups, rhythmic physical measures 1.088x/1.086x in two intervals (6/8 and 7/8
+pairs faster). HQ4 and kernel gains remain unproven; small CLKI/watchdog losses
+are possible within the large controls. Keep the narrow workload evidence;
+browser IRQ/underrun/default-engine gates and the old ADC penalty remain open.
+Native/tools: `741a1301`. See the [audit](deadline-dispatch-audit.md) and
+[measurements with isolated replay](../reports/deadline-dispatch-20261025.md).
+The subsequent GPIO audit is recorded below, independently of this compiler
+hint. Checklist remains 21/30, nine open.
+
+#### Settled GPIO checkpoint (redundant work removed; elapsed gain unproven)
+
+`df1c264e` adds a private board certificate, using existing padding, for the full
+original GPIO predicate. Reuse the raw infinite-deadline proof only with clkI/O
+running, an internal source and half!=UINT64_MAX. Reset, domains, GPIO writes,
+Timer0 overrides and external-input delivery invalidate it. Preserve final
+clock_high, zero/reverse spans and all existing bus/publication boundaries.
+Low-level GPIO/API remain unchanged; CLKI always takes the original edge path.
+See the [dependency audit](gpio-activity-audit.md).
+
+All 1,722 default/shared-tool tests pass, including 18 private-state differential
+cases and the sentinel guards. Isolated rebuild and 15 generated-CPU cases pass;
+CPU bytes/ABI remain identical. Native is 118,946 bytes (+204), with original
+109 function exports, no imports and fixed two-page memory. HQ4 traces remove
+2.16 million recurring advances and 3.68 million settled queries, preserving
+state, PCM and pins; all CLKI entry counts remain equal. These are work-removal
+claims. Final balanced 192 timings / 96 warmups measure 0.992–1.069x medians with
+large identity controls, so sustained elapsed gains remain unproven. The first
+variant is archived separately, not pooled as the final candidate.
+
+[Sources, measurements and replay](../reports/gpio-idle-20261025.md) retain both
+variants and the original-dispatch oracle. The subsequent profile and separate
+instruction-budget change are recorded below.
+No real-time/browser/default-engine acceptance closes; `wasm` remains default,
+the old ADC penalty is unresolved and the hardware count stays 21/30, nine open.
+
+#### Post-GPIO profile and adaptive region budget checkpoint
+
+`61e435d6` retains 12 profiles / 12,383 work samples with exact production equality.
+The phase-clock bridge and descendants contain 72–73% of music work samples;
+scanner and time conversions remain substantial. These are surviving-body
+sampling observations, not exclusive subsystem times. See the
+[profile and raw-sample replay](../reports/post-gpio-profile-20261025.md).
+
+`01ed0b38` implements adaptive worst-case instruction budgets only inside the
+optional bounded register regions. A smaller budget must end strictly before
+native/caller deadlines and 2^52, with full flags, clock-before-commit and uint64
+retirement capacity. Memory/I/O and CLKI retain their original fallback paths.
+One f64 local is added per region; native memory/ABI/image remain unchanged.
+Ordinary CPU bytes match with boundedRegions=false in all five control cases.
+
+All 1,729 default/shared-tool tests pass, including seven new admission/ADC/WDT
+and boundary cases; isolated reconstruction passes 24 region tests and five
+generated-CPU parity cases. 320 timings / 160 warmups retain 9,248 exact snapshots.
+HQ4 physical gains 1.764x/1.628x, eight of eight pairs faster in both intervals;
+the internal kernel gains 1.614x/2.086x. Rhythmic/Lumière gains remain unproven;
+CLKI is inactive for regions and measures 0.985x/0.953x, with control variation
+large enough that a small loss cannot be excluded. Keep the narrow evidence.
+
+The new browser run passes 12 exact checkpoints with active IRQs. All six
+10-second Worker/AudioWorklet cases stay visible but still underrun: false/true
+episode counts are 12/18 Rhythmic, 16/16 Lumière and 17/4 HQ4. This does not pass
+real-time or default activation. See the
+[measurements, browser record and replay](../reports/adaptive-region-budget-20261025.md)
+and [budget proof](region-budget-audit.md). Next profile the updated opt-in
+policy/remaining bridge paths before choosing another native or generator
+optimization. The main count remains 21/30 with nine open; default stays wasm.
+
+#### Watchdog clock checkpoint (period cache rejected; lazy sync audited)
+
+Exact period reduction passes1681 tests and15 parity cases, but four screened
+medians0.997x/0.993x/0.976x/0.961x do not establish a gain. Production returns
+to the retained117975-byte ps→ns runtime. Four new fraction/reset regressions
+and two real watchdog ISR benchmark cases remain;128 timings/64 warmups retain
+1824 exact snapshots. See [rejected candidate and reproduction](../reports/watchdog-period-20261025.md).
+
+The subsequent lazy-clock experiment follows the [consumer and boundary audit](watchdog-lazy-clock-audit.md).
+Do not simply gate `elapse` or the whole watchdog service: enabling must first
+discard inactive history, CPU write windows still expire while off, and both
+reset/startup implementations consume the oscillator phase. Keep the current
+numerator units and eager fault-sensitive arithmetic. The implementation passed
+1687 tests and15 parity cases;256 timings/128 warmups did not establish gains.
+Entry traces prove watchdog rational conversions disappear in all five measured
+physical cases, while ADC/scanner/publication work remains. The prototype is
+rejected and production restored; six new regression cases and the corrected
+alias/clock-aware tracer remain. See [exact evidence](../reports/watchdog-lazy-20261025.md).
+The [ADC recurring-service audit](adc-activity-audit.md) led to the retained
+shortcut above. No hardware item closes:21/30 complete, nine open.
+
+#### Native-delay checkpoint (rejected)
+
+Native-delay checkpoint: native-width phase subtraction passes1674 tests and
+the13-case parity matrix, but three paired timing rows1.004x/1.002x/0.993x do
+not establish speed gains. The header/runtime are restored and the independent
+fraction/product-boundary regression remains. See
+[clock-delay evidence](../reports/clock-delay-20261025.md). Its physical ps→ns
+follow-up is retained above with NVM/legacy/CLKI/ADC parity. No hardware
+checklist item closes.
+
+#### Bounded-region checkpoint (optional implementation)
+
+`boundedRegions:true` now emits cyclic register-only components of at most64
+decoded words with up to32 executed instructions per admitted span. All1673
+tests and13 parity cases pass. Untimed traces prove activation with active IRQs;
+416 timed runs with identity controls/208 warmups show HQ4 physical1.448x, an event-free
+synthetic direct loop11.265x and internal audio kernel4.210x. Rhythmic/Lumière,
+CLKI and active-ADC gains are unproven. Physical CPU modules grow1.36–1.67%.
+The native runtime/default CPU output are unchanged. The option remains off by
+default. A subsequent browser screen passes12 parity checkpoints (24 more in
+Node replay), but all six10-second audio runs underrun: delivered frames are
+26–37% of the requested stream. This is a failed default-engine gate, not a
+balanced speed comparison or silicon evidence. See the
+[browser record](../reports/bounded-browser-20261025.md). Exact Node sources, controls and
+next budget/admission experiments: [report](../reports/bounded-regions-20261025.md).
+No hardware checklist item closes:21/30 complete, nine open.
+
+Use the unchanged generated instruction path as oracle. The purpose is to
+amortize register caching and native calls across control flow, rather than add
+another small peephole pass. Keep this independent of peripheral activity work.
+
+- Start with a bounded number of register-only instructions and direct
+  RJMP/conditional/skip edges. Memory/I/O, stack, system operations and I-bit
+  changes terminate a region before their effects. Unknown targets use the
+  original per-PC entry. Do not interpret AVR opcodes at runtime.
+- Guard the whole worst-case cycle/instruction span before staging anything:
+  caller budget/deadline, earliest native event, pending IRQ/delay, inactive
+  continuation, f64 capacity and retired-counter headroom. A zero-length result
+  must return without native clock work. CLKI keeps its existing zero budget.
+- Stage dirty GPRs, full SREG, next PC and actual cycle/count totals in WASM
+  locals. The prototype preloads the statically used register union once to
+  avoid a validity branch on every read; flush only potentially written GPRs.
+  ASR must sign-extend the current cached byte. Preserve8-bit writes and
+  register-pair aliasing.
+- Advance the native clock by the actual original-cycle total, then commit
+  staged state/retirement exactly once. Keep clock-before-commit. Reset/fault
+  or an unexpected WAIT must discard staged writes and retain fail-closed
+  behavior; do not replay native work through a fallback.
+- Materialize every architectural register/flag at all external exits. Keep
+  original callable instruction entries and observe partial deadlines through
+  their existing phase path. Do not combine cross-block flag elimination yet.
+- Prove actual region activation and test loops, external entries, short limits,
+  all SREG inputs, host edits, bus barriers, IRQ/reset/protected windows, SPM and
+  retirement limits. Complete the13-workload parity matrix before timing.
+  Keep default bytes unchanged until correctness and performance gates pass.
 
 #### Register-local experiment contract
 

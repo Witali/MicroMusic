@@ -1,0 +1,434 @@
+diff --git "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-lazy-functions\\compare-ymtL6l\\function-diffs-ZxAPkm\\elapse.before.wat" "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-lazy-functions\\compare-ymtL6l\\function-diffs-ZxAPkm\\elapse.after.wat"
+index d421497..c7ea5b7 100644
+--- "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-lazy-functions\\compare-ymtL6l\\function-diffs-ZxAPkm\\elapse.before.wat"
++++ "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-lazy-functions\\compare-ymtL6l\\function-diffs-ZxAPkm\\elapse.after.wat"
+@@ -2,13 +2,13 @@
+   (local $1 i64)
+   (local $2 i64)
+   (local $3 i64)
+-  (local $4 i64)
+-  (local $5 i32)
++  (local $4 i32)
++  (local $5 i64)
+   (i32.store8
+    (i32.const 64864)
+    (i32.const 0)
+   )
+-  (local.set $2
++  (local.set $1
+    (i64.sub
+     (local.get $0)
+     (i64.load
+@@ -23,7 +23,7 @@
+     )
+    )
+    (then
+-    (local.set $1
++    (local.set $2
+      (i64.const -1)
+     )
+     (block $block
+@@ -31,7 +31,7 @@
+       (i64.gt_u
+        (local.tee $3
+         (call $native.ratio
+-         (local.get $2)
++         (local.get $1)
+          (i64.shl
+           (i64.load32_u
+            (i32.const 64620)
+@@ -62,7 +62,7 @@
+         )
+        )
+        (i64.xor
+-        (local.tee $4
++        (local.tee $5
+          (i64.load
+           (i32.const 64632)
+          )
+@@ -87,206 +87,247 @@
+        (br $block)
+       )
+      )
+-     (local.set $1
++     (local.set $2
+       (i64.add
+        (local.get $3)
+-       (local.get $4)
++       (local.get $5)
+       )
+      )
+     )
+     (i64.store
+      (i32.const 64632)
+-     (local.get $1)
++     (local.get $2)
+     )
+    )
+   )
+-  (local.set $3
++  (local.set $2
+    (i64.load
+     (i32.const 64648)
+    )
+   )
+-  (local.set $4
+-   (i64.const -1)
+-  )
+-  (block $block2
+-   (if
+-    (i64.gt_u
+-     (local.tee $1
+-      (block $block1 (result i64)
+-       (if
+-        (i32.eqz
+-         (i32.load8_u
+-          (i32.const 64788)
++  (block $block3
++   (block $block2
++    (if
++     (i64.gt_u
++      (local.tee $1
++       (block $block1 (result i64)
++        (if
++         (i32.eqz
++          (i32.load8_u
++           (i32.const 64788)
++          )
+          )
+-        )
+-        (then
+-         (br $block1
+-          (call $native.ratio
+-           (local.get $2)
+-           (i64.const 1000000000)
+-           (i64.load
+-            (i32.const 64656)
+-           )
+-           (i64.shl
+-            (i64.load32_u
+-             (i32.const 64032)
++         (then
++          (br $block1
++           (call $native.ratio
++            (local.get $1)
++            (i64.const 1000000000)
++            (i64.load
++             (i32.const 64656)
+             )
+-            (i64.const 1)
++            (i64.shl
++             (i64.load32_u
++              (i32.const 64032)
++             )
++             (i64.const 1)
++            )
++            (i32.const 64656)
+            )
+-           (i32.const 64656)
+           )
+          )
+         )
+-       )
+-       (i64.store
+-        (i32.const 64656)
+-        (i64.extend_i32_u
+-         (select
+-          (i32.sub
+-           (local.tee $5
+-            (i32.add
+-             (i32.load
+-              (i32.const 64656)
+-             )
+-             (i32.wrap_i64
+-              (i64.sub
+-               (local.get $2)
+-               (i64.mul
+-                (local.tee $1
+-                 (i64.div_u
+-                  (local.get $2)
+-                  (i64.const 1000)
++        (i64.store
++         (i32.const 64656)
++         (i64.extend_i32_u
++          (select
++           (i32.sub
++            (local.tee $4
++             (i32.add
++              (i32.load
++               (i32.const 64656)
++              )
++              (i32.wrap_i64
++               (i64.sub
++                (local.get $1)
++                (i64.mul
++                 (local.tee $1
++                  (i64.div_u
++                   (local.get $1)
++                   (i64.const 1000)
++                  )
+                  )
++                 (i64.const 1000)
+                 )
+-                (i64.const 1000)
+                )
+               )
+              )
+             )
++            (i32.const 1000)
+            )
+-           (i32.const 1000)
+-          )
+-          (local.get $5)
+-          (local.tee $5
+-           (i32.gt_u
+-            (local.get $5)
+-            (i32.const 999)
++           (local.get $4)
++           (local.tee $4
++            (i32.gt_u
++             (local.get $4)
++             (i32.const 999)
++            )
+            )
+           )
+          )
+         )
++        (i64.add
++         (local.get $1)
++         (i64.extend_i32_u
++          (local.get $4)
++         )
++        )
+        )
+-       (i64.add
+-        (local.get $1)
+-        (i64.extend_i32_u
+-         (local.get $5)
++      )
++      (i64.xor
++       (local.get $2)
++       (i64.const -1)
++      )
++     )
++     (then
++      (i32.store8
++       (i32.const 64864)
++       (i32.const 0)
++      )
++      (if
++       (i32.eqz
++        (i32.load
++         (i32.const 64744)
++        )
++       )
++       (then
++        (i64.store
++         (i32.const 64744)
++         (i64.const 4294967298)
+         )
+        )
+       )
++      (i64.store
++       (i32.const 64648)
++       (i64.const -1)
++      )
++      (br $block2)
+      )
+-     (i64.xor
+-      (local.get $3)
+-      (i64.const -1)
++    )
++    (i64.store
++     (i32.const 64648)
++     (i64.add
++      (local.get $1)
++      (local.get $2)
+      )
+     )
+-    (then
+-     (i32.store8
+-      (i32.const 64864)
+-      (i32.const 0)
++    (br_if $block2
++     (i32.load8_u
++      (i32.const 64789)
+      )
+-     (br_if $block2
+-      (i32.load
+-       (i32.const 64744)
++    )
++    (br_if $block2
++     (i32.load
++      (i32.const 64744)
++     )
++    )
++    (br_if $block3
++     (i32.eqz
++      (i32.and
++       (i32.load8_u
++        (i32.const 74676)
++       )
++       (i32.const 72)
+       )
+      )
+-     (i64.store
+-      (i32.const 64744)
+-      (i64.const 4294967298)
++    )
++   )
++   (br_if $block3
++    (i64.eq
++     (local.get $0)
++     (local.tee $3
++      (i64.load
++       (i32.const 109816)
++      )
+      )
+-     (br $block2)
+     )
+    )
+-   (local.set $4
+-    (i64.add
+-     (local.get $1)
+-     (local.get $3)
++   (local.set $1
++    (i64.load
++     (i32.const 64664)
+     )
+    )
+-  )
+-  (i64.store
+-   (i32.const 64648)
+-   (local.get $4)
+-  )
+-  (local.set $3
+-   (i64.load
+-    (i32.const 64664)
++   (local.set $2
++    (i64.const -1)
+    )
+-  )
+-  (local.set $1
+-   (i64.const -1)
+-  )
+-  (block $block3
+-   (if
+-    (i64.gt_u
+-     (local.tee $2
+-      (call $native.ratio
+-       (local.get $2)
+-       (i64.load32_u
+-        (i32.const 64036)
+-       )
+-       (i64.load
+-        (i32.const 64672)
+-       )
+-       (select
+-        (i64.const 1000000000000)
+-        (i64.shl
+-         (i64.load32_u
+-          (i32.const 64032)
+-         )
+-         (i64.const 1)
++   (block $block4
++    (if
++     (i64.gt_u
++      (local.tee $3
++       (call $native.ratio
++        (i64.sub
++         (local.get $0)
++         (local.get $3)
++        )
++        (i64.load32_u
++         (i32.const 64036)
+         )
+-        (i32.load8_u
+-         (i32.const 64788)
++        (i64.load
++         (i32.const 64672)
+         )
++        (select
++         (i64.const 1000000000000)
++         (i64.shl
++          (i64.load32_u
++           (i32.const 64032)
++          )
++          (i64.const 1)
++         )
++         (i32.load8_u
++          (i32.const 64788)
++         )
++        )
++        (i32.const 64672)
+        )
+-       (i32.const 64672)
++      )
++      (i64.xor
++       (local.get $1)
++       (i64.const -1)
+       )
+      )
+-     (i64.xor
+-      (local.get $3)
+-      (i64.const -1)
+-     )
+-    )
+-    (then
+-     (i32.store8
+-      (i32.const 64864)
+-      (i32.const 0)
+-     )
+-     (br_if $block3
+-      (i32.load
++     (then
++      (i32.store8
++       (i32.const 64864)
++       (i32.const 0)
++      )
++      (br_if $block4
++       (i32.load
++        (i32.const 64744)
++       )
++      )
++      (i64.store
+        (i32.const 64744)
++       (i64.const 4294967298)
+       )
++      (br $block4)
+      )
+-     (i64.store
+-      (i32.const 64744)
+-      (i64.const 4294967298)
++    )
++    (local.set $2
++     (i64.add
++      (local.get $1)
++      (local.get $3)
+      )
+-     (br $block3)
+     )
+    )
+-   (local.set $1
+-    (i64.add
+-     (local.get $2)
+-     (local.get $3)
+-    )
++   (i64.store
++    (i32.const 109816)
++    (local.get $0)
++   )
++   (i64.store
++    (i32.const 64664)
++    (local.get $2)
+    )
+   )
+   (i64.store
+    (i32.const 64624)
+    (local.get $0)
+   )
+-  (i64.store
+-   (i32.const 64664)
+-   (local.get $1)
+-  )
+  )

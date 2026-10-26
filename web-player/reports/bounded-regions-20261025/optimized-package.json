@@ -1,0 +1,73 @@
+{
+  "schema": "micromusic-bounded-optimized-package-v1",
+  "complete": true,
+  "runtimeSha256": "111f314fdbab5bd7a8f1c0c4d8891811676e436bd7aa78681d6c62728ef0fba6",
+  "cases": [
+    {
+      "id": "rhythmic",
+      "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "b2f1dc45524d00c600e921b91f42ee282f667e6c58748ea46db7fddbb6416051",
+        "outputSha256": "b339ea0e36a82937d271a392231fa5eae708d4f125e5c84e27fd2c5c5d1ded0f",
+        "inputBytes": 393723,
+        "outputBytes": 120459,
+        "elapsedMs": 317.81100000000004
+      },
+      "checkpoints": 4,
+      "irqCount": 798,
+      "stateSha256": "c092fbf744af12b6b075ade82a0c6b3bd700ddea069c8579b95e9d2c1cbf0505"
+    },
+    {
+      "id": "lumiere-stereo",
+      "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "450eadee6ea29c6820dd7de75960103cef3fc2f9a3126b0d8b9996dff71752b5",
+        "outputSha256": "42cf24ea09e9b75fa2fea870aa40ea0aeb325fb19e48bfb7bf274d8219d4167a",
+        "inputBytes": 397609,
+        "outputBytes": 122162,
+        "elapsedMs": 324.0965
+      },
+      "checkpoints": 4,
+      "irqCount": 798,
+      "stateSha256": "2bd18f83c4d3450626325e8d2147d04433d040ca623345948af5301a13d5e742"
+    },
+    {
+      "id": "hq4-chego-tiny",
+      "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "7237ab6d74fdecd4d4d956cc392c4fe3e60ce03a815e4282575d070c68590652",
+        "outputSha256": "ac6dcdc72e596660dcc48174682b77f8f7e97d07fb018eb7a43b8744d70d8ada",
+        "inputBytes": 412470,
+        "outputBytes": 131935,
+        "elapsedMs": 317.6694
+      },
+      "checkpoints": 4,
+      "irqCount": 798,
+      "stateSha256": "38e5ccaf8dfb7a6cf466dab1c5e39a54a19310ee7bf53d458e86e1e911ca2687"
+    }
+  ]
+}

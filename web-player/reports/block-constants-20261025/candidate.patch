@@ -1,0 +1,193 @@
+diff --git a/web-player/lib/avr-transpiled-runtime.js b/web-player/lib/avr-transpiled-runtime.js
+index 47a83b9..c7483b8 100644
+--- a/web-player/lib/avr-transpiled-runtime.js
++++ b/web-player/lib/avr-transpiled-runtime.js
+@@ -14,7 +14,7 @@ function compileTranslation(binary,abi,options) {
+   const padded=new Uint8Array(profile.flashBytes).fill(255);padded.set(binary);
+   // Exact image keys avoid hash collisions. Configuration does not enter the
+   // lowering: live clocks/fuses are supplied by this runtime instance's bus.
+-  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,Array.from(padded)]);
++  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,options.foldBlockConstants??false,Array.from(padded)]);
+   if(options.cacheTranslation!==false&&cache.has(key)) {
+     const cached=cache.get(key);cache.delete(key);cache.set(key,cached);
+     return {...cached,cacheHit:true};
+@@ -35,6 +35,8 @@ function compileTranslation(binary,abi,options) {
+ // use the existing C/WASM peripheral runtime, sharing its linear memory.
+ export class AVRCore extends PeripheralRuntime {
+   constructor(binary,eeprom,options={}) {
++    if(options.foldBlockConstants!==undefined&&(typeof options.foldBlockConstants!=='boolean'||options.foldBlockConstants&&!options.resumable))
++      throw Error('Block constant folding requires resumable execution');
+     if(options.optimizePhaseLocals!==undefined&&(typeof options.optimizePhaseLocals!=='boolean'||options.optimizePhaseLocals&&!options.resumable))
+       throw Error('Phase-local optimization requires resumable execution');
+     const profile=deviceProfile(options.device??DEFAULT_DEVICE);
+diff --git a/web-player/lib/avr-transpiler.js b/web-player/lib/avr-transpiler.js
+index aa5d5b5..c0e4654 100644
+--- a/web-player/lib/avr-transpiler.js
++++ b/web-player/lib/avr-transpiler.js
+@@ -4,6 +4,7 @@
+ import {deviceProfile,DEFAULT_DEVICE} from './devices/profiles.js';
+ import {clockPhase,assertAtomicPhase,emitInstructionPhases} from './avr-wasm-phases.js';
+ import {annotatePhaseLocals,stripLocalEffects} from './avr-phase-locals.js';
++import {foldAVRBlock} from './avr-block-constants.js';
+ const uleb = value => {
+   const out = []; do { const byte = value & 127; value >>>= 7; out.push(byte | (value ? 128 : 0)); } while (value);
+   return out;
+@@ -125,7 +126,8 @@ const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
+ const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
+ const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
+ 
+-export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false}={}) {
++export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false,foldBlockConstants=false}={}) {
++  if(typeof foldBlockConstants!=='boolean'||foldBlockConstants&&!resumable)throw Error('Block constant folding requires resumable execution');
+   if(typeof optimizePhaseLocals!=='boolean'||optimizePhaseLocals&&!resumable)throw Error('Phase-local optimization requires resumable execution');
+   const {get,set,condition,conditionValue}=optimizePhaseLocals?annotatePhaseLocals(phaseEmit):phaseEmit;
+   const profile=deviceProfile(device),{flashBytes,flashWords,pcMask,ioStart,ioEnd,ramStart,ramEnd,sreg,stackPointer}=profile;
+@@ -361,6 +363,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+     blocks.push({start:sequence[0].pc,end:p&pcMask,instructions:sequence.length,cycles:sequence.reduce((n,i)=>n+instructionCycles(i),0),masks,removed,computed,sequence});
+   }
+   const blockBodies=[];
++  const constantStats={constantExpressions:0,localReads:0,registerReads:0,constantLocalSets:0,unsupported:0};
+   // Function local remapping is performed while emitting block ALU below.
+   // Separate emitters make the local types and their indices explicit.
+   function remapLocals(code, shift) {
+@@ -407,7 +410,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+         ...condition(eqz(get(2)),fail(25,true)));
+     }
+     code.push(...set(7,load8(flagsAddress)));
+-    let elapsedCycles=0;
++    let elapsedCycles=0;const foldInput=[];
+     block.sequence.forEach((i,n)=>{
+       let effects;
+       if(guardedMemory.has(i.name)){
+@@ -424,8 +427,14 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+             k===1?writeReg(s,and(add(Z,constant(1)),constant(255))):[]);
+         }
+       }else effects=alu(i,block.masks[n]);
+-      code.push(...remapLocals(effects,2));elapsedCycles+=instructionCycles(i);
++      if(foldBlockConstants)foldInput.push(...effects);else code.push(...remapLocals(effects,2));
++      elapsedCycles+=instructionCycles(i);
+     });
++    if(foldBlockConstants){
++      const folded=foldAVRBlock(stripLocalEffects(foldInput),{registerBase:abi.data,memoryBytes:(abi.memoryPages||1)*65536});
++      for(const key of Object.keys(constantStats))constantStats[key]+=folded.stats[key];
++      code.push(...remapLocals(folded.code,2));
++    }
+     code.push(...store8(flagsAddress,get(7)),put('pc',constant(block.end)),put('errorPC',constant((block.end-1)&pcMask)),
+       resumable?bytes(storeI64(constant(abi.phase.retired),binary(0x7c,loadI64(constant(abi.phase.retired)),constantI64(block.instructions-1))),call(PHASE_RETIRE)):
+         call(CLOCK,float(block.cycles)),constant(block.instructions));
+@@ -541,9 +550,10 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
+   const mapping=decoded.map(({pc,word,name,d,s,k,words})=>({pc,byteAddress:pc*2,word,name,d,s,k,words}));
+   const stats={decodableWords:decoded.filter(i=>i.name!=='unsupported').length,unsupportedWords:decoded.filter(i=>i.name==='unsupported').length,
+     blocks:blocks.length,flagBitsComputed:blocks.reduce((n,b)=>n+b.computed,0),flagBitsEliminated:blocks.reduce((n,b)=>n+b.removed,0),
+-    ...(optimizePhaseLocals?{phaseLocals:phaseLocalStats}:{})};
++    ...(optimizePhaseLocals?{phaseLocals:phaseLocalStats}:{}),...(foldBlockConstants?{constantFolding:constantStats}:{})};
+   const manifest={schema:'micromusic-avr-transpiled-v1',device:profile.name,abi,optimizeFlags,maxBlockInstructions,stats,
+-    ...(resumable?{executionMode:'resumable-v1'}:{}),...(optimizePhaseLocals?{optimizePhaseLocals:true}:{}),blocks:blocks.map(({sequence,...block})=>block),mapping};
++    ...(resumable?{executionMode:'resumable-v1'}:{}),...(optimizePhaseLocals?{optimizePhaseLocals:true}:{}),
++    ...(foldBlockConstants?{foldBlockConstants:true}:{}),blocks:blocks.map(({sequence,...block})=>block),mapping};
+   const output=Uint8Array.from(bytes([0,97,115,109,1,0,0,0],section(1,vector(types)),section(2,importSection),section(3,vector(functionTypes.map(uleb))),
+     section(4,[1,0x70,1,...uleb(flashWords*2),...uleb(flashWords*2)]),section(6,vector([bytes(0x7f,1,constant(0),0x0b),bytes(0x7c,1,float(-1),0x0b),bytes(0x7f,1,constant(0),0x0b),bytes(0x7f,1,constant(0),0x0b)])),
+     section(7,exports),section(9,bytes(1,0,constant(0),0x0b,vector(table.map(uleb)))),section(10,vector(codes)),
+diff --git a/web-player/scripts/benchmark-generated-wasm.mjs b/web-player/scripts/benchmark-generated-wasm.mjs
+index f66a7f1..418e0a4 100644
+--- a/web-player/scripts/benchmark-generated-wasm.mjs
++++ b/web-player/scripts/benchmark-generated-wasm.mjs
+@@ -23,9 +23,11 @@ const {values}=parseArgs({options:{level:{type:'string',multiple:true},case:{typ
+ const integer=(s,min,max)=>{const n=Number(s);assert.ok(Number.isInteger(n)&&n>=min&&n<=max);return n;};
+ const trials=integer(values.trials,8,32),schedule=controlSchedule(trials),warmups=integer(values.warmups,1,8),
+   frames=integer(values.frames,1024,48000),instructions=integer(values.instructions,1000,10000000),rate=48000,block=1024;
+-const phaseLocals=values.transform==='phase-locals';assert.ok(phaseLocals||values.transform==='binaryen');
+-const levels=values.level??(phaseLocals?['live-locals']:['O3','Oz']);assert.equal(new Set(levels).size,levels.length);
+-assert.ok(levels.length&&levels.every(level=>(phaseLocals?['live-locals']:['O2','O3','Os','Oz']).includes(level)));
++const phaseLocals=values.transform==='phase-locals',blockConstants=values.transform==='block-constants',compilerTransform=phaseLocals||blockConstants;
++assert.ok(compilerTransform||values.transform==='binaryen');
++const allowedLevels=phaseLocals?['live-locals']:blockConstants?['block-constants']:['O2','O3','Os','Oz'];
++const levels=values.level??(compilerTransform?allowedLevels:['O3','Oz']);assert.equal(new Set(levels).size,levels.length);
++assert.ok(levels.length&&levels.every(level=>allowedLevels.includes(level)));
+ const sha=b=>createHash('sha256').update(b).digest('hex');
+ const stringify=v=>JSON.stringify(v,(_,n)=>typeof n==='bigint'?n.toString():n,2)+'\n';
+ const source=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
+@@ -36,16 +38,17 @@ if(values['baseline-ref']){
+   const originals=paths.map(p=>execFileSync('git',['show',revision+':'+p],{cwd:root,encoding:'utf8'}).replaceAll('\r\n','\n'));
+   const url=source=>'data:text/javascript;base64,'+Buffer.from(source).toString('base64');
+   let phaseSource=originals[1];
+-  if(originals.some(s=>s.includes("'./avr-phase-locals.js'"))){
+-    const dependency='web-player/lib/avr-phase-locals.js';
++  const dependencyNames=['avr-phase-locals.js','avr-block-constants.js'];
++  for(const name of dependencyNames)if(originals.some(s=>s.includes("'./"+name+"'"))){
++    const dependency='web-player/lib/'+name;
+     const historical=execFileSync('git',['show',revision+':'+dependency],{cwd:root,encoding:'utf8'}).replaceAll('\r\n','\n');
+-    assert.equal(historical,source(dependency),'Historical phase-local dependency must be unchanged');
+-    phaseSource=phaseSource.replace("'./avr-phase-locals.js'",JSON.stringify(new URL('../lib/avr-phase-locals.js',import.meta.url).href));
++    assert.equal(historical,source(dependency),'Historical compiler dependency must be unchanged');
++    phaseSource=phaseSource.replace("'./"+name+"'",JSON.stringify(new URL('../lib/'+name,import.meta.url).href));
+     paths.push(dependency);originals.push(historical);
+   }
+-  const compiler=originals[0].replace("'./devices/profiles.js'",JSON.stringify(new URL('../lib/devices/profiles.js',import.meta.url).href))
+-    .replace("'./avr-wasm-phases.js'",JSON.stringify(url(phaseSource)))
+-    .replace("'./avr-phase-locals.js'",JSON.stringify(new URL('../lib/avr-phase-locals.js',import.meta.url).href));
++  let compiler=originals[0].replace("'./devices/profiles.js'",JSON.stringify(new URL('../lib/devices/profiles.js',import.meta.url).href))
++    .replace("'./avr-wasm-phases.js'",JSON.stringify(url(phaseSource)));
++  for(const name of dependencyNames)compiler=compiler.replace("'./"+name+"'",JSON.stringify(new URL('../lib/'+name,import.meta.url).href));
+   previousGenerator=(await import(url(compiler))).transpileAVR;
+   baseline={revision,sourceSha256:Object.fromEntries(paths.map((p,n)=>[p,sha(originals[n])])),
+     adaptation:'Only import URLs are redirected: historical phase module as data URL, unchanged device profiles/phase-local dependency as file URLs.'};
+@@ -79,10 +82,10 @@ function layout(bytes){
+ function construct(item,generated){
+   // The phase-local experiment uses the normal production translation cache:
+   // identical labels must share a CPU Module, as well as the native Module.
+-  const c=new ATtiny13A(item.binary,item.eeprom,{...item.options,optimizePhaseLocals:generated.manifest.optimizePhaseLocals??false,runtimeModule,
+-    ...phaseLocals?{}:{precompiled:generated}});
++  const c=new ATtiny13A(item.binary,item.eeprom,{...item.options,optimizePhaseLocals:generated.manifest.optimizePhaseLocals??false,
++    foldBlockConstants:generated.manifest.foldBlockConstants??false,runtimeModule,...compilerTransform?{}:{precompiled:generated}});
+   assert.equal(sha(c.transpiledBytes),sha(generated.bytes));
+-  if(phaseLocals){
++  if(compilerTransform){
+     item.cpuModules??=new Map();const key=sha(generated.bytes);
+     if(item.cpuModules.has(key))assert.equal(c._translatedModule,item.cpuModules.get(key),'Identity labels must reuse the CPU Module');
+     else item.cpuModules.set(key,c._translatedModule);
+@@ -114,12 +117,12 @@ function execute(c,item){
+   return {raw,states,pins,ms,record:{rawSha256:sha(raw),stateSha256:sha(stringify(states)),pinSha256:sha(stringify(pins)),checkpoints:states.length}};
+ }
+ const output=resolve(root,values.out);mkdirSync(dirname(output),{recursive:true});
+-const support=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js','web-player/lib/avr-phase-locals.js','web-player/lib/avr-transpiled-runtime.js','web-player/lib/attiny13a-runtime.js',
++const support=['web-player/lib/avr-transpiler.js','web-player/lib/avr-wasm-phases.js','web-player/lib/avr-phase-locals.js','web-player/lib/avr-block-constants.js','web-player/lib/avr-transpiled-runtime.js','web-player/lib/attiny13a-runtime.js',
+   'web-player/scripts/benchmark-generated-wasm.mjs','web-player/scripts/lib/optimize-avr-wasm.mjs','web-player/scripts/lib/runtime-control-design.mjs'];
+ const report={schema:'micromusic-generated-wasm-benchmark-v1',complete:false,revision:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),
+   mode:values['validate-only']?'validation':'timing',
+   transform:values.transform,...baseline?{baseline}: {},
+-  cpuModulePolicy:phaseLocals?'production-translation-cache':'fresh-precompiled',
++  cpuModulePolicy:compilerTransform?'production-translation-cache':'fresh-precompiled',
+   gcBeforeRun:typeof globalThis.gc==='function',
+   node:process.version,platform:platform(),cpu:cpus()[0].model,trials,warmups,rate,frames,instructions,levels,
+   sourceSha256:Object.fromEntries(support.map(p=>[p,sha(source(p))])),runtimeSha256:sha(readFileSync(new URL('../wasm/attiny13a.wasm',import.meta.url))),
+@@ -130,11 +133,12 @@ for(const item of selected){
+   if(previousGenerator)assert.deepEqual(raw.bytes,previousGenerator(item.binary,raw.manifest.abi,item.options).bytes,item.id+' must preserve baseline bytes');
+   for(const level of levels){
+     let optimized;
+-    if(phaseLocals){
+-      const start=performance.now(),generated=item.options.resumable?transpileAVR(item.binary,raw.manifest.abi,{...item.options,optimizePhaseLocals:true}):raw;
+-      optimized={...generated,optimization:{tool:'generation-time phase-local liveness',flags:item.options.resumable?['optimizePhaseLocals=true']:[],
++    if(compilerTransform){
++      const setting=phaseLocals?{optimizePhaseLocals:true}:{foldBlockConstants:true};
++      const start=performance.now(),generated=item.options.resumable?transpileAVR(item.binary,raw.manifest.abi,{...item.options,...setting}):raw;
++      optimized={...generated,optimization:{tool:'generation-time '+values.transform,flags:item.options.resumable?[Object.keys(setting)[0]+'=true']:[],
+         inputSha256:sha(raw.bytes),outputSha256:sha(generated.bytes),inputBytes:raw.bytes.length,outputBytes:generated.bytes.length,elapsedMs:performance.now()-start,
+-        phaseLocals:generated.manifest.stats.phaseLocals??null}};
++        phaseLocals:generated.manifest.stats.phaseLocals??null,...blockConstants?{constantFolding:generated.manifest.stats.constantFolding??null}:{}}};
+     }else optimized=optimizeAVRWasm(raw,{level,wasmOpt:values['wasm-opt']});
+     const compiled={};
+     for(const [name,generated]of [['raw',raw],['optimized',optimized]]){const t=performance.now();new WebAssembly.Module(generated.bytes);compiled[name]=performance.now()-t;}
+diff --git a/web-player/tests/attiny13a-package-runtime.test.mjs b/web-player/tests/attiny13a-package-runtime.test.mjs
+index 4d3a82d..69f947e 100644
+--- a/web-player/tests/attiny13a-package-runtime.test.mjs
++++ b/web-player/tests/attiny13a-package-runtime.test.mjs
+@@ -100,7 +100,7 @@ test('package loader runs with only JavaScript loader files and no default WASM
+   const dir=await mkdtemp(join(tmpdir(),'micromusic-package-loader-'));
+   t.after(()=>rm(dir,{recursive:true,force:true}));
+   await mkdir(join(dir,'devices'));
+-  for(const name of ['avr-profiles.js','avr-runtime.js','avr-transpiler.js','avr-wasm-phases.js','avr-phase-locals.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js',
++  for(const name of ['avr-profiles.js','avr-runtime.js','avr-transpiler.js','avr-wasm-phases.js','avr-phase-locals.js','avr-block-constants.js','avr-transpiled-runtime.js','attiny13a-runtime.js','attiny13a-package.js','attiny13a-registers.js',
+     'devices/profiles.js','devices/attiny13a-profile.js','devices/attiny13a-reset-profile.js','devices/attiny13a-clki-profile.js'])
+     await copyFile(new URL('../lib/'+name,import.meta.url),join(dir,name));
+   await writeFile(join(dir,'package.json'),'{"type":"module"}');

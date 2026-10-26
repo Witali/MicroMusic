@@ -1,6 +1,6 @@
 #include "analog_adc.h"
 
-enum { IDLE, WAIT_START, AUTO_SYNC, CONVERTING };
+enum { IDLE = ANALOG_ADC_IDLE, WAIT_START, AUTO_SYNC, CONVERTING };
 
 static uint16_t divisor(const analog_adc_t *adc) {
     uint8_t code = adc->adcsra & 7;

@@ -1,0 +1,803 @@
+{
+  "schema": "micromusic-generated-wasm-benchmark-v1",
+  "complete": true,
+  "revision": "be3f2cd7773b7421cc65db8eacde9cfe0c5f7676",
+  "mode": "validation",
+  "node": "v22.22.3",
+  "platform": "win32",
+  "cpu": "AMD Ryzen 5 5600X 6-Core Processor             ",
+  "trials": 8,
+  "warmups": 4,
+  "rate": 48000,
+  "frames": 12000,
+  "instructions": 1000000,
+  "levels": [
+    "Oz"
+  ],
+  "sourceSha256": {
+    "web-player/lib/avr-transpiler.js": "851ac799476980739482660f4d9e991c44152d57cd9d04e4f8b43354bddd62f2",
+    "web-player/lib/avr-wasm-phases.js": "4fe16317f36ffc3148ed54426481b096e7499241192b184b2931110892133feb",
+    "web-player/lib/avr-transpiled-runtime.js": "aacf7a9808873e4168ec6a70bf65da3cbe258ccce8336ba69d22b064817a81c6",
+    "web-player/lib/attiny13a-runtime.js": "5c79fdcfcacac149ec535ebc0b9d173d12f7fe75a5bea27f9997b5e214681869",
+    "web-player/scripts/benchmark-generated-wasm.mjs": "58c175470fe21288aeb15dc800276eb2dea6d8f4dab728d541c1d8b20fc029f8",
+    "web-player/scripts/lib/optimize-avr-wasm.mjs": "144c2c0c0740b0cdd4203c8ff2a5dc186f4dcb0e668f74244c83d18025de2951",
+    "web-player/scripts/lib/runtime-control-design.mjs": "9a52ba1ab6bf6c1e9864bddf5413eacaae81899f73dfb859617777e8d7d59e43"
+  },
+  "runtimeSha256": "111f314fdbab5bd7a8f1c0c4d8891811676e436bd7aa78681d6c62728ef0fba6",
+  "method": "Timing mode: balanced four-label trials; oldA/oldB identical raw CPU bytes, newA/newB identical optimized bytes; one unchanged native Module. Fresh CPU Modules/instances and equal warmups; construction, optimization and snapshots excluded from execution timing. Validation mode: one raw and one optimized run; no speed inference. Exact PCM, full architectural/diagnostic state and pins checked after every audio block or direct run. Ratios above1 favor optimized CPU. Generation/optimizer-process times and validation-warmed compilation observations are separate single observations, not cold-start medians or browser guarantees.",
+  "cases": [
+    {
+      "id": "rhythmic-compatible",
+      "actualId": "rhythmic",
+      "level": "Oz",
+      "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+      "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
+      "generationMs": 53.737300000000005,
+      "compileAfterValidationMs": {
+        "raw": 0.16590000000002192,
+        "optimized": 0.07169999999996435
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "29bfa8d0aab2012fe08a0e5dcfdfd92c38e9eac050e919fdb9168106f5a9d58a",
+        "outputSha256": "b4818bab4510149f8d20d383c87965db01248eee5b8dc5f1e232d84e23ad6184",
+        "inputBytes": 172748,
+        "outputBytes": 94589,
+        "elapsedMs": 179.66430000000003
+      },
+      "rawLayout": {
+        "codeSectionBytes": 119956,
+        "functions": 572,
+        "customSectionBytes": 49759
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 41636,
+        "functions": 624,
+        "customSectionBytes": 49759
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 508.9696,
+          "rawSha256": "af34e1fb8dd92e06220a4eb8ed51f8bac5d3735abb76daa2ed15ed52811699b1",
+          "stateSha256": "4bc370d5ef06fc924f4126f1c7723108144f54650f684d48c1a3cd92af7aa5ed",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 449.76350000000025,
+          "rawSha256": "af34e1fb8dd92e06220a4eb8ed51f8bac5d3735abb76daa2ed15ed52811699b1",
+          "stateSha256": "4bc370d5ef06fc924f4126f1c7723108144f54650f684d48c1a3cd92af7aa5ed",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "rhythmic-physical",
+      "actualId": "rhythmic",
+      "level": "Oz",
+      "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+      "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
+      "generationMs": 108.37389999999982,
+      "compileAfterValidationMs": {
+        "raw": 0.20810000000005857,
+        "optimized": 0.06600000000003092
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "84ce8952038f4d900e8934dc8e866aeb7dad5da5b4db4aaa666f3c5a970722ef",
+        "outputSha256": "8c7e219e7fcfbdc4645e5e848e5e251936713c207e97dc18933c9c12965259eb",
+        "inputBytes": 387264,
+        "outputBytes": 115381,
+        "elapsedMs": 313.26829999999995
+      },
+      "rawLayout": {
+        "codeSectionBytes": 334373,
+        "functions": 571,
+        "customSectionBytes": 49801
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 62355,
+        "functions": 622,
+        "customSectionBytes": 49801
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 502.12820000000124,
+          "rawSha256": "7b01c8e0e49590efff48753682bc35863db2e3157481304d19db2c34f9288562",
+          "stateSha256": "cc209655ceab5045f680af23a1339dcd8fd6ba60bf503bc127a3cc8510fa4503",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 498.94959999999946,
+          "rawSha256": "7b01c8e0e49590efff48753682bc35863db2e3157481304d19db2c34f9288562",
+          "stateSha256": "cc209655ceab5045f680af23a1339dcd8fd6ba60bf503bc127a3cc8510fa4503",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "lumiere-stereo-compatible",
+      "actualId": "lumiere-stereo",
+      "level": "Oz",
+      "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+      "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
+      "generationMs": 37.522699999999986,
+      "compileAfterValidationMs": {
+        "raw": 0.15180000000009386,
+        "optimized": 0.12100000000009459
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "af4b2ad1eaf7e2d69b69123cbc73582d7c6a9484a29c47b24b1ac1439a194225",
+        "outputSha256": "e371768db1313441c24b43f3bc1696ff3aa2eb05056e13d68e00d13263c9575e",
+        "inputBytes": 174873,
+        "outputBytes": 96034,
+        "elapsedMs": 145.44759999999997
+      },
+      "rawLayout": {
+        "codeSectionBytes": 121853,
+        "functions": 575,
+        "customSectionBytes": 49984
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 42866,
+        "functions": 626,
+        "customSectionBytes": 49984
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 407.65409999999974,
+          "rawSha256": "280dfaed7185f54cb9c2c97c396833cffa35ba588fabe110b608483f0b8044b7",
+          "stateSha256": "c55815acf7583282de05e9557bc111d390678b85c7401bd07705c3428eacd29d",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 330.4778000000001,
+          "rawSha256": "280dfaed7185f54cb9c2c97c396833cffa35ba588fabe110b608483f0b8044b7",
+          "stateSha256": "c55815acf7583282de05e9557bc111d390678b85c7401bd07705c3428eacd29d",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "lumiere-stereo-physical",
+      "actualId": "lumiere-stereo",
+      "level": "Oz",
+      "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+      "eepromSha256": "45ba4c476cf214ef25d91494c6fa70b2567722b44403bcd25b09326e190fee37",
+      "generationMs": 74.51990000000023,
+      "compileAfterValidationMs": {
+        "raw": 0.21450000000004366,
+        "optimized": 0.07739999999921565
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "eb7ce66b587152d9945fd5c94082d8c5fc378033a5ccd35d1a88a1d8389ff5f2",
+        "outputSha256": "4ed9f78689652de1f0c179125db8f8d9d5e3240c2cfff61ebe154ead801dee53",
+        "inputBytes": 391150,
+        "outputBytes": 117084,
+        "elapsedMs": 306.8699000000006
+      },
+      "rawLayout": {
+        "codeSectionBytes": 338039,
+        "functions": 574,
+        "customSectionBytes": 50018
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 63839,
+        "functions": 624,
+        "customSectionBytes": 50018
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 490.5605999999989,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 471.1457999999984,
+          "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+          "stateSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "hq4-chego-auto-compatible",
+      "actualId": "hq4-chego-tiny",
+      "level": "Oz",
+      "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+      "eepromSha256": "c327e849b5fd854dac0058e350137a5a4424d9ad5ce760ba6bbccc17e2b92e98",
+      "generationMs": 30.506600000000617,
+      "compileAfterValidationMs": {
+        "raw": 0.12380000000030122,
+        "optimized": 0.05559999999968568
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "d7da0e9dabb8794508313f1bfd6ae375bac31910fc96e7bd039a21c0d79ad6dc",
+        "outputSha256": "f84c5a9506735809d45e7ca5bdcf5a5bdb127cdb54124635749b69f1cb6035ae",
+        "inputBytes": 178119,
+        "outputBytes": 102010,
+        "elapsedMs": 134.3843999999999
+      },
+      "rawLayout": {
+        "codeSectionBytes": 123940,
+        "functions": 590,
+        "customSectionBytes": 51128
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 47690,
+        "functions": 640,
+        "customSectionBytes": 51128
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 449.1857999999984,
+          "rawSha256": "7941f799b068eed20a09b338855d7f00994a97ed73fcfc0faa34344b8e066a3f",
+          "stateSha256": "57cd37b68b95bff1ad445d0a5470e8bf6231018be136819b15994a5872e0180c",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 426.4658999999983,
+          "rawSha256": "7941f799b068eed20a09b338855d7f00994a97ed73fcfc0faa34344b8e066a3f",
+          "stateSha256": "57cd37b68b95bff1ad445d0a5470e8bf6231018be136819b15994a5872e0180c",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "hq4-chego-auto-physical",
+      "actualId": "hq4-chego-tiny",
+      "level": "Oz",
+      "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+      "eepromSha256": "c327e849b5fd854dac0058e350137a5a4424d9ad5ce760ba6bbccc17e2b92e98",
+      "generationMs": 81.08100000000013,
+      "compileAfterValidationMs": {
+        "raw": 0.17929999999978463,
+        "optimized": 0.07359999999971478
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "2f4b6277b898222d39663dafc5a4f7a95144c4043f76d9fd294e99f4a2c15677",
+        "outputSha256": "4401a2e567957eb9c6df9e0af6a58eab667ed3e1f07b4e691d5f57ae551c242f",
+        "inputBytes": 406944,
+        "outputBytes": 127338,
+        "elapsedMs": 280.3678
+      },
+      "rawLayout": {
+        "codeSectionBytes": 352935,
+        "functions": 586,
+        "customSectionBytes": 50904
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 73211,
+        "functions": 635,
+        "customSectionBytes": 50904
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 450.65909999999894,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 460.23469999999907,
+          "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+          "stateSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 12
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "kernel-compatible-direct",
+      "level": "Oz",
+      "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+      "eepromSha256": null,
+      "generationMs": 14.434500000000298,
+      "compileAfterValidationMs": {
+        "raw": 0.10080000000016298,
+        "optimized": 0.03790000000026339
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "925a156ff88efe0ab870e0fe8c328a7585b1f997d6b1fe40e197748eb0dd4987",
+        "outputSha256": "b5720ecbc199ff4628186f55cb6aa7c6e3cce3f96ba1874ea5511ff65dff7d3b",
+        "inputBytes": 110967,
+        "outputBytes": 65967,
+        "elapsedMs": 61.04349999999977
+      },
+      "rawLayout": {
+        "codeSectionBytes": 59493,
+        "functions": 522,
+        "customSectionBytes": 48491
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 14483,
+        "functions": 524,
+        "customSectionBytes": 48491
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 138.03089999999975,
+          "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stateSha256": "e2a3c0f0e00c0ec5837ab876c32d5198622b3dbf22d4f5de2f8636f304847d6a",
+          "pinSha256": "c76cc9098cb5c0bb03f7f0d82cad967338482b49628b54c47ed38586e7c55348",
+          "checkpoints": 1
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 138.04710000000068,
+          "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stateSha256": "e2a3c0f0e00c0ec5837ab876c32d5198622b3dbf22d4f5de2f8636f304847d6a",
+          "pinSha256": "c76cc9098cb5c0bb03f7f0d82cad967338482b49628b54c47ed38586e7c55348",
+          "checkpoints": 1
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "kernel-physical-direct",
+      "level": "Oz",
+      "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+      "eepromSha256": null,
+      "generationMs": 45.784199999999146,
+      "compileAfterValidationMs": {
+        "raw": 0.15099999999983993,
+        "optimized": 0.060299999999188
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "64136633f78a47256924227e353fe1208a14ecb95326655814aa3a45f0999cc9",
+        "outputSha256": "2580e798453bd8046beb70f7d2dfefe69d1a64d32111df7cc26c9223127db5f0",
+        "inputBytes": 262558,
+        "outputBytes": 68195,
+        "elapsedMs": 164.79489999999896
+      },
+      "rawLayout": {
+        "codeSectionBytes": 210834,
+        "functions": 522,
+        "customSectionBytes": 48683
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 16457,
+        "functions": 524,
+        "customSectionBytes": 48683
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 105.6304999999993,
+          "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stateSha256": "f71ee0105b06de947acec8ff55cfd42f99e30acb5328c0e9792af542af56c99a",
+          "pinSha256": "bab6051c8674b2955d410dd548dfb2d4f57cd61cdbdf1f488e18bfa3592ee4b4",
+          "checkpoints": 1
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 105.38409999999931,
+          "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stateSha256": "f71ee0105b06de947acec8ff55cfd42f99e30acb5328c0e9792af542af56c99a",
+          "pinSha256": "bab6051c8674b2955d410dd548dfb2d4f57cd61cdbdf1f488e18bfa3592ee4b4",
+          "checkpoints": 1
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "kernel-clki-20m-div1",
+      "level": "Oz",
+      "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+      "eepromSha256": null,
+      "generationMs": 43.222900000000664,
+      "compileAfterValidationMs": {
+        "raw": 0.10600000000158616,
+        "optimized": 0.05609999999978754
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "64136633f78a47256924227e353fe1208a14ecb95326655814aa3a45f0999cc9",
+        "outputSha256": "2580e798453bd8046beb70f7d2dfefe69d1a64d32111df7cc26c9223127db5f0",
+        "inputBytes": 262558,
+        "outputBytes": 68195,
+        "elapsedMs": 164.2404000000006
+      },
+      "rawLayout": {
+        "codeSectionBytes": 210834,
+        "functions": 522,
+        "customSectionBytes": 48683
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 16457,
+        "functions": 524,
+        "customSectionBytes": 48683
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 293.15780000000086,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "43159dadde832cf8f7e68daac97bcdcd21fdfc6e412cb19797b222bcf5302761",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 302.8222000000005,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "43159dadde832cf8f7e68daac97bcdcd21fdfc6e412cb19797b222bcf5302761",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "kernel-clki-20m-div256",
+      "level": "Oz",
+      "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+      "eepromSha256": null,
+      "generationMs": 44.334899999999834,
+      "compileAfterValidationMs": {
+        "raw": 0.08709999999882712,
+        "optimized": 0.038800000000264845
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "64136633f78a47256924227e353fe1208a14ecb95326655814aa3a45f0999cc9",
+        "outputSha256": "2580e798453bd8046beb70f7d2dfefe69d1a64d32111df7cc26c9223127db5f0",
+        "inputBytes": 262558,
+        "outputBytes": 68195,
+        "elapsedMs": 174.9363000000012
+      },
+      "rawLayout": {
+        "codeSectionBytes": 210834,
+        "functions": 522,
+        "customSectionBytes": 48683
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 16457,
+        "functions": 524,
+        "customSectionBytes": 48683
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 204.54100000000108,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "97647d187136dd1a8ea55d1ae065460e247c39df6f7a3442e7c6e1326f7c060e",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 204.49399999999878,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "97647d187136dd1a8ea55d1ae065460e247c39df6f7a3442e7c6e1326f7c060e",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "kernel-internal-20m-div1",
+      "level": "Oz",
+      "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+      "eepromSha256": null,
+      "generationMs": 45.83350000000064,
+      "compileAfterValidationMs": {
+        "raw": 0.11180000000058499,
+        "optimized": 0.043300000001181616
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "64136633f78a47256924227e353fe1208a14ecb95326655814aa3a45f0999cc9",
+        "outputSha256": "2580e798453bd8046beb70f7d2dfefe69d1a64d32111df7cc26c9223127db5f0",
+        "inputBytes": 262558,
+        "outputBytes": 68195,
+        "elapsedMs": 167.1265000000003
+      },
+      "rawLayout": {
+        "codeSectionBytes": 210834,
+        "functions": 522,
+        "customSectionBytes": 48683
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 16457,
+        "functions": 524,
+        "customSectionBytes": 48683
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 41.05379999999968,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "7aabaa0c8a214d0ff36c15fa7ba24b2d69bf697f234e5e5704d8fe8098bae31a",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 40.910400000000664,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "7aabaa0c8a214d0ff36c15fa7ba24b2d69bf697f234e5e5704d8fe8098bae31a",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "kernel-internal-20m-div1-adc-active",
+      "level": "Oz",
+      "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+      "eepromSha256": null,
+      "generationMs": 43.91519999999946,
+      "compileAfterValidationMs": {
+        "raw": 0.11230000000068685,
+        "optimized": 0.04200000000128057
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "64136633f78a47256924227e353fe1208a14ecb95326655814aa3a45f0999cc9",
+        "outputSha256": "2580e798453bd8046beb70f7d2dfefe69d1a64d32111df7cc26c9223127db5f0",
+        "inputBytes": 262558,
+        "outputBytes": 68195,
+        "elapsedMs": 167.01659999999902
+      },
+      "rawLayout": {
+        "codeSectionBytes": 210834,
+        "functions": 522,
+        "customSectionBytes": 48683
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 16457,
+        "functions": 524,
+        "customSectionBytes": 48683
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 47.037600000001476,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "1cb0d8a6bae2257a575de628bf7ad9e47dde7ab8ada8ba69be4d36ebbbc2a20c",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 46.693600000000515,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "1cb0d8a6bae2257a575de628bf7ad9e47dde7ab8ada8ba69be4d36ebbbc2a20c",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        }
+      ],
+      "warmups": []
+    },
+    {
+      "id": "kernel-clki-20m-div1-adc-active",
+      "level": "Oz",
+      "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+      "eepromSha256": null,
+      "generationMs": 45.465799999999945,
+      "compileAfterValidationMs": {
+        "raw": 0.08649999999943248,
+        "optimized": 0.03679999999985739
+      },
+      "optimization": {
+        "tool": "wasm-opt version 133 (version_133-60-g93d6e9de7)",
+        "executableSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+        "flags": [
+          "-Oz",
+          "--mvp-features",
+          "--enable-mutable-globals",
+          "--skip-pass=remove-unused-module-elements"
+        ],
+        "inputSha256": "64136633f78a47256924227e353fe1208a14ecb95326655814aa3a45f0999cc9",
+        "outputSha256": "2580e798453bd8046beb70f7d2dfefe69d1a64d32111df7cc26c9223127db5f0",
+        "inputBytes": 262558,
+        "outputBytes": 68195,
+        "elapsedMs": 159.85410000000047
+      },
+      "rawLayout": {
+        "codeSectionBytes": 210834,
+        "functions": 522,
+        "customSectionBytes": 48683
+      },
+      "optimizedLayout": {
+        "codeSectionBytes": 16457,
+        "functions": 524,
+        "customSectionBytes": 48683
+      },
+      "runs": [
+        {
+          "variant": "oldA",
+          "trial": 0,
+          "position": 0,
+          "ms": 297.8768,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "062162d44e934fc4f10f1642ea453355b35920f1f973b804652e9e0d2864497b",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        },
+        {
+          "variant": "newA",
+          "trial": 0,
+          "position": 1,
+          "ms": 296.83070000000043,
+          "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+          "stateSha256": "062162d44e934fc4f10f1642ea453355b35920f1f973b804652e9e0d2864497b",
+          "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "checkpoints": 2
+        }
+      ],
+      "warmups": []
+    }
+  ]
+}

@@ -1,0 +1,365 @@
+{
+  "schema": "micromusic-bounded-regions-activation-v1",
+  "complete": true,
+  "instructions": 1000000,
+  "runtimeSha256": "111f314fdbab5bd7a8f1c0c4d8891811676e436bd7aa78681d6c62728ef0fba6",
+  "sourceSha256": {
+    "web-player/lib/avr-transpiler.js": "4c78f51dd22f08ce28814a3b97f84057c52c16bb103c01dd15d396f92bc99430",
+    "web-player/lib/avr-wasm-regions.js": "4c742c30a04407f98ed345c2210cfd5bc85cb2c7f4ba27930def9b27a035799a",
+    "web-player/lib/avr-transpiled-runtime.js": "17c345f568cd5b4fa793e59688e4326acdde567455380dca7625ce1fc5447b1a",
+    "web-player/scripts/trace-bounded-regions.mjs": "a6851f087f3351b120d1e18446a75b9919ea8e2cbe008cacab9abe8005dc06c2"
+  },
+  "method": "Untimed public block/step prefix, idle acceleration disabled. A return greater than the original basic-block length (or positive at a non-block entry), with final phase PC inside the same region, proves region execution. Equal/shorter returns are ambiguous, not counted as proof. Baseline public run reaches equal retirement endpoints; complete state and pins are checked in bounded chunks. Not a speed or whole-song trace.",
+  "cases": [
+    {
+      "id": "rhythmic",
+      "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+      "moduleBytes": [
+        387264,
+        393723
+      ],
+      "generatedSha256": [
+        "84ce8952038f4d900e8934dc8e866aeb7dad5da5b4db4aaa666f3c5a970722ef",
+        "b2f1dc45524d00c600e921b91f42ee282f667e6c58748ea46db7fddbb6416051"
+      ],
+      "regions": [
+        {
+          "pcs": [
+            44,
+            45,
+            46,
+            47,
+            48
+          ],
+          "maxCost": 2,
+          "registers": [
+            22,
+            16,
+            28
+          ],
+          "written": [
+            16
+          ],
+          "attempts": 61698,
+          "provenBatches": 4678,
+          "provenInstructions": 79740,
+          "otherReturns": 23560,
+          "declined": 33460
+        },
+        {
+          "pcs": [
+            462,
+            463,
+            464,
+            465,
+            466,
+            467,
+            468,
+            469,
+            470,
+            471,
+            472,
+            473,
+            474,
+            475,
+            476,
+            477,
+            478,
+            479,
+            480,
+            481,
+            482,
+            483,
+            484,
+            485,
+            486,
+            487,
+            488,
+            489,
+            490,
+            491,
+            492,
+            493,
+            494
+          ],
+          "maxCost": 2,
+          "registers": [
+            20,
+            30,
+            22,
+            19,
+            3,
+            0,
+            18,
+            5
+          ],
+          "written": [
+            20,
+            22,
+            19,
+            30,
+            3,
+            18
+          ],
+          "attempts": 0,
+          "provenBatches": 0,
+          "provenInstructions": 0,
+          "otherReturns": 0,
+          "declined": 0
+        }
+      ],
+      "checkpoints": 3892,
+      "stateSha256": "53bfdf26d8ecfc5bc17fdc55bed348e336ed4368b23ecb4ee8be7bcb3dbecc98",
+      "pinsSha256": "bf2575a1b6c2e12ea0240fe5cbd6265830d15f446baca2224a132682d31012f5",
+      "finalTimePs": "146640729167",
+      "finalCycles": 1407751,
+      "irqCount": 5497
+    },
+    {
+      "id": "lumiere-stereo",
+      "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+      "moduleBytes": [
+        391150,
+        397609
+      ],
+      "generatedSha256": [
+        "eb7ce66b587152d9945fd5c94082d8c5fc378033a5ccd35d1a88a1d8389ff5f2",
+        "450eadee6ea29c6820dd7de75960103cef3fc2f9a3126b0d8b9996dff71752b5"
+      ],
+      "regions": [
+        {
+          "pcs": [
+            48,
+            49,
+            50,
+            51,
+            52
+          ],
+          "maxCost": 2,
+          "registers": [
+            22,
+            16,
+            28
+          ],
+          "written": [
+            16
+          ],
+          "attempts": 34728,
+          "provenBatches": 3494,
+          "provenInstructions": 39630,
+          "otherReturns": 11897,
+          "declined": 19337
+        },
+        {
+          "pcs": [
+            470,
+            471,
+            472,
+            473,
+            474,
+            475,
+            476,
+            477,
+            478,
+            479,
+            480,
+            481,
+            482,
+            483,
+            484,
+            485,
+            486,
+            487,
+            488,
+            489,
+            490,
+            491,
+            492,
+            493,
+            494,
+            495,
+            496,
+            497,
+            498,
+            499,
+            500,
+            501,
+            502
+          ],
+          "maxCost": 2,
+          "registers": [
+            20,
+            30,
+            22,
+            19,
+            3,
+            0,
+            18,
+            5
+          ],
+          "written": [
+            20,
+            22,
+            19,
+            30,
+            3,
+            18
+          ],
+          "attempts": 0,
+          "provenBatches": 0,
+          "provenInstructions": 0,
+          "otherReturns": 0,
+          "declined": 0
+        }
+      ],
+      "checkpoints": 3896,
+      "stateSha256": "deb34bf8b9868fc95f55e410bad87bb2d9f119c9665816a1a9106fdf87b6a68b",
+      "pinsSha256": "d5a66196d68ee6d225acbc63180a4faff7d8f338e4e7aa75e73bb7e8150b43af",
+      "finalTimePs": "147874583334",
+      "finalCycles": 1419596,
+      "irqCount": 5543
+    },
+    {
+      "id": "hq4-chego-tiny",
+      "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+      "moduleBytes": [
+        406944,
+        412470
+      ],
+      "generatedSha256": [
+        "2f4b6277b898222d39663dafc5a4f7a95144c4043f76d9fd294e99f4a2c15677",
+        "7237ab6d74fdecd4d4d956cc392c4fe3e60ce03a815e4282575d070c68590652"
+      ],
+      "regions": [
+        {
+          "pcs": [
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ],
+          "maxCost": 2,
+          "registers": [
+            8,
+            16,
+            7
+          ],
+          "written": [
+            8,
+            16,
+            7
+          ],
+          "attempts": 210508,
+          "provenBatches": 11432,
+          "provenInstructions": 334217,
+          "otherReturns": 0,
+          "declined": 199076
+        },
+        {
+          "pcs": [
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48
+          ],
+          "maxCost": 2,
+          "registers": [
+            13,
+            12,
+            16,
+            22
+          ],
+          "written": [
+            13,
+            12,
+            16,
+            22
+          ],
+          "attempts": 14747,
+          "provenBatches": 1269,
+          "provenInstructions": 37400,
+          "otherReturns": 3962,
+          "declined": 9516
+        },
+        {
+          "pcs": [
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179
+          ],
+          "maxCost": 2,
+          "registers": [
+            22,
+            24,
+            18,
+            25,
+            19
+          ],
+          "written": [
+            22,
+            24,
+            25,
+            18,
+            19
+          ],
+          "attempts": 38769,
+          "provenBatches": 4100,
+          "provenInstructions": 87772,
+          "otherReturns": 10888,
+          "declined": 23781
+        },
+        {
+          "pcs": [
+            232,
+            233,
+            234
+          ],
+          "maxCost": 2,
+          "registers": [
+            24,
+            22
+          ],
+          "written": [
+            24,
+            22
+          ],
+          "attempts": 2865,
+          "provenBatches": 348,
+          "provenInstructions": 2704,
+          "otherReturns": 1253,
+          "declined": 1264
+        },
+        {
+          "pcs": [
+            389
+          ],
+          "maxCost": 2,
+          "registers": [],
+          "written": [],
+          "attempts": 0,
+          "provenBatches": 0,
+          "provenInstructions": 0,
+          "otherReturns": 0,
+          "declined": 0
+        }
+      ],
+      "checkpoints": 3821,
+      "stateSha256": "84a4d39ed23d6e927883c5b3ea8c60ddb65d0249c1c853f2c9e954afc682190f",
+      "pinsSha256": "c89e6e3c19bd587475d55843f8890e1d0402f47c13225bc25cb52614e15bcc8b",
+      "finalTimePs": "152358437501",
+      "finalCycles": 1462641,
+      "irqCount": 5712
+    }
+  ]
+}

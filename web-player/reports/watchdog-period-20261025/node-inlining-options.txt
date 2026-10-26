@@ -1,0 +1,6 @@
+  --experimental-wasm-inlining (enable wasm-into-wasm inlining for Wasm)
+        type: bool  default: --no-experimental-wasm-inlining
+  --experimental-wasm-exnref (enable exnref for Wasm)
+  --wasm-inlining-max-size (maximum function size (in wire bytes) that may be inlined)
+        type: size_t  default: --wasm-inlining-max-size=500
+  --wasm-inlining-factor (maximum multiple graph size (in TF nodes) in comparison to initial size)
