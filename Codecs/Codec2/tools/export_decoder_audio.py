@@ -15,10 +15,12 @@ def main():
     profile.add_argument('--compact', action='store_true', help='Use the completed ATmega64A compact verification')
     profile.add_argument('--hybrid', action='store_true', help='Use the completed fixed-IFFT hybrid verification')
     profile.add_argument('--postfilter', action='store_true', help='Use the completed integer postfilter power verification')
+    profile.add_argument('--spectral', action='store_true', help='Use the completed integer weighted-spectrum verification')
     args = parser.parse_args()
-    name = 'postfilter' if args.postfilter else 'hybrid' if args.hybrid else 'compact' if args.compact else 'full'
+    name = 'spectral' if args.spectral else 'postfilter' if args.postfilter else 'hybrid' if args.hybrid else 'compact' if args.compact else 'full'
     profiles = {'full': ('decoder', 'full-decoder'), 'compact': ('compact', 'compact-decoder'),
-                'hybrid': ('hybrid', 'hybrid-decoder'), 'postfilter': ('postfilter', 'postfilter-decoder')}
+                'hybrid': ('hybrid', 'hybrid-decoder'), 'postfilter': ('postfilter', 'postfilter-decoder'),
+                'spectral': ('spectral', 'spectral-decoder')}
     folder, report_name = profiles[name]
     build = ROOT.parents[1] / ('build/codec2/' + folder)
     out = ROOT / ('validation/' + name + '-3200')

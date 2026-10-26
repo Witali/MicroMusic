@@ -1,0 +1,35 @@
+{
+  "source": "Synthetic test speech from the user-supplied R3 archive; no new voice recording.",
+  "verification": "../../reports/spectral-decoder.json",
+  "avr_mcu": "ATmega64A instruction simulation; no analog hardware recording.",
+  "files": [
+    {
+      "path": "english_avr.wav",
+      "packet_fixture": "speech.c2zx",
+      "frames": 218,
+      "pcm_sha256": "5608f82aa458c09fe8c0ccb1f7667c1c238e7482bc81b19055a583bcf936c881",
+      "wav_sha256": "6c467dc1d806ef16ec93d50386a0eafba6b4cf6cb0583d7788d1fcd5f1d97347"
+    },
+    {
+      "path": "english_upstream.wav",
+      "packet_fixture": "speech.c2zx",
+      "frames": 218,
+      "pcm_sha256": "d02bf91f624aa4980acb7b132f043b99162faaaa897ae84d0f165478f3bff1ed",
+      "wav_sha256": "8a5d70bd472ffa62044b7ad6a53253623a657dc87509cac8174b902c55bcaa88"
+    },
+    {
+      "path": "russian_avr.wav",
+      "packet_fixture": "codec2_3200_8byte_frames.bin",
+      "frames": 147,
+      "pcm_sha256": "f1fe4d21176652714ffd396bf35c569ee9203ffc278b3a8ea13da9eb8bf887bf",
+      "wav_sha256": "d0ae6faad29ab3c323db2d9311d0e7d82fad542a63856b50c0e163d044716af4"
+    },
+    {
+      "path": "russian_upstream.wav",
+      "packet_fixture": "codec2_3200_8byte_frames.bin",
+      "frames": 147,
+      "pcm_sha256": "48fcfa668c2781974ff0e263b96137e28b1fd89bf02a15e98c32261a61818977",
+      "wav_sha256": "4d90d4ef6be2c1ef154b3abd55dcadd95424917a96e893cf1ed2b2332b66921d"
+    }
+  ]
+}

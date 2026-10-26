@@ -1,0 +1,998 @@
+{
+  "baseline_report_sha256": "00a8e0ac7745f594812c83d0e82a98cb1a26f2e2f0b222231406e178a83e0659",
+  "selection": {
+    "component_bits": 24,
+    "twiddle_q": 22,
+    "ifft_twiddle_q": 10,
+    "direct_pair": true
+  },
+  "results": [
+    {
+      "component_bits": 16,
+      "twiddle_q": 14,
+      "ifft_twiddle_q": 9,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 67.8513815625,
+        "maximum_absolute_error": 0.0645599365234
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 18340,
+          "max_absolute_error": 41,
+          "rmse": 3.8622793574342063,
+          "snr_db": 57.12292029418982,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "5db227eca71c02d8cac92a6187d37aecbf01ee9c61977738e149d549402593d0",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 10023,
+          "max_absolute_error": 45,
+          "rmse": 2.85240678897592,
+          "snr_db": 57.08762345300752,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "95aeeef2e783283caf9be6737dfe4ca8f94b48a874708a83627b762e4c06da02",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1683810,
+          "max_absolute_error": 58819,
+          "rmse": 4232.971855086,
+          "snr_db": 1.2885196684724214,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 2303,
+          "frames_with_rng_mismatch": 9030,
+          "output_sha256": "e34f14c1aae866c81f3c4587163487d1b61b720ffda24852d000bb02a722db7b",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 16,
+      "twiddle_q": 14,
+      "ifft_twiddle_q": 10,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 67.8513815625,
+        "maximum_absolute_error": 0.0645599365234
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 16936,
+          "max_absolute_error": 33,
+          "rmse": 2.727383016605122,
+          "snr_db": 60.14487131692424,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "619efa71e7ec6379231b79daaa707448b288d7afa7391e9a84d9e588ba0c7f4d",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 8966,
+          "max_absolute_error": 22,
+          "rmse": 2.050250938681562,
+          "snr_db": 59.95571229362844,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "ef2fb30edf91e811a91de401591b1fa5c4af0df222388637ad8dc89962a6646d",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1665508,
+          "max_absolute_error": 58804,
+          "rmse": 4232.831548564938,
+          "snr_db": 1.288807576636468,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 2303,
+          "frames_with_rng_mismatch": 9030,
+          "output_sha256": "f7389718b9c061b59e971891bea2406486532951344fb62354ca93bfdbf9e4b6",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 16,
+      "twiddle_q": 22,
+      "ifft_twiddle_q": 9,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 67.8804789748,
+        "maximum_absolute_error": 0.0674133300781
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 18340,
+          "max_absolute_error": 41,
+          "rmse": 3.860835312717522,
+          "snr_db": 57.126168417187706,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "c80958e2bf97ed3bde161acec624c0f131989b3a8a45440b165a4c89b2cf1fc7",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 10015,
+          "max_absolute_error": 45,
+          "rmse": 2.8505056837447675,
+          "snr_db": 57.09341445573421,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "e3328cc793cd1bc0c5eb43db4d8c26a960927bc99db9b4f294f1c3af8f7af7e9",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1683723,
+          "max_absolute_error": 58819,
+          "rmse": 4232.99646178423,
+          "snr_db": 1.2884691766545497,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 2303,
+          "frames_with_rng_mismatch": 9030,
+          "output_sha256": "6ce949d44dbbee7d48f9b4bfe7fcecd244900ca0f7c632b42c49d80cf6bffd64",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 16,
+      "twiddle_q": 22,
+      "ifft_twiddle_q": 10,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 67.8804789748,
+        "maximum_absolute_error": 0.0674133300781
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 16934,
+          "max_absolute_error": 33,
+          "rmse": 2.7212319289265245,
+          "snr_db": 60.164482793221204,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "c9f73dd086a166c46e9c2cf4c9430365fe8a673874127161a571ba734f73fcf4",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 8985,
+          "max_absolute_error": 22,
+          "rmse": 2.048726168028472,
+          "snr_db": 59.962174388869364,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "fba59ae839237ec97fc330c79bb85074f82bb01160bdd75118ea99d8dc9aa647",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1665614,
+          "max_absolute_error": 58804,
+          "rmse": 4232.888914571362,
+          "snr_db": 1.2886898607721289,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 2303,
+          "frames_with_rng_mismatch": 9030,
+          "output_sha256": "666f857a66d86df90ef5d60e515b32a40b68bcfa35f8911829846c6138ef1af0",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 16,
+      "twiddle_q": 30,
+      "ifft_twiddle_q": 9,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 67.8802330093,
+        "maximum_absolute_error": 0.0674133300781
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 18340,
+          "max_absolute_error": 41,
+          "rmse": 3.860835312717522,
+          "snr_db": 57.126168417187706,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "c80958e2bf97ed3bde161acec624c0f131989b3a8a45440b165a4c89b2cf1fc7",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 10015,
+          "max_absolute_error": 45,
+          "rmse": 2.8505056837447675,
+          "snr_db": 57.09341445573421,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "e3328cc793cd1bc0c5eb43db4d8c26a960927bc99db9b4f294f1c3af8f7af7e9",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1683720,
+          "max_absolute_error": 58819,
+          "rmse": 4232.994511688903,
+          "snr_db": 1.2884731781501444,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 2303,
+          "frames_with_rng_mismatch": 9030,
+          "output_sha256": "badcf1a371a846ad771be3bf4579029c6fe0b0be0383e92d9783ffc547eae23b",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 16,
+      "twiddle_q": 30,
+      "ifft_twiddle_q": 10,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 67.8802330093,
+        "maximum_absolute_error": 0.0674133300781
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 16934,
+          "max_absolute_error": 33,
+          "rmse": 2.7212319289265245,
+          "snr_db": 60.164482793221204,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "c9f73dd086a166c46e9c2cf4c9430365fe8a673874127161a571ba734f73fcf4",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 8985,
+          "max_absolute_error": 22,
+          "rmse": 2.048726168028472,
+          "snr_db": 59.962174388869364,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "fba59ae839237ec97fc330c79bb85074f82bb01160bdd75118ea99d8dc9aa647",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1665606,
+          "max_absolute_error": 58804,
+          "rmse": 4232.886940731074,
+          "snr_db": 1.2886939110940832,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 2303,
+          "frames_with_rng_mismatch": 9030,
+          "output_sha256": "2e5544af5c3accd753f154a451c285fbdcc14d21c235527b6b729fff85b6e30f",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 24,
+      "twiddle_q": 14,
+      "ifft_twiddle_q": 9,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 92.3316180945,
+        "maximum_absolute_error": 0.00326538085938
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 18306,
+          "max_absolute_error": 41,
+          "rmse": 3.868917244165586,
+          "snr_db": 57.10800514748816,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "a9ad1d9bafeacfbd6347bcf7633f9d7c749d4e41703d3118556051ff4d7fb7ad",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 10018,
+          "max_absolute_error": 49,
+          "rmse": 2.873694616395298,
+          "snr_db": 57.02304039435123,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "5dda0925fe967ef4e4234cdd18e8ba0094e408a50e06747a605a8a0f69d8382d",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1302300,
+          "max_absolute_error": 50321,
+          "rmse": 1218.531511873277,
+          "snr_db": 12.104691990855038,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 10072,
+          "frames_with_rng_mismatch": 1261,
+          "output_sha256": "6b39fec9c3e084db4caef96f90e79a83d9f5a220e13b21e94a3229ee33ac3a8d",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 24,
+      "twiddle_q": 14,
+      "ifft_twiddle_q": 10,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 92.3316180945,
+        "maximum_absolute_error": 0.00326538085938
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 16893,
+          "max_absolute_error": 37,
+          "rmse": 2.7280451800853953,
+          "snr_db": 60.14276278254971,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "bca3bc9127d2bfcf1977b69173bd7798bcd612c977221e382e15a20735b846b3",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 9018,
+          "max_absolute_error": 22,
+          "rmse": 2.0694982795962167,
+          "snr_db": 59.87455128768684,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "23f83d61d515a59fe677bf1c90d696f26fe2eb8ad115f999bb5efc8a0b6ca689",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1217420,
+          "max_absolute_error": 50329,
+          "rmse": 1218.5454216244007,
+          "snr_db": 12.104592840465905,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 10072,
+          "frames_with_rng_mismatch": 1261,
+          "output_sha256": "bab140b0782043f7c102a8756bb90dfac7852832e25f13f9a60ffed434cceaa6",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 24,
+      "twiddle_q": 22,
+      "ifft_twiddle_q": 9,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 115.891609471,
+        "maximum_absolute_error": 0.000251770019531
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 18284,
+          "max_absolute_error": 41,
+          "rmse": 3.8688357303272625,
+          "snr_db": 57.108188151573714,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "2deac8ffbbf7ad4b257a6ce8ee87192de3ce25a700a4c4fea732a76ad5b87c58",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 10048,
+          "max_absolute_error": 49,
+          "rmse": 2.873309914357583,
+          "snr_db": 57.02420325386534,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "08f58c7a7c7197a31004da68acff37b7acca8ed1452e1f8462cbb54477a8dfb1",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1276120,
+          "max_absolute_error": 265,
+          "rmse": 9.226403829144884,
+          "snr_db": 54.520778100680296,
+          "frames": 11333,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "55395e474ee414e28c4dd9ce03fa977f1da7e8142a366b42409240da556275fd",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 24,
+      "twiddle_q": 22,
+      "ifft_twiddle_q": 10,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 115.891609471,
+        "maximum_absolute_error": 0.000251770019531
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 16919,
+          "max_absolute_error": 37,
+          "rmse": 2.7291536813660313,
+          "snr_db": 60.139234115127415,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "e08f20a4e26ea1355b8010a4617faf2ab0cbb15c5c44b43655a1d40ff098e513",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 8996,
+          "max_absolute_error": 22,
+          "rmse": 2.0661365075975042,
+          "snr_db": 59.88867245094386,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "809af65a1af9bab9f142c1dff0736518cdb00f89c218d086e8bc48fe6caca72c",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1184269,
+          "max_absolute_error": 237,
+          "rmse": 6.515606709325809,
+          "snr_db": 57.54233004918397,
+          "frames": 11333,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "94da6669a6e4fdf5c750867254544cc904c44d233c19d56cfe1ec973f779d80a",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "component_bits": 24,
+      "twiddle_q": 30,
+      "ifft_twiddle_q": 9,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 115.902415504,
+        "maximum_absolute_error": 0.000251770019531
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 18284,
+          "max_absolute_error": 41,
+          "rmse": 3.8688357303272625,
+          "snr_db": 57.108188151573714,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "2deac8ffbbf7ad4b257a6ce8ee87192de3ce25a700a4c4fea732a76ad5b87c58",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 10048,
+          "max_absolute_error": 49,
+          "rmse": 2.873309914357583,
+          "snr_db": 57.02420325386534,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "08f58c7a7c7197a31004da68acff37b7acca8ed1452e1f8462cbb54477a8dfb1",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1275719,
+          "max_absolute_error": 248,
+          "rmse": 9.200463111380133,
+          "snr_db": 54.54523351800218,
+          "frames": 11333,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "0e1e8fd06a8e4bc3446e6e1b43d5d01ed840b47bc04fdabce80ceeb2731dab80",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "component_bits": 24,
+      "twiddle_q": 30,
+      "ifft_twiddle_q": 10,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 115.902415504,
+        "maximum_absolute_error": 0.000251770019531
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 16919,
+          "max_absolute_error": 37,
+          "rmse": 2.7291536813660313,
+          "snr_db": 60.139234115127415,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "e08f20a4e26ea1355b8010a4617faf2ab0cbb15c5c44b43655a1d40ff098e513",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 8996,
+          "max_absolute_error": 22,
+          "rmse": 2.0661365075975042,
+          "snr_db": 59.88867245094386,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "809af65a1af9bab9f142c1dff0736518cdb00f89c218d086e8bc48fe6caca72c",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1183919,
+          "max_absolute_error": 222,
+          "rmse": 6.493487581191426,
+          "snr_db": 57.57186700029162,
+          "frames": 11333,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "ee261f4bb7c21656a79621d96406caa665dbc5db1b907fe3c7f5217ff314b5e1",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "component_bits": 32,
+      "twiddle_q": 14,
+      "ifft_twiddle_q": 9,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 92.3742599848,
+        "maximum_absolute_error": 0.00338363647461
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 18310,
+          "max_absolute_error": 41,
+          "rmse": 3.86908026669023,
+          "snr_db": 57.10763916244983,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "9f1e3c2195393d4278758cae14af952612ec4bd9b3e02250fee94cc5225ece01",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 10015,
+          "max_absolute_error": 49,
+          "rmse": 2.8730731490388286,
+          "snr_db": 57.02491901451245,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "749cfab128cdc6658364365fcd566bad87a7ff1abb52818884b6f3ec9c126dab",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1302375,
+          "max_absolute_error": 50340,
+          "rmse": 1218.5525576872305,
+          "snr_db": 12.104541974185832,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 10072,
+          "frames_with_rng_mismatch": 1261,
+          "output_sha256": "409d2298abb01196a7acdd9e408e963d2a4b20df4726ba622798300bd30ab0ed",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 32,
+      "twiddle_q": 14,
+      "ifft_twiddle_q": 10,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 92.3742599848,
+        "maximum_absolute_error": 0.00338363647461
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 16893,
+          "max_absolute_error": 37,
+          "rmse": 2.7281187438845005,
+          "snr_db": 60.142528564132036,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "7ee2417ecea47b8608bafdaf798f9af99f87985731a6d6a76f593fb4f2908f85",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 9017,
+          "max_absolute_error": 22,
+          "rmse": 2.0694366448893486,
+          "snr_db": 59.87480997851989,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "c85dfe2be6ca00af188c03b7552394dc00aec747fccb9865820931c3ba81178d",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1217327,
+          "max_absolute_error": 50337,
+          "rmse": 1218.5609548873383,
+          "snr_db": 12.104482118825768,
+          "frames": 11333,
+          "first_rng_mismatch_frame": 10072,
+          "frames_with_rng_mismatch": 1261,
+          "output_sha256": "2efd82b3addff92b27114db4725795c22808e71f0fa02f81e6042be5dd4e49ac",
+          "passes": false
+        }
+      ],
+      "passes": false
+    },
+    {
+      "component_bits": 32,
+      "twiddle_q": 22,
+      "ifft_twiddle_q": 9,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 137.69091743,
+        "maximum_absolute_error": 3.0517578125e-05
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 18283,
+          "max_absolute_error": 41,
+          "rmse": 3.8691988242121136,
+          "snr_db": 57.107373010883364,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "dcd0bcbab37c6dc7ee9f31e28f81817a66363f73deeaef411a30cf922853a166",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 10042,
+          "max_absolute_error": 49,
+          "rmse": 2.872666163053713,
+          "snr_db": 57.02614950380715,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "5de1b81d57998642cf41255983a9383ac09634955bd3263690718b6c876f32c0",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1273220,
+          "max_absolute_error": 248,
+          "rmse": 9.11323533676078,
+          "snr_db": 54.627975576389844,
+          "frames": 11333,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "4bf0d0961326dd165c74d9c2ea3bf35be6eef5231319cb6e2c2ba1dd2fefa263",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "component_bits": 32,
+      "twiddle_q": 22,
+      "ifft_twiddle_q": 10,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 137.69091743,
+        "maximum_absolute_error": 3.0517578125e-05
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 16906,
+          "max_absolute_error": 37,
+          "rmse": 2.728633634946522,
+          "snr_db": 60.14088938879728,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "8fde97d5a7943f694f892863660ba5823733d054e860d9376a978127a2f4e4c2",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 8995,
+          "max_absolute_error": 22,
+          "rmse": 2.066074772602965,
+          "snr_db": 59.88893198430895,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "902da620fb15a23343117d0d3fcc914e4582ec8700085984e8e876af4e810ba3",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1179319,
+          "max_absolute_error": 222,
+          "rmse": 6.40206960217046,
+          "snr_db": 57.695019457767884,
+          "frames": 11333,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "ae5d47570e29dace4adf35ce515b54000be6fe7869dc54cd5fb9db9bd5d9555c",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "component_bits": 32,
+      "twiddle_q": 30,
+      "ifft_twiddle_q": 9,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 142.200989049,
+        "maximum_absolute_error": 1.52587890625e-05
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 18283,
+          "max_absolute_error": 41,
+          "rmse": 3.8691988242121136,
+          "snr_db": 57.107373010883364,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "dcd0bcbab37c6dc7ee9f31e28f81817a66363f73deeaef411a30cf922853a166",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 10043,
+          "max_absolute_error": 49,
+          "rmse": 2.872636561823742,
+          "snr_db": 57.02623900753881,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "ddf54026815d0493c1bc4bfffe1f812972489ad14ae2577f685d535ff0670287",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1273364,
+          "max_absolute_error": 248,
+          "rmse": 9.111880094881407,
+          "snr_db": 54.62926736315114,
+          "frames": 11333,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "60acaaa7479bd24a4d54cbde7df0b82fc66247c3e09e033299b2e5b7074b0bc9",
+          "passes": true
+        }
+      ],
+      "passes": true
+    },
+    {
+      "component_bits": 32,
+      "twiddle_q": 30,
+      "ifft_twiddle_q": 10,
+      "direct_pair": true,
+      "kernel": {
+        "vectors": 512,
+        "bins_per_vector": 256,
+        "snr_db": 142.200989049,
+        "maximum_absolute_error": 1.52587890625e-05
+      },
+      "streams": [
+        {
+          "name": "speech.c2zx",
+          "samples": 34880,
+          "different_samples": 16906,
+          "max_absolute_error": 37,
+          "rmse": 2.728633634946522,
+          "snr_db": 60.14088938879728,
+          "frames": 218,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "8fde97d5a7943f694f892863660ba5823733d054e860d9376a978127a2f4e4c2",
+          "passes": true
+        },
+        {
+          "name": "codec2_3200_8byte_frames.bin",
+          "samples": 23520,
+          "different_samples": 9000,
+          "max_absolute_error": 22,
+          "rmse": 2.066043904413937,
+          "snr_db": 59.88906175680785,
+          "frames": 147,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "2b9524a0cf3da45ca2ad08f936112ad5723074ee571c3cd5aaaf6a64a4a4233c",
+          "passes": true
+        },
+        {
+          "name": "all-11333",
+          "samples": 1813280,
+          "different_samples": 1179322,
+          "max_absolute_error": 222,
+          "rmse": 6.3980849426650215,
+          "snr_db": 57.70042725401069,
+          "frames": 11333,
+          "first_rng_mismatch_frame": -1,
+          "frames_with_rng_mismatch": 0,
+          "output_sha256": "1f5093a3d69b505f37f3482306dbd65d0a8b6c9cd0b2ab0b9616ccfbc2b5b324",
+          "passes": true
+        }
+      ],
+      "passes": true
+    }
+  ],
+  "sources": {
+    "src/fixed_weight.c": "a77f7cd8f4667fe5da0960c5ed6ed5ca3918c9e193728c9fe46038aea7fd091d",
+    "src/fixed_weight.h": "c3289522169b9c0975c0765ec88bb6092ef0993082d7de8912a6d902e3228e17",
+    "src/fixed_weight_tables.inc": "d6f40be411404b6c65888d5c3e62d6c87ffbf18c26aad9a0a6e83f73dcf2a293",
+    "src/weight_round.h": "ee6ff4c5c3f80f8be31e26f58c8d35c648c5592e156b78e8830ed24b37d1e339",
+    "src/spectral_table_access.h": "c5caa69b6dcb0d1c7746dfb382ecc55625a5c3a7fb8a3c9fc59a98e34bbda6f1",
+    "src/spectral_decoder.c": "b8ca36499b4b3bf1304f065df07f8b65ce79301dbc0bd08bb4dd1c5faa2207ed",
+    "tests/spectral_variant.c": "b274c4ce01b75ecdba8cc8b26716cb2391b65d2f86ac4f23c7f61c47186ddc71",
+    "tests/spectral_compare.c": "8c974cd8c1411668c16468f14de5b7a4055a13267a7eef1af74b44ff8815d0c7",
+    "tests/fixed_weight.c": "73920b9f2d986d098638bd6bbbf3a444e3b2d481475395db18a1c034ec53454e",
+    "tools/generate_weight_tables.py": "6eb2cedfc5a485a38976fa94a603190af905608808fc605029d4b5755ec83985",
+    "tools/study_weight_precision.py": "695c0a8ad77f658311917b4731833031a119856c1bafb5a5273c649bf5b4b867"
+  },
+  "compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+  "scope": "Native full PCM/RNG precision study for fixed gamma-weighted LPC spectrum; base LPC spectrum and phase still float. Not AVR/IRQ admission."
+}

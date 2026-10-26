@@ -2414,3 +2414,74 @@ SRAM remains 711 static +2552 observed stack =3263/4096 B, 833 B free. Worst
 frame is 14,026,572 cycles /0.877 s at 16 MHz, still above 20 ms. No active
 IRQ, board or real-time admission. Native minimum precision is corpus-specific;
 live speech remains unverified. [Whole-decoder qualification](../../Codecs/Codec2/reports/postfilter-decoder.json).
+
+### Share conjugate spectral work, then reselect joint precision
+
+The [fixed weighted LPC spectrum](../../Codecs/Codec2/WEIGHTED_SPECTRUM_RU.md)
+is portable C, tested on ATmega64A AVR5/MUL with ordinary GNU C ABI,
+AVR-GCC 7.3.0 `-Os -std=c99 -fno-strict-aliasing` and the real 4-KB SRAM
+limits from the manufacturer header. No assembly arithmetic or CPU/memory
+macro overrides are used. Existing float and earlier integer stages remain
+explicit source choices. This technique concerns speed; the resulting
+complete program uses more Flash and stack than the preceding profile.
+
+For six packed complex inputs, form both Z(k) and Z(-k) in one pass. Four
+real products rr, ii, ri, ir supply both signs of each complex term. The
+last input is real-only, allowing two products and their rounded results
+to be shared. Including real postprocessing, this graph needs 22 real
+products per output pair versus 44 for two separate sparse FFT evaluations.
+Accumulate real outputs before computing imaginary products to shorten
+wide-value lifetimes; do not assume the compiler avoids those AVR spills.
+Compute DC directly. Preserve the real-FFT midpoint overwrite order.
+Conjugating a quantized positive twiddle can differ from quantizing its
+negative independently, so this is a new rounding graph, not an exact rewrite
+of the pinned binary32 FFT. KISS provenance and full BSD conditions remain
+in the generated tables; Codec2 stages retain their LGPL notices.
+
+Use the input L1 sum to choose a block exponent; convert 11 coefficients
+once per half-frame, leaving guard bits for sums. The selected effective
+data range is signed24, carried in int32 with int64 products; Q22 twiddles
+occupy 3072 B ROM. Explicit GNU AVR `__int24` storage and decomposed 24x24
+pure-C products remain experiments, disabled by default. Earlier two-frame
+smoke experiments did not gain speed from those narrower representations.
+Their apparent operation-count savings do not establish an AVR speedup.
+
+An exact arithmetic helper rounds a signed int64 to int32 via two unsigned
+words, for 1<=q<=30 and a result known to fit int32. Let high/low be the
+two's-complement words and sign=high>>31. Add `2^(q-1)-sign` to low with
+carry into high, then return `(low>>q)|(high<<(32-q))` by bit copy to int32.
+The bias gives symmetric nearest rounding with ties away from zero and
+avoids a negative signed shift or int64 magnitude shift. Signed half-step
+boundaries and one million random cases match the magnitude-based C
+reference. The separately selectable split24 complex helper also matches
+10,000 boundary cases and one million random cases. These native tests
+support arithmetic correctness; they do not measure AVR speed themselves.
+
+Rerun the full downstream precision gate whenever the rounding graph changes.
+The original radix study chose 24/Q22, but the new paired graph plus IFFT16/Q9
+has max PCM error 265 and fails the <=256 limit despite SNR 54.52 dB.
+Of 18 tested joint configurations, 24/Q22 +IFFT16/Q10 is the smallest by
+data width, then weighted twiddle precision, then IFFT precision. It gives
+57.54 dB/max 237 over 11,333 packets /1,813,280 samples with every post-frame
+RNG state unchanged. IFFT component/product widths remain 16/32 bits. A
+16-bit weighted spectrum changes RNG at frame 2303; 24/Q14 changes it at
+frame 10072 (zero-based). This is a minimum over the tested configurations
+and corpus, not a proof for every bit depth or all speech.
+[Joint precision and control evidence](../../Codecs/Codec2/reports/weight-direct-precision.json).
+
+512 identical zero/basis/random coefficient sets, scales 2^-16..2^16, give
+byte-identical checked native C and release AVR output for all 256 complex
+bins. The standalone weighted-spectrum harness uses 8516 B Flash, 2094 B
+static SRAM and 222 B stack, averaging 2,061,088 cycles including boundary
+conversions. [Kernel evidence](../../Codecs/Codec2/reports/weight-kernel.json).
+
+Complete EN/RU streams (365 frames /58,400 samples) pass at 60.03/59.94 dB,
+max error 35/25. Mean cycles fall 12,754,415/12,864,516 to
+12,495,498/12,604,418 (-2.03%/-2.02%). Flash rises 26,276 to 31,194 B;
+static SRAM stays 711 B, observed stack rises 2552 to 2664 B, leaving 721 B.
+Worst frame is 13,677,224 cycles /0.855 s at 16 MHz, still above 20 ms.
+These comparisons include the joint Q10-IFFT change. Base LPC spectrum,
+phase and other operations still use float. No active IRQ, board, live-speech
+or real-time support is claimed. [Complete qualification](../../Codecs/Codec2/reports/spectral-decoder.json).
+The slower first int64/radix smoke remains with source-revision-bound history
+in [the negative baseline](../../Codecs/Codec2/reports/weight-wide-baseline.json).

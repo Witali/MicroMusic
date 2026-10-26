@@ -7,14 +7,17 @@
 #include <assert.h>
 #include <math.h>
 #include <string.h>
-#ifndef CODEC2_WEIGHT_BITS
-#define CODEC2_WEIGHT_BITS 32
-#endif
-#ifndef CODEC2_WEIGHT_TWIDDLE_Q
-#define CODEC2_WEIGHT_TWIDDLE_Q 30
+#ifndef CODEC2_WEIGHT_SPLIT24
+#define CODEC2_WEIGHT_SPLIT24 0
 #endif
 #ifndef CODEC2_WEIGHT_CHECKS
 #define CODEC2_WEIGHT_CHECKS 0
+#endif
+#ifndef CODEC2_WEIGHT_DIRECT_PAIR
+#define CODEC2_WEIGHT_DIRECT_PAIR 0
+#endif
+#ifndef CODEC2_WEIGHT_ROUND_LEGACY
+#define CODEC2_WEIGHT_ROUND_LEGACY 0
 #endif
 #if CODEC2_WEIGHT_BITS !=16 && CODEC2_WEIGHT_BITS !=24 && CODEC2_WEIGHT_BITS !=32
 #error Unsupported weighted spectrum precision
@@ -23,18 +26,29 @@
 #error Unsupported weighted spectrum twiddle precision
 #endif
 #include "fixed_weight_tables.inc"
-typedef struct {int32_t r,i;} complex_fixed;
+#if CODEC2_WEIGHT_SPLIT24
+#if CODEC2_WEIGHT_BITS > 24 || CODEC2_WEIGHT_TWIDDLE_Q > 22
+#error Split24 multiplication requires operands bounded to signed24
+#endif
+#include "weight_mul24.h"
+#endif
+typedef struct {codec2_weight_component r,i;} complex_fixed;
 
-static int32_t checked(int64_t value){
+static codec2_weight_component checked(int64_t value){
 #if CODEC2_WEIGHT_CHECKS
     assert(value>=-(INT64_C(1)<<(CODEC2_WEIGHT_BITS-1))&&value<(INT64_C(1)<<(CODEC2_WEIGHT_BITS-1)));
 #endif
-    return (int32_t)value;
+    return (codec2_weight_component)value;
 }
+#if CODEC2_WEIGHT_ROUND_LEGACY
 static int64_t rounded(int64_t value,unsigned bits){
     int64_t half=INT64_C(1)<<(bits-1);
     return value<0?-((-value+half)>>bits):(value+half)>>bits;
 }
+#else
+#include "weight_round.h"
+#define rounded weight_round64
+#endif
 static complex_fixed twiddle(unsigned index,int super){
     complex_fixed value;
 #if CODEC2_WEIGHT_TWIDDLE_Q ==14
@@ -43,13 +57,19 @@ static complex_fixed twiddle(unsigned index,int super){
 #else
     uint32_t r=super?CODEC2_TABLE_DWORD(weight_super,2*index):CODEC2_TABLE_DWORD(weight_twiddle,2*index);
     uint32_t i=super?CODEC2_TABLE_DWORD(weight_super,2*index+1):CODEC2_TABLE_DWORD(weight_twiddle,2*index+1);
-    memcpy(&value.r,&r,4);memcpy(&value.i,&i,4);
+    int32_t sr,si;memcpy(&sr,&r,4);memcpy(&si,&i,4);value.r=sr;value.i=si;
 #endif
     return value;
 }
 static complex_fixed multiply(complex_fixed a,complex_fixed b){
+#if CODEC2_WEIGHT_SPLIT24
+    complex_fixed result;
+    result.r=checked(weight_round48(weight_sub48(weight_product24(a.r,b.r),weight_product24(a.i,b.i)),CODEC2_WEIGHT_TWIDDLE_Q));
+    result.i=checked(weight_round48(weight_add48(weight_product24(a.r,b.i),weight_product24(a.i,b.r)),CODEC2_WEIGHT_TWIDDLE_Q));
+#else
     complex_fixed result={checked(rounded((int64_t)a.r*b.r-(int64_t)a.i*b.i,CODEC2_WEIGHT_TWIDDLE_Q)),
                           checked(rounded((int64_t)a.r*b.i+(int64_t)a.i*b.r,CODEC2_WEIGHT_TWIDDLE_Q))};
+#endif
     return result;
 }
 static complex_fixed select_two(complex_fixed a,complex_fixed b,unsigned j,unsigned which){
@@ -79,13 +99,59 @@ static complex_fixed spectrum(const codec2_weight *s,unsigned bin){
 void codec2_weight_init(codec2_weight *s,const float coefficient[11]){
     float total=0;for(unsigned i=0;i<11;++i)total+=fabsf(coefficient[i]);
     int exponent;frexpf(total,&exponent);s->exponent=exponent-(CODEC2_WEIGHT_BITS-3);
-    for(unsigned i=0;i<11;++i){float value=ldexpf(coefficient[i],-s->exponent);s->coefficient[i]=checked((int64_t)(value<0?value-.5f:value+.5f));}
+    for(unsigned i=0;i<11;++i){float value=ldexpf(coefficient[i],-s->exponent);s->coefficient[i]=checked((int32_t)(value<0?value-.5f:value+.5f));}
 }
 compact_complex codec2_weight_dc(const codec2_weight *s){
+#if CODEC2_WEIGHT_DIRECT_PAIR
+    int64_t sum=0;for(unsigned i=0;i<11;++i)sum+=s->coefficient[i];compact_complex out={ldexpf((float)checked(sum),s->exponent),0};return out;
+#else
     complex_fixed dc=spectrum(s,0);compact_complex out={ldexpf((float)checked((int64_t)dc.r+dc.i),s->exponent),0};return out;
+#endif
 }
 void codec2_weight_pair(const codec2_weight *s,unsigned k,compact_complex *positive,compact_complex *negative){
+#if CODEC2_WEIGHT_DIRECT_PAIR
+    /* Z(k)=sum(c[n]*W^(n*k)), six packed complex inputs. Compute Z(-k)
+     * with conjugate coefficients in the same pass, sharing all four real
+     * products per term. This is a new rounding graph, independently gated.
+     */
+    complex_fixed a={s->coefficient[0],s->coefficient[1]},b=a;
+    for(unsigned n=1;n<5;++n){
+        complex_fixed w=twiddle((n*k)&255,0);
+        int32_t r=s->coefficient[2*n],i=s->coefficient[2*n+1];
+#if CODEC2_WEIGHT_SPLIT24
+        weight_wide48 rr=weight_product24(r,w.r),ii=weight_product24(i,w.i);
+        a.r=checked((int64_t)a.r+weight_round48(weight_sub48(rr,ii),CODEC2_WEIGHT_TWIDDLE_Q));
+        b.r=checked((int64_t)b.r+weight_round48(weight_add48(rr,ii),CODEC2_WEIGHT_TWIDDLE_Q));
+        weight_wide48 ri=weight_product24(r,w.i),ir=weight_product24(i,w.r);
+        a.i=checked((int64_t)a.i+weight_round48(weight_add48(ri,ir),CODEC2_WEIGHT_TWIDDLE_Q));
+        b.i=checked((int64_t)b.i+weight_round48(weight_sub48(ir,ri),CODEC2_WEIGHT_TWIDDLE_Q));
+#else
+        int64_t rr=(int64_t)r*w.r,ii=(int64_t)i*w.i;
+        a.r=checked((int64_t)a.r+rounded(rr-ii,CODEC2_WEIGHT_TWIDDLE_Q));
+        b.r=checked((int64_t)b.r+rounded(rr+ii,CODEC2_WEIGHT_TWIDDLE_Q));
+        int64_t ri=(int64_t)r*w.i,ir=(int64_t)i*w.r;
+        a.i=checked((int64_t)a.i+rounded(ri+ir,CODEC2_WEIGHT_TWIDDLE_Q));
+        b.i=checked((int64_t)b.i+rounded(ir-ri,CODEC2_WEIGHT_TWIDDLE_Q));
+#endif
+    }
+    /* Last packed input is real-only: its conjugate pair shares both rounded
+     * products exactly, avoiding zero products and duplicate rounding. */
+    complex_fixed last=twiddle((5*k)&255,0);int32_t real=s->coefficient[10],lr,li;
+#if CODEC2_WEIGHT_SPLIT24
+    lr=weight_round48(weight_product24(real,last.r),CODEC2_WEIGHT_TWIDDLE_Q);
+    li=weight_round48(weight_product24(real,last.i),CODEC2_WEIGHT_TWIDDLE_Q);
+#else
+    lr=rounded((int64_t)real*last.r,CODEC2_WEIGHT_TWIDDLE_Q);
+    li=rounded((int64_t)real*last.i,CODEC2_WEIGHT_TWIDDLE_Q);
+#endif
+    a.r=checked((int64_t)a.r+lr);b.r=checked((int64_t)b.r+lr);
+    a.i=checked((int64_t)a.i+li);b.i=checked((int64_t)b.i-li);
+#else
     complex_fixed a=spectrum(s,k),b=spectrum(s,256-k);b.i=-b.i;
+#endif
+#if CODEC2_WEIGHT_DIRECT_PAIR
+    b.i=-b.i;
+#endif
     complex_fixed sum={checked((int64_t)a.r+b.r),checked((int64_t)a.i+b.i)};
     complex_fixed difference={checked((int64_t)a.r-b.r),checked((int64_t)a.i-b.i)};
     complex_fixed p=multiply(difference,twiddle(k-1,1));
