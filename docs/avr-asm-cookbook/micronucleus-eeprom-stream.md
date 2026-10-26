@@ -121,8 +121,11 @@ and eight for ACK acquisition; it is not an isolated helper-size result.
 Current active-high and active-low LED profiles use 1328 and 1326 bytes.
 All reserve 1344 Flash bytes, matching the current user ceiling; crossing
 the former 1280-byte reservation costs one page. EEPROM writes remain one
-byte. A separate staging-only OUT probe uses 1536 bytes before NVM drivers,
-so native block writes are not claimed to fit this budget.
+byte. A separate development-only staging OUT probe uses 1542 bytes after
+restoring r2=0 following SETUP CRC validation; without that restoration,
+legacy reads select the wrong source. It has no NVM worker or whole-transfer
+replay cache and produces no HEX. Native block writes are not claimed to
+fit the 1344-byte target.
 
 The linked-code checks cover 10,400 EEPROM payload/CRC cases; 4,194,304 EEPROM
 and 4,194,304 Flash address/length checks; 9,196 Flash/SRAM CRC vectors; 20 host
