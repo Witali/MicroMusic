@@ -12,6 +12,7 @@ from fast_lpx4 import _pitch_scores
 from q0_model import clamp,coefficient_trace,table,decode_pcm16
 from wav_to_lpx4 import quantize_trial,quality
 from lpx4 import decode
+from level_policy import DEFAULT_LEVEL_FLOOR_DB, relative_energy_floor
 
 
 @njit(cache=True)
@@ -84,13 +85,14 @@ def pitch_parameters(q,qh,bits):
 
 
 @njit(cache=True)
-def quantize_joint(ref,co,steps,pre,bright,lam,seed_scales,seed_widths,beam,allow_zero):
+def quantize_joint(ref,co,steps,pre,bright,lam,seed_scales,seed_widths,beam,allow_zero,level_floor_db=DEFAULT_LEVEL_FLOOR_DB):
     allq=np.empty(len(ref),np.int64);scales=np.empty(len(seed_scales),np.int64);widths=np.empty_like(scales)
     hints=np.empty(((len(ref)+39)//40,4),np.int64)
     hist=np.zeros(10,np.int64);dd=cc=0;qh=np.zeros(145,np.int64);previous_scale=0
+    floor=relative_energy_floor(ref,level_floor_db)
     for bi in range(len(scales)):
         start=bi*80;end=min(start+80,len(ref));target=ref[start:end]
-        energy=max((.025*32768)**2,np.mean(target.astype(np.float64)**2));best=np.inf
+        energy=max(floor,np.mean(target.astype(np.float64)**2));best=np.inf
         oldb=seed_widths[bi];olds=seed_scales[bi]
         for bits in (0,2,3,4,5,6):
             if bits==0 and not allow_zero:continue
@@ -138,7 +140,7 @@ def quantize_joint(ref,co,steps,pre,bright,lam,seed_scales,seed_widths,beam,allo
     return allq,scales,widths,hints
 
 
-def encode_joint(seed,reference,decoder,lam=.003,allow_zero=True,compact_features=24,kind='speech',beam=4):
+def encode_joint(seed,reference,decoder,lam=.003,allow_zero=True,compact_features=24,kind='speech',beam=4,level_floor_db=DEFAULT_LEVEL_FLOOR_DB):
     if beam not in (1,4,8) or not np.isfinite(lam) or lam<0 or compact_features not in (0,24) or kind not in ('speech','music'):
         raise ValueError('Invalid existing-format joint search settings')
     ref=np.asarray(reference)
@@ -148,13 +150,14 @@ def encode_joint(seed,reference,decoder,lam=.003,allow_zero=True,compact_feature
     start=time.perf_counter();co=coefficient_trace(frames,len(ref));steps=table('scale_table.inc')
     pre=int.from_bytes(seed[12:14],'little');bright=int.from_bytes(seed[14:16],'little')
     q,scales,widths,hints=quantize_joint(ref.astype(np.int64),co,steps,pre,bright,float(lam),
-        np.asarray([b['scale'] for b in blocks],np.int64),np.asarray([b['bits'] for b in blocks],np.int64),beam,bool(allow_zero))
+        np.asarray([b['scale'] for b in blocks],np.int64),np.asarray([b['bits'] for b in blocks],np.int64),beam,bool(allow_zero),float(level_floor_db))
     blob,bits=serialize(seed,frames,q,scales,widths,compact_features,hints)
     if len(blob)>65535:raise ValueError('Segment exceeds the existing 16-bit API')
     pcm=decoder.decode_one_s16(blob,len(ref))
     if pcm is None or not np.array_equal(pcm,decode_pcm16(blob)):raise AssertionError('Joint native/model mismatch')
     if decode(blob)[2]!=q.tolist():raise AssertionError('Joint pitch/innovation reconstruction mismatch')
     return blob,pcm,{'lambda':lam,'beam':beam,'allow_zero':allow_zero,'compact_features':compact_features,
+        'level_floor_db':float(level_floor_db),'level_reference':'whole-recording RMS; soft error floor, no gate',
         'audio_packet_bytes':len(blob)-20,'file_bytes':len(blob),'v2_payload_bits':bits,
         'quality':quality(ref,pcm,kind),'native_model_pcm_exact':True,'decoder_modified':False,
         'stream_sha256':hashlib.sha256(blob).hexdigest(),'seconds':time.perf_counter()-start,

@@ -9,6 +9,8 @@ import numpy as np,soundfile as sf
 from numba import njit
 from pystoi import stoi
 R=Path(__file__).resolve().parents[1];sys.path.insert(0,str(R/'tools'))
+sys.path.insert(0,str(R.parent/'tools'))
+from level_policy import relative_energy_floor
 from pack_lpx3_avr import prepare_frames,coeff_pack,pack_bits_lsb,HEADER
 
 @njit(cache=True)
@@ -72,6 +74,7 @@ def make(x,analysis,coeff_trace,source,dest,lam,only=None,fast=False,context=Non
  steps=np.asarray([int(z) for z in re.findall(r'\b\d+\b',ss)],dtype=np.int32);assert len(steps)==256
  hist=np.zeros(10,np.int32);prevd=0
  qpack=[];modes=[];scales=[];blockLoss=[];reference=[]
+ floor=relative_energy_floor(xq)
  for st in range(0,len(x),80):
   en=min(st+80,len(x));target=xq[st:en];coeff=co[st:en];n=len(target)
   # Ideal residual needs from unquantized Q14 pre-emphasized source.
@@ -89,7 +92,7 @@ def make(x,analysis,coeff_trace,source,dest,lam,only=None,fast=False,context=Non
      expred+=((int(co[idx,k])*xp)>>12)
    res.append(expred)
   rms=max(1.0,float(np.sqrt(np.mean(np.square(np.asarray(res,dtype=np.float64))))))
-  energy=max((.025*16384)**2,float(np.mean(target.astype(np.float64)**2)))
+  energy=max(floor,float(np.mean(target.astype(np.float64)**2)))
   options=[]
   for bits in ([only] if only else (3,4,5,6)):
    nominal=rms/max(1,(1<<(bits-1))-.5)

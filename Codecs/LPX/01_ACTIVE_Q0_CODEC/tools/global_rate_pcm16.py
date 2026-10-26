@@ -25,6 +25,7 @@ from tune_pcm16 import read_wav16
 from batch_decoder import BatchSession
 from optimize_q0 import cost_probe, probe
 from output_paths import protect_outputs
+from level_policy import DEFAULT_LEVEL_FLOOR_DB, relative_energy_floor
 
 
 @dataclass(slots=True)
@@ -170,7 +171,7 @@ def _materialize(header, frames, options, choices, ref, co, steps, pre, bright, 
 
 
 def optimize(blob, ref, decoder, rounds=2, max_states=1024, max_candidates=32,
-             kind='speech', max_cost_growth=0., probe_executable=None,timing_gate=None):
+             kind='speech', max_cost_growth=0., probe_executable=None,timing_gate=None,level_floor_db=DEFAULT_LEVEL_FLOOR_DB):
     ref = np.asarray(ref)
     if ref.ndim != 1 or ref.dtype.kind not in 'iu' or np.any(ref < -32768) or np.any(ref > 32767):
         raise ValueError('Expected mono integer PCM16 reference')
@@ -189,6 +190,7 @@ def optimize(blob, ref, decoder, rounds=2, max_states=1024, max_candidates=32,
     old_cost = probe(blob, executable)
     before = quality(ref, first, kind)
     target = ref.astype(np.float64)
+    floor = relative_energy_floor(ref,float(level_floor_db))
     def error(p):
         d = target - p
         return float(np.dot(d, d))
@@ -271,7 +273,7 @@ def optimize(blob, ref, decoder, rounds=2, max_states=1024, max_candidates=32,
                 break
             curves = []
             for bi, curve in enumerate(options):
-                energy = max(1024. ** 2, float(np.mean(target[bi * 80:(bi + 1) * 80] ** 2)))
+                energy = max(floor, float(np.mean(target[bi * 80:(bi + 1) * 80] ** 2)))
                 curves.append([(op.cost, op.loss / energy if objective == 'normalized' else op.loss) for op in curve])
             paths, stats = allocate(curves, max(0, budget), max_states)
             searches.append({'round': iteration + 1, 'objective': objective, **stats,
@@ -290,6 +292,7 @@ def optimize(blob, ref, decoder, rounds=2, max_states=1024, max_candidates=32,
     if check is None or not np.array_equal(pcm, check):
         raise AssertionError('Final independent native re-decode failed')
     return cur, pcm, {'before': before, 'after': quality(ref, pcm, kind),
+        'level_floor_db':float(level_floor_db),'level_reference':'whole-recording RMS; soft error floor, no gate',
         'input_bytes': original_size, 'output_bytes': len(cur),
         'input_sha256': hashlib.sha256(blob).hexdigest(), 'output_sha256': hashlib.sha256(cur).hexdigest(),
         'decoder_cost_before': old_cost, 'decoder_cost_after': probe(cur, executable),
@@ -324,6 +327,7 @@ if __name__ == '__main__':
     ap.add_argument('--max-candidates', type=int, default=32)
     ap.add_argument('--kind', choices=('speech', 'music'), default='speech')
     ap.add_argument('--max-cost-growth', type=float, default=0.)
+    ap.add_argument('--level-floor-db',type=float,default=DEFAULT_LEVEL_FLOOR_DB,help='Soft energy floor in dB relative to the complete recording RMS')
     a = ap.parse_args()
     print(json.dumps(run(a.input, a.reference_wav, a.output, rounds=a.rounds, max_states=a.max_states,
-        max_candidates=a.max_candidates, kind=a.kind, max_cost_growth=a.max_cost_growth), indent=2))
+        max_candidates=a.max_candidates, kind=a.kind, max_cost_growth=a.max_cost_growth,level_floor_db=a.level_floor_db), indent=2))
