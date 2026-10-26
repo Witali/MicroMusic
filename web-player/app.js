@@ -54,7 +54,7 @@ function deviceUI(device) {
   $('fuse-clock-note').textContent=micronucleus?'Штатный Micronucleus · делитель /1 в прошивке':'CKDIV8 отключён · делитель /1';
   $('fuse-datasheet').href=tiny88?'https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf':'https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf';
   $('fuse-datasheet').textContent='Фьюзы в datasheet, §'+(tiny88?'20.2':'17.2')+' ↗';
-  for(const choice of document.querySelectorAll('input[name="engine"]'))choice.disabled=tiny88&&!['js','wasm'].includes(choice.value);
+  for(const choice of document.querySelectorAll('input[name="engine"]'))choice.disabled=false;
   if(document.querySelector('input[name="engine"]:checked').disabled){
     for(const choice of document.querySelectorAll('input[name="engine"]'))choice.checked=choice.value==='wasm';
   }
@@ -199,7 +199,7 @@ function load(entry,{autoplay=false}={}) {
   selected=entry; headroom=0;
   deviceUI(currentDevice);
   if(entry.devicePackage){
-    for(const choice of document.querySelectorAll('input[name="engine"]')){choice.disabled=choice.value!=='device';choice.checked=choice.value==='device';}
+    for(const choice of document.querySelectorAll('input[name="engine"]')){choice.disabled=choice.value!=='transpiled';choice.checked=choice.value==='transpiled';}
     const configuration=entry.deviceConfiguration;
     $('fuse-low').textContent='0x'+formatHex(configuration.fuseLow);
     $('fuse-high').textContent='0x'+formatHex(configuration.fuseHigh);
@@ -286,7 +286,7 @@ function load(entry,{autoplay=false}={}) {
   if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
-  const worker=new Worker(new URL('./worker.js?v=20261025-board-um88-pipeline',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261026-avr-translated',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {

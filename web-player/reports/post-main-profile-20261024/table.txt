@@ -1,0 +1,10 @@
+| Mode | Workload | Work samples | Top self frame | Self share |
+|---|---|---:|---|---:|
+| compatible | rhythmic | 2826 | `native.device.ratio` | 9.6% |
+| compatible | lumiere-stereo | 2947 | `native.device.next_event` | 9.6% |
+| compatible | hq4-chego-tiny | 3656 | `native.device.next_event` | 9.2% |
+| physical | rhythmic | 3458 | `native.device.next_event` | 9.1% |
+| physical | lumiere-stereo | 3450 | `native.device.ratio` | 8.9% |
+| physical | hq4-chego-tiny | 3452 | `native.device.ratio` | 9.7% |
+| compatible-direct | kernel-compatible-div1-direct | 262 | `native.device.next_event` | 8.8% |
+| physical-direct | kernel-physical-div1-direct | 180 | `native.device.ratio` | 10.0% |

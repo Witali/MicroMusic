@@ -15,6 +15,9 @@ enum {
     ANALOG_TRIGGER_COMPB = 5, ANALOG_TRIGGER_PCINT = 6
 };
 
+/* Idle has no conversion edge; its enabled prescaler is represented by origin. */
+enum { ANALOG_ADC_IDLE = 0 };
+
 typedef struct {
     /* CPU time domain: one unit = HALF of one unprescaled CPU/clkADC-input
      * clock period, NOT half an ADC-prescaled period. cycle N = half_cycle 2*N.

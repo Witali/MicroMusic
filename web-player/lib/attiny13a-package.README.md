@@ -32,7 +32,9 @@ and asset hashes. Hash input is UTF-8 JSON with recursively sorted object keys,
 preserved array order and standard JSON scalar encoding. Pretty-printing or
 object key order does not change integrity.
 
-The JavaScript loader includes `avr-profiles.js` alongside `avr-runtime.js`;
+The JavaScript loader includes `avr-profiles.js` alongside `avr-runtime.js`,
+and both registered CPU profiles with their generated register maps (including
+`devices/attiny88-profile.js` and `attiny88-registers.js`);
 this shared profile metadata does not load a default WASM artifact. Historical
 packages retain their own runtime memory layout and decode-operand width.
 
@@ -308,6 +310,19 @@ all bytes without running WASM; failed verification creates no extraction
 directory. JSON status goes to stdout, errors to stderr with exit status 1.
 Unpack emits Flash, EEPROM, both WASM binaries, configuration, manifest and a
 small package metadata report.
+
+Optional offline CPU optimization:
+
+```sh
+node web-player/scripts/package-attiny13a.mjs pack firmware.hex optimized.json --optimize Oz
+```
+
+Levels `O2`, `O3`, `Os` and `Oz` are supported. The tool uses the local pinned
+SDK or `--wasm-opt /absolute/path/to/wasm-opt` / `MICROMUSIC_WASM_OPT`.
+Stdout additionally records optimizer version/hash, flags and before/after hashes
+and sizes. The existing package schema, runtime and loader remain unchanged;
+the complete import set and embedded AVR manifest are preserved. Optimization
+runs during packaging only. See [translator details](../native/AVR_TO_WASM.md).
 
 Primary format references: [WASM binary module grammar](https://webassembly.github.io/spec/core/binary/modules.html)
 and [WebCrypto digest / SHA-256](https://www.w3.org/TR/2017/REC-WebCryptoAPI-20170126/#SubtleCrypto-method-digest).

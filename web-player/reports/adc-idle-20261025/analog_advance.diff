@@ -1,0 +1,107 @@
+diff --git "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\adc-idle-functions\\compare-x2vbtQ\\function-diffs-JmyPwZ\\analog_advance.before.wat" "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\adc-idle-functions\\compare-x2vbtQ\\function-diffs-JmyPwZ\\analog_advance.after.wat"
+index 391000e..ab2c3f2 100644
+--- "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\adc-idle-functions\\compare-x2vbtQ\\function-diffs-JmyPwZ\\analog_advance.before.wat"
++++ "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\adc-idle-functions\\compare-x2vbtQ\\function-diffs-JmyPwZ\\analog_advance.after.wat"
+@@ -98,9 +98,38 @@
+      )
+     )
+     (loop $label
+-     (drop
+-      (call $native.analog_adc_advance
+-       (local.get $1)
++     (block $block4
++      (block $block3
++       (br_if $block3
++        (i32.eqz
++         (i32.load8_u
++          (i32.const 74521)
++         )
++        )
++       )
++       (br_if $block3
++        (i32.load8_u
++         (i32.const 74512)
++        )
++       )
++       (br_if $block3
++        (i64.lt_u
++         (local.get $1)
++         (i64.load
++          (i32.const 74424)
++         )
++        )
++       )
++       (i64.store
++        (i32.const 74424)
++        (local.get $1)
++       )
++       (br $block4)
++      )
++      (drop
++       (call $native.analog_adc_advance
++        (local.get $1)
++       )
+       )
+      )
+      (drop
+@@ -140,15 +169,15 @@
+      (local.set $1
+       (i64.const -1)
+      )
+-     (block $block3
+-      (br_if $block3
++     (block $block5
++      (br_if $block5
+        (i32.eqz
+         (i32.load8_u
+          (i32.const 74521)
+         )
+        )
+       )
+-      (br_if $block3
++      (br_if $block5
+        (i32.eqz
+         (i32.load8_u
+          (i32.const 74512)
+@@ -214,9 +243,38 @@
+      )
+     )
+    )
+-   (drop
+-    (call $native.analog_adc_advance
+-     (local.get $0)
++   (block $block7
++    (block $block6
++     (br_if $block6
++      (i32.eqz
++       (i32.load8_u
++        (i32.const 74521)
++       )
++      )
++     )
++     (br_if $block6
++      (i32.load8_u
++       (i32.const 74512)
++      )
++     )
++     (br_if $block6
++      (i64.lt_u
++       (local.get $0)
++       (i64.load
++        (i32.const 74424)
++       )
++      )
++     )
++     (i64.store
++      (i32.const 74424)
++      (local.get $0)
++     )
++     (br $block7)
++    )
++    (drop
++     (call $native.analog_adc_advance
++      (local.get $0)
++     )
+     )
+    )
+    (drop

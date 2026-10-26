@@ -81,6 +81,16 @@ instruction count. EEPROM/Flash programming and the watchdog therefore keep
 their wall-time behavior across CLKPR changes and CPU sleep. The host need not
 send oscillator pulses individually.
 
+In the fixed1ps contract, the private nanosecond remainder is stored directly
+as0..999ps. Splitting an interval into quotient/remainder before adding that
+carry avoids uint64 overflow and exactly preserves floor(elapsed_ps/1000).
+The NVM scanner multiplies this remainder by1e9 when passing it to the general
+deadline formula's numerator units. Initialization fixes the time contract and
+zeros the remainder; MCU reset and OSCCAL/CLKPR changes preserve elapsed time.
+Legacy nanosecond and watchdog conversion retain their original numerator
+remainders. CPU/source phases and the authoritative1ps timeline are unchanged.
+See the [validation and measured scope](../../reports/physical-ns-remainder-20261025.md).
+
 CLKPR keeps its protected four-cycle write window, including nonextension by
 an attempted CLKPCE rewrite. A selected divisor is readable immediately, but
 the actual waveform uses one old period for its next active edge, then one new

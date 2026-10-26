@@ -1,0 +1,100 @@
+#include "analog.h"
+
+static void advance_adc(analog_t *a, uint64_t time) {
+    /* No conversion edge exists while idle. Preserve the running prescaler's
+     * origin and publish exactly the same timestamp as the ordinary path.
+     * Gated clocks still need the module's origin/deadline shift. */
+    if (a->adc.clock_running && a->adc.phase == ANALOG_ADC_IDLE && time >= a->adc.half_cycle)
+        a->adc.half_cycle = time;
+    else analog_adc_advance(&a->adc, time);
+}
+
+static void connect_sources(analog_t *a, uint64_t time) {
+    uint8_t comparator_flag = (a->comparator.acsr & ANALOG_ACI) ? 2 : 0;
+    uint8_t flags = a->external_flags | comparator_flag;
+    /* Every caller has already advanced the ADC through time. Register writes
+     * handle changes to ADTS/ADATE themselves; a held flag has no new edge. */
+    if (flags != a->adc.source_flags) analog_adc_sources(&a->adc, flags, time);
+}
+
+void analog_reset(analog_t *a, uint32_t vcc_uv, uint32_t bandgap_uv,
+                   uint8_t first_sample_half_adc,
+                   const analog_comparator_config_t *config, uint64_t half_cycle) {
+    analog_adc_reset(&a->adc, vcc_uv, bandgap_uv, first_sample_half_adc, half_cycle);
+    analog_comparator_reset(&a->comparator, config, bandgap_uv, half_cycle);
+    a->external_flags = 0;
+}
+
+uint64_t analog_next_event(const analog_t *a) {
+    uint64_t adc = analog_adc_next_event(&a->adc);
+    uint64_t comparator = analog_comparator_next_event(&a->comparator);
+    return adc < comparator ? adc : comparator;
+}
+
+int analog_advance(analog_t *a, uint64_t time) {
+    if (time < a->adc.half_cycle || time < a->comparator.half_cycle) return 0;
+    uint64_t next;
+    while ((next = analog_next_event(a)) != UINT64_MAX && next <= time) {
+        advance_adc(a, next);
+        analog_comparator_advance(&a->comparator, next);
+        connect_sources(a, next);
+    }
+    advance_adc(a, time);
+    analog_comparator_advance(&a->comparator, time);
+    return 1;
+}
+
+int analog_read(analog_t *a, uint8_t io, uint8_t *value, uint64_t time) {
+    if (!analog_advance(a, time)) return 0;
+    return io == ANALOG_ACSR ? analog_comparator_read(&a->comparator, io, value, time) :
+        analog_adc_read(&a->adc, io, value, time);
+}
+
+int analog_write(analog_t *a, uint8_t io, uint8_t value, uint64_t time) {
+    if (!analog_advance(a, time)) return 0;
+    int result;
+    if (io == ANALOG_ACSR) result = analog_comparator_write(&a->comparator, io, value, time);
+    else {
+        result = analog_adc_write(&a->adc, io, value, time);
+        if (result) analog_comparator_adc(&a->comparator, a->adc.adcsra, a->adc.adcsrb,
+                                           a->adc.admux, time);
+    }
+    connect_sources(a, time);
+    return result;
+}
+
+int analog_input(analog_t *a, uint8_t pin, int32_t microvolts, uint64_t time) {
+    if (pin > 5 || !analog_advance(a, time)) return 0;
+    static const uint8_t channel[] = {0xff,0xff,1,3,2,0};
+    analog_comparator_input(&a->comparator, pin, microvolts, time);
+    if (channel[pin] != 0xff) analog_adc_input(&a->adc, channel[pin], microvolts, time);
+    return 1;
+}
+
+int analog_reference(analog_t *a, uint32_t vcc_uv, uint32_t bandgap_uv, uint64_t time) {
+    if (!analog_advance(a, time)) return 0;
+    analog_adc_reference(&a->adc, vcc_uv, bandgap_uv, time);
+    analog_comparator_reference(&a->comparator, bandgap_uv, time);
+    return 1;
+}
+
+int analog_sources(analog_t *a, uint8_t flags, uint64_t time) {
+    if (!analog_advance(a, time)) return 0;
+    a->external_flags = flags & 0x7c;
+    connect_sources(a, time);
+    return 1;
+}
+
+uint16_t analog_pending(const analog_t *a) {
+    return (analog_comparator_pending(&a->comparator) ? (1u << 5) : 0) |
+        (analog_adc_pending(&a->adc) ? (1u << 9) : 0);
+}
+
+int analog_ack(analog_t *a, uint8_t vector, uint64_t time) {
+    if (!analog_advance(a, time)) return 0;
+    if (vector == 5) analog_comparator_ack(&a->comparator, time);
+    else if (vector == 9) analog_adc_ack(&a->adc, time);
+    else return 0;
+    connect_sources(a, time);
+    return 1;
+}

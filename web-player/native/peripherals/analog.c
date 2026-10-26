@@ -1,5 +1,14 @@
 #include "analog.h"
 
+static void advance_adc(analog_t *a, uint64_t time) {
+    /* No conversion edge exists while idle. Preserve the running prescaler's
+     * origin and publish exactly the same timestamp as the ordinary path.
+     * Gated clocks still need the module's origin/deadline shift. */
+    if (a->adc.clock_running && a->adc.phase == ANALOG_ADC_IDLE && time >= a->adc.half_cycle)
+        a->adc.half_cycle = time;
+    else analog_adc_advance(&a->adc, time);
+}
+
 static void connect_sources(analog_t *a, uint64_t time) {
     uint8_t comparator_flag = (a->comparator.acsr & ANALOG_ACI) ? 2 : 0;
     uint8_t flags = a->external_flags | comparator_flag;
@@ -26,11 +35,11 @@ int analog_advance(analog_t *a, uint64_t time) {
     if (time < a->adc.half_cycle || time < a->comparator.half_cycle) return 0;
     uint64_t next;
     while ((next = analog_next_event(a)) != UINT64_MAX && next <= time) {
-        analog_adc_advance(&a->adc, next);
+        advance_adc(a, next);
         analog_comparator_advance(&a->comparator, next);
         connect_sources(a, next);
     }
-    analog_adc_advance(&a->adc, time);
+    advance_adc(a, time);
     analog_comparator_advance(&a->comparator, time);
     return 1;
 }

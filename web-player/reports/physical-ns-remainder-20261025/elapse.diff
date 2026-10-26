@@ -1,0 +1,231 @@
+diff --git "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\ns-remainder-functions\\compare-SBJJGo\\function-diffs-Oxjekc\\elapse.before.wat" "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\ns-remainder-functions\\compare-SBJJGo\\function-diffs-Oxjekc\\elapse.after.wat"
+index a90faf7..d421497 100644
+--- "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\ns-remainder-functions\\compare-SBJJGo\\function-diffs-Oxjekc\\elapse.before.wat"
++++ "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\ns-remainder-functions\\compare-SBJJGo\\function-diffs-Oxjekc\\elapse.after.wat"
+@@ -3,11 +3,12 @@
+   (local $2 i64)
+   (local $3 i64)
+   (local $4 i64)
++  (local $5 i32)
+   (i32.store8
+    (i32.const 64864)
+    (i32.const 0)
+   )
+-  (local.set $3
++  (local.set $2
+    (i64.sub
+     (local.get $0)
+     (i64.load
+@@ -28,9 +29,9 @@
+     (block $block
+      (if
+       (i64.gt_u
+-       (local.tee $2
++       (local.tee $3
+         (call $native.ratio
+-         (local.get $3)
++         (local.get $2)
+          (i64.shl
+           (i64.load32_u
+            (i32.const 64620)
+@@ -88,7 +89,7 @@
+      )
+      (local.set $1
+       (i64.add
+-       (local.get $2)
++       (local.get $3)
+        (local.get $4)
+       )
+      )
+@@ -99,41 +100,92 @@
+     )
+    )
+   )
+-  (local.set $2
++  (local.set $3
+    (i64.load
+     (i32.const 64648)
+    )
+   )
+-  (local.set $1
++  (local.set $4
+    (i64.const -1)
+   )
+-  (block $block1
++  (block $block2
+    (if
+     (i64.gt_u
+-     (local.tee $4
+-      (call $native.ratio
+-       (local.get $3)
+-       (i64.const 1000000000)
+-       (i64.load
+-        (i32.const 64656)
++     (local.tee $1
++      (block $block1 (result i64)
++       (if
++        (i32.eqz
++         (i32.load8_u
++          (i32.const 64788)
++         )
++        )
++        (then
++         (br $block1
++          (call $native.ratio
++           (local.get $2)
++           (i64.const 1000000000)
++           (i64.load
++            (i32.const 64656)
++           )
++           (i64.shl
++            (i64.load32_u
++             (i32.const 64032)
++            )
++            (i64.const 1)
++           )
++           (i32.const 64656)
++          )
++         )
++        )
+        )
+-       (select
+-        (i64.const 1000000000000)
+-        (i64.shl
+-         (i64.load32_u
+-          (i32.const 64032)
++       (i64.store
++        (i32.const 64656)
++        (i64.extend_i32_u
++         (select
++          (i32.sub
++           (local.tee $5
++            (i32.add
++             (i32.load
++              (i32.const 64656)
++             )
++             (i32.wrap_i64
++              (i64.sub
++               (local.get $2)
++               (i64.mul
++                (local.tee $1
++                 (i64.div_u
++                  (local.get $2)
++                  (i64.const 1000)
++                 )
++                )
++                (i64.const 1000)
++               )
++              )
++             )
++            )
++           )
++           (i32.const 1000)
++          )
++          (local.get $5)
++          (local.tee $5
++           (i32.gt_u
++            (local.get $5)
++            (i32.const 999)
++           )
++          )
+          )
+-         (i64.const 1)
+         )
+-        (i32.load8_u
+-         (i32.const 64788)
++       )
++       (i64.add
++        (local.get $1)
++        (i64.extend_i32_u
++         (local.get $5)
+         )
+        )
+-       (i32.const 64656)
+       )
+      )
+      (i64.xor
+-      (local.get $2)
++      (local.get $3)
+       (i64.const -1)
+      )
+     )
+@@ -142,7 +194,7 @@
+       (i32.const 64864)
+       (i32.const 0)
+      )
+-     (br_if $block1
++     (br_if $block2
+       (i32.load
+        (i32.const 64744)
+       )
+@@ -151,21 +203,21 @@
+       (i32.const 64744)
+       (i64.const 4294967298)
+      )
+-     (br $block1)
++     (br $block2)
+     )
+    )
+-   (local.set $1
++   (local.set $4
+     (i64.add
+-     (local.get $2)
+-     (local.get $4)
++     (local.get $1)
++     (local.get $3)
+     )
+    )
+   )
+   (i64.store
+    (i32.const 64648)
+-   (local.get $1)
++   (local.get $4)
+   )
+-  (local.set $2
++  (local.set $3
+    (i64.load
+     (i32.const 64664)
+    )
+@@ -173,12 +225,12 @@
+   (local.set $1
+    (i64.const -1)
+   )
+-  (block $block2
++  (block $block3
+    (if
+     (i64.gt_u
+-     (local.tee $3
++     (local.tee $2
+       (call $native.ratio
+-       (local.get $3)
++       (local.get $2)
+        (i64.load32_u
+         (i32.const 64036)
+        )
+@@ -201,7 +253,7 @@
+       )
+      )
+      (i64.xor
+-      (local.get $2)
++      (local.get $3)
+       (i64.const -1)
+      )
+     )
+@@ -210,7 +262,7 @@
+       (i32.const 64864)
+       (i32.const 0)
+      )
+-     (br_if $block2
++     (br_if $block3
+       (i32.load
+        (i32.const 64744)
+       )
+@@ -219,7 +271,7 @@
+       (i32.const 64744)
+       (i64.const 4294967298)
+      )
+-     (br $block2)
++     (br $block3)
+     )
+    )
+    (local.set $1

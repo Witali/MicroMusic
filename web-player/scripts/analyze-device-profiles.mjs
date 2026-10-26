@@ -8,6 +8,7 @@ import {parseArgs} from 'node:util';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{input:{type:'string',multiple:true},
   calls:{type:'string',default:'build/traces/current/summary.json'},
+  'without-calls':{type:'boolean'},
   'out-dir':{type:'string',default:'build/profiles/analysis'}}});
 const inputs=values.input??['current-firmware','kernel-compatible-direct','kernel-physical-direct',
   'kernel-internal-20m','kernel-clki-20m-div1','kernel-clki-20m-div256'].map(p=>'build/profiles/'+p);
@@ -18,7 +19,7 @@ const save=(p,v)=>writeFileSync(join(out,p),JSON.stringify(v,null,2)+'\n');
 const repoPath=p=>relative(root,p).replaceAll('\\','/');
 const median=v=>{const a=[...v].sort((a,b)=>a-b);return a.length%2?a[a.length>>1]:(a[a.length/2-1]+a[a.length/2])/2;};
 const report={schema:'micromusic-device-profile-analysis-v1',createdAt:new Date().toISOString(),
-  method:'Pool self/inclusive sample counts across five fresh-state profiles per case, divided by samples with the relevant public run/capturePhysical ancestor. Self samples are disjoint leaf-frame observations. Inclusive samples overlap and must not be added. O3/V8 inlining remains attributed to containing frames. Counts identify source-level function entries in a separate diagnostic binary and are never used to assign production time. Raw first-repeat profiles are copied as representatives; all-repeat hashes and original paths are retained. All percentages and wall times are profiling observations, not exact exclusive time or unprofiled benchmark timings.',
+  method:'Pool self/inclusive sample counts across all recorded fresh-state profiles per case, divided by samples with the relevant public run/capturePhysical ancestor. Self samples are disjoint leaf-frame observations. Inclusive samples overlap and must not be added. O3/V8 inlining remains attributed to containing frames. Optional source-entry counts come from a separate diagnostic binary and never assign production cost. Raw first-repeat profiles are copied as representatives; all-repeat hashes and original paths are retained. All percentages and wall times are profiling observations, not exact exclusive time or unprofiled benchmark timings.',
   results:[]};
 let profileCount=0;
 for(const input of inputs){
@@ -36,7 +37,7 @@ for(const input of inputs){
       assert.equal(run.productionEquality,true,result.id);
       sampleCount+=run.workStackSamples;allSamples+=run.samples;profileCount++;
       for(const f of run.workFrames){
-        const key=f.key??f.name,row=frames.get(key)??{name:f.name,category:f.category,selfSamples:0,inclusiveSamples:0};
+        const key=f.key??f.name,row=frames.get(key)??{key,name:f.name,category:f.category,selfSamples:0,inclusiveSamples:0};
         row.selfSamples+=f.selfSamples;row.inclusiveSamples+=f.inclusiveSamples;frames.set(key,row);
       }
       for(const c of run.workLeafCategories)categories.set(c.category,(categories.get(c.category)||0)+c.samples);
@@ -58,14 +59,16 @@ for(const input of inputs){
     report.results.push(row);
   }
 }
-const callFile=resolve(root,values.calls),calls=read(callFile);
-assert.equal(calls.complete,true);assert.equal(calls.productionRuntimeSha256,report.runtimeSha256);
-assert.ok(calls.results.every(r=>r.productionEquality));
-copyFileSync(callFile,join(out,'call-counts-and-prefix.json'));
-report.callTrace={file:'call-counts-and-prefix.json',sha256:sha(readFileSync(callFile)),
-  cases:calls.results.length,selectedFunctions:calls.functions.length,allCasesMatchProduction:true};
+if(!values['without-calls']){
+  const callFile=resolve(root,values.calls),calls=read(callFile);
+  assert.equal(calls.complete,true);assert.equal(calls.productionRuntimeSha256,report.runtimeSha256);
+  assert.ok(calls.results.every(r=>r.productionEquality));
+  copyFileSync(callFile,join(out,'call-counts-and-prefix.json'));
+  report.callTrace={file:'call-counts-and-prefix.json',sha256:sha(readFileSync(callFile)),
+    cases:calls.results.length,selectedFunctions:calls.functions.length,allCasesMatchProduction:true};
+}else report.callTrace=null;
 report.profiles=profileCount;report.samples=report.results.reduce((n,r)=>n+r.samples,0);report.complete=true;
 save('summary.json',report);
 console.table(report.results.map(r=>({case:r.id,samples:r.samples,top:r.frames[0].name,
   self:r.frames[0].selfPercent.toFixed(1)+'%',profiledMs:r.workWallMs.median.toFixed(1)})));
-console.log(`${profileCount}profiles/${report.samples}work samples and${calls.results.length}counter traces verified. Output: ${repoPath(out)}`);
+console.log(`${profileCount} profiles / ${report.samples} work samples and ${report.callTrace?.cases??0} counter traces verified. Output: ${repoPath(out)}`);

@@ -1,6 +1,7 @@
 import {AVRCore as PeripheralRuntime} from './avr-runtime.js';
 import {runtimeABI,transpileAVR} from './avr-transpiler.js';
 import {deviceProfile,DEFAULT_DEVICE} from './devices/profiles.js';
+import {resolveAVRProfile} from './avr-profiles.js?v=20261025-board-um88-pipeline';
 const littleEndian=new Uint8Array(Uint16Array.of(1).buffer)[0]===1;
 const runtimeCaches=new WeakMap(),legacyCache=new Map();
 const abiKey=abi=>JSON.stringify([abi.data,abi.rom,abi.idle,abi.frames,abi.pwm,
@@ -14,7 +15,7 @@ function compileTranslation(binary,abi,options) {
   const padded=new Uint8Array(profile.flashBytes).fill(255);padded.set(binary);
   // Exact image keys avoid hash collisions. Configuration does not enter the
   // lowering: live clocks/fuses are supplied by this runtime instance's bus.
-  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,Array.from(padded)]);
+  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,options.boundedRegions??false,Array.from(padded)]);
   if(options.cacheTranslation!==false&&cache.has(key)) {
     const cached=cache.get(key);cache.delete(key);cache.set(key,cached);
     return {...cached,cacheHit:true};
@@ -35,8 +36,14 @@ function compileTranslation(binary,abi,options) {
 // use the existing C/WASM peripheral runtime, sharing its linear memory.
 export class AVRCore extends PeripheralRuntime {
   constructor(binary,eeprom,options={}) {
-    const profile=deviceProfile(options.device??DEFAULT_DEVICE);
-    super(binary,eeprom,{fastIdle:options.fastIdle??true,fastBlocks:false,runtimeModule:options.runtimeModule,configureRuntime:options.configureRuntime});
+    if(options.boundedRegions!==undefined&&(typeof options.boundedRegions!=='boolean'||options.boundedRegions&&!options.resumable))
+      throw Error('Bounded regions require resumable execution');
+    if(options.optimizePhaseLocals!==undefined&&(typeof options.optimizePhaseLocals!=='boolean'||options.optimizePhaseLocals&&!options.resumable))
+      throw Error('Phase-local optimization requires resumable execution');
+    const profile=deviceProfile(options.device??(options.target?resolveAVRProfile(options.target).name:DEFAULT_DEVICE));
+    const target=profile.target??'attiny13a';
+    if(options.target&&resolveAVRProfile(options.target).id!==target)throw Error('Conflicting AVR target and device');
+    super(binary,eeprom,{target,cpuHz:options.cpuHz,fastIdle:options.fastIdle??true,fastBlocks:false,runtimeModule:options.runtimeModule,configureRuntime:options.configureRuntime});
     this._translationOptions={...options,device:profile.name};
     this._compile(binary);
   }

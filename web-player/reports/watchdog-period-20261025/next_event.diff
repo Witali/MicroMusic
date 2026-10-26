@@ -1,0 +1,33 @@
+diff --git "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-period-functions\\compare-Qv3z3q\\function-diffs-TMxE7U\\next_event.before.wat" "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-period-functions\\compare-Qv3z3q\\function-diffs-TMxE7U\\next_event.after.wat"
+index 7db6218..6384cd0 100644
+--- "a/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-period-functions\\compare-Qv3z3q\\function-diffs-TMxE7U\\next_event.before.wat"
++++ "b/C:\\Work\\MicroMusic\\.worktree\\avr-to-wasm\\build\\watchdog-period-functions\\compare-Qv3z3q\\function-diffs-TMxE7U\\next_event.after.wat"
+@@ -1611,11 +1611,24 @@
+           (i32.const 64788)
+          )
+         )
+-        (i64.load32_u
+-         (i32.const 64036)
++        (local.tee $0
++         (i64.load32_u
++          (i32.const 64036)
++         )
+         )
+-        (i64.load
+-         (i32.const 64672)
++        (i64.mul
++         (i64.load
++          (i32.const 64672)
++         )
++         (select
++          (i64.const 1)
++          (local.get $0)
++          (i64.eqz
++           (i64.load
++            (i32.const 109816)
++           )
++          )
++         )
+         )
+        )
+       )

@@ -1,9 +1,73 @@
 # AVR machine code to WebAssembly
 
-The experimental translator accepts ATtiny13A Flash bytes, including decoded
+The experimental translator accepts ATtiny13A and ATtiny88 Flash bytes, including decoded
 Intel HEX. It emits a real WebAssembly binary directly, without AVR sources,
 Clang, Emscripten, WAT assembly or runtime opcode interpretation. The browser
 can translate a firmware image when it is loaded; the CLI can do it in advance.
+
+The shared music renderer supports ATtiny88 with `target:'attiny88'` and the
+catalog's `cpuHz`, including the existing 16-MHz board model. Its lowering uses
+the pinned Microchip DFP for Flash/SRAM bounds, the full X/Y/Z pointer pairs,
+SPL/SPH and SREG. Timer1 and audio retain the shared music runtime's peripheral
+contract; the full physical board/runtime and offline CLI/package format remain
+ATtiny13A-only. The player exposes JS, WASM and AVR → WASM for music and speech;
+imported ATtiny13A packages use their own physical runtime under AVR → WASM.
+
+An optional offline Binaryen pass can optimize the emitted CPU module:
+
+```sh
+node web-player/scripts/transpile-avr.mjs firmware.hex cpu.wasm --device --optimize Oz
+node web-player/scripts/package-attiny13a.mjs pack firmware.hex device.json --optimize Oz
+```
+
+`--optimize O2|O3|Os|Oz` uses the pinned local Emscripten6.0.12 SDK, or
+`--wasm-opt /absolute/path/to/wasm-opt` / `MICROMUSIC_WASM_OPT`. The helper records
+the tool version, executable hash, exact flags and input/output hashes. The
+standalone sidecar retains this record; the pack command prints it to stdout.
+Package bytes and their integrity hashes include the optimized CPU module.
+The browser loader needs no optimizer dependency. Default generation is unchanged;
+Flash modified by SPM still uses the existing fresh-translation/cache path.
+
+### What automatic optimization can change
+
+The emitter decodes Flash, emits one callable body per word, adds guarded basic
+blocks and then emits dispatch/capture loops. AVR registers live in shared
+linear memory; temporary arithmetic values use i32 locals. SREG liveness removes
+unneeded flags inside a proven block; flags remain visible at its exit and all
+observable boundaries. Resumable code additionally emits phase state machines.
+
+| AVR operation | Principal emitted WASM operations | Remaining constraints |
+| --- | --- | --- |
+| LDI / MOV | `i32.const` / `i32.load8_u`, `i32.store8` | Preserve visible register bytes. |
+| ADD / ADC / SUB / SBC | byte loads, i32 arithmetic, byte mask/store, live SREG equations | Carry and chained zero; final 8-bit wrap. |
+| AND / OR / EOR / shifts | i32 bit operations and byte stores, live flags | WASM uses 32-bit operands; AVR has 8-bit results and flags. |
+| CP / CPI / CPC | subtraction and SREG only | A comparison with no live result can disappear in a guarded block. |
+| RJMP / BRxx / calls | PC/AVR-stack updates and table dispatch | AVR return addresses, original cycles and IRQ boundaries. |
+| IN / OUT / memory-I/O | calls to native WASM bridges and memory effects | Bus sampling/commit phases and side effects. |
+| SLEEP / WDR / SPM | device-control bridge | Wake, reset, stalls and changed-Flash invalidation. |
+
+Binaryen can simplify constants/control flow, remove dead temporary work,
+coalesce locals and merge equivalent function bodies. It cannot infer the AVR
+meaning of an opaque peripheral call or safely delete clock barriers merely
+because the arithmetic results match. Bounded regions and per-phase context
+liveness are explicit translator options; cross-block SREG liveness remains open.
+
+The helper uses `--mvp-features --enable-mutable-globals` (exported mutable globals
+are part of this ABI) and skips `remove-unused-module-elements` to retain every
+bridge import required by existing packages. It verifies imports, exports and
+the exact embedded `micromusic.avr` section; package validation additionally
+checks dispatch-table geometry and function/memory signatures. Do not add trap,
+fast-math, imported-zero-memory or closed-world assumptions to this path.
+Function indices can change, so raw-emitter diagnostic index maps must not be
+applied to an optimized module. The embedded mapping describes AVR addresses,
+not optimized function indices. Native peripheral builds invoke Clang `-O3`;
+the prepared SDK's driver enables `wasm-opt` by default (`--no-wasm-opt` disables
+it). The profiling tool reproduces that final pass explicitly when adding names.
+The optional CLI pass described here only handles the generated CPU binary.
+
+References: [Binaryen optimizer cookbook](https://github.com/WebAssembly/binaryen/wiki/Optimizer-Cookbook),
+[Binaryen133 optimization options](https://github.com/WebAssembly/binaryen/blob/version_133/src/tools/optimization-options.h),
+[WASM custom-section semantics](https://webassembly.github.io/spec/core/binary/modules.html#custom-section).
 
 The translator now lowers all 123 ATtiny13A instruction-summary forms.
 Forms include aliases and addressing variants, not 123 distinct opcodes.
@@ -24,6 +88,12 @@ The existing reviewed `reports/attiny13a-instructions.json` retains source
 hashes, all 123 forms, opcode patterns, cycle counts and flag-write masks.
 Tests compare the new independent decoder against all 65,536 possible first
 words and that official-document fixture, rather than the interpreter decoder.
+
+For ATtiny13A test firmware, generated `AT13_VECTOR` values are vector indices
+and already equal word PCs: `WDT` is8 (Flash byte offset16). Pass them directly
+to the word-addressed `flash({at:...})` fixture; do not divide by two. This
+relationship relies on this device's single-word vector slots. Register I/O
+offsets and data-memory addresses have separate units.
 
 ## Instruction effect timing
 
@@ -67,6 +137,68 @@ bridge. It does not interpret AVR opcodes or reparse generated WASM. WAIT
 returns to the host with saved operands; resuming skips completed bus effects.
 Reset cancels that context before it can be spilled back. PC/SREG retirement
 and a zero-length trailing phase can commit at the exact observation deadline.
+
+`optimizePhaseLocals:true` is an explicit optional resumable-emitter setting;
+the default remains the original full-context path. Generation-time read/write
+and branch annotations identify locals needed after each WAIT, including the
+clock expression evaluated again on resume. An old value is dead only when
+every continuing branch overwrites it before a read. The phase emitter spills
+that mask and restores it according to the saved stage. No emitted WASM is
+reparsed or interpreted; all annotations disappear before serialization.
+The 80-byte native context layout is unchanged, and unused temporary slots are
+unspecified scratch rather than architectural AVR state. Observable registers,
+bus effects, flags, counters and phase boundaries retain their existing contract.
+The translation cache includes the setting, and SPM recompilation preserves it.
+
+### Optional bounded control-flow regions
+
+`boundedRegions:true` requires `resumable:true` and is disabled by default.
+`lib/avr-wasm-regions.js` finds cyclic strongly connected components of at most64
+decoded words containing register-only ALU operations, RJMP, BRxx, SBRC/SBRS and
+CPSE. It emits each accepted PC as arithmetic plus WASM `block`/`loop`/`br_table`
+control flow. AVR words are never interpreted at execution time. Memory/I/O,
+stack, indirect transfers, system operations and SREG bit-set/clear instructions
+leave the region before their effects. Every original instruction entry and
+basic block remains available as a fallback.
+
+An invocation admits at most32 source instructions, reduced by the caller's
+instruction limit. The entire worst-case span must lie strictly before the
+native event/deadline, overflow and numeric capacity limits, with no pending
+enabled IRQ, IRQ delay or active continuation and enough64-bit retirement
+headroom. CLKI retains its zero batching budget and all source transitions.
+The region preloads the statically used GPR union once, avoiding a validity
+branch on every read. It stages byte-masked GPR writes, full SREG, PC and actual
+instruction/cycle totals in WASM locals. ASR sign-extends the cached byte; pair
+operations use the same cached registers. Full flags are computed initially;
+this option does not add cross-block flag elimination.
+
+The native phase clock sees the incoming architectural registers and advances
+by the exact actual path's AVR cycles. Only successful completion commits the
+staged state and retirement count. Reset/fault or unexpected WAIT discards the
+staged writes and cannot replay that clock span through a basic-block fallback.
+Rejected guards retain the original phase path for partial observations. Explicit
+runtime options enter cache identity and survive SPM recompilation; packages
+load the embedded region code, but changed Flash is regenerated using runtime
+options, as with other optional offline transforms.
+
+```sh
+node web-player/scripts/transpile-avr.mjs firmware.hex cpu.wasm --device --resumable --bounded-regions
+node web-player/scripts/package-attiny13a.mjs pack firmware.hex device.json --configuration physical.json --bounded-regions
+```
+
+The package configuration must enable `resumable:true` and provide physical
+clock configuration (an OSCCAL table or CLKI profile). The standalone command
+selects a resumable ABI; its loader must configure that physical clock as well.
+`--bounded-regions` applies to newly generated translations. Optional offline
+`--optimize` remains a separate preparation step.
+
+Measured Node22/V8 results: HQ4 physical execution1.45x; a synthetic direct
+loop11.27x; no established speed gain for rhythmic/Lumière, CLKI or active ADC.
+Physical firmware CPU modules grow1.36–1.67%. The subsequent
+[browser screen](../reports/bounded-browser-20261025.md) preserves exact parity
+but has underruns on all three physical firmware packages, including this
+option. Real-time acceptance and default activation remain open. See the
+[conditions, exact sources and evidence](../reports/bounded-regions-20261025.md).
 
 This optional path keeps SREG exact at every observable boundary. Register-only
 blocks can execute when their complete original cycle span lies strictly before

@@ -9,6 +9,7 @@ excluded by [`EMULATION_SCOPE.md`](EMULATION_SCOPE.md).
 |---|---|---|
 | AVR decoder and WASM emitter | `lib/avr-transpiler.js` | Decode machine instructions, lower effects and flags, emit WASM functions and instruction blocks |
 | CPU continuation lowering | `lib/avr-wasm-phases.js` | Split generation-time clock barriers into saved phases; emit native WASM control and local spills without an opcode interpreter |
+| Phase temporary analysis | `lib/avr-phase-locals.js` | Optional generation-time local/branch annotations and backward liveness; strip annotations before serialization, retaining the full-context oracle |
 | Target registry | `lib/devices/profiles.js` | Select a supported device explicitly and reject unregistered targets |
 | ATtiny13A profile | `lib/devices/attiny13a-profile.js` | Flash/data geometry, PC wrapping, register placement and legacy hardware hooks |
 | Manufacturer definitions | `vendor/microchip/ATtiny_DFP/3.4.278/` | Original register, bit, fuse, vector and memory definitions with versioned provenance |

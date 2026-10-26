@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: watchdog elapsed ticks match BigInt at period/fallback and uint64 boundaries
+ok 1 - watchdog elapsed ticks match BigInt at period/fallback and uint64 boundaries
+  ---
+  duration_ms: 3.055
+  type: 'test'
+  ...
+# Subtest: free-running watchdog fractions accumulate while disabled for divisible and arbitrary rates
+ok 2 - free-running watchdog fractions accumulate while disabled for divisible and arbitrary rates
+  ---
+  duration_ms: 2.4198
+  type: 'test'
+  ...
+# Subtest: watchdog timeout scanner preserves fractional endpoints in both time contracts
+ok 3 - watchdog timeout scanner preserves fractional endpoints in both time contracts
+  ---
+  duration_ms: 0.8042
+  type: 'test'
+  ...
+# Subtest: internal reset pulse and external CLKI startup keep watchdog numerator phase
+ok 4 - internal reset pulse and external CLKI startup keep watchdog numerator phase
+  ---
+  duration_ms: 1.081
+  type: 'test'
+  ...
+# Subtest: disabled watchdog preserves clock and phase across 500 service intervals
+ok 5 - disabled watchdog preserves clock and phase across 500 service intervals
+  ---
+  duration_ms: 1.133
+  type: 'test'
+  ...
+# Subtest: enabling watchdog discards disabled history and keeps the first timeout edge
+ok 6 - enabling watchdog discards disabled history and keeps the first timeout edge
+  ---
+  duration_ms: 0.7193
+  type: 'test'
+  ...
+# Subtest: WDR preserves off-state oscillator phase and clears only the active counter
+ok 7 - WDR preserves off-state oscillator phase and clears only the active counter
+  ---
+  duration_ms: 0.3659
+  type: 'test'
+  ...
+# Subtest: WDCE expires on delivered CPU cycles while the watchdog counter is disabled
+ok 8 - WDCE expires on delivered CPU cycles while the watchdog counter is disabled
+  ---
+  duration_ms: 0.3347
+  type: 'test'
+  ...
+# Subtest: reset preserves off-state oscillator phase and WDRF or WDTON forces enable
+ok 9 - reset preserves off-state oscillator phase and WDRF or WDTON forces enable
+  ---
+  duration_ms: 0.5472
+  type: 'test'
+  ...
+# Subtest: rates exceeding the base frequency diagnose overflow before a bus observation
+ok 10 - rates exceeding the base frequency diagnose overflow before a bus observation
+  ---
+  duration_ms: 0.5528
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3520.6731

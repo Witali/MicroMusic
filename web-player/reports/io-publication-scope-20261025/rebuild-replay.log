@@ -1,0 +1,119 @@
+Built import-free ATtiny13A device C/WASM: 118670 bytes; 16 sources; 111 exports
+TAP version 13
+# Subtest: I/O scope preserves zero-work and restores raw shadows on execution: compatible
+ok 1 - I/O scope preserves zero-work and restores raw shadows on execution: compatible
+  ---
+  duration_ms: 51.0625
+  type: 'test'
+  ...
+# Subtest: direct native/generated entry retains full clock publication: compatible
+ok 2 - direct native/generated entry retains full clock publication: compatible
+  ---
+  duration_ms: 2.3146
+  type: 'test'
+  ...
+# Subtest: I/O scope preserves zero-work and restores raw shadows on execution: physical
+ok 3 - I/O scope preserves zero-work and restores raw shadows on execution: physical
+  ---
+  duration_ms: 75.7816
+  type: 'test'
+  ...
+# Subtest: direct native/generated entry retains full clock publication: physical
+ok 4 - direct native/generated entry retains full clock publication: physical
+  ---
+  duration_ms: 1.3355
+  type: 'test'
+  ...
+# Subtest: I/O scope preserves zero-work and restores raw shadows on execution: clki
+ok 5 - I/O scope preserves zero-work and restores raw shadows on execution: clki
+  ---
+  duration_ms: 3.6085
+  type: 'test'
+  ...
+# Subtest: direct native/generated entry retains full clock publication: clki
+ok 6 - direct native/generated entry retains full clock publication: clki
+  ---
+  duration_ms: 1.566
+  type: 'test'
+  ...
+# Subtest: unknown CLKI WAIT and a zero physical deadline preserve unserviced shadows
+ok 7 - unknown CLKI WAIT and a zero physical deadline preserve unserviced shadows
+  ---
+  duration_ms: 6.3872
+  type: 'test'
+  ...
+# Subtest: configuration cross-effects remain visible within a batch and at partial edges
+ok 8 - configuration cross-effects remain visible within a batch and at partial edges
+  ---
+  duration_ms: 102.5635
+  type: 'test'
+  ...
+# Subtest: scope cleanup survives a real WASM trap and a pre-execution host exception
+ok 9 - scope cleanup survives a real WASM trap and a pre-execution host exception
+  ---
+  duration_ms: 3.759
+  type: 'test'
+  ...
+# Subtest: nested native scope admission fails without publishing or releasing the owner
+ok 10 - nested native scope admission fails without publishing or releasing the owner
+  ---
+  duration_ms: 1.6129
+  type: 'test'
+  ...
+# Subtest: reset cancels a partial store and republishes configuration: power=false
+ok 11 - reset cancels a partial store and republishes configuration: power=false
+  ---
+  duration_ms: 65.6208
+  type: 'test'
+  ...
+# Subtest: reset cancels a partial store and republishes configuration: power=true
+ok 12 - reset cancels a partial store and republishes configuration: power=true
+  ---
+  duration_ms: 4.7408
+  type: 'test'
+  ...
+# Subtest: peripheral faults inside execution and an existing CPU error release the scope
+ok 13 - peripheral faults inside execution and an existing CPU error release the scope
+  ---
+  duration_ms: 66.7854
+  type: 'test'
+  ...
+# Subtest: optional scope validates exact WASM signatures and historical absence
+ok 14 - optional scope validates exact WASM signatures and historical absence
+  ---
+  duration_ms: 28.2102
+  type: 'test'
+  ...
+# Subtest: package validation rejects incomplete or mistyped optional scope exports
+ok 15 - package validation rejects incomplete or mistyped optional scope exports
+  ---
+  duration_ms: 42.0121
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 585.2969
+4-way rhythmic-compatible
+4-way rhythmic-physical
+4-way lumiere-stereo-compatible
+4-way lumiere-stereo-physical
+4-way hq4-chego-auto-compatible
+4-way hq4-chego-auto-physical
+4-way kernel-compatible-direct
+4-way kernel-physical-direct
+4-way kernel-clki-20m-div1
+4-way kernel-clki-20m-div256
+4-way kernel-internal-20m-div1
+4-way kernel-internal-20m-div1-adc-active
+4-way kernel-clki-20m-div1-adc-active
+4-way kernel-internal-20m-div1-watchdog-active
+4-way kernel-clki-20m-div1-watchdog-active
+Exact controls passed: C:\Work\MicroMusic\.worktree\avr-to-wasm\build\replays\io-publication-hqbEz9\parity-replay.json
+Isolated replay: C:\Work\MicroMusic\.worktree\avr-to-wasm\build\replays\io-publication-hqbEz9
+{"timings":320,"warmups":160,"snapshots":6992,"comparisons":6762,"tracePairs":7,"candidateTests":1711}

@@ -3,9 +3,9 @@ export const DEFAULT_ENGINE = 'wasm';
 // Load only the selected engine: JS playback also works without WebAssembly.
 export async function createRenderer(entry, sampleRate, controls, engine = DEFAULT_ENGINE) {
   if (!['js','wasm','transpiled','device'].includes(engine)) throw new Error('Unknown AVR engine: ' + engine);
-  if(entry.device==='attiny88'&&!['js','wasm'].includes(engine))throw Error('ATtiny88 requires the JS or WASM engine');
+  if(entry.device==='attiny88'&&engine==='device')throw Error('The physical device engine supports only ATtiny13A');
   if(entry.devicePackage){
-    if(engine!=='device')throw Error('An ATtiny13A package requires the device engine');
+    if(!['device','transpiled'].includes(engine))throw Error('An ATtiny13A package requires the device engine or AVR → WASM');
     const {createPackageRenderer}=await import('./renderer-package.js');
     const renderer=await createPackageRenderer(entry,sampleRate,controls);renderer.engine=engine;return renderer;
   }

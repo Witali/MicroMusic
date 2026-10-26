@@ -30,7 +30,9 @@ Integration
    model convention, not a prediction of the voltage of a physical short.
 5. Timer0 uses timer_outputs(enabled, levels, stamp) for PB0/PB1. The output
    override changes the PORT value, not the DDR output-enable bit. PORTB retains
-   the software latch. Other alternate functions and debugWIRE are not modeled.
+   the software latch. The board additionally connects CLKI on PB3 to GPIO,
+   ADC3 and physical pin capture; debugWIRE configurations remain unsupported.
+   ATtiny13A has no CLKOUT pin role or CKOUT fuse (Tables10-3 and17-3/17-4).
 6. Invoke clock for individual rising/falling clkI/O edges in the C scheduler,
    or use the bounded advance API described below for stable spans.
    Timestamps use explicit uint64 half-cycle units; input changes before/after
@@ -95,7 +97,7 @@ solver, oscillator/fuse startup, brown-out or reset-pin timing. External RESET
 detection belongs to the system reset controller. No full-chip claim is made.
 Interrupt synchronizers use the documented phase/edge topology; silicon behavior
 inside the metastability aperture and under undersized pulses is unspecified.
-The core still needs to connect the bus, clock, reset and interrupt APIs.
+The full-device board already connects the bus, clock, reset and interrupt APIs.
 
 Verification
 

@@ -1,0 +1,223 @@
+{
+  "deviceSourceSha256": "9e2c4a6e61647d73fd4a572e115cb598235ad0f8709158b0b8d198b540984569",
+  "officialMapSha256": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+  "registers": [
+    {
+      "symbol": "ANALOG_ADCSRB",
+      "name": "ADCSRB",
+      "io": 3,
+      "data": 35,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "ANALOG_ADCL",
+      "name": "ADCL",
+      "io": 4,
+      "data": 36,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "ANALOG_ADCH",
+      "name": "ADCH",
+      "io": 5,
+      "data": 37,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "ANALOG_ADCSRA",
+      "name": "ADCSRA",
+      "io": 6,
+      "data": 38,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "ANALOG_ADMUX",
+      "name": "ADMUX",
+      "io": 7,
+      "data": 39,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "ANALOG_ACSR",
+      "name": "ACSR",
+      "io": 8,
+      "data": 40,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "SYSTEM_DIDR0",
+      "name": "DIDR0",
+      "io": 20,
+      "data": 52,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "SYSTEM_PCMSK",
+      "name": "PCMSK",
+      "io": 21,
+      "data": 53,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "SYSTEM_PINB",
+      "name": "PINB",
+      "io": 22,
+      "data": 54,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "SYSTEM_DDRB",
+      "name": "DDRB",
+      "io": 23,
+      "data": 55,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "SYSTEM_PORTB",
+      "name": "PORTB",
+      "io": 24,
+      "data": 56,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "SYSTEM_MCUCR",
+      "name": "MCUCR",
+      "io": 53,
+      "data": 85,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "SYSTEM_GIFR",
+      "name": "GIFR",
+      "io": 58,
+      "data": 90,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "SYSTEM_GIMSK",
+      "name": "GIMSK",
+      "io": 59,
+      "data": 91,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "SYSTEM_WDTCR",
+      "name": "WDTCR",
+      "io": 33,
+      "data": 65,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "SYSTEM_MCUSR",
+      "name": "MCUSR",
+      "io": 52,
+      "data": 84,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "NVM_EECR",
+      "name": "EECR",
+      "io": 28,
+      "data": 60,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "NVM_EEDR",
+      "name": "EEDR",
+      "io": 29,
+      "data": 61,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "NVM_EEARL",
+      "name": "EEARL",
+      "io": 30,
+      "data": 62,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "NVM_SPMCSR",
+      "name": "SPMCSR",
+      "io": 55,
+      "data": 87,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "TIMER0_PRR",
+      "name": "PRR",
+      "io": 37,
+      "data": 69,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "TIMER0_GTCCR",
+      "name": "GTCCR",
+      "io": 40,
+      "data": 72,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "TIMER0_TCCR0A",
+      "name": "TCCR0A",
+      "io": 47,
+      "data": 79,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "TIMER0_TCCR0B",
+      "name": "TCCR0B",
+      "io": 51,
+      "data": 83,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "TIMER0_TCNT0",
+      "name": "TCNT0",
+      "io": 50,
+      "data": 82,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "TIMER0_OCR0A",
+      "name": "OCR0A",
+      "io": 54,
+      "data": 86,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "TIMER0_OCR0B",
+      "name": "OCR0B",
+      "io": 41,
+      "data": 73,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "TIMER0_TIFR0",
+      "name": "TIFR0",
+      "io": 56,
+      "data": 88,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "TIMER0_TIMSK0",
+      "name": "TIMSK0",
+      "io": 57,
+      "data": 89,
+      "group": "software-or-reset"
+    },
+    {
+      "symbol": "CLKPR",
+      "name": "CLKPR",
+      "io": 38,
+      "data": 70,
+      "group": "dynamic"
+    },
+    {
+      "symbol": "BODCR",
+      "name": "BODCR",
+      "io": 48,
+      "data": 80,
+      "group": "dynamic"
+    }
+  ]
+}
