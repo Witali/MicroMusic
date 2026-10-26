@@ -24,3 +24,10 @@ the exact values depend on input and supply conditions. Tests use explicit
 synthetic parameters and compare exact/adjacent boundaries, not guessed silicon
 calibration. The [retained evidence](../../web-player/reports/comparator-physical-20261026.md)
 records tests, source/runtime identities and default-mode active-IRQ output parity.
+
+An additional [independent BigInt phase oracle](../../web-player/tests/attiny13a-comparator-osccal.test.mjs)
+checks 3574 scenarios in eight groups: positive/negative OSCCAL changes,
+pending propagation/reference startup at CLKPR /1 and /8, quantized edge ties,
+zero-delta service and held external CLKI. It derives expected deadlines without
+production timing helpers. All eight groups pass; these checks validate the
+selected digital convention and do not measure silicon oscillator settling.
