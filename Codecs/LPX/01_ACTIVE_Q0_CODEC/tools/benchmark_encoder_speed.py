@@ -16,7 +16,7 @@ import joint_rate
 def sha(data):return hashlib.sha256(data).hexdigest()
 def load(path):return json.loads(Path(path).read_text(encoding='utf-8'))
 
-def baseline(path,expected):
+def baseline(path,expected,model_mode='original'):
     path=Path(path)
     if sha(path.read_bytes())!=expected:raise ValueError('Baseline source hash changed')
     model_path=path.with_name('q0_model_reference.py')
@@ -27,19 +27,21 @@ def baseline(path,expected):
     model.ROOT=Path(__file__).resolve().parents[1]
     spec=importlib.util.spec_from_file_location('joint_rate_reference',path)
     module=importlib.util.module_from_spec(spec);sys.modules[spec.name]=module;spec.loader.exec_module(module)
-    module.coefficient_trace=model.coefficient_trace
-    module.decode_pcm16=model.decode_pcm16
+    if model_mode=='original':
+        module.coefficient_trace=model.coefficient_trace
+        module.decode_pcm16=model.decode_pcm16
+    elif model_mode!='current':raise ValueError('Unknown baseline model mode')
     return module
 
 def clock(call):
     started=time.perf_counter();result=call();return time.perf_counter()-started,result
 
-def run(baseline_source,baseline_sha256,inputs,output,repeats=5,micro_loops=20):
+def run(baseline_source,baseline_sha256,inputs,output,repeats=5,micro_loops=20,baseline_model_mode='original'):
     if not 3<=repeats<=9 or not 1<=micro_loops<=100:raise ValueError('Use3..9 paired repeats and1..100 micro loops')
     cases=load(inputs)['cases']
     if not cases or len({c['id'] for c in cases})!=len(cases):raise ValueError('Missing or duplicate benchmark cases')
     protect_outputs([baseline_source,inputs,*[Path(c[k]) for c in cases for k in ('reference','seed')]],[output])
-    old=baseline(baseline_source,baseline_sha256)
+    old=baseline(baseline_source,baseline_sha256,baseline_model_mode)
     # Reuse deterministic synthetic inputs; expected values were frozen before edits.
     tests=Path(__file__).resolve().parents[1]/'tests';sys.path.insert(0,str(tests))
     from test_joint_trellis_exact import inputs as trellis_inputs,output_hash
@@ -58,7 +60,9 @@ def run(baseline_source,baseline_sha256,inputs,output,repeats=5,micro_loops=20):
             elapsed,_=clock(lambda:micro(module));times[name].append(elapsed)
     result={'schema':1,'timing_protocol':'Alternating paired repeats in one process, all output caches bypassed; JIT warmup measured separately.',
         'baseline_source_sha256':baseline_sha256,'current_source_sha256':sha(Path(joint_rate.__file__).read_bytes()),
-        'baseline_model_source_sha256':sha(Path(baseline_source).with_name('q0_model_reference.py').read_bytes()),
+        'baseline_model_mode':baseline_model_mode,
+        'original_reference_model_sha256':sha(Path(baseline_source).with_name('q0_model_reference.py').read_bytes()),
+        'baseline_model_source_sha256':sha((Path(baseline_source).with_name('q0_model_reference.py') if baseline_model_mode=='original' else Path(__file__).with_name('q0_model.py')).read_bytes()),
         'current_model_source_sha256':sha(Path(__file__).with_name('q0_model.py').read_bytes()),
         'python':platform.python_version(),'numpy':np.__version__,'numba':numba.__version__,
         'threads':{k:os.environ.get(k) for k in ('OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','NUMBA_NUM_THREADS')},
@@ -101,4 +105,5 @@ if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('baseline_source',type=Path);ap.add_argument('baseline_sha256');ap.add_argument('inputs',type=Path);ap.add_argument('output',type=Path)
     ap.add_argument('--repeats',type=int,default=5);ap.add_argument('--micro-loops',type=int,default=20)
-    a=ap.parse_args();run(a.baseline_source,a.baseline_sha256,a.inputs,a.output,a.repeats,a.micro_loops)
+    ap.add_argument('--baseline-model',choices=('original','current'),default='original',help='Use current model on both sides to isolate the joint kernel')
+    a=ap.parse_args();run(a.baseline_source,a.baseline_sha256,a.inputs,a.output,a.repeats,a.micro_loops,a.baseline_model)

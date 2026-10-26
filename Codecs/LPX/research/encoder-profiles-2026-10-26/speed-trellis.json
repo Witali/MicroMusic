@@ -1,0 +1,151 @@
+{
+  "schema": 1,
+  "timing_protocol": "Alternating paired repeats in one process, all output caches bypassed; JIT warmup measured separately.",
+  "baseline_source_sha256": "9b0cdedf2d58d00536c149e73b9ac23fe7cc0a4dbaea4f07ff735473823c48bf",
+  "current_source_sha256": "c84c61aa103fb6943f4932f21d71fe3d18bf88b2a04efcd6df4a485e648b0634",
+  "baseline_model_source_sha256": "dedef3bc558d8dd9a4f2c8079ae7e88c418f7391c7928febd22e2a7f2bd2ed7b",
+  "current_model_source_sha256": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+  "python": "3.12.14",
+  "numpy": "2.5.4",
+  "numba": "0.68.0",
+  "threads": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "NUMBA_NUM_THREADS": "1"
+  },
+  "repeats": 3,
+  "trellis_cases": 300,
+  "micro_loops": 10,
+  "trellis_jit_or_warmup_seconds": {
+    "before": 0.05892449989914894,
+    "after": 0.16262670001015067
+  },
+  "trellis_hashes": {
+    "before": "f52ec7e1134b63d4b2d6b2dbfbe2b56b9159dd266959f22c20cdffe9e408954e",
+    "after": "f52ec7e1134b63d4b2d6b2dbfbe2b56b9159dd266959f22c20cdffe9e408954e"
+  },
+  "trellis_seconds": {
+    "before": [
+      0.1691990999970585,
+      0.19966040016151965,
+      0.17678019986487925
+    ],
+    "after": [
+      0.06230600015260279,
+      0.11739249993115664,
+      0.05968350009061396
+    ]
+  },
+  "cases": [
+    {
+      "id": "case-01",
+      "kind": "speech",
+      "seed_nominal_bps": 8000,
+      "samples": 32000,
+      "reference_sha256": "ce6b5617bbf1c87ca3cf95b1725752dd5b5af8ddef4b0f634cf0f75e21fec36a",
+      "seed_sha256": "6a4a1dbad4775cf70c82d139d3265c0f6e43804bdb2d4de79705c3a60ad765b1",
+      "options": {
+        "beam": 4,
+        "lam": 0.1,
+        "kind": "speech"
+      },
+      "output_sha256": "f0090bd0ea38680619d02daded3aa74bb978920ad1e0562290a644310a3ed1b2",
+      "pcm16_sha256": "1a7470f3cc3a4bf1e47a1f2fc26c9f3c3e8c4b59771184ceafa9bb7297c64156",
+      "pwm_sha256": "103a7a4973ae079d9771cb3459c3092e3065826debdd1b3eb6c9b331100d8e69",
+      "file_bytes": 5061,
+      "output_file_bps": 10122.0,
+      "native_model_exact": true,
+      "warmup_seconds": {
+        "before": 4.840298400027677,
+        "after": 1.3732131000142545
+      },
+      "seconds": {
+        "before": [
+          4.4384488998912275,
+          4.404157599899918,
+          4.480549299856648
+        ],
+        "after": [
+          1.3963470000308007,
+          1.3004743999335915,
+          1.4200234001036733
+        ]
+      },
+      "time_reduction_percent": 68.53975270358478
+    },
+    {
+      "id": "case-02",
+      "kind": "speech",
+      "seed_nominal_bps": 12000,
+      "samples": 32000,
+      "reference_sha256": "f6d20e20e2e7fa5a6634ec7c44fc1e831335738bbc5f942bdcda07039db759f9",
+      "seed_sha256": "f1fce9a17da2bb0643e876fb7218ee1e9b5e9a447afe5aa157a14571335aacd3",
+      "options": {
+        "beam": 4,
+        "lam": 0.03,
+        "kind": "speech"
+      },
+      "output_sha256": "b284c17d4366a59f0503091e530fdbd80e8ac2678c7118af163144225eb0fc92",
+      "pcm16_sha256": "5fedbd5d3cfb090f45978803348e9fca3777f850fad1269439166627d6aa44db",
+      "pwm_sha256": "049215635e12780d755b78e9f5e38c68eaf4698c280531e76bd624886ecfe975",
+      "file_bytes": 4189,
+      "output_file_bps": 8378.0,
+      "native_model_exact": true,
+      "warmup_seconds": {
+        "before": 4.652099800063297,
+        "after": 1.2073784000240266
+      },
+      "seconds": {
+        "before": [
+          4.64092450006865,
+          4.884476299863309,
+          4.560574400005862
+        ],
+        "after": [
+          1.2856294000521302,
+          1.2816707999445498,
+          1.3556162000168115
+        ]
+      },
+      "time_reduction_percent": 72.29798933309273
+    },
+    {
+      "id": "case-03",
+      "kind": "music",
+      "seed_nominal_bps": 16000,
+      "samples": 32000,
+      "reference_sha256": "0220655b5077359ec5ed6bae71c4291c3b33309bb33f838df524ef8f09ba4d10",
+      "seed_sha256": "d6817c44ee53aee8fb83c4bd470cb236a7095ea1b81bbffdcc0f7d36a7f47399",
+      "options": {
+        "beam": 4,
+        "lam": 0.01,
+        "kind": "music"
+      },
+      "output_sha256": "91bab15c45fe04b11994f7469bb2af7fd6827156010d02451bd1387c4be3b0b5",
+      "pcm16_sha256": "d93372b1936f852f3979abe3a9c1a65d636bcdb56a2deeae38b377edcdc8d57c",
+      "pwm_sha256": "b727ab4cedd95ca116f86bbc3df9738c60531c3bb57f36c3a8079282cf6ecf6d",
+      "file_bytes": 5840,
+      "output_file_bps": 11680.0,
+      "native_model_exact": true,
+      "warmup_seconds": {
+        "before": 4.833625300088897,
+        "after": 1.3727397001348436
+      },
+      "seconds": {
+        "before": [
+          4.935688400175422,
+          4.62507739989087,
+          4.506364600034431
+        ],
+        "after": [
+          1.4602363999001682,
+          1.617139199981466,
+          1.017475999891758
+        ]
+      },
+      "time_reduction_percent": 68.42784944670066
+    }
+  ],
+  "decoder_modified": false,
+  "trellis_time_reduction_percent": 64.75510255094974
+}
