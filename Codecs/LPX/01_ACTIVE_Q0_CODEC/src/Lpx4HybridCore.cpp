@@ -505,8 +505,8 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     const uint8_t t=(uint8_t)(sub*2+1);
     const uint8_t localT=(uint8_t)(t%width);
     for(uint8_t i=0;i<10;i++){
-        const int32_t d=(int32_t)curLpc_[i]-prevLpc_[i];
-        a_[i]=clamp((int32_t)prevLpc_[i]+truncShift(d*localT,LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2),-32767,32767);
+        a_[i]=lpx4LpcInterpolate(prevLpc_[i],curLpc_[i],localT,
+            LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2);
     }
     return;
 #else

@@ -84,11 +84,32 @@ __attribute__((noinline)) static void ringCase(int32_t excitation,const int16_t*
     for(uint8_t i=0;i<20;i++)if(mirrored[i]!=beforeRing[i])math_error=20;
     ++math_cases;
 }
+template<uint8_t bits> __attribute__((noinline)) static void lpcCase(int16_t prev,int16_t cur,uint8_t t){
+    const int16_t actual=lpx4LpcInterpolate(prev,cur,t,bits);checkZero(actual);
+    const int32_t expected=prev+((int32_t)cur-prev)*t/(1L<<bits);
+    if(actual!=expected)math_error=21;
+    ++math_cases;
+}
 int main(){
 #ifdef __AVR__
     TCCR1A=TCCR1B=0;OCR1A=1999;
     TIMSK1=_BV(OCIE1A);TCCR1B=_BV(WGM12)|_BV(CS10);sei();
 #endif
+    const int16_t anchors[]={-32768,-32767,-16384,-256,-1,0,1,255,16384,32766,32767};
+    for(uint8_t p=0;p<11;p++)for(uint8_t c=0;c<11;c++){
+        for(uint8_t t=0;t<=4;t++)lpcCase<2>(anchors[p],anchors[c],t);
+        for(uint8_t t=0;t<=8;t++)lpcCase<3>(anchors[p],anchors[c],t);
+        for(uint8_t t=0;t<=16;t++)lpcCase<4>(anchors[p],anchors[c],t);
+    }
+    uint16_t anchorBits=0;
+    do{
+        const int16_t p=(int16_t)anchorBits,c=(int16_t)(anchorBits*40503U+17U);
+        lpcCase<2>(p,c,anchorBits%5);lpcCase<3>(p,c,anchorBits%9);lpcCase<4>(p,c,anchorBits%17);
+    }while(++anchorBits);
+    for(uint16_t i=0;i<20000;i++){
+        const int16_t p=(int16_t)random32(),c=(int16_t)random32();
+        lpcCase<2>(p,c,random32()%5);lpcCase<3>(p,c,random32()%9);lpcCase<4>(p,c,random32()%17);
+    }
     const uint16_t coefficients[]={0,1,127,128,255,256,4095,8192,11469,16383,16384};
     for(uint8_t c=0;c<11;c++){
         uint16_t bits=0;

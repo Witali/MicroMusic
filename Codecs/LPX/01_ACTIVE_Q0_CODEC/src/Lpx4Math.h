@@ -52,6 +52,34 @@ static inline __attribute__((always_inline)) int16_t lpx4CosineInterpolate(int16
     return (int16_t)(lo+(product>>4));
 }
 
+// Convex signed16 LPC anchors, t=0..2^bits, bits=2/3/4.
+// Preserve prev + trunc((cur-prev)*t / 2^bits), including a signed17
+// difference. The convex result already fits signed16; no clamp is needed.
+static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t prev,int16_t cur,uint8_t t,uint8_t bits){
+#if LPX4_USE_AVR_ASM
+    int32_t product;
+    int16_t delta;
+    uint8_t negative;
+    __asm__(
+        "clr %2\n\tmovw %A1,%A4\n\t"
+        "sub %A1,%A3\n\tsbc %B1,%B3\n\tbrge 1f\n\tdec %2\n\t1:\n\t"
+        // delta's low word is unsigned; negative differences subtract t<<16.
+        "mul %A1,%5\n\tmovw %A0,r0\n\tclr %C0\n\t"
+        "mul %B1,%5\n\tadd %B0,r0\n\tadc %C0,r1\n\t"
+        "sbrc %2,7\n\tsub %C0,%5\n\tclr __zero_reg__\n\t"
+        // Bias only negative products to retain division toward zero.
+        "andi %2,%6\n\tadd %A0,%2\n\tadc %B0,__zero_reg__\n\tadc %C0,__zero_reg__\n\t"
+        ".rept %7\n\tasr %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
+        "add %A0,%A3\n\tadc %B0,%B3\n\t"
+        : "=&r"(product),"=&r"(delta),"=&d"(negative)
+        : "r"(prev),"r"(cur),"r"(t),"M"((1U<<bits)-1),"I"(bits)
+        : "r0","r1","cc");
+    return (int16_t)product;
+#else
+    return (int16_t)(prev+((int32_t)cur-prev)*t/(1L<<bits));
+#endif
+}
+
 // Byte-aligned shifts avoid a 12/14-iteration 32-bit shift loop at AVR -Os.
 // The low byte cannot affect a floor right shift. Restore sign after 24 bits.
 #define LPX4_SHIFT_BODY(N) \

@@ -2809,6 +2809,24 @@ all six long controls, including +100 IRQ cycles, pass.97 host tests and
 explicitly hashed round7 validation; no new arithmetic benchmark is claimed.
 [Full corpus and retained evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: exact convex LPC interpolation with a signed17 delta
+
+AVR5/GCC7.3 -Os. Signed16 anchors and t in0..width, width4/8/16, prove
+prev+trunc((cur-prev)*t/width) stays within the anchors. No final clamp is
+required. Keep the wrapped16-bit difference plus its true signed comparison
+flag, multiply its two unsigned bytes by t, subtract t from product byte C
+when delta was negative. The signed24 product plus negative-only width-1
+bias preserves division toward zero. Shift2/3/4 and add prev. Clear r1 before
+return. The wide portable C expression stays explicitly selectable on AVR.
+
+Measured round9:2804033000 ->2783055441 cycles over91 full IRQ images,
+0.748121% less time,-96 B Flash/image, unchanged1102 B SRAM, minimum stack
+margin820 B. Static-spectrum streams rarely use this work, limiting aggregate
+gain. Golden PCM16/PWM and useful AVR PWM exact; all long IRQ controls pass.
+97 host tests and nine C/ASM/generic x unroll builds with5,223,048 cases pass,
+including260,359 new edge/dense/random interpolation vectors and r1/IRQ.
+[Full scope and retained measurements](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

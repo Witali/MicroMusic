@@ -1,3 +1,6 @@
+Раунды1–9 завершены; слабых подряд1. Следующий раунд10 — pitch predictor.
+См. README и round-09*.json.
+
 Раунды1–8 завершены; слабых подряд0. Следующий раунд9 — LPC interpolation.
 См. README и round-08*.json.
 
