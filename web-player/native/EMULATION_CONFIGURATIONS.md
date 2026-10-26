@@ -25,6 +25,12 @@ implementation. The site profile retains its existing fast paths and supported
 subset. Its musical output and full supported CPU/timer state remain covered
 by the existing differential tests.
 
+Full ATtiny13A catalog construction can reuse verified generated WASM from a
+[bounded persistent cache](../lib/avr-persistent-cache.README.md) across Worker
+restarts. Every instance starts with fresh CPU/peripheral memory and queues.
+This preserves the selected hardware and conservative verification policy;
+site engines and packaged-runtime loading retain their existing paths.
+
 ## Historical evidence
 
 The full model was retained, not replaced by the music model:

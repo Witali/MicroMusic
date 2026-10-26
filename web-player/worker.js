@@ -1,4 +1,4 @@
-import { createRenderer, DEFAULT_ENGINE, DEFAULT_EMULATION_CONFIGURATION } from './lib/engines.js?v=20261026-emulation-config';
+import { createRenderer, DEFAULT_ENGINE, DEFAULT_EMULATION_CONFIGURATION } from './lib/engines.js?v=20261026-persistent-cache';
 let renderer, entry, port, engine = DEFAULT_ENGINE, configuration=DEFAULT_EMULATION_CONFIGURATION, controls = {cutoff:4000,volume:1};
 let messages = Promise.resolve();
 
@@ -25,7 +25,8 @@ self.onmessage = ({data}) => {
     if (data.type === 'init') {
       entry = data.entry; configuration=data.configuration??DEFAULT_EMULATION_CONFIGURATION; controls = data.controls ?? controls;
       renderer = await createRenderer(entry, data.sampleRate, controls, data.engine,configuration);engine=renderer.engine;
-      self.postMessage({type:'ready',engine,configuration,emulationModel:renderer.emulationModel,state:renderer.core.state()});
+      self.postMessage({type:'ready',engine,configuration,emulationModel:renderer.emulationModel,
+        translationCache:renderer.translationCache??null,state:renderer.core.state()});
     } else if (data.type === 'audio-port') {
       controls = data.controls ?? controls;
       port?.close();

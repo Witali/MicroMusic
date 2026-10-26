@@ -20,7 +20,7 @@ Current status, 2026-10-26: **22/30 checklist items complete, eight open**.
 The newly completed item is explicit verification/site delivery (`8b813c70`),
 not a newly measured hardware feature. Earlier21/30 counts below are historical
 checkpoints. Timer0 TOP=0, debugWIRE, physical measurements, exclusive profiling,
-register-traffic optimization and persistent/region translation caching remain
+register-traffic optimization and region translation caching remain
 open under their original acceptance criteria.
 
 ADC power-sequencing audit, `9b9015b4`: the full device now diagnoses PRADC
@@ -201,8 +201,17 @@ not a completed refactor or a reason to close remaining hardware items.
   identities; invalidate changed Flash regions after self-programming.
   A bounded in-process module cache now uses the exact padded Flash image,
   compiler options, ABI and runtime module identity. Clocks/fuses stay in each
-  runtime instance; changed Flash invalidates by image. Region-level
-  retranslation and a persistent cache remain open.
+  runtime instance; changed Flash invalidates by image. A bounded persistent
+  IndexedDB cache now reuses validated generated WASM across full-device Worker
+  restarts, keyed by initial Flash/EEPROM, the source graph, native bytes,
+  normalized clock/fuse/hardware configuration and compiler policy. All1933
+  tests pass, including real SPM after a hit under compatible, physical and
+  external CLKI clocks. Eight browser checks reproduce hardware state, PCM and
+  physical pin audio with798 active interrupts. The accepted binary format
+  improves warm construction by paired median3.10–3.13x on two firmwares;
+  first-use validation/storage costs extra. See the
+  [measurement and rejected JSON format](../reports/persistent-cache-20261026.md).
+  Region-level retranslation remains open; the combined item is not closed.
 - [x] Evaluate moving audio filters into WASM using measured costs.
   JS DSP took 0.17–0.29 ms per 250 ms audio, compared with 262–872 ms capture.
   Keep the filters in JS while optimizing the coupled native execution path.

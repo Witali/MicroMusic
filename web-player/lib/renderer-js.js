@@ -20,17 +20,21 @@ function validateControls(cutoff, volume) {
   if (!Number.isFinite(cutoff) || cutoff <= 0 || !Number.isFinite(volume) || volume < 0 || volume > 1)
     throw new Error('Invalid audio configuration');
 }
+export function validateRendererInput(entry, sampleRate, {cutoff = 4000, volume = 1} = {}) {
+  if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000) throw new Error('Invalid audio sample rate');
+  validateControls(cutoff, volume);
+  if (!Number.isFinite(entry.pwmHz) || entry.pwmHz <= 0) throw new Error('Invalid audio configuration');
+  const profile = resolveAVRProfile(entry.device,{cpuHz:entry.cpuHz});
+  if (![1,2].includes(entry.audioChannels||1)) throw new Error('Unsupported audio channel count');
+  return profile;
+}
 
 export class Renderer {
   constructor(entry, sampleRate, {cutoff = 4000, volume = 1, filtered = true} = {}, Core = AVRCore, coreOptions={}) {
-    if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000) throw new Error('Invalid audio sample rate');
-    validateControls(cutoff, volume);
-    if (!Number.isFinite(entry.pwmHz) || entry.pwmHz <= 0) throw new Error('Invalid audio configuration');
-    const profile = resolveAVRProfile(entry.device,{cpuHz:entry.cpuHz});
+    const profile = validateRendererInput(entry,sampleRate,{cutoff,volume});
     this.core = typeof Core==='function'
       ? new Core(parseHex(entry.flashHex, profile.flashBytes), entry.eepromHex ? parseHex(entry.eepromHex, profile.eepromBytes) : null, {target:profile.id,cpuHz:profile.cpuHz,...coreOptions}) : Core;
     this.channels=entry.audioChannels||1;
-    if(![1,2].includes(this.channels))throw new Error('Unsupported audio channel count');
     this.nextValue=this.channels===2?()=>this.core.nextStereoDuty():()=>this.core.nextDuty();
     this.sampleRate = sampleRate; this.ratio = entry.pwmHz / sampleRate;
     this.frames = 0; this.phase = 0; this.first = true; this.filtered = filtered;

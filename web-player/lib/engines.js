@@ -17,9 +17,10 @@ export async function createRenderer(entry, sampleRate, controls, engine, config
     renderer.engine=engine;renderer.configuration=configuration;renderer.emulationModel='packaged-device';return renderer;
   }
   const physical=engine==='device'||verification&&!tiny88;
-  const { Renderer } = await (physical ? import('./renderer-device.js?v=20261026-emulation-config') : engine === 'js' ? import('./renderer-js.js?v=20261026-emulation-config') : engine === 'transpiled' ? import('./renderer-transpiled.js?v=20261026-emulation-config') : import('./renderer.js?v=20261026-emulation-config'));
+  const rendererModule = await (physical ? import('./renderer-device.js?v=20261026-persistent-cache') : engine === 'js' ? import('./renderer-js.js?v=20261026-emulation-config') : engine === 'transpiled' ? import('./renderer-transpiled.js?v=20261026-emulation-config') : import('./renderer.js?v=20261026-emulation-config'));
+  const {Renderer}=rendererModule;
   const options=verification&&!tiny88?nominalVerificationDeviceOptions(entry.cpuHz):executionOptions(configuration);
-  const renderer = physical||engine==='js'||engine==='transpiled'
+  const renderer = physical?await rendererModule.createDeviceRenderer(entry,sampleRate,controls,options):engine==='js'||engine==='transpiled'
     ? new Renderer(entry,sampleRate,controls,undefined,options) : new Renderer(entry,sampleRate,controls,options);
   renderer.engine = engine;
   renderer.configuration=configuration;

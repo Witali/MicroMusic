@@ -327,6 +327,17 @@ async function validateCode(translated,runtime,flash,manifest,version=PACKAGE_VE
   return embedded;
 }
 
+/** Normalize the same hardware options used by self-contained packages. */
+export function packageConfiguration(input={}){return normalizeConfiguration(input);}
+
+// Reuse the package's complete executable/ABI checks when immutable runtime,
+// firmware and configuration inputs are already supplied by the caller.
+export async function validateTranslation({flash,configuration={},translated,runtime,manifest}){
+  return validateCode(code(translated,PACKAGE_LIMITS.translated,'translated'),
+    code(runtime,PACKAGE_LIMITS.runtime,'runtime'),image(flash,1024,'Flash'),manifest,
+    PACKAGE_VERSION,normalizeConfiguration(configuration));
+}
+
 /** Return a self-contained JSON-serializable object; Flash is padded with 0xff. */
 export async function createPackage({flash,eeprom,configuration={},translated,runtime,manifest}){
   flash=image(flash,1024,'Flash');eeprom=image(eeprom,64,'EEPROM',true);
