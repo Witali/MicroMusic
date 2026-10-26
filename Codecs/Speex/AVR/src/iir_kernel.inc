@@ -96,9 +96,10 @@
     st Z+, r22
     st Z+, r23
     movw r8, r30
-    com r22
+    /* NEG sets C iff the original low byte was nonzero. The high-byte
+     * subtract therefore supplies the exact two's-complement carry. */
     com r23
-    subi r22, 255
+    neg r22
     sbci r23, 255
     /* Y advances to the next sample without a separate address calculation.
      * Mirror/age offsets compensate for the two postincrements. */
