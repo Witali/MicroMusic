@@ -2535,54 +2535,71 @@ C fallback remains exact but 146.538% and 32390 underruns. Sources/tables and
 backend selectors are unchanged; this is not an arithmetic speedup or a
 27-case/hardware admission claim. [Three-case measurements and listening provenance](../../Codecs/LPX/research/q0-8kbps-2026-10-25/README.md).
 
-### LPX: exact table reduction and next decoder candidates (host proof only)
+### LPX: exact smaller tables and measured Q0 synthesis
 
-The current Q0 tables admit smaller exact representations. The original
-project [standard-library checker](examples/lpx-exact-tables.py) verifies
-256 scale values, 257 cosine values and all 4096 interpolated cosine inputs.
-This is an algebraic host proof, not assembled code or a measured AVR gain.
-It applies to the pinned table hashes printed by the checker.
+Applicable target: ATmega328P / AVR5 hardware multiply, AVR-GCC 7.3.0,
+GNU C++11 / AVR ABI, `-Os`, 16MHz CPU / 8kHz audio. ASM still requires
+`LPX4_ENABLE_ASM=1` and the supported architecture macros; explicit C on
+the same AVR remains available. Real avr-libc Flash access is independent
+of the arithmetic selector. Original project derivations below build on
+the existing AVR201/Speex partial-product provenance retained in the source.
 
-For the scale index `i`, store sixteen unsigned16 mantissas (32 B), then
-compute `((mantissa[i & 15] >> (15 - (i >> 4))) + 1) >> 1`. The largest
-mantissa is 8032, every intermediate fits unsigned16 and shifts are 0..15.
-All 256 values exactly match the current 512 B table, including zero aliases.
-The mantissas were derived by intersecting the sixteen integer rounding
-intervals for each low nibble; no approximate exponential is required.
-For cosine, keep indices 0..128 and recover later indices by
-`cos[i] = -cos[256-i]`, including index 256. Its table falls 514 to 258 B.
-Combined raw tables fall 1026 to 290 B (736 B); helper code reduces the net
-Flash saving and must be measured. Keep real Flash reads outside arithmetic.
+The [standard-library checker](examples/lpx-exact-tables.py) proves the
+integer identities for the pinned original tables. For scale index `i`,
+sixteen unsigned16 mantissas reconstruct every value exactly with
+`((mantissa[i & 15] >> (15 - (i >> 4))) + 1) >> 1`. Mantissas were derived
+by intersecting sixteen integer rounding intervals for each low nibble.
+The largest is 8032; all intermediates fit unsigned16, shifts are 0..15,
+including zero aliases. Keep cosine nodes 0..128 and use
+`cos[i] = -cos[256-i]` above 128. Preserve the 16-bit endpoint index 256.
+All 256 scales, 257 nodes and 4096 interpolated inputs match exactly.
+Raw tables shrink 1026 to 290 B; the complete measured implementation
+including helper code saves 600 B Flash and adds a 2 B block-step cache.
 
-Candidate order for AVR5/GCC7.3.0 `-Os`, explicit ASM with portable C fallback:
+Implemented sequence in `Lpx4HybridCore.cpp` and `Lpx4Math.h`:
 
-1. Cache the scale value per 80-sample block instead of reading it every sample;
-   add 2 B state, handle repeat/implicit-zero modes and repeated `begin()`.
-   Combine with compact scale arithmetic at block boundaries, not per sample.
-2. Remove `previousQuant_[10]` only after proving its invariant with `cur_`:
-   current initialization and successful frame updates assign equal values.
-   This removes 20 B of array storage; measure final object alignment/code.
-3. Replace the excitation's generic signed16 multiply with a separate exact
-   signed8-by-positive12 helper; retain the full-range generic math interface.
-   Later consider fusing excitation-minus-LPC in a signed24 accumulator,
-   preserving each product's Q12 floor, clipping and history update order.
-4. Avoid repeated static-spectrum LPC copies. A transition from changing to
-   static spectra still needs the final anchor copied. Optional bandwidth
-   expansion modifies the coefficients, so it must not silently accumulate.
-5. Only after timing improves, retest queue 256 / unroll 3 on the new corpus;
-   smaller buffers previously failed a different longer/heavier workload.
+1. Reconstruct/cache the scale only at 80-sample block boundaries. Scale
+   repeats retain the cache; implicit-zero blocks retain the scale state;
+   repeated `begin()` resets both. Never shift the mantissa per sample.
+2. Remove the duplicate 20 B `previousQuant_` array after proving equality
+   with `cur_` on initialization, successful and partial frame updates.
+3. Copy static LPC once per frame, retaining the changing-to-static endpoint
+   transition. With bandwidth expansion, reload the original coefficients
+   every 20 samples before expansion so multiplication does not accumulate.
+4. Use a separate exact signed8 x unsigned12 excitation helper: two `mulsu`
+   products, sign extension of the low product, carry into the high byte,
+   and restore `r1`. Keep generic signed16 math unchanged. Preconditions:
+   step 0..4095 (actual codec 0..4016), any signed8 input.
+5. Seed a signed24 LPC accumulator with excitation and subtract each
+   individually floor-rounded Q12 product while shifting history in reverse.
+   With |excitation| <= 524288, ten full-range signed16 pairs and every
+   partial sum fit signed24. Extend the final sign to signed32, then clip.
+   Do not replace per-product floor with a single floor after summation.
 
-For smaller streams, extend the current multi-seed shortlist to retain a
-size/time frontier rather than only the minimum-SSE candidate. Reuse the
-existing offline timing gate, then measure full ELF and active-IRQ bursts
-for the finalists. Exact mode repacking already exists; a shorter Rice or
-sparse description can cost more CPU. Do not assume additive cycle costs
-across changed bit alignment/IRQ phases, or add a new entropy decoder first.
+Measured simavr matrix: 111 golden points / 91 unique four-second streams,
+27 cases at 12/16k plus three 8k cases. Queue512/prefill384/unroll9 saves
+670 B Flash and 18 B static SRAM on every image; decode wall time falls
+3.63--4.49% (mean paired reduction 4.00%). Mean budget range 58.06--78.23%
+becomes 55.46--75.36%, SRAM 1102 -> 1084 B, zero underruns. Native PCM16/PWM
+and all full-ELF useful PWM bytes match the original golden hashes.
+All C/ASM/generic x unroll1/3/9 pass 1,097,849 arithmetic cases each with IRQ,
+including exhaustive excitation, extreme/random LPC sums, history and r1.
+Host regression: 92 tests; ASan/UBSan: 566,610 reset/truncation/mutation cases.
 
-No decoder, format or default profile changes are made by this note.
-Require full native/C/ASM PCM and active-IRQ AVR PWM equivalence, malformed
-input tests, per-stream total ELF/SRAM/stack, 160-sample windows and long
-continuous playback before claiming speed, size or real-time support.
+Queue256/prefill160/unroll3 saves another 416 B Flash and 256 B SRAM but is
+slower. It passes all 91 streams and the old heavy continuous eight-second
+standard workload, which previously had 431 underruns. That old workload
+still fails +100 extra cycles/audio IRQ on both queue profiles. C stays
+PWM-exact but does not meet 8kHz on the measured 91 streams. These results
+cover active-IRQ simulation, not physical hardware or arbitrary app load.
+
+The explicit offline candidate selector measures a bounded shortlist before
+forming a quality/file/Flash/mean-time/160-sample-burst frontier. Never drop
+a candidate using only its size/quality dominance before measuring time:
+a larger, lower-quality stream can still decode faster. In the retained
+male12 trial, 5547 B takes 1476.384 cycles/sample versus the 5570 B baseline's
+1306.319; the timing gate correctly rolls back. Defaults are unchanged.
+[Full paired results, source hashes, C fallback, IRQ limits and reproduction](../../Codecs/LPX/research/q0-decoder-size-speed-2026-10-26/README.md).
 
 ## UM88: page-local FIFO
 
