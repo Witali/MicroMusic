@@ -1,0 +1,844 @@
+{
+  "unique_streams": 91,
+  "samples": 2912000,
+  "comparison": "Fresh complete native PCM16/PWM SHA256 equality to frozen golden outputs; complete active-IRQ AVR PWM equality to the original speed baseline.",
+  "scope": "Differences are relative to the frozen decoder output, not the source WAV. Existing codec distortion is unchanged on these streams.",
+  "current_report_sha256": "dc3335416a2890bb8adb65318aad5e4a1f8342f03062f20b0765135b46af86ba",
+  "baseline_report_sha256": "94526acaa5e62606010e302756e202f62a3c25cbd56aa201f4e713d29eb8919a",
+  "manifest_sha256": "4e70e5103ab14aab92312d8cc027a11899d0651650657e7c667db1036d70de89",
+  "source_sha256": {
+    "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "ab0f7994379963ddd87091971b3c30ce8b770467651a6143e3ea70487ad9ac80",
+    "Lpx4HybridCore.h": "e9d41d9a56bda8cf714148280c9303c9c0311c05ab82f120d81cefae0ce7801c",
+    "Lpx4Math.h": "03c727b785cdee594e74c2342480473af39cce1fac6f33d0f3db86a159fb2730",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+    "harness": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+    "runner": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52"
+  },
+  "physical_hardware_measured": false,
+  "images": {
+    "87682472457f1bd1a4ad11c00a1c49111391fdab50e7690a6e0866637c6d3788": {
+      "samples": 32000,
+      "pcm16_sha256": "ac4162307f559acc7fd8b65561277dc09aab4da621cba32f805671199d9fb447",
+      "pwm_sha256": "ed7760ac78bc52a6751aa24c13191c5e63ffee8cea7678609cb6be273593fa5b",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "23d0446ebd2012c77abdff63741a9296de64c5a21d9a6bacbd0b12801f6a7e51"
+    },
+    "e1addd9254e318c25443920e4626bd2670865c233a59c93fc9ec89e8509ade70": {
+      "samples": 32000,
+      "pcm16_sha256": "7ac1321452eeef8ba2dd2d955d56a5a5baf810a95386d9a23ab1cee6b4646351",
+      "pwm_sha256": "477b4cf3c56719249fd7be3ccf0a711b058a4f1416a9ba3606c9bb7beb937b67",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "77c83a9de78fce174d1d41414494fbda45130ac6c23cba018cf078d947b9228b"
+    },
+    "f1fce9a17da2bb0643e876fb7218ee1e9b5e9a447afe5aa157a14571335aacd3": {
+      "samples": 32000,
+      "pcm16_sha256": "0c4f0614f3f8027f9b0a49478fe43e1a6093ad7977c4ac3a6c5716a8f65b5c55",
+      "pwm_sha256": "290afcfec0a21ed06d30108d63b31d97ed4f4ee912909f91357ef9343ba1ed11",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "6f03529b68f8d778e720b5ee8a194542daae69a3222b2482a4bd90e9df5bc636"
+    },
+    "f20baaf2197578621e5d41dea94350fdfd0e2ce3aa5068d5d11565697bb3b4b9": {
+      "samples": 32000,
+      "pcm16_sha256": "31c95a6f77e61eae26a54e63a5872a956d33a819d55624cb4ddc23cc90ca7872",
+      "pwm_sha256": "47ff5b3cf7834d1a088718aba4bd696ae9d88834205f6b6187bbe15f25b147a1",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "afde99cee7599ed27ecb8a07d72bc2d05f6915691c28949632f3ea0721c4f9f9"
+    },
+    "95247e25daf8792b6c18cacff81db8048480a4df7b89089a0ebc6037e61adae0": {
+      "samples": 32000,
+      "pcm16_sha256": "84ff80945b3d821ff54f6deae3e15145330ce367078482c4f6b9926b3af377df",
+      "pwm_sha256": "6be4340c6eb92de10a6a475636602534f91a3be9c4b726d8348d3a8215c5aa01",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "ba87d710f275bda583d430d697899b721b7ec512bad9308d92cdf9df98c6dc8f"
+    },
+    "bdf6f1c6a2c500e9169b5a42dd03b657bd36aa1ab83d62cee6f73ba84fb2061b": {
+      "samples": 32000,
+      "pcm16_sha256": "158817add3a0987e0b377f752ad0e03a67e196eee72740556cc80a29bde6975f",
+      "pwm_sha256": "b13414a8426433435e416ac786807881b3c22b8fca300e169813afea1d29058c",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "97373b9706835ddbe83f1cf4d09f9ff2a30c29459030e7e74a9c5d998d6f643f"
+    },
+    "66db2f4bf1681baa781cd0d0372aff89d9347a4233c1148013fd918721e72402": {
+      "samples": 32000,
+      "pcm16_sha256": "95a66a9c62398859c4657e0a8a124a8a62d3dd76186e25e80e1831551d6e6cc7",
+      "pwm_sha256": "8bea031f70da1994e960e93b24a6558511103724f142ab2cbcca8120c7d93f18",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "62aee1bf1086585f8a59f7adbcfaea2eb4c993279fdc37f2a007b09ea7cce314"
+    },
+    "6a8ce9164f470efa91dee0938a691e9c5125039e1f906b1316bc3ea1d7e1934f": {
+      "samples": 32000,
+      "pcm16_sha256": "df37815bb8ae6343b17348d6796801f43f4c2756a64a50a99ca89287a0e7d68c",
+      "pwm_sha256": "d0e4781d59eb91c827f51503dd205e590d25bb9dd050e5d1c6f6760392c225a2",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "67014fd78ad4c49f3bc01f21086713012d345a2d501efd6996cec1d2a1dc2529"
+    },
+    "3e1e28d1a1094d21e581e8114e1cf237218a9194ca3889d4ba74e7b9d126add8": {
+      "samples": 32000,
+      "pcm16_sha256": "0283b177d4e6ab69bcace91880998c793554bcec1f5cb70b76cb545201130ffb",
+      "pwm_sha256": "9707de5a90ee25464cfc60230ccf9390bf44f9a3ade142b26f345f02a5a05e2a",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "b0c11f3367b2f6a510c918b96ff9edcfe6dc529b32bb24cbc30f237076fa85aa"
+    },
+    "0285282c6bd115d51e6ee896fe9c05d64e169393e0616f54ba1d5745e63b5d1f": {
+      "samples": 32000,
+      "pcm16_sha256": "7e53b8f2f65921231c38ab5699adfd2756f73277749bea3670a5f0329dbee026",
+      "pwm_sha256": "3ae0ab1069887c0a14a33be49f598ab336aab97e19966617f2beeac3f8430f08",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "3247d92d323f7e57815c577643b36b7e61969a30dafcc138ac6b24a55212f2d4"
+    },
+    "add41d54cd13593bb7384bb70e48cbdb551f608a7de0d134f7ad6f4f27b55687": {
+      "samples": 32000,
+      "pcm16_sha256": "324e7ec7f27faa39e05954695adf0be448d6b10c433ed2b8fce7369154f33027",
+      "pwm_sha256": "d681f3d8fe675505d49c76e0fa7c0b438c7b38ec348d342162a8620ad4fa294e",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "eec0d7ebc349059c9920953237e14c59a784110e3c4f272c28797ac14a247c85"
+    },
+    "44866717e82e3997b3a3939f4cecdd7a3634f502c52ee8ede58c25032bc71190": {
+      "samples": 32000,
+      "pcm16_sha256": "49a77443f1b3acb722552ba8717c563354ff4f587be81914988df892aec6626a",
+      "pwm_sha256": "fcdbc06f1773fed127672f05d567c4c3b643ed3a930f3613744d4da2f5f8b693",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "c0e5733398db37cddf9f2c2b334b33f06e07977c27c7c7798f3427bfa21ddf6a"
+    },
+    "8849ffe7446e6c5f825d5aeaded7ce04e8e5b9bfaf310e8bb1cdfd04394872b0": {
+      "samples": 32000,
+      "pcm16_sha256": "337d906022709621d9cb79f007154614f04856a06fbab4da0d6c39763b1ac9ee",
+      "pwm_sha256": "2ef00328a4d5fc8c6ac10502f0faee2e355c95e77645d65c811b8e3c35e90bf5",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "d2839230d5f67587cf20275f64418d76fd313b3c5ec4b459f05995c366b05490"
+    },
+    "e25a96cd6d8f27497f5a3f442038e48f9804c547964bf81e7bfc3bce31d1ffd0": {
+      "samples": 32000,
+      "pcm16_sha256": "e1c2a010eb4e5dbc80df0ac5a6272e1703603d87f75d87456c8e8157f7f8cc54",
+      "pwm_sha256": "b2ebf50069b7b6333b6bad0e368879956c7a544c2c415b39be26ae55cd72b308",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "3c47ea27f5299587e3f79cfef342be4a3c57d6efa1ad7495dc28406d08af3b19"
+    },
+    "39ab74189e6da61aec8504eabf2669061519cb425f72c7377fdc00a3dc00ca28": {
+      "samples": 32000,
+      "pcm16_sha256": "423677195cfcb2fb5cb837de30b7701440a4ee492b0e7f7f468353b4904f7a2e",
+      "pwm_sha256": "413af89d2f796ba7b8ac3a46893c405e329eaf7b9f99cd35426a23360b5440a6",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "dac5ab1ced5488e60b21d7ca36e3ab0e318d45eeea911e457a834fd58febddbe"
+    },
+    "0a925589c647c6da097a65da40970599ac9e1ae6fb259314995d73992c953a93": {
+      "samples": 32000,
+      "pcm16_sha256": "da5fb54b01d0b310a7d700efee2a795383b6085ed18ae9faba69a0f6e22c3b41",
+      "pwm_sha256": "34d88f329130979041588bad86e2072049cd5470b87d35cde039584321758c1c",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "b0d0d8052b52b4915ed52cc4071f978947299ee87dd17a70cb71691d3d2cf9dd"
+    },
+    "89e93dbae391fea9834ca7d75b88a8f6d3cbf4f27863e2a74e18b4abba19b8e4": {
+      "samples": 32000,
+      "pcm16_sha256": "8c0289f3c1cd27ac71db1f424821f7fff821755957a4f7c66481b4495aae9833",
+      "pwm_sha256": "bcebcaa1474500806beba8389a6d1d0af884fd2083d8a886e9998f45f8cf9494",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "39566a0072167425f3b6d95a72f3c28e837eca07942d155208a314e314a1a1d3"
+    },
+    "0c657cc3eac04278420b5902995506d83d524ac4d70f9abb253492390a394944": {
+      "samples": 32000,
+      "pcm16_sha256": "0c30d3071f611869397379f3cb6f3544de02477833809b6a287a033083b62d04",
+      "pwm_sha256": "40f950aeef2746fc43353746171f7dcce5db11adb3cd3bafd777ce8e2d3db580",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "017355ae6e4c463a3ef8f4b032d5bca4747d2a4595f8f832bb03eea334e60d35"
+    },
+    "ae449503d2fb3d4f448a8dc80c0afd42f794b8c8351ed8d236e0e890028a631b": {
+      "samples": 32000,
+      "pcm16_sha256": "e1394c4358ed68bd1084a1129f2acad3ce85c358b956922a8f79dd2422017352",
+      "pwm_sha256": "044e10d8856babdc8d9012fb8eef1f1fddc2c3c1002c99b65c718d0484895317",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "0123865e9620060646ddf5879fd453a9bd77595b100dea736b76f91a2a4a5608"
+    },
+    "825992f8a49952fb08fac2666fac38f7ad1ab35bead9f41c3afad0f13a8f4f34": {
+      "samples": 32000,
+      "pcm16_sha256": "01a370401b01e0c7be342df5d9465cfc79535025d84f8379fa0e2ac3b51eb4f3",
+      "pwm_sha256": "ecb49f3b33ce207580dcc4a6d1a40dbc3e3cc1999c63055a465c37f0f091d592",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "841672acf99fb0e8914c27fd7655ab0a052eeec9f2d9fb105e7e591bba2e1824"
+    },
+    "46e967eb9a7e1ae4b079d94edf173e69913090a83dae49e9305135cea4622af9": {
+      "samples": 32000,
+      "pcm16_sha256": "8d0ef64dae99175bec2927741a378b318fdb35df947623ed3fd5366d719f4e28",
+      "pwm_sha256": "bde57c2553f686aa35b72681aeec3e51356d19db065bf8fa5aa28b5b5d7b83bf",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "17aa00d6b207607432e9c2351512e334a2cce97565caad8b83a920502d116794"
+    },
+    "47664c50eb521aa40077cf920a631676f0afdabee9c154d4152c768ba1f87a91": {
+      "samples": 32000,
+      "pcm16_sha256": "2d1c7a62312d58c1ba593440a2fb2a57bde4f5349684e214285570a4dae71437",
+      "pwm_sha256": "9c84e8491669326faa1c81d5977bf0b32cbedc2354478d12233ec20872cdb6d5",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "d66b913be1bc952bf702a1a800ee676616dfeeee67f75316cec5c4fb39868448"
+    },
+    "ac6b87c56a9f9dd77c30104a3e904ce81674963e32d8925bee944887f69b8ace": {
+      "samples": 32000,
+      "pcm16_sha256": "524f02b8bf54330a097a90943e7efc2b3ee1ca4c440251d9813068286ace1138",
+      "pwm_sha256": "be1d8bd4e428253897d9754a14d11de5bee0e801a874f4b2a148a3742de5d0c2",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "12c0823e77c5d322762a1f70873132bc1209f8f001cc026a6d240b3fd0d8989b"
+    },
+    "1d34accb298bc326fd3f086f5bc72bfcc5023bb4cc4d82c503e800d88b9c3591": {
+      "samples": 32000,
+      "pcm16_sha256": "4c7e0c32858b42f212840d1bec9e2f50d3bb49c263add6bc57a892a8e5718639",
+      "pwm_sha256": "e270ab67902640cabb5b6de0a904ad5fbba177dbca2fd65a083763f5a2475dc3",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "69563d514129b64fe72eb7c467acd2282308c6c7f2ed3f26f7fa6593d52effc0"
+    },
+    "bd5ab009ad4931a0fb1480cadc4d00085038d78094232d661eaede1b5c92656d": {
+      "samples": 32000,
+      "pcm16_sha256": "152a92530a45b832bbf5ab8ef94f799de06905a294d543f018ae27dcde95082c",
+      "pwm_sha256": "41cc9b0c554faf289e07429c2e0bab05b6aa01067180476a57fb84799b23c321",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "1827039a3027af89cc0b1adfdc64a5b489fcfd2aaac7efa7be568b8b9b9e464b"
+    },
+    "ebb145108af2f762cca3ec603ce19c90ff860ba7957e864ed27bd24bbf762fa3": {
+      "samples": 32000,
+      "pcm16_sha256": "39493c20ba12b16f172b5ba12f410da401ca20323b0e4e6b5ac1b5af1cb4f036",
+      "pwm_sha256": "2fac16ee6db68d382bfe9a41139ad824ea9bbdb887e524173159e432c17c52e7",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "cc0c009f88cc077f65c7f5381fa4155a927323e75e4dc1c439249019f64ec6cc"
+    },
+    "e4c4f728b1fd2e912d2be3ceb6a4cbbf74836c75cf88e155b4a233c0accb0e69": {
+      "samples": 32000,
+      "pcm16_sha256": "30137d4e63ffee5dd7480e6d41158cb24cde9d27d3d6ba55c22a639bfce2cf21",
+      "pwm_sha256": "8b4248c28fd71f932fa28279557550c127432f2d8b3018cc3beaeecee9bd90c3",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "7ef2e5eff5adfab8b3117af74047541a2077981d66aa58b7eb4af2f73a454bdc"
+    },
+    "cb506e669d4dfba270a917272821e8ae1180ef8b1563f45e76aebfd98dc35604": {
+      "samples": 32000,
+      "pcm16_sha256": "60ff1ef86dc716cded1277fe718ccdcc766459532a5c271692c8f7667e78df4d",
+      "pwm_sha256": "5b6233032a93f62298f3cd1126eb9a65981ce1b6ff78292a4d416fe4351dd99e",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "64d81fb51539adbff1a9a30f8b224619ca37e239974d32fc705d55e4a641802c"
+    },
+    "e0b1537524ef50b9eea69db96e1b788a14f20b03936cb265b7b7437ddcabd66e": {
+      "samples": 32000,
+      "pcm16_sha256": "ceb92edd39fea627eae59b1e3eb3bf935bc544c5ec79893a52e9d7bf2519767a",
+      "pwm_sha256": "f201af097c1c3c7451a7f3d6d43b91dad23bc0847d984d5232e4666ce4e84f8f",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "368bee710c41c3caf3d5d76ac6f5cf94ff86699df4617ed3ce63407e80fabf49"
+    },
+    "f798c20722d8d07ea07b128e6f91b2e018f460ef17a286dc04147c62bc62eb62": {
+      "samples": 32000,
+      "pcm16_sha256": "ce3e1cc3169017f3e723f82d717f327a1ef613a6fd31a444470bc824533532c6",
+      "pwm_sha256": "1acd30d19f8d4335b6cfdc1005a94991b6487f85ffc0ac5ca1f7e163081d53dc",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "97c4b4c7f9196e2ab2d797535deab82f518e07f1f055c09d7d8cb0800a1582a3"
+    },
+    "1001348aeba95e73af032487d03a43a0a49e8b131d28ac278ae026dace9e2565": {
+      "samples": 32000,
+      "pcm16_sha256": "9cbc6b39799c769c50ae7fc89a4c5cf20e282b1b44d777e768d72ac5bb3b594a",
+      "pwm_sha256": "5b9c759a32c206779a67d3bde8783eb4988b854acd7d4e097cf4721c11d5c8a3",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "668091200283ffe19f0f4817eea44c8b6659734496fd9a25215aace75ecb721b"
+    },
+    "b6517c9525d81cad8628e969baec21176889bf4da5f097934379957872821696": {
+      "samples": 32000,
+      "pcm16_sha256": "ebce04dce477d1f0e789525d288ac27f4a553f8618e86ffe38d77238e8677ed5",
+      "pwm_sha256": "51a90aeea9aa5efa30c0d8dac44539b6003b23d98f9aeae4cfab34004d6a23be",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "0c0fc0b53afe33d041aa04acd0c9d8026e798fd5de9a67ba0377fdbec0430409"
+    },
+    "c310c73d15cf8b220cb4ddfe3a60549e81036eeadb2b4d839f3700060d679ae5": {
+      "samples": 32000,
+      "pcm16_sha256": "3ddb4f4182daf3d11bc37431698e3305dddd59254f851a4e64a44a46c57d57b0",
+      "pwm_sha256": "568b80b3c356a69228f5ec84e0d6caf33a048cea8414b61c05d2769b67aa44b9",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "0825a47782a9c0e322dd01e32e0f587e899dd35948d2505b8cad22bec49bd5f9"
+    },
+    "c19d33d0cee519afa0936e93acac22401c5a0f7719554901c1e2dc5d99046948": {
+      "samples": 32000,
+      "pcm16_sha256": "269673b35c346ac6ca8f28560a90cba968452a0570f9cf9d675b78038234589c",
+      "pwm_sha256": "3980a1ce1f745cb7a5e3de85373bf9d6ac291a002bf8b9b528eb6c6af8e6ea47",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "2bb22bf1ab4098b1a3dc41d2e1f0f03b6be0ddee8f76cec070126183565ce6d8"
+    },
+    "db148bebed0605a7c425df3f08c444557395d8089bafa1f6efdee0d31020d2a8": {
+      "samples": 32000,
+      "pcm16_sha256": "6c2cf7a6893871808e975c6bff05d7da01af91f064efc0dd9421b6b090dbc7cc",
+      "pwm_sha256": "c86aea2e4fc2879c885a8a33050d482a51f61d20a281081d2d9569dc9a5cec3f",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "5f895a1024d10b5c6c55d7c17b0ddcee6c77d9dbb37f789ff4664428f3f07327"
+    },
+    "e39618d8f1bfb692959b11499cd2169717903e93348d60daab537103342316d2": {
+      "samples": 32000,
+      "pcm16_sha256": "a1f874d8992cef275386df9557a9e3f47b1d4f50b6de19b2e875558c4fa88677",
+      "pwm_sha256": "e00dec15e0d5c0661d90e33b644e970a45d1b55bd6b5e4a70754decce1d57f07",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "517709ffe8033ec69cd05bd5ba91c18050e62ee36cb92e03b2a4a2c3cd235815"
+    },
+    "16c6a6561cf961ccb58477dc75de607e3bd9684aed1843241da593f35d75094e": {
+      "samples": 32000,
+      "pcm16_sha256": "d3630ffdfada056cce1d5a22b752541085f22a4c83baf6000d2354f0f301b1dd",
+      "pwm_sha256": "b340b590f2cc730e6454a5547ea917325406b2674e4196e03f1e51b45479ed90",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "30b60bf47615c7ee475d1c34db58f17ab2adda74bcbaf3074f70d7b2c0b5bce3"
+    },
+    "7ed3d795a80063237b8843569bbee337af158f555508021f6d2bbedcef661ece": {
+      "samples": 32000,
+      "pcm16_sha256": "391187c74f9de2e4bd45f6e079a8697171815cbb4aa4d57d970c4e714509827b",
+      "pwm_sha256": "ac8b48756bbcfd12234d68ff95568a39c7dd07e21da4c6683a99325115d205d1",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "c1a766ea9f93a8927574cf50cad26676d5d8c0f98404930faed64adb450f7ecf"
+    },
+    "5350390f36dc1145894f427cf02d4b099d9b6f7f71ef448f0fb7eada8b653301": {
+      "samples": 32000,
+      "pcm16_sha256": "6d010d48b6777598f955453f482ae38fcc0574b4eef79d10ced3c7847b879590",
+      "pwm_sha256": "3982667c1085ecfac3824c6a48e457e34930336979c13558c53e9d838655cd8e",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "2cd2b011ac911b633541086baaea45c23c42a4182f4987e67a90185b853dc8aa"
+    },
+    "b3e191a668e42b913ad41cb00f95c51751c498e050c470a2c89c704b88ffa8b2": {
+      "samples": 32000,
+      "pcm16_sha256": "9981b75bc7711708a87bab8b47203e58a3f13c0b483756fae50c91d56d54b89e",
+      "pwm_sha256": "2cbcbe0478970f4ecc67c51c628d1cd0de263a83b78e0d7a38f6be75bcd6eecc",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "ea7724899c28b291c21b905c270f8c629571e6e3dbb009df6fabe794c22e008f"
+    },
+    "6d8ead749026d8f441a67473a81ea5c7b3e03e69f088ac06c5364cda1696cbd9": {
+      "samples": 32000,
+      "pcm16_sha256": "95bcc0d627967ee2b6c967a5a4b7c1aa84d3cf078f4352e51d78eb67d0887fa2",
+      "pwm_sha256": "16c5c5a1c1a6cffef6e3256d3369181617d2296ad75ad598e76ec2401db26657",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "2341b3f7eb94bd509f825bf90a3abb75bb1f96010815343e37006f48becff663"
+    },
+    "a2e84dabc29702b83053a05fe89d281aec414920f52269a8247c05a18703a27c": {
+      "samples": 32000,
+      "pcm16_sha256": "4680372cacc6403a8686431ab3cd867c4524890da8c8816a51da74fabe51e3eb",
+      "pwm_sha256": "e62621f9e46fef946c2b51fab12064657d563b5068fcbdf98bf7c18e05406369",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "99190e49c8f16543f27600b4d2ed1b5f12514e36aec9eea141e07e35986750b0"
+    },
+    "31e467a7157e75e7bafb27042740fd07a90899b3ebdeba7ae22646385371eac3": {
+      "samples": 32000,
+      "pcm16_sha256": "75ec2f97a4f8953cc74f63be3bd7433bf7e94553d367016334c5d88949e234f7",
+      "pwm_sha256": "a49f9419f29912a2c3157d3b2dca991d527516e9c80c52894454ece10bc865c8",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "e61ff6334dd0b2cc331ebb2ae31276223182397e68149eebf9ba9ff2f1d178f3"
+    },
+    "36abd3cc90f9da434f3d6504a3fbb93ce68076bb49b2e77613a8957385eabc82": {
+      "samples": 32000,
+      "pcm16_sha256": "d4a03d4d4d459f0ea29304141a76b713cbc40f0e32ad51fdf71ae0278587acc8",
+      "pwm_sha256": "a67b803d4df800e03dbee1316720fa04f15d0ea9d137cc6ddf197c2059bc3bd9",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "9788d34068b88eedceeefec12333a3d5957f21f2a877566859fe904540c550f5"
+    },
+    "8443286e5177010f1c8cb1773302423e070e5301eebee9343247ecd535f1eb2f": {
+      "samples": 32000,
+      "pcm16_sha256": "0fb4267022399cddc5cb778fee8c141ca49d4ce4b4686818a6d9112c5639023e",
+      "pwm_sha256": "24a3422394e6b44902a7ea7106747287538038fcf348024ff48c154165154b2a",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "2eec64e1119cccd20e2724f98c1fb36e881f2db6163428f42115491955efecdb"
+    },
+    "d6817c44ee53aee8fb83c4bd470cb236a7095ea1b81bbffdcc0f7d36a7f47399": {
+      "samples": 32000,
+      "pcm16_sha256": "9f0bb52a2b3f62df136b7192a64498d136b4c7c6913902f49673af3588d893f0",
+      "pwm_sha256": "5c7d2d1515aa04734adc2e08368c4949042688b3f536e1c9a7ea30a59d587296",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "605e54fc9f898aeb6ec46ff7ae1d6e220dd304e93d41f5ea18cd8ee6be6dc494"
+    },
+    "eb3bfc25298022c03994144fbde79ca89f89f6c219ca075a27b81805614f4c62": {
+      "samples": 32000,
+      "pcm16_sha256": "c9f14044f2244ee8d8b0bef679d0d9ddb2c0356e16028daa25c7acac33ceaf71",
+      "pwm_sha256": "859a0e56edca985a47e9c1dea599d6998ef41dce12c9de0c6449c76a70969f66",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "5c8f5ae75a5ea8140bc5df46380c39a93bb7719e5136db8d9d61b65522636066"
+    },
+    "1246fc5af5a0f9666a8e01950c362d0a555e5d766434ce1ec7b89e365217da57": {
+      "samples": 32000,
+      "pcm16_sha256": "f1cab60a95462f528ab92f6997749330105f03a049cff08cb4bdf8ae8e13104e",
+      "pwm_sha256": "edee3cf81d5b01c1dd91c8bab554ffa1ec73e3de54eb1a094ff10ce02e7662f8",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "8b1f980e02f67d4f3f71630f7a00d9dbeb585241d1b34f63c7bedb69c4bd87d3"
+    },
+    "a031b41e87ef4b28334f01e4650564a7203e5433f1c0cf4cca9415dda8a6d54d": {
+      "samples": 32000,
+      "pcm16_sha256": "1961cd8f002afcc4624afeb7fb936f870dd031a5b1fb5919f8b031c356858cbc",
+      "pwm_sha256": "d903e036da10dcad212ee631156ab6738e88e1f3c9b094692eb9090443b49a1d",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "35fc7ab74a78d8aa0492c4304b19fb79d447d60cc9ecbec81422d973ab77c9c6"
+    },
+    "7357cbb2936d821166aa562b54e815aa1cf925e08da7fbd101256a452fa94d49": {
+      "samples": 32000,
+      "pcm16_sha256": "c312491bf457b2e84a34d305fabb10bfe0593b88c5acd07f53f177f74272d39c",
+      "pwm_sha256": "00b8d15d1d214c759af974e0738e86ff7344ad90b0fa941bf6fc12aa7bfe9ad2",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "217a502be8e65a4f62dcf579bcd09f0305e9bc1e37801335091a14892034b963"
+    },
+    "66f13bbb774fd3f5640a95b1297241d03c0c9f1c9a5006a06d2f5876f4456dd1": {
+      "samples": 32000,
+      "pcm16_sha256": "29d81d6711eca235fb06aa7034874965bf37a14ce379991c0498709285afa79f",
+      "pwm_sha256": "ff936aae38ee6ec8643d41d946273c38c5895640ad18c7d207ac55253384ecb1",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "4338eaa465b377d582c1b4f8361a469a02c29d46561d763ca3fd6168f84eb71e"
+    },
+    "f3c193b0df6d3cce2e586e9a091f07b213c0b96e62f0aae971162fe2f503fb17": {
+      "samples": 32000,
+      "pcm16_sha256": "ea9928397b81f18bb06ce19c98753a2d6ba16b92bc3cb211967422eb9c541c4d",
+      "pwm_sha256": "5a7203b86188cd9bd9def16e55799d14288b4c4aa065433b4ca659a332dde988",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "4ce4295b93f517187134bada511b8b6533e8bb5405d0df0a3ca2b043a4559b5c"
+    },
+    "31fd63ead24f7903f674d76dbd50ad6a3235821f92710e2f621d085c2ed9f45f": {
+      "samples": 32000,
+      "pcm16_sha256": "533c2bc5c8f00df0c07a0b4817ec23c04e76f70c92b03e5fbb0a3feacf06c37c",
+      "pwm_sha256": "6c5f4bfdc4b15e84ef31d3d79f7bc6f851748367d0ac7cd2bf7c037d47a3f65b",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "33732dfe567990a5799842249b0d614f8075e8b69e8422048d2b68d8af6707c8"
+    },
+    "bcd783b4a444b9c6a029bb094d06f48bcf6693295477c64ddfd08a4abb919f9c": {
+      "samples": 32000,
+      "pcm16_sha256": "d9ebdc940d77b0e2b8dfcbd0c99bd605f59ca0d221ec8f98926e64ac85641cbf",
+      "pwm_sha256": "33ef083a921afa279f80cd676ebec5573fc538bee55a4d4b0c558313e8cda121",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "e175ea26e69ac388d61c5b497ca15fdfb120bb6bea9b7b9d87287ff7b2ab0bb3"
+    },
+    "1e1384ae183eb592588bb26b8577734f6b58e372423487137f3f831629810752": {
+      "samples": 32000,
+      "pcm16_sha256": "f684302017f65719723e68e3b6818a5ff250b11e67b16d6278442567bd6c7924",
+      "pwm_sha256": "ab28a4cf43c553d254ab8b70331e369effd9d7aff95d165e9e3db1f2e4eab681",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "1cf16e8adb645f2bbabcdb2d5f996eb96a8364c6b0f357f4180b8f6f7c42e396"
+    },
+    "59bb30cc80e42b1ee13de85950d648b920a5fc45d4b13b87eabac52a1c7d3eae": {
+      "samples": 32000,
+      "pcm16_sha256": "a7245024449f0cd40cf5e5096a5c34f5c4befb1e97d8c608016cef1a692116af",
+      "pwm_sha256": "e5f75389fc0f4524c01ecde5daa8a6faaf9515ffc6aaabfdfd66e63ccf99aa6a",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "735d47f8b8bf2b3acb6e7b3fbb7af4751cad0130eb1d5226dff7fee55a930126"
+    },
+    "f4c5f346df4359c678156df75cb7766f6afb72aeb3d5096755ea2883e0c5f9cc": {
+      "samples": 32000,
+      "pcm16_sha256": "df3d923c6ebc1da31cb89cba8c28367267b8f6162f779450082bf9af7d6dd07d",
+      "pwm_sha256": "d83a90c69df5b609bfd67fae2384c6730ef156fe02a29b98dcf3c614a9e5e696",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "3782f3b143c2c2954d075e87baab73c5e87a1ddc7c41dc318d7b72deca34be5f"
+    },
+    "3ff2fcaa5aa0e4c117d60a02a6bcb8b0178c3dc783250c000e9e05147d33c019": {
+      "samples": 32000,
+      "pcm16_sha256": "3315ad8c7453c5888ea6d9d7fcb2c622f1b2891a30c3ec6dcd16d2d10be83055",
+      "pwm_sha256": "fbd4cd5e2b7598aeb890d9c2e526882c2ab06c114904be27c1a4498005aed020",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "58028b1ef25af5f31490941b0527c4056fead6958af18e898687d1bd0f22b8ed"
+    },
+    "7f5f7b7ee0bbcfbba172829d379853327e22c534a15905e789d874cfd7f672cf": {
+      "samples": 32000,
+      "pcm16_sha256": "51544631ddb7f5241bf00f49b466bacdc125f06b50df9d1b407b7784dfcf8d37",
+      "pwm_sha256": "e4fc9c08da4216cbcdb5343be9005d20785fcc8173cc570d88afe68ff4996214",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "bc85887b65afb4c573a1f293b02542b6fff4665d3783b7cdf265639478c532f6"
+    },
+    "8f18f16dbef00c2306b2ffbc9693482da8d05d7c2ed4a52cc0aef418533afa82": {
+      "samples": 32000,
+      "pcm16_sha256": "5de9f5a93c17a695aab1555212ae4c79c18b90a925bd6ff1fdf178f52643dfb6",
+      "pwm_sha256": "7d04b7c7d7539489190bf78588bc2d98d841e2115495613d1073f7af2f31f829",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "50ba1cef9b7bc474417cbf30133f332e2e069adf865061fd9b3499d85e8d94de"
+    },
+    "df187548a752f4ad88ff13ece5732292bbdce015ff6316665eeb07e8e25e3c76": {
+      "samples": 32000,
+      "pcm16_sha256": "1d7ecce6f9404493883ecd60f52a2e6b59fc17dbb404efc38ff0a298ccd5bbd5",
+      "pwm_sha256": "64b1b2b70dc12b493c31dedc2a985f2839fce8f8bb9bb3f550608165ab93957a",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "508c616e458c2caced61d8f8b866190a7cfce5eaced806300ea0c164911edea7"
+    },
+    "6c4fb0e1a2fae4671346577121601709e44b0153ac2c389cc5da094e17e8e9b8": {
+      "samples": 32000,
+      "pcm16_sha256": "ac4ffaa13d581217431837c1ccdf95a3091528e919755aaaeda1dde7045fda55",
+      "pwm_sha256": "2934a61a41bfa3bdfdb02bef16f85249f36a6ac188e6d1d6df78f310d17c1f24",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "ce074f363660916935e9ca30a1748b54772673b31eda3a506eb0ca95f250ce6e"
+    },
+    "5a37370571eaacd16d8a3924602d98aa1eb320a0eedd11200197e7d64cb926b8": {
+      "samples": 32000,
+      "pcm16_sha256": "4a1684adc694f918cd93357ad340d343664faea73dcb8c82f4630c1f7205a1fb",
+      "pwm_sha256": "3288bbfcb4cbd282bec26a95ba14f2fed14a5bf7e56ee764d9d4e626e06b5401",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "e1c442d8e1be7dc3e98abedfaa3eba59462c513e912cf9757c16a66a2b807d8f"
+    },
+    "3e041705445ad4ee34156cd3b67908111a57126140bba87e96cec3fd7dbd667e": {
+      "samples": 32000,
+      "pcm16_sha256": "8eb50250a921d52170f34782f37ed0863b21a85fc13027bdbe03462c5d84317f",
+      "pwm_sha256": "d8dcb7501e95caf7fc3ff9742ce19cc55662ccbe845f029f1281975eb4343af9",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "67d73e7f120a6d2ce9f27f449a033a28843e35f376b832d93ba7dc4166bf0e99"
+    },
+    "fa25ab4ee7ab0fb04595a97af64713de52b53347cf3cf57789592e5c39b73acb": {
+      "samples": 32000,
+      "pcm16_sha256": "389bcf8db0ca1744f8bdcc94494d92428cf1e6dfacca9350cffdf3f42b478437",
+      "pwm_sha256": "bce48908a404d2efc6c5faf15c6d210eee79af87883f04bf51dfb3468632030e",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "5b9b5f312fb97f3aca0a79a6059a590e67548c1b66737d3b022802f76bc81eb3"
+    },
+    "65eba0e267c542a20b730475289e5e5258812c6e4aea63d576e0cdc2bb598391": {
+      "samples": 32000,
+      "pcm16_sha256": "ad752573863dd77e52158081cecfa2624779f68a29eba073dd228b110c940b2e",
+      "pwm_sha256": "2b2185b11a83fcdd5b82e4bc9af55dbbde3cda0a626f4afea72a659d0ca0bbcf",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "27f1672a84b27087c3ac6bd8c54a2825765c6366a0ca4fc4250a15cb7f768956"
+    },
+    "6588222cf1e80ffee065504716cfc09e7e4f85ffb5316afb2fe0106126819594": {
+      "samples": 32000,
+      "pcm16_sha256": "a9bd2d83824bb09b9b1b8b8f600cbd30e3ff645a391e566f5b267d850528a03f",
+      "pwm_sha256": "dc8edb35962183cc222effe0a11fe757a3daeeaab4f3fb25e7658d91f4065dd0",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "fb7bfd2c3d068f5b48c20161d90e996a151ce37dcdbee62c0665a46f40bfc790"
+    },
+    "b68fd6775fc72d6ca402b78e21e2abf7d0c180323041e9d585b64159c2e91733": {
+      "samples": 32000,
+      "pcm16_sha256": "b713bca43b7560621af16acad78d8854b09c94af97bf35facaab909ddf42e05d",
+      "pwm_sha256": "45d403e11872faf2c83e5d6426d922e4171c4f21d91d13b16f78d881e23155f7",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "447722557baea241d3daf13e8888e839634604478181c1c9738427988b993b24"
+    },
+    "a0a32fd1e2109e3a3a02bde0854b46d890fa593ceee9fbb95287893c36c35ac7": {
+      "samples": 32000,
+      "pcm16_sha256": "770a2271dfce805cd11da10fde1da11914e2c08a8fc79ee354fa750f86e27f0f",
+      "pwm_sha256": "3b207c1386fd15f9a5b84c36dbda9ea36b82c09f31e93e03824d9f3510d69c91",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "1a32733f0a3cbd2858adf9516e4777fd62745b985602142149150dfbb73fd556"
+    },
+    "941597a27886fe55f2b187687558e29219d86ae4796d324284a38f7f5788f95f": {
+      "samples": 32000,
+      "pcm16_sha256": "fcb1389fa5be0e7d8f2dffd2e0b36322e794799e8285526ee9e7d1658ef4d8f3",
+      "pwm_sha256": "4fbb7b32851407b7cba44deb65c234eab85716c0700f0adf95aaa88ed01c83d4",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "1b2b95b08c3ef78fb5dfe0eece9317426bbbd1ed4b4a69908c4aded82be5af53"
+    },
+    "450d73109d8bc166b990d55d350addc1535e041537dd988ed06593244d27b923": {
+      "samples": 32000,
+      "pcm16_sha256": "12062f11fc514b1c6f439495bf10c7c817247b3ca671708dd8e326c0b635ba63",
+      "pwm_sha256": "c775ee2a2e30fe7b4d5609fe1033b381913710e772e2b6ac76b934e6465176a0",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "e171060b2115d24e4cf60c88c9c76e36d835ebd13ab9f89e67cfb9c088b23687"
+    },
+    "56963a61a34cc17fe74a76c16773bfcfff24cbebe3a814215b86102068e6f7a0": {
+      "samples": 32000,
+      "pcm16_sha256": "7cd4799cda20d2457644b64755949dad0b4a0001cf933d78f056674fe85fe0f7",
+      "pwm_sha256": "f0bbdf946d6dc7fe3e58db3ad1f5c5d9d305c2f716dbb437827c960ac3db1a38",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "de662b50712fc3a045aec7220e895740eedd4ef63c6f9afb6ae5d4b13aa7cebf"
+    },
+    "0a3e8b920b1e10e5a24868bd2e716758298a58800896c901e8e33dcf54b59e91": {
+      "samples": 32000,
+      "pcm16_sha256": "be5effc81b07ff94b8dca05759e7d4e3aa0aa748311b3a095872ab8556e0a53c",
+      "pwm_sha256": "79ba5ded997f667cecaaf3f09cde3bb85b18975b1a4d179e3d59d2f7847694ad",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "3f300689ee0b3479d7228c0270b443c2f72372779bb4ad198a394035ab23c805"
+    },
+    "e64b1550c0200fa47a16de35c53431ce70c7cc7a064adadce1d8e8ee5b645fa3": {
+      "samples": 32000,
+      "pcm16_sha256": "c08b05b1e67f0ea7c4e6eb0286bed2452248dda8afbe76ac3dddb056633c6ddd",
+      "pwm_sha256": "a023f906fa1ff05b04b30fbb12f4b2aa571ba2b1e524c28cac428950cbd17f9a",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "bab6601b8d7a9a4e392e1c2265c7465cd64a7def9114ab24d0d21ec0767d9f54"
+    },
+    "706a4aea2c388440356ccea98fb08c8ff52ac6c2d782617b8aeff2c7109b1f2b": {
+      "samples": 32000,
+      "pcm16_sha256": "d0fb7898c1bce0a1b3fc5505e0fb5600bde4783e38168b482becd3830419e690",
+      "pwm_sha256": "bf5028bf673e5f2b8575ea56dcf47892bb0b2ecaafc9c51e1ded468dbf0589cc",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "b72eff4f85bd5fa0f87bc7382cdbc358519ec3b863a8bb0a719eb040d8754adf"
+    },
+    "af5f827ead167be2f636219c3295b0c195ee74cc08631234af09611eb354cf9b": {
+      "samples": 32000,
+      "pcm16_sha256": "bfdcdac42b004f0e80ed0879e47379609b5a75a7a1219915be24ddbb4ca25a2e",
+      "pwm_sha256": "72768dc9dcb62831b4623d8132766df21603fbde005a18a9158cd9bba5b71aab",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "8633f9b1928056fe496e01db29bb77264e5c26aee7e8ab6cccedc2019f5df2be"
+    },
+    "dfb720c242c6a9d546535fd4653fcf5755b667229fd1deb556c1b1c69303d658": {
+      "samples": 32000,
+      "pcm16_sha256": "a05c632c718d9388e5ad1cbf6c5b16856276048f387f15d891f5f6c16190990b",
+      "pwm_sha256": "a2c84ce02e34a6560a7ed1a0510941624085d8a28dfcff56c8ac1bb2eb4a8e79",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "057bd6f372f148abfdf6d16c233acd4cdfd3e3f728e4666ceff8c95fe6f71f8f"
+    },
+    "7a577f79a3ce1a24c905074c4053037f9bb474ecc4a94e2ac6dd56270fa1b3fe": {
+      "samples": 32000,
+      "pcm16_sha256": "0cc7b690afed22b7e947458f1cc74229bb613e84d5966f2e389bd59e3e2bf831",
+      "pwm_sha256": "dfc9d7171b0ee3ccd991365637bf4ff94562202c54fb2988d8aa884ed9f383f1",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "dea8da66e602479a3ba3a07abbea2e25d99b09cb294da32c79daef2411dc6bae"
+    },
+    "904d8d51dea912f743bd6eddc984e3ab0ba981ff83a76833fc91292af916eebb": {
+      "samples": 32000,
+      "pcm16_sha256": "551b4b209a72e2b629cd144a0c40685528e5ed51c86e41a1aa66c5076f0d486f",
+      "pwm_sha256": "fcf6c7386b515a66ea5d07f13e3e0c6a117040e887849023e889f833a18ca62d",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "5c8c9a0ee1001026b773a72f22f418e3ef1954b57cceda4934c61baed456c693"
+    },
+    "165384cda2bf7238d569bc027cb5d61b35a0523b42a4264200f16ac2c562b204": {
+      "samples": 32000,
+      "pcm16_sha256": "a7efaa860a9fbe7f2fe83468377a4805711e7d40373fa22811dd857987d4daf1",
+      "pwm_sha256": "eaf15d6bc8a0674bd96537e6915a4ed70133c005d66a9a77e40e8fc9d08103c7",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "4c57b37f9e0a9ddbe86955321985efe7a3b1c085b9040c172b09f8da1a49302c"
+    },
+    "420d8bff5ba76bdc61ff470c8f419f2ab91c4f2b5961c63ac586357a8c1a0e57": {
+      "samples": 32000,
+      "pcm16_sha256": "d6cd790db31bc704e13a55d22a005a4821042ed913b6a09981f5b672d5b42484",
+      "pwm_sha256": "4c592625a85485bc7cd575b56e11aa3e1371187bab01b95f7e2b3f3365829556",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "578c9ba1447c403a603c0f996fa59f6d3d84c895d0cfb2705f419e1c965add1c"
+    },
+    "46303d11ba7ed6beb7501190750844f506f74e58c6877021887cfc57ed5a809c": {
+      "samples": 32000,
+      "pcm16_sha256": "79e7a834343f695716a991f6106251b6d03bcdc8f39cc725422c63591570e406",
+      "pwm_sha256": "b29c8d7165964b1fac22652dace7fb61352d5a70f0eff6d58b3208b6d1487cf6",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "2e0dce15a45b6ffc347d01cf7e4da6fd68b8042687460d391526d07a23fa383e"
+    },
+    "1208458d1aadebe3cb00e44d1775351eab32091032e8abfc7de161a12bccf79a": {
+      "samples": 32000,
+      "pcm16_sha256": "4f7988030a00d082fe445e00a2ac5dab502300ff1b80e8592dd569867b60ef74",
+      "pwm_sha256": "0a1412a6b41919ff54a18d81fda8dc8cc062af02e34ce2a06d1baf3530b8e912",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "063c6a30b53be6e2a6ded3e63addda5a271eaae9ccddd8d55c941566a323bcc2"
+    },
+    "bb72250ec1691cd11cf9df54e6b4a2b12b877b65eecf4fad9fcdb073326c72de": {
+      "samples": 32000,
+      "pcm16_sha256": "b8d59c666c249bb85484bf2afeba03a651c96ae6ecbd65ffc7a9b0a50c62e6a4",
+      "pwm_sha256": "30d16278b18489b59bad8713d0900364489b8178fe6e2168ca9a92ca8d3e6248",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "45e1bb563874ece2ed92d0871db1185c6eb60abe4f9f6f2bee0c47ce4b223407"
+    },
+    "d254b85d836683adee8f91c84ef13a566a0bcb7f77478ce5231354c7143769c5": {
+      "samples": 32000,
+      "pcm16_sha256": "e88cb24bcd4aeeb21f019fc4990f970bf57a341b468ef2bd2de737270fd4f444",
+      "pwm_sha256": "a05adec4a509b1dc97f7bc58ddf60a36da6c0dac1e6f3208162c632b946ce67a",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "52c7ade8127010cf27e4e2ecf0d6e83eec2d5f99827daf79f29bdf0a2b3c8f70"
+    },
+    "03c1c3ac98342ff3e5df4422dd538389a2b62086c87632230df384fc5402cd7d": {
+      "samples": 32000,
+      "pcm16_sha256": "6e6946338671a6f7ff730ecb2cc0b1d6d49b7fdb30ad52f5d67aed97f458fc65",
+      "pwm_sha256": "63ce0eb2f7b62ec49a0b7d24d52c8046a6bd7c4a31eb1618ad89481576892554",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "947ee24f9e834c1954327c680c4bd884abbc7ad291ade01b447f55ce154c48b4"
+    },
+    "3043e7df650cc90dbdb68fc20fedabcb0bd85d3ccbabb5ccb58fce968236cfdb": {
+      "samples": 32000,
+      "pcm16_sha256": "ab398d0c31c5dec71c0c2d805f557770121c50782e3e92393efd4c1950578653",
+      "pwm_sha256": "a99445760b278ef45d07a97f6f21c0ceabedef6875d1ac55678a37f796652584",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "2c34445901e8c6964ca5363a281ddb9d5f881803e5e39eb8253ebee56721d68c"
+    },
+    "417fdfc5a5e4ef043dc63f2b5572a17c3d8e57614f7316ac8c74aad4fbe99418": {
+      "samples": 32000,
+      "pcm16_sha256": "add68e586c7fb3e459aa84e3f1b8bb6f639f239218241c417f79b9d8abb741ac",
+      "pwm_sha256": "76169d64d475620c39bfba1a0c5527e1fba20507befe5cbf94b713e7abf43492",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "1380c76fc3c8aca3f569f03c6bdb946844641d83cf75a478a539fe025b410d83"
+    },
+    "5adf08f76daf7cc8b3b3b3c48a1c1ef6d1785f6dbdabd6cb0add9d271ba87c96": {
+      "samples": 32000,
+      "pcm16_sha256": "5d078b9d0fcd9190426d96602d9ccbcbcd69b667b651835b4cbfb321058f599f",
+      "pwm_sha256": "54eca41f4dd0936bb9dbd60aefd3864d2f7ea801e4f7ef38aa9fe826780fca77",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "9123191a1f969aec21fa302766cf116b742ac7d2bb622b6f99a622e964eb99e7"
+    },
+    "6a4a1dbad4775cf70c82d139d3265c0f6e43804bdb2d4de79705c3a60ad765b1": {
+      "samples": 32000,
+      "pcm16_sha256": "be7504424d2511ecfe53481798fda2a2bc81a3400057dbff5076146efe3c2f56",
+      "pwm_sha256": "56a22989a1c1ee1d8cf00d32a7937548ab38d357f715c0c1c02505a61522a711",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "ef0ae1436b47d500d0951aa5a244900e9171f948731859a856a032cd66226c91"
+    },
+    "a93fd9c94784cc2b093b78adaa862b6622f50fdc35eae338b99224ab50517aa0": {
+      "samples": 32000,
+      "pcm16_sha256": "2f3ed0ea48df2eca48db9d8f957e0a6bfe40fdb79a33cf07cd5f5cdecdd78a97",
+      "pwm_sha256": "082959b0c9672da1b4e95cfd21a780aaedb37bdc2989166b73b55477ba3ef8e6",
+      "pcm16_difference_from_frozen_decoder": 0,
+      "pwm_difference_from_frozen_decoder": 0,
+      "avr_underruns": 0,
+      "elf_sha256": "b723835e2ff099baf7f6af27c754537379a8a336c6fb37eab9547d7724e5c8f6"
+    }
+  }
+}

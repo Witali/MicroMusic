@@ -61,7 +61,11 @@ static int16_t cosineAt(uint16_t index){
 
 Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),remaining_(0),
  sampleRate_(0),preQ14_(0),brightQ14_(0),blockStep_(0),prevDeemph_(0),prevBright_(0),
- subPos_(0),subIndex_(0),quantLimit_(0),mode_(0),blockScale_(0),
+ subPos_(0),subIndex_(0),
+#if LPX4_BATCHED_REMAINING
+ subEnd_(0),
+#endif
+ quantLimit_(0),mode_(0),blockScale_(0),
  bitBuffer_(0),bitsLeft_(0),riceK_(0),subType_(0),lag_(0),gain_(0),ringCursor_(0),
 #if LPX4_V3_FEATURES
  formatFeatures_(0),
@@ -104,6 +108,9 @@ uint32_t Lpx4HybridCore::read32(){
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  data_=input;bytes_=size;cursor_=0;error_=NONE;initializedFrame_=false;
  remaining_=sampleCount_;subPos_=subIndex_=0;
+#if LPX4_BATCHED_REMAINING
+ subEnd_=0;
+#endif
  bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;blockStep_=0;
  subType_=lag_=gain_=ringCursor_=quantLimit_=0;
 #if LPX4_V3_FEATURES
@@ -134,6 +141,9 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
  sampleRate_=read16();sampleCount_=read32();preQ14_=read16();brightQ14_=read16();
  remaining_=sampleCount_;
+#if LPX4_BATCHED_REMAINING
+ subEnd_=remaining_<20?(uint8_t)remaining_:20;
+#endif
  const uint16_t frames=read16(),blocks=read16();
  if(error_||sampleRate_!=8000||!sampleCount_||frames!=160||blocks!=80||
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
@@ -574,7 +584,11 @@ bool Lpx4HybridCore::next(uint8_t& pcm){
 #else
 bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #endif
+#if LPX4_BATCHED_REMAINING
+    if(error_||subPos_==subEnd_)return false;
+#else
     if(error_||!remaining_)return false;
+#endif
     if(subPos_==0){
         // All frame/block/excitation headers coincide with a 20-sample boundary.
         if(subIndex_==0&&!readFrame())return false;
@@ -657,8 +671,18 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #else
     postfilterQ14 = b;
 #endif
-    --remaining_;++subPos_;
-    if(subPos_==20){subPos_=0;if(++subIndex_==8)subIndex_=0;}
+#if !LPX4_BATCHED_REMAINING
+    --remaining_;
+#endif
+    ++subPos_;
+    if(subPos_==20){
+        subPos_=0;
+#if LPX4_BATCHED_REMAINING
+        remaining_-=20;
+        subEnd_=remaining_<20?(uint8_t)remaining_:20;
+#endif
+        if(++subIndex_==8)subIndex_=0;
+    }
     return true;
 }
 

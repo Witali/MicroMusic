@@ -2855,6 +2855,16 @@ margin820 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
 97 host tests and nine C/ASM/generic x unroll builds with5,768,584 cases pass with IRQ/r1, including527,104 unsigned products and16,384 Q4 ring vectors. All six long IRQ controls pass. The expanded C oracle needs2,077,224,978 cycles, so the test runner cap was raised from2 to3 billion and rebuilt; coverage was retained. No new fuzz run is claimed in this arithmetic round.
 [Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: update wide sample counters at subframe boundaries
+
+AVR5/GCC7.3 -Os, portable C state optimization. Keep remaining at the start of each20-sample subframe and subtract20 only at a complete boundary. Existing subPos gives exact produced=sampleCount-remaining+subPos. A new byte subEnd=min(20,remaining) detects end/partial tails with one byte comparison. Preserve failed begin, partial errors and restart semantics. LPX4_BATCHED_REMAINING=0 selects the old per-sample updates on C/ASM; arithmetic and hardware memory access are unchanged.
+
+Measured round12:2690423444 ->2594280361 wall cycles over91 active-IRQ images,
+3.573530% less time,+30 B Flash/image, SRAM1103 B, minimum stack
+margin819 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+97 host tests, both counter modes through131073 samples and truncated prefixes, plus566610 ASan/UBSan mutation/reset cases pass. Identical arithmetic bytes explicitly reuse round11 math validation. All six long IRQ controls pass. A fresh reproducible quality audit verifies91 streams/2,912,000 samples against frozen PCM16/PWM and the original AVR baseline: zero decoder-output differences, zero AVR underruns. This retains existing lossy-codec distortion, rather than claiming zero source-WAV error.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

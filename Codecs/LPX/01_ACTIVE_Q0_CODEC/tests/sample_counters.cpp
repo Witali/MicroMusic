@@ -21,4 +21,17 @@ int main(int argc,char** argv){
         if(d.nextS16(value) || d.produced()!=count || d.error())return 6;
         if(d.begin(0,0) || d.produced()!=0 || d.finished() || d.error()!=Lpx4HybridCore::BAD_HEADER)return 7;
     }
+    // Truncated headers and payloads must expose exactly the successful count,
+    // even when the parse fails partway through a20-sample subframe.
+    const unsigned step=blob.size()>32?blob.size()/32:1;
+    for(unsigned cut=0;cut<blob.size();cut+=step){
+        const bool started=d.begin(blob.data(),(uint16_t)cut);
+        if(d.produced())return 8;
+        if(!started){if(d.finished() || !d.error())return 9;continue;}
+        uint32_t successful=0;int16_t value;
+        while(d.nextS16(value)){
+            if(d.produced()!=++successful || d.finished()!=(successful==d.samples()))return 10;
+        }
+        if(d.produced()!=successful || d.finished()!=(successful==d.samples()&&!d.error()))return 11;
+    }
 }

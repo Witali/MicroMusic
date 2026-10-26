@@ -22,6 +22,15 @@
 #error LPX4_EXCITATION_Q4 must be 0 or 1
 #endif
 
+// Commit the wide remaining count at20-sample boundaries; subPos provides
+// exact public progress within the current subframe. Zero keeps old updates.
+#ifndef LPX4_BATCHED_REMAINING
+#define LPX4_BATCHED_REMAINING 1
+#endif
+#if LPX4_BATCHED_REMAINING != 0 && LPX4_BATCHED_REMAINING != 1
+#error LPX4_BATCHED_REMAINING must be 0 or 1
+#endif
+
 // Optional compact-container parser. Zero keeps the original v2-only build.
 // 4 scale repeat, 8 width repeat, 16 subheader repeat, 32 zero headers,
 // 64 small LSF Rice deltas. The stream may only use compiled feature bits.
@@ -47,9 +56,21 @@ public:
     bool nextS16(int16_t& out); // signed PCM16 = saturated(2*Q14)
 #endif
     Error error() const {return error_;}
-    bool finished() const {return !remaining_&&!error_;}
+    bool finished() const {
+#if LPX4_BATCHED_REMAINING
+        return subPos_==subEnd_&&!error_;
+#else
+        return !remaining_&&!error_;
+#endif
+    }
     uint32_t samples() const {return sampleCount_;}
-    uint32_t produced() const {return sampleCount_-remaining_;}
+    uint32_t produced() const {
+#if LPX4_BATCHED_REMAINING
+        return sampleCount_-remaining_+subPos_;
+#else
+        return sampleCount_-remaining_;
+#endif
+    }
     uint16_t sampleRate() const {return sampleRate_;}
 #ifdef LPX3_Q_DIAG
     int8_t debugLastQ() const {return lastQ_;}
@@ -87,6 +108,9 @@ private:
     uint16_t sampleRate_,preQ14_,brightQ14_,blockStep_;
     int16_t prevDeemph_,prevBright_;
     uint8_t subPos_,subIndex_;
+#if LPX4_BATCHED_REMAINING
+    uint8_t subEnd_;
+#endif
     uint8_t quantLimit_;
     uint8_t mode_,blockScale_,bitBuffer_,bitsLeft_,riceK_;
     uint8_t subType_,lag_,gain_,ringCursor_;
