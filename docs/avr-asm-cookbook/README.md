@@ -2939,6 +2939,11 @@ margin823 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
 
 ## LPX speech: measure CPU independently of bitrate
 
+[Bounded exact spectral packing](lpx-speech-compact.md) adds measured
+gap/delta Rice, bounded radix20 arithmetic and collision-safe extra pulses.
+It explicitly compares smaller files with the new parser's total Flash
+cost and records C fallback/active-IRQ limits.
+
 [Fixed-rate speech and shared integer synthesis](lpx-speech-v4.md) records
 the 4/6 kbit/s packet tradeoff, common active-IRQ conditions, full PWM checks,
 Flash/SRAM/stack observations and the C fallback's missed real-time budget.

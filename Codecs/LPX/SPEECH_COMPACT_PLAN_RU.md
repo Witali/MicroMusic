@@ -13,11 +13,11 @@
   encoder-only уточнение и необязательные дополнительные импульсы за счёт
   экономии. Ограничить полный файл прежним бюджетом 4/6 кбит/с с headers;
   принимать только кандидаты с сохранением полных SSE и STOI floors.
-- [ ] Native/model, malformed/truncation/restart, старые форматы, C fallback,
+- [x] Native/model, malformed/truncation/restart, старые форматы, C fallback,
   ASan/UBSan. Проверить полные PWM и active-IRQ timing в simavr для принятых
   результатов, +100 IRQ, 8-second continuous controls. Измерить Flash,
   static SRAM и наблюдаемый stack, включая цену нового parser.
-- [ ] Подготовить новые локальные WAV/HTML сравнения, обезличенный отчёт,
+- [x] Подготовить новые локальные WAV/HTML сравнения, обезличенный отчёт,
   cookbook и отдельные проверенные коммиты. Не публиковать audio или secrets.
 
 Ни меньший поток, ни лучшие waveform metrics не считаются доказательством
@@ -52,3 +52,12 @@ SSE/STOI при прежних v4 header/размере/спектре. Допо
 на поток достигнуто; часть битового бюджета намеренно не использована.
 Итоговые кандидаты:4k SER7,00→7,75/STOI0,751→0,783 при1850..1908B
 вместо2020B;6k SER9,24→9,92/STOI0,792→0,812 при2618..2699B вместо3020B.
+
+Этап завершён:32 основных AVR images,6 continuous8s controls и2 feature-off
+controls. ASM и +100IRQ без underrun, полный полезный PWM точен. C fallback
+точен, но медленнее realtime.91 старый AVR stream заново прошёл с прежними
+2495466530 cycles и нулём пропусков; native C5-on PCM/PWM тоже прежние.
+Локальные7 WAV/HTML готовы, отчёт research/speech-compact-2026-10-26/.
+В нём отдельно указаны ухудшения peak error в3 случаях и net Flash:
+аудиоданные меньше, но общий код нового parser дороже, короткий firmware
+увеличился. Всё сохранено отдельно от предыдущего baseline, uploads нет.

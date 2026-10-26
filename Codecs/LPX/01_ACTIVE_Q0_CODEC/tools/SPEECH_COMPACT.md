@@ -65,7 +65,7 @@ and PCM/PWM-exact to v4. Optional extras deliberately change audio.
 The native decoder rejects truncated declared payloads. At an exact final
 320-sample boundary, it also rejects unread trailing bytes and nonzero
 padding bits. For partial sample tails it stops at the requested count,
-so unused final-packet fields are not fully validated; Python `unpack`
+so the remaining declared payload is not fully validated; Python `unpack`
 validates the whole packet and its zero padding. There is no CRC and no
 claim of detecting every syntactically valid corruption. Restart needs a
 fresh header/zero state; arbitrary state-free packet seeking is not provided.

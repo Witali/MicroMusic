@@ -1,0 +1,309 @@
+{
+  "recipe": "horizon160/pass1 followed by horizon320/pass2; then bounded extra innovations",
+  "cases": {
+    "case-01": {
+      "4": {
+        "refinement_second_stage": {
+          "profile": 4,
+          "samples": 32000,
+          "file_bytes": 2020,
+          "passes_requested": 2,
+          "horizon_samples": 320,
+          "group_samples": 640,
+          "tune_parameters": true,
+          "candidate_evaluations": 109200,
+          "accepted_groups": 16,
+          "seconds": 2.856338200159371,
+          "spectra_exact": true,
+          "native_model_exact": true
+        },
+        "enhancement": {
+          "profile": 4,
+          "samples": 32000,
+          "max_file_bytes": 2020,
+          "file_bytes": 1850,
+          "payload_bits": 14620,
+          "exact_compact_file_bytes": 1661,
+          "extra_capacity": 207,
+          "extra_pulses": 71,
+          "horizon_samples": 160,
+          "position_candidates": 6,
+          "candidate_evaluations": 136000,
+          "full_evaluations": 128,
+          "full_evaluation_limit": 128,
+          "full_limit_reached": true,
+          "rejected_sse_groups": 79,
+          "rejected_stoi_groups": 30,
+          "seconds": 2.846574200084433,
+          "spectra_params_base_pulses_exact": true,
+          "native_model_exact": true
+        }
+      },
+      "6": {
+        "refinement_second_stage": {
+          "profile": 6,
+          "samples": 32000,
+          "file_bytes": 3020,
+          "passes_requested": 2,
+          "horizon_samples": 320,
+          "group_samples": 640,
+          "tune_parameters": true,
+          "candidate_evaluations": 411880,
+          "accepted_groups": 14,
+          "seconds": 3.2493787999264896,
+          "spectra_exact": true,
+          "native_model_exact": true
+        },
+        "enhancement": {
+          "profile": 6,
+          "samples": 32000,
+          "max_file_bytes": 3020,
+          "file_bytes": 2632,
+          "payload_bits": 20875,
+          "exact_compact_file_bytes": 2482,
+          "extra_capacity": 350,
+          "extra_pulses": 40,
+          "horizon_samples": 160,
+          "position_candidates": 6,
+          "candidate_evaluations": 136000,
+          "full_evaluations": 128,
+          "full_evaluation_limit": 128,
+          "full_limit_reached": true,
+          "rejected_sse_groups": 87,
+          "rejected_stoi_groups": 21,
+          "seconds": 2.5900320999789983,
+          "spectra_params_base_pulses_exact": true,
+          "native_model_exact": true
+        }
+      }
+    },
+    "case-02": {
+      "4": {
+        "refinement_second_stage": {
+          "profile": 4,
+          "samples": 32000,
+          "file_bytes": 2020,
+          "passes_requested": 2,
+          "horizon_samples": 320,
+          "group_samples": 640,
+          "tune_parameters": true,
+          "candidate_evaluations": 109200,
+          "accepted_groups": 24,
+          "seconds": 3.3991298999171704,
+          "spectra_exact": true,
+          "native_model_exact": true
+        },
+        "enhancement": {
+          "profile": 4,
+          "samples": 32000,
+          "max_file_bytes": 2020,
+          "file_bytes": 1860,
+          "payload_bits": 14703,
+          "exact_compact_file_bytes": 1675,
+          "extra_capacity": 196,
+          "extra_pulses": 68,
+          "horizon_samples": 160,
+          "position_candidates": 6,
+          "candidate_evaluations": 136000,
+          "full_evaluations": 128,
+          "full_evaluation_limit": 128,
+          "full_limit_reached": true,
+          "rejected_sse_groups": 59,
+          "rejected_stoi_groups": 50,
+          "seconds": 2.920454999897629,
+          "spectra_params_base_pulses_exact": true,
+          "native_model_exact": true
+        }
+      },
+      "6": {
+        "refinement_second_stage": {
+          "profile": 6,
+          "samples": 32000,
+          "file_bytes": 3020,
+          "passes_requested": 2,
+          "horizon_samples": 320,
+          "group_samples": 640,
+          "tune_parameters": true,
+          "candidate_evaluations": 411660,
+          "accepted_groups": 33,
+          "seconds": 3.8925777000840753,
+          "spectra_exact": true,
+          "native_model_exact": true
+        },
+        "enhancement": {
+          "profile": 6,
+          "samples": 32000,
+          "max_file_bytes": 3020,
+          "file_bytes": 2699,
+          "payload_bits": 21409,
+          "exact_compact_file_bytes": 2494,
+          "extra_capacity": 341,
+          "extra_pulses": 84,
+          "horizon_samples": 160,
+          "position_candidates": 6,
+          "candidate_evaluations": 136000,
+          "full_evaluations": 128,
+          "full_evaluation_limit": 128,
+          "full_limit_reached": true,
+          "rejected_sse_groups": 82,
+          "rejected_stoi_groups": 22,
+          "seconds": 2.570288799935952,
+          "spectra_params_base_pulses_exact": true,
+          "native_model_exact": true
+        }
+      }
+    },
+    "case-03": {
+      "4": {
+        "refinement_second_stage": {
+          "profile": 4,
+          "samples": 32000,
+          "file_bytes": 2020,
+          "passes_requested": 2,
+          "horizon_samples": 320,
+          "group_samples": 640,
+          "tune_parameters": true,
+          "candidate_evaluations": 109200,
+          "accepted_groups": 30,
+          "seconds": 2.1957624000497162,
+          "spectra_exact": true,
+          "native_model_exact": true
+        },
+        "enhancement": {
+          "profile": 4,
+          "samples": 32000,
+          "max_file_bytes": 2020,
+          "file_bytes": 1908,
+          "payload_bits": 15084,
+          "exact_compact_file_bytes": 1663,
+          "extra_capacity": 206,
+          "extra_pulses": 116,
+          "horizon_samples": 160,
+          "position_candidates": 6,
+          "candidate_evaluations": 136000,
+          "full_evaluations": 128,
+          "full_evaluation_limit": 128,
+          "full_limit_reached": true,
+          "rejected_sse_groups": 84,
+          "rejected_stoi_groups": 20,
+          "seconds": 2.324619200080633,
+          "spectra_params_base_pulses_exact": true,
+          "native_model_exact": true
+        }
+      },
+      "6": {
+        "refinement_second_stage": {
+          "profile": 6,
+          "samples": 32000,
+          "file_bytes": 3020,
+          "passes_requested": 2,
+          "horizon_samples": 320,
+          "group_samples": 640,
+          "tune_parameters": true,
+          "candidate_evaluations": 405980,
+          "accepted_groups": 24,
+          "seconds": 3.201798800146207,
+          "spectra_exact": true,
+          "native_model_exact": true
+        },
+        "enhancement": {
+          "profile": 6,
+          "samples": 32000,
+          "max_file_bytes": 3020,
+          "file_bytes": 2618,
+          "payload_bits": 20765,
+          "exact_compact_file_bytes": 2484,
+          "extra_capacity": 348,
+          "extra_pulses": 27,
+          "horizon_samples": 160,
+          "position_candidates": 6,
+          "candidate_evaluations": 136000,
+          "full_evaluations": 128,
+          "full_evaluation_limit": 128,
+          "full_limit_reached": true,
+          "rejected_sse_groups": 99,
+          "rejected_stoi_groups": 19,
+          "seconds": 1.9159656998235732,
+          "spectra_params_base_pulses_exact": true,
+          "native_model_exact": true
+        }
+      }
+    },
+    "case-04": {
+      "4": {
+        "refinement_second_stage": {
+          "profile": 4,
+          "samples": 32000,
+          "file_bytes": 2020,
+          "passes_requested": 2,
+          "horizon_samples": 320,
+          "group_samples": 640,
+          "tune_parameters": true,
+          "candidate_evaluations": 109200,
+          "accepted_groups": 20,
+          "seconds": 2.0935837998986244,
+          "spectra_exact": true,
+          "native_model_exact": true
+        },
+        "enhancement": {
+          "profile": 4,
+          "samples": 32000,
+          "max_file_bytes": 2020,
+          "file_bytes": 1876,
+          "payload_bits": 14831,
+          "exact_compact_file_bytes": 1668,
+          "extra_capacity": 202,
+          "extra_pulses": 87,
+          "horizon_samples": 160,
+          "position_candidates": 6,
+          "candidate_evaluations": 136000,
+          "full_evaluations": 128,
+          "full_evaluation_limit": 128,
+          "full_limit_reached": true,
+          "rejected_sse_groups": 91,
+          "rejected_stoi_groups": 10,
+          "seconds": 2.309651100076735,
+          "spectra_params_base_pulses_exact": true,
+          "native_model_exact": true
+        }
+      },
+      "6": {
+        "refinement_second_stage": {
+          "profile": 6,
+          "samples": 32000,
+          "file_bytes": 3020,
+          "passes_requested": 2,
+          "horizon_samples": 320,
+          "group_samples": 640,
+          "tune_parameters": true,
+          "candidate_evaluations": 411820,
+          "accepted_groups": 23,
+          "seconds": 3.0573933001141995,
+          "spectra_exact": true,
+          "native_model_exact": true
+        },
+        "enhancement": {
+          "profile": 6,
+          "samples": 32000,
+          "max_file_bytes": 3020,
+          "file_bytes": 2642,
+          "payload_bits": 20954,
+          "exact_compact_file_bytes": 2483,
+          "extra_capacity": 350,
+          "extra_pulses": 47,
+          "horizon_samples": 160,
+          "position_candidates": 6,
+          "candidate_evaluations": 136000,
+          "full_evaluations": 128,
+          "full_evaluation_limit": 128,
+          "full_limit_reached": true,
+          "rejected_sse_groups": 84,
+          "rejected_stoi_groups": 18,
+          "seconds": 2.1017466001212597,
+          "spectra_params_base_pulses_exact": true,
+          "native_model_exact": true
+        }
+      }
+    }
+  }
+}
