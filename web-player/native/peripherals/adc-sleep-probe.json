@@ -1,0 +1,37 @@
+{
+  "schema": "micromusic-attiny13a-hardware-probe-v1",
+  "probeId": 5,
+  "status": "pending-hardware",
+  "sequencePolicy": "consecutive",
+  "expectedRecords": 6,
+  "requiredCsvColumns": ["clock", "data", "clki", "vcc", "marker", "adc1", "reset"],
+  "firmware": "adc-sleep-probe.S",
+  "device": "ATtiny13A",
+  "fuses": {"low": "0x70", "high": "0xff", "lock": "0xff"},
+  "clock": {"source": "external-CLKI-PB3", "frequencyHz": 8000000, "cpuDivisor": 1, "adcDivisor": 64, "adcFrequencyHz": 125000},
+  "pins": {"marker": "PB0", "clock": "PB1", "analogInput": "PB2", "clki": "PB3", "data": "PB4", "reset": "PB5"},
+  "manufacturerDefinitions": "../attiny13a-registers.generated.inc",
+  "fields": ["raw0", "raw1", "raw2", "raw3", "raw4", "recordKind"],
+  "wire": {
+    "include": "probe-wire.inc", "version": 2, "bytes": 14, "syncHex": "a55a", "bitOrder": "MSB-first",
+    "sampleDataAt": "rising trace clock", "checksum": "XOR of all 11 payload bytes",
+    "recordKinds": {
+      "0": "planned ADCSRA, sleep MCUCR, watchdog WDTCR, ADMUX, DIDR0",
+      "1": "pre-sleep ADCSRA, ADCL, ADCH, SREG, WDTCR; before watchdog arm and SEI",
+      "2": "ADC ISR ADCSRA, ADCL, ADCH, entry SREG, ADC ISR count; zero fields if absent",
+      "3": "watchdog ISR ADCSRA, ADCL, ADCH, entry SREG, watchdog ISR count",
+      "4": "ADC ISR order, watchdog ISR order, total ISR count, final WDTCR, final MCUCR",
+      "5": "final ADCSRA, ADCL, ADCH, SREG, total ISR count; before transport"
+    }
+  },
+  "profiles": [
+    {"id": "idle-adie0", "profileId": 1, "defines": {"PROBE_PROFILE_ID": 1, "PROBE_SLEEP_MODE": 0, "PROBE_ADIE": 0}},
+    {"id": "idle-adie1", "profileId": 2, "defines": {"PROBE_PROFILE_ID": 2, "PROBE_SLEEP_MODE": 0, "PROBE_ADIE": 1}},
+    {"id": "noise-reduction-adie0", "profileId": 3, "defines": {"PROBE_PROFILE_ID": 3, "PROBE_SLEEP_MODE": 1, "PROBE_ADIE": 0}},
+    {"id": "noise-reduction-adie1", "profileId": 4, "defines": {"PROBE_PROFILE_ID": 4, "PROBE_SLEEP_MODE": 1, "PROBE_ADIE": 1}}
+  ],
+  "stimulus": {"adc1": "Constant measured low-impedance nonzero in-range voltage; repeat at two separated levels", "sleepEntriesPerReset": 1, "manualAdscWrites": 0, "adate": 0},
+  "watchdog": {"mode": "interrupt-only", "prescaler": "2K", "nominalSeconds": 0.016, "measurement": "Measure actual marker/wake intervals; nominal WDT oscillator is not a calibrated deadline"},
+  "currentSoftwareFixture": {"qualification": "model prediction only; not silicon evidence", "adie0": "No ADC conversion; watchdog wakes, result retains reset zero, ADIF remains clear", "adie1": "ADC ISR precedes watchdog; single conversion result retained; ADC vector acknowledgement clears ADIF"},
+  "expectedSiliconTrace": null
+}

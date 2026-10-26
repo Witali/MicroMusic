@@ -5,6 +5,11 @@ not determine either unresolved silicon result. `adc-probe.json` specifies the
 nine build profiles, wiring and record format with `expectedSiliconTrace:null`.
 Neither source assembly nor synthetic decoding is a hardware measurement.
 
+The separate [sleep-entry ADIE controls](adc-sleep-probe.md) cover Idle and ADC
+Noise Reduction with ADIE=0/1 and an independent watchdog interrupt wake. Their
+source, raw ISR/ADIF/result evidence and software smoke do not resolve the
+ADIE=0 silicon uncertainty or change these aperture/ADIF profiles.
+
 ## Official conflicts and definitions
 
 [Microchip ATtiny13A DS40002307A](https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf)

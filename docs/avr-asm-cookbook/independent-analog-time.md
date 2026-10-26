@@ -3,7 +3,8 @@
 Applicable to MicroMusic's full ATtiny13A C/WASM model and its resumable AVR
 emitter, built with Clang 24/Binaryen 133 and Node 22/V8 12.4. This is a
 correctness technique; it establishes no speed, code-size or real-time gain.
-No handwritten assembly or architecture-specific arithmetic backend is added.
+Runtime arithmetic remains portable C. The separate ADC acquisition firmware
+uses AVR assembly with vendor register definitions and AVR GCC7.3.0.
 
 Use independent physical deadlines for an analog comparator's propagation and
 reference startup. Use delivered enabled clkI/O rises for digital synchronization
@@ -49,3 +50,11 @@ timing. The [official-host acquisition record](../../web-player/native/devices/a
 pins the signed installer/payload provenance, supported automation and these
 limits. Downloaded host files and successful CLI help are not an executed
 simulator comparison or an analog oracle.
+
+For an ambiguous sleep-start condition, keep the observation independent of its
+interrupt. The [ATtiny13A ADIE probe](../../web-player/native/peripherals/adc-sleep-probe.md)
+uses an unrelated watchdog wake, raw result/ADIF and both ISR counts/order.
+Serialization starts after evidence is frozen, and vector acknowledgement is
+accounted for explicitly. Paired controls validate the acquisition without
+assigning an unmeasured silicon result. This is measurement-tool correctness,
+not a runtime optimization or a claim that the ambiguity has been resolved.

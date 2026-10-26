@@ -98,11 +98,13 @@ resets, required conditions and alternate-source provenance.
 |[CLKPR](clkpr-probe.md)|12|Continuous CLKI/CTC OC0A, bracketed protected write and negative controls|
 |[RESET](reset-probe.md)|4|MCUSR-first boot, DDR-first witness, SUT/CKDIV8 and reassertion/held-clock cases|
 |[ADC](adc-probe.md)|9|First/normal aperture, ADIF SBI/CBI and whole-byte controls|
+|[ADC sleep entry](adc-sleep-probe.md)|4|Idle/ADC Noise Reduction ADIE=0/1, independent watchdog wake, raw ISR/ADIF/result evidence|
 |[CPU phases](cpu-phase-probe.md)|22|Raw memory/GPR snapshots before reinitialization, stack/bus operations, queued RESET cuts and mandatory hardware retention control|
 
 ```text
 node web-player/scripts/verify-hardware-probes.mjs
 node web-player/scripts/verify-adc-aperture.mjs
+node web-player/scripts/verify-adc-sleep-probe.mjs
 node web-player/scripts/verify-cpu-phase-probe.mjs
 ```
 

@@ -234,6 +234,12 @@ model, correctness and simplification work; do not repeat equipment questions.
   [peripheral acquisition report](../reports/hardware-probes-20261024.md) and
   [CPU acquisition report](../reports/cpu-phase-probe-20261024.md). Hardware
   captures, internal read-phase oracles and measured uncertainty remain open.
+  Four additional [ADC sleep-entry controls](peripherals/adc-sleep-probe.md)
+  pair Idle/ADC Noise Reduction with ADIE0/1 and an independent watchdog wake.
+  They preserve raw ADIF/result/ISR/order evidence for the unresolved difference
+  between the mode descriptions and section14.7's interrupt-enabled procedure.
+  Software execution validates acquisition, not which silicon interpretation
+  is correct; production behavior and the seven open items are unchanged.
 - [ ] Record measured chip, clock, fuse configuration and measurement tolerance;
   update the default profile only when the evidence supports it.
 
