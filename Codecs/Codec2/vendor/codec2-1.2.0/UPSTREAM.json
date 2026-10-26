@@ -1,0 +1,279 @@
+{
+  "repository": "https://github.com/drowe67/codec2",
+  "tag": "1.2.0",
+  "commit": "06d4c11e699b0351765f10398abb4f663a984f36",
+  "license": "LGPL-2.1 (see COPYING and individual file notices)",
+  "selection": "Unmodified C/header sources for mode-3200 oracle and all ten dlsp codebooks. Generated tables and project adaptations stay outside vendor.",
+  "files": [
+    {
+      "path": "COPYING",
+      "sha256": "9ebb6f82b7380a62ac74c5f0322c88e6744dedf2ebe1f54d6f088282b39844bf",
+      "bytes": 26462
+    },
+    {
+      "path": "README.md",
+      "sha256": "da7db4e687ba20ce687e8e7187f59bb29f95c40c303806b710fd97027d924909",
+      "bytes": 9268
+    },
+    {
+      "path": "src/CMakeLists.txt",
+      "sha256": "874d1678fd7640ef42cd81a94603889159e749621abb1aa3f2188becbfd7a887",
+      "bytes": 10359
+    },
+    {
+      "path": "src/_kiss_fft_guts.h",
+      "sha256": "25fbd1b559e52dd255bc0129806c84c863f21bbafe652c83e169438cff517a9e",
+      "bytes": 6606
+    },
+    {
+      "path": "src/bpf.h",
+      "sha256": "3fd6a2d74603d3aead51f4c3bd7e58233ab5cc23a73f0a269fa0282db1f0c041",
+      "bytes": 1201
+    },
+    {
+      "path": "src/bpfb.h",
+      "sha256": "92788e0ccc90f6baa560dc797557276aa0ed6c3c25e3accf4fe2e30501402e54",
+      "bytes": 1201
+    },
+    {
+      "path": "src/codebook/dlsp1.txt",
+      "sha256": "6c8563ad9adedadeed06acae4dd0fed981981cd75953de54c71a262a15768334",
+      "bytes": 132
+    },
+    {
+      "path": "src/codebook/dlsp10.txt",
+      "sha256": "6c8563ad9adedadeed06acae4dd0fed981981cd75953de54c71a262a15768334",
+      "bytes": 132
+    },
+    {
+      "path": "src/codebook/dlsp2.txt",
+      "sha256": "6c8563ad9adedadeed06acae4dd0fed981981cd75953de54c71a262a15768334",
+      "bytes": 132
+    },
+    {
+      "path": "src/codebook/dlsp3.txt",
+      "sha256": "6c8563ad9adedadeed06acae4dd0fed981981cd75953de54c71a262a15768334",
+      "bytes": 132
+    },
+    {
+      "path": "src/codebook/dlsp4.txt",
+      "sha256": "4ea3cc664caa017150f9bdf4d75a67db67abd7b9b2745baa577ed4a6604776ad",
+      "bytes": 141
+    },
+    {
+      "path": "src/codebook/dlsp5.txt",
+      "sha256": "4ea3cc664caa017150f9bdf4d75a67db67abd7b9b2745baa577ed4a6604776ad",
+      "bytes": 141
+    },
+    {
+      "path": "src/codebook/dlsp6.txt",
+      "sha256": "4ea3cc664caa017150f9bdf4d75a67db67abd7b9b2745baa577ed4a6604776ad",
+      "bytes": 141
+    },
+    {
+      "path": "src/codebook/dlsp7.txt",
+      "sha256": "6c8563ad9adedadeed06acae4dd0fed981981cd75953de54c71a262a15768334",
+      "bytes": 132
+    },
+    {
+      "path": "src/codebook/dlsp8.txt",
+      "sha256": "6c8563ad9adedadeed06acae4dd0fed981981cd75953de54c71a262a15768334",
+      "bytes": 132
+    },
+    {
+      "path": "src/codebook/dlsp9.txt",
+      "sha256": "6c8563ad9adedadeed06acae4dd0fed981981cd75953de54c71a262a15768334",
+      "bytes": 132
+    },
+    {
+      "path": "src/codec2.c",
+      "sha256": "de5b4f46a2081b3fc8d20edf119df6154c69bb7f8117bab61b841167be8972f3",
+      "bytes": 61415
+    },
+    {
+      "path": "src/codec2.h",
+      "sha256": "b8d2c2a18f03aff240f4d5799ba4010ac817509304a225647dd40ef4ad9c4857",
+      "bytes": 4104
+    },
+    {
+      "path": "src/codec2_fft.c",
+      "sha256": "9190b741cb5ef609a56bc4b7dd1c3fe18a9ecb70a4255806a729cfd19394a211",
+      "bytes": 4211
+    },
+    {
+      "path": "src/codec2_fft.h",
+      "sha256": "91d88c42998a743d54f25c12f03cab4522bdc7d01a2a16c750e3c3d6b5cc6766",
+      "bytes": 2862
+    },
+    {
+      "path": "src/codec2_internal.h",
+      "sha256": "c0152b27e891d6192a04c88e30911617c9bf58f8f1cf2a51a81f8011198cce2b",
+      "bytes": 4597
+    },
+    {
+      "path": "src/comp.h",
+      "sha256": "72165b1e50364f6b8cd27251f9262ca90d66dbf52d559cdd56065d5bdfd6827f",
+      "bytes": 1034
+    },
+    {
+      "path": "src/comp_prim.h",
+      "sha256": "47be51e70813ba6dd9930b21a979f74ce2bf62207ce7e65adef1bdc4d55d524d",
+      "bytes": 2881
+    },
+    {
+      "path": "src/debug_alloc.h",
+      "sha256": "959f7a016f32da860bb13c0cd030298c7fd888a50c6e559efa4aebc30f949809",
+      "bytes": 1806
+    },
+    {
+      "path": "src/defines.h",
+      "sha256": "2823ad9940f510432de44bd467231cfb47450999d13fefaf2f33960fbf685072",
+      "bytes": 4310
+    },
+    {
+      "path": "src/dump.c",
+      "sha256": "17286a0aa2427a463e758012e1fbf1b5f0582429e1942bd18e0591bb751ad15a",
+      "bytes": 13090
+    },
+    {
+      "path": "src/dump.h",
+      "sha256": "691d027b44b86870d5eec36b864fe373d5f663dda8af65e6938d1292adb651aa",
+      "bytes": 2195
+    },
+    {
+      "path": "src/generate_codebook.c",
+      "sha256": "3ef14db6609e8f25fbfedb2d47a13da719e031741b112915c1e7bf4f36cb5183",
+      "bytes": 4499
+    },
+    {
+      "path": "src/interp.c",
+      "sha256": "27cac5a3d055d2d6287e4b978ecdac537f92303a69715df2e1ccb5b3afe456d0",
+      "bytes": 9827
+    },
+    {
+      "path": "src/interp.h",
+      "sha256": "6d81020040ab5cc0645f126547b04ea2ceb825087a26ae98ea1bdf3bd8a2c2c9",
+      "bytes": 1753
+    },
+    {
+      "path": "src/kiss_fft.c",
+      "sha256": "f16ca65e00a766c8c17bbd8c068168e9615c9b9e493fda2acf2822d743cc40c8",
+      "bytes": 12144
+    },
+    {
+      "path": "src/kiss_fft.h",
+      "sha256": "cef46109553a42087a7efde3f0a133b96c78561d6b0a0764651b37cf0be1f035",
+      "bytes": 3323
+    },
+    {
+      "path": "src/kiss_fftr.c",
+      "sha256": "fcd5fb59beae112c91a53832e4ff24242ef3192fa57f0845dd8dcbf11e46c16d",
+      "bytes": 5542
+    },
+    {
+      "path": "src/kiss_fftr.h",
+      "sha256": "6c44114389a80c558da06415a01e54f7438cc04a39033570280d7d5d26ede637",
+      "bytes": 912
+    },
+    {
+      "path": "src/lpc.c",
+      "sha256": "875360ef3b44a06c5b341e15fa844d2731ae31d702e7b972053a6406deab531a",
+      "bytes": 8840
+    },
+    {
+      "path": "src/lpc.h",
+      "sha256": "76abd1c359e204c86299c60cb8eaaa645d61e3cbd4dcb0eabe25d0b9dc31b02a",
+      "bytes": 1595
+    },
+    {
+      "path": "src/lsp.c",
+      "sha256": "81ea0264c982754341b358fd7de9219bafc3b4e09f2b2dd758576d5e46d76971",
+      "bytes": 9241
+    },
+    {
+      "path": "src/lsp.h",
+      "sha256": "bf70456661d9a9f273ba36030aa37c4485b7e976b8514ed910a425a377059716",
+      "bytes": 1237
+    },
+    {
+      "path": "src/machdep.h",
+      "sha256": "f6cee89f708494cb492734b30dcce005f246500dc282eee37f219b872e43633a",
+      "bytes": 1850
+    },
+    {
+      "path": "src/mbest.h",
+      "sha256": "c501ae2b2443c729f106c36b362b36f39849dcb7e9d9d2fda272e047079adcf9",
+      "bytes": 1801
+    },
+    {
+      "path": "src/newamp1.h",
+      "sha256": "457f8357a8ca2f064f77cb68abebfe1acf4fb6be82802b43244d7c926d356423",
+      "bytes": 4163
+    },
+    {
+      "path": "src/newamp2.h",
+      "sha256": "d0848ca72de8a7c392b0513428c94b6779df631e47e5fc163fc8b13e6270bb04",
+      "bytes": 3799
+    },
+    {
+      "path": "src/nlp.c",
+      "sha256": "5c35a44bc3093bd74fe7411e48214ed38afd59b0b84206d73b1751343f27c3ba",
+      "bytes": 14898
+    },
+    {
+      "path": "src/nlp.h",
+      "sha256": "0ba662b3d14ba4563b28b7ee028b00d9acdcbfe90ab6cba6e240ce31796d5d68",
+      "bytes": 1201
+    },
+    {
+      "path": "src/os.h",
+      "sha256": "27115da4a8401b71b491a76ee2af70650cf8dc0476c7c007cfa45f3f23c0d982",
+      "bytes": 2218
+    },
+    {
+      "path": "src/pack.c",
+      "sha256": "cfeeda4561b6a06a748d1edd7a8511ec5a328e241852e11ac38127d704a50220",
+      "bytes": 4496
+    },
+    {
+      "path": "src/phase.c",
+      "sha256": "751d3123d070c42fcb235affe154219f3326fb0e8a13335f4b9e1389ab295eb2",
+      "bytes": 8946
+    },
+    {
+      "path": "src/phase.h",
+      "sha256": "00a03705088e4767fff13c56f755049691209c6298ed259fe3ba87eaf7ca901f",
+      "bytes": 1318
+    },
+    {
+      "path": "src/postfilter.c",
+      "sha256": "52fd7d3131e947b71644851224d09351fd53974c6f4abb2c25a1d0f8d12a0d07",
+      "bytes": 4839
+    },
+    {
+      "path": "src/postfilter.h",
+      "sha256": "4304bc99e33dcdeaffccaf58029849334adb32077c33eb51b98a9ffdd2f92bd3",
+      "bytes": 1042
+    },
+    {
+      "path": "src/quantise.c",
+      "sha256": "a9b6dbadfee5c79b5ba346e606152c735d1096c2f3552a3da3b39c024469732f",
+      "bytes": 31531
+    },
+    {
+      "path": "src/quantise.h",
+      "sha256": "97fe76969a82bc1e3d5e2d830140186e2a7d27c85a24c2018834f3001ad98d5a",
+      "bytes": 3892
+    },
+    {
+      "path": "src/sine.c",
+      "sha256": "9d286a353734f6968e6fd6502d089a95d46a226757a16346fa9b27169b958252",
+      "bytes": 18933
+    },
+    {
+      "path": "src/sine.h",
+      "sha256": "ca6a177e4382bd634c343bed061120d0287e443c07eb03ee1c1e4d5aeeb3616c",
+      "bytes": 1848
+    }
+  ]
+}
