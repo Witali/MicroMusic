@@ -1,6 +1,6 @@
 {
   "schema": "micromusic-downloads-v1",
-  "scope": "Pinned AVR research inputs; toolchains and retained vendor files use the linked canonical registries. Historical caches outside these records have not been fully audited.",
+  "scope": "Pinned AVR research inputs and optional official simulator SDK; toolchains and retained vendor files use the linked canonical registries. Historical caches outside these records have not been fully audited.",
   "registries": [
     {
       "manifest": "tools/toolchains-windows-x64.json",
@@ -42,6 +42,17 @@
       "path": "build/reference-downloads/AVR-Instruction-Set-Manual-DS40002198A.pdf",
       "purpose": "AVR instruction semantics and SREG flag audits.",
       "license": "Microchip document copyright and usage notices in the PDF; cached locally, not vendored."
+    },
+    {
+      "id": "mplab-x-sdk",
+      "version": "6.25",
+      "url": "https://ww1.microchip.com/downloads/mplab/x/sdk/mplab-x-sdk-v6.25.zip",
+      "bytes": 111698606,
+      "sha256": "6f78c110804ff8e6ec53265ff79a508a907a74a31c37fdc3c5c7c9678bc3e2f6",
+      "path": "build/reference-downloads/mplab-x-sdk-v6.25.zip",
+      "purpose": "Optional research into the documented standalone MDBCore API and an independent ATtiny13A simulator oracle; no system installation or physical programming.",
+      "license": "Source files: Microchip standard software copyright notice/disclaimer in MPLAB_X/doc/mchp-software-license.txt; third-party/device-pack notices apply separately. Not vendored or redistributed.",
+      "provenance": "Linked by https://ww1.microchip.com/downloads/mplab/x/sdk/archive.html; size/hash computed from the HTTPS download on 2026-10-26, not a separately published vendor checksum."
     }
   ],
   "derivedAssets": [
@@ -55,6 +66,25 @@
       "bytes": 38249813,
       "purpose": "Static inspection of official simulator exports; no simulator comparison or silicon validation has been performed.",
       "license": "Retain the parent package and individual member license notices; this is an ignored local extraction."
+    },
+    {
+      "id": "mplab-sdk-selected-docs",
+      "sourceAsset": "mplab-x-sdk",
+      "path": "build/mplab-sdk-6.25/",
+      "members": [
+        "mplab-x-sdk/index.html",
+        "mplab-x-sdk/MPLAB_X/doc/mchp-software-license.txt",
+        "mplab-x-sdk/MPLAB_X/doc/MDBCore.htm",
+        "mplab-x-sdk/MPLAB_X/doc/mdbcs.html",
+        "mplab-x-sdk/MPLAB_X/doc/development-setup.html",
+        "mplab-x-sdk/MPLAB_X/doc/how-to-build-the-samples.html",
+        "mplab-x-sdk/MPLAB_X/mdbcs/utils/getcp.py",
+        "mplab-x-sdk/MPLAB_X/sample/debug_API/program_device/src/programdevice/Main.java"
+      ],
+      "fileCount": 8,
+      "bytes": 351830,
+      "purpose": "Byte-identical SDK documentation, license, classpath utility and Java example for host-dependency inspection; no code executed.",
+      "license": "Original source notice retained as mplab-x-sdk/MPLAB_X/doc/mchp-software-license.txt."
     }
   ]
 }
