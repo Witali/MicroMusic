@@ -35,6 +35,16 @@ software/profile checks, not silicon calibration or official-simulator results.
 See the [contract](devices/attiny13a/shared-reference.md) and
 [integration evidence](../reports/shared-reference-20261026.md).
 
+Official reference host checkpoint, 2026-10-26: the signed Microchip Studio
+web installer and its exact manifest-selected host MSI/7z are now acquired and
+hash-verified. Original host files/licenses were extracted into ignored build
+storage; the documented CLI help runs locally. Its advertised commands provide
+no simulator run/step interface. No system installation, driver, physical-tool
+command or official simulator session was performed. GUI/Isolated Shell and
+actual ATtiny13A/pack execution remain to be established. This is acquisition
+progress, not hardware validation or a checklist closure. See the
+[manufacturer-host record](devices/attiny13a/simulator-oracle.md).
+
 Physical comparator checkpoint, 2026-10-26: an explicit ns profile separates
 analog propagation/reference startup from delivered digital clock phases. It
 settles raw state during held CLKI, retains CLKPR-independent wall deadlines,

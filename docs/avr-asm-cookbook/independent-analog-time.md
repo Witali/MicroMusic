@@ -41,3 +41,11 @@ consumer during publication. The [implemented shared profile](../../web-player/n
 keeps BOD recovery independent and diagnoses unavailable ADC samples. Explicit
 startup fixtures and generated-CPU lifecycle tests validate the selected digital
 contract; they establish no calibrated analog startup or performance benefit.
+
+An independent manufacturer's simulator is useful only within its documented
+coverage. Microchip Studio excludes analog modeling and has incomplete NVM
+behavior; instruction-boundary stimuli also cannot prove subinstruction pad
+timing. The [official-host acquisition record](../../web-player/native/devices/attiny13a/simulator-oracle.md)
+pins the signed installer/payload provenance, supported automation and these
+limits. Downloaded host files and successful CLI help are not an executed
+simulator comparison or an analog oracle.

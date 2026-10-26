@@ -107,7 +107,7 @@ Instruction-boundary inspection alone cannot verify subinstruction bus phases.
 
 ## Additional supported host route: Microchip Studio
 
-Read-only research, 2026-10-26. The
+Acquisition and static research, 2026-10-26. The
 [official Studio page](https://www.microchip.com/en-us/tools-resources/develop/microchip-studio)
 publishes archived **7.0.2594**, dated 2022-06-20, with offline and web installers.
 Microchip discourages it for new designs; its legacy AVR simulator remains
@@ -135,9 +135,10 @@ It does not prove that Studio 7.0.2594 has accepted this newer pack or executed 
 
 The documented execution route, not performed here:
 
-1. Obtain and register a Studio installer from that official page, verify its
-   full checksum and inspect its license. The web bootstrap is a smaller
-   acquisition candidate; all additional payloads would also need registration.
+1. The registered web bootstrap has now been acquired and inspected below.
+   Its signed manifest identifies the separate host payloads; verify their
+   registered sizes/hashes before inspecting them. A bootstrap alone is not
+   an installed or runnable simulator host.
 2. Use the supported Windows installation, preferably isolated in a VM for
    reference work. The [official FAQ](https://onlinedocs.microchip.com/oxy/GUID-ECD8A826-B1DA-44FC-BE0B-5A53418A47BD-en-US-12/GUID-54DCACE0-2AB9-4CCE-B17B-403ECC49B3B5.html)
    explicitly supports simulator use in a VM. This is a documented isolation
@@ -162,16 +163,109 @@ The documented execution route, not performed here:
    include fuse-related session aborts; confirm each needed setting in the
    running host instead of assuming that every profile is configurable.
 
-### Verified access state and limits
+### Verified bootstrap acquisition and static contents
 
-The official catalogue is readable through the web reference reader. A new,
-read-only raw-HTML request for the Studio page was denied; current browser
-inventory was empty. The canonical bootstrap binary URL and full checksum have
-therefore **not been resolved**. No guessed filename, bootstrap, offline package,
-installer execution, system change or new dependency was used. There is no live
-download handle. Next acquisition requires resolving the actual official link
-and registering it first; the MPLAB X denial does not prove that this different
-bootstrap URL is denied.
+The earlier raw-HTML denial did not prevent the web reference reader from
+following the official catalogue's actual web-installer link. The registered
+asset `microchip-studio-web` is now cached at
+`build/reference-downloads/as-installer-7.0.2594-web.exe`:
+
+- Canonical URL: `https://ww1.microchip.com/downloads/aemDocuments/documents/DEV/ProductDocuments/SoftwareTools/as-installer-7.0.2594-web.exe`.
+- Actual size: **2,333,360 bytes**; computed SHA-256:
+  `bd98e452f417b03919ce232385d4d5022e1fcea9f57de86fafe934c53c117c24`.
+- Windows Authenticode reports **Valid**, with Microchip Technology Incorporated
+  as signer and a timestamp countersignature. No separate published checksum
+  for this web installer was found; the offline installer checksum is unrelated.
+- The installer was never launched. An original CAB at byte offset1,139,200,
+  size1,183,685, SHA-256
+  `eadcf41379a56ceb540f82d1639e2f458e48ba11cbcaf32e7c6bf8c6af8c375c`,
+  was carved as data and expanded with Windows `expand.exe`. The44 flat original
+  members total1,955,849 bytes. Registry `derivedAssets` links them to the installer.
+
+The original WiX Burn manifest is
+`build/microchip-studio-7.0.2594-bootstrap/ux/0` (43,284 bytes; SHA-256
+`c79d2954e66a2de8054d482af8180ab203df5a72dc74f3e62e9cce521752c0e7`).
+It identifies these host payloads using the official HTTPS S3 location
+`https://s3-us-west-2.amazonaws.com/atmel-studio/7.0.2594/`:
+
+| Original payload filename | Manifest bytes | Manifest SHA-1 |
+| --- | ---: | --- |
+| `atmelstudio-7.0.2594.msi` | 1,482,752 | `095d43a0f931cd0cc41ad4e5e874caeb26dfb472` |
+| `atmelstudio-7.0.2594.7z` | 97,715,873 | `485b45535da34f9613d72b6913f4f651b122ea4b` |
+
+Both payloads were acquired through those exact manifest URLs. Their actual
+sizes and SHA-1 match the signed manifest. Locally computed SHA-256 values are
+`f8ed4a616618a39f7bcc7a7b769d338d342a3f8f92f07ea01997314ffd9e0b22` (MSI) and
+`75dfd5491cd27df3e9898a13e8acbd97bbdfaf248ae4092145be2bdc19429dda` (7z).
+The [download registry](../../../../tools/downloads.json) pins the originals.
+The archive's1895 validated relative member paths were extracted with Windows
+`tar.exe` into ignored `build/microchip-studio-7.0.2594-host/`:1723 original files,
+279,065,945 bytes and172 directories, with all original license/component notices.
+This is not evidence that the archive is a supported portable installation.
+The `ideInstaller` package is declared per-machine, with `ALLUSERS=1` and a
+`TARGETDIR` property. The chain also names Visual Studio Isolated Shell2015,
+VC runtimes, communication components and separate driver/toolchain/device-pack
+packages. Selecting an extraction directory does not establish that those
+dependencies can be omitted or that Studio supports a no-install launch. Opening
+the original MSI through Windows Installer `OpenDatabase(path,0)` confirmed the
+product version7.0.2594 and ALLUSERS1 without running installer/custom actions.
+
+The manifest maps original member `u37` to `License.rtf` (94,799 bytes; SHA-256
+`d2fb474bbcbe9d56abef8571cd27a7b722bae28a08d13b5000d24843ca6dfa51`);
+its bytes also match the manifest SHA-1. Its EULA section1 limits installation
+and internal use to developing/debugging embedded applications for supported
+Microchip AVR/ARM products. Section2 restricts modification, distribution and
+reverse engineering, including deriving interfaces/protocols. Section3 preserves
+applicable open-source component licenses. Retain the original terms and
+third-party notices locally; this inspection grants no redistribution or
+undocumented simulator-ABI permission. No license acceptance dialog, installer,
+driver or registration utility has been run. The only executed vendor program
+was the documented `atprogram` help/usage check described below.
+
+Reproduce the non-executing bootstrap checks:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tools/setup-downloads.ps1 -Id microchip-studio-web -Offline -CheckOnly
+Get-AuthenticodeSignature -LiteralPath build/reference-downloads/as-installer-7.0.2594-web.exe | Select-Object Status
+Get-FileHash -Algorithm SHA256 -LiteralPath build/microchip-studio-7.0.2594-bootstrap/ux/0,build/microchip-studio-7.0.2594-bootstrap/ux/u37
+```
+
+### Documented automation and remaining host step
+
+Studio's [CLI chapter](https://onlinedocs.microchip.com/oxy/GUID-ECD8A826-B1DA-44FC-BE0B-5A53418A47BD-en-US-12/GUID-7EFC7945-0589-4C6C-9F45-C40B07349FC4.html)
+documents `atprogram.exe` for programming, memory/fuse access and physical tools.
+It does not establish a simulator run/step CLI. Do not substitute an assumed
+`atprogram -t simulator` or reverse engineer `atbackend` commands. The documented
+simulator command-file route remains MPLAB X MDB described above.
+
+Actual extracted CLI check: from `7.0/atbackend/`, with TEMP/TMP pointing inside
+the ignored bootstrap build directory, `atprogram help` exits0. The advertised
+no-argument usage exits12 (no command), listing physical tools/interfaces and
+device operations, with no Simulator tool or run/step command. The first help
+attempt from another working directory failed to extract a CRT manifest; the
+controlled local-directory retry resolved that startup issue. No device/tool
+command, backend debugging session or simulator was invoked. This demonstrates
+only that this documented help command runs locally; it does not establish a
+headless simulator API or readiness of the Studio GUI.
+
+Studio does document [debug scripting](https://onlinedocs.microchip.com/oxy/GUID-ECD8A826-B1DA-44FC-BE0B-5A53418A47BD-en-US-12/GUID-E6AEB04E-0C45-43E6-AB02-33AC01E3A513.html):
+place project-local `debughooks.py` beside the ELF or project, defining all four
+callbacks `should_process_breakpoint`, `has_processed_breakpoint`, `on_reset`
+and `on_eval_expr`. The IDE loads it in IronPython2.7/.NET at session launch.
+Documented `studio_interface` methods include `ReadMemory`, `CalcNumericValue`
+and `Print`; this could collect bounded firmware snapshots at breakpoints.
+It is an IDE-hosted API, not a standalone simulator host. A later capture must
+first establish its actual memory-space names, device/pack compatibility and
+unmodified control execution through the supported Simulator selection.
+
+Next: establish the supported GUI/Isolated Shell dependencies and a real
+ATtiny13A Simulator session; the host payload extraction is complete. Do not
+execute MSI custom actions or an administrative installation merely to extract
+files. Unless a supported portable route is established, the documented
+execution option is an isolated Windows installation/VM with Studio's GUI and
+project-local scripting. No such installation or simulator session exists here.
+
+### Execution limits
 
 Studio's manufacturer documentation says
 [analog peripherals are absent and NVM modeling is incomplete](https://onlinedocs.microchip.com/oxy/GUID-19BA5E18-FC0D-4489-9A99-3E3FFC279F4D-en-US-1/GUID-0FF41858-E8B2-4ED9-A242-5913E0AE9922.html).
@@ -198,3 +292,27 @@ The pinned DFP's `simulator/win32/libattiny13a.dll` and dependencies are already
 registered local extractions. Their factory/version exports and `interface=dw`
 metadata do not document a callable simulator or debugWIRE wire protocol.
 No guessed factory signature, vtable or wire command has been invoked.
+
+## debugWIRE admission remains separate
+
+The read-only DWEN audit does not justify lifting the
+[unsupported-mode guard](interfaces.md). In the pinned
+[DS40002307A](https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf),
+debugWIRE is section15; section16 is self-programming. Section15.3 requires
+programmed DWEN and unprogrammed lock bits, describes PB5's open-drain/pull-up
+gateway and preserves CKSEL. Section15.5 excludes external RESET and keeps
+unspecified clock circuitry active in every sleep mode. It supplies neither a
+complete unattended cold-start contract nor the exact sleep gates/wake phases.
+Table10-4's PB5 overrides also depend on RSTDISBL; section17.1/Table17-2 retain
+conflicting locked-device statements. Absence of an attached debugger does not
+establish ordinary PB5 RESET behavior or disable fuse-enabled OCD.
+
+The pinned [AVR instruction manual DS40002198A](https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf),
+section5.13, makes BREAK stop an enabled, unlocked OCD target; debugger absence
+is not an exemption. Host `debugEnabled` remains a diagnostic fixture. DWDR's
+current zero read is also a fixture, not a documented absent-debugger guarantee.
+Official [Atmel-ICE guidance](https://onlinedocs.microchip.com/oxy/GUID-DDB0017E-84E3-4E77-AAE9-7AC4290E5E8B-en-US-4/GUID-F9465218-A270-4DF1-995F-D5293CE87DD8.html)
+confirms DWEN activation requires a power toggle and recommends unprogrammed
+RSTDISBL/lock bits, but does not complete that passive contract. Keep all DWEN
+configurations rejected and the plan item open; no wire protocol or external
+programming implementation is inferred from these sources or simulator files.

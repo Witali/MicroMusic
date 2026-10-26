@@ -53,6 +53,46 @@
       "purpose": "Optional research into the documented standalone MDBCore API and an independent ATtiny13A simulator oracle; no system installation or physical programming.",
       "license": "Source files: Microchip standard software copyright notice/disclaimer in MPLAB_X/doc/mchp-software-license.txt; third-party/device-pack notices apply separately. Not vendored or redistributed.",
       "provenance": "Linked by https://ww1.microchip.com/downloads/mplab/x/sdk/archive.html; size/hash computed from the HTTPS download on 2026-10-26, not a separately published vendor checksum."
+    },
+    {
+      "id": "microchip-studio-web",
+      "version": "7.0.2594",
+      "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/DEV/ProductDocuments/SoftwareTools/as-installer-7.0.2594-web.exe",
+      "publisherPage": "https://www.microchip.com/en-us/tools-resources/develop/microchip-studio",
+      "path": "build/reference-downloads/as-installer-7.0.2594-web.exe",
+      "purpose": "Static inspection of the official simulator bootstrap manifest and license; no installer execution, system installation, drivers or physical programming.",
+      "license": "Microchip and bundled third-party terms must be inspected from the acquired original before use; local research only, no redistribution.",
+      "provenance": "Canonical web-installer href resolved from the official Studio download row on2026-10-26 through the web reference reader. No separately published web-installer checksum obtained; do not reuse the offline installer checksum. Acquired via ordinary HTTPS on2026-10-26; size/hash computed locally, not a published checksum. Windows Authenticode status Valid; installer never executed.",
+      "bytes": 2333360,
+      "sha256": "bd98e452f417b03919ce232385d4d5022e1fcea9f57de86fafe934c53c117c24"
+    },
+    {
+      "id": "microchip-studio-host-msi",
+      "version": "7.0.2594",
+      "url": "https://s3-us-west-2.amazonaws.com/atmel-studio/7.0.2594/atmelstudio-7.0.2594.msi",
+      "bytes": 1482752,
+      "publisherManifestSha1": "095d43a0f931cd0cc41ad4e5e874caeb26dfb472",
+      "publisherSourceAsset": "microchip-studio-web",
+      "publisherManifestMember": "0",
+      "path": "build/reference-downloads/atmelstudio-7.0.2594.msi",
+      "purpose": "Inspect original Studio host files and supported simulator/CLI dependencies without running the bootstrap/MSI, modifying system installation, installing drivers or physical programming.",
+      "license": "Original Studio EULA in bootstrap UX memberu37 and bundled third-party notices apply; retain local originals, no redistribution.",
+      "provenance": "Payload URL/size/SHA1 read directly from the acquired Authenticode-valid Microchip bootstrap Burn manifest; no filename or endpoint guessed. Received via ordinary HTTPS on2026-10-26; publisher-manifest size/SHA1 match; SHA256 computed locally, no installer executed.",
+      "sha256": "f8ed4a616618a39f7bcc7a7b769d338d342a3f8f92f07ea01997314ffd9e0b22"
+    },
+    {
+      "id": "microchip-studio-host-archive",
+      "version": "7.0.2594",
+      "url": "https://s3-us-west-2.amazonaws.com/atmel-studio/7.0.2594/atmelstudio-7.0.2594.7z",
+      "bytes": 97715873,
+      "publisherManifestSha1": "485b45535da34f9613d72b6913f4f651b122ea4b",
+      "publisherSourceAsset": "microchip-studio-web",
+      "publisherManifestMember": "0",
+      "path": "build/reference-downloads/atmelstudio-7.0.2594.7z",
+      "purpose": "Inspect original Studio host files and supported simulator/CLI dependencies without running the bootstrap/MSI, modifying system installation, installing drivers or physical programming.",
+      "license": "Original Studio EULA in bootstrap UX memberu37 and bundled third-party notices apply; retain local originals, no redistribution.",
+      "provenance": "Payload URL/size/SHA1 read directly from the acquired Authenticode-valid Microchip bootstrap Burn manifest; no filename or endpoint guessed. Received via ordinary HTTPS on2026-10-26; publisher-manifest size/SHA1 match; SHA256 computed locally, no installer executed.",
+      "sha256": "75dfd5491cd27df3e9898a13e8acbd97bbdfaf248ae4092145be2bdc19429dda"
     }
   ],
   "derivedAssets": [
@@ -85,6 +125,38 @@
       "bytes": 351830,
       "purpose": "Byte-identical SDK documentation, license, classpath utility and Java example for host-dependency inspection; no code executed.",
       "license": "Original source notice retained as mplab-x-sdk/MPLAB_X/doc/mchp-software-license.txt."
+    },
+    {
+      "id": "microchip-studio-bootstrap-ux",
+      "sourceAsset": "microchip-studio-web",
+      "path": "build/microchip-studio-7.0.2594-bootstrap/",
+      "container": {
+        "path": "ux.cab",
+        "offset": 1139200,
+        "bytes": 1183685,
+        "sha256": "eadcf41379a56ceb540f82d1639e2f458e48ba11cbcaf32e7c6bf8c6af8c375c"
+      },
+      "selection": "All44 original validated flat CAB member names (0 and u0..u42), extracted using Windows expand.exe; none executed.",
+      "purpose": "Inspect original Burn manifest, payload URLs/checksums and license resources without launching the installer.",
+      "license": "Preserve original installer, extracted license resources and third-party notices locally; no redistribution.",
+      "fileCount": 44,
+      "bytes": 1955849,
+      "manifest": {
+        "member": "0",
+        "bytes": 43284,
+        "sha256": "c79d2954e66a2de8054d482af8180ab203df5a72dc74f3e62e9cce521752c0e7"
+      }
+    },
+    {
+      "id": "microchip-studio-host-files",
+      "sourceAsset": "microchip-studio-host-archive",
+      "archivePrefix": "7.0/",
+      "selection": "All1895 original archive member entries (1723files and172directories), paths validated before extraction with Windows tar.exe. No installer executed. Only documented atprogram help/usage was run, with no physical-tool/device command or simulator session.",
+      "path": "build/microchip-studio-7.0.2594-host/",
+      "purpose": "Inspect manufacturer simulator host, documented automation dependencies and licenses; not an assertion of a supported portable installation.",
+      "license": "Keep the original archive and complete7.0/License/ plus component notices; no redistribution.",
+      "fileCount": 1723,
+      "bytes": 279065945
     }
   ],
   "plannedAssets": [
@@ -103,7 +175,8 @@
         "httpsGet": "Access Denied response referencing Microchip /en-us/error/401.html; no complete or partial file created.",
         "iab": "Unavailable; current browser inventory is empty.",
         "activeDownloadHandle": false,
-        "actualBytesAndHash": "Unknown; publishedSha256 is vendor metadata, not a hash computed from a local file."
+        "actualBytesAndHash": "Unknown; publishedSha256 is vendor metadata, not a hash computed from a local file.",
+        "permittedNetworkRecheck": "2026-10-26: after successful Studio acquisition, ordinary HTTPS HEAD with permitted network access still returned403 Forbidden. No GET, complete/partial installer or live handle created."
       }
     }
   ]
