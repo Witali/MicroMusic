@@ -2705,6 +2705,39 @@ every produced()/finished() step and durations through131073 on host; the
 active-IRQ AVR controls cover64000, not an arbitrary playback duration.
 [Fixed matrix, intermediate variant and reset/phase proof](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: bounded LSF arithmetic and preserving split-product floors
+
+AVR5/GCC7.3 `-Os`, unchanged arithmetic selectors and real memory macros:
+validated LSF10 prev/cur0..1023, t0..16 permit signed16
+`prev*16+(cur-prev)*t` instead of two signed32 products. Every intermediate
+fits and the convex weighted sum is0..16368. Adjacent retained cosine nodes
+differ by<=101, so fraction0..15 multiplication fits signed16 (-1515..0),
+with the same negative floor shift. All17,825,792 LSF anchors and4096 cosine
+interpolations have independent host oracles;417,792 LSF edge cases run on AVR.
+
+Polynomial p[0] is always4096, so its Q12 product with c is exactly c.
+In the existing slow split-product path, derive rem from the low nibble,
+subtract16 for negative v with a nonzero nibble, instead of v-trunc(v/16)*16.
+Multiply the signed8 remainder by signed16 c with two MULSU/MULS products;
+retain both original floors, not a newly combined floor. The signed8x16
+helper also serves excitation's existing positive-step contract, with the
+same explicit-ASM selector and C fallback. First (1+/-z) factors can be
+initialized directly: multiplication by +/-4096 is exact +/-c.
+
+Round5 chooses the fastest screened variant:3099393628 ->3083330283 cycles
+over91 full active-IRQ images,0.518274% less time,+80 B Flash/image, unchanged
+SRAM1082 B, minimum measured stack margin834 ->830 B, golden outputs exact,
+zero underruns. A smaller remainder-only variant saved92 B and was about
+1.7cycles/sample slower on heavy16. Dense/new arithmetic passes4,010,881
+cases per each C/ASM/generic x unroll1/3/9 build with IRQ/r1 checks;95 host
+tests and566,610 ASan/UBSan cases pass. This is one weak round after round4.
+
+Oracle lesson: an unsigned fraction had silently converted both old C++ test
+formulas' negative product to unsigned arithmetic. Explicit signed32 in the
+reference and the actual narrowed helper now compare the correct4096 results.
+Production PCM/PWM and the independent Python integer proof were unaffected.
+[Exact bounds, variants, complete measurements and next untested candidates](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

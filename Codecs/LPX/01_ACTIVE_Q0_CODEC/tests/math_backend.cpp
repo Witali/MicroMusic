@@ -58,6 +58,9 @@ static void pwm(int16_t sample,uint8_t gain){
     if(actual!=expected)math_error=13;
     ++math_cases;
 }
+__attribute__((noinline)) static uint16_t referenceLsf(int16_t p,int16_t c,uint8_t t){
+    return (uint16_t)(((int32_t)p*(16-t)+(int32_t)c*t)>>2);
+}
 int main(){
 #ifdef __AVR__
     TCCR1A=TCCR1B=0;OCR1A=1999;
@@ -75,12 +78,32 @@ int main(){
         do{pwm((int16_t)bits,gain);}while(++bits);
     }
     for(uint16_t gain=0;gain<256;gain++)for(uint8_t i=0;i<8;i++)pwm(states[i],gain);
+    const int16_t lsfEdges[]={0,1,2,31,32,255,256,511,512,767,1022,1023};
+    for(int16_t value=0;value<1024;value++)for(uint8_t i=0;i<12;i++)for(uint8_t t=0;t<=16;t++){
+        if(lpx4LsfNorm10(value,lsfEdges[i],t)!=referenceLsf(value,lsfEdges[i],t))math_error=14;
+        if(lpx4LsfNorm10(lsfEdges[i],value,t)!=referenceLsf(lsfEdges[i],value,t))math_error=14;
+        math_cases+=2;
+    }
     for(int16_t x=-128;x<128;x++)for(uint16_t y=0;y<4096;y++){
         const int32_t actual=lpx4Excitation((int8_t)x,y);checkZero(actual);
         if(actual!=product(x,y))math_error=8;
         ++math_cases;
     }
     const int16_t edges[]={-32768,-32767,-16385,-16384,-1,0,1,4095,16384,32766,32767};
+    const int8_t byteEdges[]={-128,-127,-64,-1,0,1,64,127};
+    for(uint8_t i=0;i<8;i++){
+        uint16_t bits=0;
+        do{
+            const int32_t actual=lpx4Mul8x16(byteEdges[i],(int16_t)bits);checkZero(actual);
+            if(actual!=product(byteEdges[i],(int16_t)bits))math_error=15;
+            ++math_cases;
+        }while(++bits);
+    }
+    for(int16_t x=-128;x<128;x++)for(uint8_t i=0;i<11;i++){
+        const int32_t actual=lpx4Mul8x16((int8_t)x,edges[i]);checkZero(actual);
+        if(actual!=product(x,edges[i]))math_error=15;
+        ++math_cases;
+    }
     for(uint8_t i=0;i<11;i++)for(uint8_t j=0;j<11;j++)
         scalar(edges[i],edges[j],(int32_t)((uint32_t)(uint16_t)edges[i]<<16 | (uint16_t)edges[j]));
     for(uint32_t n=0;n<16384 && !math_error && !math_zero_error;n++){

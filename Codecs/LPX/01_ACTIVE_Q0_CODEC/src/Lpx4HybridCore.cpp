@@ -392,8 +392,11 @@ void Lpx4HybridCore::interpolate(uint8_t sub){interpolateLsf(sub);}
 // absolute polynomial coefficient would overflow signed int32 when *8192.
 static inline int32_t polyMulQ12(int32_t v,int16_t c){
     if(v<=250000L && v>=-250000L)return lpx4Shift12(v*c);
-    const int32_t hi=truncShift(v,4), rem=v-hi*16;
-    return ((hi*c)>>8)+lpx4Shift12(rem*c);
+    const int32_t hi=truncShift(v,4);
+    int8_t rem=(uint8_t)v&15;
+    if(v<0 && rem)rem-=16;
+    // Preserve the original separate floors of the two split products.
+    return ((hi*c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
 }
 // LSF->LPC polynomial. Independent Q12 multiplication (no floats/trig in AVR).
 void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
@@ -405,7 +408,8 @@ void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
     for(uint8_t j=(uint8_t)(n-1);j>=2;--j){
         p[j]=p[j-2]+polyMulQ12(p[j-1],c)+p[j];
     }
-    p[1]=polyMulQ12(p[0],c)+p[1];
+    // p[0] is initialized to 4096 and never changed by any factor.
+    p[1]=c+p[1];
 }
 #ifdef LPX3_FAST_LPC_INTERP
 #ifndef LPX3_LPC_SEGMENTS
@@ -423,21 +427,27 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
     ++lsfConverts_;
 #endif
     polyP_[0]=polyQ_[0]=4096;
-    polyP_[1]=4096;polyQ_[1]=-4096;
+    // The first (1 +/- z) factor pair is initialized directly below.
     uint8_t n=2;
     for(uint8_t i=0;i<10;i+=2){
         int16_t cc[2];
         for(uint8_t j=0;j<2;j++){
-            const int32_t weighted=(int32_t)prev_[i+j]*(16-t)+(int32_t)cur_[i+j]*t;
-            const uint16_t norm=(uint16_t)(weighted>>2);
+            const uint16_t norm=lpx4LsfNorm10(prev_[i+j],cur_[i+j],t);
             const uint8_t idx=(uint8_t)(norm>>4),frac=(uint8_t)(norm&15);
             const int16_t lo=cosineAt(idx);
             const int16_t hi=cosineAt((uint16_t)idx+1);
-            const int16_t cosQ13=(int16_t)(lo+(((int32_t)(hi-lo)*frac)>>4));
+            const int16_t cosQ13=lpx4CosineInterpolate(lo,hi,frac);
             cc[j]=(int16_t)(-cosQ13);
         }
-        polyFactor(polyP_,cc[0],n);
-        polyFactor(polyQ_,cc[1],n);
+        if(!i){
+            // (1+z)(1+c*z+z^2) and (1-z)(1+c*z+z^2), Q12.
+            // Multiplication by +/-4096 is exactly +/-c, with no rounding.
+            polyP_[1]=polyP_[2]=4096+cc[0];polyP_[3]=4096;
+            polyQ_[1]=cc[1]-4096;polyQ_[2]=4096-cc[1];polyQ_[3]=-4096;
+        }else{
+            polyFactor(polyP_,cc[0],n);
+            polyFactor(polyQ_,cc[1],n);
+        }
         n+=2;
     }
     for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
@@ -502,7 +512,7 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
             const uint8_t idx=(uint8_t)(norm>>4),frac=(uint8_t)(norm&15);
             const int16_t lo=cosineAt(idx);
             const int16_t hi=cosineAt((uint16_t)idx+1);
-            const int16_t cosQ13=(int16_t)(lo+(((int32_t)(hi-lo)*frac)>>4));
+            const int16_t cosQ13=lpx4CosineInterpolate(lo,hi,frac);
             cc[j]=(int16_t)(-cosQ13); // -2cos(pi*lsf), Q12
         }
         polyFactor(polyP_,cc[0],n);

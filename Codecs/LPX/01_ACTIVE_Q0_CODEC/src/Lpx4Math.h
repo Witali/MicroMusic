@@ -38,6 +38,20 @@
 #error LPX4_AVR_DOT_UNROLL must be 1, 3 or 9
 #endif
 
+// Validated LSF10 values are 0..1023, anchor t is 0..16. Each intermediate
+// fits signed16: prev*16 + (cur-prev)*t is a convex weighted sum, 0..16368.
+static inline __attribute__((always_inline)) uint16_t lpx4LsfNorm10(int16_t prev,int16_t cur,uint8_t t){
+    const int16_t delta=(int16_t)(cur-prev);
+    const int16_t weighted=(int16_t)(prev*16+delta*t);
+    return ((uint16_t)weighted)>>2;
+}
+// Adjacent retained Q13 cosine nodes differ by at most 101; fraction is 0..15.
+// The signed16 product fits (-1515..0), retaining the original floor shift.
+static inline __attribute__((always_inline)) int16_t lpx4CosineInterpolate(int16_t lo,int16_t hi,uint8_t fraction){
+    const int16_t product=(int16_t)((hi-lo)*fraction);
+    return (int16_t)(lo+(product>>4));
+}
+
 // Byte-aligned shifts avoid a 12/14-iteration 32-bit shift loop at AVR -Os.
 // The low byte cannot affect a floor right shift. Restore sign after 24 bits.
 #define LPX4_SHIFT_BODY(N) \
@@ -62,15 +76,15 @@ static inline __attribute__((always_inline)) int32_t lpx4Shift14(int32_t v){
 }
 #undef LPX4_SHIFT_BODY
 
-// Exact signed8 x unsigned12 excitation product. y must be 0..4095;
-// the decoder's reconstructed step is 0..4016. Keep full-range Mul16 separate.
-static inline __attribute__((always_inline)) int32_t lpx4Excitation(int8_t x,uint16_t y){
+// Exact signed8 x signed16 product. Both partial products fit signed24;
+// keep the full signed16 x signed16 helper separate.
+static inline __attribute__((always_inline)) int32_t lpx4Mul8x16(int8_t x,int16_t y){
 #if LPX4_USE_AVR_ASM
     int32_t result;
     __asm__(
         "mulsu %1,%A2\n\tmovw %A0,r0\n\t"
         "mov %C0,r1\n\tlsl %C0\n\tsbc %C0,%C0\n\t"
-        "mulsu %1,%B2\n\tadd %B0,r0\n\tadc %C0,r1\n\t"
+        "muls %1,%B2\n\tadd %B0,r0\n\tadc %C0,r1\n\t"
         "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\t"
         "clr __zero_reg__\n\t"
         : "=&r"(result) : "a"(x),"a"(y) : "r0","r1","cc");
@@ -78,6 +92,12 @@ static inline __attribute__((always_inline)) int32_t lpx4Excitation(int8_t x,uin
 #else
     return (int32_t)x*y;
 #endif
+}
+
+// Decoder excitation retains its narrower contract: step 0..4095
+// (actual retained scales 0..4016), so the signed16 cast is lossless.
+static inline __attribute__((always_inline)) int32_t lpx4Excitation(int8_t x,uint16_t step){
+    return lpx4Mul8x16(x,(int16_t)step);
 }
 
 static inline __attribute__((always_inline)) int32_t lpx4Mul16(int16_t x,int16_t y){
