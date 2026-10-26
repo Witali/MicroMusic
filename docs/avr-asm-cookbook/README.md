@@ -2885,6 +2885,16 @@ margin819 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
 98 host tests,784896 valid cache/refill/EOF states in each of three instrumented builds, and566610 ASan/UBSan mutation/reset cases pass. Result, residual reader state, errors and bit/ROM counters match the original decisions. Unchanged arithmetic bytes explicitly reuse round13 validation. All six long IRQ controls and a fresh complete frozen-output quality audit pass.
 [Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: replace ROM base plus cursor with an advancing pointer
+
+AVR5/GCC7.3 -Os, portable C cursor representation. Keep the current data pointer and a decreasing unsigned16 remaining byte count instead of base/cursor/size. Check EOF before decrement/advance; sticky errors return0 without moving the reader, and instrumented ROM calls stay unchanged. Removing the16-bit cursor saves2 B AVR SRAM. LPX4_ROM_POINTER=0 selects the original representation independently of arithmetic selection. The contiguous input-span contract, public size API and official pgm_read_byte hardware access remain unchanged.
+
+Measured round15:2537960986 ->2535457558 wall cycles over91 active-IRQ images,
+0.098639% less time,-20 B Flash/image, SRAM1101 B, minimum stack
+margin821 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+98 host tests,4,718,592 reader cases for each layout,784896 unary states in each of six builds,526843 Huffman/EOF states in each of three builds, and566610 ASan/UBSan mutation/reset cases pass. ROM0/1 native PCM and instrumented costs match across v2/v3. Unchanged arithmetic bytes explicitly reuse round13 math validation. All six long IRQ controls and a fresh complete frozen-output quality audit pass.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

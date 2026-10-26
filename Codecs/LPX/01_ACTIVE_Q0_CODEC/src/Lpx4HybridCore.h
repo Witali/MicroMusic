@@ -31,6 +31,15 @@
 #error LPX4_BATCHED_REMAINING must be 0 or 1
 #endif
 
+// Advance the ROM pointer and decrement its remaining byte count.
+// Zero retains base+cursor+size; hardware Flash access is unchanged.
+#ifndef LPX4_ROM_POINTER
+#define LPX4_ROM_POINTER 1
+#endif
+#if LPX4_ROM_POINTER != 0 && LPX4_ROM_POINTER != 1
+#error LPX4_ROM_POINTER must be 0 or 1
+#endif
+
 // Optional compact-container parser. Zero keeps the original v2-only build.
 // 4 scale repeat, 8 width repeat, 16 subheader repeat, 32 zero headers,
 // 64 small LSF Rice deltas. The stream may only use compiled feature bits.
@@ -104,7 +113,10 @@ private:
     // Keep per-sample state within AVR's short displacement range. Arrays
     // are addressed through pointers; frame-only polynomial workspace follows.
     const uint8_t* data_;
-    uint16_t bytes_,cursor_;
+    uint16_t bytes_;
+#if !LPX4_ROM_POINTER
+    uint16_t cursor_;
+#endif
     uint32_t sampleCount_,remaining_;
     uint16_t sampleRate_,preQ14_,brightQ14_,blockStep_;
     int16_t prevDeemph_,prevBright_;

@@ -59,7 +59,11 @@ static int16_t cosineAt(uint16_t index){
 }
 
 
-Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),cursor_(0),sampleCount_(0),remaining_(0),
+Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
+#if !LPX4_ROM_POINTER
+ cursor_(0),
+#endif
+ sampleCount_(0),remaining_(0),
  sampleRate_(0),preQ14_(0),brightQ14_(0),blockStep_(0),prevDeemph_(0),prevBright_(0),
  subPos_(0),subIndex_(0),
 #if LPX4_BATCHED_REMAINING
@@ -96,8 +100,14 @@ uint8_t Lpx4HybridCore::readByte(){
  ++romByteCalls_;
 #endif
  if(error_)return 0;
+#if LPX4_ROM_POINTER
+ if(!bytes_){error_=END_OF_ROM;return 0;}
+ --bytes_;
+ return LP_READ_U8(data_++);
+#else
  if(cursor_>=bytes_){error_=END_OF_ROM;return 0;}
  return LP_READ_U8(data_+cursor_++);
+#endif
 }
 uint16_t Lpx4HybridCore::read16(){
  const uint16_t low=readByte();return (uint16_t)(low | (uint16_t)readByte()<<8);
@@ -106,7 +116,11 @@ uint32_t Lpx4HybridCore::read32(){
  const uint32_t low=read16();return low|((uint32_t)read16()<<16);
 }
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
- data_=input;bytes_=size;cursor_=0;error_=NONE;initializedFrame_=false;
+ data_=input;bytes_=size;
+#if !LPX4_ROM_POINTER
+ cursor_=0;
+#endif
+ error_=NONE;initializedFrame_=false;
  remaining_=sampleCount_;subPos_=subIndex_=0;
 #if LPX4_BATCHED_REMAINING
  subEnd_=0;

@@ -130,3 +130,7 @@ gain0 отклонён по размеру/времени. Слабых подр
 Раунд 14 завершён: cached unary с сохранением bounded refill.
 2564893109 →2537960986 cycles, **1,050029%**, Flash +84 Б на всех91 ELF, RAM1103 Б, stack margin≥819 Б. Все91 native PCM16/PWM и AVR PWM точны, underrun=0.
 Слабых подряд **0**. Далее исследовать ROM reader: текущий указатель плюс remaining bytes вместо base+cursor+size; сохранить EOF, границы и instrumented costs.
+
+Раунд 15 завершён: ROM pointer и остаток bytes вместо base/cursor/size.
+2537960986 →2535457558 cycles, **0,098639%**, Flash -20 Б на всех91 ELF, RAM1101 Б, stack margin≥821 Б. Все91 native PCM16/PWM и AVR PWM точны, underrun=0.
+Слабых подряд **1**. Первый слабый раунд после14. Далее исследовать O2 для отдельных горячих функций при прежних общих AVR-GCC -Os/options; проверить скорость, размер, stack и IRQ, не менять профиль измерения.

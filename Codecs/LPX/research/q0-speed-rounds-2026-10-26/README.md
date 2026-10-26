@@ -31,6 +31,8 @@ prefill384, unroll9, v3 mask24 и активные IRQ фиксированы.
 
 | 14 | cached unary с сохранением bounded refill | 1,050029% | +84 Б Flash, RAM1103 Б | 0 |
 
+| 15 | ROM pointer и остаток bytes вместо base/cursor/size | 0,098639% | -20 Б Flash, RAM1101 Б | 1 |
+
 ## Раунд 1: точное Q4-накопление
 
 Исходный LPC сдвигал каждое signed32-произведение вправо на 12, затем
@@ -395,6 +397,17 @@ Scale step0..4016 умножается на16 один раз на80 samples и 
 
 Результаты round-14.json, round-14-controls.json, round-14-tests.json.
 Слабых подряд **0**. Далее исследовать ROM reader: текущий указатель плюс remaining bytes вместо base+cursor+size; сохранить EOF, границы и instrumented costs.
+
+## Раунд 15: ROM pointer и остаток bytes вместо base/cursor/size
+
+В readByte хранить текущий data pointer и уменьшаемый unsigned16 byte count вместо неизменной базы, cursor и size. Проверять EOF до decrement/advance; sticky error по-прежнему возвращает0 без изменения reader state, instrumented ROM calls прежние. Удалён cursor16, что экономит2 Б AVR SRAM; официальные pgm_read_byte и настоящие memory macros не меняются. LPX4_ROM_POINTER=0 оставляет прежнее представление, независимо от C/ASM. Оба требуют тот же корректный непрерывный input span длиной size; размер входа/API/доступ к аппаратной Flash прежние.
+
+2537960986 →2535457558 cycles, **0,098639%**, Flash -20 Б на всех91 ELF, RAM1101 Б, stack margin≥821 Б. Все91 native PCM16/PWM и AVR PWM точны, underrun=0.
+
+98 host-тестов за56,719 с; по4718592 reader cases обоих ROM layouts,784896 unary состояний ×6 сборок,526843 Huffman/EOF состояния ×3 сборки прошли. Native PCM и instrumented counters ROM0/1 совпадают через v2/v3 masks0/24/32/124. ASan/UBSan566610 mutation/reset случаев прошли. Arithmetic bytes прежние; ссылка/hash девяти math-сборок раунда13 сохранены. Все шесть длинных IRQ контролей точны/без пропусков: standard1169,620 →1167,866, +100 IRQ1202,591 →1200,851 cycles/sample. Свежий полный quality audit: round-15-quality.json.
+
+Результаты round-15.json, round-15-controls.json, round-15-tests.json.
+Слабых подряд **1**. Первый слабый раунд после14. Далее исследовать O2 для отдельных горячих функций при прежних общих AVR-GCC -Os/options; проверить скорость, размер, stack и IRQ, не менять профиль измерения.
 
 ## Воспроизведение
 

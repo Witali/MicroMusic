@@ -8,7 +8,10 @@
 #include "Lpx4HybridCore.cpp"
 
 static bool same(const Lpx4HybridCore& a,const Lpx4HybridCore& b){
-    if(a.cursor_!=b.cursor_ || a.bitBuffer_!=b.bitBuffer_ || a.bitsLeft_!=b.bitsLeft_ || a.error_!=b.error_)return false;
+    if(a.data_!=b.data_ || a.bytes_!=b.bytes_ || a.bitBuffer_!=b.bitBuffer_ || a.bitsLeft_!=b.bitsLeft_ || a.error_!=b.error_)return false;
+#if !LPX4_ROM_POINTER
+    if(a.cursor_!=b.cursor_)return false;
+#endif
 #ifdef LPX3_COST_INSTRUMENT
     if(a.bitCalls_!=b.bitCalls_ || a.romByteCalls_!=b.romByteCalls_)return false;
 #endif
