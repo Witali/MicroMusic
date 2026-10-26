@@ -95,6 +95,11 @@ int main(){
     TCCR1A=TCCR1B=0;OCR1A=1999;
     TIMSK1=_BV(OCIE1A);TCCR1B=_BV(WGM12)|_BV(CS10);sei();
 #endif
+    for(int8_t x=-32;x<32;x++)for(uint8_t gain=0;gain<32;gain++){
+        const int8_t actual=lpx4PitchQ4(x,gain);checkZero(actual);
+        if(actual!=((product(x,gain)+8)>>4))math_error=22;
+        ++math_cases;
+    }
     const int16_t anchors[]={-32768,-32767,-16384,-256,-1,0,1,255,16384,32766,32767};
     for(uint8_t p=0;p<11;p++)for(uint8_t c=0;c<11;c++){
         for(uint8_t t=0;t<=4;t++)lpcCase<2>(anchors[p],anchors[c],t);

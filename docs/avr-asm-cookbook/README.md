@@ -2827,6 +2827,24 @@ gain. Golden PCM16/PWM and useful AVR PWM exact; all long IRQ controls pass.
 including260,359 new edge/dense/random interpolation vectors and r1/IRQ.
 [Full scope and retained measurements](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: narrow rounded pitch product and zero-history bypass
+
+AVR5/GCC7.3 -Os, gain0..31 and signed q-history-32..31 prove rounded Q4
+prediction lies in-62..60. Extract bits4..11 of the biased signed product
+with SWAP/AND/OR and clip with signed8 bounds. The equivalent C formula stays
+selectable on AVR. A zero-history input returns0 before multiply/clip; mode0
+also returns0. Keep the old predictor with LPX4_FAST_PITCH=0; default3 enables
+narrow/x0. Flag7's extra gain0 branch was larger and slower on heavy16.
+
+Measured round10:2783055441 ->2736686405 cycles over91 full IRQ images,
+1.666120% less time,+12 B Flash/image, unchanged1102 B SRAM, minimum stack
+margin820 B. Golden PCM16/PWM and AVR PWM exact; all six long IRQ controls
+pass.97 host tests, all2048 valid pitch combinations, and nine arithmetic
+builds with5,225,096 cases pass with IRQ/r1. The native
+[distribution probe](examples/lpx-pitch-distribution.cpp) measures route counts,
+not AVR time; retained hashes tie the counts to the fixed input manifest.
+[Variants and full evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

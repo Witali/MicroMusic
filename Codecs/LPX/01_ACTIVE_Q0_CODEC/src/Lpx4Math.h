@@ -122,6 +122,22 @@ static inline __attribute__((always_inline)) int32_t lpx4Mul8x16(int8_t x,int16_
 #endif
 }
 
+// Pitch gain0..31, history code -32..31: rounded Q4 lies in -62..60.
+// Extract product bits4..11 with two nibble swaps instead of 16-bit shifts.
+static inline __attribute__((always_inline)) int8_t lpx4PitchQ4(int8_t x,uint8_t gain){
+#if LPX4_USE_AVR_ASM
+    int16_t product;
+    __asm__(
+        "muls %1,%2\n\tmovw %A0,r0\n\tclr __zero_reg__\n\t"
+        "subi %A0,248\n\tsbci %B0,255\n\t"
+        "swap %A0\n\tandi %A0,15\n\tswap %B0\n\tandi %B0,240\n\tor %A0,%B0\n\t"
+        : "=&d"(product) : "a"(x),"a"(gain) : "r0","r1","cc");
+    return (int8_t)product;
+#else
+    return (int8_t)(((int16_t)x*gain+8)>>4);
+#endif
+}
+
 // Decoder excitation retains its narrower contract: step 0..4095
 // (actual retained scales 0..4016), so the signed16 cast is lossless.
 static inline __attribute__((always_inline)) int32_t lpx4Excitation(int8_t x,uint16_t step){

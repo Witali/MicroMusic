@@ -340,7 +340,30 @@ bool Lpx4HybridCore::readSubframe(){
  }
  return !error_;
 }
+// 0 keeps the reference predictor, bit1 narrows the proven result,
+// bit2 bypasses zero history, bit4 additionally bypasses zero gain.
+#ifndef LPX4_FAST_PITCH
+#define LPX4_FAST_PITCH 3
+#endif
+#if LPX4_FAST_PITCH < 0 || (LPX4_FAST_PITCH & ~7) || (LPX4_FAST_PITCH && !(LPX4_FAST_PITCH&1))
+#error Unsupported LPX4_FAST_PITCH
+#endif
 int16_t Lpx4HybridCore::pitchPredict() const{
+#if LPX4_FAST_PITCH
+ if(!mode_)return 0;
+ const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
+#if LPX4_FAST_PITCH&2
+ if(!x)return 0;
+#endif
+#if LPX4_FAST_PITCH&4
+ if(!gain_)return 0;
+#endif
+ int8_t v=lpx4PitchQ4(x,gain_);
+ const int8_t low=-(int8_t)quantLimit_,high=(int8_t)(quantLimit_-1);
+ if(v<low)v=low;
+ if(v>high)v=high;
+ return v;
+#else
  const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
  int16_t v=(int16_t)(((int8_t)gain_*x+8)>>4);
  if(!mode_)return 0;
@@ -348,6 +371,7 @@ int16_t Lpx4HybridCore::pitchPredict() const{
  if(v < -lim)v=-lim;
  if(v >= lim)v=lim-1;
  return v;
+#endif
 }
 bool Lpx4HybridCore::decodeCode(int8_t& q){
  int16_t decoded=0;

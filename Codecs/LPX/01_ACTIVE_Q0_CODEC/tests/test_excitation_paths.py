@@ -13,13 +13,13 @@ class ExcitationPathTests(unittest.TestCase):
         probes=[]
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
             folder=Path(td)
-            for flags in (0,7):
+            for flags,pitch in ((0,0),(7,1),(7,3),(7,7)):
                 common=['g++','-O2','-std=c++11','-I'+str(ROOT/'src'),'-DLPX4_V3_FEATURES=124',
-                    '-DLPX4_FAST_EXCITATION='+str(flags)]
-                dll=folder/f'fast{flags}.so'
+                    '-DLPX4_FAST_EXCITATION='+str(flags),'-DLPX4_FAST_PITCH='+str(pitch)]
+                dll=folder/f'fast{flags}-pitch{pitch}.so'
                 subprocess.run([*common,'-shared','-fPIC',str(ROOT/'src/Lpx4HybridCore.cpp'),
                     str(ROOT/'src/native_batch_decoder.cpp'),'-o',str(dll)],check=True,capture_output=True)
-                exe=folder/f'probe{flags}.exe'
+                exe=folder/f'probe{flags}-pitch{pitch}.exe'
                 subprocess.run([*common,'-DLPX3_COST_INSTRUMENT=1',str(ROOT/'src/Lpx4HybridCore.cpp'),
                     str(ROOT/'tests/decode_metrics.cpp'),'-o',str(exe)],check=True,capture_output=True)
                 decoder=BatchDecoder(dll);metrics=[]
@@ -28,6 +28,6 @@ class ExcitationPathTests(unittest.TestCase):
                     np.testing.assert_array_equal(decoder.decode_one_s16(blob,samples),expected)
                     metrics.append(json.loads(subprocess.check_output([str(exe),str(path)],text=True)))
                 probes.append(metrics)
-        self.assertEqual(probes[0],probes[1])
+        for actual in probes[1:]:self.assertEqual(probes[0],actual)
 
 if __name__=='__main__':unittest.main()
