@@ -1,0 +1,171 @@
+{
+  "eligible_unique": 6,
+  "measurement_limit": 6,
+  "measured": [
+    {
+      "stream_sha256": "311ec4ddfc9968475233190edb9c0de6ebb0ab0c1682226d3abd6a81a7aa029d",
+      "file_bytes": 5570,
+      "full_sse": 9256275096,
+      "stoi": 0.7158130575523414,
+      "accepted": true,
+      "mean_decode_wall_cycles": 1306.3189375,
+      "decode_wall_cycles_max_160": 235765,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 385,
+      "flash_bytes": 13586,
+      "pwm_native_exact": true,
+      "input_sha256": "311ec4ddfc9968475233190edb9c0de6ebb0ab0c1682226d3abd6a81a7aa029d"
+    },
+    {
+      "stream_sha256": "1246fc5af5a0f9666a8e01950c362d0a555e5d766434ce1ec7b89e365217da57",
+      "file_bytes": 6020,
+      "full_sse": 3619770732,
+      "stoi": 0.8209062179821597,
+      "accepted": false,
+      "mean_decode_wall_cycles": 1479.38675,
+      "decode_wall_cycles_max_160": 292993,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 385,
+      "flash_bytes": 14036,
+      "pwm_native_exact": true,
+      "input_sha256": "1246fc5af5a0f9666a8e01950c362d0a555e5d766434ce1ec7b89e365217da57"
+    },
+    {
+      "stream_sha256": "a031b41e87ef4b28334f01e4650564a7203e5433f1c0cf4cca9415dda8a6d54d",
+      "file_bytes": 5547,
+      "full_sse": 4784893480,
+      "stoi": 0.7976425971524045,
+      "accepted": false,
+      "mean_decode_wall_cycles": 1476.3843125,
+      "decode_wall_cycles_max_160": 294907,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 385,
+      "flash_bytes": 13562,
+      "pwm_native_exact": true,
+      "input_sha256": "a031b41e87ef4b28334f01e4650564a7203e5433f1c0cf4cca9415dda8a6d54d"
+    },
+    {
+      "stream_sha256": "ff7d4e83cba3470c5158a8e5f5422b63c4aa9687b253985217a4281ce19e7dbd",
+      "file_bytes": 5955,
+      "full_sse": 3754416000,
+      "stoi": 0.8084754378043224,
+      "accepted": false,
+      "mean_decode_wall_cycles": 1480.13159375,
+      "decode_wall_cycles_max_160": 294501,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 385,
+      "flash_bytes": 13970,
+      "pwm_native_exact": true,
+      "input_sha256": "ff7d4e83cba3470c5158a8e5f5422b63c4aa9687b253985217a4281ce19e7dbd"
+    },
+    {
+      "stream_sha256": "d50c219eea28bfdceed349781bbed60292116ba207755eba5dbcc1f8df807752",
+      "file_bytes": 5563,
+      "full_sse": 4858382056,
+      "stoi": 0.7896089528909949,
+      "accepted": false,
+      "mean_decode_wall_cycles": 1476.1103125,
+      "decode_wall_cycles_max_160": 292035,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 385,
+      "flash_bytes": 13578,
+      "pwm_native_exact": true,
+      "input_sha256": "d50c219eea28bfdceed349781bbed60292116ba207755eba5dbcc1f8df807752"
+    },
+    {
+      "stream_sha256": "9d71697b747bbd782af4b3b69396e26e0cac2fcbf6e1aff104601fee2704cbc5",
+      "file_bytes": 5829,
+      "full_sse": 8211601152,
+      "stoi": 0.7219566062665305,
+      "accepted": false,
+      "mean_decode_wall_cycles": 1310.79884375,
+      "decode_wall_cycles_max_160": 231997,
+      "underruns": 0,
+      "min_queue_before_producer_eos": 385,
+      "flash_bytes": 13844,
+      "pwm_native_exact": true,
+      "input_sha256": "9d71697b747bbd782af4b3b69396e26e0cac2fcbf6e1aff104601fee2704cbc5"
+    }
+  ],
+  "frontier_sha256": [
+    "311ec4ddfc9968475233190edb9c0de6ebb0ab0c1682226d3abd6a81a7aa029d"
+  ],
+  "baseline_sha256": "311ec4ddfc9968475233190edb9c0de6ebb0ab0c1682226d3abd6a81a7aa029d",
+  "selected_sha256": "311ec4ddfc9968475233190edb9c0de6ebb0ab0c1682226d3abd6a81a7aa029d",
+  "cap_file_bytes": 6020,
+  "quality_floor": {
+    "full_sse": 9256275096,
+    "stoi": 0.7158130575523414
+  },
+  "scope": "Bounded shortlist only; unmeasured streams may have a better time/size tradeoff.",
+  "reference_sha256": "ce6b5617bbf1c87ca3cf95b1725752dd5b5af8ddef4b0f634cf0f75e21fec36a",
+  "samples": 32000,
+  "selected_pcm16_sha256": "06182425272445fb73855f38ec9639fe3a8a4a0d8eff7e6ddbd55432b13f3167",
+  "physical_hardware_measured": false,
+  "profile": {
+    "enable_asm": true,
+    "v3_features": 24,
+    "queue": 512,
+    "prefill": 384,
+    "dot_unroll": 9,
+    "irq_load": 0
+  },
+  "inputs": [
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-lowrate\\benchmark\\ru_pushkin_a4\\12000-joint.l4hy",
+      "stream_sha256": "311ec4ddfc9968475233190edb9c0de6ebb0ab0c1682226d3abd6a81a7aa029d"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\12000-enhanced.l4hy",
+      "stream_sha256": "1246fc5af5a0f9666a8e01950c362d0a555e5d766434ce1ec7b89e365217da57"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\12000-size_matched.l4hy",
+      "stream_sha256": "a031b41e87ef4b28334f01e4650564a7203e5433f1c0cf4cca9415dda8a6d54d"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\01dffd2449a2dbf4ddb2db94121c2dcbdb50d3d681cb831d17c3a9a389c3205d.l4hy",
+      "stream_sha256": "d50c219eea28bfdceed349781bbed60292116ba207755eba5dbcc1f8df807752"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\06c634e4f66fc09123a47def2c6f1e6a8aa179b8472405c85cc229f01897d057.l4hy",
+      "stream_sha256": "78ad92044cff79821a940363e0e1c07f529fc66f7a7034ba0d5da49ef30fd1b9"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\0a7206a695396863a68ffcdefbbc1879eaaef4d87ee049dc89666b50a845f590.l4hy",
+      "stream_sha256": "ff7d4e83cba3470c5158a8e5f5422b63c4aa9687b253985217a4281ce19e7dbd"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\15ed88519e30c9824fa3c068ed707aab72ba8467f52e9c7552807fd92887fe33.l4hy",
+      "stream_sha256": "e9310b3a5d51d1c15e0bf1e3862d9115b09f1dedb0050086f7b1f6c549aeb9e6"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\164af17638a62675de6b7a360190e457194a107ad27b4e35a5f143f2a7f54342.l4hy",
+      "stream_sha256": "9d71697b747bbd782af4b3b69396e26e0cac2fcbf6e1aff104601fee2704cbc5"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\1951545ab59acd0c0c5a3e4ef60e33d0e6915bda8e9ec4809a4691c185ffc0e3.l4hy",
+      "stream_sha256": "df1cafdc62736d3ff35c61e61f8bb542812590cd26fdf3415a13d9bbc55d7f90"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\1988bd56a582d598c4ac5c5d86e9e471214db7ab1a88f694b8179a15d888f1de.l4hy",
+      "stream_sha256": "a70f95805782642c164cb1cb0aa76d9b272e6e8ae8be8a3cd220f3039c0d902d"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\1ce658ef22f3e5a96786381a93b9d600cbff538ec3044c091e2ac05ac20cad40.l4hy",
+      "stream_sha256": "8f6dfa9417110f7349a41181d71c134b6b166ef13d7cc5721005a7f1f38ec687"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\20190abad617cbbf4a506eac652814d814242b9787463c6934799599af20332e.l4hy",
+      "stream_sha256": "2143255f025d0a01c1d6ae624dd8976533447b3cc2cc2bddba41ad8c5b0ed392"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\22bbc31834377513796043b4051470405802d0ef373dab6b9e503064c1c18eec.l4hy",
+      "stream_sha256": "9d081582a78542c2aac1903f95f585c2b5499145930a80b1db1b3b54ec1a2e56"
+    },
+    {
+      "path": "C:\\Work\\MicroMusic\\.worktree\\lpx-lowrate-quality\\build\\lpx-multiseed\\results\\ru_pushkin_a4\\candidates\\277c14607acbb6fa13759c802913420df2ac5b6db6e1acdecb3d009432b541b2.l4hy",
+      "stream_sha256": "5e77943143c52aadd706b9f2e7b021c61f17ac0d9365ecbcc1b4439c9bf143d1"
+    }
+  ]
+}
