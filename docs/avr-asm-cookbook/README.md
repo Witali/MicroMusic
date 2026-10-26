@@ -2658,3 +2658,46 @@ Worst frame is still 30,768,431 cycles /1.923 s at 16 MHz. This is portable C,
 with explicit old wide C source selection; no new assembly, hardware macro
 overrides, IRQ or real-time admission.
 [Complete verification](../../Codecs/Codec2/reports/sums32-decoder.json).
+
+### Share sibling FFT outputs in the existing bank, qualify the rounding graph
+
+The [shared radix profile](../../Codecs/Codec2/MATRIX_SPECTRUM_RU.md) builds
+the sparse N=64 children from six packed complex LPC coefficients, then
+computes all four N=256 root siblings together. This avoids reevaluating
+common branches for each pair: 1792 real products per fast forward pass
+instead of 2816 in the former paired graph. Keep integer complex32 cells in
+the existing 257x8-byte bank and convert them in place only after the real
+split. Use memcpy for representation access and compile-time size checks;
+there is no additional FFT array and no strict-aliasing type pun.
+
+Applicable profile: ATmega64A AVR5/MUL, GNU AVR-GCC 7.3.0 `-Os`, ordinary ABI,
+32-bit components/Q30 twiddles, bounded C32 sums, wide products, adaptive
+faithful40 fallback. It is portable C; older paired C and scalar radix C
+remain explicitly selectable by source list. Manufacturer CPU/memory macros
+and ROM reads are unchanged. KISS/BSD provenance is retained in the source
+and original tables. This implementation rejects other precision settings.
+
+The shared graph matches the original scalar radix rounding graph, not the
+paired graph. All 64x257 complex native/AVR results equal the frozen radix
+C bytes for both raw and adaptive kernels. Mean raw cycles are
+3,678,401→1,320,429 (-64.10%), stack 580→462 B; adaptive cycles
+4,176,440→1,818,468 (-56.46%), stack 1008→751 B. Relative to the already
+optimized paired+sums32 adaptive kernel, the new kernel saves 25.60%; that
+comparison needs the whole PCM gate because the rounding graphs differ.
+[Kernel evidence](../../Codecs/Codec2/reports/matrix-kernel.json).
+
+Rerun the full precision/conditioning study after changing a rounding graph.
+All guards 14..22 were checked; g=18 refines the fewest bins among passing
+choices. Native 11,333-frame SNR is 57.08 dB, maximum PCM error 237; RNG
+is unchanged. Passing is nonmonotonic (g=15 fails, g=16 passes). Keep the
+24-packet extreme/transition sequence outside selection.
+[Precision evidence](../../Codecs/Codec2/reports/matrix-precision.json).
+
+The complete 389-frame AVR test saves another 8.27%/8.19% mean EN/RU cycles
+after sums32. Flash grows 48,768→51,146 B; ordinary-phrase stack grows
+2738→2974 B; extreme stack remains 3009 B, leaving 376/4096 B. SNR is
+60.02/59.98/57.25 dB. Mean frames cost about 14 million cycles; the maximum
+is 29,508,800. A 20-ms frame at 16 MHz permits 320,000 cycles, before IRQ
+and I/O, so these gains do not establish real-time feasibility. No active
+IRQ, underrun, physical board or live-speech admission is claimed.
+[Complete evidence](../../Codecs/Codec2/reports/matrix-decoder.json).
