@@ -1,0 +1,76 @@
+{
+  "verified_at_utc": "2026-10-26T10:54:48.597232+00:00",
+  "scope": "Physical static link bounds only. Success is not proof of stack, real-time, IRQ or board operation.",
+  "compiler": "avr-gcc (GCC) 7.3.0",
+  "results": [
+    {
+      "mcu": "atmega64a",
+      "manufacturer_header_macros": {
+        "RAMSTART": 256,
+        "FLASHEND": 65535,
+        "RAMEND": 4351
+      },
+      "physical_flash_bytes": 65536,
+      "physical_sram_bytes": 4096,
+      "static_link_passed": false,
+      "link_exit_code": 1,
+      "link_diagnostics": "c:/work/micromusic/build/toolchains/avr-7.3.0/bin/../lib/gcc/avr/7.3.0/../../../../avr/bin/ld.exe: address 0x801d47 of C:\\Work\\MicroMusic\\.worktree\\import-codec2-history\\build\\codec2\\memory\\atmega64a\\decoder.elf section `.bss' is not within region `data'\nc:/work/micromusic/build/toolchains/avr-7.3.0/bin/../lib/gcc/avr/7.3.0/../../../../avr/bin/ld.exe: address 0x801d47 of C:\\Work\\MicroMusic\\.worktree\\import-codec2-history\\build\\codec2\\memory\\atmega64a\\decoder.elf section `.bss' is not within region `data'\ncollect2.exe: error: ld returned 1 exit status",
+      "map_sections": {
+        ".text": {
+          "address": 0,
+          "bytes": 21308
+        },
+        ".data": {
+          "address": 8388864,
+          "bytes": 44
+        },
+        ".bss": {
+          "address": 8388908,
+          "bytes": 7195
+        }
+      },
+      "static_sram_bytes": 7239,
+      "flash_bytes_including_data_initializer": 21352,
+      "static_sram_overflow_bytes": 3143
+    },
+    {
+      "mcu": "atmega1284p",
+      "manufacturer_header_macros": {
+        "RAMSTART": 256,
+        "FLASHEND": 131071,
+        "RAMEND": 16639
+      },
+      "physical_flash_bytes": 131072,
+      "physical_sram_bytes": 16384,
+      "static_link_passed": true,
+      "link_exit_code": 0,
+      "link_diagnostics": "",
+      "map_sections": {
+        ".text": {
+          "address": 0,
+          "bytes": 21262
+        },
+        ".data": {
+          "address": 8388864,
+          "bytes": 44
+        },
+        ".bss": {
+          "address": 8388908,
+          "bytes": 7195
+        }
+      },
+      "static_sram_bytes": 7239,
+      "flash_bytes_including_data_initializer": 21306,
+      "static_sram_overflow_bytes": 0,
+      "section_sizes": "C:\\Work\\MicroMusic\\.worktree\\import-codec2-history\\build\\codec2\\memory\\atmega1284p\\decoder.elf  :\nsection                     size      addr\n.data                         44   8388864\n.text                      21262         0\n.bss                        7195   8388908\n.comment                      17         0\n.note.gnu.avr.deviceinfo      64         0\n.debug_aranges               448         0\n.debug_info                 4570         0\n.debug_abbrev               2113         0\n.debug_line                 2412         0\n.debug_str                   662         0\nTotal                      38787\n\n\n"
+    }
+  ],
+  "sources": {
+    "tools/audit_decoder_memory.py": "c1f7824d3effef01d6d480d69def303374d34b0849ba424a206123dc6dd7e716",
+    "include/codec2_decoder.h": "24b60452a4198f912d450a895940720afc69c40ed85227465276c4cdcb7f9703",
+    "src/decoder_float.c": "31392d32d4e4fbca3529572520c46e32dab89e4fdcfab5d062ed256766e1e98c",
+    "src/parameters.c": "52f1777d7a1c2539de1889a3788d6c17a6f03121e51daf8aaff39cb30af3e6b4",
+    "tests/avr_decoder.c": "80fb982c59f2bd12571f7e3662d36f166a2ce0e8e7b0d41de61f2cecf65fb518",
+    "vendor/codec2-1.2.0/UPSTREAM.json": "4120cfe95f7d131623f045cabb137a352e45c208a3181e01f265a726f94a00e0"
+  }
+}

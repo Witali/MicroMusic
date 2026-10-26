@@ -2155,3 +2155,56 @@ this explicitly selectable C path and verify spectral/PCM errors, not just
 individual coefficients. Provenance and license: pinned upstream `lsp.c`
 and COPYING; source/binary/input hashes are in
 [lpc-q23.json](../../Codecs/Codec2/reports/lpc-q23.json).
+
+## Full Codec2 waveform baseline and AVR/native control boundaries
+
+The [complete float C decoder](../../Codecs/Codec2/FULL_DECODER_RU.md) retains
+all ten LSPs, LPC spectral magnitudes, harmonic phases, both default postfilters
+and original overlap/add. It is a large-AVR correctness baseline. One KISS real
+FFT config switches direction by conjugating its twiddles. The pinned KISS path
+consumes input into its own scratch before writing output, allowing explicitly
+overlapped union input/output storage. Do not assume this for another FFT API.
+Vendor files remain unchanged; this project adaptation stays separate.
+
+**CPU/ABI:** ATmega1284P, AVR51 with MUL, GNU AVR-GCC 7.3.0 `-Os`, C99,
+IEEE binary32 and 32-bit AVR `double`, ordinary GNU C ABI. No handwritten ASM
+backend; hardware-memory definitions come from the actual device headers.
+Native Clang's 64-bit `double` exposes a control-flow hazard: `int(PI/Wo)` is
+79 at minimum Wo on native, but rounds to 80 on AVR. One extra UV harmonic
+advances the RNG, corrupting later noise phases. Half-bin decisions in spectral
+bands and synthesis similarly change with intermediate precision.
+
+The C baseline corrects these decisions with exact binary32 mantissa comparisons:
+harmonic count uses floor(PI*2^30), band edges compare the exact dyadic Wo/r ratio,
+and synthesis rounding uses floor((TWO_PI/2)*2^48). Inputs are constrained to
+mode-3200 pitch/interpolation ranges; unsigned64 products avoid overflow.
+See `harmonic_count`, `band_boundary` and `synthesis_bin` in
+[decoder_float.c](../../Codecs/Codec2/src/decoder_float.c). This retains native
+upstream decisions rather than dropping harmonics to meet a budget.
+
+Measured workload: 11,333 host packets / 1,813,280 PCM samples match original
+Codec2 1.2.0 byte-for-byte; full AVR execution covers both archived speech
+streams, 365 packets / 58,400 samples. Maximum AVR/native error is 7 s16 units,
+SNR 73.97/75.04 dB. The linked harness occupies 21,306 Flash and 7,239 static
+SRAM bytes; observed stack is 6,593 B, leaving 2,552 B. Maximum frame cost is
+16,124,312 cycles, exceeding the 16-MHz 20-ms budget by about 50.4x.
+These are baseline measurements, with no timers/IRQ or board admission and no
+speedup claim. [Report and source/binary hashes](../../Codecs/Codec2/reports/full-decoder.json).
+
+ATmega64A's header-defined 4,096-byte SRAM cannot hold this version: static data
+alone overflows by 3,143 B. The [physical memory audit](../../Codecs/Codec2/reports/decoder-memory.json)
+explicitly bounds GNU link regions from RAMSTART/RAMEND/FLASHEND. Generic linker
+regions must not be mistaken for physical SRAM; successful static linking still
+requires a separate stack/IRQ bound.
+
+**Untested memory-reduction direction:** on a 4-KB AVR with MUL, compute LPC and
+gamma-weighted responses directly at all 256 original DFT bins, in two passes
+for postfilter energy normalization and harmonic-band sums. Retain all harmonics
+and phases, then evaluate only the original 160 OLA time indices by a direct
+inverse sum with Flash twiddles. Reusing each harmonic's amplitude slot for its
+complex synthesis coefficient can avoid the 5-KB RAM FFT config and large
+simultaneous spectra. This is a time-for-working-memory tradeoff hypothesis,
+not a verified fit or real-time profile. It must be compared with the full C/PCM
+baseline, including near-resonance errors, before selecting lower precision or
+adding explicitly enabled ASM with an equivalent C fallback. Provenance:
+original Codec2 `quantise.c`/`sine.c` formulas (LGPL-2.1) and retained KISS notices.
