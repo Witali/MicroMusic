@@ -5,6 +5,7 @@
 - Keep temporary MIDI test fixtures outside the repository and remove them after use. Generated firmware and retained source descriptions must use JSON, not a copied MIDI binary.
 - Commit each logically complete change separately and stage only files belonging to that change.
 - Prefer official device definition files, register headers, and device family packs from the microcontroller manufacturer's official website whenever they are available. Reuse those definitions instead of manually duplicating register addresses. Pin the source URL and version, retain licensing and provenance, and keep project-specific adaptations separate from the original vendor files.
+- Register every external download before using it in the project. Use the download index in `docs/SETUP_DOWNLOADS.md` and its linked setup manifests: record the canonical source URL, version or revision, SHA-256, local destination, purpose and license/provenance. Reuse existing registries rather than duplicating their records. Link extracted files to their original archive; explicitly mark unknown historical provenance. Keep credentials and signed/private URLs out of the registry.
 
 ## Architecture optimization cookbooks
 

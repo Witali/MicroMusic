@@ -1,0 +1,60 @@
+{
+  "schema": "micromusic-downloads-v1",
+  "scope": "Pinned AVR research inputs; toolchains and retained vendor files use the linked canonical registries. Historical caches outside these records have not been fully audited.",
+  "registries": [
+    {
+      "manifest": "tools/toolchains-windows-x64.json",
+      "setup": "tools/setup.ps1",
+      "purpose": "Node.js, Python, AVR GCC and Emscripten; exact versions, URLs and archive SHA-256 values."
+    },
+    {
+      "manifest": "web-player/vendor/microchip/ATtiny_DFP/3.4.278/provenance.json",
+      "purpose": "Original device definitions and licenses, including the separately downloaded Apache-2.0 license text and its URL/hash."
+    }
+  ],
+  "assets": [
+    {
+      "id": "microchip-attiny-dfp",
+      "version": "3.4.278",
+      "url": "https://packs.download.microchip.com/Microchip.ATtiny_DFP.3.4.278.atpack",
+      "bytes": 33433639,
+      "sha256": "41f09d5825abaa764c9000f4488f8ba3fab152afe6229b359de4a5efe9a21eda",
+      "path": "build/vendor-packs/Microchip.ATtiny_DFP.3.4.278.atpack",
+      "purpose": "Manufacturer register definitions and independent simulator model research.",
+      "license": "Package LICENSE.txt and individual member notices; retained definition/license provenance is linked above."
+    },
+    {
+      "id": "attiny13a-datasheet",
+      "version": "DS40002307A",
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf",
+      "bytes": 3128073,
+      "sha256": "7c363e5deb94b5527a3ebfe9ac98338ce38e7d4499fe481100b7ede44bf37445",
+      "path": "build/reference-downloads/ATtiny13A-Data-Sheet-DS40002307A.pdf",
+      "purpose": "ATtiny13A peripheral, clock, reset and instruction timing reference.",
+      "license": "Microchip document copyright and usage notices in the PDF; cached locally, not vendored."
+    },
+    {
+      "id": "avr-instruction-manual",
+      "version": "DS40002198A",
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf",
+      "bytes": 1196344,
+      "sha256": "d8e75ad7cc92de2b86c718495ed9392096e0192a08269a4dba8da16075be1e00",
+      "path": "build/reference-downloads/AVR-Instruction-Set-Manual-DS40002198A.pdf",
+      "purpose": "AVR instruction semantics and SREG flag audits.",
+      "license": "Microchip document copyright and usage notices in the PDF; cached locally, not vendored."
+    }
+  ],
+  "derivedAssets": [
+    {
+      "id": "microchip-simulator-win32",
+      "sourceAsset": "microchip-attiny-dfp",
+      "archivePrefix": "simulator/win32/",
+      "selection": "All .dll members directly inside archivePrefix, preserving member basenames and bytes.",
+      "path": "build/microchip-simulator/win32/",
+      "fileCount": 30,
+      "bytes": 38249813,
+      "purpose": "Static inspection of official simulator exports; no simulator comparison or silicon validation has been performed.",
+      "license": "Retain the parent package and individual member license notices; this is an ignored local extraction."
+    }
+  ]
+}
