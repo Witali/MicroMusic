@@ -82,7 +82,15 @@ CRC into a timing-critical receive path.
 | --- | ---: | --- | ---: |
 | Stable baseline | 1262 B | `0x1B00` | 6908 |
 | Native read draft before ACK tracking | 1294 B | `0x1AC0` | 6844 |
-| Native reads with IN retry protection | 1318 B | `0x1AC0` | 6844 |
+| Native read intermediate with ACK bookkeeping | 1318 B | `0x1AC0` | 6844 |
+
+The 1318-byte result is a measured intermediate. Independent review found
+that the current tests inject ACKs at a decoder entry and do not establish
+that the polling loop acquires a real host ACK after transmitting DATA.
+Foreground resynchronization may discard a late ACK. A bounded ACK wait and
+a wire/event-level test are being added; their resulting size is not yet
+recorded here. The arithmetic, linked-size and listed test counts remain
+valid, but this intermediate is not a qualified complete USB receiver.
 
 The 56-byte total increase includes four bytes from the changed Flash-boundary
 encoding. It is not a 56-byte isolated cost for the source helper. The final

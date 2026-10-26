@@ -3061,5 +3061,6 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 [EEPROM reads through an existing CRC copier](micronucleus-eeprom-stream.md):
 bounded low-byte cursors that preserve carry, source selection from proven
 zero state, sole-caller inlining, and ACK bookkeeping outside USB bit timing.
-The measured native-read loader is 1318 bytes; no MicroMusic runtime changes
+The measured native-read intermediate is 1318 bytes; host ACK acquisition
+through the polling loop remains under review. No MicroMusic runtime changes
 or physical-board result are implied.
