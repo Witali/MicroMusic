@@ -2131,3 +2131,27 @@ Reset execution verifies the SRAM copy, and direct ISA calls reproduce all
 58,400 archived resonator samples. This is correctness evidence without IRQ,
 not a new optimization or a supported streaming profile. Keep manual-relocation
 experiments separate from a normal linked build and inspect affected opcodes.
+
+The [integer Codec2 LPC baseline](../../Codecs/Codec2/LPC_RU.md) now uses
+all ten LSPs: five explicit second-order factors per polynomial, followed by
+the original P/Q combination. Q15 quarter-cosine lookup (161 unsigned16
+entries, 322 bytes) preserves +1=32768; the input grid is 12.5 Hz at 8 kHz.
+Q23 polynomial coefficients fit signed32 because their binomial envelope
+peaks at 252. Signed64 products and sums avoid overflow; symmetric product
+rounding shifts only nonnegative magnitudes. Flash access lives in a separate
+platform header using the manufacturer's AVR headers. The arithmetic is
+portable C, without a handwritten ASM backend or forged CPU/memory macros.
+
+Evidence: Clang host compares 29,845 vectors to unmodified Codec2 1.2.0
+`lsp_to_lpc`; maximum absolute coefficient error is 0.0102233887 on the
+stress corpus. GNU AVR-GCC 7.3.0 `-Os` machine code matches the native
+integer output on 1,510 vectors per MCU. The no-MUL ATtiny88 harness costs
+1,784 Flash / 66 static SRAM / 156 stack bytes, maximum 139,262 cycles;
+ATmega328P costs 1,898 / 66 / 161 bytes, maximum 38,033 cycles. These are
+first measured correctness baselines, not improvements over a previous
+implementation. No IRQs, waveform quality, Tiny13 fit, or streaming deadline
+claim is established. Future smaller-width/multiply kernels must retain
+this explicitly selectable C path and verify spectral/PCM errors, not just
+individual coefficients. Provenance and license: pinned upstream `lsp.c`
+and COPYING; source/binary/input hashes are in
+[lpc-q23.json](../../Codecs/Codec2/reports/lpc-q23.json).

@@ -1,0 +1,85 @@
+{
+  "upstream_commit": "06d4c11e699b0351765f10398abb4f663a984f36",
+  "host": {
+    "vectors": 29845,
+    "max_absolute_lpc_error_vs_upstream": 0.0102233887,
+    "allowed_absolute_error": 0.025
+  },
+  "host_compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+  "integer_format": "Q15 cosine (nearest), Q23 coefficients, signed64 products; symmetric nearest product rounding and truncation at final /2",
+  "vectors_sha256": "ac3178712ae12a341309ac2a872cba66bb4067a7474371a839b12331558ee3bf",
+  "expected_sha256": "065721cfabab0324ad2dc6f7077445a8553a115e77970b8c16345ae0435ee9d9",
+  "avr_vectors_sha256": "182a75a1fabb65304963b444c374f2f64f13a5c571b1d8bdcd3196edd5f87043",
+  "avr_expected_sha256": "5be91bdad054fead3da6ec90dbe025728846d89231ac7dfb1c7e51480133a840",
+  "avr_vector_count": 1510,
+  "mcus": {
+    "attiny88": {
+      "binary_sha256": "49d72c63376fe768166878f6cb1b45c83ae65ca60592232d538011021361cf83",
+      "compiler": "avr-gcc (GCC) 7.3.0",
+      "size": "C:\\Work\\MicroMusic\\.worktree\\import-codec2-history\\build\\codec2\\lpc\\attiny88\\lpc.elf  :\nsection                    size      addr\n.data                         0   8388864\n.text                      1784         0\n.bss                         66   8388864\n.comment                     17         0\n.note.gnu.avr.deviceinfo     60         0\n.debug_aranges              320         0\n.debug_info                3278         0\n.debug_abbrev              1523         0\n.debug_line                1552         0\n.debug_str                  473         0\nTotal                      9073\n\n\n",
+      "manufacturer_header_memory": {
+        "RAMSTART": 256,
+        "FLASHEND": 8191,
+        "RAMEND": 767
+      }
+    },
+    "atmega328p": {
+      "binary_sha256": "680add209cbafebb4280dfdb27ff1c4888af6248be36fe6be1ef11d58b22ef65",
+      "compiler": "avr-gcc (GCC) 7.3.0",
+      "size": "C:\\Work\\MicroMusic\\.worktree\\import-codec2-history\\build\\codec2\\lpc\\atmega328p\\lpc.elf  :\nsection                     size      addr\n.data                          0   8388864\n.text                       1898         0\n.bss                          66   8388864\n.comment                      17         0\n.note.gnu.avr.deviceinfo      64         0\n.debug_aranges               416         0\n.debug_info                 3955         0\n.debug_abbrev               1702         0\n.debug_line                 2044         0\n.debug_str                   520         0\nTotal                      10682\n\n\n",
+      "manufacturer_header_memory": {
+        "RAMSTART": 256,
+        "FLASHEND": 32767,
+        "RAMEND": 2303
+      }
+    }
+  },
+  "execution": {
+    "simulator": "avr8js 0.21.1",
+    "vectorsSha256": "182a75a1fabb65304963b444c374f2f64f13a5c571b1d8bdcd3196edd5f87043",
+    "expectedSha256": "5be91bdad054fead3da6ec90dbe025728846d89231ac7dfb1c7e51480133a840",
+    "results": [
+      {
+        "mcu": "attiny88",
+        "vectors": 1510,
+        "mismatches": 0,
+        "flashBytes": 1784,
+        "staticSramBytes": 66,
+        "stackBytes": 156,
+        "freeSramAtPeak": 290,
+        "maximumCycles": 139262,
+        "meanCycles": 126806.28145695364,
+        "binarySha256": "49d72c63376fe768166878f6cb1b45c83ae65ca60592232d538011021361cf83",
+        "includesInterrupts": false
+      },
+      {
+        "mcu": "atmega328p",
+        "vectors": 1510,
+        "mismatches": 0,
+        "flashBytes": 1898,
+        "staticSramBytes": 66,
+        "stackBytes": 161,
+        "freeSramAtPeak": 1821,
+        "maximumCycles": 38033,
+        "meanCycles": 37472.835099337746,
+        "binarySha256": "680add209cbafebb4280dfdb27ff1c4888af6248be36fe6be1ef11d58b22ef65",
+        "includesInterrupts": false
+      }
+    ]
+  },
+  "sources": {
+    "src/lpc.c": "e1cae76210d7f11724bbd08ce0443d43ad81f8d288f14a02693b67a833b80d5c",
+    "src/cosine_q15.inc": "5184095504d7a5e17be793e6e333586d2559160eef242e72cdbbb510afcd2b33",
+    "src/table_access.h": "4b91e061fdccc831974298c05becb6623d1dd13a7f0ffc7c07bc6192b7cc7f0f",
+    "include/codec2_lpc.h": "a34a54aafb31ceda3ad95b74aea7fc93e8be9175d726ba46c4cf135ec3ad45d3",
+    "tests/lpc.c": "424a6f92d3fbea38f8b89eeaeb6886c9e0a0a305c71876aa262051475d42398d",
+    "tests/avr_lpc.c": "edcec63decfac2401ae1ba68edfe8bc41c394ec69b31c7aa7757dca31cc4bd98",
+    "tests/verify_lpc_avr.mjs": "eff74715526961d4bc5096a19562b6d3382ab807862e2f8418e45cdd90fe16a3",
+    "tools/verify_lpc.py": "526e017c5dd961efd7f5a36a020abfb5656a9e47325ecb38361ffbf2ea841012",
+    "tools/generate_cosine.py": "55faa50dbedf5b4564eeac43bc9d8cda03017ea810fb256704b0a4a952507432",
+    "vendor/codec2-1.2.0/src/lsp.c": "81ea0264c982754341b358fd7de9219bafc3b4e09f2b2dd758576d5e46d76971",
+    "vendor/codec2-1.2.0/UPSTREAM.json": "4120cfe95f7d131623f045cabb137a352e45c208a3181e01f265a726f94a00e0"
+  },
+  "verified_at_utc": "2026-10-26T10:17:09.298580+00:00",
+  "scope": "Integer ten-LSP to LPC stage; spectral amplitudes, phases, overlap/add, end-to-end quality, Tiny13 resource fit, and active-IRQ playback remain unproved."
+}
