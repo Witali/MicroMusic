@@ -1,0 +1,38 @@
+{
+  "cases": 579054,
+  "rejected": 142816,
+  "sample_capped": 0,
+  "reset_exact": true,
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "compiler_options": [
+    "-O1",
+    "-g",
+    "-std=c++11",
+    "-fno-omit-frame-pointer",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize-recover=all",
+    "-DLPX4_V3_FEATURES=124",
+    "-DLPX4_ENABLE_SPEECH=1"
+  ],
+  "seeds": [
+    20261101,
+    20261102,
+    20261103,
+    20261104,
+    20261105,
+    20261106,
+    20261107,
+    20261108,
+    20261109,
+    20261110,
+    20261111,
+    20261112
+  ],
+  "input_streams": 408,
+  "v3_features": 124,
+  "speech_enabled": true,
+  "max_samples_per_decode": 4096,
+  "core_sha256": "77a2f2e0305f381e50e01673d349a93af2e3c4b2544c8eef71c5726b0611098e",
+  "math_header_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+  "harness_sha256": "50b2bf5c1ac59ceffdb8dbe1ac3210a0d2aea1193234b47978153cf0c7f07449"
+}

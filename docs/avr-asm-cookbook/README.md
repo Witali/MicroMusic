@@ -2937,6 +2937,15 @@ margin823 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
 99 host tests, copy/rotate x segments1/2/4 x v2/v3, partial/restart and independent value-copy snapshots pass; default segments2 matches the independent model.566610 ASan/UBSan mutation/reset cases, all six long IRQ controls and a fresh full quality audit pass. Unchanged arithmetic bytes explicitly reuse round13 validation. Rounds17/18/19 give0/0/0.175483% selected gains: three consecutive weak rounds.
 [Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+## LPX speech: measure CPU independently of bitrate
+
+[Fixed-rate speech and shared integer synthesis](lpx-speech-v4.md) records
+the 4/6 kbit/s packet tradeoff, common active-IRQ conditions, full PWM checks,
+Flash/SRAM/stack observations and the C fallback's missed real-time budget.
+On the four measured clips 4k is slightly slower than 6k; do not infer CPU
+cost from compressed size. Existing v2/v3 compatibility is independently
+verified against the frozen 91-stream corpus.
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

@@ -1,0 +1,63 @@
+{
+  "scope": "Actual quantized/interpolated Q12 filters; per-filter roots, not a proof of switched-system stability.",
+  "input_sha256": {
+    "case-01": {
+      "4": "94d22c96dd543f135b72ba92b1deabdd568ed44791e689ea0ce09af349b993d4",
+      "6": "a1bbf18c08c7f4ef84e618252bcc06b001181a6300d972297536ba584a912010"
+    },
+    "case-02": {
+      "4": "38956aeb476bc6af81dc92b6fcc32a15f1c9d40719b707174dbabce6ed33468b",
+      "6": "fc09f42e9577e5ed619ed24e9d10d8fd0bfb6f544743d56fc336ab941e709dd8"
+    },
+    "case-03": {
+      "4": "89fd83b9a26ad6d70524cca368a4aafc3b2fc7d8caecc58be88cbc0495bb8be3",
+      "6": "a79be26049d28190bd608bdcaee2a9a8c18b7a8288a9e863cdad174e3ca707f1"
+    },
+    "case-04": {
+      "4": "3555d8d256910613e7c43302cc6b9c9b801c4b63a4c790e0631d12f576631750",
+      "6": "8006e0250ba1459d58167089d51f6fea522088319699d4e96fbc6eb89e84f3ab"
+    }
+  },
+  "cases": {
+    "case-01": {
+      "4": {
+        "max_interpolated_pole_radius": 0.966429893869302,
+        "unstable_subframes": 0
+      },
+      "6": {
+        "max_interpolated_pole_radius": 0.9728405229626644,
+        "unstable_subframes": 0
+      }
+    },
+    "case-02": {
+      "4": {
+        "max_interpolated_pole_radius": 0.9675941376516514,
+        "unstable_subframes": 0
+      },
+      "6": {
+        "max_interpolated_pole_radius": 0.9757490648414012,
+        "unstable_subframes": 0
+      }
+    },
+    "case-03": {
+      "4": {
+        "max_interpolated_pole_radius": 0.9575676587536874,
+        "unstable_subframes": 0
+      },
+      "6": {
+        "max_interpolated_pole_radius": 0.9589279270108826,
+        "unstable_subframes": 0
+      }
+    },
+    "case-04": {
+      "4": {
+        "max_interpolated_pole_radius": 0.9644352868805285,
+        "unstable_subframes": 0
+      },
+      "6": {
+        "max_interpolated_pole_radius": 0.9713060175037266,
+        "unstable_subframes": 0
+      }
+    }
+  }
+}

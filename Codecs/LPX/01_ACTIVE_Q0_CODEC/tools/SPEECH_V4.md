@@ -4,6 +4,8 @@ This is a lossy speech prototype, enabled only with `LPX4_ENABLE_SPEECH=1`.
 It does not change the v2/v3 formats or their defaults. The public
 `Lpx4HybridCore` interface, Flash access and selectable C/AVR5 ASM arithmetic
 remain shared. Neither a floating-point decoder nor trained tables are added.
+Compile the core and every consumer with the same speech flag: enabling it
+adds two state bytes to the class. Arithmetic selection is still independent.
 
 The 20-byte little-endian header uses the existing `<4sBBHIHHHH` layout:
 `L4HY`, version 4, profile 4 or 6, 8000 Hz, exact sample count (1..64000),
@@ -38,6 +40,9 @@ existing 40-sample sparse subframe. A pulse after the exact sample tail is
 padding and produces no output. There is no CRC; syntactically valid bit
 changes can change audio without detection. Restart uses a fresh header and
 zero state; arbitrary packet seeking without state is not supported.
+The MCU validates parameters as they are consumed. Unread fields after the
+exact sample tail are not validated, even though the final packet's full byte
+length is mandatory. Python `unpack` validates all fields, including padding.
 
 The Python encoder averages two LPC analyses per packet, quantizes ordered
 LSF values, proposes pitch/energy through inverse filtering, then searches
