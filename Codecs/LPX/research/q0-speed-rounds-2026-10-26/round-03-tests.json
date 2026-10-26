@@ -1,0 +1,47 @@
+{
+  "host_tests_passed": 93,
+  "host_seconds": 41.516,
+  "reader_states_per_build": 526843,
+  "reader_builds": [
+    "reference",
+    "fast",
+    "instrumented"
+  ],
+  "fuzz": {
+    "cases": 566610,
+    "rejected": 136722,
+    "sample_capped": 0,
+    "reset_exact": true,
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "compiler_options": [
+      "-O1",
+      "-g",
+      "-std=c++11",
+      "-fno-omit-frame-pointer",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=all",
+      "-DLPX4_V3_FEATURES=124"
+    ],
+    "seeds": [
+      20261101,
+      20261102,
+      20261103,
+      20261104,
+      20261105,
+      20261106,
+      20261107,
+      20261108,
+      20261109,
+      20261110,
+      20261111,
+      20261112
+    ],
+    "input_streams": 384,
+    "v3_features": 124,
+    "max_samples_per_decode": 4096,
+    "core_sha256": "a8e9ce6e617e40545e434e3434399adc8bcea3ba2f6eb6ad870c61899bc78456",
+    "math_header_sha256": "c261bb5418d9c867c2b9bde00e555c41b8176e5291cae6be7005d363ed58828b",
+    "harness_sha256": "50b2bf5c1ac59ceffdb8dbe1ac3210a0d2aea1193234b47978153cf0c7f07449"
+  },
+  "math_reference": "round-02-tests.json"
+}

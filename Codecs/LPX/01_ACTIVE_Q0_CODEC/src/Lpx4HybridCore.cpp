@@ -128,6 +128,33 @@ uint8_t Lpx4HybridCore::readOne(){
  --bitsLeft_;
  return r;
 }
+// Consume the mandatory two-bit Huffman prefix in one cached operation.
+// Zero retains the original per-bit path; instrumentation preserves its costs.
+#ifndef LPX4_FAST_HUFFMAN3
+#define LPX4_FAST_HUFFMAN3 1
+#endif
+#if LPX4_FAST_HUFFMAN3 != 0 && LPX4_FAST_HUFFMAN3 != 1
+#error LPX4_FAST_HUFFMAN3 must be 0 or 1
+#endif
+int8_t Lpx4HybridCore::readHuffman3(){
+#if LPX4_FAST_HUFFMAN3 && !defined(LPX3_COST_INSTRUMENT)
+ uint8_t prefix;
+ if(bitsLeft_>=2){prefix=bitBuffer_&3;bitBuffer_>>=2;bitsLeft_-=2;}
+ else prefix=readBits(2);
+ if(prefix==0)return -1;
+ if(prefix==1)return 0;
+ if(prefix==2)return readOne()?-2:2;
+#else
+ if(!readOne()){
+  if(!readOne())return -1;
+  return readOne()?-2:2;
+ }
+ if(!readOne())return 0;
+#endif
+ if(readOne())return 1;
+ if(!readOne())return 3;
+ return readOne()?-3:-4;
+}
 uint8_t Lpx4HybridCore::readBits(uint8_t n){
 #ifdef LPX3_COST_INSTRUMENT
  ++bitCalls_;
@@ -306,13 +333,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
  if(subType_==0){
    if(!mode_)decoded=0;
    else if(riceK_==7){
-     if(!readOne()){
-       if(!readOne())decoded=-1;
-       else decoded=readOne() ? -2 : 2;
-     }else if(!readOne())decoded=0;
-     else if(readOne())decoded=1;
-     else if(!readOne())decoded=3;
-     else decoded=readOne() ? -3 : -4;
+     decoded=readHuffman3();
    }else if(riceK_){
      uint8_t high=0;
      while(!readOne()){

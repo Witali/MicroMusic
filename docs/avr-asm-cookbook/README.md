@@ -2653,6 +2653,31 @@ The old eight-second standard +100-IRQ workload now passes: 25 ->0 underruns,
 arbitrary interrupt workloads remain unmeasured.
 [Derivation, per-stream evidence and continuing-round criterion](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: code-reader screening and a two-bit Huffman prefix
+
+AVR5/GCC7.3 `-Os`, unchanged stream/IRQ configuration: a nibble-ctz unary
+reader plus 32-byte Huffman lookahead was correct but slower/larger on the
+heavy enhanced16 screen (1376.494 ->1404.646 cycles/sample, +356 B Flash).
+Forcing both inline was worse (1442.663, +870 B). Register preservation,
+LPM and variable shifts can outweigh the saved readOne calls. These are
+screening results, not aggregate corpus speed claims; rejected code is not
+retained in the active decoder.
+
+The smaller accepted alternative consumes Huffman3's mandatory first two
+bits from the existing cache in one operation, falling back to readBits(2)
+at a short cache. Remaining decisions use readOne; no lookahead beyond EOS,
+new table or arithmetic ASM. LPX4_FAST_HUFFMAN3=0 selects the old decisions;
+instrumentation retains the old bit-call counts. Three reader builds pass
+526,843 states each against independent readOne decisions, including partial
+EOF caches, sticky error states and exact residual state/counters.
+
+Full round 3 measures 3597011184 ->3593851806 cycles over the frozen 91 ELF:
+0.087833% less time, +16 B Flash/image, unchanged RAM, exact golden outputs,
+zero underruns. The old eight-second standard improves 1692.708 ->1683.867
+cycles/sample. This is one weak round under the user's <=1% stopping rule.
+93 host tests and 566,610 ASan/UBSan mutation/reset cases pass.
+[Alternatives, fixed-corpus evidence and continuing criterion](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

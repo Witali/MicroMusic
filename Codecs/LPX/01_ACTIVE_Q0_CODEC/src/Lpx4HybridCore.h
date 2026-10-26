@@ -47,6 +47,7 @@ private:
     uint32_t read32();
     uint8_t readBits(uint8_t n);
     __attribute__((noinline)) uint8_t readOne();
+    __attribute__((always_inline)) inline int8_t readHuffman3();
     bool readFrame();
     bool readBlock();
     bool readSubframe();
