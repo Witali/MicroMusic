@@ -2208,3 +2208,63 @@ not a verified fit or real-time profile. It must be compared with the full C/PCM
 baseline, including near-resonance errors, before selecting lower precision or
 adding explicitly enabled ASM with an equivalent C fallback. Provenance:
 original Codec2 `quantise.c`/`sine.c` formulas (LGPL-2.1) and retained KISS notices.
+
+## Codec2: exact sparse FFT and reuse of dead spectral storage
+
+The [compact full decoder](../../Codecs/Codec2/COMPACT_DECODER_RU.md) implements
+a different memory tradeoff from the direct inverse-sum idea above. It keeps
+the original 512-point real inverse FFT, using one 257-complex/514-float union
+(2056 B) and 3712 B of exact binary32 twiddles/window in Flash. An iterative
+radix-four FFT with base-four digit reversal retains the pinned KISS scalar
+operation order. Real preprocessing/postprocessing also preserves its k=128
+aliased output convention. Do not substitute a generic in-place FFT and assume
+the same rounding or storage semantics.
+
+The gamma-weighted LPC has only 11 real coefficients, or six packed complex
+inputs. All N=4/N=16 children have at most one nonzero input; only two N=64
+butterflies and the N=256 root remain for each selected output. Evaluating
+that pruned original graph avoids another 257-complex spectrum without using
+Horner polynomial evaluation or a new trigonometric approximation. It trades
+extra recomputation for working memory. The forward dense and sparse paths
+are checked on every bin of 512 basis/random vectors against unmodified KISS;
+512 dense inverse vectors also match original float values.
+
+The decoder then reuses storage according to data liveness. Phase analysis
+reads increasing harmonic bins spaced by at least 3.2 bins for this mode.
+Consumed complex bins become real power values; their dead imaginary lanes
+hold phases at index m, behind all future reads. Harmonic amplitudes overwrite
+already consumed power bands. Descending scatter moves amplitude/phase pairs
+rightward into synthesis bins without overwriting unread lower-index pairs.
+After inverse FFT, dead tail cells hold the current output head; only the
+79 floats actually read by the next original OLA shift remain in state.
+These dependencies require the mode-3200 pitch range, 512 FFT and 80-sample
+half-frame. Recheck them if any dimensions or interpolation rules change.
+
+CPU/ABI and licensing constraints: ATmega64A, AVR5 with MUL, GNU AVR-GCC 7.3.0
+`-mmcu=atmega64a -Os -std=c99 -fno-strict-aliasing`, ordinary C ABI, IEEE
+binary32 and AVR 32-bit double. This is portable C; no handwritten assembly
+backend or CPU/memory-model macro override was added. `float_table_access.h`
+separates arithmetic from actual manufacturer-header-selected Flash access.
+Near-Flash tables must end below 65536; the linked-image verifier checks that
+condition. Original source provenance: pinned Codec2 1.2.0 (LGPL-2.1) and KISS
+FFT (BSD); full notices remain in the separate adaptation and generated tables.
+The old complete float decoder remains a frozen independent regression path.
+
+Measured evidence: native Clang 24 matches original upstream PCM byte-for-byte
+on 11,333 packets / 1,813,280 samples. AVR8js 0.21.1 executes both complete
+archived synthetic speech streams, 365 packets / 58,400 samples, reset separately.
+AVR maximum error is 7/4 s16 units, SNR 73.95/75.02 dB. The ATmega64A harness
+uses 21,860 B Flash and 711 B static SRAM (including PCM/mailbox); observed peak
+stack is 2808 B, total 3519 B of physical 4096 B, with 577 B left. State falls
+from the original 6850 B AVR object to 378 B. The earlier ATmega1284P harness
+required 13,832 B SRAM including stack; the MCU/harness distinction matters.
+
+This is a working-memory improvement, not a speedup: maximum frame cost rises
+from the earlier harness's 16,124,312 to 27,486,179 cycles, or 1.718 s at 16 MHz
+against 20 ms required. No timers/active IRQ, physical board, human-speech corpus,
+or real-time admission is established. Observed stack on those inputs is not a
+universal bound for arbitrary packets or toolchains. The verifier obtains the
+actual device RAM/Flash limits from avr/io.h and enforces physical link regions,
+near-Flash addresses and stack separation at each instruction. Source, binary,
+input and output hashes, toolchain and per-frame timing are retained in
+[compact-decoder.json](../../Codecs/Codec2/reports/compact-decoder.json).
