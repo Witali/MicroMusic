@@ -2769,3 +2769,32 @@ are 13,592,539 /8,570,710. New-corpus stack peaks are 2974/3045 B with
 3009-B stack peak and is still required. The nopost mean at 16 MHz remains
 0.536 s per 20-ms frame; quality regression evidence does not establish
 real-time support. [Eight complete cases](../../Codecs/Codec2/reports/existing-speech.json).
+
+### Attribute inlined stages without perturbing the executed binary
+
+For AVR-GCC 7.3.0 `-Os`, ATmega64A AVR5/MUL, ordinary ABI, rebuild the exact
+qualified sources/flags with `-g` and require the extracted binary hash to
+equal the qualified release image. Abort on a difference. Use addr2line's
+source/inline information for a PC stage map; static functions inlined into
+one decoder function otherwise disappear into an unhelpful `other` bucket.
+Library helpers inherit the caller's stage. Source attribution can place
+compiler-moved instructions on neighboring source lines; it is not a
+semantic proof of each boundary. Counters partition the exact cycle total.
+
+The [nopost profile](../../Codecs/Codec2/PROFILE_RU.md) selects a highest-energy
+20-frame window from each of four human clips, replaying preceding frames
+without counting them. It also profiles the entire 24-frame extreme test.
+Every replayed PCM frame and cycle count equals the prior full execution.
+Keep duplicate static symbols as distinct PC entries, maintain balanced
+physical calls, and do not treat RCALL .+0 stack reservations as calls.
+Inclusive function counts overlap, including work of tail-called helpers.
+
+Measured active-speech costs: main spectrum 33.20%, inverse FFT 26.52%,
+phase/inverse power 14.43%, LSP/LPC/angles 11.38%, spectral synthesis/OLA
+7.14%, harmonic magnitudes 6.62%, background 0.48%, other 0.23%.
+On the whole extreme test the main-spectrum share is 52.20%; selective
+faithful arithmetic dominates more strongly. The 80 active-frame mean
+8,083,645 cycles differs from the 446-frame mean 8,570,710 because the
+workload is selected, not because the decoder changed. No assembly, IRQ,
+board or real-time support is introduced by profiling.
+[Hash-bound measurements](../../Codecs/Codec2/reports/nopost-profile.json).
