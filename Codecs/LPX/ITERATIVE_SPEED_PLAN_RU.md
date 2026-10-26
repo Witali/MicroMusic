@@ -126,3 +126,7 @@ gain0 отклонён по размеру/времени. Слабых подр
 Раунд 13 завершён: точное PWM-извлечение двумя левыми сдвигами.
 2594280361 →2564893109 cycles, **1,132771%**, Flash -18 Б на всех91 ELF, RAM1103 Б, stack margin≥819 Б. Все91 native PCM16/PWM и AVR PWM точны, underrun=0.
 Слабых подряд **0**. Следующая область — оставшийся unary reader после введения zero-delta shortcuts; проверить cached terminator без повторных вызовов readOne, включая EOF/ошибки и instrumented counters.
+
+Раунд 14 завершён: cached unary с сохранением bounded refill.
+2564893109 →2537960986 cycles, **1,050029%**, Flash +84 Б на всех91 ELF, RAM1103 Б, stack margin≥819 Б. Все91 native PCM16/PWM и AVR PWM точны, underrun=0.
+Слабых подряд **0**. Далее исследовать ROM reader: текущий указатель плюс remaining bytes вместо base+cursor+size; сохранить EOF, границы и instrumented costs.

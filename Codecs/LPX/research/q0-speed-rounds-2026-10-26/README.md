@@ -29,6 +29,8 @@ prefill384, unroll9, v3 mask24 и активные IRQ фиксированы.
 
 | 13 | точное PWM-извлечение двумя левыми сдвигами | 1,132771% | -18 Б Flash, RAM1103 Б | 0 |
 
+| 14 | cached unary с сохранением bounded refill | 1,050029% | +84 Б Flash, RAM1103 Б | 0 |
+
 ## Раунд 1: точное Q4-накопление
 
 Исходный LPC сдвигал каждое signed32-произведение вправо на 12, затем
@@ -382,6 +384,17 @@ Scale step0..4016 умножается на16 один раз на80 samples и 
 
 Результаты round-13.json, round-13-controls.json, round-13-tests.json.
 Слабых подряд **0**. Следующая область — оставшийся unary reader после введения zero-delta shortcuts; проверить cached terminator без повторных вызовов readOne, включая EOF/ошибки и instrumented counters.
+
+## Раунд 14: cached unary с сохранением bounded refill
+
+После cached zero-delta shortcuts оставшиеся pitch-Rice случаи чаще содержат несколько битов. Если bitBuffer ненулевой, первый1 уже находится в текущем кеше: unused upper bits всегда0, значит terminator находится внутри bitsLeft и high≤7. Сдвигать локальный byte до1 и один раз записать остаток/счётчик вместо повторных readOne. Пустой/нулевой кеш сохраняет исходный bounded loop8, refill и ошибки. Внутренний helper вызывается только без sticky error, как и прежде в decodeCode. Bool-return сохраняет прямой failure control flow без лишней загрузки error. LPX4_FAST_UNARY=0 reference,1 register/default,2 диагностический nibble-table вариант (медленнее/больше). Instrumented bitCalls увеличивается ровно на high+1. Это повторное исследование читателя обосновано изменившимся после раунда8 распределением его оставшихся вызовов.
+
+2564893109 →2537960986 cycles, **1,050029%**, Flash +84 Б на всех91 ELF, RAM1103 Б, stack margin≥819 Б. Все91 native PCM16/PWM и AVR PWM точны, underrun=0.
+
+98 host-тестов за55,387 с,784896 допустимых cache/next-byte/ROM-length/second-refill состояний ×3 instrumented сборки совпадают с исходным readOne по результату, high, cursor, buffer, bitsLeft, error и bit/ROM costs. ASan/UBSan566610 mutation/reset случаев прошли. Arithmetic bytes неизменны, девять math-сборок раунда13 переиспользованы по hash. Все шесть длинных IRQ контролей точны/без пропусков: standard1182,995 →1169,620, +100 IRQ1216,623 →1202,591 cycles/sample. Свежий полный quality audit: round-14-quality.json. Варианты и ограниченная область screening сохранены в round-14-variants.json.
+
+Результаты round-14.json, round-14-controls.json, round-14-tests.json.
+Слабых подряд **0**. Далее исследовать ROM reader: текущий указатель плюс remaining bytes вместо base+cursor+size; сохранить EOF, границы и instrumented costs.
 
 ## Воспроизведение
 

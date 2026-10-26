@@ -2875,6 +2875,16 @@ margin819 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
 97 host tests and nine arithmetic builds with5,768,584 cases pass with IRQ/r1. The existing PWM oracle covers all65,536 signed16 samples at control gains including0/255. All six long IRQ controls pass, and a fresh complete frozen-output quality audit is retained. No new fuzz run is claimed for this isolated arithmetic change.
 [Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
 
+### LPX: decode a cached unary terminator without repeated reader calls
+
+AVR5/GCC7.3 -Os, portable C. After the zero-delta shortcuts, the remaining pitch Rice calls more often consume multiple bits. A nonzero cache already contains its unary terminator because unused upper bits are zero; high<=7 and no refill/bound failure is possible there. Shift a local byte, then commit buffer/bit count once. Empty/all-zero cache keeps the original bounded8 loop and exact refill/error decisions. The private caller enters with no sticky error. A bool return preserves direct failure control flow; instrumented bitCalls adds exactly high+1. LPX4_FAST_UNARY=0 selects the reference,1 register/default,2 diagnostic nibble table. The table was slower/larger. The changed call distribution after round8 justifies retesting this area.
+
+Measured round14:2564893109 ->2537960986 wall cycles over91 active-IRQ images,
+1.050029% less time,+84 B Flash/image, SRAM1103 B, minimum stack
+margin819 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
+98 host tests,784896 valid cache/refill/EOF states in each of three instrumented builds, and566610 ASan/UBSan mutation/reset cases pass. Result, residual reader state, errors and bit/ROM counters match the original decisions. Unchanged arithmetic bytes explicitly reuse round13 validation. All six long IRQ controls and a fresh complete frozen-output quality audit pass.
+[Scope, bounds and per-stream evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/README.md).
+
 ## UM88: page-local FIFO
 
 [Page-local FIFO addressing](um88-page-fifo.md) records the ATtiny88 alignment and ISR ABI contract, the unchanged C fallback, and isolated Flash/active-IRQ measurements.

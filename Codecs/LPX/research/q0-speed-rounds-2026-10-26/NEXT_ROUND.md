@@ -1,3 +1,6 @@
+Раунды1–14 завершены; слабых подряд0. Далее исследовать ROM reader: текущий указатель плюс remaining bytes вместо base+cursor+size; сохранить EOF, границы и instrumented costs.
+См. README и round-14*.json.
+
 Раунды1–13 завершены; слабых подряд0. Следующая область — оставшийся unary reader после введения zero-delta shortcuts; проверить cached terminator без повторных вызовов readOne, включая EOF/ошибки и instrumented counters.
 См. README и round-13*.json.
 

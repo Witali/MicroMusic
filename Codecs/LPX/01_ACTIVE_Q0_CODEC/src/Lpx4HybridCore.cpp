@@ -386,6 +386,42 @@ int16_t Lpx4HybridCore::pitchPredict() const{
  return v;
 #endif
 }
+// Valid decodeCode callers have error==NONE. Nonzero cache contains a
+// terminator within bitsLeft (all unused cache bits are zero by construction).
+// Empty/all-zero caches retain the exact bounded refill/error path.
+#ifndef LPX4_FAST_UNARY
+#define LPX4_FAST_UNARY 1
+#endif
+#if LPX4_FAST_UNARY < 0 || LPX4_FAST_UNARY > 2
+#error LPX4_FAST_UNARY must be 0,1 or2
+#endif
+#if LPX4_FAST_UNARY==2
+static const uint8_t LP_PROGMEM unaryNibble[16]={4,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0};
+#endif
+bool Lpx4HybridCore::readUnary8(uint8_t& high){
+ high=0;
+#if LPX4_FAST_UNARY
+ if(bitBuffer_){
+   uint8_t cache=bitBuffer_;
+#if LPX4_FAST_UNARY==2
+   if(!(cache&15)){cache>>=4;high=4;}
+   high+=LP_READ_U8(&unaryNibble[cache&15]);
+   cache=bitBuffer_>>high;
+#else
+   while(!(cache&1)){cache>>=1;++high;}
+#endif
+   bitBuffer_=cache>>1;bitsLeft_-=high+1;
+#ifdef LPX3_COST_INSTRUMENT
+   bitCalls_+=high+1;
+#endif
+   return true;
+ }
+#endif
+ while(!readOne()){
+   if(error_||++high>8){error_=CORRUPT_STREAM;return false;}
+ }
+ return true;
+}
 bool Lpx4HybridCore::decodeCode(int8_t& q){
  int16_t decoded=0;
  if(subType_==0){
@@ -393,10 +429,8 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
    else if(riceK_==7){
      decoded=readHuffman3();
    }else if(riceK_){
-     uint8_t high=0;
-     while(!readOne()){
-       if(error_||++high>8){error_=CORRUPT_STREAM;return false;}
-     }
+     uint8_t high;
+     if(!readUnary8(high))return false;
      const uint16_t z=(uint16_t)((high<<riceK_)|readBits(riceK_));
      decoded=(z&1)?-(int16_t)((z+1)>>1):(int16_t)(z>>1);
    }else decoded=(int16_t)readBits(mode_)-(int16_t)quantLimit_;
@@ -406,10 +440,8 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
    if(subType_==1){
      if(riceK_==7)d=(int8_t)readBits(8);
      else{
-       uint8_t high=0;
-       while(!readOne()){
-         if(error_||++high>8){error_=CORRUPT_STREAM;return false;}
-       }
+       uint8_t high;
+       if(!readUnary8(high))return false;
        const uint16_t z=(uint16_t)((high<<riceK_) | (riceK_?readBits(riceK_):0));
        d=(z&1)?-(int16_t)((z+1)>>1):(int16_t)(z>>1);
      }

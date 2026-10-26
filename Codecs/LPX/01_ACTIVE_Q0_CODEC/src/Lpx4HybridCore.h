@@ -91,6 +91,7 @@ private:
     bool readBlock();
     bool readSubframe();
     __attribute__((always_inline)) inline int16_t pitchPredict() const;
+    __attribute__((always_inline)) inline bool readUnary8(uint8_t& high);
     bool decodeCode(int8_t& q);
 #if !defined(__AVR__) || defined(LPX4_ENABLE_PCM16)
     bool nextCore(int16_t& postfilterQ14);
