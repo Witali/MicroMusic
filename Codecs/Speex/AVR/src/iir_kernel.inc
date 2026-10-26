@@ -1,38 +1,54 @@
 /* Order 8/10, 40 samples, mirrored signed16 history and coefficient ages.
  * State = 6*IIR_ORDER zeroed bytes. Same ABI as speex_avr_iir40.
  * Exact modulo-32 arithmetic and transposed-filter coefficient transitions. */
+#if IIR_ORDER != 8 && IIR_ORDER != 10
+#error This private 40-sample kernel supports orders 8 and 10
+#endif
+/* r3 counts samples. After warm-up r16:r17 holds the first coefficient;
+ * r10:r11, r14:r15 and r12:r13 hold the next three. Private group CALL/RET
+ * adds two stack bytes on ATmega328P. r1 may remain dirty across a private
+ * RET; no C call occurs there, and the external ABI return clears r1. */
 .text
 /* Source macros share the exact arithmetic without per-tap CALL overhead. */
-.macro IIR_MAC coefficient, first=0
+.macro IIR_MAC coefficient, first=0, lo=18, hi=19
     .ifc \coefficient,memory
-    ld r18, X+
-    ld r19, X+
+    ld r\lo, X+
+    ld r\hi, X+
     .else
-    movw r18, \coefficient
+    .ifc \coefficient,r16
+    .if \lo-16
+    .error "Direct MAC expects r16:r17"
+    .endif
+    .if \hi-17
+    .error "Direct MAC expects r16:r17"
+    .endif
+    .else
+    movw r\lo, \coefficient
+    .endif
     .endif
     ld r21, -Z
     ld r20, -Z
     /* Signed 16x16: initialize the accumulator on the first tap; later
      * taps use AVR201 method B addition modulo 2^32. No zeroing pass. */
-    muls r19, r21
+    muls r\hi, r21
     .if \first
     movw r24, r0
-    mul r18, r20
+    mul r\lo, r20
     movw r22, r0
     .else
     movw r4, r0
-    mul r18, r20
+    mul r\lo, r20
     add r22, r0
     adc r23, r1
     adc r24, r4
     adc r25, r5
     .endif
-    mulsu r19, r20
+    mulsu r\hi, r20
     sbc r25, r2
     add r23, r0
     adc r24, r1
     adc r25, r2
-    mulsu r21, r18
+    mulsu r21, r\lo
     sbc r25, r2
     add r23, r0
     adc r24, r1
@@ -40,9 +56,9 @@
 .endm
 .macro IIR_FINISH age
     /* PSHR32(sum,13), preserving wrap when adding the rounding bias. */
-    add r23,r3
-    adc r24, r2
-    adc r25, r2
+    subi r23,lo8(-16)
+    sbci r24,255
+    sbci r25,255
     lsl r23
     rol r24
     rol r25
@@ -117,14 +133,6 @@
     std Y+(4*IIR_ORDER-2),r18
     std Y+(4*IIR_ORDER-1),r19
     .endif
-    cp r28,r16
-    brne .Lcursor_done\@
-    .if \age
-    movw r28,r12
-    .else
-    sbiw r28,2*IIR_ORDER
-    .endif
-.Lcursor_done\@:
 .endm
 .global IIR_ENTRY
 .type IIR_ENTRY, @function
@@ -157,14 +165,10 @@ IIR_ENTRY:
     add r14, r24
     adc r15, r1
     clr r2
-    /* One rounding constant for the whole block; r3 survives every MAC. */
-    ldi r18,16
+    /* Exactly order warm samples update all coefficient ages. Y wraps
+     * once after the phase, so no per-sample cursor test is needed. */
+    ldi r18,IIR_ORDER
     mov r3,r18
-    /* Y traverses 2*order bytes: its low end byte is reached only after
-     * order words, including when the history crosses a 256-byte page. */
-    mov r16,r12
-    subi r16,-2*IIR_ORDER
-    ldi r17, IIR_ORDER
 .Lwarm_sample:
     movw r26, r14
     movw r30, r28
@@ -174,37 +178,28 @@ IIR_ENTRY:
     IIR_MAC memory
     .endr
     IIR_FINISH 1
-    dec r17
+    dec r3
     breq .Lsteady_setup
     rjmp .Lwarm_sample
 .Lsteady_setup:
-    /* Age updates are complete. X ends every steady dot product at the
-     * coefficient-table end, so rewind it by a fixed displacement instead
-     * of rebuilding it from the state base. Reuse that now-dead base pair
-     * for a third LPC word; rewind Y at wrap as well. No extra SRAM. */
+    movw r28,r12
+    /* Ages are now fixed. Immediate rounding frees r3 for the counter;
+     * group-boundary Y resets free r16:r17 for a fourth cached word. The
+     * first coefficient can feed MULSU directly from that high-register
+     * pair; the other three use MOVW. X still uses a fixed rewind. */
     movw r26, r14
+    ld r16, X+
+    ld r17, X+
     ld r10, X+
     ld r11, X+
     ld r14, X+
     ld r15, X+
     ld r12, X+
     ld r13, X+
-    adiw r26,2*(IIR_ORDER-3)
-    ldi r17, 40-IIR_ORDER
-.Lsteady_sample:
-    sbiw r26,2*(IIR_ORDER-3)
-    movw r30, r28
-    adiw r30, 2*IIR_ORDER
-    IIR_MAC r10,1
-    IIR_MAC r14
-    IIR_MAC r12
-    .rept IIR_ORDER-3
-    IIR_MAC memory
+    adiw r26,2*(IIR_ORDER-4)
+    .rept 40/IIR_ORDER-1
+    rcall .Liir_group
     .endr
-    IIR_FINISH 0
-    dec r17
-    breq .Ldone
-    rjmp .Lsteady_sample
 .Ldone:
     clr r1
     pop r29
@@ -225,5 +220,29 @@ IIR_ENTRY:
     pop r4
     pop r3
     pop r2
+    ret
+
+/* A group consumes exactly one mirrored-history revolution. Reusing this
+ * body avoids duplicating the dot product and removes every cursor test. */
+.Liir_group:
+    ldi r18,IIR_ORDER
+    mov r3,r18
+.Lsteady_sample:
+    sbiw r26,2*(IIR_ORDER-4)
+    movw r30, r28
+    adiw r30, 2*IIR_ORDER
+    IIR_MAC r16,1,16,17
+    IIR_MAC r10
+    IIR_MAC r14
+    IIR_MAC r12
+    .rept IIR_ORDER-4
+    IIR_MAC memory
+    .endr
+    IIR_FINISH 0
+    dec r3
+    breq .Lgroup_done
+    rjmp .Lsteady_sample
+.Lgroup_done:
+    sbiw r28,2*IIR_ORDER
     ret
 .size IIR_ENTRY, .-IIR_ENTRY
