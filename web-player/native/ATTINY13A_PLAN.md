@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Verification tolerance checkpoint, 2026-10-27: a fixed 10,000 ps comparator now
+rejects site mode, accumulated drift, reordered/missing events and altered
+discrete state. The real full-model replay passes 41 analytical scenarios and
+17,890 events with maximum 1 ps timestamp difference: fractional internal
+clocks, CTC counter/flags/OC0A, generated GPIO whole/partitioned execution,
+20 MHz CLKI and neighboring large-time inputs. Native bytes, compiler identity
+and site behavior stay unchanged. This validates software fixtures, not physical
+calibration or the unresolved modes; the 24/31 count remains. See
+the 53 passing focused checks and fixture results in
+[the evidence](../reports/virtual-event-accuracy-20261027.md).
+
 Native work-window checkpoint, 2026-10-27: native-only sampling avoids the
 observed inspector CPU profiler suppression of raw native ticks/timer events.
 Generated inspector-console markers and an explicit conservative host-boundary

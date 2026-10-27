@@ -52,6 +52,11 @@ profiles; distinguish model timestamp error from instrument uncertainty and
 unmeasured oscillator/analog behavior. The tolerance alone does not establish
 silicon calibration or close the outstanding hardware checks.
 
+The [acceptance replay](../scripts/verify-virtual-event-accuracy.mjs) applies this
+bound to the real full model using analytical clock/Timer0/firmware pin fixtures.
+Its [recorded software evidence](../reports/virtual-event-accuracy-20261027.md)
+keeps exact event/state comparisons separate from unmeasured silicon accuracy.
+
 ## Historical evidence
 
 The full model was retained, not replaced by the music model:
