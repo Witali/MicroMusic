@@ -29,7 +29,7 @@ export function planRegions(decoded,{pure,pcMask,width,cycles,maxNodes=64}){
   return regions.sort((a,b)=>a.nodes[0].pc-b.nodes[0].pc);
 }
 
-export function emitRegion(region,{abi,pcMask,width,decoded,pure,cycles,emitALU,readRegister,registers,written,emit:b,state,stateF,put}){
+export function emitRegion(region,{abi,pcMask,width,decoded,pure,cycles,emitALU,readRegister,registers,written,emit:b,state,stateF,put,touchesFlags=true}){
   const {bytes,constant:c,get:g,set:s,call,condition:iff,conditionValue:select,eq,eqz,lt,ge,binary,add,sub,and,
     shr,float,asFloat,load8,store8,loadI64,storeI64,constantI64,store32}=b;
   const PC=11,COUNT=12,CYCLES=13,LIMIT=14,LAST=15,COST=16,cacheBase=18;
@@ -63,7 +63,9 @@ export function emitRegion(region,{abi,pcMask,width,decoded,pure,cycles,emitALU,
       s(LIMIT,bytes(binary(0xa3,binary(0xa1,bytes(binary(0xa1,g(TIME),stateF('cyc')),0x9b),float(1)),float(region.maxCost)),0xaa)),
       iff(lt(g(LIMIT),c(2)),stop))),
     iff(binary(0x56,loadI64(c(abi.phase.retired)),binary(0x7d,constantI64(0xffffffffffffffffn),bytes(g(LIMIT),0xad))),stop),
-    s(PC,state('pc')),s(7,load8(flagsAddress)),
+    // The IRQ guard above still reads I, even when the region needs no working
+    // SREG value. Keep the conservative default for direct emitter callers.
+    s(PC,state('pc')),touchesFlags?s(7,load8(flagsAddress)):[],
     ...cached.map((n,index)=>s(cacheBase+index,load8(c(abi.data+n)))));
   // The statically used register union is preloaded once, avoiding a validity
   // branch on every read. Only potentially written registers are committed.
@@ -80,7 +82,7 @@ export function emitRegion(region,{abi,pcMask,width,decoded,pure,cycles,emitALU,
     ...s(2,call(16,asFloat(g(CYCLES)))),...iff(lt(g(2),c(0)),bytes(c(-1),0x0f)),
     ...iff(eqz(g(2)),bytes(put('error',c(25)),c(-1),0x0f)),
     ...dirty.map(n=>store8(c(abi.data+n),g(cacheBase+cached.indexOf(n)))),
-    ...store8(flagsAddress,g(7)),...put('pc',g(PC)),...put('errorPC',g(LAST)),
+    ...(touchesFlags?store8(flagsAddress,g(7)):[]),...put('pc',g(PC)),...put('errorPC',g(LAST)),
     ...storeI64(c(abi.phase.retired),binary(0x7c,loadI64(c(abi.phase.retired)),binary(0x7d,bytes(g(COUNT),0xad),constantI64(1)))),
     ...call(18),...g(COUNT));
   return {code,locals:16+cached.length,floatLocals:1,registers:cached,written:dirty};

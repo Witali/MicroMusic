@@ -16,7 +16,7 @@ limited to the common core/Timer1. The user's two-configuration request replaces
 the earlier website-wide full-engine-default criterion; it does not reduce the
 full verification model's hardware requirements or change site/WASM defaults.
 
-Current status, 2026-10-26: **24/31 checklist items complete, seven open**.
+Current status, 2026-10-27: **24/31 checklist items complete, seven open**.
 The new item explicitly covers the shared ADC/comparator/BOD internal reference
 identified during the official section8.3.1 audit. Its explicit physical profile
 is implemented and tested; no original open item was reclassified as complete.
@@ -24,6 +24,15 @@ Earlier21/30,22/30 and23/30 counts below are historical checkpoints.
 Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
+
+Neutral bounded-region checkpoint, 2026-10-27: regions with no flag input or
+output omit one working SREG load/store pair; the initial I-bit IRQ guard and
+all native phase/deadline/retirement paths remain. The synthetic body shrinks
+18bytes; one of36 catalog variants shrinks18bytes and35 stay byte-identical.
+All2560 default/shared checks pass, including the new structural/phase cases.
+This is limited register-traffic progress, not full stage5 or hardware closure.
+See the [cookbook constraints](../../docs/avr-asm-cookbook/neutral-region-sreg.md)
+and [integration evidence](../reports/neutral-regions-20261027.md).
 
 Shared reference checkpoint, 2026-10-26: package v7 connects enabled ADC,
 software ACBG/ACD and BOD demand to one explicit physical startup. Continuous

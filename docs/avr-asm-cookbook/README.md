@@ -2613,3 +2613,10 @@ backend selectors are unchanged; this is not an arithmetic speedup or a
 comparator and BOD owner mask, continuous startup handoff, POR-qualified power
 and readiness publication before a tied sample. This is a tested digital-model
 correctness technique; physical calibration and performance remain unmeasured.
+
+## ATtiny13A: omit unused SREG copies in bounded WASM regions
+
+[Neutral region SREG traffic](neutral-region-sreg.md) retains the IRQ I-bit guard
+while omitting a working flag copy only when the complete region neither reads
+nor writes SREG. It records the ABI, phase/event constraints, emitted size and
+active-IRQ validation without assuming a general execution-speed gain.

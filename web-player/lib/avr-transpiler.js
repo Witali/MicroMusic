@@ -491,6 +491,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     if(oldEmission?.regions.has(key)){const cached=oldEmission.regions.get(key);emission.regions.set(key,cached);return cached;}
     regionRegisters=new Map();regionWritten=new Set();
     const body=emitRegion(region,{abi:{...abi,sreg},pcMask,width,decoded,pure,cycles:instructionCycles,
+      touchesFlags:region.nodes.some(needsFlagSnapshot),
       emitALU:i=>remapLocals(alu(i,writes[i.name]||0),2),readRegister:n=>remapLocals(reg(n),2),
       registers:()=>[...regionRegisters.keys()],written:()=>[...regionWritten],state,stateF,put,
       emit:{...phaseEmit,uleb,binary,add,sub,and,shr,ge,float,asFloat,load8,store8,loadI64,storeI64,constantI64}});
