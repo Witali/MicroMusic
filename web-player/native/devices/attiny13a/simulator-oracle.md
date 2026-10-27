@@ -1,6 +1,6 @@
 # Official ATtiny13A simulator: host acquisition audit
 
-2026-10-26. An independent manufacturer simulator could compare Timer0/NVM/CPU
+Updated 2026-10-27. An independent manufacturer simulator could compare Timer0/NVM/CPU
 behavior with this project. No official simulator session has been executed.
 Simulator agreement would remain software evidence, not a silicon measurement
 or closure of the hardware-dependent plan items.
@@ -292,6 +292,21 @@ CPU/digital/Timer0 comparisons, not an analog reference or proof of our
 half-edge/1 ps asynchronous timing. Actual ATtiny13A model results and its exact
 usable peripheral subset remain unmeasured. **No official simulator session has
 been executed.**
+
+## Archived MDB host availability
+
+The [official MPLAB archive](https://www.microchip.com/en-us/tools-resources/archives/mplab-ecosystem)
+also links Windows IDE **6.25**, matching the acquired SDK. Its exact href was
+registered before the local network check as `mplab-x-ide-windows-6.25` in
+`plannedAssets`. On 2026-10-27 the web reader followed it to the manufacturer's
+access-denied page, and an ordinary HTTPS HEAD with permitted network access
+returned **403 Forbidden**. No GET, complete/partial installer or active download
+exists. No published checksum was obtained; 6.35's checksum is not applicable.
+
+This alternative did not establish an executable MDB host. Prefer the documented
+console route when it becomes available; do not repeat the unchanged denied URL,
+infer simulator commands from Studio's programming CLI, or treat the unexecuted
+command-file template as verification evidence.
 
 ## Oracle limits
 
