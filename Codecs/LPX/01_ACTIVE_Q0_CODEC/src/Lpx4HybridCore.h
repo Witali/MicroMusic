@@ -163,7 +163,7 @@ public:
 #endif
 private:
     // Stream lifetime and container/entropy readers.
-    void resetSynthesis();
+    void resetState();
     LPX4_TUNE_READERS uint8_t readByte();
     uint16_t read16();
     uint32_t read32();
@@ -181,7 +181,7 @@ private:
 #endif
     bool readSubframe();
     // Excitation reconstruction.
-    __attribute__((always_inline)) inline int16_t pitchPredict() const;
+    int16_t pitchPredict() const;
 #if !LPX4_COMPACT_ONLY
     __attribute__((always_inline)) inline bool readUnary8(uint8_t& high);
 #endif

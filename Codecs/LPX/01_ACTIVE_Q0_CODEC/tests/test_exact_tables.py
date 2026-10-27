@@ -9,6 +9,6 @@ class ExactTableTests(unittest.TestCase):
             subprocess.run(['g++','-O2','-std=c++11','-I'+str(ROOT/'src'),
                 str(ROOT/'tests/exact_tables.cpp'),'-o',str(exe)],check=True,capture_output=True)
             self.assertEqual(subprocess.check_output([str(exe)],text=True).strip(),
-                '256 scales, 257 cosine nodes, 4096 interpolations exact')
+                '256 scales, 4096 cosine interpolations exact')
 
 if __name__=='__main__':unittest.main()

@@ -1,5 +1,5 @@
 """Compare compiled coefficient arithmetic with the frozen Python model."""
-import hashlib,json,unittest
+import hashlib,json,subprocess,tempfile,unittest
 from pathlib import Path
 import numpy as np
 from q0_model import coefficient_trace
@@ -30,6 +30,20 @@ class CoefficientTraceExactTests(unittest.TestCase):
             observed[name]=output_hash(actual)
         self.assertEqual(len(observed),52)
         self.assertEqual(observed,expected)
+
+    def test_native_anchor_conversion_matches_frozen_baseline(self):
+        # Frozen from decoder commit 5dea80be, not the implementation under test.
+        # 2048 ten-coefficient vectors * 17 anchor positions * 10 s16 outputs.
+        root=Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as td:
+            exe=Path(td)/'anchor-coefficients.exe'
+            subprocess.run(['g++','-O2','-std=c++11','-I'+str(root/'src'),
+                str(root/'tests/anchor_coefficients.cpp'),'-o',str(exe)],
+                check=True,capture_output=True)
+            data=subprocess.check_output([str(exe)])
+        self.assertEqual(len(data),2048*17*10*2)
+        self.assertEqual(hashlib.sha256(data).hexdigest(),
+            'f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588')
 
     def test_same_invalid_frames_and_counts(self):
         bad=[([],1),([b'\0'],0),([b'\0'],1),([b'\x06'+bytes(10)],1),([b'\x07'],1),

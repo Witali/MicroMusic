@@ -132,3 +132,36 @@ ASan/UBSan mutation/reset cases для двух layouts. C fallback точен
 экономию нельзя приписывать числу удалённых строк. Для других
 toolchains/workloads эффект общего helper требует повторного измерения.
 [Подробности, before/after hashes, flags и ограничения](../../Codecs/LPX/research/decoder-refactor-2026-10-27/README.md).
+
+## Ещё меньше Flash LPX: общие readers и один цикл LPC
+
+Второй проход от `5dea80be`: те же ATmega328P / enhanced AVR5 с MUL,
+GNU ABI, AVR-GCC 7.3.0, simavr 1.6, 16 МГц / 8 кГц, unroll 1 / tuning 0,
+`-Os -flto -mcall-prologues -mrelax`. Измеренный выигрыш касается Flash;
+новых ASM и изменений C/ASM selection нет.
+
+Общий `resetSynthesis()` расширен до `resetState()`: одинаковые scalar
+parser/synthesis fields и каждый именованный массив через свой `sizeof`.
+Размеры между соседними полями не предполагаются. Публичную metadata при
+неудачном `begin()` сохранить. Для v4 accepted count ≤64000 позволяет
+16-битную геометрию пакетов; v5 untrusted payload+22 по-прежнему требует
+широкой проверки. Rice delta ограничен 7 битами, поэтому signed8 достаточен.
+
+Один цикл из 10 коэффициентов выбирает независимые P/Q полиномы по чётности,
+сохраняя степени и порядок вкладов. Два соседних cosine узла используют
+общую reflection: отрицательный интервал начинается в `-hi`, а slope
+остаётся `hi-lo`; floor rounding сохраняется. `readOne()` делегирует
+`readBits(1)`, включая прежний instrumentation, при инварианте нулевых
+неиспользуемых cache bits. Убрано принудительное встраивание pitch predictor.
+
+На восьми фиксированных потоках common 7729–7870 → **7225–7320 Б**
+(−504…550), compact-only 5753–5754 → **5363–5364 Б** (−390).
+Static SRAM прежняя. Среднее decode wall time выросло **3,09% / 2,51%**;
+полезный PWM точен, normal/+100 IRQ controls без underruns. After-ready
+stack margin 819→845  / 858→882 Б не является worst-case/startup proof.
+C fallback остаётся точным, его 8 кГц deadline не обеспечен.
+
+Полный вывод сверяют с frozen model, а новый anchor regression сохраняет
+digest 34816 преобразований старого ядра. Проверены 764 stream/config pairs,
+все 4096 cosine inputs, 91 golden stream и по 605670 ASan/UBSan reset cases.
+[Подробности, flags, source hashes и отклонённые варианты](../../Codecs/LPX/research/decoder-flash-pass2-2026-10-27/README.md).

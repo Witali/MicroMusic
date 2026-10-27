@@ -1,6 +1,7 @@
 #include "Lpx4HybridCore.h"
 #include "Lpx4Math.h"
 #include <stddef.h>
+#include <string.h>
 // Compile-time amplitude calibration: same compressed bits, same decoder path.
 #ifndef LPX4_PWM_GAIN
 #define LPX4_PWM_GAIN 130
@@ -51,10 +52,18 @@ static uint16_t scaleStep(uint8_t index){
  const uint16_t mantissa=LP_READ_U16(&scaleMantissa[index&15]);
  return ((mantissa>>(15-(index>>4)))+1)>>1;
 }
-// The endpoint 256 must remain 16-bit, rather than wrapping to index zero.
-static int16_t cosineAt(uint16_t index){
- if(index<=128)return (int16_t)LP_READ_U16(&cosineHalfQ13[index]);
- return -(int16_t)LP_READ_U16(&cosineHalfQ13[256-index]);
+// Adjacent cosine nodes share one reflection. The reflected interval starts
+// at -hi and has the same hi-lo slope, so negative floor rounding is exact.
+// norm is Q12 in 0..4095; adjacent nodes differ by at most 101.
+static inline __attribute__((always_inline)) int16_t cosineInterpolate(uint16_t norm){
+ uint8_t index=(uint8_t)(norm>>4);
+ const uint8_t fraction=(uint8_t)(norm&15);
+ const bool negative=index>=128;
+ if(negative)index=(uint8_t)(255-index);
+ const int16_t lo=(int16_t)LP_READ_U16(&cosineHalfQ13[index]);
+ const int16_t hi=(int16_t)LP_READ_U16(&cosineHalfQ13[(uint16_t)index+1]);
+ const int16_t product=(int16_t)((hi-lo)*fraction);
+ return (int16_t)((negative?-hi:lo)+(product>>4));
 }
 
 
@@ -62,40 +71,39 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
 #if !LPX4_ROM_POINTER
  cursor_(0),
 #endif
- sampleCount_(0),remaining_(0),
- sampleRate_(0),preQ14_(0),brightQ14_(0),blockStep_(0),
- subPos_(0),subIndex_(0),
-#if LPX4_BATCHED_REMAINING
- subEnd_(0),
-#endif
-#if LPX4_COMPACT_ONLY
- bitBuffer_(0),bitsLeft_(0),lag_(0),gain_(0),ringCursor_(0),
-#else
- quantLimit_(0),mode_(0),blockScale_(0),
- bitBuffer_(0),bitsLeft_(0),riceK_(0),subType_(0),lag_(0),gain_(0),ringCursor_(0),
-#endif
-#if LPX4_ENABLE_SPEECH
- speechProfile_(0),speechHalf_(0),
-#endif
-#if LPX4_ENABLE_SPEECH_COMPACT
- speechCompact_(0),
-#endif
-#if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY
- formatFeatures_(0),
-#endif
-#if LPX4_ALLOW_SPARSE
- pulseCount_(0),pulseIndex_(0),
-#endif
- error_(NONE),initializedFrame_(false) {
+ sampleCount_(0),remaining_(0),sampleRate_(0),preQ14_(0),brightQ14_(0) {
 #ifdef __AVR__
  static_assert(offsetof(Lpx4HybridCore,staticSpectrum_)<64,"Hot state exceeds AVR short displacement");
  static_assert(offsetof(Lpx4HybridCore,error_)<64,"Error flag must retain short displacement");
 #endif
- resetSynthesis();
+ resetState();
 }
-// Stream lifetime: reset only synthesis/cache state shared by construction
-// and begin(). Input, progress, and sticky error semantics stay with begin().
-void Lpx4HybridCore::resetSynthesis(){
+// Shared per-stream parser and synthesis reset. Callers retain input, public
+// stream metadata, and remaining-count initialization, including failed begin().
+void Lpx4HybridCore::resetState(){
+ error_=NONE;initializedFrame_=false;
+ subPos_=subIndex_=0;
+#if LPX4_BATCHED_REMAINING
+ subEnd_=0;
+#endif
+#if LPX4_COMPACT_ONLY
+ bitBuffer_=bitsLeft_=lag_=gain_=ringCursor_=0;blockStep_=0;
+#else
+ bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;blockStep_=0;
+ subType_=lag_=gain_=ringCursor_=quantLimit_=0;
+#endif
+#if LPX4_ENABLE_SPEECH
+ speechProfile_=speechHalf_=0;
+#endif
+#if LPX4_ENABLE_SPEECH_COMPACT
+ speechCompact_=0;
+#endif
+#if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY
+ formatFeatures_=0;
+#endif
+#if LPX4_ALLOW_SPARSE
+ pulseCount_=pulseIndex_=0;
+#endif
  prevDeemph_=prevBright_=0;
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
@@ -104,11 +112,9 @@ void Lpx4HybridCore::resetSynthesis(){
 #if LPX4_ROTATE_LPC_ANCHORS
  lpcAnchorOffset_=0;
 #endif
- for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0;
-#if LPX4_LPC_RING
- for(uint8_t i=10;i<20;i++)hist_[i]=0;
-#endif
- for(uint16_t i=0;i<256;i++)ringQ_[i]=0;
+ memset(prev_,0,sizeof(prev_));memset(cur_,0,sizeof(cur_));
+ memset(a_,0,sizeof(a_));memset(hist_,0,sizeof(hist_));
+ memset(ringQ_,0,sizeof(ringQ_));
 }
 int16_t Lpx4HybridCore::clamp(int32_t n,int16_t low,int16_t high){
  return n<low?low:(n>high?high:(int16_t)n);
@@ -139,30 +145,8 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if !LPX4_ROM_POINTER
  cursor_=0;
 #endif
- error_=NONE;initializedFrame_=false;
- remaining_=sampleCount_;subPos_=subIndex_=0;
-#if LPX4_BATCHED_REMAINING
- subEnd_=0;
-#endif
-#if LPX4_COMPACT_ONLY
- bitBuffer_=bitsLeft_=lag_=gain_=ringCursor_=0;blockStep_=0;
-#else
- bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;blockStep_=0;
- subType_=lag_=gain_=ringCursor_=quantLimit_=0;
-#endif
-#if LPX4_ENABLE_SPEECH
- speechProfile_=speechHalf_=0;
-#endif
-#if LPX4_ENABLE_SPEECH_COMPACT
- speechCompact_=0;
-#endif
-#if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY
- formatFeatures_=0;
-#endif
-#if LPX4_ALLOW_SPARSE
- pulseCount_=pulseIndex_=0;
-#endif
- resetSynthesis();
+ remaining_=sampleCount_;
+ resetState();
  if(!input||size<20){error_=BAD_HEADER;return false;}
  if(readByte()!='L'||readByte()!='4'||readByte()!='H'||readByte()!='Y'){
   error_=BAD_HEADER;return false;
@@ -214,7 +198,9 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
   if(speechCompact_){const uint16_t payload=read16();complete=(uint32_t)size==22UL+payload;}
   else
 #endif
-  complete=(uint32_t)size==20+((sampleCount_+319)/320)*(speechProfile_==4?20:30);
+  // Accepted counts are <=64000: count+319 and the byte length fit uint16.
+  // Larger counts are still rejected by the full-width guard below.
+  complete=size==(uint16_t)(20+(((uint16_t)sampleCount_+319u)/320u)*(speechProfile_==4?20:30));
   if(sampleCount_>64000 || !sampleCount_ || !complete){
    error_=BAD_HEADER;return false;
   }
@@ -226,16 +212,9 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  return true;
 }
 // LSB-first bit and entropy readers.
-uint8_t Lpx4HybridCore::readOne(){
-#ifdef LPX3_COST_INSTRUMENT
- ++bitCalls_;
-#endif
- if(!bitsLeft_){bitBuffer_=readByte();bitsLeft_=8;}
- const uint8_t r=bitBuffer_&1;
- bitBuffer_>>=1;
- --bitsLeft_;
- return r;
-}
+// Share cache/refill logic and its single diagnostic call with readBits.
+uint8_t Lpx4HybridCore::readOne(){return readBits(1);}
+
 #if !LPX4_COMPACT_ONLY
 // Consume the mandatory two-bit Huffman prefix in one cached operation.
 // Zero retains the original per-bit path; instrumentation preserves its costs.
@@ -319,7 +298,9 @@ bool Lpx4HybridCore::readFrame(){
      int16_t last=-1;
      for(uint8_t i=0;i<10;i++){
       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
-      const int16_t value=delta?((prev_[i]>>shift)+((code&1)?-(int16_t)((code+1)>>1):(int16_t)(code>>1))):last+1+code;
+      // Compact Rice codes use at most seven bits: delta is -64..63.
+      const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
+      const int16_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
       if(error_)return false;
       if(value<=last || value>=(1<<bits)){error_=CORRUPT_STREAM;return false;}
       const int16_t v=(value<<shift)+(1u<<(shift-1));
@@ -767,28 +748,15 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
     ++lsfConverts_;
 #endif
     polyP_[0]=polyQ_[0]=4096;
-    // The first (1 +/- z) factor pair is initialized directly below.
-    uint8_t n=2;
-    for(uint8_t i=0;i<10;i+=2){
-        int16_t cc[2];
-        for(uint8_t j=0;j<2;j++){
-            const uint16_t norm=lpx4LsfNorm10(prev_[i+j],cur_[i+j],t);
-            const uint8_t idx=(uint8_t)(norm>>4),frac=(uint8_t)(norm&15);
-            const int16_t lo=cosineAt(idx);
-            const int16_t hi=cosineAt((uint16_t)idx+1);
-            const int16_t cosQ13=lpx4CosineInterpolate(lo,hi,frac);
-            cc[j]=(int16_t)(-cosQ13);
-        }
-        if(!i){
-            // (1+z)(1+c*z+z^2) and (1-z)(1+c*z+z^2), Q12.
-            // Multiplication by +/-4096 is exactly +/-c, with no rounding.
-            polyP_[1]=polyP_[2]=4096+cc[0];polyP_[3]=4096;
-            polyQ_[1]=cc[1]-4096;polyQ_[2]=4096-cc[1];polyQ_[3]=-4096;
-        }else{
-            polyFactor(polyP_,cc[0],n);
-            polyFactor(polyQ_,cc[1],n);
-        }
-        n+=2;
+    for(uint8_t i=0;i<10;i++){
+        const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(prev_[i],cur_[i],t));
+        // P/Q polynomials are independent; each pair retains the same degree.
+        int32_t* p=(i&1)?polyQ_:polyP_;
+        if(i<2){
+            // Exact (1 +/- z) first factors; no rounded multiplication.
+            const int16_t unit=(i&1)?-4096:4096;
+            p[1]=unit+cc;p[2]=4096+((i&1)?-cc:cc);p[3]=unit;
+        }else polyFactor(p,cc,(uint8_t)((i&254)+2));
     }
     for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
 }
