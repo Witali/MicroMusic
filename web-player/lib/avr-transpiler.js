@@ -36,6 +36,8 @@ const eqz = a => bytes(a,0x45);
 const load8 = address => bytes(address,0x2d,0,0);
 const load8Signed = address => bytes(address,0x2c,0,0);
 const store8 = (address,value) => bytes(address,value,0x3a,0,0);
+const load16 = address => bytes(address,0x2f,1,0);
+const store16 = (address,value) => bytes(address,value,0x3b,1,0);
 const load32 = address => bytes(address,0x28,2,0);
 const store32 = (address,value) => bytes(address,value,0x36,2,0);
 const constantI64 = value => bytes(0x42,sleb64(value));
@@ -209,7 +211,10 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     if(name==='NOP')return code;
     if(name==='LDI')return writeReg(d,constant(k));
     if(name==='MOV')return writeReg(d,reg(s));
-    if(name==='MOVW')return bytes(writeReg(d,reg(s)),writeReg(d+1,reg(s+1)));
+    // MOVW pairs are even and therefore either identical or disjoint. WASM's
+    // little-endian word copy preserves AVR low/high order without a bus call.
+    if(name==='MOVW')return regionRegisters?bytes(writeReg(d,reg(s)),writeReg(d+1,reg(s+1))):
+      store16(constant(abi.data+d),load16(constant(abi.data+s)));
     if(name==='SWAP')return writeReg(d,or(shl(and(reg(d),constant(15)),4),shr(reg(d),4)));
     if(name==='BST')return updateFlags(mask,()=>and(shr(reg(d),s),constant(1)));
     if(name==='BLD')return writeReg(d,or(and(reg(d),constant(255^(1<<s))),shl(and(shr(flags(),6),constant(1)),s)));
@@ -421,7 +426,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       else if(op===0x41){let byte;do{byte=code[p++];out.push(byte);}while(byte&128);}
       else if(op===0x44){out.push(...code.slice(p,p+8));p+=8;}
       else if(op===0x10){let byte;do{byte=code[p++];out.push(byte);}while(byte&128);}
-      else if(op===0x2c||op===0x2d||op===0x3a||op===0x2b||op===0x39){out.push(code[p++],code[p++]);}
+      else if(op===0x2c||op===0x2d||op===0x2f||op===0x3a||op===0x3b||op===0x2b||op===0x39){out.push(code[p++],code[p++]);}
       else if(op===0x04)out.push(code[p++]);
       else if(op===0x05||op===0x0b||op===0x0f||(op>=0x45&&op<=0xc4)){}
       else throw new Error('Unexpected opcode in remapped ALU: '+op.toString(16));

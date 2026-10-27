@@ -25,6 +25,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+MOVW lowering checkpoint, 2026-10-27: uncached register pairs use one unsigned
+16-bit WASM load/store instead of two byte copies. Cached-region locals retain
+their original path; source sampling, SREG, clock, IRQ and RESET boundaries stay
+unchanged. All 256 legal pair combinations pass in seven policies. Against the
+actual historical generator, 44 of 48 catalog/policy modules shrink 84–915 bytes;
+the other four are byte-identical. All 2586 default/shared checks pass and six
+active-IRQ music spans preserve complete state, PCM and pins. No execution-speed
+or new hardware coverage claim; stage 5 and the 24/31 count remain unchanged. See
+the [cookbook](../../docs/avr-asm-cookbook/movw-word-lowering.md) and
+[integration evidence](../reports/movw-lowering-20261027.md).
+
 Neutral bounded-region checkpoint, 2026-10-27: regions with no flag input or
 output omit one working SREG load/store pair; the initial I-bit IRQ guard and
 all native phase/deadline/retirement paths remain. The synthetic body shrinks
