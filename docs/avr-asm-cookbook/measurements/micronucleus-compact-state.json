@@ -1,0 +1,230 @@
+{
+  "date": "2026-10-27",
+  "status": "local assembled and model-validated experiments; not a release or a 1024-byte result",
+  "target": {
+    "mcu": "ATtiny88",
+    "core": "classic enhanced AVR / AVR25",
+    "clock_hz": 16000000,
+    "return_address_bytes": 2,
+    "abi": "private standalone-loader register convention; not C-callable"
+  },
+  "tools": {
+    "clang_llvm": "18.1.3",
+    "avr_ld": "2.26.20160125",
+    "python": "3.12.3",
+    "assembler_options": [
+      "-target",
+      "avr",
+      "-mmcu=attiny88",
+      "-x",
+      "assembler-with-cpp"
+    ],
+    "link_options": [
+      "-m",
+      "avr25",
+      "--defsym=__TEXT_REGION_LENGTH__=0x10000",
+      "-Ttext=0",
+      "-e",
+      "bootloader_start"
+    ],
+    "placement_note": "The widened linker region permits size measurements beyond physical Flash. A candidate must separately satisfy its actual 8192-BOOT_AT limit."
+  },
+  "lineage": {
+    "repository": "MicroNucleus",
+    "original_pass26_snapshot": "378ebfecb33da72d2bbd460757f364911a46616c",
+    "preserved_import_commit": "cfce71f",
+    "note": "Separate compact Pass27 line, not the native-read 1308-byte development line.",
+    "later_modular_checkpoint_commit": "7642197"
+  },
+  "fixed_rx_base": {
+    "before": {
+      "local_experiment_file": "pass27-phy/candidate_before_none_7168.S",
+      "sha256": "5305e568da976901469be31063663c37098170e12494af20a69c717f3a87cad7"
+    },
+    "after": {
+      "local_experiment_file": "pass27-phy/candidate_after_none_7168.S",
+      "sha256": "85ec71edf97dec4701e80dbd2c851e629d61b83625e478c0c77bce77209538cf"
+    },
+    "verification": {
+      "local_experiment_file": "pass27-phy/audit.py",
+      "sha256": "3be7b8963a2c9e5c0509bb6972d8196c8f1ed43dadb01106e4625eb1843d7b4a"
+    },
+    "reusable_verification": {
+      "local_experiment_file": "pass27-phy/audit_candidate.py",
+      "sha256": "739e418af6ad2e084b0ff787413110fe42a2353c89fcec1792d9e42abc49ca01"
+    },
+    "fragment_bytes_before": 12,
+    "fragment_bytes_after": 6,
+    "fragment_cycles_before": 9,
+    "fragment_cycles_after": 9,
+    "peak_stack_delta_bytes": 1,
+    "profiles": [
+      {
+        "led": "NONE",
+        "boot_at": "0x1c00",
+        "body_before": 1186,
+        "body_after": 1180
+      },
+      {
+        "led": "NONE",
+        "boot_at": "0x1b40",
+        "body_before": 1190,
+        "body_after": 1184
+      },
+      {
+        "led": "ACTIVE_HIGH",
+        "boot_at": "0x1b00",
+        "body_before": 1204,
+        "body_after": 1198
+      },
+      {
+        "led": "ACTIVE_LOW",
+        "boot_at": "0x1b00",
+        "body_before": 1202,
+        "body_after": 1196
+      }
+    ],
+    "validation": {
+      "normalized_phy_branch_targets": 60,
+      "flag_liveness_states": 66,
+      "corrected_flag_sites": [
+        [
+          "usb_rx_decode_bit6",
+          6,
+          "BRBC",
+          "N"
+        ],
+        [
+          "usb_rx_handle_data",
+          14,
+          "BRBS",
+          "N"
+        ],
+        [
+          "usb_rx_handle_in",
+          4,
+          "BRBC",
+          "S"
+        ]
+      ],
+      "offset_unit": "bytes"
+    },
+    "constraints": [
+      "input-buffer offset remains zero after startup",
+      "fixed RX/TX ranges do not overwrite context byte14",
+      "RCALL lands directly on an existing bare RET",
+      "valid stack and interrupts disabled",
+      "all changed arithmetic flags dead until redefined",
+      "timings apply to this classic core and two-byte PC only"
+    ]
+  },
+  "reply_state": {
+    "baseline": {
+      "local_experiment_file": "pass27-ep0/baseline.S",
+      "sha256": "0577c550a26205ff9bf14ceb927c42a0b05165a30379f41aec6484024eb73717"
+    },
+    "isolated_register_cursor": {
+      "local_experiment_file": "pass27-ep0/baseline_register_pointer.S",
+      "sha256": "71141c9957da4e1d61ef53a08574e85323ce5cd8df53523871ba0c7db8943db0"
+    },
+    "cursor_and_standard_tail": {
+      "local_experiment_file": "pass27-ep0/std_share_register_pointer.S",
+      "sha256": "e05119b8efbed2a6ad25b6ca21218a7008af5ce8bf5c6027511f976dbd16caaf"
+    },
+    "cursor_standard_tail_and_pid": {
+      "local_experiment_file": "pass27-ep0/register_pid.S",
+      "sha256": "dcb07afdbd120a0ff2ddc15c1885f9d4e030b8eb1a0c58fd9f25cf68309e32a2"
+    },
+    "verification": [
+      {
+        "local_experiment_file": "pass27-ep0/verify_probes.py",
+        "sha256": "7838efb854dce5f2233dae43ff396fcc39ebf319298458aba4f2c08208a5c536"
+      },
+      {
+        "local_experiment_file": "pass27-ep0/verify_pid.py",
+        "sha256": "2d43c38ad1a6833614b31e0ad3b59d431080eb142dbe2a72ddd57fd4bea4849e"
+      },
+      {
+        "local_experiment_file": "pass27-ep0/build_probe.py",
+        "sha256": "e554356415058e534c94176d958d614f539d51835598059f758c7fb3f0981ebc"
+      }
+    ],
+    "register_pair": "r14:r15",
+    "isolated_saved_code_bytes": 6,
+    "combined_saved_code_bytes": 10,
+    "profiles": [
+      {
+        "led": "NONE",
+        "boot_at": "0x1c00",
+        "baseline": 1182,
+        "cursor_only": 1176,
+        "cursor_and_tail": 1174,
+        "all_three": 1172
+      },
+      {
+        "led": "NONE",
+        "boot_at": "0x1b40",
+        "baseline": 1186,
+        "cursor_only": 1180,
+        "cursor_and_tail": 1178,
+        "all_three": 1176
+      },
+      {
+        "led": "ACTIVE_HIGH",
+        "boot_at": "0x1b00",
+        "baseline": 1200,
+        "cursor_only": 1194,
+        "cursor_and_tail": 1192,
+        "all_three": 1190
+      },
+      {
+        "led": "ACTIVE_LOW",
+        "boot_at": "0x1b00",
+        "baseline": 1198,
+        "cursor_only": 1192,
+        "cursor_and_tail": 1190,
+        "all_three": 1188
+      }
+    ],
+    "validation": {
+      "standard_dispatch_comparisons": 13824,
+      "actual_opcode_payload_independent_crc_and_cursor_cases": 675,
+      "data_pid_reset_toggle_cases": 1110,
+      "note": "Standard cases compare baseline with tail sharing; TX/cursor cases compare baseline with tail+cursor; PID cases compare tail+cursor with all three."
+    },
+    "constraints": [
+      "register pair unused by PHY and other persistent state",
+      "every reply consumer/producer updated together",
+      "initialize before first actual memory use",
+      "preserve ABI/interrupt lifetimes in any adaptation"
+    ]
+  },
+  "supporting_includes": [
+    {
+      "path": "vendor/avr/io.h",
+      "sha256": "9c799ea125df89a7cbd9281c79233ba1cac3271e97be7143e5cb1ccc196dc19b"
+    },
+    {
+      "path": "variants/strict_usb_verified/led_config.h",
+      "sha256": "858cb95215c04354d495bc7aebd7c5c8a271d07de48a6e20308631b7c0d1cb35"
+    },
+    {
+      "path": "variants/strict_usb_verified/led_macros.inc",
+      "sha256": "7028639e907b2ed930fd66696705f2b5e2adb5666970131bdfa53026b12dc4dd"
+    }
+  ],
+  "elf_example_validation": {
+    "accepted_profiles": 4,
+    "rejected_original_undefined_operands": true,
+    "rejected_raw_flag_bit_mutation_without_undefined_symbols": true,
+    "rejected_truncated_elf": true,
+    "rejected_missing_symbol_table": true
+  },
+  "limitations": [
+    "No hardware USB/ISP operation",
+    "No physical timing or USB compliance claim",
+    "No MicroMusic runtime/backend changes",
+    "Local source hashes identify the isolated evidence and may differ from later integrated candidates",
+    "Equal initializer delay does not establish correct or centered inherited RX/TX bit periods; the specification timing audit remains separate."
+  ]
+}

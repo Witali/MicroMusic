@@ -264,3 +264,12 @@ node Codecs/Speex/AVR/tests/verify_avr.mjs --backend asm --verify-reset --firmwa
 и оба unit-образа совпали с измеренными. C-образ также совпал с полностью
 допущенной zero-vector C-версией. Полные замеры и проверка воспроизведения:
 `Codecs/Speex/AVR/reports/scalar-boundary-experiment-*.json`.
+
+## Inspect linked AVR branch operands
+
+`avr_elf_branch_audit.py` is an original standard-library Python example for a
+fully linked little-endian AVR ELF32. It rejects named undefined symbols and
+checks selected BRBC/BRBS sense and SREG-bit operands from machine words.
+It is a build-audit utility, not an AVR runtime backend or a complete timing
+verifier. See the [compact Micronucleus recipe](../micronucleus-eeprom-stream.md)
+for commands, architecture constraints and mutation-check evidence.

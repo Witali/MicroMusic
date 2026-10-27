@@ -218,3 +218,148 @@ and [AVR035](https://www.microchip.com/content/dam/mchp/documents/OTH/Applicatio
 for the broader advice to use bounded data types, direct I/O and measured
 code sharing. The cookbook's [control-size recipe](um88-control-size.md)
 likewise treats shared work and caller-count changes as measurements.
+
+## Compact Pass27: verify operands, then retain proven state
+
+The following measurements belong to a **separate compact Pass27 research
+line**, derived from the October 27, 2026 Pass26 handoff. They do not extend
+the 1308-byte native-read line above. They are local assembled/model-validated
+experiments, not a published release, a 1024-byte result, or physical USB
+validation. Target and tools: ATtiny88, classic enhanced AVR/AVR25, 16 MHz,
+Clang/LLVM 18.1.3 with `-target avr -mmcu=attiny88`, preprocessed assembly,
+GNU `avr-ld` 2.26, Python 3.12.3. These are private standalone-loader register
+conventions; no MicroMusic assembly backend is added.
+
+### Reject unresolved operands and inspect the actual branch bits
+
+The handoff's reduced AVR header omitted `SREG_N` and `SREG_S`. The source
+assembled and linked, and the final file had no `R_AVR_*` relocations, yet its
+symbol table still contained those two undefined names. Three branches encoded
+bit zero (C), rather than the intended N/N/S. Checking only relocation output
+or comparing two descendants of the same defective header missed the problem.
+
+Keep official device definitions pinned where available. Put any separately
+required compatibility definitions in the project's adapter, and reject
+undefined symbols in the final candidate ELF as well as unresolved relocations.
+Then verify selected raw instruction operands against an independent contract.
+Here N is SREG bit 2, S is bit 4; BRBC/BRBS encode the bit in the instruction's
+low three bits. The mask `word & 0xfc07` checks both branch sense and flag,
+without depending on a disassembler's preferred alias. See Microchip's
+[SREG definition](https://onlinedocs.microchip.com/oxy/GUID-80B1922D-872B-40C8-A8A5-0CBE009FD908-en-US-3/GUID-CE0DCB6D-2266-4C24-8BE6-FEC114F6D6E3.html)
+and [AVR Instruction Set Manual, DS40002198B](https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-InstructionSet-Manual-DS40002198.pdf).
+
+The standard-library Python example
+[avr_elf_branch_audit.py](examples/avr_elf_branch_audit.py) reads linked AVR
+ELF32 directly and checks the three observed sites:
+
+```sh
+python3 avr_elf_branch_audit.py candidate.elf \
+  --branch usb_rx_decode_bit6+6:clear:N \
+  --branch usb_rx_handle_data+14:set:N \
+  --branch usb_rx_handle_in+4:clear:S
+```
+
+Offsets are **bytes** from the named symbols and must be refreshed when those
+procedures change. The example also accepts numeric addresses. It requires an
+unstripped symbol table and rejects all named undefined symbols, including weak
+references, so use it for a fully resolved bare-metal candidate, not a deliberately
+partially linked object.
+It does not validate whole-program control flow, timing or protocol behavior.
+
+### Replace an invariant address calculation with a cycle-matched setup
+
+The single-buffer receiver clears context byte 14 at startup and never changes
+it. RX writes context bytes 22..32, while the eight-byte TX payload plus CRC
+occupies bytes 2..11. The old initializer therefore always produced Y=0x0116:
+
+```asm
+; GPL-2.0-or-later MicroNucleus excerpt; offset is proven zero.
+push    r0                         ; 2 cycles, 2 bytes
+lds     r28, input_buffer_offset   ; 2 cycles, 4 bytes
+ldi     r29, 1                     ; 1 cycle,  2 bytes
+adiw    r28, 22                    ; 2 cycles, 2 bytes
+pop     r0                         ; 2 cycles, 2 bytes
+```
+
+Use two immediate loads and call an already present bare RET:
+
+```asm
+ldi     r28, 0x16                  ; 1 cycle, 2 bytes
+ldi     r29, 0x01                  ; 1 cycle, 2 bytes
+rcall   existing_bare_ret          ; 3 cycles, 2 bytes; RET takes 4 cycles
+```
+
+This measured substitution reduces **12 to 6 code bytes**, with **9 cycles**
+in either sequence. The existing RET is not duplicated. The ATtiny88 call
+temporarily pushes a two-byte return address instead of the former one-byte
+PUSH, so peak stack increases by **one byte**. These instruction timings and
+stack width follow the classic AVR core; do not transfer the figures to
+AVRxt/AVRrc or three-byte-PC devices without remeasuring.
+
+The incoming SREG differs because the removed ADIW updated arithmetic flags.
+An emitted-word control-flow audit explored 66 states through successful and
+failed SYNC paths and return into the caller: every affected flag is redefined
+before it is consumed. All 60 other PHY branch targets normalize to the same
+instructions. The call must land directly on `RET`, stay within RCALL range,
+and use a valid, sufficiently sized stack. This loader runs with interrupts
+disabled; observers of intermediate flags need a separate proof. A future
+double buffer, DMA writer, ISR, or mutable context offset invalidates the
+fixed-state assumption. Equal initializer delay does not prove that the
+inherited bit period is correct or centered within USB tolerance. Audit actual
+sampling/output timestamps against the protocol separately; electrical behavior
+still needs hardware validation.
+
+### Keep the reply cursor in a genuinely available register pair
+
+The USB reply source pointer is live across packet preparation but its old
+representation was a pair of SRAM context bytes. A private persistent pair
+`r14:r15` is untouched by this receiver/transmitter and by the loader's other
+long-lived state. Replace each paired memory operation with MOVW:
+
+```asm
+; Set the reply pointer: two stores become one instruction.
+; Before: STD Y+MSG_POINTER_HIGH,r19; STD Y+MSG_POINTER_LOW,r18
+movw    r14, r18
+
+; Begin a packet: two loads become one instruction.
+; Before: LDD r30,Y+MSG_POINTER_LOW; LDD r31,Y+MSG_POINTER_HIGH
+movw    r30, r14
+
+; Preserve the pointer advanced by the copier, for the following packet.
+; Before: STD Y+MSG_POINTER_HIGH,r31; STD Y+MSG_POINTER_LOW,r30
+movw    r14, r30
+```
+
+Each pair shrinks from four bytes to two, saving **six code bytes** in the
+isolated linked experiment. This does not mean X/Y/Z can be globally reserved:
+polling and reply staging use X, and the PHY clobbers Y/Z. Nor is `r14:r15`
+generally free in a C-callable function.
+Prove register liveness across every caller, helper, reset/abort path and
+interrupt boundary; reserve or save the pair according to the actual ABI.
+Persistent state also needs initialization before its first real use.
+
+Related experiments share a two-byte standard-reply tail and keep DATA PID in
+another proven-free persistent register (two bytes). The combined candidate
+therefore saves ten bytes, not six: at `BOOT_AT=0x1C00`, 1182 becomes 1172.
+The isolated cursor variant is 1176 bytes at that placement. These remain
+over the 1024-byte target. Validation of the combined reply changes covers
+13824 standard-dispatch comparisons, 675 actual-opcode payload/independent
+USB CRC16/cursor cases, and 1110 DATA-PID reset/toggle cases across all three
+LED profiles. These counts describe specific model workloads, not every USB
+error/retry state or electrical compliance.
+
+### Evidence and reuse boundary
+
+The [measurement record](measurements/micronucleus-compact-state.json) pins
+the exact local experiment sources and verification scripts by SHA-256.
+Pass26's original snapshot is `378ebfecb33da72d2bbd460757f364911a46616c`;
+the preserved MicroNucleus import is `cfce71f`, and the later modular checkpoint
+is `7642197`. Candidate source organization and later optimization may change
+independently of these isolated measurements.
+
+The snippets derive from Micronucleus/V-USB and retain GPL-2.0-or-later
+provenance. The ELF checker is an original documentation utility. No loader
+binary or new handwritten runtime backend is incorporated into MicroMusic.
+Any production arithmetic backend adapted here must still retain an explicitly
+selectable equivalent C implementation, architecture plus explicit ASM-enable
+selection, and a common reference-output check, as required by this repository.

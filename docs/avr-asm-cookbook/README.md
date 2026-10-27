@@ -3056,7 +3056,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 [Admission, bounds, workload and reproduction](../../Codecs/Speex/AVR/HIGHER_BITRATES.md).
 
 
-## Micronucleus EEPROM stream reuse
+## Micronucleus stream and compact-state recipes
 
 [EEPROM reads through an existing CRC copier](micronucleus-eeprom-stream.md):
 bounded cursors that preserve carry, shared address guards and protocol
@@ -3064,3 +3064,9 @@ state, a callable full-length CRC copier, and bounded ACK acquisition.
 The current native-read loader is 1308 bytes; digital ACK and whole-call CRC
 checks are recorded separately from the larger staging-only write probes.
 No MicroMusic runtime changes or physical-board result are implied.
+
+The same entry now records separate compact Pass27 experiments: reject
+undefined ELF flag operands, verify raw branch bits, replace a proven invariant
+RX-base calculation with a cycle-matched setup, and keep a reply cursor in a
+proven-free register pair. Exact local source hashes and model workloads are
+pinned; the measurements do not claim a 1024-byte result or a new runtime backend.
