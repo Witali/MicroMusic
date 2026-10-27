@@ -45,7 +45,10 @@ class EnhanceCompactSpeechTests(unittest.TestCase):
         with self.assertRaises(ValueError):enhance(ref,blob,self.decoder,len(base)-1)
 
     def test_known_innovation_improves_with_frozen_fields_and_whole_file_budget(self):
-        blob=source(4);args=components(blob);extras=[(-1,0)]*16;extras[0]=(5,3);extras[4]=(12,-2)
+        # Use enough active audio for a real STOI value, not its old numeric
+        # insufficient-frame sentinel on the 80 ms fixture.
+        blob=source(4,6400);args=components(blob);extras=[(-1,0)]*(len(args[2])*8)
+        extras[0]=(5,3);extras[len(extras)//2]=(12,-2)
         target,_=pack5(*args,extras=extras);ref=decode_model(target)
         marked,info=pack5(*args,force_extras=True);cap=len(marked)+3
         result,pcm,report=enhance(ref,blob,self.decoder,cap,position_candidates=4,
