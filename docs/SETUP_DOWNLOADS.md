@@ -130,6 +130,31 @@ GET не выполнялся; полного/частичного устано�
 же отказавший URL без изменения условий не нужно. `atprogram` из Studio
 не заменяет MDB для запуска и пошагового исполнения симулятора.
 
+### Официальные каталоги обновлений MPLAB X
+
+2026-10-27: получены два XML-каталога по точным HTTPS-ссылкам из
+[документации серверов Microchip](https://developerhelp.microchip.com/xwiki/bin/view/software-tools/ides/x/connections-servers-ports/).
+Они зарегистрированы до GET и сохранены в `assets` после проверки фактических
+размеров/хешей:
+
+| ID | Байты | SHA-256 |
+| --- | ---: | --- |
+| `mplab-x-update-catalog-v3` | 55 648 | `00d2dc4696170fe440dc0dcbf50e6c63b515c3ad5c38ce6facee0c51ec0ce071` |
+| `mplab-x-update-catalog-6.15` | 87 530 | `86615a8559bd001092d13517806d49ea628701abcdd30037139460efa137b21a` |
+
+Это снимки изменяемых каталогов, а не отдельно опубликованные vendor-хеши.
+Они содержат 26 и 47 модулей. Ни в одном нет требуемых базовых модулей
+MDBCore assemblies/debugger/memory/simulator/symbolview; плагины ссылаются на
+отдельные библиотеки установленной IDE. Версия каталога 6.15 не устанавливает
+совместимость с SDK 6.25. NBM по этим каталогам не загружались, не устанавливались
+и не запускались. XML остаются в игнорируемом `build/reference-downloads/`.
+
+Локальная проверка двух записей без сети:
+
+```powershell
+& ./tools/setup-downloads.ps1 -Id @('mplab-x-update-catalog-v3','mplab-x-update-catalog-6.15') -Offline -CheckOnly
+```
+
 ### Linux MPLAB X 6.25 и вложенный пример SDK
 
 2026-10-27: точная Linux-ссылка 6.25 из официального архива зарегистрирована как

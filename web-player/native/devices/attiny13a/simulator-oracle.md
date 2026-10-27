@@ -358,6 +358,34 @@ established or installed. Do not assume Linux payloads can run on Windows or
 retry unchanged denied URLs. An accessible supported installation/distribution
 remains the prerequisite for the documented MDB control comparison.
 
+## Official update-center catalogs
+
+Microchip's [documented servers and ports](https://developerhelp.microchip.com/xwiki/bin/view/software-tools/ides/x/connections-servers-ports/)
+provide exact HTTPS URLs for two further inspected inputs:
+
+- `https://ww1.microchip.com/downloads/mplab/X/v3/plugins/updates.xml`
+- `https://ww1.microchip.com/downloads/mplab/X/v3/plugins/v6.15/updates.xml`
+
+Both were registered before ordinary GET and acquired with 200 status on
+2026-10-27. IDs `mplab-x-update-catalog-v3` and `mplab-x-update-catalog-6.15`
+in `tools/downloads.json` pin the original XML sizes/hashes and source page.
+Offline setup verification passes for both. They are catalog snapshots, not
+published checksum assertions or installed plug-ins.
+
+The catalogs contain **26** and **47** module entries. Their combined declared
+module IDs omit all five missing example dependencies:
+`com.microchip.mplab.mdbcore.assemblies`, `.debugger`, `.memory`, `.simulator`
+and `.symbolview`. Some listed modules themselves require external MDBCore
+libraries. This does not establish a distribution of the base simulator host;
+no NBM was downloaded or executed, and 6.15 catalog compatibility with 6.25 is
+unverified. Do not synthesize unlisted package URLs from dependency names.
+
+The fallback built-in-browser inventory could not initialize: its tool returned
+that kernel assets could not be written because a required path was missing.
+No browser tab or installer was obtained. This is tool availability evidence,
+not another HTTP result or proof about an installed user browser. The documented
+MDB route still needs an accessible supported MPLAB X installation/distribution.
+
 ## Oracle limits
 
 The official MPLAB X [debug feature matrix](https://ww1.microchip.com/downloads/aemDocuments/documents/DEV/ProductDocuments/SupportingCollateral/SimDebugFeatures.pdf)
