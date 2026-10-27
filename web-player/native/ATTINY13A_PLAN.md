@@ -16,6 +16,14 @@ limited to the common core/Timer1. The user's two-configuration request replaces
 the earlier website-wide full-engine-default criterion; it does not reduce the
 full verification model's hardware requirements or change site/WASM defaults.
 
+Verification timing requirement, clarified by the user on 2026-10-27: virtual
+CLK, timer and pin-event timestamps in the precise ATtiny13A simulator have a
+maximum 10 ns error against the corresponding reference, without accumulation
+per clock step. Exact cycle counts, event identity/order and discrete state
+remain required. This changes no site-model or host-profiling requirement and
+closes no unmeasured hardware item. See the
+[verification-only contract](EMULATION_CONFIGURATIONS.md#verification-virtual-event-tolerance).
+
 Current status, 2026-10-27: **24/31 checklist items complete, seven open**.
 The new item explicitly covers the shared ADC/comparator/BOD internal reference
 identified during the official section8.3.1 audit. Its explicit physical profile

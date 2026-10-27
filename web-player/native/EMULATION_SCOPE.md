@@ -6,6 +6,15 @@ The virtual ATtiny13A starts from a supplied firmware image. The binary is
 translated into WASM and executed with the configured CPU, peripherals and
 initial memory state. Package loading restores those inputs.
 
+## Verification timing acceptance
+
+The user's 2026-10-27 **10 ns** tolerance concerns virtual CLK, timer and pin
+events in the precise ATtiny13A verification simulator. It does not apply to
+the simplified site model or to measuring emulator execution time on the host.
+The [configuration contract](EMULATION_CONFIGURATIONS.md#verification-virtual-event-tolerance)
+defines the per-event bound, exact event/state ordering and calibration limits.
+Internal integer-picosecond time need not be rounded or replaced.
+
 ## No virtual-chip programming interface
 
 The project does not program a virtual chip through an external programmer.

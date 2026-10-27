@@ -31,6 +31,27 @@ restarts. Every instance starts with fresh CPU/peripheral memory and queues.
 This preserves the selected hardware and conservative verification policy;
 site engines and packaged-runtime loading retain their existing paths.
 
+## Verification virtual-event tolerance
+
+User clarification, 2026-10-27: the full ATtiny13A verification simulator requires
+virtual CLK, timer and pin-event timestamps within **10 ns (10,000 ps)** of the
+corresponding reference event. This is a maximum per-event error across the
+whole compared trace, not an allowance to accumulate 10 ns on every clock step.
+
+The tolerance applies only to the precise verification model. It introduces no
+new accuracy requirement for the simplified `site` music model, audio sample
+spacing, browser wall-clock scheduling or host performance profiling. Existing
+integer-picosecond representation remains valid; this does not require rounding
+events onto a 10 ns grid.
+
+Event identity, event count, original CPU-cycle counts, register/flag effects
+and the required ordering of tied or neighboring events remain exact. Matching
+timestamps within tolerance cannot excuse a lost edge, duplicate IRQ or changed
+read/write ordering. Compare equivalent inputs, fuses and explicit hardware
+profiles; distinguish model timestamp error from instrument uncertainty and
+unmeasured oscillator/analog behavior. The tolerance alone does not establish
+silicon calibration or close the outstanding hardware checks.
+
 ## Historical evidence
 
 The full model was retained, not replaced by the music model:
