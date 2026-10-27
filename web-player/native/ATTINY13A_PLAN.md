@@ -25,6 +25,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Native source-location checkpoint, 2026-10-27: a diagnostic replay combines raw
+V8 leaf PCs/disassembly with a source map whose executable sections and absolute
+offsets equal production. It resolves 37 candidate project source observations,
+retains 46 unresolved native observations and 486 other observations, conserving
+all 569 whole-process ticks. All 50 focused profiling checks pass. No production
+source, bytecode, ABI or callback changes; source-map predecessors and setup/
+warmup contamination still prevent precise exclusive durations. Stage 5 and the
+24/31 count remain open/unchanged. See the
+[cookbook](../../docs/avr-asm-cookbook/sampled-native-source-locations.md) and
+[retained evidence](../reports/native-source-profile-20261027.md).
+
 MOVW lowering checkpoint, 2026-10-27: uncached register pairs use one unsigned
 16-bit WASM load/store instead of two byte copies. Cached-region locals retain
 their original path; source sampling, SREG, clock, IRQ and RESET boundaries stay
