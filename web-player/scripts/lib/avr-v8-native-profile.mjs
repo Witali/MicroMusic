@@ -137,8 +137,68 @@ function parseDisassembly(text,known){
   check(!block,'Truncated disassembly block');return {blocks,total};
 }
 
-export function auditV8NativeProfile({log,disassembly,functions,sourceMap}){
+const view=()=>({ticks:0,budget:{project:0,support:0,unresolvedNative:0,other:0},reasons:new Map(),ownership:new Map()});
+function record(target,result){
+  target.ticks++;target.budget[result.category]++;
+  if(result.reason)add(target.reasons,result.reason);
+  if(result.source){const {label:source,line}=result.source,key=source+'|'+line;
+    if(!target.ownership.has(key))target.ownership.set(key,{source,line,ticks:0});target.ownership.get(key).ticks++;}
+}
+function finishView(target){
+  check(Object.values(target.budget).reduce((a,b)=>a+b,0)===target.ticks,'Tick budget mismatch');
+  return {ticks:target.ticks,budget:target.budget,
+    unresolvedReasons:[...target.reasons].map(([reason,ticks])=>({reason,ticks})).sort((a,b)=>a.reason.localeCompare(b.reason)),
+    sourceLines:[...target.ownership.values()].sort((a,b)=>a.source.localeCompare(b.source)||a.line-b.line)};
+}
+const windowPrefix='MM_AVR_CAPTURE_';
+function requestedWindows(windows){
+  if(windows===undefined)return null;
+  check(Array.isArray(windows),'Windows must be an array');const requested=new Map();
+  for(const entry of windows){
+    check(entry&&typeof entry.label==='string'&&/^MM_AVR_CAPTURE_(?:0|[1-9]\d*)$/.test(entry.label)&&
+      safe(Number(entry.label.slice(windowPrefix.length)))&&!requested.has(entry.label),'Invalid or duplicate window label');
+    check(typeof entry.workWallMs==='number'&&Number.isFinite(entry.workWallMs)&&entry.workWallMs>=0&&
+      entry.workWallMs*1000<=Number.MAX_SAFE_INTEGER,'Invalid window work duration');
+    requested.set(entry.label,{label:entry.label,innerDurationUs:entry.workWallMs*1000});
+  }
+  return requested;
+}
+function windowViews(requested,ticks,observations){
+  const windows=[...requested.values()].sort((a,b)=>(a.start?.order??0)-(b.start?.order??0));
+  let previous;
+  for(const win of windows){
+    check(win.start&&win.end,'Missing window timer marker');
+    check(win.start.order<win.end.order&&win.start.time<=win.end.time,'Reversed window timer markers');
+    check(!previous||previous.end.time<=win.start.time,'Overlapping window intervals');previous=win;
+    win.outerDurationUs=win.end.time-win.start.time;
+    check(win.innerDurationUs<=win.outerDurationUs+2,'Inconsistent window clock duration');
+    win.boundaryAllowanceUs=Math.ceil(Math.max(0,win.outerDurationUs-win.innerDurationUs)+2);
+    win.certainInterior=view();win.boundary=view();
+  }
+  const certainInterior=view(),boundary=view(),outside=view();
+  for(const [n,tick]of ticks.entries()){
+    const win=windows.find(w=>tick.time>=w.start.time&&tick.time<w.end.time);
+    if(!win){record(outside,observations[n]);continue;}
+    const offset=tick.time-win.start.time;
+    const inside=offset>win.boundaryAllowanceUs&&win.outerDurationUs-offset>win.boundaryAllowanceUs;
+    record(inside?certainInterior:boundary,observations[n]);record(inside?win.certainInterior:win.boundary,observations[n]);
+  }
+  check(certainInterior.ticks+boundary.ticks+outside.ticks===ticks.length,'Window tick budget mismatch');
+  return {clock:'V8 integer microsecond timer/tick timestamps',certainInterior:finishView(certainInterior),
+    boundary:finishView(boundary),outside:finishView(outside),
+    windows:windows.map(win=>({label:win.label,outerDurationUs:win.outerDurationUs,innerDurationUs:win.innerDurationUs,
+      boundaryAllowanceUs:win.boundaryAllowanceUs,certainInterior:finishView(win.certainInterior),boundary:finishView(win.boundary)})),
+    limits:[
+      'Outer windows are half-open marker intervals and include marker/wrapper boundary overhead.',
+      'Interior classification assumes a stable host-clock rate shared by performance.now durations and V8 timer/tick timestamps, with a selected 2us rounding allowance; this is not a host latency guarantee.',
+      'Certain-interior ticks are strictly beyond both conservative boundary allowances; empty interiors supply no attribution.',
+      'Delimited source counts remain sampling candidates, not exclusive elapsed durations or causal ownership; no virtual device timing tolerance is inferred.',
+    ]};
+}
+
+export function auditV8NativeProfile({log,disassembly,functions,sourceMap,windows}){
   check(typeof log==='string'&&typeof disassembly==='string','Profile inputs must be strings');
+  const requested=requestedWindows(windows);let activeWindow=null;
   const known=metadata(functions),map=sourceMap===null||sourceMap===undefined?null:decodeMap(sourceMap);
   const parsed=parseDisassembly(disassembly,known),generations=[],ticks=[];
   let order=0;
@@ -152,43 +212,47 @@ export function auditV8NativeProfile({log,disassembly,functions,sourceMap}){
     }else if(f[0]==='tick'){
       check(f.length>=6&&/^[01]$/.test(f[3]),'Malformed tick record');
       ticks.push({pc:address(f[1],'Invalid tick address'),time:uint(f[2],'Invalid tick timestamp'),order,external:f[3]==='1'});
+    }else if(requested&&f[0].startsWith('timer-event')&&(f[1]||'').startsWith(windowPrefix)){
+      check(requested.has(f[1]),'Unknown reserved window timer label');
+      check(f.length===3&&['timer-event-start','timer-event-end'].includes(f[0]),'Malformed window timer marker');
+      const win=requested.get(f[1]),kind=f[0]==='timer-event-start'?'start':'end';
+      check(!win[kind],'Duplicate window timer marker');
+      if(kind==='start'){check(activeWindow===null,'Overlapping or nested window markers');activeWindow=win.label;}
+      else {check(activeWindow===win.label,'Reversed or mismatched window markers');activeWindow=null;}
+      win[kind]={time:uint(f[2],'Invalid window timer timestamp'),order};
     }
   }
-  const budget={project:0,support:0,unresolvedNative:0,other:0},reasons=new Map(),ownership=new Map();
-  const unresolved=reason=>{budget.unresolvedNative++;add(reasons,reason);};
-  for(const tick of ticks){
+  const unresolved=reason=>({category:'unresolvedNative',reason});
+  const classify=tick=>{
     const candidates=generations.filter(g=>g.order<tick.order&&g.time<=tick.time&&tick.pc>=g.start&&tick.pc<g.end);
-    if(tick.external){budget.other++;continue;}
-    if(!candidates.length||!candidates.some(g=>g.fn)){budget.other++;continue;}
-    if(candidates.length!==1){unresolved('ambiguous-address-generation');continue;}
-    const g=candidates[0];if(g.time===tick.time){unresolved('creation-time-tie');continue;}
+    if(tick.external||!candidates.length||!candidates.some(g=>g.fn))return {category:'other'};
+    if(candidates.length!==1)return unresolved('ambiguous-address-generation');
+    const g=candidates[0];if(g.time===tick.time)return unresolved('creation-time-tie');
     const matches=parsed.blocks.filter(b=>b.fn===g.fn&&b.base===g.start&&BigInt(b.size)<=g.end-g.start);
-    if(matches.length!==1){unresolved(matches.length?'ambiguous-disassembly':'missing-disassembly');continue;}
+    if(matches.length!==1)return unresolved(matches.length?'ambiguous-disassembly':'missing-disassembly');
     const block=matches[0],offset=Number(tick.pc-g.start);
-    if(offset>=block.size){unresolved('native-location-gap');continue;}
+    if(offset>=block.size)return unresolved('native-location-gap');
     const position=lower(block.positions,offset,'offset');
-    if(!position){unresolved(block.positions.length?'native-location-gap':'absent-native-positions');continue;}
-    if(position.position===0){unresolved('function-entry-position');continue;}
-    if(!map){unresolved('absent-source-map');continue;}
+    if(!position)return unresolved(block.positions.length?'native-location-gap':'absent-native-positions');
+    if(position.position===0)return unresolved('function-entry-position');
+    if(!map)return unresolved('absent-source-map');
     const source=lower(map.rows,g.fn.codeOffset+position.position,'column');
-    if(!source||source.column<g.fn.codeOffset){unresolved('source-map-function-gap');continue;}
-    if(!source.mapped){unresolved('unmapped-source-map');continue;}
-    if(!source.label){budget.support++;continue;}
-    budget.project++;const key=source.label+'|'+source.line;
-    if(!ownership.has(key))ownership.set(key,{source:source.label,line:source.line,ticks:0});ownership.get(key).ticks++;
-  }
-  check(Object.values(budget).reduce((a,b)=>a+b,0)===ticks.length,'Tick budget mismatch');
+    if(!source||source.column<g.fn.codeOffset)return unresolved('source-map-function-gap');
+    if(!source.mapped)return unresolved('unmapped-source-map');
+    return source.label?{category:'project',source}:{category:'support'};
+  };
+  const observations=ticks.map(classify),whole=view();for(const result of observations)record(whole,result);
+  const finished=finishView(whole);
   return {schema:'micromusic-avr-v8-native-profile-v1',exclusiveSubsystemTimeAvailable:false,
     counts:{ticks:ticks.length,codeGenerations:generations.length,knownNativeGenerations:generations.filter(g=>g.fn).length,
       disassemblyBlocks:parsed.total,knownNativeDisassemblyBlocks:parsed.blocks.length,
       sourceMapSegments:map?.rows.length||0,sourceMapSources:map?.sources||0,projectSourceMapSources:map?.projectSources||0},
-    budget,unresolvedReasons:[...reasons].map(([reason,ticks])=>({reason,ticks})).sort((a,b)=>a.reason.localeCompare(b.reason)),
-    sourceLines:[...ownership.values()].sort((a,b)=>a.source.localeCompare(b.source)||a.line-b.line),
+    budget:finished.budget,unresolvedReasons:finished.unresolvedReasons,sourceLines:finished.sourceLines,
     limits:[
       'Disjoint raw tick leaf-PC observations only; inclusive stack frames are not counted.',
       'Whole-process ticks include construction, warmup and unrelated work; no emulator work-window duration is inferred.',
       'Predecessor native source positions and source-map segments are attribution candidates, not proven exclusive ownership or elapsed durations.',
       'Function-entry positions, unmapped spans, address-generation ties and ambiguous generations remain unresolved.',
       'Source-map lines cannot recover full C inline scopes, optimized-away code or timing between samples; no speed or real-time claim is made.',
-    ]};
+    ],...(requested?{windowed:windowViews(requested,ticks,observations)}:{})};
 }

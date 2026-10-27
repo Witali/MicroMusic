@@ -86,3 +86,9 @@ The raw V8 log covers the entire process, including setup, reference execution
 and warmup. Its 569 observations are separate from the inspector capture-window
 samples; they cannot be added or compared as elapsed-time budgets. Further work
 needs verified window markers and a measured ambiguity/overhead model.
+
+Follow-up: the [native-window experiment](native-window-profile-20261027.md)
+shows that this engine suppresses raw native ticks while the inspector CPU
+profiler runs. This report's whole-process counts cannot establish a measured-
+work source budget; setup/reference/warmup remain included. The separate native-
+only mode supplies validated markers; the original data and limits above remain.

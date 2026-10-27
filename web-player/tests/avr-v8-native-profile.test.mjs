@@ -206,3 +206,117 @@ test('native WASM imports, invalid executables and truncated/malformed custom na
   }
   assert.throws(()=>validateV8NativeFunctions(functions,Array.from(bytes)),/Invalid native WASM/);
 });
+
+const label=n=>'MM_AVR_CAPTURE_'+n;
+const marker=(kind,time,n=0)=>`timer-event-${kind},${label(n)},${time}`;
+const window=(workWallMs,n=0)=>({label:label(n),workWallMs});
+function checkWindows(result){
+  const w=result.windowed,views=[w.certainInterior,w.boundary,w.outside];
+  assert.equal(views.reduce((n,row)=>n+row.ticks,0),result.counts.ticks);
+  for(const category of Object.keys(result.budget))assert.equal(views.reduce((n,row)=>n+row.budget[category],0),result.budget[category]);
+  for(const row of [...views,...w.windows.flatMap(win=>[win.certainInterior,win.boundary])]){
+    assert.equal(Object.values(row.budget).reduce((a,b)=>a+b,0),row.ticks);
+    assert.equal(row.sourceLines.reduce((n,s)=>n+s.ticks,0),row.budget.project);
+    assert.equal(row.unresolvedReasons.reduce((n,s)=>n+s.ticks,0),row.budget.unresolvedNative);
+  }
+  assert.equal(w.windows.reduce((n,win)=>n+win.certainInterior.ticks,0),w.certainInterior.ticks);
+  assert.equal(w.windows.reduce((n,win)=>n+win.boundary.ticks,0),w.boundary.ticks);
+}
+
+test('absent window requests preserve the entire whole-process result and ignore unrelated or reserved timers',()=>{
+  const original=audit(),timers=['timer-event-start,ordinary-private-timer,bad',marker('start',10),
+    marker('start',20),'timer-event-end,MM_AVR_CAPTURE_unknown,invalid'];
+  const actual=audit({log:timers.join('\n')+'\n'+input().log});assert.deepEqual(actual,original);
+  assert.ok(!Object.hasOwn(actual,'windowed'));
+});
+
+test('window views conserve native candidates inside and outside, with ties kept in conservative boundary bands',()=>{
+  const ticks=[99,100,105,106,107,193,194,199,200].map(time=>tick('0x1009',time));
+  ticks.push(tick('0x1002',120),tick('0x1031',130),tick('0x9000',140));
+  const log=[creation(),marker('start',100),...ticks,marker('end',200)].join('\n');
+  const a=audit({log,windows:[window(0.096)]});checkWindows(a);
+  assert.deepEqual(a.budget,{project:9,support:1,unresolvedNative:1,other:1});
+  assert.deepEqual(a.windowed.certainInterior.budget,{project:2,support:1,unresolvedNative:1,other:1});
+  assert.equal(a.windowed.boundary.ticks,5);assert.equal(a.windowed.outside.ticks,2);
+  assert.deepEqual(a.windowed.windows.map(({label,outerDurationUs,innerDurationUs,boundaryAllowanceUs})=>
+    ({label,outerDurationUs,innerDurationUs,boundaryAllowanceUs})),[{label:label(0),outerDurationUs:100,innerDurationUs:96,boundaryAllowanceUs:6}]);
+  assert.equal(a.windowed.certainInterior.sourceLines[0].ticks,2);assert.equal(a.windowed.outside.sourceLines[0].ticks,2);
+  const text=JSON.stringify(a);for(const privateValue of ['confidential','0x1009','0x1000','C:/'])assert.ok(!text.includes(privateValue));
+  assert.ok(!Object.hasOwn(a.windowed.windows[0],'start'));assert.ok(!Object.hasOwn(a.windowed.windows[0],'end'));
+});
+
+test('zero and tiny marker intervals allow an empty certain interior without fabricating attribution',()=>{
+  for(let duration=0;duration<=4;duration++){
+    const log=[creation(),marker('start',100),...Array.from({length:duration+2},(_,n)=>tick('0x1009',99+n)),marker('end',100+duration)].join('\n');
+    const a=audit({log,windows:[window(duration/1000)]});checkWindows(a);
+    assert.equal(a.windowed.certainInterior.ticks,0);assert.deepEqual(a.windowed.certainInterior.sourceLines,[]);
+    assert.equal(a.windowed.boundary.ticks,duration);assert.equal(a.windowed.outside.ticks,2);
+    assert.equal(a.windowed.windows[0].boundaryAllowanceUs,2);
+  }
+  const a=audit({log:[marker('start',100),marker('end',100)].join('\n'),windows:[window(0.002)]});checkWindows(a);
+  assert.equal(a.counts.ticks,0);assert.equal(a.windowed.windows[0].boundaryAllowanceUs,2);
+});
+
+test('adjacent windows own shared boundary ticks once and request order does not change chronology',()=>{
+  const log=[creation(),marker('start',100),tick('0x1009',110),marker('end',120),marker('start',120,1),
+    tick('0x1009',120),tick('0x1009',130),marker('end',140,1),tick('0x1009',140)].join('\n');
+  const a=audit({log,windows:[window(0.020,1),window(0.020)]});checkWindows(a);
+  assert.equal(a.windowed.certainInterior.ticks,2);assert.equal(a.windowed.boundary.ticks,1);assert.equal(a.windowed.outside.ticks,1);
+  assert.deepEqual(a.windowed.windows.map(w=>w.label),[label(0),label(1)]);
+  assert.equal(a.windowed.windows[0].boundary.ticks,0);assert.equal(a.windowed.windows[1].boundary.ticks,1);
+});
+
+test('zero-duration adjacent windows sort by marker order when timestamps coincide',()=>{
+  const log=[creation(),marker('start',100),marker('end',100),marker('start',100,1),tick('0x1009',110),marker('end',120,1)].join('\n');
+  const a=audit({log,windows:[window(0.020,1),window(0)]});checkWindows(a);
+  assert.deepEqual(a.windowed.windows.map(w=>w.label),[label(0),label(1)]);assert.equal(a.windowed.certainInterior.ticks,1);
+});
+
+test('requested labels and work durations reject malformed, duplicate and unsafe values without echoing them',()=>{
+  const invalid=[null,{},[null],[{}],[window(-1)],[window(NaN)],[window(Infinity)],[window(Number.MAX_VALUE)],
+    [{label:label(0),workWallMs:'1'}],[{label:'MM_AVR_CAPTURE_private',workWallMs:0}],
+    [{label:'MM_AVR_CAPTURE_00',workWallMs:0}],[{label:'MM_AVR_CAPTURE_9007199254740992',workWallMs:0}],[window(1),window(1)]];
+  for(const windows of invalid)assert.throws(()=>audit({windows}),error=>/Window|window/.test(error.message)&&!error.message.includes('private'));
+});
+
+test('requested marker pairs reject missing, duplicate, malformed and reversed records',()=>{
+  const bad=['',marker('start',100),marker('end',200),[marker('end',200),marker('start',100)].join('\n'),
+    [marker('start',200),marker('end',100)].join('\n'),[marker('start',100),marker('start',100),marker('end',200)].join('\n'),
+    [marker('start',100),marker('end',200),marker('end',200)].join('\n'),
+    [marker('start',100)+',extra',marker('end',200)].join('\n'),[marker('start','bad'),marker('end',200)].join('\n'),
+    [marker('start',-1),marker('end',200)].join('\n'),[marker('start',100),marker('end','9007199254740992')].join('\n')];
+  for(const log of bad)assert.throws(()=>audit({log,windows:[window(0)]}),/window|Window/);
+});
+
+test('reserved timer names must be requested while unrelated timers remain ignored',()=>{
+  const valid=[marker('start',100),marker('end',200)].join('\n');
+  for(const extra of [marker('start',100,1),'timer-event-start,MM_AVR_CAPTURE_private,100',
+    'timer-event,MM_AVR_CAPTURE_0,110'])assert.throws(()=>audit({log:valid+'\n'+extra,windows:[window(0)]}),/window/);
+  const a=audit({log:'timer-event-start,unrelated-confidential-name,bad\n'+valid,windows:[window(0)]});checkWindows(a);
+  assert.ok(!JSON.stringify(a).includes('confidential'));
+  const empty=audit({windows:[]});checkWindows(empty);assert.equal(empty.windowed.outside.ticks,empty.counts.ticks);
+});
+
+test('nested, crossing and timestamp-overlapping windows reject even when an interval is empty',()=>{
+  const logs=[
+    [marker('start',100),marker('start',120,1),marker('end',150,1),marker('end',200)],
+    [marker('start',100),marker('start',120,1),marker('end',200),marker('end',220,1)],
+    [marker('start',100),marker('end',200),marker('start',150,1),marker('end',250,1)],
+    [marker('start',100),marker('start',120,1),marker('end',120,1),marker('end',200)],
+    [marker('start',100),marker('end',200),marker('start',150,1),marker('end',150,1)],
+  ];
+  for(const rows of logs)assert.throws(()=>audit({log:rows.join('\n'),windows:[window(0),window(0,1)]}),/window/);
+});
+
+test('logger rounding permits exactly two microseconds of inner/outer disagreement and pads fractional overhead conservatively',()=>{
+  const log=[marker('start',100),marker('end',110)].join('\n');
+  const a=audit({log,windows:[window(0.012)]});checkWindows(a);assert.equal(a.windowed.windows[0].boundaryAllowanceUs,2);
+  assert.throws(()=>audit({log,windows:[window(0.012001)]}),/Inconsistent window clock/);
+  const b=audit({log,windows:[window(0.0071)]});assert.equal(b.windowed.windows[0].boundaryAllowanceUs,5);
+});
+
+test('logged window chronology rejects a native clock rollback rather than sorting it away',()=>{
+  const log=[marker('start',100),marker('end',200),marker('start',0,1),marker('end',50,1)].join('\n');
+  for(const windows of [[window(0.100),window(0.050,1)],[window(0.050,1),window(0.100)]])
+    assert.throws(()=>audit({log,windows}),/Overlapping window intervals/);
+});

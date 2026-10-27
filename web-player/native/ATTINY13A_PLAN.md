@@ -33,6 +33,16 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Native work-window checkpoint, 2026-10-27: native-only sampling avoids the
+observed inspector CPU profiler suppression of raw native ticks/timer events.
+Generated inspector-console markers and an explicit conservative host-boundary
+allowance conserve 724 ticks as 227 interior, one boundary and 496 outside;
+70 interior source observations are candidates, not exclusive durations. All
+61 focused checks pass; default inspector replay also preserves its counts.
+Host-clock assumptions and sampled gaps remain explicit. This changes no
+virtual event timing or site behavior and closes no checklist item. See
+[the evidence](../reports/native-window-profile-20261027.md).
+
 Native source-location checkpoint, 2026-10-27: a diagnostic replay combines raw
 V8 leaf PCs/disassembly with a source map whose executable sections and absolute
 offsets equal production. It resolves 37 candidate project source observations,

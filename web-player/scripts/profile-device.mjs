@@ -1,6 +1,7 @@
 // Sampling-only diagnostics. Production sources/artifacts are read, never edited.
 import assert from 'node:assert/strict';
 import {Session} from 'node:inspector/promises';
+import {console as inspectorConsole} from 'node:inspector';
 import {createHash} from 'node:crypto';
 import {execFileSync,spawnSync} from 'node:child_process';
 import {readFileSync,writeFileSync,mkdirSync,existsSync} from 'node:fs';
@@ -24,8 +25,19 @@ const {values}=parseArgs({options:{frames:{type:'string',default:'48000'},
   operation:{type:'string',default:'capture'},instructions:{type:'string',default:'1000000'},
   'runtime-ref':{type:'string',default:'working-tree'},'benchmark-controls':{type:'boolean'},
   'bounded-regions':{type:'boolean'},'phase-locals':{type:'boolean'},
+  'native-log-windows':{type:'boolean'},
+  'native-log-only':{type:'boolean'},
   help:{type:'boolean'}}});
-if(values.help){console.log('node web-player/scripts/profile-device.mjs [--frames 48000] [--rate 48000] [--repeats 3] [--interval-us 1000] [--firmware id,id] [--kernel --clock compatible|physical|clki --frequency 20000000 --divisor 1 --operation capture|direct --instructions 1000000] [--bounded-regions] [--phase-locals] [--runtime-ref working-tree|git-ref] [--benchmark-controls] [--out-dir build/profiles/device] [--emsdk path]');process.exit(0);}
+if(values.help){console.log('node web-player/scripts/profile-device.mjs [--frames 48000] [--rate 48000] [--repeats 3] [--interval-us 1000] [--firmware id,id] [--kernel --clock compatible|physical|clki --frequency 20000000 --divisor 1 --operation capture|direct --instructions 1000000] [--bounded-regions] [--phase-locals] [--native-log-windows (requires Node --prof --log-timer-events)] [--native-log-only (no inspector CPU profile)] [--runtime-ref working-tree|git-ref] [--benchmark-controls] [--out-dir build/profiles/device] [--emsdk path]');process.exit(0);}
+const nativeLogWindows=!!values['native-log-windows'],nativeLogOnly=!!values['native-log-only'];let windowSequence=0;
+assert.ok(!nativeLogOnly||nativeLogWindows,'Native-log-only capture requires --native-log-windows');
+if(nativeLogWindows){
+  assert.ok(process.execArgv.includes('--prof')&&process.execArgv.includes('--log-timer-events')&&
+    !process.execArgv.includes('--no-prof')&&!process.execArgv.includes('--no-log-timer-events'),
+    'Native windows require Node --prof --log-timer-events');
+  assert.ok(typeof inspectorConsole.time==='function'&&typeof inspectorConsole.timeEnd==='function',
+    'Inspector console timers are unavailable');
+}
 function integer(value,name,low,high){const n=Number(value);assert.ok(Number.isInteger(n)&&n>=low&&n<=high,`${name}: integer ${low}..${high} required`);return n;}
 const frames=integer(values.frames,'frames',1,1048576),rate=integer(values.rate,'rate',8000,192000);
 const repeats=integer(values.repeats,'repeats',1,16),intervalUs=integer(values['interval-us'],'interval-us',100,100000);
@@ -190,17 +202,18 @@ const report={schema:'micromusic-device-sampling-profile-v1',createdAt:new Date(
   git:{head:git(['rev-parse','HEAD']),status:git(['status','--short'])},
   node:{version:process.version,versions:process.versions,flags:process.execArgv,executable:process.execPath},
   host:{platform:platform(),release:release(),arch:arch(),cpu:cpus()[0]?.model,logicalCpus:cpus().length},
-  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:benchmarkControls||!values.kernel,optimizeFlags:true,benchmarkControls,boundedRegions,optimizePhaseLocals,
+  parameters:{frames,rate,repeats,intervalUs,blockFrames,fastIdle:benchmarkControls||!values.kernel,optimizeFlags:true,benchmarkControls,boundedRegions,optimizePhaseLocals,nativeLogWindows,nativeLogOnly,
     requestedFirmware:ids,firmwareOrder:selected.map(entry=>entry.id),
     kernel:!!values.kernel,clock,frequency:values.kernel?frequency:null,divisor,operation,instructions},
   provenance:{runtimeRef,runtimeCommit,compileRoot,runtimeSha256:hash(production),namedRuntimeSha256:hash(namedRuntime),
     executableSectionsSha256:hash(executable(production)),runtimeRebuildByteEqual:true,
     diagnosticCompiler:compiler,compilerVersion:manifest.compilerVersion,compileArgs,optimizer,optimizeArgs,
     sourceSha256NormalizedLF:Object.fromEntries(sourcePaths.map(path=>[path,hash(source(path))]))},
-  methodology:{sampling:'Node inspector CPU profiler, no instruction/event callbacks or production instrumentation. Profiles run sequentially; construction, lowering, warmup, comparison, hashing and profile serialization are outside the capture window.',
+  methodology:{sampling:nativeLogOnly?'Native V8 --prof logger only; inspector CPU profiler is never enabled/started because it suppresses native log ticks. Inspector Session is connected solely for console timer markers. Raw log/disassembly stay separate; no .cpuprofile is produced. Construction, lowering, warmup, comparison and hashing remain outside the marked capture/run. No instruction/event callbacks or production instrumentation.':
+    'Node inspector CPU profiler, no instruction/event callbacks or production instrumentation. Profiles run sequentially; construction, lowering, warmup, comparison, hashing and profile serialization are outside the capture window.',
     naming:'Clang -O3 link followed by the same wasm-opt -O3 pass with --print-function-map gives the optimized function name/index mapping. The link map supplies source-object ownership only. The rebuilt runtime must match every production byte. Diagnostic names are attached in a custom name section; all executable sections remain identical. Generated instruction/block/region body/entry/fallback/driver names follow the manifest and unoptimized emitter order; body count, unique names and actual export indices must agree.',
     attribution:'Self/leaf sample counts are observations, not exact exclusive times. Inclusive samples count ancestors and overlap; do not sum them. O3/V8 inlining attributes inlined work to the surviving containing frame. Body categories describe function ownership, not pure subsystem cost. Native bridge bodies may include inlined pin/audio/clock work.',
-    window:'workStackSamples retain samples with public capturePhysical or run in their recorded ancestors. Capture cases retain historical capture* aliases. GC/VM samples may lack this ancestry; total-profile categories remain available. Requested interval is not guaranteed; actual deltas/gaps are retained in raw profiles.',
+    window:'workStackSamples retain samples with public capturePhysical or run in their recorded ancestors. Capture cases retain historical capture* aliases. GC/VM samples may lack this ancestry; total-profile categories remain available. Requested interval is not guaranteed; actual deltas/gaps are retained in raw profiles. Optional inspector-console native log timers bracket each Profiler.start/capture/Profiler.stop scope; workWallMs times only capture/run. Starting the inspector CPU profiler suppresses native timer logging, so both markers stay outside that session. A conservative edge allowance retains profiler/marker/wrapper overhead; these are not per-instruction callbacks or exact subsystem durations.',
     limits:'Single Node host, profiler overhead and tiering, no affinity/GC/frequency control. No parallel benchmark is launched by this script. OS/other application load is uncontrolled. Sampling resolves likely hotspots, not causal speedup, exact call counts or browser AudioWorklet latency.'},results:[]};
 save('runtime-functions.json',runtimeFunctions);
 function snapshot(core){
@@ -306,20 +319,33 @@ for(const entry of selected){
     generatedOriginalSha256:hash(seed.transpiledBytes),generatedNamedSha256:hash(namedCpu),
     generatedExecutableSectionsSha256:hash(executable(Buffer.from(seed.transpiledBytes))),runs:[]};
   for(let repeat=0;repeat<repeats;repeat++){
-    const core=make(),session=new Session();session.connect();let profile,blocks,elapsed;
+    const core=make(),session=new Session();session.connect();let profile,blocks,elapsed,markerStarted=false;
+    const nativeLogWindow=nativeLogWindows?{label:`MM_AVR_CAPTURE_${windowSequence++}`}:null;
     try{
-      await session.post('Profiler.enable');await session.post('Profiler.setSamplingInterval',{interval:intervalUs});
-      await session.post('Profiler.start');const started=performance.now();blocks=capture(core,entry);elapsed=performance.now()-started;
-      ({profile}=await session.post('Profiler.stop'));
-    }finally{session.disconnect();}
+      if(!nativeLogOnly){
+        await session.post('Profiler.enable');await session.post('Profiler.setSamplingInterval',{interval:intervalUs});
+      }
+      if(nativeLogWindow){inspectorConsole.time(nativeLogWindow.label);markerStarted=true;}
+      if(!nativeLogOnly)await session.post('Profiler.start');
+      const started=performance.now();
+      blocks=capture(core,entry);elapsed=performance.now()-started;
+      if(!nativeLogOnly)({profile}=await session.post('Profiler.stop'));
+    }finally{
+      if(markerStarted)inspectorConsole.timeEnd(nativeLogWindow.label);
+      session.disconnect();
+    }
     const raw=combined(blocks),observedState=snapshot(core);assert.ok(raw.equals(expected),entry.id+' named/profiled PCM differs from production');
     assert.deepEqual(observedState,expectedState,entry.id+' named/profiled architecture differs from production');
-    const rawName=`${entry.id}-${repeat}.cpuprofile`;save(rawName,profile);
-    result.runs.push({repeat,profile:rawName,profileSha256:hash(readFileSync(join(out,rawName))),workWallMs:elapsed,
+    const rawName=`${entry.id}-${repeat}.cpuprofile`;if(!nativeLogOnly)save(rawName,profile);
+    result.runs.push({repeat,...(nativeLogOnly?{captureMode:'native-log-only-v1'}:
+      {profile:rawName,profileSha256:hash(readFileSync(join(out,rawName)))}),workWallMs:elapsed,
+      ...(nativeLogWindow?{nativeLogWindow}:{}),
       ...(operation==='capture'?{captureWallMs:elapsed}:{}),
-      rawPcmSha256:hash(raw),architectureSha256:hash(stringify(observedState)),productionEquality:true,...summarize(profile)});
+      rawPcmSha256:hash(raw),architectureSha256:hash(stringify(observedState)),productionEquality:true,
+      ...(!nativeLogOnly?summarize(profile):{})});
   }
   report.results.push(result);report.complete=report.results.length===selected.length;report.updatedAt=new Date().toISOString();save('summary.json',report);
-  console.log(entry.id,JSON.stringify(result.runs.map(run=>({ms:run.workWallMs,samples:run.samples,workSamples:run.workStackSamples,top:run.workFrames.slice(0,5).map(row=>({name:row.name,self:row.selfPercent,inclusive:row.inclusivePercent}))}))));
+  console.log(entry.id,JSON.stringify(result.runs.map(run=>({ms:run.workWallMs,...(nativeLogOnly?{mode:run.captureMode}:
+    {samples:run.samples,workSamples:run.workStackSamples,top:run.workFrames.slice(0,5).map(row=>({name:row.name,self:row.selfPercent,inclusive:row.inclusivePercent}))})}))));
 }
 console.log('Raw profiles, function maps, diagnostic WASM and summary: '+relative(root,out));

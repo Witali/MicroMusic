@@ -66,5 +66,26 @@ captured process; these observations are not uninstrumented execution timings.
 
 The [retained experiment](../../web-player/reports/native-source-profile-20261027.md)
 records the workload, completed tests, resolved and unresolved budgets. A future
-cost producer still needs independently delimited work windows, ambiguity/error
-bounds and overhead controls before closing the plan's exclusive-timing item.
+cost producer still needs ambiguity/error bounds and overhead controls before
+closing the plan's exclusive-timing item. The subsequent
+[window experiment](../../web-player/reports/native-window-profile-20261027.md)
+adds validated work markers without claiming exclusive durations.
+
+## Native work markers
+
+Use `--native-log-windows --native-log-only` with Node `--prof --log-timer-events`
+to delimit raw native samples. The documented
+[inspector console](https://nodejs.org/docs/latest-v22.x/api/inspector.html#inspectorconsole)
+provides `time`/`timeEnd` in the tested engine. Node's global console does not
+emit those named native records. Do not start the inspector CPU profiler in
+this mode: the observed engine suppresses native timer events and ticks while
+that profiler runs. Keep inspector-tree and native-log captures separate.
+
+The native timer interval encloses the measured public operation. Conservative
+edge classification uses its excess over the host work duration plus a selected
+2 µs rounding allowance at each edge. This assumes stable host-clock rate
+correspondence; it is not a universal precision guarantee. Every tick remains
+in exactly one interior/boundary/outside view. Validate logged chronology,
+including backwards clocks, rather than sorting away malformed event order.
+Empty interiors stay empty. The project's verification-only 10 ns virtual-event
+tolerance does not apply to these host measurements.

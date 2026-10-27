@@ -30,6 +30,25 @@ assert.equal(summary.provenance.runtimeRebuildByteEqual,true);
 assert.equal(summary.provenance.runtimeSha256,hash(native),'Capture uses another native version');
 assert.equal(summary.node.version,process.version,'Use the captured Node version');
 assert.equal(summary.node.versions.v8,process.versions.v8,'Use the captured V8 version');
+for(const result of summary.results)for(const run of result.runs){
+  assert.equal(run.productionEquality,true,'Capture lacks production parity');
+  assert.equal(run.architectureSha256,result.referenceArchitectureSha256,'Reference architecture differs');
+  if(summary.parameters.nativeLogOnly)assert.ok(run.captureMode==='native-log-only-v1'&&
+    !Object.hasOwn(run,'profile'),'Native-only capture has an inconsistent mode');
+}
+assert.ok(!summary.parameters.nativeLogOnly||summary.parameters.nativeLogWindows,
+  'Native-only capture lacks native window metadata');
+const captureProducer='web-player/scripts/profile-device.mjs';
+const windows=summary.parameters.nativeLogWindows?summary.results.flatMap(result=>result.runs.map(run=>{
+  assert.ok(run.nativeLogWindow&&Object.keys(run.nativeLogWindow).length===1&&
+    typeof run.nativeLogWindow.label==='string','Missing or invalid native capture window');
+  return {label:run.nativeLogWindow.label,workWallMs:run.workWallMs};
+})):null;
+if(windows){
+  assert.ok(windows.length,'No native capture windows');
+  assert.equal(summary.provenance.sourceSha256NormalizedLF[captureProducer],hash(text(captureProducer)),
+    'Window capture uses another producer revision');
+}
 let sdk=values.emsdk||process.env.EMSDK;
 for(let parent=root;!sdk;parent=dirname(parent)){
   const candidate=join(parent,'build/toolchains/emscripten-6.0.12');
@@ -80,13 +99,16 @@ assert.ok(executable(mappedBytes).equals(executable(native)),'Source-map build c
 assert.deepEqual(sections(mappedBytes).filter(s=>s.id),originalSections,'Source map uses another byte-offset layout');
 const sourceMap=json(finalMap);
 const audit=auditV8NativeProfile({log,
-  disassembly:text(join(input,'run.log')),functions,sourceMap});
+  disassembly:text(join(input,'run.log')),functions,sourceMap,...(windows?{windows}:{})});
+const tickTimes=log.split('\n').filter(line=>line.startsWith('tick,')).map(line=>Number(line.split(',')[2])).sort((a,b)=>a-b);
+const gaps=tickTimes.slice(1).map((time,n)=>time-tickTimes[n]).sort((a,b)=>a-b);
 for(const row of audit.sourceLines){
   assert.ok(Object.hasOwn(manifest.inputs,row.source),'Unregistered project source location');
   assert.ok(row.line>0&&row.line<=text(row.source).split('\n').length,'Source line outside current input');
 }
 const paths=['web-player/wasm/device-build.json','web-player/scripts/audit-native-source-profile.mjs',
-  'web-player/scripts/lib/avr-v8-native-profile.mjs','web-player/tests/avr-v8-native-profile.test.mjs'];
+  'web-player/scripts/lib/avr-v8-native-profile.mjs','web-player/tests/avr-v8-native-profile.test.mjs',captureProducer];
+paths.push('web-player/scripts/audit-device-profile.mjs');
 const report={schema:'micromusic-native-source-profile-v1',
   node:process.version,v8:process.versions.v8,native:{bytes:native.length,sha256:hash(native),
     executableSha256:hash(executable(native)),sourceMapExecutableEqual:true,sourceMapByteOffsetsEqual:true,
@@ -98,8 +120,14 @@ const report={schema:'micromusic-native-source-profile-v1',
     .map(p=>[p,hash(read(join(input,p)))])),
   mapping:{sha256:hash(read(finalMap)),sources:sourceMap.sources.length,
     sourceMapGeneratorSha256:hash(read(sourceMapTool)),embeddedSourceContents:!!sourceMap.sourcesContent?.some(Boolean)},
+  rawTickGaps:{scope:'Whole-process adjacent raw tick timestamp gaps; not work durations or source ownership.',
+    count:gaps.length,minUs:gaps[0]??null,medianUs:gaps.length?
+      (gaps.length%2?gaps[gaps.length>>1]:(gaps[gaps.length/2-1]+gaps[gaps.length/2])/2):null,
+    maxUs:gaps.at(-1)??null},
   workload:{parameters:summary.parameters,ids:summary.results.map(r=>r.id),
-    scope:'Whole-process V8 leaf ticks include construction, warmup, reference and capture. No exact work window or exclusive elapsed-time claim.'},
+    captureProducerSha256:summary.provenance.sourceSha256NormalizedLF[captureProducer],
+    scope:windows?'Whole-process ticks remain conserved. Native timer markers and a conservative boundary allowance separate certain-interior, boundary and outside views; source ownership remains a candidate, with no exclusive subsystem duration claim.':
+      'Whole-process V8 leaf ticks include construction, warmup, reference and capture. No exact work window or exclusive elapsed-time claim.'},
   audit};
 if(values['test-tap']){
   const bytes=read(values['test-tap']),tap=bytes.toString();

@@ -25,6 +25,8 @@ const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 const load=name=>{const bytes=readFileSync(within(dir,name));return {value:JSON.parse(bytes),sha256:hash(bytes)};};
 const summary=load('summary.json'),runtime=load('runtime-functions.json');
 assert.equal(summary.value.complete,true,'Incomplete source profile');
+assert.notEqual(summary.value.parameters.nativeLogOnly,true,
+  'Native-log-only capture has no inspector sample tree; use audit-native-source-profile.mjs');
 const operation=summary.value.parameters.operation??'capture';
 const selected=summary.value.results.filter(row=>!values.firmware||row.id===values.firmware);
 assert.ok(selected.length,'No matching firmware');
