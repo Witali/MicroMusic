@@ -1,0 +1,166 @@
+{
+  "schema": "lpx-shared-corpus-summary-v1",
+  "input_manifest_sha256": "f9f4b6bfa1a17bdd884d88fa3dcb791ef8819c49587fd5b1099373c33d683a80",
+  "unique_reference_cases": 181,
+  "profile_pairs": 362,
+  "unique_reference_samples": 15188029,
+  "unique_reference_seconds": 1898.503625,
+  "fully_accounted_matrix": true,
+  "complete_output_pairs": 362,
+  "all_applicable_complete_case_floors_passed": true,
+  "nominal_profiles_kbps": [
+    4,
+    6
+  ],
+  "bitrate_policy": "Actual file/payload rates use complete reference duration. Caps retain padded v4 packet geometry, including all independent segment headers; they are not achieved-rate promises.",
+  "ser_aggregation": "SER sum is10*log10(sum(reference energy)/sum(error energy)); individual dB means are separate descriptive statistics.",
+  "stoi_policy": "Unavailable STOI remains null and is excluded from means, with available/unavailable counts. No invented floor from null.",
+  "totals": {
+    "cases": 362,
+    "paired_outputs": 362,
+    "changed": 15,
+    "whole_case_rollbacks": 0,
+    "pcm_sse_improved": 15,
+    "pwm_sse_improved": 14,
+    "baseline": {
+      "status_counts": {
+        "complete": 362
+      },
+      "samples_with_output": 30376058,
+      "file_bytes": 2027293,
+      "payload_bytes": 2013829,
+      "duration_weighted_file_bps": 4271.349231687666,
+      "duration_weighted_payload_bps": 4242.981627174929,
+      "per_case_file_bps": {
+        "count": 362,
+        "mean": 4225.910163929637,
+        "minimum": 2983.076923076923,
+        "maximum": 6152.0
+      },
+      "per_case_payload_bps": {
+        "count": 362,
+        "mean": 4186.922994940244,
+        "minimum": 2949.230769230769,
+        "maximum": 5997.352863319509
+      },
+      "pcm_activity_failures": 4,
+      "pwm_activity_failures": 220,
+      "pcm_worse_than_silence": 5,
+      "pwm_worse_than_silence": 6,
+      "pcm16": {
+        "reference_energy": 45332127299784.0,
+        "error_energy": 33323982851657.0,
+        "ser_sum_db": 1.3364919735257952,
+        "ser_sum_status": "finite",
+        "per_case_ser_db": {
+          "count": 360,
+          "mean": 8.240303404362384,
+          "minimum": -13.463860542750334,
+          "maximum": 16.936982832972397
+        },
+        "stoi": {
+          "count": 98,
+          "mean": 0.7841363638965612,
+          "minimum": 0.5646480666479815,
+          "maximum": 0.9381207629458846
+        },
+        "stoi_unavailable": 264
+      },
+      "pwm8": {
+        "reference_energy": 45332127299784.0,
+        "error_energy": 33408480513736.0,
+        "ser_sum_db": 1.3254937618201181,
+        "ser_sum_status": "finite",
+        "per_case_ser_db": {
+          "count": 360,
+          "mean": 7.130725304063479,
+          "minimum": -13.443864742632417,
+          "maximum": 14.596071396045094
+        },
+        "stoi": {
+          "count": 98,
+          "mean": 0.7325850798328951,
+          "minimum": 0.20128542387344903,
+          "maximum": 0.9340547746841861
+        },
+        "stoi_unavailable": 264
+      }
+    },
+    "selected": {
+      "status_counts": {
+        "complete": 362
+      },
+      "samples_with_output": 30376058,
+      "file_bytes": 2026980,
+      "payload_bytes": 2013516,
+      "duration_weighted_file_bps": 4270.689764945801,
+      "duration_weighted_payload_bps": 4242.322160433062,
+      "per_case_file_bps": {
+        "count": 362,
+        "mean": 4224.863192219301,
+        "minimum": 2828.0,
+        "maximum": 6152.0
+      },
+      "per_case_payload_bps": {
+        "count": 362,
+        "mean": 4185.876023229908,
+        "minimum": 2784.0,
+        "maximum": 5997.352863319509
+      },
+      "pcm_activity_failures": 4,
+      "pwm_activity_failures": 219,
+      "pcm_worse_than_silence": 4,
+      "pwm_worse_than_silence": 6,
+      "pcm16": {
+        "reference_energy": 45332127299784.0,
+        "error_energy": 33315050065425.0,
+        "ser_sum_db": 1.3376562940814796,
+        "ser_sum_status": "finite",
+        "per_case_ser_db": {
+          "count": 360,
+          "mean": 8.257418709358936,
+          "minimum": -13.463860542750334,
+          "maximum": 16.936982832972397
+        },
+        "stoi": {
+          "count": 98,
+          "mean": 0.7847980297331372,
+          "minimum": 0.5646480666479815,
+          "maximum": 0.9381207629458846
+        },
+        "stoi_unavailable": 264
+      },
+      "pwm8": {
+        "reference_energy": 45332127299784.0,
+        "error_energy": 33399153725128.0,
+        "ser_sum_db": 1.32670636960029,
+        "ser_sum_status": "finite",
+        "per_case_ser_db": {
+          "count": 360,
+          "mean": 7.141539473142263,
+          "minimum": -13.443864742632417,
+          "maximum": 14.596071396045094
+        },
+        "stoi": {
+          "count": 98,
+          "mean": 0.7336398073242871,
+          "minimum": 0.20128542387344903,
+          "maximum": 0.9340547746841861
+        },
+        "stoi_unavailable": 264
+      }
+    }
+  },
+  "tests": {
+    "source_log_name": "all-tests-complete.log",
+    "source_log_sha256": "aa65abebbcc0b8cc23a23857a4a2acdc072c13da1653dbb27decb0f3be7ed221",
+    "tests": 206,
+    "passed": 205,
+    "skipped": 1,
+    "seconds": 92.145,
+    "result": "OK (skipped=1)",
+    "raw_log_retained": false
+  },
+  "physical_hardware_measured": false,
+  "human_listening_scores_collected": false
+}

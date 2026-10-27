@@ -1,0 +1,1174 @@
+{
+  "schema": "lpx-shared-corpus-avr-summary-v1",
+  "modes": {
+    "compact-only": {
+      "images": 612,
+      "samples": 30376058,
+      "total_decode_wall_cycles": 23659143171,
+      "weighted_decode_wall_cycles_per_sample": 778.8747035905712,
+      "unweighted_image_mean_cycles_per_sample": 777.4223136230096,
+      "image_mean_cycles_per_sample": {
+        "minimum": 653.1739375,
+        "maximum": 800.8438461538461
+      },
+      "program_flash_excluding_audio_bytes": {
+        "minimum": 5909,
+        "maximum": 5912
+      },
+      "total_flash_including_audio_bytes": {
+        "minimum": 6430,
+        "maximum": 11428
+      },
+      "static_sram_bytes": {
+        "minimum": 1085,
+        "maximum": 1085
+      },
+      "observed_stack_high_water_bytes_after_ready": {
+        "minimum": 90,
+        "maximum": 105
+      },
+      "observed_stack_margin_bytes_after_ready": {
+        "minimum": 858,
+        "maximum": 873
+      },
+      "minimum_queue_before_producer_eos": {
+        "minimum": 386,
+        "maximum": 386
+      },
+      "observed_tick_interval_cycles": {
+        "minimum": 1984,
+        "maximum": 2009
+      },
+      "first_output_from_reset_ms": {
+        "minimum": 21.304,
+        "maximum": 23.0869375
+      },
+      "maximum_sample_decode_wall_cycles": 20892,
+      "maximum_160_sample_decode_wall_cycles": 150495,
+      "total_underruns": 0,
+      "full_saved_pwm_exact": true,
+      "by_cohort_and_profile": {
+        "independent": {
+          "4": {
+            "images": 10,
+            "samples": 491129,
+            "total_decode_wall_cycles": 384683848,
+            "weighted_decode_wall_cycles_per_sample": 783.2643724968389,
+            "unweighted_image_mean_cycles_per_sample": 783.2631779068056,
+            "image_mean_cycles_per_sample": {
+              "minimum": 781.4240417561738,
+              "maximum": 785.0850818974351
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5911
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 6430,
+              "maximum": 9572
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1989,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 22.55975,
+              "maximum": 22.7415
+            },
+            "maximum_sample_decode_wall_cycles": 20164,
+            "maximum_160_sample_decode_wall_cycles": 147978,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 10,
+            "samples": 491129,
+            "total_decode_wall_cycles": 386663815,
+            "weighted_decode_wall_cycles_per_sample": 787.2958326631089,
+            "unweighted_image_mean_cycles_per_sample": 787.6351067587475,
+            "image_mean_cycles_per_sample": {
+              "minimum": 785.9565032134361,
+              "maximum": 789.723625
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5912
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 6678,
+              "maximum": 11120
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1991,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 22.559375,
+              "maximum": 22.8494375
+            },
+            "maximum_sample_decode_wall_cycles": 20772,
+            "maximum_160_sample_decode_wall_cycles": 148321,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        },
+        "instruments": {
+          "4": {
+            "images": 122,
+            "samples": 4919200,
+            "total_decode_wall_cycles": 3740465423,
+            "weighted_decode_wall_cycles_per_sample": 760.380838957554,
+            "unweighted_image_mean_cycles_per_sample": 761.3000496532156,
+            "image_mean_cycles_per_sample": {
+              "minimum": 696.3579086538462,
+              "maximum": 796.2216346153846
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5910
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 6504,
+              "maximum": 8172
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1985,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 21.5266875,
+              "maximum": 22.9605
+            },
+            "maximum_sample_decode_wall_cycles": 20117,
+            "maximum_160_sample_decode_wall_cycles": 149295,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 122,
+            "samples": 4919200,
+            "total_decode_wall_cycles": 3789028403,
+            "weighted_decode_wall_cycles_per_sample": 770.2529685721255,
+            "unweighted_image_mean_cycles_per_sample": 771.1107654870744,
+            "image_mean_cycles_per_sample": {
+              "minimum": 673.0247836538462,
+              "maximum": 800.8438461538461
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5910
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 6764,
+              "maximum": 9186
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1984,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 22.6344375,
+              "maximum": 23.0869375
+            },
+            "maximum_sample_decode_wall_cycles": 20669,
+            "maximum_160_sample_decode_wall_cycles": 150495,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        },
+        "music": {
+          "4": {
+            "images": 118,
+            "samples": 7412533,
+            "total_decode_wall_cycles": 5795368173,
+            "weighted_decode_wall_cycles_per_sample": 781.8337096104665,
+            "unweighted_image_mean_cycles_per_sample": 781.8359068337913,
+            "image_mean_cycles_per_sample": {
+              "minimum": 774.710738169947,
+              "maximum": 790.8729784420261
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5912
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 9164,
+              "maximum": 9872
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1984,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 21.442125,
+              "maximum": 22.960125
+            },
+            "maximum_sample_decode_wall_cycles": 20191,
+            "maximum_160_sample_decode_wall_cycles": 148809,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 118,
+            "samples": 7412533,
+            "total_decode_wall_cycles": 5859567487,
+            "weighted_decode_wall_cycles_per_sample": 790.4946240374242,
+            "unweighted_image_mean_cycles_per_sample": 790.4891335345505,
+            "image_mean_cycles_per_sample": {
+              "minimum": 783.3080575516642,
+              "maximum": 798.4311500610133
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5911,
+              "maximum": 5912
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 10656,
+              "maximum": 11428
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1984,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 22.594125,
+              "maximum": 22.982375
+            },
+            "maximum_sample_decode_wall_cycles": 20880,
+            "maximum_160_sample_decode_wall_cycles": 149210,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        },
+        "phrases": {
+          "4": {
+            "images": 7,
+            "samples": 221119,
+            "total_decode_wall_cycles": 173039577,
+            "weighted_decode_wall_cycles_per_sample": 782.563131164667,
+            "unweighted_image_mean_cycles_per_sample": 783.8852528035615,
+            "image_mean_cycles_per_sample": {
+              "minimum": 779.8781771158476,
+              "maximum": 788.3348104382078
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5910
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 6648,
+              "maximum": 8550
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1991,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 22.591625,
+              "maximum": 22.83125
+            },
+            "maximum_sample_decode_wall_cycles": 20189,
+            "maximum_160_sample_decode_wall_cycles": 148065,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 7,
+            "samples": 221119,
+            "total_decode_wall_cycles": 174176708,
+            "weighted_decode_wall_cycles_per_sample": 787.7057512018415,
+            "unweighted_image_mean_cycles_per_sample": 788.2658303759109,
+            "image_mean_cycles_per_sample": {
+              "minimum": 785.9535137786498,
+              "maximum": 792.3303552877624
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5912
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 6994,
+              "maximum": 9692
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1991,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 22.5363125,
+              "maximum": 22.8321875
+            },
+            "maximum_sample_decode_wall_cycles": 20854,
+            "maximum_160_sample_decode_wall_cycles": 149230,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        },
+        "regression": {
+          "4": {
+            "images": 27,
+            "samples": 864000,
+            "total_decode_wall_cycles": 669410835,
+            "weighted_decode_wall_cycles_per_sample": 774.7810590277778,
+            "unweighted_image_mean_cycles_per_sample": 774.7810590277777,
+            "image_mean_cycles_per_sample": {
+              "minimum": 653.1739375,
+              "maximum": 796.9198125
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5910
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 7324,
+              "maximum": 7842
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 90,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 873
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1984,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 21.304,
+              "maximum": 22.7911875
+            },
+            "maximum_sample_decode_wall_cycles": 20188,
+            "maximum_160_sample_decode_wall_cycles": 148874,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 27,
+            "samples": 864000,
+            "total_decode_wall_cycles": 674397567,
+            "weighted_decode_wall_cycles_per_sample": 780.5527395833333,
+            "unweighted_image_mean_cycles_per_sample": 780.5527395833334,
+            "image_mean_cycles_per_sample": {
+              "minimum": 655.22825,
+              "maximum": 797.85925
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5910
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 8024,
+              "maximum": 8678
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 90,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 873
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1985,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 21.3644375,
+              "maximum": 22.879875
+            },
+            "maximum_sample_decode_wall_cycles": 20892,
+            "maximum_160_sample_decode_wall_cycles": 148816,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        },
+        "speech": {
+          "4": {
+            "images": 22,
+            "samples": 1280048,
+            "total_decode_wall_cycles": 1004234250,
+            "weighted_decode_wall_cycles_per_sample": 784.5285879904503,
+            "unweighted_image_mean_cycles_per_sample": 784.4997232843056,
+            "image_mean_cycles_per_sample": {
+              "minimum": 779.542734375,
+              "maximum": 797.53296875
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5912
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 7772,
+              "maximum": 9592
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1984,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 21.5278125,
+              "maximum": 22.861
+            },
+            "maximum_sample_decode_wall_cycles": 20212,
+            "maximum_160_sample_decode_wall_cycles": 148282,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 22,
+            "samples": 1280048,
+            "total_decode_wall_cycles": 1008107085,
+            "weighted_decode_wall_cycles_per_sample": 787.5541268764921,
+            "unweighted_image_mean_cycles_per_sample": 787.5879465016166,
+            "image_mean_cycles_per_sample": {
+              "minimum": 783.89109375,
+              "maximum": 796.466140625
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 5909,
+              "maximum": 5912
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 8566,
+              "maximum": 11170
+            },
+            "static_sram_bytes": {
+              "minimum": 1085,
+              "maximum": 1085
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 105,
+              "maximum": 105
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 858,
+              "maximum": 858
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1984,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 21.3645,
+              "maximum": 22.9109375
+            },
+            "maximum_sample_decode_wall_cycles": 20883,
+            "maximum_160_sample_decode_wall_cycles": 148724,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        }
+      },
+      "stress_controls": {
+        "p4-normal": {
+          "backend": "asm",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 797.53296875,
+          "underruns": 0,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": true
+        },
+        "p4-extra_irq100": {
+          "backend": "asm",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 808.626515625,
+          "underruns": 0,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": true
+        },
+        "p4-c_fallback": {
+          "backend": "c",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 3189.10028125,
+          "underruns": 43519,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": false
+        },
+        "p6-normal": {
+          "backend": "asm",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 799.46225,
+          "underruns": 0,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": true
+        },
+        "p6-extra_irq100": {
+          "backend": "asm",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 812.00225,
+          "underruns": 0,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": true
+        },
+        "p6-c_fallback": {
+          "backend": "c",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 3180.57840625,
+          "underruns": 43237,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": false
+        }
+      }
+    },
+    "common": {
+      "images": 132,
+      "samples": 5712592,
+      "total_decode_wall_cycles": 4826253236,
+      "weighted_decode_wall_cycles_per_sample": 844.8447282774614,
+      "unweighted_image_mean_cycles_per_sample": 844.00307015383,
+      "image_mean_cycles_per_sample": {
+        "minimum": 700.60409375,
+        "maximum": 861.550765625
+      },
+      "program_flash_excluding_audio_bytes": {
+        "minimum": 7889,
+        "maximum": 8032
+      },
+      "total_flash_including_audio_bytes": {
+        "minimum": 8550,
+        "maximum": 13290
+      },
+      "static_sram_bytes": {
+        "minimum": 1105,
+        "maximum": 1105
+      },
+      "observed_stack_high_water_bytes_after_ready": {
+        "minimum": 109,
+        "maximum": 124
+      },
+      "observed_stack_margin_bytes_after_ready": {
+        "minimum": 819,
+        "maximum": 834
+      },
+      "minimum_queue_before_producer_eos": {
+        "minimum": 385,
+        "maximum": 386
+      },
+      "observed_tick_interval_cycles": {
+        "minimum": 1985,
+        "maximum": 2009
+      },
+      "first_output_from_reset_ms": {
+        "minimum": 22.536625,
+        "maximum": 24.54125
+      },
+      "maximum_sample_decode_wall_cycles": 20857,
+      "maximum_160_sample_decode_wall_cycles": 161994,
+      "total_underruns": 0,
+      "full_saved_pwm_exact": true,
+      "by_cohort_and_profile": {
+        "independent": {
+          "4": {
+            "images": 10,
+            "samples": 491129,
+            "total_decode_wall_cycles": 415625013,
+            "weighted_decode_wall_cycles_per_sample": 846.2644498695862,
+            "unweighted_image_mean_cycles_per_sample": 846.2728917596329,
+            "image_mean_cycles_per_sample": {
+              "minimum": 844.5446766204484,
+              "maximum": 847.7997067726069
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 7889,
+              "maximum": 8030
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 8550,
+              "maximum": 11552
+            },
+            "static_sram_bytes": {
+              "minimum": 1105,
+              "maximum": 1105
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 124,
+              "maximum": 124
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 819,
+              "maximum": 819
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1985,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 23.9899375,
+              "maximum": 24.2929375
+            },
+            "maximum_sample_decode_wall_cycles": 20139,
+            "maximum_160_sample_decode_wall_cycles": 159983,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 10,
+            "samples": 491129,
+            "total_decode_wall_cycles": 416284342,
+            "weighted_decode_wall_cycles_per_sample": 847.6069260825567,
+            "unweighted_image_mean_cycles_per_sample": 848.1277825967938,
+            "image_mean_cycles_per_sample": {
+              "minimum": 846.3374818023648,
+              "maximum": 851.80125
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 7889,
+              "maximum": 8032
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 8658,
+              "maximum": 13240
+            },
+            "static_sram_bytes": {
+              "minimum": 1105,
+              "maximum": 1105
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 124,
+              "maximum": 124
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 819,
+              "maximum": 819
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1990,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 23.8326875,
+              "maximum": 24.429375
+            },
+            "maximum_sample_decode_wall_cycles": 20746,
+            "maximum_160_sample_decode_wall_cycles": 160138,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        },
+        "phrases": {
+          "4": {
+            "images": 7,
+            "samples": 221119,
+            "total_decode_wall_cycles": 186924477,
+            "weighted_decode_wall_cycles_per_sample": 845.3569209339768,
+            "unweighted_image_mean_cycles_per_sample": 846.8075530415679,
+            "image_mean_cycles_per_sample": {
+              "minimum": 842.081044323553,
+              "maximum": 852.0103807648121
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 7889,
+              "maximum": 8030
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 8628,
+              "maximum": 10600
+            },
+            "static_sram_bytes": {
+              "minimum": 1105,
+              "maximum": 1105
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 124,
+              "maximum": 124
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 819,
+              "maximum": 819
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 385,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1991,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 24.0211875,
+              "maximum": 24.398125
+            },
+            "maximum_sample_decode_wall_cycles": 20173,
+            "maximum_160_sample_decode_wall_cycles": 160211,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 7,
+            "samples": 221119,
+            "total_decode_wall_cycles": 187593595,
+            "weighted_decode_wall_cycles_per_sample": 848.3829747782868,
+            "unweighted_image_mean_cycles_per_sample": 848.8777082726184,
+            "image_mean_cycles_per_sample": {
+              "minimum": 846.5490502095781,
+              "maximum": 853.4447330147517
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 7889,
+              "maximum": 8032
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 9114,
+              "maximum": 11782
+            },
+            "static_sram_bytes": {
+              "minimum": 1105,
+              "maximum": 1105
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 124,
+              "maximum": 124
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 819,
+              "maximum": 819
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 386,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1990,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 23.762125,
+              "maximum": 24.513
+            },
+            "maximum_sample_decode_wall_cycles": 20826,
+            "maximum_160_sample_decode_wall_cycles": 161323,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        },
+        "regression": {
+          "4": {
+            "images": 27,
+            "samples": 864000,
+            "total_decode_wall_cycles": 723421255,
+            "weighted_decode_wall_cycles_per_sample": 837.293119212963,
+            "unweighted_image_mean_cycles_per_sample": 837.293119212963,
+            "image_mean_cycles_per_sample": {
+              "minimum": 700.60409375,
+              "maximum": 860.90415625
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 7889,
+              "maximum": 8030
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 9444,
+              "maximum": 9960
+            },
+            "static_sram_bytes": {
+              "minimum": 1105,
+              "maximum": 1105
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 109,
+              "maximum": 124
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 819,
+              "maximum": 834
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 385,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1985,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 22.536625,
+              "maximum": 24.420125
+            },
+            "maximum_sample_decode_wall_cycles": 20167,
+            "maximum_160_sample_decode_wall_cycles": 161994,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 27,
+            "samples": 864000,
+            "total_decode_wall_cycles": 725741794,
+            "weighted_decode_wall_cycles_per_sample": 839.9789282407407,
+            "unweighted_image_mean_cycles_per_sample": 839.9789282407407,
+            "image_mean_cycles_per_sample": {
+              "minimum": 702.31525,
+              "maximum": 858.3394375
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 7889,
+              "maximum": 8030
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 10004,
+              "maximum": 10758
+            },
+            "static_sram_bytes": {
+              "minimum": 1105,
+              "maximum": 1105
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 109,
+              "maximum": 124
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 819,
+              "maximum": 834
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 385,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1985,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 22.6025625,
+              "maximum": 24.48975
+            },
+            "maximum_sample_decode_wall_cycles": 20857,
+            "maximum_160_sample_decode_wall_cycles": 161301,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        },
+        "speech": {
+          "4": {
+            "images": 22,
+            "samples": 1280048,
+            "total_decode_wall_cycles": 1085204170,
+            "weighted_decode_wall_cycles_per_sample": 847.7839659137783,
+            "unweighted_image_mean_cycles_per_sample": 847.7627257684427,
+            "image_mean_cycles_per_sample": {
+              "minimum": 842.9583125,
+              "maximum": 861.550765625
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 7889,
+              "maximum": 8032
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 9752,
+              "maximum": 11706
+            },
+            "static_sram_bytes": {
+              "minimum": 1105,
+              "maximum": 1105
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 124,
+              "maximum": 124
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 819,
+              "maximum": 819
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 385,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1985,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 23.0775,
+              "maximum": 24.5068125
+            },
+            "maximum_sample_decode_wall_cycles": 20192,
+            "maximum_160_sample_decode_wall_cycles": 161057,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          },
+          "6": {
+            "images": 22,
+            "samples": 1280048,
+            "total_decode_wall_cycles": 1085458590,
+            "weighted_decode_wall_cycles_per_sample": 847.9827240853468,
+            "unweighted_image_mean_cycles_per_sample": 848.0671108811931,
+            "image_mean_cycles_per_sample": {
+              "minimum": 842.6566875,
+              "maximum": 857.754875
+            },
+            "program_flash_excluding_audio_bytes": {
+              "minimum": 7889,
+              "maximum": 8032
+            },
+            "total_flash_including_audio_bytes": {
+              "minimum": 10562,
+              "maximum": 13290
+            },
+            "static_sram_bytes": {
+              "minimum": 1105,
+              "maximum": 1105
+            },
+            "observed_stack_high_water_bytes_after_ready": {
+              "minimum": 124,
+              "maximum": 124
+            },
+            "observed_stack_margin_bytes_after_ready": {
+              "minimum": 819,
+              "maximum": 819
+            },
+            "minimum_queue_before_producer_eos": {
+              "minimum": 385,
+              "maximum": 386
+            },
+            "observed_tick_interval_cycles": {
+              "minimum": 1987,
+              "maximum": 2009
+            },
+            "first_output_from_reset_ms": {
+              "minimum": 22.58725,
+              "maximum": 24.54125
+            },
+            "maximum_sample_decode_wall_cycles": 20844,
+            "maximum_160_sample_decode_wall_cycles": 161564,
+            "total_underruns": 0,
+            "full_saved_pwm_exact": true
+          }
+        }
+      },
+      "stress_controls": {
+        "p4-normal": {
+          "backend": "asm",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 861.550765625,
+          "underruns": 0,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": true
+        },
+        "p4-extra_irq100": {
+          "backend": "asm",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 876.202546875,
+          "underruns": 0,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": true
+        },
+        "p4-c_fallback": {
+          "backend": "c",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 3232.92615625,
+          "underruns": 45082,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": false
+        },
+        "p6-normal": {
+          "backend": "asm",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 858.816703125,
+          "underruns": 0,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": true
+        },
+        "p6-extra_irq100": {
+          "backend": "asm",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 871.52234375,
+          "underruns": 0,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": true
+        },
+        "p6-c_fallback": {
+          "backend": "c",
+          "samples": 64000,
+          "mean_decode_wall_cycles": 3223.630609375,
+          "underruns": 44782,
+          "full_saved_pwm_exact": true,
+          "real_time_admitted": false
+        }
+      }
+    }
+  },
+  "input_manifest_sha256": "f9f4b6bfa1a17bdd884d88fa3dcb791ef8819c49587fd5b1099373c33d683a80",
+  "paired_report_sha256": "126a5469bc176157de5abd008f9fca3b12622029da330cf68d5651dfdb970579",
+  "retention_script_sha256": "7ba9b249873a1fc5cb56acf52e1ba8589f6983ddf62a8bdd69b6bcc356266ae2",
+  "physical_hardware_measured": false,
+  "total_normal_images": 744,
+  "total_stress_images": 12,
+  "program_flash_scope": ".text + .data minus the proven exact embedded stream; includes startup, codec tables, helpers and retained playback/profiling harness. Not an isolated library size.",
+  "stack_scope": "Observed after profile_ready, not startup/worst-case proof.",
+  "wall_scope": "Decode wall cycles include active IRQ and instrumentation.",
+  "c_scope": "Useful output remains exact; C controls are recorded and no C real-time admission is claimed.",
+  "artifact_policy": "Only anonymous JSON metadata and hashes retained; no source media, encoded streams, ELF/HEX, raw logs or private provenance copied."
+}

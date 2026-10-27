@@ -1,0 +1,127 @@
+{
+  "schema": "lpx-shared-corpus-environment-v1",
+  "baseline_environment": {
+    "source_sha256": {
+      "tools/speech_v4.py": "d7c17a39dbaad71df99ff1d46916bd263080cc6727f94b79e98aa86381f562cc",
+      "tools/refine_speech_v4.py": "ad3b4465a2ab608cac51cacbaed7c7d31c9a8fd01ea97f980f8a9f7968f0a1ce",
+      "tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "tools/enhance_speech_compact.py": "44aacfa31522b8780f19560bda152a49c3c6bd92f850040aa4d99331b938dc40",
+      "tools/standard_metrics.py": "e3f07d5e8bbf60db330a300f0f1436db0ba94fb999ab7ab2928e6e20775d3209",
+      "tools/level_policy.py": "59d16e07b74390b334383efdd648c6e5f69364e833f4d31c56fa76dbd71df04b",
+      "tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "tools/batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178",
+      "tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+      "tools/lpx4.py": "d732e76ed807089d02bea837f07e77f1a64cc94ce63a6be2fab286548b94acc0",
+      "tools/rice_v3.py": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+      "tools/rice_v7.py": "a263dd86f37e0fd467b3c46b42f7ff25e6259ba5f647b6a6d2451ff56f76739b",
+      "src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+      "src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "src/Lpx4HybridCore.cpp": "9a000d56400422e5bc4e79347ed46f2e2c66d0221d5e7e2f3bccb5c29374cd35",
+      "src/Lpx4HybridCore.h": "a16a665fa2c872456eaa907cff10b91e7c6449b171243b737b38327de1e1e640",
+      "src/Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+      "src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+      "src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+    },
+    "benchmark_sha256": "ca97b72d15530b06a19392b2867e5ee857cb0aec3b6c69e93fc1dd8d19218beb",
+    "sample_rate": 8000,
+    "python": "3.12.14",
+    "packages": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "numba": "0.68.0",
+      "pystoi": "0.4.1",
+      "soundfile": "0.14.0"
+    },
+    "protocol": "Original levels, complete references, balanced independent segments <=64000; no fitted gain/delay."
+  },
+  "selection_extension": {
+    "driver_sha256": "78fa6ce8762bb520acd4c7aa75d10a2d90812bf474456278ce51e0a437538b61",
+    "optimizer_sha256": "00da26ae60ed1196e4459f230ce6a70d46c2bc1ce4ff4105e66adb92a6ea0aac",
+    "policy": "necessary",
+    "settings": {
+      "proposals": [
+        "pre75",
+        "lower_scales"
+      ],
+      "refinement_passes": 2,
+      "refinement_horizon": 320,
+      "necessary_trigger": {
+        "condition_contains": [
+          "quiet",
+          "noisy",
+          "noise"
+        ],
+        "pcm_activity_failed": true,
+        "pwm_activity_failed": true,
+        "pcm_sse_worse_than_silence": true,
+        "finite_pcm_ser_below_db": 3.0,
+        "valid_pcm_stoi_below": 0.6,
+        "absolute_rms_gain_above_db": 3.0
+      },
+      "exact_zero_reference": "Repair with lower_scales only regardless of kind; already exact outputs retain baseline.",
+      "acceptance": "Whole-case PCM/PWM SSE and available STOI floors; no newly failed PCM/PWM activity; original segment caps."
+    }
+  },
+  "metadata_writer_sha256": "d18b66dbe787a8f5456491b89d5792d378c4416da8cab71f4461a49da5557a18",
+  "retention_script_sha256": "511545a5f9012e53fab9ffd3398423cb561e16b7d892e7d61dbb1ad08a88f6b8",
+  "git_revision_at_retention": "d0ad2da957ab47bb40bfe5b76f51a5a32148c899",
+  "source_hashes_are_authoritative_for_worktree_state": true,
+  "decoder_source_equivalence": {
+    "comparison_report": "../speech-flash-2026-10-26/common-avr.json",
+    "comparison_report_sha256": "d2eb6b4615495148cd03c1f02ec5bbf98480930f740b144504431f843098cf37",
+    "source_files": {
+      "cos_half_table.inc": {
+        "previous_sha256": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+        "current_sha256": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+        "exact": true
+      },
+      "cos_table.inc": {
+        "previous_sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+        "current_sha256": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+        "exact": true
+      },
+      "Lpx3AvrCore.cpp": {
+        "previous_sha256": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+        "current_sha256": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+        "exact": true
+      },
+      "Lpx3AvrCore.h": {
+        "previous_sha256": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+        "current_sha256": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+        "exact": true
+      },
+      "Lpx4HybridCore.cpp": {
+        "previous_sha256": "9a000d56400422e5bc4e79347ed46f2e2c66d0221d5e7e2f3bccb5c29374cd35",
+        "current_sha256": "9a000d56400422e5bc4e79347ed46f2e2c66d0221d5e7e2f3bccb5c29374cd35",
+        "exact": true
+      },
+      "Lpx4HybridCore.h": {
+        "previous_sha256": "a16a665fa2c872456eaa907cff10b91e7c6449b171243b737b38327de1e1e640",
+        "current_sha256": "a16a665fa2c872456eaa907cff10b91e7c6449b171243b737b38327de1e1e640",
+        "exact": true
+      },
+      "Lpx4Math.h": {
+        "previous_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+        "current_sha256": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+        "exact": true
+      },
+      "native_batch_decoder.cpp": {
+        "previous_sha256": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+        "current_sha256": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+        "exact": true
+      },
+      "scale_table.inc": {
+        "previous_sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+        "current_sha256": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+        "exact": true
+      }
+    },
+    "claim": "Decoder sources are unchanged. Generated streams, firmware images and per-stream timing are not inferred unchanged."
+  },
+  "physical_hardware_measured": false,
+  "human_listening_scores_collected": false,
+  "avr_evidence_retained_here": false,
+  "scope": "Corpus-specific offline quality/output validation. No universal codec quality, physical PWM/audio or real-time AVR claim."
+}

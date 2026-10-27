@@ -2992,6 +2992,10 @@ without editing production sources. No board measurements are claimed.
 
 ## LPX speech: measure CPU independently of bitrate
 
+[Shared-corpus admission and host proposals](lpx-shared-corpus.md) records
+existing-field scale/pre-emphasis search, exact whole-case rollback, quiet
+PWM limits and actual AVR checks on the wider speech/music/instrument corpus.
+
 [Host gain proposals](lpx-host-gain.md) avoid adding a gain operation to the
 AVR decoder, while requiring actual fixed-point re-decoding and original-level
 quality checks. Includes a rejected level-error case and active-IRQ scope.
