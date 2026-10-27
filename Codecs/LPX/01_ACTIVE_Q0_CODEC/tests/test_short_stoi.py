@@ -14,6 +14,35 @@ class ShortStoiTests(unittest.TestCase):
     def setUp(self):
         self.rng=np.random.default_rng(20261027)
 
+    def test_tiny_nonzero_tails_skip_pystoi_without_changing_pcm_metrics(self):
+        for n in (1,19,80,161,205,256,319,321):
+            x=np.full(n,123,np.int16)
+            with self.subTest(samples=n),patch('pystoi.stoi',side_effect=AssertionError('Too short for STOI')):
+                result=error_metrics(x,x,speech=True)
+            self.assertIsNone(result['stoi'])
+            self.assertEqual(result['samples'],n)
+            self.assertEqual(result['ser_status'],'perfect')
+
+    def test_resampled_frame_lower_bound_preserves_first_possible_score(self):
+        # Minimum 4097 samples at pystoi's internal 10 kHz. Rational
+        # resampling uses ceiling, so 8/7.5 kHz reach it at3277/3073.
+        for rate,first in ((10000,4097),(8000,3277),(7500,3073)):
+            for n in (first-1,first):
+                x=np.full(n,123,np.int16)
+                with self.subTest(rate=rate,samples=n),patch('pystoi.stoi',return_value=.75) as measured:
+                    result=error_metrics(x,x,speech=True,rate=rate)
+                self.assertEqual(result['stoi'],.75 if n==first else None)
+                self.assertEqual(measured.call_count,int(n==first))
+
+    def test_first_possible_real_scores_match_pystoi(self):
+        from pystoi import stoi
+        for rate,n in ((10000,4097),(8000,3277),(7500,3073)):
+            x=self.rng.integers(-4000,4000,n,dtype=np.int16)
+            with self.subTest(rate=rate),warnings.catch_warnings():
+                warnings.simplefilter('error')
+                expected=float(stoi(x.astype(float)/32768,x.astype(float)/32768,rate))
+                self.assertEqual(error_metrics(x,x,speech=True,rate=rate)['stoi'],expected)
+
     def test_short_active_recording_has_no_stoi_but_retains_pcm_metrics(self):
         x=self.rng.integers(-4000,4000,2185,dtype=np.int16)
         with warnings.catch_warnings(record=True) as seen:
@@ -43,13 +72,13 @@ class ShortStoiTests(unittest.TestCase):
         self.assertEqual(actual,expected)
 
     def test_valid_low_scores_are_not_treated_as_missing(self):
-        x=np.asarray([100,-200,300,-400],np.int16)
+        x=np.resize(np.asarray([100,-200,300,-400],np.int16),4000)
         for score in (1e-5,0.,-.2):
             with self.subTest(score=score),patch('pystoi.stoi',return_value=score):
                 self.assertEqual(error_metrics(x,x,speech=True)['stoi'],score)
 
     def test_unrelated_warning_remains_visible(self):
-        x=np.asarray([100,-200,300,-400],np.int16)
+        x=np.resize(np.asarray([100,-200,300,-400],np.int16),4000)
         def measured(*args):
             warnings.warn('Independent metric warning',RuntimeWarning)
             return .75
@@ -60,7 +89,7 @@ class ShortStoiTests(unittest.TestCase):
         self.assertEqual([str(w.message) for w in seen],['Independent metric warning'])
 
     def test_errors_and_promoted_unrelated_warnings_propagate(self):
-        x=np.asarray([100,-200,300,-400],np.int16)
+        x=np.resize(np.asarray([100,-200,300,-400],np.int16),4000)
         with patch('pystoi.stoi',side_effect=ValueError('Invalid metric input')):
             with self.assertRaisesRegex(ValueError,'Invalid metric input'):
                 error_metrics(x,x,speech=True)
@@ -74,10 +103,10 @@ class ShortStoiTests(unittest.TestCase):
 
     def test_matching_exception_from_other_source_is_not_suppressed(self):
         from pystoi import stoi
-        x=self.rng.integers(-4000,4000,2185,dtype=np.int16)
+        x=self.rng.integers(-4000,4000,16000,dtype=np.int16)
         with warnings.catch_warnings(record=True) as seen:
             warnings.simplefilter('always')
-            stoi(x.astype(float)/32768,x.astype(float)/32768,8000)
+            stoi(x[:2185].astype(float)/32768,x[:2185].astype(float)/32768,8000)
         self.assertEqual(len(seen),1)
         with patch('pystoi.stoi',side_effect=RuntimeWarning(str(seen[0].message))):
             with self.assertRaises(RuntimeWarning):

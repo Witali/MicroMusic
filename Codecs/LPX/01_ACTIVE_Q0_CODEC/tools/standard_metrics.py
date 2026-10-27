@@ -23,6 +23,14 @@ def error_metrics(reference, decoded, speech=False, rate=8000):
         'stoi':None}
     if speech and power:
         from pystoi import stoi
+        from pystoi.stoi import FS, N, N_FRAME
+        # Both pystoi framing passes exclude a window ending exactly at the
+        # array boundary. Even before silence removal, N final STFT frames
+        # therefore need N_FRAME + N*(N_FRAME//2) + 1 resampled samples.
+        # resample_poly returns ceil(input_samples*FS/rate); use an exact
+        # integer inequality, and leave invalid rates to pystoi as before.
+        minimum=N_FRAME+N*(N_FRAME//2)
+        if rate>0 and int(rate)==rate and len(x)*FS<=minimum*int(rate):return result
         # pystoi returns a numeric sentinel for insufficient active frames.
         # Identify that specific warning, not its value: a valid score may
         # also be 1e-5. Other warnings retain the caller's warning policy.
