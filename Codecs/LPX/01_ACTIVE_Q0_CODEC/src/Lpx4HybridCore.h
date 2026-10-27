@@ -162,6 +162,8 @@ public:
     uint32_t romByteCalls() const {return romByteCalls_;}
 #endif
 private:
+    // Stream lifetime and container/entropy readers.
+    void resetSynthesis();
     LPX4_TUNE_READERS uint8_t readByte();
     uint16_t read16();
     uint32_t read32();
@@ -178,6 +180,7 @@ private:
     bool readBlock();
 #endif
     bool readSubframe();
+    // Excitation reconstruction.
     __attribute__((always_inline)) inline int16_t pitchPredict() const;
 #if !LPX4_COMPACT_ONLY
     __attribute__((always_inline)) inline bool readUnary8(uint8_t& high);
@@ -186,7 +189,7 @@ private:
 #if !defined(__AVR__) || defined(LPX4_ENABLE_PCM16)
     LPX4_TUNE_SAMPLE bool nextCore(int16_t& postfilterQ14);
 #endif
-    void interpolate(uint8_t sub);
+    // LPC spectrum conversion and interpolation.
     void interpolateLsf(uint8_t sub);
     void convertLsfAt(uint8_t t,int16_t* out);
     void polyFactor(int32_t* p,int16_t c,uint8_t n);

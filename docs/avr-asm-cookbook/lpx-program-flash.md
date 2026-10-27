@@ -105,3 +105,30 @@ underruns=0; minimum observed stack margin после ready828 байт.
 Новых арифметических ASM путей нет; C fallback и аппаратный Flash access
 остаются независимыми. Полные source/toolchain/firmware hashes и memory
 accounting в [legacy profile study](../../Codecs/LPX/research/encoder-profiles-2026-10-26/README.md).
+
+## Общий сброс состояния LPX: измеренный рефакторинг
+
+Для того же ATmega328P / enhanced AVR5 с MUL, GNU ABI, AVR-GCC 7.3.0,
+simavr 1.6 и прежних small-code flags от 27.10.2026: вынести одинаковую
+очистку синтеза из конструктора и `begin()` в одну частную
+[`resetSynthesis()`](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp).
+Группировать по одинаковому контракту: фильтры, массивы спектра/истории,
+LPC cache и instrumentation. Парсер, вход, progress и error оставить
+в соответствующих lifecycle-функциях, чтобы сохранить неудачный restart.
+Порядок полей и layout не меняются. Это C++-рефакторинг размера программы;
+новых ASM и изменений выбора C/ASM нет.
+
+На восьми тех же потоках общая программа без аудио
+7889–8030 → **7729–7870 байт** (−160 на поток); v5-only
+5909–5910 → **5753–5754 байт** (−156). Static SRAM и наблюдавшийся
+stack margin прежние. Полные decode wall-cycle totals не изменились;
+полезный PWM точен, normal/+100 IRQ controls без пропусков.
+Подтверждено 46 host tests, 91 legacy golden stream и по 605670
+ASan/UBSan mutation/reset cases для двух layouts. C fallback точен
+по значениям, его прежние deadline misses сохраняются.
+
+Отдельно удалена недостижимая ветка LPC, закрытая безусловным макросом,
+и частный forwarding wrapper. Мёртвая ветка не занимала Flash:
+экономию нельзя приписывать числу удалённых строк. Для других
+toolchains/workloads эффект общего helper требует повторного измерения.
+[Подробности, before/after hashes, flags и ограничения](../../Codecs/LPX/research/decoder-refactor-2026-10-27/README.md).

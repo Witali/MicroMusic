@@ -11,7 +11,6 @@
 #if LPX4_PWM_GAIN < 120 || LPX4_PWM_GAIN > 136
 #error LPX4_PWM_GAIN out of tested bounds
 #endif
-#define LPX3_FAST_LPC_INTERP 1
 // Optional simple excitation paths:1 raw/zero,2 exhausted sparse,4 cached
 // zero-delta pitch Rice k0. Zero retains the complete reference decodeCode.
 #ifndef LPX4_FAST_EXCITATION
@@ -64,7 +63,7 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
  cursor_(0),
 #endif
  sampleCount_(0),remaining_(0),
- sampleRate_(0),preQ14_(0),brightQ14_(0),blockStep_(0),prevDeemph_(0),prevBright_(0),
+ sampleRate_(0),preQ14_(0),brightQ14_(0),blockStep_(0),
  subPos_(0),subIndex_(0),
 #if LPX4_BATCHED_REMAINING
  subEnd_(0),
@@ -92,6 +91,12 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
  static_assert(offsetof(Lpx4HybridCore,staticSpectrum_)<64,"Hot state exceeds AVR short displacement");
  static_assert(offsetof(Lpx4HybridCore,error_)<64,"Error flag must retain short displacement");
 #endif
+ resetSynthesis();
+}
+// Stream lifetime: reset only synthesis/cache state shared by construction
+// and begin(). Input, progress, and sticky error semantics stay with begin().
+void Lpx4HybridCore::resetSynthesis(){
+ prevDeemph_=prevBright_=0;
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
@@ -99,7 +104,6 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
 #if LPX4_ROTATE_LPC_ANCHORS
  lpcAnchorOffset_=0;
 #endif
-
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0;
 #if LPX4_LPC_RING
  for(uint8_t i=10;i<20;i++)hist_[i]=0;
@@ -109,6 +113,7 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
 int16_t Lpx4HybridCore::clamp(int32_t n,int16_t low,int16_t high){
  return n<low?low:(n>high?high:(int16_t)n);
 }
+// Bounded ROM access and container setup.
 uint8_t Lpx4HybridCore::readByte(){
 #ifdef LPX3_COST_INSTRUMENT
  ++romByteCalls_;
@@ -157,19 +162,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if LPX4_ALLOW_SPARSE
  pulseCount_=pulseIndex_=0;
 #endif
- lsfCached_=false;staticSpectrum_=false;
-#if LPX4_ROTATE_LPC_ANCHORS
- lpcAnchorOffset_=0;
-#endif
-prevDeemph_=prevBright_=0;
-#ifdef LPX3_COST_INSTRUMENT
- lsfConverts_=bitCalls_=romByteCalls_=0;
-#endif
- for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i]=a_[i]=hist_[i]=0;
-#if LPX4_LPC_RING
- for(uint8_t i=10;i<20;i++)hist_[i]=0;
-#endif
- for(uint16_t i=0;i<256;i++)ringQ_[i]=0;
+ resetSynthesis();
  if(!input||size<20){error_=BAD_HEADER;return false;}
  if(readByte()!='L'||readByte()!='4'||readByte()!='H'||readByte()!='Y'){
   error_=BAD_HEADER;return false;
@@ -232,6 +225,7 @@ prevDeemph_=prevBright_=0;
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
  return true;
 }
+// LSB-first bit and entropy readers.
 uint8_t Lpx4HybridCore::readOne(){
 #ifdef LPX3_COST_INSTRUMENT
  ++bitCalls_;
@@ -298,6 +292,7 @@ uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
  return (high<<k)|(k?readBits(k):0);
 }
 #endif
+// Container parsing: frame, block, and subframe headers.
 bool Lpx4HybridCore::readFrame(){
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
 #if LPX4_ENABLE_SPEECH
@@ -591,6 +586,7 @@ bool Lpx4HybridCore::readSubframe(){
  return !error_;
 #endif
 }
+// Excitation reconstruction and quantized pitch history.
 // 0 keeps the reference predictor, bit1 narrows the proven result,
 // bit2 bypasses zero history, bit4 additionally bypasses zero gain.
 #ifndef LPX4_FAST_PITCH
@@ -732,7 +728,6 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
  return true;
 #endif
 }
-void Lpx4HybridCore::interpolate(uint8_t sub){interpolateLsf(sub);}
 // Guard the 32x16 product on pathological/invalid LPX3 LSF vectors.
 // Normal spectra take the single-multiply fast path; split product only if
 // absolute polynomial coefficient would overflow signed int32 when *8192.
@@ -757,7 +752,7 @@ void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
     // p[0] is initialized to 4096 and never changed by any factor.
     p[1]=c+p[1];
 }
-#ifdef LPX3_FAST_LPC_INTERP
+// LPC spectrum conversion and anchor interpolation.
 #ifndef LPX3_LPC_SEGMENTS
 #define LPX3_LPC_SEGMENTS 2
 #endif
@@ -768,7 +763,6 @@ void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
 // Anchor arithmetic is identical to the reference integer polynomial at t=0..16.
 // PCM synthesis still uses the exact same 10-pole filter and quantized residual.
 void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
-    const uint8_t coeffBits=10;
 #ifdef LPX3_COST_INSTRUMENT
     ++lsfConverts_;
 #endif
@@ -798,9 +792,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
     }
     for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
 }
-#endif
 void Lpx4HybridCore::interpolateLsf(uint8_t sub){
-#ifdef LPX3_FAST_LPC_INTERP
 #if LPX4_ROTATE_LPC_ANCHORS
     int16_t* curLpc=lpcAnchors_+lpcAnchorOffset_;
 #else
@@ -858,36 +850,7 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
         a_[i]=lpx4LpcInterpolate(prevLpc[i],curLpc[i],localT,
             LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2);
     }
-    return;
-#else
-#ifdef LPX3_COST_INSTRUMENT
-    ++lsfConverts_;
-#endif
-    // Center of 8 subframes: t=(sub+0.5)/8.
-    const uint8_t t=(uint8_t)(sub*2+1);
-    polyP_[0]=polyQ_[0]=4096;
-    polyP_[1]=4096;polyQ_[1]=-4096;
-    uint8_t n=2;
-    for(uint8_t i=0;i<10;i+=2){
-        int16_t cc[2];
-        for(uint8_t j=0;j<2;j++){
-            int32_t weighted=(int32_t)prev_[i+j]*(16-t)+(int32_t)cur_[i+j]*t;
-            // normalize encoded LSF (Q8/Q10) to Q12 without division.
-            const uint16_t norm=(uint16_t)((weighted*(coeffBits_==8?16:4))>>4);
-            const uint8_t idx=(uint8_t)(norm>>4),frac=(uint8_t)(norm&15);
-            const int16_t lo=cosineAt(idx);
-            const int16_t hi=cosineAt((uint16_t)idx+1);
-            const int16_t cosQ13=lpx4CosineInterpolate(lo,hi,frac);
-            cc[j]=(int16_t)(-cosQ13); // -2cos(pi*lsf), Q12
-        }
-        polyFactor(polyP_,cc[0],n);
-        polyFactor(polyQ_,cc[1],n);
-        n+=2;
-    }
-    for(uint8_t i=0;i<10;i++){
-        a_[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
-    }
-#endif
+
 }
 
 // AVR PWM firmware uses the direct sample path. The optional signed-output
@@ -909,7 +872,7 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
         if(!(subIndex_&3)&&!readBlock())return false;
 #endif
         if(!(subIndex_&1)&&!readSubframe())return false;
-        interpolate(subIndex_);
+        interpolateLsf(subIndex_);
 #ifdef LPX3_BANDWIDTH_EXPAND_Q14
         // Bandwidth expansion a[k] *= gamma^(k+1), once per 20 samples.
         uint16_t weight=16384;
