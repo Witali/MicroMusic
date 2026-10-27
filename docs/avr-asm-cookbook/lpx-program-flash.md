@@ -165,3 +165,46 @@ C fallback остаётся точным, его 8 кГц deadline не обес
 digest 34816 преобразований старого ядра. Проверены 764 stream/config pairs,
 все 4096 cosine inputs, 91 golden stream и по 605670 ASan/UBSan reset cases.
 [Подробности, flags, source hashes и отклонённые варианты](../../Codecs/LPX/research/decoder-flash-pass2-2026-10-27/README.md).
+
+
+## Exact v5-only tables and bounded arithmetic, 2026-10-27
+
+Measured on the same ATmega328P / AVR5 GNU ABI, AVR-GCC 7.3.0, 16 MHz /
+8 kHz, queue 512 / prefill 384, unroll 1 / tuning 0, explicit ASM and
+`-Os -flto -mcall-prologues -mrelax` recipe used above. Arithmetic backend
+selection and hardware Flash access stay independent; no assembly was added.
+
+The generated cosine values remain exact. For half-wave nodes `c[j]`, store
+`d[j] = c[j] - c[j+1]` at every sixteenth node and encode
+`d[j+1] - d[j] + 1` in a nibble (range 0..4). Eight node checkpoints, eight
+initial drops and 64 packed bytes replace the258-byte half table with 88 bytes.
+Reconstruct at most 15 intervening nodes; the drops stay within 0..101. Reflect
+the negative half using `-hi`, and subtract `ceil(drop*fraction/16)` to preserve
+the original signed floor rounding. The full original table remains an
+independent regression oracle. The old half-table file stays in existing build
+source inventories; it is no longer compiled into the core.
+
+In v5-only, a 5-bit scale accesses only 32 of the original 256 scale values.
+A 64-byte direct table is larger than the generic 32-byte mantissas, but removes
+enough variable-shift code to reduce total program Flash. Use the unshifted
+5-bit scale only in this build; the common parser retains its full scale range.
+For compact pitch, `gain` is 0..14 and history is -32..31, so
+`(gain*history+8)>>4` is -28..27. Its prior clamp is redundant; common-format
+clamps remain. Equivalent Rice parameter/range arithmetic is valid only after
+header validation restricts the speech profile to 4 or 6.
+
+Exhaustive tests call the actual scale/cosine helpers in both layouts (256
+common scales, 32 compact scales, 4096 cosine interpolations each). The frozen
+34816-conversion LPC fingerprint also stays exact. On eight unchanged speech
+images, v5-only program Flash is 5363-5364 to 5063-5064 B (300 B saved), mean
+IRQ-inclusive decode time 804.737145 to 800.998199 cycles/sample (-0.46%), and
+static SRAM 1085 B unchanged. Common Flash is 7225-7320 to 7083-7178 B (142 B
+saved), cycles 872.820309 to 888.795691 (+1.83%), SRAM 1105 B unchanged.
+Normal and extra 100-cycle IRQ continuous controls pass for both ASM layouts;
+the C fallback remains numerically exact but misses the 8 kHz deadline.
+
+These are combined measured changes, not additive claims for individual
+source edits. Longer 32/64-node reconstruction saved only 8/12 more program
+bytes while increasing measured time, and was rejected. Disabling the fast
+excitation path grew the integrated compact build and was not selected.
+No compiler recipe or feature default changes are required.

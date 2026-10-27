@@ -39,9 +39,29 @@ static inline __attribute__((always_inline)) int32_t truncShift(int32_t v,uint8_
 
 static const uint8_t LP_PROGMEM bitMasks[9]={0,1,3,7,15,31,63,127,255};
 
-static const int16_t LP_PROGMEM cosineHalfQ13[129]={
-#include "cos_half_table.inc"
+// Exact differences of cos_table.inc, not an approximation. Every16th
+// half-wave node and its positive drop are retained. A nibble stores the
+// next drop minus the current drop plus1 (range0..4); low nibble first.
+// Reconstruct at most15 intervening nodes, keeping the drop in0..101.
+static const uint16_t LP_PROGMEM cosineCheckpoints[8]={
+ 8192,8035,7568,6811,5793,4551,3135,1598
 };
+static const uint8_t LP_PROGMEM cosineSlope[8]={1,21,39,56,72,84,93,99};
+static const uint8_t LP_PROGMEM cosineBend[64]={
+ 65,33,35,50,34,34,19,51,49,34,34,35,65,33,35,34,
+ 34,19,19,35,34,50,33,19,50,49,33,50,33,34,34,49,
+ 49,17,35,33,34,33,34,33,49,48,33,33,18,49,32,18,
+ 18,33,33,17,18,2,18,18,48,32,32,17,33,16,2,18
+};
+#if LPX4_COMPACT_ONLY
+// v5 transmits a5-bit scale; these are exactly originalStep[index*8].
+// Its small direct table removes the generic variable-shift reconstruction.
+static const uint16_t LP_PROGMEM scaleValues[32]={
+ 0,0,0,0,0,0,1,1,1,1,2,3,4,6,8,12,
+ 16,23,33,46,66,93,131,185,262,371,524,741,1049,1483,2097,2966
+};
+static uint16_t scaleStep(uint8_t index){return LP_READ_U16(&scaleValues[index]);}
+#else
 static const uint16_t LP_PROGMEM scaleMantissa[16]={
  4194,4380,4573,4776,4987,5208,5439,5680,
  5931,6194,6468,6754,7053,7366,7692,8032
@@ -52,6 +72,7 @@ static uint16_t scaleStep(uint8_t index){
  const uint16_t mantissa=LP_READ_U16(&scaleMantissa[index&15]);
  return ((mantissa>>(15-(index>>4)))+1)>>1;
 }
+#endif
 // Adjacent cosine nodes share one reflection. The reflected interval starts
 // at -hi and has the same hi-lo slope, so negative floor rounding is exact.
 // norm is Q12 in 0..4095; adjacent nodes differ by at most 101.
@@ -60,10 +81,18 @@ static inline __attribute__((always_inline)) int16_t cosineInterpolate(uint16_t 
  const uint8_t fraction=(uint8_t)(norm&15);
  const bool negative=index>=128;
  if(negative)index=(uint8_t)(255-index);
- const int16_t lo=(int16_t)LP_READ_U16(&cosineHalfQ13[index]);
- const int16_t hi=(int16_t)LP_READ_U16(&cosineHalfQ13[(uint16_t)index+1]);
- const int16_t product=(int16_t)((hi-lo)*fraction);
- return (int16_t)((negative?-hi:lo)+(product>>4));
+ const uint8_t group=index>>4;
+ int16_t lo=LP_READ_U16(&cosineCheckpoints[group]);
+ uint8_t drop=LP_READ_U8(&cosineSlope[group]);
+ for(uint8_t j=group<<4;j<index;j++){
+  lo-=drop;
+  const uint8_t pair=LP_READ_U8(&cosineBend[j>>1]);
+  drop+=((j&1)?(pair>>4):(pair&15))-1;
+ }
+ const int16_t hi=lo-drop;
+ // floor(-drop*f/16) == -ceil(drop*f/16); product is at most1515.
+ const uint16_t loss=((uint16_t)drop*fraction+15)>>4;
+ return (int16_t)((negative?-hi:lo)-(int16_t)loss);
 }
 
 
@@ -294,7 +323,7 @@ bool Lpx4HybridCore::readFrame(){
     }else{
      const bool delta=readOne()!=0;
      if(delta&&!initializedFrame_){error_=CORRUPT_STREAM;return false;}
-     const uint8_t k=delta?(bits==5?0:1):(bits==5?1:2);
+     const uint8_t k=bits-4-(uint8_t)delta;
      int16_t last=-1;
      for(uint8_t i=0;i<10;i++){
       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
@@ -302,7 +331,7 @@ bool Lpx4HybridCore::readFrame(){
       const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
       const int16_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
       if(error_)return false;
-      if(value<=last || value>=(1<<bits)){error_=CORRUPT_STREAM;return false;}
+      if(value<=last || value>=((speechProfile_-2)<<4)){error_=CORRUPT_STREAM;return false;}
       const int16_t v=(value<<shift)+(1u<<(shift-1));
       if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
       cur_[i]=v;last=value;
@@ -328,7 +357,7 @@ bool Lpx4HybridCore::readFrame(){
   if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
   initializedFrame_=true;speechHalf_^=1;
 #if LPX4_COMPACT_ONLY
-  const uint8_t blockScale=readBits(5)<<3;
+  const uint8_t blockScale=readBits(5);
 #else
   mode_=6;quantLimit_=32;
   blockScale_=readBits(5)<<3;
@@ -589,25 +618,22 @@ int16_t Lpx4HybridCore::pitchPredict() const{
  if(!gain_)return 0;
 #endif
  int8_t v=lpx4PitchQ4(x,gain_);
-#if LPX4_COMPACT_ONLY
- const int8_t low=-32,high=31;
-#else
+// v5 gain is0..14 and history is-32..31: prediction is already-28..27.
+#if !LPX4_COMPACT_ONLY
  const int8_t low=-(int8_t)quantLimit_,high=(int8_t)(quantLimit_-1);
-#endif
  if(v<low)v=low;
  if(v>high)v=high;
+#endif
  return v;
 #else
  const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
  int16_t v=(int16_t)(((int8_t)gain_*x+8)>>4);
-#if LPX4_COMPACT_ONLY
- const int16_t lim=32;
-#else
+#if !LPX4_COMPACT_ONLY
  if(!mode_)return 0;
  const int16_t lim=quantLimit_;
-#endif
  if(v < -lim)v=-lim;
  if(v >= lim)v=lim-1;
+#endif
  return v;
 #endif
 }
