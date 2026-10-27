@@ -1,0 +1,30 @@
+{
+  "schema": "lpx-v5-music-header-independent-audit-v1",
+  "case_count": 132,
+  "case_profiles": 264,
+  "scope": "Non-speech robustness and numerical diagnostics; STOI values on music are not speech-intelligibility evidence.",
+  "candidate_streams": 1482,
+  "accepted_case_profiles": 82,
+  "native_common_and_v5_only_model_frozen_pcm_pwm_exact": true,
+  "joined_original_reference_metrics_recomputed": true,
+  "unchanged_payload_and_stream_size": true,
+  "all_selected_pcm_pwm_sse_stoi_floors_passed": true,
+  "source_sha256": {
+    "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "9c82ed7193f01c684398117088ecb4185fb0a1528560340d09ca9a9d29a97a85",
+    "Lpx4HybridCore.h": "332b71ad188491b9c57c27f79aff34aa98be89af57a62d129a6c69c22c58277f",
+    "Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "header_sources": {
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29"
+  },
+  "elapsed_seconds": 364.1796755999999,
+  "diagnostic_scope": "Non-speech numerical robustness only; STOI is not interpreted as music intelligibility.64 header trials,2 full-metric candidates; unchanged bytes.",
+  "case_results_sha256": "c62d2ca3cb5f474a7737933b92da5f5c98862ba164bd4065599568e629a2b0eb"
+}

@@ -1,0 +1,635 @@
+{
+  "schema": "lpx-v5-development-quality-v1",
+  "baseline_commit": "1ae4aa99dc5d02108b6a288444b7e481a9880328",
+  "corpus": {
+    "all_cases": 181,
+    "segments": 306,
+    "samples": 15188029,
+    "speech_cases": 49,
+    "speech_segments": 59,
+    "speech_seconds": 329.037,
+    "non_speech_cases": 132,
+    "baseline_selected_streams_verified": 1224
+  },
+  "protocol": {
+    "original_levels_and_full_reference": true,
+    "gain_or_delay_fit": false,
+    "same_native_pwm_transfer": true,
+    "baseline": "Strongest previously retained selected v5 per segment; original whole-case join retained as rollback.",
+    "header_search": {
+      "trials": 256,
+      "full_metric_candidates": 16,
+      "complete_stream_bytes_unchanged": true
+    },
+    "joint_search": {
+      "horizon": 160,
+      "group_samples": 1280,
+      "passes": 1,
+      "segment_fits": 236,
+      "joined_budget_variants": 196,
+      "case_profile_pairs": 98,
+      "caps": "Same exact input byte size; nominal+10 percent uses ceil(binary_float(input_bytes*1.10)), which can allow one extra byte at decimal boundaries. Exact caps and achieved sizes are retained; public API accepts and enforces an exact integer cap.",
+      "raw_scope": "Best encountered PCM-SSE proposal along conservative trajectory, not a separate unconstrained optimizer."
+    },
+    "declared_floors": "PCM/PWM SSE do not grow; available PCM/PWM STOI do not fall, tolerance1e-12. Whole recording joins are re-evaluated and can roll back.",
+    "spectral_diagnostics": "RMS log-magnitude STFT error,8kHz,nperseg256,default scipy overlap/padding,magnitude floor1/32768; spectral error may worsen despite the four declared floors.",
+    "human_listening_scores_collected": false,
+    "held_out_perceptual_generalization_claimed": false,
+    "larger_cap_is_not_automatic_adoption": true,
+    "total_flash": "Program cost is shared once per firmware image; complete streams include headers,extra markers and padding. Aggregate corpus stream totals are not a single32KB firmware deployment."
+  },
+  "original_baseline_to_header_plus_joint": [
+    {
+      "profile": 4,
+      "nominal_growth_cap": 0.0,
+      "cases": 49,
+      "accepted_joint_rows": 46,
+      "baseline_bytes": 150962,
+      "candidate_bytes": 150962,
+      "actual_total_stream_growth_percent": 0.0,
+      "pcm16": {
+        "baseline_sse": 3365402943676.0,
+        "candidate_sse": 3171724494220.0,
+        "sse_reduction_percent": 5.754985441489113,
+        "aggregate_ser_gain_db": 0.25741614140677715,
+        "mean_stoi_gain": 0.00162310055514783,
+        "max_stoi_gain": 0.006774862439570151,
+        "valid_stoi_pairs": 49
+      },
+      "pwm8": {
+        "baseline_sse": 3413703149594.0,
+        "candidate_sse": 3201803351578.0,
+        "sse_reduction_percent": 6.207329364335667,
+        "aggregate_ser_gain_db": 0.27831097941343746,
+        "mean_stoi_gain": 0.0031965487171465266,
+        "max_stoi_gain": 0.01292595744798819,
+        "valid_stoi_pairs": 49
+      }
+    },
+    {
+      "profile": 4,
+      "nominal_growth_cap": 0.1,
+      "cases": 49,
+      "accepted_joint_rows": 48,
+      "baseline_bytes": 150962,
+      "candidate_bytes": 165265,
+      "actual_total_stream_growth_percent": 9.474569759277163,
+      "pcm16": {
+        "baseline_sse": 3365402943676.0,
+        "candidate_sse": 3044574722639.0,
+        "sse_reduction_percent": 9.533129506523885,
+        "aggregate_ser_gain_db": 0.43510432905610125,
+        "mean_stoi_gain": 0.0024052569321710462,
+        "max_stoi_gain": 0.014926746371344612,
+        "valid_stoi_pairs": 49
+      },
+      "pwm8": {
+        "baseline_sse": 3413703149594.0,
+        "candidate_sse": 3070670773786.0,
+        "sse_reduction_percent": 10.048687913850907,
+        "aggregate_ser_gain_db": 0.45992497381038494,
+        "mean_stoi_gain": 0.004165011824622033,
+        "max_stoi_gain": 0.014993194357933781,
+        "valid_stoi_pairs": 49
+      }
+    },
+    {
+      "profile": 6,
+      "nominal_growth_cap": 0.0,
+      "cases": 49,
+      "accepted_joint_rows": 47,
+      "baseline_bytes": 216081,
+      "candidate_bytes": 216081,
+      "actual_total_stream_growth_percent": 0.0,
+      "pcm16": {
+        "baseline_sse": 2379106980939.0,
+        "candidate_sse": 2222297607205.0,
+        "sse_reduction_percent": 6.591102249303205,
+        "aggregate_ser_gain_db": 0.2961175267807519,
+        "mean_stoi_gain": 0.00149299443738458,
+        "max_stoi_gain": 0.008457508182068252,
+        "valid_stoi_pairs": 49
+      },
+      "pwm8": {
+        "baseline_sse": 2409382602266.0,
+        "candidate_sse": 2241152680474.0,
+        "sse_reduction_percent": 6.982283412928336,
+        "aggregate_ser_gain_db": 0.31434325820056663,
+        "mean_stoi_gain": 0.0025762214593391076,
+        "max_stoi_gain": 0.010186552924720815,
+        "valid_stoi_pairs": 49
+      }
+    },
+    {
+      "profile": 6,
+      "nominal_growth_cap": 0.1,
+      "cases": 49,
+      "accepted_joint_rows": 49,
+      "baseline_bytes": 216081,
+      "candidate_bytes": 235441,
+      "actual_total_stream_growth_percent": 8.959603111796044,
+      "pcm16": {
+        "baseline_sse": 2379106980939.0,
+        "candidate_sse": 2153869084248.0,
+        "sse_reduction_percent": 9.467329485204646,
+        "aggregate_ser_gain_db": 0.43194668707891604,
+        "mean_stoi_gain": 0.002548784793627666,
+        "max_stoi_gain": 0.014059128210709648,
+        "valid_stoi_pairs": 49
+      },
+      "pwm8": {
+        "baseline_sse": 2409382602266.0,
+        "candidate_sse": 2170651282970.0,
+        "sse_reduction_percent": 9.908402221858648,
+        "aggregate_ser_gain_db": 0.45315710782801355,
+        "mean_stoi_gain": 0.0035053506101115055,
+        "max_stoi_gain": 0.014137343264216229,
+        "valid_stoi_pairs": 49
+      }
+    }
+  ],
+  "header_audit": {
+    "schema": "lpx-v5-header-independent-audit-v1",
+    "case_count": 49,
+    "case_profiles": 98,
+    "candidate_streams": 354,
+    "accepted_case_profiles": 63,
+    "native_common_and_v5_only_model_frozen_pcm_pwm_exact": true,
+    "joined_original_reference_metrics_recomputed": true,
+    "unchanged_payload_and_stream_size": true,
+    "all_selected_pcm_pwm_sse_stoi_floors_passed": true,
+    "source_sha256": {
+      "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+      "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Lpx4HybridCore.cpp": "9c82ed7193f01c684398117088ecb4185fb0a1528560340d09ca9a9d29a97a85",
+      "Lpx4HybridCore.h": "332b71ad188491b9c57c27f79aff34aa98be89af57a62d129a6c69c22c58277f",
+      "Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+      "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+      "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+    },
+    "header_sources": {
+      "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+      "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29"
+    },
+    "elapsed_seconds": 83.89952850000009
+  },
+  "joint_audit": {
+    "schema": "lpx-v5-joint-independent-audit-v1",
+    "speech_cases": 49,
+    "case_profile_budget_rows": 196,
+    "candidate_streams": 708,
+    "segment_checkpoints_checked": 5616,
+    "accepted_rows": 190,
+    "native_common_and_v5_only_model_frozen_pcm_pwm_exact": true,
+    "reported_whole_reference_metrics_and_decisions_exact": true,
+    "complete_stream_caps_and_fixed_spectra_filters_verified": true,
+    "all_selected_pcm_pwm_sse_stoi_floors_passed": true,
+    "source_sha256": {
+      "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+      "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Lpx4HybridCore.cpp": "9c82ed7193f01c684398117088ecb4185fb0a1528560340d09ca9a9d29a97a85",
+      "Lpx4HybridCore.h": "332b71ad188491b9c57c27f79aff34aa98be89af57a62d129a6c69c22c58277f",
+      "Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+      "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+      "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+    },
+    "encoder_sources": {
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_excitation.py": "798913d36a5cfbd112896ecdd4945b0b1ab96b1c831876fed3ec7764861d92ff",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29"
+    },
+    "pareto_policy": "Actual complete stream bytes, PCM/PWM SSE minimized, PCM/PWM STOI maximized; spectral metrics remain diagnostic. Header baseline, both budget selected/candidate/raw branches eligible. Missing STOI values are incomparable rather than assigned an invented score; exact ties remain. Numerical frontier is not a listening verdict.",
+    "elapsed_seconds": 204.12899310000012
+  },
+  "joint_review": {
+    "aggregates": [
+      {
+        "profile": 4,
+        "growth_cap": 0,
+        "accepted": 46,
+        "baseline_bytes": 150962,
+        "file_bytes": 150962,
+        "actual_byte_change_percent": 0.0,
+        "pcm16_ser_gain_vs_original_db": 0.25741614140677715,
+        "pcm16_mean_stoi_gain_vs_original": 0.00162310055514783,
+        "pcm16_max_stoi_gain_vs_original": 0.006774862439570151,
+        "pwm8_ser_gain_vs_original_db": 0.27831097941343746,
+        "pwm8_mean_stoi_gain_vs_original": 0.0031965487171465266,
+        "pwm8_max_stoi_gain_vs_original": 0.01292595744798819
+      },
+      {
+        "profile": 4,
+        "growth_cap": 0.1,
+        "accepted": 48,
+        "baseline_bytes": 150962,
+        "file_bytes": 165265,
+        "actual_byte_change_percent": 9.474569759277163,
+        "pcm16_ser_gain_vs_original_db": 0.43510432905610125,
+        "pcm16_mean_stoi_gain_vs_original": 0.0024052569321710462,
+        "pcm16_max_stoi_gain_vs_original": 0.014926746371344612,
+        "pwm8_ser_gain_vs_original_db": 0.45992497381038494,
+        "pwm8_mean_stoi_gain_vs_original": 0.004165011824622033,
+        "pwm8_max_stoi_gain_vs_original": 0.014993194357933781
+      },
+      {
+        "profile": 6,
+        "growth_cap": 0,
+        "accepted": 47,
+        "baseline_bytes": 216081,
+        "file_bytes": 216081,
+        "actual_byte_change_percent": 0.0,
+        "pcm16_ser_gain_vs_original_db": 0.2961175267807519,
+        "pcm16_mean_stoi_gain_vs_original": 0.00149299443738458,
+        "pcm16_max_stoi_gain_vs_original": 0.008457508182068252,
+        "pwm8_ser_gain_vs_original_db": 0.31434325820056663,
+        "pwm8_mean_stoi_gain_vs_original": 0.0025762214593391076,
+        "pwm8_max_stoi_gain_vs_original": 0.010186552924720815
+      },
+      {
+        "profile": 6,
+        "growth_cap": 0.1,
+        "accepted": 49,
+        "baseline_bytes": 216081,
+        "file_bytes": 235441,
+        "actual_byte_change_percent": 8.959603111796044,
+        "pcm16_ser_gain_vs_original_db": 0.43194668707891604,
+        "pcm16_mean_stoi_gain_vs_original": 0.002548784793627666,
+        "pcm16_max_stoi_gain_vs_original": 0.014059128210709648,
+        "pwm8_ser_gain_vs_original_db": 0.45315710782801355,
+        "pwm8_mean_stoi_gain_vs_original": 0.0035053506101115055,
+        "pwm8_max_stoi_gain_vs_original": 0.014137343264216229
+      }
+    ],
+    "growth_selected_dominated_within_profile": 4,
+    "growth_selected_nondominated_within_profile": 94,
+    "growth_selected_dominated_cross_profile": 4,
+    "largest_incremental_growth_benefits": [
+      {
+        "id": "v5-case-058",
+        "profile": 4,
+        "extra_bytes_over_zero": 190,
+        "extra_percent_over_zero": 9.994739610731184,
+        "pcm_ser_gain_over_zero_db": 0.5452912687727994,
+        "pcm_stoi_delta_over_zero": 0.0006942831868228527,
+        "pwm_stoi_delta_over_zero": 0.0002756500713558818
+      },
+      {
+        "id": "v5-case-039",
+        "profile": 4,
+        "extra_bytes_over_zero": 190,
+        "extra_percent_over_zero": 10.042283298097242,
+        "pcm_ser_gain_over_zero_db": 0.5042228891836632,
+        "pcm_stoi_delta_over_zero": 0.0005002238298335016,
+        "pwm_stoi_delta_over_zero": -0.00041782073132901054
+      },
+      {
+        "id": "v5-case-016",
+        "profile": 4,
+        "extra_bytes_over_zero": 362,
+        "extra_percent_over_zero": 9.983452840595696,
+        "pcm_ser_gain_over_zero_db": 0.3911562112895246,
+        "pcm_stoi_delta_over_zero": 0.00011168599900812648,
+        "pwm_stoi_delta_over_zero": 0.00040988723064649957
+      },
+      {
+        "id": "v5-case-034",
+        "profile": 4,
+        "extra_bytes_over_zero": 193,
+        "extra_percent_over_zero": 10.005184033177805,
+        "pcm_ser_gain_over_zero_db": 0.3769232706485228,
+        "pcm_stoi_delta_over_zero": 0.0022014096369199487,
+        "pwm_stoi_delta_over_zero": -0.0014514862665087058
+      },
+      {
+        "id": "v5-case-007",
+        "profile": 4,
+        "extra_bytes_over_zero": 364,
+        "extra_percent_over_zero": 10.019267822736033,
+        "pcm_ser_gain_over_zero_db": 0.3677715613342117,
+        "pcm_stoi_delta_over_zero": 4.368718694502949e-05,
+        "pwm_stoi_delta_over_zero": 0.0006055989521378535
+      },
+      {
+        "id": "v5-case-036",
+        "profile": 4,
+        "extra_bytes_over_zero": 186,
+        "extra_percent_over_zero": 10.026954177897585,
+        "pcm_ser_gain_over_zero_db": 0.33958300061866753,
+        "pcm_stoi_delta_over_zero": 2.9574356478212493e-05,
+        "pwm_stoi_delta_over_zero": 0.004746937051528399
+      }
+    ]
+  },
+  "fair_existing_enhancer_control": {
+    "schema": "lpx-v5-control-pareto-v1",
+    "scope": "Same48 case/profile/budget points; six alternatives per point, including duplicates. Objective surrogate frontier only; no listening or perceptual winner claim.",
+    "source_control_sha256": "38232b45e1facb0e3b3d055b412baef4902df015f9aef7d5bdee898a5ab2320a",
+    "source_joint_sha256": "0b5d2d5b5ac15ad0bb8f0335d198ceec6dc02ca854ea6cbba01be792c0fbf13d",
+    "header_start_validation": "Control-recorded per-segment input hashes match retained header-corpus bytes used by both drivers; all joined baseline metrics, geometry, caps and reference hashes match exactly. Joint summary did not record input hashes independently; its unchanged driver reads that same retained header tree.",
+    "dimensions": {
+      "minimize": [
+        "complete_stream_bytes",
+        "pcm_sse",
+        "pwm_sse"
+      ],
+      "maximize": [
+        "pcm_stoi",
+        "pwm_stoi"
+      ]
+    },
+    "stoi_absolute_tolerance": 1e-12,
+    "sse_and_byte_tolerance": 0,
+    "ties": "Retained; frontier counts include duplicate/tied alternatives.",
+    "cost_scope": "Complete stream bytes only. Target program Flash, placement and timing are measured separately.",
+    "original_gain_and_delay_preserved": true,
+    "all_stream_instances_within_segment_caps": true,
+    "case_count": 12,
+    "case_profile_budget_points": 48,
+    "segment_budget_sets": 64,
+    "retained_alternative_count": 288,
+    "segment_stream_instances": 384,
+    "frontier_distinct_exact_metric_cost_vectors": 127,
+    "measured_frontier_counts": {
+      "old_attempted": 40,
+      "joint_selected": 48,
+      "joint_joined_candidate": 48,
+      "joint_raw_best_sse": 48,
+      "header_baseline": 23,
+      "old_selected": 27
+    },
+    "joint_vs_old_selected_metrics": {
+      "joint_no_worse": 44,
+      "mixed": 3,
+      "metrics_tied": 1
+    },
+    "joint_selected_strictly_dominates_old_selected": 21,
+    "old_selected_strictly_dominates_joint_selected": 0,
+    "groups": [
+      {
+        "profile": 4,
+        "growth_cap": 0.0,
+        "points": [
+          {
+            "variant": "header_baseline",
+            "file_bytes": 47876,
+            "pcm_sse": 1157797786276.0,
+            "pwm_sse": 1169150681256.0,
+            "pcm_stoi_case_mean": 0.7197777365545766,
+            "pwm_stoi_case_mean": 0.6674109890512733,
+            "measured_frontier_points": 1
+          },
+          {
+            "variant": "old_selected",
+            "file_bytes": 47876,
+            "pcm_sse": 1157797786276.0,
+            "pwm_sse": 1169150681256.0,
+            "pcm_stoi_case_mean": 0.7197777365545766,
+            "pwm_stoi_case_mean": 0.6674109890512733,
+            "measured_frontier_points": 1
+          },
+          {
+            "variant": "old_attempted",
+            "file_bytes": 47602,
+            "pcm_sse": 1175640946812.0,
+            "pwm_sse": 1190073136296.0,
+            "pcm_stoi_case_mean": 0.719546425774058,
+            "pwm_stoi_case_mean": 0.6675709606391685,
+            "measured_frontier_points": 10
+          },
+          {
+            "variant": "joint_selected",
+            "file_bytes": 47876,
+            "pcm_sse": 1095115041776.0,
+            "pwm_sse": 1104418765992.0,
+            "pcm_stoi_case_mean": 0.7212948010928235,
+            "pwm_stoi_case_mean": 0.6689482474093489,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "joint_joined_candidate",
+            "file_bytes": 47876,
+            "pcm_sse": 1095115041776.0,
+            "pwm_sse": 1104418765992.0,
+            "pcm_stoi_case_mean": 0.7212948010928235,
+            "pwm_stoi_case_mean": 0.6689482474093489,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "joint_raw_best_sse",
+            "file_bytes": 47876,
+            "pcm_sse": 1090364729308.0,
+            "pwm_sse": 1099619267752.0,
+            "pcm_stoi_case_mean": 0.7197948458493336,
+            "pwm_stoi_case_mean": 0.6685259492240069,
+            "measured_frontier_points": 12
+          }
+        ]
+      },
+      {
+        "profile": 4,
+        "growth_cap": 0.1,
+        "points": [
+          {
+            "variant": "header_baseline",
+            "file_bytes": 47876,
+            "pcm_sse": 1157797786276.0,
+            "pwm_sse": 1169150681256.0,
+            "pcm_stoi_case_mean": 0.7197777365545766,
+            "pwm_stoi_case_mean": 0.6674109890512733,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "old_selected",
+            "file_bytes": 47925,
+            "pcm_sse": 1156565569988.0,
+            "pwm_sse": 1168035100328.0,
+            "pcm_stoi_case_mean": 0.7203374540355794,
+            "pwm_stoi_case_mean": 0.6680640542437247,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "old_attempted",
+            "file_bytes": 47753,
+            "pcm_sse": 1166437389564.0,
+            "pwm_sse": 1181731282088.0,
+            "pcm_stoi_case_mean": 0.7207099598382293,
+            "pwm_stoi_case_mean": 0.6684982880488327,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "joint_selected",
+            "file_bytes": 52198,
+            "pcm_sse": 1041026052140.0,
+            "pwm_sse": 1048385930408.0,
+            "pcm_stoi_case_mean": 0.7218704669945949,
+            "pwm_stoi_case_mean": 0.6700646649654795,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "joint_joined_candidate",
+            "file_bytes": 52198,
+            "pcm_sse": 1041026052140.0,
+            "pwm_sse": 1048385930408.0,
+            "pcm_stoi_case_mean": 0.7218704669945949,
+            "pwm_stoi_case_mean": 0.6700646649654795,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "joint_raw_best_sse",
+            "file_bytes": 52116,
+            "pcm_sse": 1038936826152.0,
+            "pwm_sse": 1046428958376.0,
+            "pcm_stoi_case_mean": 0.7212066444253391,
+            "pwm_stoi_case_mean": 0.670239583436126,
+            "measured_frontier_points": 12
+          }
+        ]
+      },
+      {
+        "profile": 6,
+        "growth_cap": 0.0,
+        "points": [
+          {
+            "variant": "header_baseline",
+            "file_bytes": 68427,
+            "pcm_sse": 791282491641.0,
+            "pwm_sse": 800032653992.0,
+            "pcm_stoi_case_mean": 0.7636533306756258,
+            "pwm_stoi_case_mean": 0.6961640914512249,
+            "measured_frontier_points": 0
+          },
+          {
+            "variant": "old_selected",
+            "file_bytes": 68421,
+            "pcm_sse": 791151310289.0,
+            "pwm_sse": 799885622440.0,
+            "pcm_stoi_case_mean": 0.7636826388076695,
+            "pwm_stoi_case_mean": 0.6962123023306033,
+            "measured_frontier_points": 2
+          },
+          {
+            "variant": "old_attempted",
+            "file_bytes": 68252,
+            "pcm_sse": 799928579369.0,
+            "pwm_sse": 809664342184.0,
+            "pcm_stoi_case_mean": 0.7633509169789585,
+            "pwm_stoi_case_mean": 0.696100038772061,
+            "measured_frontier_points": 7
+          },
+          {
+            "variant": "joint_selected",
+            "file_bytes": 68427,
+            "pcm_sse": 738370617545.0,
+            "pwm_sse": 744318212776.0,
+            "pcm_stoi_case_mean": 0.7647580059850645,
+            "pwm_stoi_case_mean": 0.697253709860529,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "joint_joined_candidate",
+            "file_bytes": 68427,
+            "pcm_sse": 738370617545.0,
+            "pwm_sse": 744318212776.0,
+            "pcm_stoi_case_mean": 0.7647580059850645,
+            "pwm_stoi_case_mean": 0.697253709860529,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "joint_raw_best_sse",
+            "file_bytes": 68427,
+            "pcm_sse": 738032988621.0,
+            "pwm_sse": 743964438184.0,
+            "pcm_stoi_case_mean": 0.7646763402187863,
+            "pwm_stoi_case_mean": 0.6972184310853741,
+            "measured_frontier_points": 12
+          }
+        ]
+      },
+      {
+        "profile": 6,
+        "growth_cap": 0.1,
+        "points": [
+          {
+            "variant": "header_baseline",
+            "file_bytes": 68427,
+            "pcm_sse": 791282491641.0,
+            "pwm_sse": 800032653992.0,
+            "pcm_stoi_case_mean": 0.7636533306756258,
+            "pwm_stoi_case_mean": 0.6961640914512249,
+            "measured_frontier_points": 10
+          },
+          {
+            "variant": "old_selected",
+            "file_bytes": 68444,
+            "pcm_sse": 790874956781.0,
+            "pwm_sse": 799688202920.0,
+            "pcm_stoi_case_mean": 0.7636983030482476,
+            "pwm_stoi_case_mean": 0.6962265552324512,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "old_attempted",
+            "file_bytes": 68290,
+            "pcm_sse": 799498257233.0,
+            "pwm_sse": 809481493672.0,
+            "pcm_stoi_case_mean": 0.7633549719721975,
+            "pwm_stoi_case_mean": 0.6959451388487605,
+            "measured_frontier_points": 11
+          },
+          {
+            "variant": "joint_selected",
+            "file_bytes": 74599,
+            "pcm_sse": 718666864681.0,
+            "pwm_sse": 723873107624.0,
+            "pcm_stoi_case_mean": 0.7658055235543936,
+            "pwm_stoi_case_mean": 0.6985979531853539,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "joint_joined_candidate",
+            "file_bytes": 74599,
+            "pcm_sse": 718666864681.0,
+            "pwm_sse": 723873107624.0,
+            "pcm_stoi_case_mean": 0.7658055235543936,
+            "pwm_stoi_case_mean": 0.6985979531853539,
+            "measured_frontier_points": 12
+          },
+          {
+            "variant": "joint_raw_best_sse",
+            "file_bytes": 74640,
+            "pcm_sse": 718473422981.0,
+            "pwm_sse": 723692163752.0,
+            "pcm_stoi_case_mean": 0.7657264229811008,
+            "pwm_stoi_case_mean": 0.6985196404836609,
+            "measured_frontier_points": 12
+          }
+        ]
+      }
+    ]
+  },
+  "tests": {
+    "tests": 31,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 25.813338899999962,
+    "modules": [
+      "test_refine_speech_compact",
+      "test_refine_speech_excitation",
+      "test_speech_compact",
+      "test_short_stoi",
+      "test_standard_metrics"
+    ]
+  },
+  "speech_results_sha256": "167ba80dd6ed2a035526d8089dc16b0e968f89812a13142b560a22b4fd72ded5",
+  "source_reports_sha256": {
+    "header-independent-audit.json": "3d6fab02eaaab22e4422e543ddc6c7b3db88a96ba6b0faf0ed1bd98bba99d8de",
+    "joint-independent-audit.json": "d6e4d83c74dd435af89e15490b16f2a716cc58349c280bdbf3aac8d840f03094",
+    "anonymous-results.json": "38232b45e1facb0e3b3d055b412baef4902df015f9aef7d5bdee898a5ab2320a",
+    "pareto-comparison.json": "2ab98349d539ac9b3b39f5b8bb9ce1bff0b42510ed1048c2e11b3222b0bae18a"
+  }
+}
