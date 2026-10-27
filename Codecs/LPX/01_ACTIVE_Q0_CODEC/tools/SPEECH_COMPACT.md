@@ -81,3 +81,49 @@ whether smaller audio files also reduce the total firmware footprint.
 
 All source audio, caches and generated WAVs remain in ignored build trees.
 See `../../SPEECH_COMPACT_PLAN_RU.md` and the compact-study research report.
+
+
+## Further v5-only encoding
+
+The primary embedded target for current speech development is the explicit
+v5-only build described in [SPEECH_FLASH.md](SPEECH_FLASH.md). Two offline
+refiners improve existing v5 assets without adding decoder modes or fields:
+
+```text
+python tools/refine_speech_compact.py REFERENCE.wav INPUT.l4hy BUILD/header
+python tools/refine_speech_excitation.py REFERENCE.wav BUILD/header/audio.l4hy BUILD/joint --max-bytes COMPLETE_STREAM_CAP
+```
+
+Both accept an original-level mono PCM16 reference at 8 kHz and a v5 segment
+of 1..64000 samples. Keep private audio and generated streams in ignored build
+storage. The CLIs protect source/reference files against output-path aliases.
+
+The header refiner caches the exact LPC signal before postfilter clipping,
+then searches the existing preQ14/brightQ14 pair. Payload and complete stream
+size remain exact. Defaults bound search to 256 header pairs and 16 full
+metric candidates. Reports include the best encountered PCM-SSE header even
+when it trades off another metric.
+
+The excitation refiner freezes spectrum and header filters, preserves incoming
+extra pulses, and jointly probes scale/pitch/base and additional pulse fields.
+It uses the existing exact integer synthesis helper. Default search uses one
+pass, a 160-sample lookahead and 1280-sample groups. `--max-bytes` counts the
+entire serialized stream including the global extra markers and padding.
+Use the input size for the same-budget candidate; a larger explicit cap can
+explore useful quality profiles. Active extra pulses in the stored padded tail
+still count against the cap even though their samples are not scored.
+
+Each selected segment preserves full-reference PCM/PWM SSE and available STOI
+relative to its input, with the input always eligible as rollback. For a
+recording with multiple reset segments, re-evaluate the complete joined output
+and retain the original recording if the joined gates fail. Spectral error can
+move in the opposite direction; these are four declared numerical floors,
+not proof of a perceptual improvement or preservation of every quality measure.
+The excitation CLI also saves a raw best-encountered PCM-SSE stream for review.
+It follows the accepted trajectory, not an independent unconstrained search.
+
+Compare achieved size against quality and an existing encoder at the same
+budget. Modest size growth is acceptable for a demonstrated sound improvement;
+never adopt the largest cap automatically. Account for total firmware Flash,
+including program/tables plus embedded data, and use listening comparisons to
+judge naturalness and artifacts. [Current corpus evidence](../../research/v5-development-2026-10-27/README.md).

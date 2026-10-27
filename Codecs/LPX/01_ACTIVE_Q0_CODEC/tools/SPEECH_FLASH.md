@@ -5,6 +5,13 @@ AVR-GCC7.3.0. Encoded audio is unchanged. No new assembly or hardware
 definitions are added. Keep all defines consistent across the core and its
 consumers because format flags affect class layout.
 
+## Primary speech development target
+
+Current speech work targets `LPX4_COMPACT_ONLY=1` with the measured small-code
+recipe below. Encoder refinement uses the existing v5 format; see
+[SPEECH_COMPACT.md](SPEECH_COMPACT.md#further-v5-only-encoding). The general
+library defaults remain available for consumers of earlier formats.
+
 ## Retained default and compact-only profile
 
 `LPX4_COMPACT_ONLY=0` is the default. It preserves all formats enabled by
