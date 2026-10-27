@@ -1,0 +1,327 @@
+{
+  "schema": "lpx-period-benchmark-v1",
+  "input_manifest_sha256": "d5acf16be0f54e015d2908f520e48ee2e10f019c22ca8b17e917f6fad5ef2846",
+  "environment": {
+    "source_sha256": {
+      "Codecs/LPX/research/period-excitation-2026-10-27/prototype/benchmark_period_excitation.py": "c3b70d088e61077bf32cb24fcaf8d7b0469b1d7c2bae319fc85181e4867e7533",
+      "Codecs/LPX/research/period-excitation-2026-10-27/prototype/fit_period_excitation.py": "8a34954ee01e9b3691f6bfcd0d94cb220a780b3e33cc1bd8e1eb18695dd68257",
+      "Codecs/LPX/research/period-excitation-2026-10-27/prototype/period_excitation.py": "b572b154c3ba23246458ec71bfefb7a911ecbd2172da771fc41d6a941d082792",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "d7c17a39dbaad71df99ff1d46916bd263080cc6727f94b79e98aa86381f562cc",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lpx4.py": "d732e76ed807089d02bea837f07e77f1a64cc94ce63a6be2fab286548b94acc0",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v3.py": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v7.py": "a263dd86f37e0fd467b3c46b42f7ff25e6259ba5f647b6a6d2451ff56f76739b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v4_reference.py": "5cc2b9f0f0f6b5cfebbf4e1afe65326eb017b3564ab40163b3c25cbdc418013c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/l3av_parse.py": "41d61c89ed0bce196eaa44cfd3dbe98bad93ce0d29a2c0cb82f39974fa0d2ab0",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "3129e3d2ea2f634e8a46a4bf7c0c1e91f3c3fb914476fd0ab8737ca96de3d807",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_to_lpx4.py": "26295e84688bb6801875504229341a998c261f72df46e84989daee3a58cc257d",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_pcm16.py": "ae6c2b0aba038254b5555cd4cdf054d7a9e549f72485f483a880807b3d5d0c9a",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "8313d8d3702d1e0d1fc980bd54f119ac3aaf30d449c2ddcb62028d2598c2f522",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "332b71ad188491b9c57c27f79aff34aa98be89af57a62d129a6c69c22c58277f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "ATtiny13A/Sound/codec/period_wave.py": "d6d92cdd2e8d910a9e4085f939e193553fac53e5cd8b0d892b29e76b3709587f"
+    },
+    "python": "3.12.14",
+    "packages": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "numba": "0.68.0",
+      "pystoi": "0.4.1",
+      "soundfile": "0.14.0"
+    },
+    "native_decoder": {
+      "speech": true,
+      "speech_compact": true,
+      "v3_features": 124
+    }
+  },
+  "seed": 20261027,
+  "words": [
+    0,
+    4,
+    8
+  ],
+  "rate_weights": [
+    0.0,
+    0.05
+  ],
+  "case_count": 12,
+  "expected_baseline_segments": 32,
+  "expected_candidate_streams": 192,
+  "protocol": {
+    "original_level_and_dc": true,
+    "gain_fit": false,
+    "delay_fit": false,
+    "full_case_join_before_quality": true,
+    "fixed_pwm_gain": 130,
+    "fixed_pwm_rounding": 1,
+    "all_lpwb_header_dictionary_metadata_padding_counted": true,
+    "baseline_is_frozen_selected_v5": true,
+    "floors": "PCM/PWM SSE <= baseline; available PCM/PWM STOI >= baseline; absolute tolerance 1e-10.",
+    "unavailable_stoi": "No invented floor; explicitly counted as unavailable.",
+    "selection": "Keep baseline eligible; report best PCM SSE and minimum bytes choices separately.",
+    "cap_scenarios": [
+      "existing total complete-stream bytes",
+      "each existing segment complete-stream bytes",
+      "each configured segment cap and their total"
+    ],
+    "configured_segment_caps_mandatory_for_adoption": true,
+    "firmware_or_real_time_support_claimed": false,
+    "human_listening_scores_collected": false
+  },
+  "status": "complete",
+  "counters": {
+    "baseline_segments_verified": 32,
+    "analyses_executed": 32,
+    "fits_executed": 192,
+    "fits_reused": 0
+  },
+  "completed_case_profiles": 24,
+  "elapsed_seconds": 66.920219700085,
+  "raw_variant_counts": {
+    "total": 144,
+    "strict_quality_floors_passed": 26,
+    "accepted_under_existing_total": 3,
+    "accepted_under_configured_caps": 21
+  },
+  "selection_counts": {
+    "existing_total_bytes": {
+      "baseline-v5": 23,
+      "k00-r000": 1
+    },
+    "existing_segment_bytes": {
+      "baseline-v5": 23,
+      "k00-r000": 1
+    },
+    "configured_caps": {
+      "baseline-v5": 22,
+      "k04-r000": 1,
+      "k00-r000": 1
+    }
+  },
+  "baseline_commit": "3680f86c895e238e1ed9d44b5cc74b1e2213c9d6",
+  "host_only": true,
+  "firmware_modified": false,
+  "firmware_or_real_time_admission": false,
+  "human_listening_scores_collected": false,
+  "held_out_quality_claimed": false,
+  "composition": {
+    "languages": {
+      "ru": 6,
+      "en": 6
+    },
+    "cohorts": {
+      "speech": 8,
+      "independent": 2,
+      "phrases": 2
+    },
+    "conditions": {
+      "natural": 6,
+      "quiet_minus24dB": 2,
+      "white_noise_15dB": 2,
+      "prepared": 2
+    },
+    "explicit_primary_speaker_groups": 5,
+    "primary_voice_categories": 2
+  },
+  "unique_samples": 840537,
+  "unique_seconds": 105.067125,
+  "aggregate": [
+    {
+      "profile": 4,
+      "variant": "baseline-v5",
+      "bytes": 47876,
+      "pcm_sse": 1170304731077.0,
+      "pcm_stoi_case_mean": 0.7197412969346629,
+      "pwm_sse": 1186488947368.0,
+      "pwm_stoi_case_mean": 0.6663058568264695,
+      "periodic_active_blocks": 0,
+      "quality_floors_passed": 12
+    },
+    {
+      "profile": 4,
+      "variant": "k00-r000",
+      "bytes": 52094,
+      "pcm_sse": 1173859431597.0,
+      "pcm_stoi_case_mean": 0.6837284200771923,
+      "pwm_sse": 1189977708712.0,
+      "pwm_stoi_case_mean": 0.6518750054010811,
+      "periodic_active_blocks": 0,
+      "quality_floors_passed": 4
+    },
+    {
+      "profile": 4,
+      "variant": "k00-r050",
+      "bytes": 48300,
+      "pcm_sse": 1205413652653.0,
+      "pcm_stoi_case_mean": 0.6697727297697055,
+      "pwm_sse": 1221671066280.0,
+      "pwm_stoi_case_mean": 0.640414548680776,
+      "periodic_active_blocks": 0,
+      "quality_floors_passed": 1
+    },
+    {
+      "profile": 4,
+      "variant": "k04-r000",
+      "bytes": 52530,
+      "pcm_sse": 1194374541585.0,
+      "pcm_stoi_case_mean": 0.6938515126062067,
+      "pwm_sse": 1210249861288.0,
+      "pwm_stoi_case_mean": 0.6531064740141067,
+      "periodic_active_blocks": 189,
+      "quality_floors_passed": 0
+    },
+    {
+      "profile": 4,
+      "variant": "k04-r050",
+      "bytes": 47947,
+      "pcm_sse": 1255515221433.0,
+      "pcm_stoi_case_mean": 0.6779431001932404,
+      "pwm_sse": 1272427555496.0,
+      "pwm_stoi_case_mean": 0.6400178202109613,
+      "periodic_active_blocks": 854,
+      "quality_floors_passed": 0
+    },
+    {
+      "profile": 4,
+      "variant": "k08-r000",
+      "bytes": 52046,
+      "pcm_sse": 1223889483046.0,
+      "pcm_stoi_case_mean": 0.671065141503279,
+      "pwm_sse": 1238906107560.0,
+      "pwm_stoi_case_mean": 0.6368071326546393,
+      "periodic_active_blocks": 283,
+      "quality_floors_passed": 0
+    },
+    {
+      "profile": 4,
+      "variant": "k08-r050",
+      "bytes": 47853,
+      "pcm_sse": 1290334029023.0,
+      "pcm_stoi_case_mean": 0.6492382736475499,
+      "pwm_sse": 1305864209576.0,
+      "pwm_stoi_case_mean": 0.6210656119441395,
+      "periodic_active_blocks": 1056,
+      "quality_floors_passed": 0
+    },
+    {
+      "profile": 6,
+      "variant": "baseline-v5",
+      "bytes": 68427,
+      "pcm_sse": 793519076371.0,
+      "pcm_stoi_case_mean": 0.763627627842676,
+      "pwm_sse": 804042163368.0,
+      "pwm_stoi_case_mean": 0.6957159463649492,
+      "periodic_active_blocks": 0,
+      "quality_floors_passed": 12
+    },
+    {
+      "profile": 6,
+      "variant": "k00-r000",
+      "bytes": 72368,
+      "pcm_sse": 793716184543.0,
+      "pcm_stoi_case_mean": 0.7354499941745647,
+      "pwm_sse": 804204198056.0,
+      "pwm_stoi_case_mean": 0.6896267256934081,
+      "periodic_active_blocks": 0,
+      "quality_floors_passed": 7
+    },
+    {
+      "profile": 6,
+      "variant": "k00-r050",
+      "bytes": 63691,
+      "pcm_sse": 862296183035.0,
+      "pcm_stoi_case_mean": 0.698909715168214,
+      "pwm_sse": 873413377192.0,
+      "pwm_stoi_case_mean": 0.6616531688119919,
+      "periodic_active_blocks": 0,
+      "quality_floors_passed": 1
+    },
+    {
+      "profile": 6,
+      "variant": "k04-r000",
+      "bytes": 72133,
+      "pcm_sse": 796510512191.0,
+      "pcm_stoi_case_mean": 0.7321331144205108,
+      "pwm_sse": 807306665128.0,
+      "pwm_stoi_case_mean": 0.6875157303279753,
+      "periodic_active_blocks": 19,
+      "quality_floors_passed": 6
+    },
+    {
+      "profile": 6,
+      "variant": "k04-r050",
+      "bytes": 63058,
+      "pcm_sse": 891363379293.0,
+      "pcm_stoi_case_mean": 0.684322246052665,
+      "pwm_sse": 903537466536.0,
+      "pwm_stoi_case_mean": 0.6514665524304526,
+      "periodic_active_blocks": 742,
+      "quality_floors_passed": 1
+    },
+    {
+      "profile": 6,
+      "variant": "k08-r000",
+      "bytes": 71651,
+      "pcm_sse": 795243999963.0,
+      "pcm_stoi_case_mean": 0.7247270851051346,
+      "pwm_sse": 805789686440.0,
+      "pwm_stoi_case_mean": 0.6839683942761513,
+      "periodic_active_blocks": 22,
+      "quality_floors_passed": 5
+    },
+    {
+      "profile": 6,
+      "variant": "k08-r050",
+      "bytes": 63771,
+      "pcm_sse": 916251996407.0,
+      "pcm_stoi_case_mean": 0.6954254044120827,
+      "pwm_sse": 929413369512.0,
+      "pwm_stoi_case_mean": 0.6577730379508837,
+      "periodic_active_blocks": 1002,
+      "quality_floors_passed": 1
+    }
+  ],
+  "case_results_sha256": "283f1012a3959c2ffde8a269498a219906bf5ed7ac480eaa3b2e3bc040667b15",
+  "full_local_sanitized_report_sha256": "0932dea698e06c379ffc7f8ad941d3bfbfe903d11836b1f05a63d0f4b838c3fe",
+  "tests": {
+    "groups": 13,
+    "passed": true,
+    "scope": "Synthetic bitstream/arithmetic, native all-legacy parity, fitter determinism and input-validation tests."
+  },
+  "conclusions": {
+    "learned_period_improvement_under_existing_achieved_bytes": false,
+    "achieved_byte_winner_is_zero_dictionary_equivalent": true,
+    "configured_cap_distinct_learned_improvement": {
+      "id": "period-speech-10",
+      "profile": 6,
+      "variant": "k04-r000",
+      "periodic_active_blocks": 2,
+      "baseline_bytes": 23262,
+      "candidate_bytes": 25272,
+      "caution": "Small metric improvement costs 2010 additional bytes; target decoder cost is not included."
+    },
+    "same_byte_silence_ablation_win": {
+      "id": "period-speech-12",
+      "profile": 6,
+      "baseline_bytes": 1084,
+      "candidate_bytes": 1000,
+      "periodic_active_blocks": 0,
+      "silent_book_blocks": 20
+    }
+  },
+  "test_source_sha256": {
+    "test_fit_period_excitation.py": "38cf48921aba088f1103188c33d4ffbff9607f11a494447a2ede2bc87f367edf",
+    "test_period_excitation.py": "5ec0e0f128183b4fb5781f85f8988669fce86cb67ebebf05eee3cf89a214d480"
+  },
+  "runner_sha256": "43adcaffa5475bbb3a7dad95027adadc60858a4cc212d231310ac4bea2b3d476"
+}
