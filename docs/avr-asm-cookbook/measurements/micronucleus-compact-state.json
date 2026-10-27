@@ -226,5 +226,91 @@
     "No MicroMusic runtime/backend changes",
     "Local source hashes identify the isolated evidence and may differ from later integrated candidates",
     "Equal initializer delay does not establish correct or centered inherited RX/TX bit periods; the specification timing audit remains separate."
-  ]
+  ],
+  "descriptor_backed_replies": {
+    "source_commit": "9b3918c05d09ed2977604267cf1b1c4e51476616",
+    "source_files": [
+      "source/vusb_ep0.inc",
+      "source/vusb_standard.inc"
+    ],
+    "before_bytes_at_0x1c00": 1110,
+    "after_bytes_at_0x1c00": 1102,
+    "saving_bytes": 8,
+    "after_body_sha256_at_0x1c00": "d4794c300614c616018617b394cb97d1025abdf99d7487054331b08c55ea9375",
+    "fitting_profile_bytes_before": [
+      1114,
+      1132,
+      1130
+    ],
+    "fitting_profile_bytes_after": [
+      1106,
+      1124,
+      1122
+    ],
+    "constraints": [
+      "configuration is zero or one after RESET and every accepted SET_CONFIGURATION",
+      "complete 16-bit wValue >= 2 is rejected without changing configuration",
+      "descriptor bytes 14..17 are immutable and share one high address byte",
+      "Flash reply pointers have bit 15 clear; EEPROM replies retain bit 15",
+      "valid EEPROM packets never cross a low-byte wrap",
+      "all reply-pointer producers and consumers use the same tag",
+      "EEPROM busy and final SPM boundary/alignment guards remain"
+    ],
+    "validation": {
+      "standard_request_combinations": 13824,
+      "stateful_transfers": 2658,
+      "configuration_word_prior_state_cases": 393216,
+      "payload_crc_tagged_pointer_cases": 540,
+      "cursor_inputs": 196608,
+      "poisoned_r2_independence": true,
+      "full_nvm_and_mock_host": true,
+      "phy_bytes_identical": true
+    }
+  },
+  "merged_startup_clear_delay": {
+    "source_commit": "0cd03c728f63f7cabb701ea5e2503bf48ecd3027",
+    "source_files": [
+      "source/micronucleus_t88_compact.S",
+      "source/compact_protocol.inc",
+      "tests27/startup_init.py"
+    ],
+    "before_bytes_at_0x1c00": 1102,
+    "after_bytes_at_0x1c00": 1096,
+    "saving_bytes": 6,
+    "fitting_profile_bytes_after": [
+      1100,
+      1118,
+      1116
+    ],
+    "context_bytes": 44,
+    "clear_first": "0x012b",
+    "clear_last": "0x0100",
+    "inner_count": 27359,
+    "inner_cycles": "4 * 27359 - 1",
+    "disconnect_cycles": 4815449,
+    "disconnect_ms_at_16mhz": 300.9655625,
+    "constraints": [
+      "hardware/watchdog RESET only; reset-owned stack and I=0",
+      "watchdog WDTON fuse unprogrammed, as required by the baseline",
+      "WDR before watchdog prescaler change; capture MCUSR before clearing",
+      "clear MCUSR.WDRF before clearing WDE; two STS writes two cycles apart",
+      "watchdog disabled and D- driven low before delayed SRAM clear",
+      "context remains unused and PCINT disabled until complete initialization",
+      "exact byte range and low-byte stop condition must be re-proved if relocated"
+    ],
+    "validation": {
+      "all_three_led_modes": true,
+      "actual_word_countdown_acceleration": true,
+      "surrounding_sram_unchanged": true,
+      "final_y": "0x0100",
+      "r24_r25_finish_zero": true,
+      "persistent_cursors_initialized": true,
+      "watchdog_and_usb_enable_order": true,
+      "rejected_mutations": [
+        "MCUSR clear after watchdog writes",
+        "same-cycle MOV replacing startup WDR"
+      ]
+    },
+    "scope": "Offline state, instruction and size validation, without physical USB or timing admission"
+  }
 }

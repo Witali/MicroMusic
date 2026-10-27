@@ -348,6 +348,130 @@ USB CRC16/cursor cases, and 1110 DATA-PID reset/toggle cases across all three
 LED profiles. These counts describe specific model workloads, not every USB
 error/retry state or electrical compliance.
 
+### Replace generic reply storage with validated descriptor bytes
+
+The compact loader's fixed device descriptor already ends in the string-index
+bytes `0, 0, 0` and the configuration count `1`. GET_STATUS and GET_INTERFACE
+can read its bytes 14/15 instead of a permanent SRAM zero pair.
+GET_CONFIGURATION can point to byte 16 or byte 17, provided every reachable
+configuration is zero or one. Enforce that invariant at the complete 16-bit
+SET_CONFIGURATION value, not only its low byte:
+
+```asm
+; GPL-2.0-or-later MicroNucleus excerpt, source commit 9b3918c.
+; r18 = wValueLow; Y = context; r1 = 0. LDD preserves CPI's borrow.
+cpi     r18, 2
+ldd     r24, Y+CTX_SETUP_VALUE_HIGH
+cpc     r24, r1
+brsh    reject_without_changing_configuration
+std     Y+CTX_CONFIGURATION, r18
+
+; Bytes 16/17 share the descriptor's 256-byte Flash window.
+ldd     r18, Y+CTX_CONFIGURATION
+subi    r18, lo8(-(device_descriptor + 16))
+ldi     r24, 1
+; The common reply helper loads the known Flash high byte.
+```
+
+The `SUBI` adds a fixed low address without another LDI/ADD pair. The shared
+high byte is valid only while these adjacent bytes remain in the same window.
+The two valid prior states are established by RESET clearing and preserved by
+every accepted setter; invalid values, including nonzero wValueHigh, preserve
+the old state. Directly injecting CFG=255 into this representation is no
+longer a valid-state fixture. Keep exhaustive malformed-request tests instead.
+
+All remaining reply sources are Flash or EEPROM, so remove the unused SRAM
+copy branch and its separate source flag. The persistent byte pointer
+`r14:r15` can retain EEPROM in bit 15; the eight-byte READ keeps that tag rather
+than moving it into r2 and clearing its high byte. The TX byte reader tests
+`r15.7`, uses only ZL for EEARL, and advances the low byte. The host already
+restricts valid EEPROM reads to 0..63, so no valid packet crosses a low-byte
+wrap. Flash pointers must have bit 15 clear, and every actual reply-pointer
+producer and consumer must adopt the tag together. EEPROM readiness and the
+final Flash SPM boundary guard are unchanged. **Never remove SPM page-address
+alignment:** ATtiny48/88 doc8008 section 19.0.3 requires non-PCPAGE Z bits zero
+for Page Write, even though Page Erase ignores them.
+
+This combined linked change saves **eight code bytes**, including strict
+full-word configuration validation: **1110 to 1102 bytes at 0x1C00**. It frees
+r2; poisoned-r2 tests ensure it no longer selects memory. The fitting
+off/high/low profiles change 1114/1132/1130 to 1106/1124/1122 bytes. PHY machine
+bytes are identical. The arithmetic C reference in
+[micronucleus-state-reuse.c](examples/micronucleus-state-reuse.c) checks the
+state invariant independently of EEPROM hardware access; it is not a new
+MicroMusic runtime backend.
+
+Validation at source commit `9b3918c05d09ed2977604267cf1b1c4e51476616` covers
+13824 standard request combinations, 2658 stateful control transfers including
+descriptor wLength 0..256 and 8/8/2 packets, independent CRC/PID checks,
+393216 configuration-word/prior-state cases (all 65536 words from both valid
+states in each of three profiles), 540 Flash/EEPROM payload/CRC/tagged-pointer
+cases, 196608 cursor inputs, and full NVM/host tests. These are instruction/IO
+models, not electrical USB or timing admission.
+
+### Merge an idle-time delay with a bounded SRAM initialization loop
+
+After hardware RESET, the loader must disconnect USB for roughly 301 ms and
+clear 44 context bytes. Their iteration counts can share Y: delay once per
+context byte, then pre-decrement/store zero. This removes the separate outer
+delay counter and standalone clear loop:
+
+```asm
+; GPL-2.0-or-later MicroNucleus excerpt, source commit 0cd03c7.
+; Before this fragment: r1=0; reset cause captured; watchdog disabled;
+; D- driven low; Y=0x012c. Interrupts and PCINT remain disabled.
+outer:
+    ldi     r24, lo8(27359)
+    ldi     r25, hi8(27359)
+inner:
+    sbiw    r24, 1
+    brne    inner
+    st      -Y, r1
+    cpi     r28, 0
+    brne    outer
+; Y=0x0100, r25:r24=0; only then release D- and enable USB polling.
+```
+
+The context cannot be consumed until the complete clear finishes; it is safe
+here because USB is physically disconnected and its pin-change source is
+disabled. The exact range 0x012B..0x0100 is 44 bytes and never crosses the
+low-byte stop condition. A different base/range needs a new end test and
+delay calculation. All paths require hardware/watchdog RESET, reset-owned
+stack and I=0; a software jump into startup is unsupported. The delay relies
+on a 16 MHz CPU clock and an unprogrammed WDTON fuse, as did the previous code.
+
+The invariant is not merely final SRAM content. Execute WDR before changing
+watchdog prescaler bits, capture MCUSR before clearing it, clear WDRF before
+clearing WDE, and keep the WDCE/WDE timed writes within four CPU cycles.
+This loader's two STS instructions write the unlock value 0x18 and then zero
+two cycles apart. Disable the inherited watchdog before the 300 ms delay.
+See the primary [ATtiny48/88 doc8008](https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf),
+sections 8.4/8.5.2 for watchdog sequencing and 8.1 for GPIO RESET state.
+
+The inner countdown is exactly `4 * 27359 - 1` cycles. Including 44 outer loads,
+stores, comparisons, branches and the initial DDR write, the disconnect
+interval is 4815449 CPU cycles: **300.9655625 ms at 16 MHz**. The linked change
+saves **six bytes**, **1102 to 1096 bytes at 0x1C00**, at source commit
+`0cd03c728f63f7cabb701ea5e2503bf48ecd3027`. The off/high/low fitting profiles
+then occupy 1100/1118/1116 bytes. The LED-off build remains 72 bytes above
+the 1024-byte target.
+
+`tests27/startup_init.py` executes actual emitted words, accelerating only the
+verified `SBIW r24, 1; BRNE` countdown. It checks the exact 44 addresses, untouched
+surroundings, zero registers/persistent cursors, final Y, reset-cause capture,
+watchdog write timing and ordering, disconnect interval and USB enable order.
+Independent rebuilt mutations move MCUSR clearing after watchdog writes or
+replace WDR by a same-cycle MOV; both are rejected by the strengthened model
+while the measured baseline passes. The portable reference checks the merged
+loop's address/count arithmetic; it does not emulate watchdog hardware.
+
+Reproduce both checkpoints from the corresponding MicroNucleus source commits
+in `experimental/attiny88/compact` with `sh verify27.sh`. Startup standalone:
+`python3 tests27/startup_init.py`. Toolchain remains Clang/LLVM 18.1.3,
+`-target avr -mmcu=attiny88 -x assembler-with-cpp`, GNU `avr-ld` 2.26 and
+Python 3.12.3. Build/model evidence and exact provenance are added to the
+[measurement record](measurements/micronucleus-compact-state.json).
+
 ### Evidence and reuse boundary
 
 The [measurement record](measurements/micronucleus-compact-state.json) pins

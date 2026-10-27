@@ -3070,3 +3070,9 @@ undefined ELF flag operands, verify raw branch bits, replace a proven invariant
 RX-base calculation with a cycle-matched setup, and keep a reply cursor in a
 proven-free register pair. Exact local source hashes and model workloads are
 pinned; the measurements do not claim a 1024-byte result or a new runtime backend.
+Later compact examples reuse validated descriptor bytes instead of generic
+SRAM reply storage (eight bytes saved), and merge the disconnect delay with
+the SRAM clear loop (six bytes). The source-pinned checkpoints measure
+1110 to 1102 to 1096 bytes at 0x1C00, with full configuration-word checks,
+tagged-pointer CRC cases and startup watchdog-order mutations. These are
+offline state/size measurements; USB timing admission remains separate.

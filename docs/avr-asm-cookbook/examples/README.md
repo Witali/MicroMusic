@@ -273,3 +273,16 @@ checks selected BRBC/BRBS sense and SREG-bit operands from machine words.
 It is a build-audit utility, not an AVR runtime backend or a complete timing
 verifier. See the [compact Micronucleus recipe](../micronucleus-eeprom-stream.md)
 for commands, architecture constraints and mutation-check evidence.
+
+## Compact Micronucleus state and startup reference
+
+[micronucleus-state-reuse.c](micronucleus-state-reuse.c) is a standalone portable
+C arithmetic reference for complete configuration validation, descriptor-based
+zero/one replies, tagged memory pointers and the merged 44-byte clear/delay loop.
+It performs no MMIO and adds no ASM backend. Actual AVR opcode, watchdog-order
+mutation and protocol checks stay in the pinned MicroNucleus source commits.
+See the [measured recipe](../micronucleus-eeprom-stream.md) for provenance,
+size results and hardware/timing limits. Compile with assertions enabled:
+
+    clang -std=c99 -Wall -Wextra -Werror micronucleus-state-reuse.c -o state-reuse-test
+    ./state-reuse-test
