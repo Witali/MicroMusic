@@ -265,6 +265,22 @@ files. Unless a supported portable route is established, the documented
 execution option is an isolated Windows installation/VM with Studio's GUI and
 project-local scripting. No such installation or simulator session exists here.
 
+2026-10-27 launch observation: after explicit user approval, Windows app control
+launched the extracted `7.0/AtmelStudio.exe` (531,688 bytes; SHA-256
+`21229ec4471897be90dbdbe90a37896821e7d44afc6bd0832d70430195d79f42`).
+It briefly returned one Studio window; that handle disappeared before state
+capture, and a process check then found zero Studio processes. Application-log
+inspection was denied, so the termination cause is unknown. The user stopped
+computer control with Escape; no further UI action followed. No installer,
+driver or simulator session was run. A missing conventional installation or
+Shell InstallDir value is not enough to assign a failure cause.
+
+The user then explicitly requested console commands when available. Prefer the
+documented MDB command-file route for future reference execution and record its
+actual host/device/pack readiness before comparing results. Studio's successful
+programming-CLI help does not supply a simulator stepping command. Do not retry
+an unchanged denied installer URL or substitute guessed backend commands.
+
 ### Execution limits
 
 Studio's manufacturer documentation says
