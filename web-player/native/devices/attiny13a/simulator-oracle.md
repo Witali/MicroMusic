@@ -15,10 +15,10 @@ This is not a separately published vendor checksum. URL, destination, purpose
 and license are pinned in [`tools/downloads.json`](../../../../tools/downloads.json),
 ID `mplab-x-sdk`; the archive stays in ignored `build/reference-downloads/`.
 
-The actual archive contains **zero `.jar` and zero `.class` files**. Its
-runtime-like binaries belong to bundled test fixtures/device packs, not a
-standalone MDBCore host. The Gallery package description mentioning precompiled
-libraries therefore does not establish that this SDK alone runs the simulator.
+The outer archive has **zero plain `.jar` and zero `.class` members**. This
+filename result does not imply an absence of compiled Java payloads: a nested
+official example contains a Pack200 plug-in, audited below. Bundled device-model
+binaries and that client plug-in do not establish a standalone MDBCore host.
 
 Relevant original archive members:
 
@@ -40,6 +40,46 @@ retained byte-for-byte under `build/mplab-sdk-6.25/`; `derivedAssets` in the reg
 records all member names. No SDK code or example was compiled/executed. Local
 Java/Javac are Temurin 25.0.3; compatibility with the documented API is unproven.
 No MDB command or usual MPLAB X/Microchip Studio installation was found.
+
+### Nested plug-in audit, 2026-10-27
+
+An independent recursive ZIP/gzip-magic scan inspected **15,215 regular members**
+and **23 ZIP containers including the SDK itself** (22 nested containers, also
+named `.nbm`, `.atzip` and `.thmx`). It found no plain JAR or raw Java class, but
+exactly one gzip-compressed Pack200 Java payload:
+
+```text
+mplab-x-sdk/MPLAB_X/doc/Simulator/examples/ExecCyclePlugIn.zip
+ ! ExecCyclePlugIn/com-microchip-mplab-simulator.nbm
+ ! netbeans/modules/com-microchip-mplab-simulator.jar.pack.gz
+```
+
+The original compressed member is **6814 bytes**, SHA-256
+`3887e45b992e3eb97c991cc92727ba7aeb3b22354254fe5f8488c3f2bcd92c2c`.
+Gzip decompression in memory yields **15,210 bytes**, beginning with Pack200
+magic `CAFED00D`. No Pack200 unpacker or Java plug-in code was executed; no
+archive member was extracted to disk in this audit.
+
+The original NBM `Info/info.xml` has SHA-256
+`976ee65c40ff49e371dea9a81b4e0835e26641b227df34cb6170799273c2b8e5`.
+It names **ExecCyclePlugIn**, module `com.microchip.mplab.simulator`, and requires
+Java >1.6 plus separate `mdbcore.assemblies` >1.0, `mdbcore.debugger` >1.1,
+`mdbcore.memory` >1.0, `mdbcore.simulator` >1.0 and `mdbcore.symbolview` >1.5.5
+modules under `com.microchip.mplab`, together with IDE/NetBeans modules.
+Those dependency payloads are absent. The corresponding project source supplies
+an execution-cycle counter and its NetBeans window; it is not the required
+`com.microchip.mplab.mdbcore.simulator` engine. Its metadata license field is
+`[NO LICENSE SPECIFIED]`; the SDK's separate standard notice does not supply a
+specific plug-in redistribution license. Keep original bytes/notices locally.
+
+The expanded read-only audit also examined 9351 SDK text/source members, all 44
+`doc/Simulator/content/*.html` pages, and 1552 pinned DFP members (489 text).
+The Simulator `ProcessorAPI.html` describes PIC processors; included functional
+examples use PIC18F458 or PIC16F777/PIC16F1947. ATtiny13 appears in two compiler
+fixture register headers and two Mockito device-list/deprecation tests. No
+ATtiny13A Timer0 golden trace or TOP=0 definition was found. The DFP's model DLL
+still supplies no documented standalone ABI. These checks establish no working
+archive-only host or independent AVR execution result.
 
 Reproduce the archive checks from the repository root:
 
@@ -307,6 +347,16 @@ This alternative did not establish an executable MDB host. Prefer the documented
 console route when it becomes available; do not repeat the unchanged denied URL,
 infer simulator commands from Studio's programming CLI, or treat the unexecuted
 command-file template as verification evidence.
+
+The same official archive's **Linux 6.25** href was separately registered as
+`mplab-x-ide-linux-6.25` before its local network check. On 2026-10-27 the web
+reader reached the manufacturer's access-denied page and ordinary permitted-
+network HTTPS HEAD returned 403. No GET, archive, computed hash or live download
+exists. A sandboxed read-only WSL inventory was also denied; that is not evidence
+of the host's installed distribution state. No Linux execution environment was
+established or installed. Do not assume Linux payloads can run on Windows or
+retry unchanged denied URLs. An accessible supported installation/distribution
+remains the prerequisite for the documented MDB control comparison.
 
 ## Oracle limits
 

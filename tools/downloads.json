@@ -161,6 +161,25 @@
   ],
   "plannedAssets": [
     {
+      "id": "mplab-x-ide-linux-6.25",
+      "version": "6.25",
+      "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/DEV/ProductDocuments/SoftwareTools/MPLABX-v6.25-linux-installer.tar",
+      "publisherPage": "https://www.microchip.com/en-us/tools-resources/archives/mplab-ecosystem",
+      "path": "build/reference-downloads/MPLABX-v6.25-linux-installer.tar",
+      "status": "not-downloaded",
+      "purpose": "Check availability of the official Linux MDB host matching the acquired SDK; static format/license research only. Linux execution support must be established separately; no installer, VM/WSL installation, system changes, drivers or physical programming.",
+      "license": "Original installer and third-party terms must be inspected after acquisition; local research only, no redistribution.",
+      "provenance": "Exact Linux 6.25 href resolved from the official archive table on 2026-10-27. No published checksum or local file obtained; no Windows checksum applies.",
+      "acquisitionCheck": {
+        "date": "2026-10-27",
+        "webReference": "Redirected to the manufacturer's /en-us/error/401.html access-denied page.",
+        "permittedNetworkHead": "Ordinary HTTPS HEAD returned403 Forbidden; no GET attempted.",
+        "activeDownloadHandle": false,
+        "actualBytesAndHash": "Unknown; no complete or partial archive file created.",
+        "linuxHost": "Not established. A read-only WSL inventory query was denied inside the command sandbox; that does not establish the host's installed distribution state. No subsystem or VM was installed/launched."
+      }
+    },
+    {
       "id": "mplab-x-ide-windows-6.25",
       "version": "6.25",
       "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/DEV/ProductDocuments/SoftwareTools/MPLABX-v6.25-windows-installer.exe",
