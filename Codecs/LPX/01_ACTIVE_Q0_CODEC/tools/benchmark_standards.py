@@ -67,7 +67,15 @@ def save(path,data):
     path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
     temporary=path.with_name(path.name+'.writing')
     temporary.write_bytes((json.dumps(data,ensure_ascii=False,indent=2,allow_nan=False)+'\n').encode())
-    temporary.replace(path)
+    for attempt in range(6):
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            if attempt==5:raise
+            # Windows readers can briefly deny atomic replacement. Keep the
+            # old destination intact and retry only that operation, bounded.
+            time.sleep(.01*(2**attempt))
 
 
 def prepare(corpus,music_sources,output):
