@@ -1,6 +1,13 @@
 """Shared PCM error, fixed PWM and Ogg byte accounting for codec comparisons."""
+import re
+import warnings
 import numpy as np
 from scipy.signal import correlate
+
+
+_STOI_INSUFFICIENT_FRAMES = (
+    'Not enough STFT frames to compute intermediate intelligibility measure '
+    'after removing silent frames. Returning 1e-5. Please check you wav files')
 
 
 def error_metrics(reference, decoded, speech=False, rate=8000):
@@ -17,7 +24,27 @@ def error_metrics(reference, decoded, speech=False, rate=8000):
         'stoi':None}
     if speech and power:
         from pystoi import stoi
-        result['stoi']=float(stoi(x.astype(float)/32768,y.astype(float)/32768,rate))
+        from pystoi.stoi import FS, N, N_FRAME
+        # Both pystoi framing passes exclude a window ending exactly at the
+        # array boundary. Even before silence removal, N final STFT frames
+        # therefore need N_FRAME + N*(N_FRAME//2) + 1 resampled samples.
+        # resample_poly returns ceil(input_samples*FS/rate); use an exact
+        # integer inequality, and leave invalid rates to pystoi as before.
+        minimum=N_FRAME+N*(N_FRAME//2)
+        if rate>0 and int(rate)==rate and len(x)*FS<=minimum*int(rate):return result
+        # pystoi returns a numeric sentinel for insufficient active frames.
+        # Identify that specific warning, not its value: a valid score may
+        # also be 1e-5. Other warnings retain the caller's warning policy.
+        with warnings.catch_warnings():
+            warnings.filterwarnings('error',message='^'+re.escape(_STOI_INSUFFICIENT_FRAMES)+'$',
+                                    category=RuntimeWarning,module=r'^pystoi\.stoi$')
+            try:
+                result['stoi']=float(stoi(x.astype(float)/32768,y.astype(float)/32768,rate))
+            except RuntimeWarning as warning:
+                origin=warning.__traceback__
+                while origin.tb_next is not None:origin=origin.tb_next
+                if (str(warning)!=_STOI_INSUFFICIENT_FRAMES or
+                        origin.tb_frame.f_globals.get('__name__')!='pystoi.stoi'):raise
     return result
 
 
