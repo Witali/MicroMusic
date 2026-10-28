@@ -95,3 +95,49 @@ symbol retention, exact audio exclusion and saved-PWM checks for the
 completed8/12/16 study. It does not reinterpret a v5-only build as legacy
 compatible. Its current-source admission and continuous controls are
 separate from the earlier speech measurements.
+
+
+## Complete-recording firmware cost
+
+```text
+python tools/measure_speech_firmware.py BUILD/firmware SEGMENT0.l4hy SEGMENT1.l4hy --avr-bin AVR_BIN
+```
+
+This separate collector links a real v5-only ELF for the complete recording,
+including every reset segment, Flash pointer/length tables, startup, runtime,
+codec tables and the retained playback/profiling harness. Shared code is counted
+once. Full Flash is `.text + .data`; `program_flash_bytes` additionally subtracts
+only the exact, distinct embedded stream arrays proved against ELF symbols and
+the loaded binary. Duplicate segment content must still occupy distinct ranges
+before its cost can be subtracted twice. Alignment and linker relaxation can
+change non-stream cost by a byte, so do not replace measurement with a constant.
+
+The derived harness resets the decoder between segments while output IRQs and
+the queue continue. Reset time is inside the measured producer interval. It
+uses the same manufacturer/AVR-LibC register definitions and externally retained
+profiling metadata as `profile.cpp`. This multi-segment harness has a different
+footprint from the old one-array study; compare candidate images built with the
+same collector, reset geometry and flags. It is a diagnostic firmware, not the
+planned minimal production player.
+
+`cost.json` records `lpx-v5-firmware-cost-v1`: ordered stream hashes, total stream
+bytes, full/program Flash, source/build/image fingerprints and explicit exact
+embedding/complete-image evidence. The build fingerprint includes toolchain,
+headers, flags, source inventory, derived harness and segment sample counts;
+stream content is bound separately. Source or binary changes invalidate the
+cache. These local fingerprints detect stale data, not maliciously fabricated
+third-party evidence.
+
+All generated files must stay under this checkout's ignored `build/`. APIs
+`measure(streams, output, avr_bin)` and `simulate(...)` accept complete bytes-like
+v5 segments; the CLI also protects source stream paths. At most 255 segments
+are supported. Link failure or unknown cost never means zero Flash. The
+selector separately enforces the hard target capacity, such as 32768 bytes for
+the tested ATmega328P; no bootloader reservation is assumed.
+
+Add `--runner SIM_RUNNER --lib SIM_LIB --wsl Ubuntu` for complete-chain active-IRQ
+simulation and independent-model PWM verification. `--irq 100` adds 100 deliberate
+cycles per audio tick. Timing and physical-board status are separate from size
+evidence: a linked image is not real-time admission, and simulator success does
+not establish board/analog-output behavior. The arithmetic C fallback can be
+measured through `measure(..., assembly=False)`; no new assembly is introduced.

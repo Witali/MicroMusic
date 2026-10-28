@@ -127,3 +127,66 @@ budget. Modest size growth is acceptable for a demonstrated sound improvement;
 never adopt the largest cap automatically. Account for total firmware Flash,
 including program/tables plus embedded data, and use listening comparisons to
 judge naturalness and artifacts. [Current corpus evidence](../../research/v5-development-2026-10-27/README.md).
+
+
+## Joint LPC and excitation refinement
+
+```text
+python tools/refine_speech_lpc.py REFERENCE.wav INPUT.l4hy BUILD/lpc --max-bytes COMPLETE_STREAM_CAP
+```
+
+This additional offline stage changes legal ordered quantized LSF coordinates
+and refits nearby excitation using the same integer synthesis. The decoder and
+v5 format are unchanged. Use a strong existing v5 stream as input; header
+filters remain fixed. Search is bounded, not a global coefficient optimum.
+
+Defaults visit up to 32 compact frames per segment, screening legal +/-1 LSF
+neighbours over 640 samples and refitting the best two proposals over the changed
+frame and its next interpolation tail. Excitation probes scale, lag, gain,
+base pulse positions/amplitudes and optional pulses with an 80-sample horizon.
+The exact coefficient patch includes the following 160 samples; filter and
+pitch state continue through the full remaining output before acceptance.
+Actual gap/delta/repeat Rice costs, presence markers and padded-tail extras
+count against the complete serialized cap. A spectral edit may reclaim later
+optional pulses; it cannot change an already cached prefix.
+
+The input remains eligible. Selected streams preserve full-reference PCM/PWM
+SSE and available STOI relative to that input. A raw best-encountered PCM-SSE
+alternative is saved separately. Re-evaluate whole joined recordings and all
+retained alternatives: rejecting a per-segment metric change does not prove
+that its complete recording is worse. Spectral error is a separate diagnostic.
+Native decoding, the independent model and PWM must agree exactly.
+
+## Automatic budget selection
+
+`select_speech_budget.py` evaluates complete reset chains and chooses from
+actual full-firmware measurements collected by
+[measure_speech_firmware.py](SPEECH_FLASH.md#complete-recording-firmware-cost).
+Its Python API is `evaluate(reference_pcm, candidates, decoder)` followed by
+`select(evaluated, baseline_id, max_flash_bytes, ...)`. Each input candidate has
+`id`, ordered `streams` (bytes) and optional `firmware` evidence. Original
+reference, reset geometry, decoder sources, metric/model implementation and
+build configuration must match. Unknown Flash cost remains research-only.
+
+Use `exact_budget_cap(bytes, percent)` for proposed stream budgets: integer
+ceiling of `bytes * (100 + percent) / 100`. It avoids binary-float off-by-one
+limits. The hard full-image growth limit instead rounds down so that its
+configured percentage is never exceeded. Corpus stream totals are not a
+single firmware image.
+
+The default `growth_policy='review'` selects the best no-growth full-image
+candidate preserving the baseline's four numerical floors. Measured Pareto
+alternatives remain available for listening. Explicit `growth_policy='metric-proxy'`
+can recommend a larger image when either the configured absolute STOI gain or
+SER gain passes in both PCM and PWM domains, preserving the best no-growth
+result's four floors. Defaults are 0.005 STOI or 0.25 dB SER, with at most 10%
+full-image growth and an independently required hard Flash limit. These are
+configurable numerical rules, not validated audibility thresholds; no listener
+confirmation or real-time admission is inferred.
+
+The CLI takes `REFERENCE.wav MANIFEST.json EMPTY_BUILD_DIR --max-flash-bytes N`.
+The manifest schema is `lpx-v5-budget-input-v1`, with `baseline_id` and
+`candidates=[{id,segments:[{path,sha256}],firmware:...}]`; segment paths are
+relative to the manifest. A selected result writes exact segment files,
+`decoded.wav` and `selection.json`. Existing output is protected. Private
+media and generated firmware should stay in ignored build storage.

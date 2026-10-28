@@ -208,3 +208,36 @@ source edits. Longer 32/64-node reconstruction saved only 8/12 more program
 bytes while increasing measured time, and was rejected. Disabling the fast
 excitation path grew the integrated compact build and was not selected.
 No compiler recipe or feature default changes are required.
+
+
+## Count complete reset chains in one linked image, 2026-10-28
+
+For ATmega328P / AVR5, GNU ABI and the same AVR-GCC 7.3.0 recipe, measuring
+separate decoder-plus-segment images overcounts shared code and misses the
+lookup tables and reset dispatcher required by a whole recording. The original
+project collector `measure_speech_firmware.py` derives the retained IRQ harness,
+embeds distinct `PROGMEM` byte arrays plus pointer/uint16 length tables, and
+calls `begin()` between segments while the output queue and Timer1 IRQ continue.
+Reset and the next sample are timed inside the same producer interval.
+
+Count full Flash as linked `.text + .data`. Subtract each stream array only
+when its ELF symbol size, binary bytes and non-overlapping Flash range match.
+Do not subtract duplicate content twice if a compiler pooled it. The recipe
+uses manufacturer/AVR-LibC definitions through `<avr/pgmspace.h>` and hardware
+headers; it adds no assembly and preserves the explicitly selectable C backend.
+This collector is specific to the tested near-Flash AVR5 address model, not
+proof for devices requiring far pointers.
+
+Assembled and simulated synthetic controls: one 320-sample stream uses 5124 B
+full / 5085 B non-stream Flash; a two-segment 320+641 chain uses 5486 / 5319 B;
+two identical 320-sample streams use distinct storage and 5398 / 5320 B. All
+produce exact complete model PWM with active IRQ, zero underruns. Their stream
+bytes are 39 / 167 / 78 B respectively. These figures include instrumentation;
+there is no claimed decoder saving from this change. Alignment, constant
+propagation and linker relaxation mean non-stream cost may vary by a byte.
+Measure each candidate under the same reset geometry instead of adding a
+constant program estimate. Full-corpus size and selected-chain timing evidence
+are recorded in the linked research report below; physical-board support is
+not inferred from simulation.
+
+[Collector contract and use](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/SPEECH_FLASH.md#complete-recording-firmware-cost).
