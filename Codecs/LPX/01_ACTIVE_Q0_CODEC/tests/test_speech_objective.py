@@ -1,5 +1,6 @@
 """Independent SciPy, state/branch/reset and exact-v5 objective checks."""
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 from scipy.signal import lfilter, lfiltic
@@ -8,7 +9,7 @@ from batch_decoder import BatchSession
 from q0_model import coefficient_trace
 import speech_compact as compact
 from speech_objective import (SpeechObjective, WeightingState, denominator_gamma,
-                              weight_error, weight_error_chunk)
+                              weight_error, weight_error_chunk, CHUNK_SAMPLES, MAX_SAMPLES)
 from standard_metrics import pwm_duties
 from test_speech_v4 import fixture
 from wav_lpc import pack_frames
@@ -165,6 +166,71 @@ class SpeechObjectiveTests(unittest.TestCase):
         for bad in ([], blobs[:1], blobs[0]):
             with self.assertRaises(ValueError):
                 SpeechObjective.from_chain(reference, bad)
+
+    def test_v5_chunk_geometry_and_score_match_original_full_trace(self):
+        rng = np.random.default_rng(714)
+        for profile in (4, 6):
+            n = CHUNK_SAMPLES * 2 + 201
+            seed = compact.repack(fixture(profile, n))[0]
+            reference = rng.integers(-1000, 1001, n, dtype=np.int16)
+            candidate = compact.decode_model(seed)
+            objective = SpeechObjective.from_v5(reference, seed)
+            fields = compact.unpack(seed)
+            shift = 5 if profile == 4 else 4
+            vectors = [[(x << shift) + (1 << (shift - 1)) for x in row]
+                       for row in fields[2] for _ in range(2)]
+            old_trace = coefficient_trace(pack_frames(vectors[:(n + 159) // 160]), n)
+            self.assertEqual(objective.gamma2, denominator_gamma(old_trace))
+            start = 0
+            for rows, samples, repeat in objective._blocks:
+                self.assertEqual(repeat, 20)
+                expanded = np.repeat(rows, repeat, axis=0)[:samples]
+                np.testing.assert_array_equal(expanded, old_trace[start:start + samples])
+                start += samples
+            self.assertEqual(start, n)
+            weighted = weight_error(candidate.astype(np.int64) - reference,
+                                    old_trace, objective.gamma1, objective.gamma2)
+            self.assertAlmostEqual(objective(candidate) / float(weighted @ weighted), 1., places=13)
+            self.assertEqual(objective(candidate), objective(candidate))
+            self.assertEqual(objective.describe()['coefficient_storage_bytes'], ((n + 19) // 20) * 20)
+
+    def test_dense_constructor_chunk_state_and_damping_match_whole_filter(self):
+        rng = np.random.default_rng(248)
+        n = CHUNK_SAMPLES + 41
+        reference = rng.integers(-5000, 5001, n, dtype=np.int16)
+        candidate = rng.integers(-5000, 5001, n, dtype=np.int16)
+        co = rng.integers(-150, 151, (n, 10), dtype=np.int64)
+        co[:, 0] = -2100
+        objective = SpeechObjective(reference, co)
+        self.assertEqual(objective.gamma2, denominator_gamma(co))
+        expected = scipy_variable_filter(candidate.astype(float) - reference, co,
+                                         objective.gamma1, objective.gamma2)
+        self.assertAlmostEqual(objective(candidate) / float(expected @ expected), 1., places=12)
+
+    def test_long_sse_has_no_unused_lpc_trace_and_exact_integer_reduction(self):
+        n = 3786111
+        reference = np.full(n, -32768, np.int16)
+        candidate = np.full(n, 32767, np.int16)
+        # A zero-stride coefficient view avoids allocating an unused dense
+        # matrix and confirms the SSE constructor validates without copying it.
+        co = np.broadcast_to(np.zeros((1, 10), np.int16), (n, 10))
+        with patch('speech_objective.denominator_gamma', side_effect=AssertionError('Unused weights')):
+            objective = SpeechObjective(reference, co, mode='sse')
+            self.assertEqual(objective(candidate), float(n * 65535 ** 2))
+            self.assertEqual(objective.describe()['coefficient_storage_bytes'], 0)
+            self.assertEqual(objective.describe()['reference_storage_bytes'], n * 2)
+            seed = compact.repack(fixture(4, 641))[0]
+            with patch('q0_model._coefficient_trace_vectors', side_effect=AssertionError('Unused LPC')):
+                streamed = SpeechObjective.from_chain(np.zeros(1282, np.int16), [seed, seed], mode='sse')
+                self.assertEqual(streamed(np.zeros(1282, np.int16)), 0)
+                self.assertEqual(streamed.describe()['coefficient_storage_bytes'], 0)
+        self.assertGreater(MAX_SAMPLES * 65535 ** 2, np.iinfo(np.int64).max)
+        # This over-uint32 view has no backing allocation to scan. Reject the
+        # count before touching samples, rather than wrapping it to zero.
+        oversized = np.lib.stride_tricks.as_strided(np.zeros(1, np.int16),
+                                                    shape=(MAX_SAMPLES + 1,), strides=(0,))
+        with self.assertRaises(ValueError):
+            SpeechObjective(oversized, np.zeros((1, 10), np.int16), mode='sse')
 
     def test_v5_seed_weights_and_native_model_pcm_pwm_partial_tails(self):
         with BatchSession('batch', v3_features=124, speech=True, speech_compact=True) as common, \
