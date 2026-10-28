@@ -131,12 +131,16 @@ class VoiceObjective:
             centered[row, :length] = samples - samples.mean()
         return raw, centered
 
-    def _shape(self, centered, indices):
+    def _periodograms(self, centered, indices):
+        """Unaggregated positive-frequency powers shared by host objectives."""
         windowed = centered.copy()
         for row, index in enumerate(indices):
             length = int(self.lengths[index])
             windowed[row, :length] *= self._hann[length]
-        power = abs(np.fft.rfft(windowed, axis=1)[:, 1:]) ** 2
+        return abs(np.fft.rfft(windowed, axis=1)[:, 1:]) ** 2
+
+    def _shape(self, centered, indices):
+        power = self._periodograms(centered, indices)
         grouped = np.stack([part.sum(axis=1) for part in np.array_split(power, self.bands, axis=1)], axis=1)
         totals = grouped.sum(axis=1, keepdims=True)
         return np.sqrt(grouped / np.where(totals > 0, totals, 1))
