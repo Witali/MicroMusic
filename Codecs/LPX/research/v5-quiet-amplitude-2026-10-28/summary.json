@@ -1,0 +1,3182 @@
+{
+  "schema": "lpx-quiet-amplitude-synthetic-v1",
+  "status": "complete",
+  "protocol_commit": "73e7dd1a",
+  "source_sha256": {
+    "Codecs/LPX/research/v5-quiet-amplitude-2026-10-28/reproduction/run_synthetic.py": "e9a539bb0da0584aa5fbae8c754d9c05c2c14715f5bafeb3cd5afabe7d057930",
+    "Codecs/LPX/research/v5-quiet-amplitude-2026-10-28/PROTOCOL.md": "42c1af1b932a0a3ef0c3c664a44480e154f789a60ef420a14ec5f57ba030bf98",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/abs_closed_loop.py": "4dc8a5da4e813b27210e7b3e2b67d75c00eb39a7c572b10c9a4c578daca1530e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/audit_lowrate.py": "11cc01789f637e3f7d76d663b6a11daf4a1d1e430d6ae09473fb4109be0c7bdd",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/audit_nonspeech_trajectory.py": "024766778fdc29921371112bfee6f3e6435fbbb476bf8c18367e09d69b057fd6",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/audit_speed_round_quality.py": "dd46a96fd8555409591e697e884f34352b56f314a46b1ef2ceec9dd821f574e1",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/auto_legacy_lpc.py": "ee6764e86140a2153e40ca1df30cbacfb2922ab0c15f862df1536b5412438a9d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/auto_pcm16.py": "3ac31390e90446c7070e5bbcdb9a33602d42c73faa3ad1e3d89b97586bb9da5e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/auto_search_lambda.py": "b561afe9eb38ebfe9518a0db0bca9ea1d9e64778f27d98286aae51878b7a0ca6",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/avr_timing_gate.py": "2cc594b7de7b50684a1d21b0c62c56d6dcb9cdbbe4622444b106ae6fd3cac2fa",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/beam_excitation_pcm16.py": "a1928bb71f01c05e0fb6534b90b4906145c33aec380463fba84351137db2dee1",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_8kbps.py": "6c2bffbf29d374eee52e1ba7ae9231806f79d3914eca4f1d79f57be568793a9b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_avr_profile.py": "ef5e11a76c91f0dd67f49c04cedc81ecb5cc37f7205b5a8b47e69b8a046e367e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_batch_quality.py": "88fa168bb9921340df5b9f7b344bf7f4cfbe2c1de3e811637c02ccc379cd4c9b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_compact.py": "78047fbbc01558d97c7961d21c8184f0240527665e2852cbefa7b06779d89b53",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_encoder_search_speed.py": "7f8400910fc3b5c3b879fc335d88a763bba326e99abd8d47639f07e0a3f281aa",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_encoder_speed.py": "a25c900bbbc9b698364e76c62978efc109bf4e4643c1ed4ee5d4b470ff86bdf5",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_fast_encoder.py": "826f17bb85b67c2d002687601d5c85d6fc3ffa8d85e5b8315860adde8a5282a1",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_global_rate.py": "4832ba86e976b77f6b415aef62a7d2e27e245c8f0187b0b365200242b0a70066",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_lossless.py": "9a1b26091338af60a177714099115ea1c6bde11aa75eecab0a82768027e7b294",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_lowrate.py": "ee65bfed8ad8bc0e63dedc319cf3df345cd49ec5f904125ad97ad0b3858198a0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_multiseed.py": "0e4f59c43c8be9c20dbd38135eeca5aca2fcf1492945183633b59e0647b0588a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_nonspeech_trajectory.py": "b1e9a1134f5e703da8bc203f85834502a613c281ef6a573d458f655b76a08bb2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_profile_development.py": "2e758fa316d7b121adcd9858aaf298913fe71e68f6ea58a19a48f0bce27d06aa",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_q0_encoder.py": "9e16469252847ef590e91838c3a463879a260fa107caae0354a9e9ee8b8f0d76",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_speech.py": "3d35f3293bda5d8b02c03dc156de182333b257d94a4532273e992acfe4304dd9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_speech_compact.py": "799d90dd276d06700f74c741efe4a3c7f71ff8874079bfcb90d9076728c864d2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_speech_flash.py": "ab1dc4cdf84825c86c5340773fa32094cabee0cd55c9d12716298f4b9c236e70",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_speed_round.py": "5331bb091d88f4208cf3e74447c33f592c57a14cf1f436c0a9c9ac7e0e045b0a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_standards.py": "01f160bbff3275feb0cb750681e6b747b7dc008f1871e5d336001af61fc2cd51",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_unified.py": "2bfe48e05f0cc344520de91b40f27bc9471dee5aa2c9861990d63fdc12759a7e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/budget_search.py": "e474a024f828ba546e0a3de6dc3f206ecff61cfba57d4ac0def4852b4602d8ba",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_observer.py": "857d9cd987968742b549224d2271b01a8318adcc05b30d1a8773498f181fa44a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py": "1fba71295fbe982ae57a10678a32bfc490a7f1e5a32a5e47c994275c653ce97c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/cleanup_speech_compact.py": "34abfacd845af198aba9ab66b794588c4c342b56612a6b8d1e8c2066eefe5730",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/compact_format.py": "118ed178c5910d4590faaef7f1119a4fab2a9c66ebe263f9bdc82d8a0ac7ad4f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/compare_codecs.py": "c83924e768aefb43b1d771f76a39e4f10c1defd25c667b3ae301d3214c29fbb7",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/diagnose_standard_alignment.py": "b20edacc74d8cf76b0b766b5b9bb4bf6c6f7d63223084de0e45dd300a5601865",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/encode_lowrate.py": "580b1cfd2dcffd019336a4f481a26212e72077eb049fe508950fbe8e1f1ec621",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/enhance_speech_compact.py": "3307b9ad09a7740264c6e4cab1787719148b1191b837f17605e5e5a764785e99",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/fast_lpx4.py": "2f794c219e8d585da06a8762c6b428c6fa1379eec359e04ee36b4788b1bd5938",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/gain_search.py": "2bea71223cb3c9958403a402828442b7552a6a943ed71e84c09e6c1c92be4db8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/gen_voice_header.py": "5803c445c1049e8fe4cddc18a1cc539bb6ad6d7f4ea98b5e08a27c2b9c1e7ecc",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/global_rate_pcm16.py": "b6597aa626c48add4e909fc83f648ff73c55c5583e341afa68f414ff88132735",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/joint_rate.py": "1e384f919e2efe552da48b6000811387c6dc9a681cd7bbb7c97d281bdfaa39b2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/l3av_parse.py": "41d61c89ed0bce196eaa44cfd3dbe98bad93ce0d29a2c0cb82f39974fa0d2ab0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/level_policy.py": "59d16e07b74390b334383efdd648c6e5f69364e833f4d31c56fa76dbd71df04b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lossless_repack.py": "e267771f096c22ea31f05fa11289753be44f904f263231209b2bfbb5a971ad51",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lpx4.py": "d732e76ed807089d02bea837f07e77f1a64cc94ce63a6be2fab286548b94acc0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/make_synthetic.py": "0f36cc2327cd5112261e5f6387aa09d67054e3313ea211df9886c14af0ec1e09",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/measure_speech_firmware.py": "d37ad0e4c258ab52bbb186b0eb9b6d841405b30c1c7530930f33c680dec700c1",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/optimize_lambda_regions.py": "da46711572622d9dbff347db3bce8def54d70f566ae31fce3691bd3c66c1e21a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/optimize_old_lpc.py": "5611fe1df88298d320142800065ad63a5a3df8f324ef9fb3529564b12137b873",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/optimize_q0.py": "cfc2d55683c3f0a7214db2922f12b87e143568c12cc9c5adf98fc81d4f17ee42",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/output_paths.py": "17d34b7471e9af6ad14c5261db3242194fc66f703af5173253644f0f2e2fe571",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/perceptual_rate.py": "af7ed7996dd9cfe6aff8c6e96f1e48d69b0282fad8dd4b0a7c5344775447659b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/plot_lowrate.py": "6b1332941dcbf0f10cf38ec22ea7a5643894231065114ae169c4c8271255e097",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/plot_multiseed.py": "bfaa2388223293e875d9e755a11e9b451e050c474f5bb065cb745745113db3ce",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/plot_standards.py": "c256b8f268fc0c90b8343e05190cec3836ad48db59153e4be2789020c6716843",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/prepare_speech_corpus.py": "ec6ca0be2f7c2a2cbcbbb2b3dd73445051025e4cbcab71b1fe9c98f757df0432",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/prepare_v5_encoder_study.py": "2e4825f27ffb585eadde590720d9721967a154ac091c9c989737884bb213261f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/profile_avr.py": "37809f1fefcf2dd50293e378264b52083aee71f5c2df4a2d3de354a1f989478b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rate_distortion.py": "c3baec11d562e5f0c68ac9ab5a8fce062788dfce0197f54c0b106a9d51c120d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_bitrate_profile.py": "14397f89575a3d9d343ddfe6cec3f0c1d5c4e9c4358dc64de392d7a3d59e5955",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_excitation_pcm16.py": "4f2c7b45b4ffdecbac135331bc59f75cec3778a89f43984fa64a7fc64b1128ec",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_fixedrate.py": "8b5eae4cc230b18570b06e20098c3d6811cce7c74fd7e399b6434153fa2177ac",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_lsf_pcm16.py": "02b20220c76809fe85dde4c84ebd543c75b26c018a93176c0d9fd427323163ea",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech8.py": "8f835b1a6b5ded621fdee332cbd2ef69b40a2e997ce7af4b0bd93d4fdc9dfed9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_excitation.py": "bd532c8ca4bfb40ef238fdf026b9776e2a5151351ab953aa02174a0d2fcbf6ac",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_lpc.py": "4b5e2f7d840b731331340809185499ecdacd198ed8d10a00242a356eb86bd9f3",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_perceptual.py": "6feefbaaf3aebddb51ee8052b7ad681c59b235efe93cbd31809ec4b783031c3b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_trajectory.py": "a8f08aa94e2356922226728853c473932255af7724493cd6b6cd9097db60029d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_v4.py": "ad3b4465a2ab608cac51cacbaed7c7d31c9a8fd01ea97f980f8a9f7968f0a1ce",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v3.py": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v4_reference.py": "5cc2b9f0f0f6b5cfebbf4e1afe65326eb017b3564ab40163b3c25cbdc418013c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v7.py": "a263dd86f37e0fd467b3c46b42f7ff25e6259ba5f647b6a6d2451ff56f76739b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/run_v5_encoder_study.py": "28a90ca7be8d490b24ac4029d8403d85303a105889afcef335c38651d64ec7ba",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/select_avr_candidates.py": "53fd8c982e9f67dc8db8711265e369636907e3b963db03f2565064d9359cacf8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/select_speech_budget.py": "6a1b97fa80f11a125a3bb21ca590cf4b000f9f36a0a4f140dd4aeb5f835a6a07",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_chain_frontier.py": "4a377ac360e42e55913a900a8ea53c1d942e5ec7426a79f5370f230dba04b37d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_objective.py": "240f1bed2bc6d007e83f1a9c0ef0925b2f2728db6f2cc6cd16a5b1cae9d553da",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_parameter_costs.py": "e551fffaa67077df817df076c7379fd1676e90072c3071245bc9f6b198a3d821",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_parameter_histograms.py": "5847af8434ce8f4b349f6728fbb3f2b37140878e319fc77282ad1e30257b5fab",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_rate_allocation.py": "38ad9a7f868326e82bced8f40e73495ee41df2fa30152cd894732a6c4d54b193",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "d7c17a39dbaad71df99ff1d46916bd263080cc6727f94b79e98aa86381f562cc",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_headroom.py": "e7e208290fc6849f14c4f40ac185d9883a02eab5e44007a9e4a820ac2a2ae943",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/stress_lowrate.py": "c15e11d9e8abf3f398b6a6b2bf65c627b0d7f4af1e4f88f4050a16e1610b6f23",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_lowrate.py": "895fb28b80674da014f6f521580e72675a84e75cfdca53c2ff5d9f584fdf2ebb",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_multiseed.py": "9b4b7329305fdfd425747c78805171e3259fff5213d90db462c9fa3a6fdc5710",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_profile_development.py": "97cf69bf493391a994e3929bdb831a1d57c0092106446dffaa7a799b8d412c54",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_speech.py": "11dda36a84ba4ce2498604abcdf6fe7b44e6ddc988333e54996688deab74c8b5",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_standards.py": "89b921b67803541810a3ec182b7fc32d559c896a30fe02145ea94bbb25e63e32",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_header_fixedrate.py": "9463a777036db496283fc2d934d9c6569d63204b32e91252b6860ea11a77142c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_pcm16.py": "ae6c2b0aba038254b5555cd4cdf054d7a9e549f72485f483a880807b3d5d0c9a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_shared_pwm_gain.py": "faa76de29e4698732ae99f4693e096e379c89515e00230755da19f0ecbe246c8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_lowrate_avr.py": "5ca48d3af0c745bca84c61bf14054d80be68cc17a0a660bf904888ecff0a4880",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_profile_development.py": "79e4642ca0b772ab5a00c582a4730b8a335d51f8ffe39dc4d7a28fdf5065eb4e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_profile_smallcode.py": "3176778823bfa9d98d5568355df4b03752151a2e6827ec2f9165739107e81c7e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_speech_avr.py": "f026546a3855668436624b8b2c61599081766d5407a71da37bcd3191567c9c20",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_standards_avr.py": "a8369672b461507eb4aa4dc44dd6eb782dab7c5e80e9c00e16c57b57076b3375",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_v5_runtime.py": "d38220823f4333772bc8a9dbc7329e01167c437b9e99f8b0930e6678647ad541",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/verify_decoder_configs.py": "f59d352c2d36cd6096cbd87fe96065022275de119ae0f39f27b3ab45f69bd43c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/voice_character.py": "95a22f1f50a7ffa8eaec690c822e4c079b1558efac007ed42173ad350f61cded",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_to_lpx4.py": "26295e84688bb6801875504229341a998c261f72df46e84989daee3a58cc257d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "runtime": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "packages": {
+      "numpy": "2.5.4",
+      "numba": "0.68.0",
+      "scipy": "1.18.1",
+      "soundfile": "0.14.0"
+    }
+  },
+  "samples_per_case": 8000,
+  "rate": 8000,
+  "cases_expected": 16,
+  "rows": [
+    {
+      "case": "scale-0001-p4-pre-00000",
+      "nominal_scale": 1,
+      "profile": 4,
+      "preQ14": 0,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 1,
+        "rms_pcm16": 0.6708203932499369,
+        "mean_pcm16": 0.0,
+        "integer_levels": 3,
+        "nonzero_samples": 3600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 520,
+      "v5_bytes": 373,
+      "v5_payload_bits": 2802,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 102,
+        "rms_pcm16": 17.910974289524287,
+        "mean_pcm16": 2.3545,
+        "integer_levels": 77,
+        "nonzero_samples": 7560
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 0,
+        "rms_pcm16": 0.0,
+        "mean_pcm16": 0.0,
+        "integer_levels": 1,
+        "nonzero_samples": 0
+      },
+      "non_neutral_pwm_samples": 0,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 3600.0,
+        "error_energy": 2562240.0,
+        "ser_db": -28.523173060597887,
+        "ser_status": "finite",
+        "rmse_pcm16": 17.896368346678607,
+        "max_abs_error_pcm16": 102,
+        "max_abs_error_percent_fs": 0.311279296875,
+        "max_error_signed_pcm16": 102,
+        "max_error_sample": 98,
+        "max_error_seconds": 0.01225,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 3600.0,
+        "error_energy": 3600.0,
+        "ser_db": 0.0,
+        "ser_status": "finite",
+        "rmse_pcm16": 0.6708203932499369,
+        "max_abs_error_pcm16": 1,
+        "max_abs_error_percent_fs": 0.0030517578125,
+        "max_error_signed_pcm16": -1,
+        "max_error_sample": 3,
+        "max_error_seconds": 0.000375,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.6708203932499369,
+          "peak_pcm16": 1,
+          "rms_dbfs": -93.77687356144092,
+          "nonzero_samples": 3600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 17.910974289524287,
+          "peak_pcm16": 102,
+          "rms_dbfs": -65.24661448968925,
+          "nonzero_samples": 7560
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 0.4755923895066999,
+        "relative_spectral_shape_rms_db_mean": 21.250879147151522,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.6708203932499369,
+          "peak_pcm16": 1,
+          "rms_dbfs": -93.77687356144092,
+          "nonzero_samples": 3600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.0,
+          "peak_pcm16": 0,
+          "rms_dbfs": null,
+          "nonzero_samples": 0
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 1.0,
+        "relative_spectral_shape_rms_db_mean": 53.49450263741955,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 47,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 269,
+          "8": 131
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 11.155720499999006
+    },
+    {
+      "case": "scale-0001-p4-pre-13926",
+      "nominal_scale": 1,
+      "profile": 4,
+      "preQ14": 13926,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 1,
+        "rms_pcm16": 0.6708203932499369,
+        "mean_pcm16": 0.0,
+        "integer_levels": 3,
+        "nonzero_samples": 3600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 520,
+      "v5_bytes": 373,
+      "v5_payload_bits": 2804,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 78,
+        "rms_pcm16": 13.556308494571818,
+        "mean_pcm16": 1.00575,
+        "integer_levels": 61,
+        "nonzero_samples": 7478
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 0,
+        "rms_pcm16": 0.0,
+        "mean_pcm16": 0.0,
+        "integer_levels": 1,
+        "nonzero_samples": 0
+      },
+      "non_neutral_pwm_samples": 0,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 3600.0,
+        "error_energy": 1460512.0,
+        "ser_db": -26.08202628849281,
+        "ser_status": "finite",
+        "rmse_pcm16": 13.511624624744428,
+        "max_abs_error_pcm16": 77,
+        "max_abs_error_percent_fs": 0.2349853515625,
+        "max_error_signed_pcm16": 77,
+        "max_error_sample": 43,
+        "max_error_seconds": 0.005375,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 3600.0,
+        "error_energy": 3600.0,
+        "ser_db": 0.0,
+        "ser_status": "finite",
+        "rmse_pcm16": 0.6708203932499369,
+        "max_abs_error_pcm16": 1,
+        "max_abs_error_percent_fs": 0.0030517578125,
+        "max_error_signed_pcm16": -1,
+        "max_error_sample": 3,
+        "max_error_seconds": 0.000375,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.6708203932499369,
+          "peak_pcm16": 1,
+          "rms_dbfs": -93.77687356144092,
+          "nonzero_samples": 3600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 13.556308494571818,
+          "peak_pcm16": 78,
+          "rms_dbfs": -67.66616983291057,
+          "nonzero_samples": 7478
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 0.5398860995870962,
+        "relative_spectral_shape_rms_db_mean": 21.273692566740472,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.6708203932499369,
+          "peak_pcm16": 1,
+          "rms_dbfs": -93.77687356144092,
+          "nonzero_samples": 3600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.0,
+          "peak_pcm16": 0,
+          "rms_dbfs": null,
+          "nonzero_samples": 0
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 1.0,
+        "relative_spectral_shape_rms_db_mean": 53.49450263741955,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 47,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 237,
+          "8": 163
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.1918920000025537
+    },
+    {
+      "case": "scale-0001-p6-pre-00000",
+      "nominal_scale": 1,
+      "profile": 6,
+      "preQ14": 0,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 1,
+        "rms_pcm16": 0.6708203932499369,
+        "mean_pcm16": 0.0,
+        "integer_levels": 3,
+        "nonzero_samples": 3600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 770,
+      "v5_bytes": 549,
+      "v5_payload_bits": 4212,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 0,
+        "rms_pcm16": 0.0,
+        "mean_pcm16": 0.0,
+        "integer_levels": 1,
+        "nonzero_samples": 0
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 0,
+        "rms_pcm16": 0.0,
+        "mean_pcm16": 0.0,
+        "integer_levels": 1,
+        "nonzero_samples": 0
+      },
+      "non_neutral_pwm_samples": 0,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 3600.0,
+        "error_energy": 3600.0,
+        "ser_db": 0.0,
+        "ser_status": "finite",
+        "rmse_pcm16": 0.6708203932499369,
+        "max_abs_error_pcm16": 1,
+        "max_abs_error_percent_fs": 0.0030517578125,
+        "max_error_signed_pcm16": -1,
+        "max_error_sample": 3,
+        "max_error_seconds": 0.000375,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 3600.0,
+        "error_energy": 3600.0,
+        "ser_db": 0.0,
+        "ser_status": "finite",
+        "rmse_pcm16": 0.6708203932499369,
+        "max_abs_error_pcm16": 1,
+        "max_abs_error_percent_fs": 0.0030517578125,
+        "max_error_signed_pcm16": -1,
+        "max_error_sample": 3,
+        "max_error_seconds": 0.000375,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.6708203932499369,
+          "peak_pcm16": 1,
+          "rms_dbfs": -93.77687356144092,
+          "nonzero_samples": 3600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.0,
+          "peak_pcm16": 0,
+          "rms_dbfs": null,
+          "nonzero_samples": 0
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 1.0,
+        "relative_spectral_shape_rms_db_mean": 53.49450263741955,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 47,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.6708203932499369,
+          "peak_pcm16": 1,
+          "rms_dbfs": -93.77687356144092,
+          "nonzero_samples": 3600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.0,
+          "peak_pcm16": 0,
+          "rms_dbfs": null,
+          "nonzero_samples": 0
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 1.0,
+        "relative_spectral_shape_rms_db_mean": 53.49450263741955,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 47,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "6": 50
+        },
+        "scale_step_q14_histogram": {
+          "1": 50
+        },
+        "gain_histogram": {
+          "0": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "0": 400
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.660959399989224
+    },
+    {
+      "case": "scale-0001-p6-pre-13926",
+      "nominal_scale": 1,
+      "profile": 6,
+      "preQ14": 13926,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 1,
+        "rms_pcm16": 0.6708203932499369,
+        "mean_pcm16": 0.0,
+        "integer_levels": 3,
+        "nonzero_samples": 3600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 770,
+      "v5_bytes": 549,
+      "v5_payload_bits": 4215,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 0,
+        "rms_pcm16": 0.0,
+        "mean_pcm16": 0.0,
+        "integer_levels": 1,
+        "nonzero_samples": 0
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 0,
+        "rms_pcm16": 0.0,
+        "mean_pcm16": 0.0,
+        "integer_levels": 1,
+        "nonzero_samples": 0
+      },
+      "non_neutral_pwm_samples": 0,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 3600.0,
+        "error_energy": 3600.0,
+        "ser_db": 0.0,
+        "ser_status": "finite",
+        "rmse_pcm16": 0.6708203932499369,
+        "max_abs_error_pcm16": 1,
+        "max_abs_error_percent_fs": 0.0030517578125,
+        "max_error_signed_pcm16": -1,
+        "max_error_sample": 3,
+        "max_error_seconds": 0.000375,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 3600.0,
+        "error_energy": 3600.0,
+        "ser_db": 0.0,
+        "ser_status": "finite",
+        "rmse_pcm16": 0.6708203932499369,
+        "max_abs_error_pcm16": 1,
+        "max_abs_error_percent_fs": 0.0030517578125,
+        "max_error_signed_pcm16": -1,
+        "max_error_sample": 3,
+        "max_error_seconds": 0.000375,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.6708203932499369,
+          "peak_pcm16": 1,
+          "rms_dbfs": -93.77687356144092,
+          "nonzero_samples": 3600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.0,
+          "peak_pcm16": 0,
+          "rms_dbfs": null,
+          "nonzero_samples": 0
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 1.0,
+        "relative_spectral_shape_rms_db_mean": 53.49450263741955,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 47,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.6708203932499369,
+          "peak_pcm16": 1,
+          "rms_dbfs": -93.77687356144092,
+          "nonzero_samples": 3600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.0,
+          "peak_pcm16": 0,
+          "rms_dbfs": null,
+          "nonzero_samples": 0
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 1.0,
+        "relative_spectral_shape_rms_db_mean": 53.49450263741955,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 47,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "6": 50
+        },
+        "scale_step_q14_histogram": {
+          "1": 50
+        },
+        "gain_histogram": {
+          "0": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "0": 400
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.8652123999927426
+    },
+    {
+      "case": "scale-0004-p4-pre-00000",
+      "nominal_scale": 4,
+      "profile": 4,
+      "preQ14": 0,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 3,
+        "rms_pcm16": 2.085665361461421,
+        "mean_pcm16": 0.0,
+        "integer_levels": 7,
+        "nonzero_samples": 7200
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 520,
+      "v5_bytes": 373,
+      "v5_payload_bits": 2803,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 146,
+        "rms_pcm16": 20.04885283501278,
+        "mean_pcm16": 2.68125,
+        "integer_levels": 97,
+        "nonzero_samples": 7605
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 256,
+        "rms_pcm16": 12.143146215046576,
+        "mean_pcm16": 0.576,
+        "integer_levels": 2,
+        "nonzero_samples": 18
+      },
+      "non_neutral_pwm_samples": 18,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 34800.0,
+        "error_energy": 3156028.0,
+        "ser_db": -19.575616036299497,
+        "ser_status": "finite",
+        "rmse_pcm16": 19.862112173683844,
+        "max_abs_error_pcm16": 145,
+        "max_abs_error_percent_fs": 0.4425048828125,
+        "max_error_signed_pcm16": 145,
+        "max_error_sample": 56,
+        "max_error_seconds": 0.007,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 34800.0,
+        "error_energy": 1199088.0,
+        "ser_db": -15.372718128069664,
+        "ser_status": "finite",
+        "rmse_pcm16": 12.242793798802625,
+        "max_abs_error_pcm16": 255,
+        "max_abs_error_percent_fs": 0.7781982421875,
+        "max_error_signed_pcm16": 255,
+        "max_error_sample": 41,
+        "max_error_seconds": 0.005125,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 2.085665361461421,
+          "peak_pcm16": 3,
+          "rms_dbfs": -83.92410612964798,
+          "nonzero_samples": 7200
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 20.04885283501278,
+          "peak_pcm16": 146,
+          "rms_dbfs": -64.26720813929911,
+          "nonzero_samples": 7605
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 0.6752448047992501,
+        "relative_spectral_shape_rms_db_mean": 31.44922035453138,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 2.085665361461421,
+          "peak_pcm16": 3,
+          "rms_dbfs": -83.92410612964798,
+          "nonzero_samples": 7200
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 12.143146215046576,
+          "peak_pcm16": 256,
+          "rms_dbfs": -68.62237421184373,
+          "nonzero_samples": 18
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 0.9957823876777023,
+        "relative_spectral_shape_rms_db_mean": 44.15249795279974,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 46,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 263,
+          "8": 137
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.1792427000036696
+    },
+    {
+      "case": "scale-0004-p4-pre-13926",
+      "nominal_scale": 4,
+      "profile": 4,
+      "preQ14": 13926,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 3,
+        "rms_pcm16": 2.085665361461421,
+        "mean_pcm16": 0.0,
+        "integer_levels": 7,
+        "nonzero_samples": 7200
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 520,
+      "v5_bytes": 374,
+      "v5_payload_bits": 2815,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 366,
+        "rms_pcm16": 41.18072364590015,
+        "mean_pcm16": 5.3075,
+        "integer_levels": 190,
+        "nonzero_samples": 7671
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 256,
+        "rms_pcm16": 38.82432227354394,
+        "mean_pcm16": 5.888,
+        "integer_levels": 2,
+        "nonzero_samples": 184
+      },
+      "non_neutral_pwm_samples": 184,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 34800.0,
+        "error_energy": 13538116.0,
+        "ser_db": -25.899789870396603,
+        "ser_status": "finite",
+        "rmse_pcm16": 41.1371425842875,
+        "max_abs_error_pcm16": 365,
+        "max_abs_error_percent_fs": 1.1138916015625,
+        "max_error_signed_pcm16": 365,
+        "max_error_sample": 58,
+        "max_error_seconds": 0.00725,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 34800.0,
+        "error_energy": 12083696.0,
+        "ser_db": -25.406205468698868,
+        "ser_status": "finite",
+        "rmse_pcm16": 38.86466261271285,
+        "max_abs_error_pcm16": 259,
+        "max_abs_error_percent_fs": 0.7904052734375,
+        "max_error_signed_pcm16": 259,
+        "max_error_sample": 71,
+        "max_error_seconds": 0.008875,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 2.085665361461421,
+          "peak_pcm16": 3,
+          "rms_dbfs": -83.92410612964798,
+          "nonzero_samples": 7200
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 41.18072364590015,
+          "peak_pcm16": 366,
+          "rms_dbfs": -58.01511921991643,
+          "nonzero_samples": 7671
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 0.6358785256412757,
+        "relative_spectral_shape_rms_db_mean": 30.262509304581723,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 2.085665361461421,
+          "peak_pcm16": 3,
+          "rms_dbfs": -83.92410612964798,
+          "nonzero_samples": 7200
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 38.82432227354394,
+          "peak_pcm16": 256,
+          "rms_dbfs": -58.52692103278144,
+          "nonzero_samples": 184
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 0.9730571236419048,
+        "relative_spectral_shape_rms_db_mean": 43.91917761672141,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 44,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 270,
+          "8": 130
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.17899020000186283
+    },
+    {
+      "case": "scale-0004-p6-pre-00000",
+      "nominal_scale": 4,
+      "profile": 6,
+      "preQ14": 0,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 3,
+        "rms_pcm16": 2.085665361461421,
+        "mean_pcm16": 0.0,
+        "integer_levels": 7,
+        "nonzero_samples": 7200
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 770,
+      "v5_bytes": 549,
+      "v5_payload_bits": 4214,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 118,
+        "rms_pcm16": 13.095438137000228,
+        "mean_pcm16": 2.28775,
+        "integer_levels": 74,
+        "nonzero_samples": 6811
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 0,
+        "rms_pcm16": 0.0,
+        "mean_pcm16": 0.0,
+        "integer_levels": 1,
+        "nonzero_samples": 0
+      },
+      "non_neutral_pwm_samples": 0,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 34800.0,
+        "error_energy": 1355012.0,
+        "ser_db": -15.903638973972061,
+        "ser_status": "finite",
+        "rmse_pcm16": 13.01447271309906,
+        "max_abs_error_pcm16": 118,
+        "max_abs_error_percent_fs": 0.360107421875,
+        "max_error_signed_pcm16": 118,
+        "max_error_sample": 60,
+        "max_error_seconds": 0.0075,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 34800.0,
+        "error_energy": 34800.0,
+        "ser_db": 0.0,
+        "ser_status": "finite",
+        "rmse_pcm16": 2.085665361461421,
+        "max_abs_error_pcm16": 3,
+        "max_abs_error_percent_fs": 0.0091552734375,
+        "max_error_signed_pcm16": -3,
+        "max_error_sample": 4,
+        "max_error_seconds": 0.0005,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 2.085665361461421,
+          "peak_pcm16": 3,
+          "rms_dbfs": -83.92410612964798,
+          "nonzero_samples": 7200
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 13.095438137000228,
+          "peak_pcm16": 118,
+          "rms_dbfs": -67.96659803335712,
+          "nonzero_samples": 6811
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 0.46961235903425574,
+        "relative_spectral_shape_rms_db_mean": 33.19659815587156,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 2.085665361461421,
+          "peak_pcm16": 3,
+          "rms_dbfs": -83.92410612964798,
+          "nonzero_samples": 7200
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 0.0,
+          "peak_pcm16": 0,
+          "rms_dbfs": null,
+          "nonzero_samples": 0
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 1.0,
+        "relative_spectral_shape_rms_db_mean": 44.35260678476695,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 47,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 21,
+          "-7": 20,
+          "-6": 13,
+          "-5": 24,
+          "-4": 34,
+          "-3": 40,
+          "-2": 56,
+          "-1": 45,
+          "0": 2,
+          "1": 40,
+          "2": 39,
+          "3": 31,
+          "4": 21,
+          "5": 7,
+          "6": 6,
+          "7": 1
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.6549757999891881
+    },
+    {
+      "case": "scale-0004-p6-pre-13926",
+      "nominal_scale": 4,
+      "profile": 6,
+      "preQ14": 13926,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 3,
+        "rms_pcm16": 2.085665361461421,
+        "mean_pcm16": 0.0,
+        "integer_levels": 7,
+        "nonzero_samples": 7200
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 770,
+      "v5_bytes": 555,
+      "v5_payload_bits": 4257,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 200,
+        "rms_pcm16": 21.443483858739,
+        "mean_pcm16": 3.713,
+        "integer_levels": 113,
+        "nonzero_samples": 6972
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 256,
+        "rms_pcm16": 25.277974602408317,
+        "mean_pcm16": 2.496,
+        "integer_levels": 2,
+        "nonzero_samples": 78
+      },
+      "non_neutral_pwm_samples": 78,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 34800.0,
+        "error_energy": 3646556.0,
+        "ser_db": -20.203036434448922,
+        "ser_status": "finite",
+        "rmse_pcm16": 21.349929742273158,
+        "max_abs_error_pcm16": 200,
+        "max_abs_error_percent_fs": 0.6103515625,
+        "max_error_signed_pcm16": 200,
+        "max_error_sample": 61,
+        "max_error_seconds": 0.007625,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 34800.0,
+        "error_energy": 5165040.0,
+        "ser_db": -21.714944452608513,
+        "ser_status": "finite",
+        "rmse_pcm16": 25.409250284099294,
+        "max_abs_error_pcm16": 259,
+        "max_abs_error_percent_fs": 0.7904052734375,
+        "max_error_signed_pcm16": 259,
+        "max_error_sample": 71,
+        "max_error_seconds": 0.008875,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 2.085665361461421,
+          "peak_pcm16": 3,
+          "rms_dbfs": -83.92410612964798,
+          "nonzero_samples": 7200
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 21.443483858739,
+          "peak_pcm16": 200,
+          "rms_dbfs": -63.683091793601115,
+          "nonzero_samples": 6972
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 0.4807145506503476,
+        "relative_spectral_shape_rms_db_mean": 31.952322151870458,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 2.085665361461421,
+          "peak_pcm16": 3,
+          "rms_dbfs": -83.92410612964798,
+          "nonzero_samples": 7200
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 25.277974602408317,
+          "peak_pcm16": 256,
+          "rms_dbfs": -62.254153235972,
+          "nonzero_samples": 78
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 200.0,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 0.0,
+        "fixed_decoded_period_error_mean": 0.9752926129458799,
+        "relative_spectral_shape_rms_db_mean": 43.83780009688903,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 45,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 21,
+          "-7": 15,
+          "-6": 13,
+          "-5": 9,
+          "-4": 26,
+          "-3": 46,
+          "-2": 56,
+          "-1": 56,
+          "0": 1,
+          "1": 48,
+          "2": 52,
+          "3": 29,
+          "4": 11,
+          "5": 11,
+          "6": 4,
+          "7": 2
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.6910931000020355
+    },
+    {
+      "case": "scale-0032-p4-pre-00000",
+      "nominal_scale": 32,
+      "profile": 4,
+      "preQ14": 0,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 25,
+        "rms_pcm16": 16.631295800387896,
+        "mean_pcm16": 0.0,
+        "integer_levels": 31,
+        "nonzero_samples": 7600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 520,
+      "v5_bytes": 373,
+      "v5_payload_bits": 2803,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 240,
+        "rms_pcm16": 33.366128034280514,
+        "mean_pcm16": 5.74725,
+        "integer_levels": 139,
+        "nonzero_samples": 7759
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 256,
+        "rms_pcm16": 26.075582447953106,
+        "mean_pcm16": 2.656,
+        "integer_levels": 2,
+        "nonzero_samples": 83
+      },
+      "non_neutral_pwm_samples": 83,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 2212800.0,
+        "error_energy": 7063460.0,
+        "ser_db": -5.040753273534751,
+        "ser_status": "finite",
+        "rmse_pcm16": 29.714180116570606,
+        "max_abs_error_pcm16": 246,
+        "max_abs_error_percent_fs": 0.750732421875,
+        "max_error_signed_pcm16": 246,
+        "max_error_sample": 62,
+        "max_error_seconds": 0.00775,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 2212800.0,
+        "error_energy": 7591360.0,
+        "ser_db": -5.3537742440630565,
+        "ser_status": "finite",
+        "rmse_pcm16": 30.80454511918655,
+        "max_abs_error_pcm16": 281,
+        "max_abs_error_percent_fs": 0.8575439453125,
+        "max_error_signed_pcm16": 281,
+        "max_error_sample": 35,
+        "max_error_seconds": 0.004375,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 16.631295800387896,
+          "peak_pcm16": 25,
+          "rms_dbfs": -65.89047694146144,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 33.366128034280514,
+          "peak_pcm16": 240,
+          "rms_dbfs": -59.842882459962,
+          "nonzero_samples": 7759
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 199.99644075987038,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 8.72172286554623e-09,
+        "fixed_decoded_period_error_mean": 0.40186157519730537,
+        "relative_spectral_shape_rms_db_mean": 36.69508313252986,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 16.631295800387896,
+          "peak_pcm16": 25,
+          "rms_dbfs": -65.89047694146144,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 26.075582447953106,
+          "peak_pcm16": 256,
+          "rms_dbfs": -61.984318339116065,
+          "nonzero_samples": 83
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 199.99644075987038,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 8.72172286554623e-09,
+        "fixed_decoded_period_error_mean": 0.9799101552706608,
+        "relative_spectral_shape_rms_db_mean": 34.08900536669419,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 45,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 281,
+          "8": 119
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.17901419999543577
+    },
+    {
+      "case": "scale-0032-p4-pre-13926",
+      "nominal_scale": 32,
+      "profile": 4,
+      "preQ14": 13926,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 25,
+        "rms_pcm16": 16.631295800387896,
+        "mean_pcm16": 0.0,
+        "integer_levels": 31,
+        "nonzero_samples": 7600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 520,
+      "v5_bytes": 373,
+      "v5_payload_bits": 2802,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 1050,
+        "rms_pcm16": 132.10895124858118,
+        "mean_pcm16": 22.28,
+        "integer_levels": 441,
+        "nonzero_samples": 7899
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 1024,
+        "rms_pcm16": 138.2162942637372,
+        "mean_pcm16": 23.552,
+        "integer_levels": 6,
+        "nonzero_samples": 1303
+      },
+      "non_neutral_pwm_samples": 1303,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 2212800.0,
+        "error_energy": 138514388.0,
+        "ser_db": -17.96552724746859,
+        "ser_status": "finite",
+        "rmse_pcm16": 131.58380789443663,
+        "max_abs_error_pcm16": 1035,
+        "max_abs_error_percent_fs": 3.1585693359375,
+        "max_error_signed_pcm16": 1035,
+        "max_error_sample": 42,
+        "max_error_seconds": 0.00525,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 2212800.0,
+        "error_energy": 152979904.0,
+        "ser_db": -18.39692221286829,
+        "ser_status": "finite",
+        "rmse_pcm16": 138.28408440597929,
+        "max_abs_error_pcm16": 1031,
+        "max_abs_error_percent_fs": 3.1463623046875,
+        "max_error_signed_pcm16": 1031,
+        "max_error_sample": 39,
+        "max_error_seconds": 0.004875,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 16.631295800387896,
+          "peak_pcm16": 25,
+          "rms_dbfs": -65.89047694146144,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 132.10895124858118,
+          "peak_pcm16": 1050,
+          "rms_dbfs": -47.89035380092941,
+          "nonzero_samples": 7899
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 199.99644075987038,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 8.72172286554623e-09,
+        "fixed_decoded_period_error_mean": 0.5588300061324535,
+        "relative_spectral_shape_rms_db_mean": 28.79462556805879,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 16.631295800387896,
+          "peak_pcm16": 25,
+          "rms_dbfs": -65.89047694146144,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 138.2162942637372,
+          "peak_pcm16": 1024,
+          "rms_dbfs": -47.497813802007045,
+          "nonzero_samples": 1303
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 199.99644075987038,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 8.72172286554623e-09,
+        "fixed_decoded_period_error_mean": 0.6851340468150597,
+        "relative_spectral_shape_rms_db_mean": 40.32274867947168,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 297,
+          "8": 103
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.1957681999920169
+    },
+    {
+      "case": "scale-0032-p6-pre-00000",
+      "nominal_scale": 32,
+      "profile": 6,
+      "preQ14": 0,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 25,
+        "rms_pcm16": 16.631295800387896,
+        "mean_pcm16": 0.0,
+        "integer_levels": 31,
+        "nonzero_samples": 7600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 770,
+      "v5_bytes": 555,
+      "v5_payload_bits": 4257,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 150,
+        "rms_pcm16": 23.525581820647922,
+        "mean_pcm16": 4.2665,
+        "integer_levels": 98,
+        "nonzero_samples": 7723
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 256,
+        "rms_pcm16": 12.8,
+        "mean_pcm16": 0.64,
+        "integer_levels": 2,
+        "nonzero_samples": 20
+      },
+      "non_neutral_pwm_samples": 20,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 2212800.0,
+        "error_energy": 2222552.0,
+        "ser_db": -0.01909767978870322,
+        "ser_status": "finite",
+        "rmse_pcm16": 16.667903287456404,
+        "max_abs_error_pcm16": 155,
+        "max_abs_error_percent_fs": 0.4730224609375,
+        "max_error_signed_pcm16": 155,
+        "max_error_sample": 35,
+        "max_error_seconds": 0.004375,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 2212800.0,
+        "error_energy": 3549632.0,
+        "ser_db": -2.052411681339263,
+        "ser_status": "finite",
+        "rmse_pcm16": 21.064282565518344,
+        "max_abs_error_pcm16": 281,
+        "max_abs_error_percent_fs": 0.8575439453125,
+        "max_error_signed_pcm16": 281,
+        "max_error_sample": 35,
+        "max_error_seconds": 0.004375,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 16.631295800387896,
+          "peak_pcm16": 25,
+          "rms_dbfs": -65.89047694146144,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 23.525581820647922,
+          "peak_pcm16": 150,
+          "rms_dbfs": -62.878191240313896,
+          "nonzero_samples": 7723
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 40,
+        "missing_decoded_period_frames": 7,
+        "within_tolerance_frames": 40,
+        "pitch_failure_fraction": 0.14893617021276595,
+        "reference_hz_median": 199.99644075987038,
+        "decoded_hz_median_paired": 200.0055464250853,
+        "absolute_cents_median_paired": 0.5861265091979149,
+        "signed_cents_median_paired": 0.07881948695621843,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 8.72172286554623e-09,
+        "fixed_decoded_period_error_mean": 0.08271267375464757,
+        "relative_spectral_shape_rms_db_mean": 32.094464765058724,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 16.631295800387896,
+          "peak_pcm16": 25,
+          "rms_dbfs": -65.89047694146144,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 12.8,
+          "peak_pcm16": 256,
+          "rms_dbfs": -68.16479930623699,
+          "nonzero_samples": 20
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 199.99644075987038,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 8.72172286554623e-09,
+        "fixed_decoded_period_error_mean": 0.9943748543395392,
+        "relative_spectral_shape_rms_db_mean": 33.9344367740329,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 46,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 17,
+          "-7": 10,
+          "-6": 8,
+          "-5": 20,
+          "-4": 24,
+          "-3": 29,
+          "-2": 55,
+          "-1": 168,
+          "1": 27,
+          "2": 17,
+          "3": 16,
+          "4": 7,
+          "6": 1,
+          "7": 1
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.654034799998044
+    },
+    {
+      "case": "scale-0032-p6-pre-13926",
+      "nominal_scale": 32,
+      "profile": 6,
+      "preQ14": 13926,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 25,
+        "rms_pcm16": 16.631295800387896,
+        "mean_pcm16": 0.0,
+        "integer_levels": 31,
+        "nonzero_samples": 7600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 770,
+      "v5_bytes": 555,
+      "v5_payload_bits": 4258,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 644,
+        "rms_pcm16": 75.44714374978021,
+        "mean_pcm16": 22.41225,
+        "integer_levels": 299,
+        "nonzero_samples": 7795
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 768,
+        "rms_pcm16": 70.10848736066126,
+        "mean_pcm16": 13.504,
+        "integer_levels": 5,
+        "nonzero_samples": 368
+      },
+      "non_neutral_pwm_samples": 368,
+      "reference_fixed_pwm_non_neutral_samples": 0,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 2212800.0,
+        "error_energy": 43218108.0,
+        "ser_db": -12.907235876777449,
+        "ser_status": "finite",
+        "rmse_pcm16": 73.50009183667731,
+        "max_abs_error_pcm16": 622,
+        "max_abs_error_percent_fs": 1.898193359375,
+        "max_error_signed_pcm16": 622,
+        "max_error_sample": 44,
+        "max_error_seconds": 0.0055,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 2212800.0,
+        "error_energy": 40822208.0,
+        "ser_db": -12.659543284595587,
+        "ser_status": "finite",
+        "rmse_pcm16": 71.43371752890927,
+        "max_abs_error_pcm16": 746,
+        "max_abs_error_percent_fs": 2.276611328125,
+        "max_error_signed_pcm16": 746,
+        "max_error_sample": 44,
+        "max_error_seconds": 0.0055,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 16.631295800387896,
+          "peak_pcm16": 25,
+          "rms_dbfs": -65.89047694146144,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 75.44714374978021,
+          "peak_pcm16": 644,
+          "rms_dbfs": -52.75614263795341,
+          "nonzero_samples": 7795
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 199.99644075987038,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 8.72172286554623e-09,
+        "fixed_decoded_period_error_mean": 0.4851864708912317,
+        "relative_spectral_shape_rms_db_mean": 30.628603061388993,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 16.631295800387896,
+          "peak_pcm16": 25,
+          "rms_dbfs": -65.89047694146144,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 70.10848736066126,
+          "peak_pcm16": 768,
+          "rms_dbfs": -53.39358675904037,
+          "nonzero_samples": 368
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 0,
+        "missing_decoded_period_frames": 47,
+        "within_tolerance_frames": 0,
+        "pitch_failure_fraction": 1.0,
+        "reference_hz_median": 199.99644075987038,
+        "decoded_hz_median_paired": null,
+        "absolute_cents_median_paired": null,
+        "signed_cents_median_paired": null,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 8.72172286554623e-09,
+        "fixed_decoded_period_error_mean": 0.8808435807574915,
+        "relative_spectral_shape_rms_db_mean": 38.91565038024592,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 14,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 50
+        },
+        "scale_step_q14_histogram": {
+          "2": 50
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 38,
+          "-7": 24,
+          "-6": 23,
+          "-5": 52,
+          "-4": 49,
+          "-3": 52,
+          "-2": 55,
+          "-1": 38,
+          "1": 16,
+          "2": 19,
+          "3": 16,
+          "4": 8,
+          "5": 8,
+          "6": 1,
+          "7": 1
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.6763151999912225
+    },
+    {
+      "case": "scale-1024-p4-pre-00000",
+      "nominal_scale": 1024,
+      "profile": 4,
+      "preQ14": 0,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 806,
+        "rms_pcm16": 531.9464258738844,
+        "mean_pcm16": 0.0,
+        "integer_levels": 39,
+        "nonzero_samples": 7600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 520,
+      "v5_bytes": 373,
+      "v5_payload_bits": 2804,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 1034,
+        "rms_pcm16": 528.0763349175951,
+        "mean_pcm16": 9.60925,
+        "integer_levels": 903,
+        "nonzero_samples": 7992
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 1024,
+        "rms_pcm16": 541.8196305044696,
+        "mean_pcm16": 7.424,
+        "integer_levels": 9,
+        "nonzero_samples": 7214
+      },
+      "non_neutral_pwm_samples": 7214,
+      "reference_fixed_pwm_non_neutral_samples": 7200,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 2263736000.0,
+        "error_energy": 41053184.0,
+        "ser_db": 17.414789317075893,
+        "ser_status": "finite",
+        "rmse_pcm16": 71.63552191475958,
+        "max_abs_error_pcm16": 538,
+        "max_abs_error_percent_fs": 1.641845703125,
+        "max_error_signed_pcm16": 538,
+        "max_error_sample": 25,
+        "max_error_seconds": 0.003125,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 2263736000.0,
+        "error_energy": 78631104.0,
+        "ser_db": 14.592314041404498,
+        "ser_status": "finite",
+        "rmse_pcm16": 99.14074843372931,
+        "max_abs_error_pcm16": 630,
+        "max_abs_error_percent_fs": 1.922607421875,
+        "max_error_signed_pcm16": 630,
+        "max_error_sample": 25,
+        "max_error_seconds": 0.003125,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 531.9464258738844,
+          "peak_pcm16": 806,
+          "rms_dbfs": -35.79164079460738,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 528.0763349175951,
+          "peak_pcm16": 1034,
+          "rms_dbfs": -35.85506458801519,
+          "nonzero_samples": 7992
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "all_observed_periods_within_tolerance",
+        "reference_period_frames": 47,
+        "paired_period_frames": 47,
+        "missing_decoded_period_frames": 0,
+        "within_tolerance_frames": 47,
+        "pitch_failure_fraction": 0.0,
+        "reference_hz_median": 199.9977683565576,
+        "decoded_hz_median_paired": 200.0718393105467,
+        "absolute_cents_median_paired": 0.8570747630525433,
+        "signed_cents_median_paired": 0.6410592386949353,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 3.3221777352192146e-09,
+        "fixed_decoded_period_error_mean": 0.011180607218516294,
+        "relative_spectral_shape_rms_db_mean": 36.15350833077446,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 531.9464258738844,
+          "peak_pcm16": 806,
+          "rms_dbfs": -35.79164079460738,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 541.8196305044696,
+          "peak_pcm16": 1024,
+          "rms_dbfs": -35.63190398368897,
+          "nonzero_samples": 7214
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "all_observed_periods_within_tolerance",
+        "reference_period_frames": 47,
+        "paired_period_frames": 47,
+        "missing_decoded_period_frames": 0,
+        "within_tolerance_frames": 47,
+        "pitch_failure_fraction": 0.0,
+        "reference_hz_median": 199.9977683565576,
+        "decoded_hz_median_paired": 200.03012501882816,
+        "absolute_cents_median_paired": 0.8737557364051661,
+        "signed_cents_median_paired": 0.2800652478828178,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 3.3221777352192146e-09,
+        "fixed_decoded_period_error_mean": 0.02408151975736005,
+        "relative_spectral_shape_rms_db_mean": 44.95625843341535,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "12": 8,
+          "13": 35,
+          "14": 5,
+          "15": 1,
+          "16": 1
+        },
+        "scale_step_q14_histogram": {
+          "4": 8,
+          "6": 35,
+          "8": 5,
+          "12": 1,
+          "16": 1
+        },
+        "gain_histogram": {
+          "10": 1,
+          "14": 49
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 227,
+          "8": 173
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.19419019999622833
+    },
+    {
+      "case": "scale-1024-p4-pre-13926",
+      "nominal_scale": 1024,
+      "profile": 4,
+      "preQ14": 13926,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 806,
+        "rms_pcm16": 531.9464258738844,
+        "mean_pcm16": 0.0,
+        "integer_levels": 39,
+        "nonzero_samples": 7600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 520,
+      "v5_bytes": 376,
+      "v5_payload_bits": 2831,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 3238,
+        "rms_pcm16": 665.0044458498003,
+        "mean_pcm16": 85.2915,
+        "integer_levels": 1427,
+        "nonzero_samples": 7976
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 3328,
+        "rms_pcm16": 678.2913120481494,
+        "mean_pcm16": 87.296,
+        "integer_levels": 20,
+        "nonzero_samples": 7061
+      },
+      "non_neutral_pwm_samples": 7061,
+      "reference_fixed_pwm_non_neutral_samples": 7200,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 2263736000.0,
+        "error_energy": 1632264128.0,
+        "ser_db": 1.4203534113852316,
+        "ser_status": "finite",
+        "rmse_pcm16": 451.70013947308007,
+        "max_abs_error_pcm16": 3459,
+        "max_abs_error_percent_fs": 10.5560302734375,
+        "max_error_signed_pcm16": 3459,
+        "max_error_sample": 183,
+        "max_error_seconds": 0.022875,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 2263736000.0,
+        "error_energy": 1723851968.0,
+        "ser_db": 1.1832580844514065,
+        "ser_status": "finite",
+        "rmse_pcm16": 464.1998448944162,
+        "max_abs_error_pcm16": 3589,
+        "max_abs_error_percent_fs": 10.9527587890625,
+        "max_error_signed_pcm16": 3589,
+        "max_error_sample": 183,
+        "max_error_seconds": 0.022875,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 531.9464258738844,
+          "peak_pcm16": 806,
+          "rms_dbfs": -35.79164079460738,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 665.0044458498003,
+          "peak_pcm16": 3238,
+          "rms_dbfs": -33.85250772391177,
+          "nonzero_samples": 7976
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 17,
+        "missing_decoded_period_frames": 30,
+        "within_tolerance_frames": 17,
+        "pitch_failure_fraction": 0.6382978723404256,
+        "reference_hz_median": 199.9977683565576,
+        "decoded_hz_median_paired": 200.37016063681654,
+        "absolute_cents_median_paired": 4.586550372143781,
+        "signed_cents_median_paired": 3.220529590026841,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 3.3221777352192146e-09,
+        "fixed_decoded_period_error_mean": 0.16392366562711622,
+        "relative_spectral_shape_rms_db_mean": 27.77767700619145,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 531.9464258738844,
+          "peak_pcm16": 806,
+          "rms_dbfs": -35.79164079460738,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 678.2913120481494,
+          "peak_pcm16": 3328,
+          "rms_dbfs": -33.68067361113619,
+          "nonzero_samples": 7061
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 12,
+        "missing_decoded_period_frames": 35,
+        "within_tolerance_frames": 12,
+        "pitch_failure_fraction": 0.7446808510638298,
+        "reference_hz_median": 199.9977683565576,
+        "decoded_hz_median_paired": 200.39737080328706,
+        "absolute_cents_median_paired": 3.4553606237559302,
+        "signed_cents_median_paired": 3.4553606237559302,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 3.3221777352192146e-09,
+        "fixed_decoded_period_error_mean": 0.17607349522878604,
+        "relative_spectral_shape_rms_db_mean": 45.12092546797751,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 49,
+          "15": 1
+        },
+        "scale_step_q14_histogram": {
+          "2": 49,
+          "12": 1
+        },
+        "gain_histogram": {
+          "0": 1,
+          "14": 49
+        },
+        "lag_histogram": {
+          "38": 1,
+          "40": 49
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 305,
+          "8": 95
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.19817170000169426
+    },
+    {
+      "case": "scale-1024-p6-pre-00000",
+      "nominal_scale": 1024,
+      "profile": 6,
+      "preQ14": 0,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 806,
+        "rms_pcm16": 531.9464258738844,
+        "mean_pcm16": 0.0,
+        "integer_levels": 39,
+        "nonzero_samples": 7600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 770,
+      "v5_bytes": 549,
+      "v5_payload_bits": 4214,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 870,
+        "rms_pcm16": 531.6427762135022,
+        "mean_pcm16": 2.44825,
+        "integer_levels": 768,
+        "nonzero_samples": 7995
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 768,
+        "rms_pcm16": 538.984882904892,
+        "mean_pcm16": 3.904,
+        "integer_levels": 7,
+        "nonzero_samples": 7207
+      },
+      "non_neutral_pwm_samples": 7207,
+      "reference_fixed_pwm_non_neutral_samples": 7200,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 2263736000.0,
+        "error_energy": 5229212.0,
+        "ser_db": 26.363895283224963,
+        "ser_status": "finite",
+        "rmse_pcm16": 25.56660908294254,
+        "max_abs_error_pcm16": 467,
+        "max_abs_error_percent_fs": 1.4251708984375,
+        "max_error_signed_pcm16": 467,
+        "max_error_sample": 27,
+        "max_error_seconds": 0.003375,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 2263736000.0,
+        "error_energy": 40044736.0,
+        "ser_db": 17.52280342583574,
+        "ser_status": "finite",
+        "rmse_pcm16": 70.75020848025821,
+        "max_abs_error_pcm16": 457,
+        "max_abs_error_percent_fs": 1.3946533203125,
+        "max_error_signed_pcm16": 457,
+        "max_error_sample": 27,
+        "max_error_seconds": 0.003375,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 531.9464258738844,
+          "peak_pcm16": 806,
+          "rms_dbfs": -35.79164079460738,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 531.6427762135022,
+          "peak_pcm16": 870,
+          "rms_dbfs": -35.79660035513168,
+          "nonzero_samples": 7995
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "all_observed_periods_within_tolerance",
+        "reference_period_frames": 47,
+        "paired_period_frames": 47,
+        "missing_decoded_period_frames": 0,
+        "within_tolerance_frames": 47,
+        "pitch_failure_fraction": 0.0,
+        "reference_hz_median": 199.9977683565576,
+        "decoded_hz_median_paired": 199.99809251891432,
+        "absolute_cents_median_paired": 0.00280603358326789,
+        "signed_cents_median_paired": 0.00280603358326789,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 3.3221777352192146e-09,
+        "fixed_decoded_period_error_mean": 0.0005394002665938301,
+        "relative_spectral_shape_rms_db_mean": 27.46260097218435,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 531.9464258738844,
+          "peak_pcm16": 806,
+          "rms_dbfs": -35.79164079460738,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 538.984882904892,
+          "peak_pcm16": 768,
+          "rms_dbfs": -35.67746700818894,
+          "nonzero_samples": 7207
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "all_observed_periods_within_tolerance",
+        "reference_period_frames": 47,
+        "paired_period_frames": 47,
+        "missing_decoded_period_frames": 0,
+        "within_tolerance_frames": 47,
+        "pitch_failure_fraction": 0.0,
+        "reference_hz_median": 199.9977683565576,
+        "decoded_hz_median_paired": 200.0,
+        "absolute_cents_median_paired": 0.019317593339577735,
+        "signed_cents_median_paired": 0.019317593339577735,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 3.3221777352192146e-09,
+        "fixed_decoded_period_error_mean": 0.00260752979319913,
+        "relative_spectral_shape_rms_db_mean": 42.368347928898665,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "15": 48,
+          "16": 1,
+          "17": 1
+        },
+        "scale_step_q14_histogram": {
+          "12": 48,
+          "16": 1,
+          "23": 1
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "40": 50
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 1,
+          "-7": 1,
+          "-5": 1,
+          "-4": 2,
+          "-3": 1,
+          "-2": 8,
+          "-1": 120,
+          "0": 145,
+          "1": 115,
+          "2": 2,
+          "3": 3,
+          "7": 1
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.6795730000012554
+    },
+    {
+      "case": "scale-1024-p6-pre-13926",
+      "nominal_scale": 1024,
+      "profile": 6,
+      "preQ14": 13926,
+      "source": {
+        "samples": 8000,
+        "peak_pcm16": 806,
+        "rms_pcm16": 531.9464258738844,
+        "mean_pcm16": 0.0,
+        "integer_levels": 39,
+        "nonzero_samples": 7600
+      },
+      "source_period_windows": 47,
+      "source_period_status": "observed",
+      "status": "complete",
+      "v4_bytes": 770,
+      "v5_bytes": 555,
+      "v5_payload_bits": 4264,
+      "v4_v5_all_pcm_exact": true,
+      "native_output_domain_comparisons": 6,
+      "native_model_pcm_pwm_exact": true,
+      "native_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 2144,
+        "rms_pcm16": 612.048521769312,
+        "mean_pcm16": 64.897,
+        "integer_levels": 1282,
+        "nonzero_samples": 7983
+      },
+      "fixed_pwm_pcm16": {
+        "samples": 8000,
+        "peak_pcm16": 2304,
+        "rms_pcm16": 626.6642609882903,
+        "mean_pcm16": 65.472,
+        "integer_levels": 16,
+        "nonzero_samples": 7244
+      },
+      "non_neutral_pwm_samples": 7244,
+      "reference_fixed_pwm_non_neutral_samples": 7200,
+      "pcm16_waveform": {
+        "samples": 8000,
+        "reference_energy": 2263736000.0,
+        "error_energy": 796514012.0,
+        "ser_db": 4.53632357287434,
+        "ser_status": "finite",
+        "rmse_pcm16": 315.53803494982975,
+        "max_abs_error_pcm16": 2510,
+        "max_abs_error_percent_fs": 7.659912109375,
+        "max_error_signed_pcm16": 2510,
+        "max_error_sample": 195,
+        "max_error_seconds": 0.024375,
+        "stoi": null
+      },
+      "pwm8_waveform": {
+        "samples": 8000,
+        "reference_energy": 2263736000.0,
+        "error_energy": 868838592.0,
+        "ser_db": 4.158866743214183,
+        "ser_status": "finite",
+        "rmse_pcm16": 329.55246016378027,
+        "max_abs_error_pcm16": 2598,
+        "max_abs_error_percent_fs": 7.928466796875,
+        "max_error_signed_pcm16": 2598,
+        "max_error_sample": 194,
+        "max_error_seconds": 0.02425,
+        "stoi": null
+      },
+      "pcm16_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 531.9464258738844,
+          "peak_pcm16": 806,
+          "rms_dbfs": -35.79164079460738,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 612.048521769312,
+          "peak_pcm16": 2144,
+          "rms_dbfs": -34.573281632056215,
+          "nonzero_samples": 7983
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 45,
+        "missing_decoded_period_frames": 2,
+        "within_tolerance_frames": 45,
+        "pitch_failure_fraction": 0.0425531914893617,
+        "reference_hz_median": 199.9977683565576,
+        "decoded_hz_median_paired": 200.1973411115425,
+        "absolute_cents_median_paired": 3.694468807370011,
+        "signed_cents_median_paired": 1.7266936509872168,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 3.3221777352192146e-09,
+        "fixed_decoded_period_error_mean": 0.04936951149924256,
+        "relative_spectral_shape_rms_db_mean": 22.996552207274064,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "pwm8_voice": {
+        "schema": "lpx-voice-character-diagnostic-v1",
+        "settings": {
+          "rate": 8000,
+          "frame_samples": 640,
+          "hop_samples": 160,
+          "fmin": 50.0,
+          "fmax": 800.0,
+          "trough_threshold": 0.15,
+          "min_rms_pcm16": 0.5,
+          "tolerance_cents": 100.0
+        },
+        "reference_level": {
+          "samples": 8000,
+          "rms_pcm16": 531.9464258738844,
+          "peak_pcm16": 806,
+          "rms_dbfs": -35.79164079460738,
+          "nonzero_samples": 7600
+        },
+        "decoded_level": {
+          "samples": 8000,
+          "rms_pcm16": 626.6642609882903,
+          "peak_pcm16": 2304,
+          "rms_dbfs": -34.368300152192184,
+          "nonzero_samples": 7244
+        },
+        "frames": 47,
+        "active_reference_frames": 47,
+        "pitch_status": "pitch_mismatch_or_missing",
+        "reference_period_frames": 47,
+        "paired_period_frames": 45,
+        "missing_decoded_period_frames": 2,
+        "within_tolerance_frames": 45,
+        "pitch_failure_fraction": 0.0425531914893617,
+        "reference_hz_median": 199.9977683565576,
+        "decoded_hz_median_paired": 200.24087553018796,
+        "absolute_cents_median_paired": 3.377985171962725,
+        "signed_cents_median_paired": 2.1031225982260056,
+        "near_half_pitch_frames": 0,
+        "near_double_pitch_frames": 0,
+        "fixed_source_period_error_mean": 3.3221777352192146e-09,
+        "fixed_decoded_period_error_mean": 0.06436972192335326,
+        "relative_spectral_shape_rms_db_mean": 44.43764432053834,
+        "spectral_shape_frames": 47,
+        "decoded_collapsed_active_frames": 0,
+        "scope": "Frame periodicity and coarse spectral proxies, not perceived quality or validated true F0; no gain fitting/resampling/alignment."
+      },
+      "stored_parameters": {
+        "tuples": 50,
+        "scale_code_histogram": {
+          "10": 49,
+          "15": 1
+        },
+        "scale_step_q14_histogram": {
+          "2": 49,
+          "12": 1
+        },
+        "gain_histogram": {
+          "14": 50
+        },
+        "lag_histogram": {
+          "38": 1,
+          "40": 49
+        },
+        "innovation_amplitude_histogram": {
+          "-8": 35,
+          "-7": 31,
+          "-6": 24,
+          "-5": 40,
+          "-4": 43,
+          "-3": 55,
+          "-2": 69,
+          "-1": 35,
+          "1": 20,
+          "2": 19,
+          "3": 18,
+          "4": 3,
+          "5": 4,
+          "6": 2,
+          "7": 2
+        },
+        "zero_step_tuples": 0
+      },
+      "seconds": 0.6663983000034932
+    }
+  ],
+  "actual_cases": 16,
+  "seconds": 19.7038990999863,
+  "scope": "Sixteen analytic synthetic cases; no fit tuning, corpus, firmware, true-F0 or perceptual-quality claim."
+}
