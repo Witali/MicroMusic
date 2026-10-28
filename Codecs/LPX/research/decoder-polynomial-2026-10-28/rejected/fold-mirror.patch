@@ -1,0 +1,52 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -747,14 +747,21 @@
+     return ((hi*c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
+ }
+ // LSF->LPC polynomial. Independent Q12 multiplication (no floats/trig in AVR).
+-void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
++void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n,bool reciprocal){
+     // Multiply by 1+c*z^-1+z^-2 IN PLACE, descending to preserve original
+     // p[j-1] and p[j-2]. Eliminates 12*4=48 bytes of SRAM and two passes.
+     // Retain the same ascending-contribution order as the old polyTmp method.
+-    p[n+1]=p[n-1];
+-    // The trailing unit is +/-4096, so this product has no rounding.
+-    p[n]=p[n-2]+(p[n-1]<0?-(int32_t)c:(int32_t)c);
+-    for(uint8_t j=(uint8_t)(n-1);j>=2;--j){
++    if(reciprocal){
++        // P has exact reciprocal coefficients: only its lower half is needed.
++        n>>=1;
++        p[n]=p[n-1];
++    }else{
++        p[n+1]=p[n-1];
++        // Q's trailing unit is +/-4096: this product has no rounding.
++        p[n]=p[n-2]+(p[n-1]<0?-(int32_t)c:(int32_t)c);
++        --n;
++    }
++    for(uint8_t j=n;j>=2;--j){
+         p[j]=p[j-2]+polyMulQ12(p[j-1],c)+p[j];
+     }
+     // p[0] is initialized to 4096 and never changed by any factor.
+@@ -783,8 +790,9 @@
+             // Exact (1 +/- z) first factors; no rounded multiplication.
+             const int16_t unit=(i&1)?-4096:4096;
+             p[1]=unit+cc;p[2]=4096+((i&1)?-cc:cc);p[3]=unit;
+-        }else polyFactor(p,cc,(uint8_t)((i&254)+2));
+-    }
++        }else polyFactor(p,cc,(uint8_t)((i&254)+2),!(i&1));
++    }
++    for(uint8_t i=1;i<=5;i++)polyP_[11-i]=polyP_[i];
+     for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
+ }
+ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -192,7 +192,7 @@
+     // LPC spectrum conversion and interpolation.
+     void interpolateLsf(uint8_t sub);
+     void convertLsfAt(uint8_t t,int16_t* out);
+-    void polyFactor(int32_t* p,int16_t c,uint8_t n);
++    void polyFactor(int32_t* p,int16_t c,uint8_t n,bool reciprocal);
+     static int16_t clamp(int32_t n,int16_t low,int16_t high);
+     // Keep per-sample state within AVR's short displacement range. Arrays
+     // are addressed through pointers; frame-only polynomial workspace follows.

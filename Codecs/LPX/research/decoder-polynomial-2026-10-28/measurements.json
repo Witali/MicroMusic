@@ -1,0 +1,799 @@
+{
+  "baseline_commit": "3f717df5",
+  "cpu": "ATmega328P / AVR5 with MUL",
+  "abi": "GNU AVR",
+  "compiler": "AVR-GCC7.3.0",
+  "cpu_hz": 16000000,
+  "sample_rate_hz": 8000,
+  "compiler_options": [
+    "-mmcu=atmega328p",
+    "-DF_CPU=16000000UL",
+    "-Os",
+    "-std=gnu++11",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-DLPX4_PROFILE_QUEUE=512",
+    "-DLPX4_PROFILE_PREFILL=384",
+    "-DLPX4_PROFILE_IRQ_LOAD=0",
+    "-DLPX4_AVR_DOT_UNROLL=1",
+    "-DLPX4_FUNCTION_TUNING=0",
+    "-DLPX4_V3_FEATURES=24",
+    "-DLPX4_ENABLE_SPEECH=1",
+    "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+    "-DLPX4_COMPACT_ONLY=1",
+    "-DLPX4_ENABLE_ASM=1",
+    "-flto",
+    "-mcall-prologues",
+    "-mrelax",
+    "-Wl,-u,profile_decode_active",
+    "-Wl,-u,profile_done",
+    "-Wl,-u,profile_error",
+    "-Wl,-u,profile_min_occupancy",
+    "-Wl,-u,profile_occupancy",
+    "-Wl,-u,profile_output_valid",
+    "-Wl,-u,profile_played",
+    "-Wl,-u,profile_produced",
+    "-Wl,-u,profile_producer_done",
+    "-Wl,-u,profile_pwm_address",
+    "-Wl,-u,profile_ready",
+    "-Wl,-u,profile_running",
+    "-Wl,-u,profile_sph_address",
+    "-Wl,-u,profile_spl_address",
+    "-Wl,-u,profile_underruns"
+  ],
+  "variants": {
+    "baseline": {
+      "source_sha256": {
+        "Lpx4HybridCore.cpp": "9c82ed7193f01c684398117088ecb4185fb0a1528560340d09ca9a9d29a97a85",
+        "Lpx4HybridCore.h": "332b71ad188491b9c57c27f79aff34aa98be89af57a62d129a6c69c22c58277f"
+      },
+      "images": [
+        {
+          "id": "v5-case-001",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3547,
+          "flash_bytes": 8632,
+          "program_flash_bytes": 5085,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-001",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5181,
+          "flash_bytes": 10268,
+          "program_flash_bytes": 5087,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3580,
+          "flash_bytes": 8666,
+          "program_flash_bytes": 5086,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5006,
+          "flash_bytes": 10094,
+          "program_flash_bytes": 5088,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 4,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 16142,
+          "flash_bytes": 21478,
+          "program_flash_bytes": 5336,
+          "static_sram_bytes": 1086
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 6,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 23259,
+          "flash_bytes": 28594,
+          "program_flash_bytes": 5335,
+          "static_sram_bytes": 1086
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 4,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 739,
+          "flash_bytes": 5824,
+          "program_flash_bytes": 5085,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 6,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 1084,
+          "flash_bytes": 6170,
+          "program_flash_bytes": 5086,
+          "static_sram_bytes": 1085
+        }
+      ]
+    },
+    "unit": {
+      "source_sha256": {
+        "Lpx4HybridCore.cpp": "6ebd7a4fd88d390c81d7b0cd823b9332af2dae9f7bb17c89d78115c3365e2405",
+        "Lpx4HybridCore.h": "332b71ad188491b9c57c27f79aff34aa98be89af57a62d129a6c69c22c58277f"
+      },
+      "images": [
+        {
+          "id": "v5-case-001",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3547,
+          "flash_bytes": 8632,
+          "program_flash_bytes": 5085,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-001",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5181,
+          "flash_bytes": 10268,
+          "program_flash_bytes": 5087,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3580,
+          "flash_bytes": 8666,
+          "program_flash_bytes": 5086,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5006,
+          "flash_bytes": 10094,
+          "program_flash_bytes": 5088,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 4,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 16142,
+          "flash_bytes": 21476,
+          "program_flash_bytes": 5334,
+          "static_sram_bytes": 1086
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 6,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 23259,
+          "flash_bytes": 28592,
+          "program_flash_bytes": 5333,
+          "static_sram_bytes": 1086
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 4,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 739,
+          "flash_bytes": 5824,
+          "program_flash_bytes": 5085,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 6,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 1084,
+          "flash_bytes": 6170,
+          "program_flash_bytes": 5086,
+          "static_sram_bytes": 1085
+        }
+      ]
+    },
+    "fold": {
+      "source_sha256": {
+        "Lpx4HybridCore.cpp": "a5cded5a8790ae0e817f7943150a2c0c35533d16a8be183b47f0da75df07a688",
+        "Lpx4HybridCore.h": "dac348412434adc10b2597961098fab5cb292c5699ff04301feec9367648ce75"
+      },
+      "images": [
+        {
+          "id": "v5-case-001",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3547,
+          "flash_bytes": 8792,
+          "program_flash_bytes": 5245,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-001",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5181,
+          "flash_bytes": 10428,
+          "program_flash_bytes": 5247,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3580,
+          "flash_bytes": 8826,
+          "program_flash_bytes": 5246,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5006,
+          "flash_bytes": 10254,
+          "program_flash_bytes": 5248,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 4,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 16142,
+          "flash_bytes": 21630,
+          "program_flash_bytes": 5488,
+          "static_sram_bytes": 1062
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 6,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 23259,
+          "flash_bytes": 28746,
+          "program_flash_bytes": 5487,
+          "static_sram_bytes": 1062
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 4,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 739,
+          "flash_bytes": 5984,
+          "program_flash_bytes": 5245,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 6,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 1084,
+          "flash_bytes": 6330,
+          "program_flash_bytes": 5246,
+          "static_sram_bytes": 1061
+        }
+      ]
+    },
+    "fold-index": {
+      "source_sha256": {
+        "Lpx4HybridCore.cpp": "be5266442605d0baf783c383dc33f209ab5ffd6cb144b172b2f6bbd7b27c2aad",
+        "Lpx4HybridCore.h": "dac348412434adc10b2597961098fab5cb292c5699ff04301feec9367648ce75"
+      },
+      "images": [
+        {
+          "id": "v5-case-001",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3547,
+          "flash_bytes": 8704,
+          "program_flash_bytes": 5157,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-001",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5181,
+          "flash_bytes": 10340,
+          "program_flash_bytes": 5159,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3580,
+          "flash_bytes": 8738,
+          "program_flash_bytes": 5158,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5006,
+          "flash_bytes": 10166,
+          "program_flash_bytes": 5160,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 4,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 16142,
+          "flash_bytes": 21548,
+          "program_flash_bytes": 5406,
+          "static_sram_bytes": 1062
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 6,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 23259,
+          "flash_bytes": 28664,
+          "program_flash_bytes": 5405,
+          "static_sram_bytes": 1062
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 4,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 739,
+          "flash_bytes": 5896,
+          "program_flash_bytes": 5157,
+          "static_sram_bytes": 1061
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 6,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 1084,
+          "flash_bytes": 6242,
+          "program_flash_bytes": 5158,
+          "static_sram_bytes": 1061
+        }
+      ]
+    },
+    "fold-mirror": {
+      "source_sha256": {
+        "Lpx4HybridCore.cpp": "5e0d1600cab9ee70db2c12d7fb29be8a39567c76cafea7c8a223f3f51db8cbee",
+        "Lpx4HybridCore.h": "c3cc62563549efb8a6c694f8d5e33938f331306284ec9b22e0c28124c15c11b7"
+      },
+      "images": [
+        {
+          "id": "v5-case-001",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3547,
+          "flash_bytes": 8722,
+          "program_flash_bytes": 5175,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-001",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5181,
+          "flash_bytes": 10358,
+          "program_flash_bytes": 5177,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 4,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 3580,
+          "flash_bytes": 8756,
+          "program_flash_bytes": 5176,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-017",
+          "profile": 6,
+          "segments": 1,
+          "samples": 64000,
+          "stream_bytes": 5006,
+          "flash_bytes": 10184,
+          "program_flash_bytes": 5178,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 4,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 16142,
+          "flash_bytes": 21566,
+          "program_flash_bytes": 5424,
+          "static_sram_bytes": 1086
+        },
+        {
+          "id": "v5-case-050",
+          "profile": 6,
+          "segments": 5,
+          "samples": 281632,
+          "stream_bytes": 23259,
+          "flash_bytes": 28682,
+          "program_flash_bytes": 5423,
+          "static_sram_bytes": 1086
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 4,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 739,
+          "flash_bytes": 5914,
+          "program_flash_bytes": 5175,
+          "static_sram_bytes": 1085
+        },
+        {
+          "id": "v5-case-057",
+          "profile": 6,
+          "segments": 1,
+          "samples": 11333,
+          "stream_bytes": 1084,
+          "flash_bytes": 6260,
+          "program_flash_bytes": 5176,
+          "static_sram_bytes": 1085
+        }
+      ]
+    }
+  },
+  "timings": [
+    {
+      "variant": "baseline",
+      "id": "v5-case-001",
+      "profile": 4,
+      "irq": 0,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "stack_margin_bytes": 887,
+      "decode_wall_cycles_total": 53616721,
+      "decode_wall_cycles_max": 22429,
+      "decode_wall_cycles_max_40": 51757,
+      "decode_wall_cycles_max_80": 81867,
+      "decode_wall_cycles_max_160": 157384,
+      "pwm_model_exact": true,
+      "decode_timing_samples": 64000,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "baseline",
+      "id": "v5-case-001",
+      "profile": 4,
+      "irq": 100,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "stack_margin_bytes": 887,
+      "decode_wall_cycles_total": 54510731,
+      "decode_wall_cycles_max": 23529,
+      "decode_wall_cycles_max_40": 54461,
+      "decode_wall_cycles_max_80": 86104,
+      "decode_wall_cycles_max_160": 163832,
+      "pwm_model_exact": true,
+      "decode_timing_samples": 64000,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "baseline",
+      "id": "v5-case-001",
+      "profile": 6,
+      "irq": 0,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "stack_margin_bytes": 887,
+      "decode_wall_cycles_total": 51309016,
+      "decode_wall_cycles_max": 22951,
+      "decode_wall_cycles_max_40": 50218,
+      "decode_wall_cycles_max_80": 78368,
+      "decode_wall_cycles_max_160": 152104,
+      "pwm_model_exact": true,
+      "decode_timing_samples": 64000,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "baseline",
+      "id": "v5-case-001",
+      "profile": 6,
+      "irq": 100,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "stack_margin_bytes": 887,
+      "decode_wall_cycles_total": 52230996,
+      "decode_wall_cycles_max": 24298,
+      "decode_wall_cycles_max_40": 52923,
+      "decode_wall_cycles_max_80": 83119,
+      "decode_wall_cycles_max_160": 157518,
+      "pwm_model_exact": true,
+      "decode_timing_samples": 64000,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "unit",
+      "id": "v5-case-001",
+      "profile": 4,
+      "irq": 0,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "stack_margin_bytes": 889,
+      "decode_wall_cycles_total": 52356007,
+      "decode_wall_cycles_max": 19303,
+      "decode_wall_cycles_max_40": 48403,
+      "decode_wall_cycles_max_80": 78289,
+      "decode_wall_cycles_max_160": 151109,
+      "pwm_model_exact": true,
+      "decode_timing_samples": 64000,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "unit",
+      "id": "v5-case-001",
+      "profile": 4,
+      "irq": 100,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "stack_margin_bytes": 889,
+      "decode_wall_cycles_total": 53082330,
+      "decode_wall_cycles_max": 20450,
+      "decode_wall_cycles_max_40": 50825,
+      "decode_wall_cycles_max_80": 81593,
+      "decode_wall_cycles_max_160": 156111,
+      "pwm_model_exact": true,
+      "decode_timing_samples": 64000,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "unit",
+      "id": "v5-case-001",
+      "profile": 6,
+      "irq": 0,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "stack_margin_bytes": 889,
+      "decode_wall_cycles_total": 50030872,
+      "decode_wall_cycles_max": 19972,
+      "decode_wall_cycles_max_40": 46945,
+      "decode_wall_cycles_max_80": 75095,
+      "decode_wall_cycles_max_160": 145558,
+      "pwm_model_exact": true,
+      "decode_timing_samples": 64000,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "unit",
+      "id": "v5-case-001",
+      "profile": 6,
+      "irq": 100,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "stack_margin_bytes": 889,
+      "decode_wall_cycles_total": 50791287,
+      "decode_wall_cycles_max": 20972,
+      "decode_wall_cycles_max_40": 49361,
+      "decode_wall_cycles_max_80": 80040,
+      "decode_wall_cycles_max_160": 150361,
+      "pwm_model_exact": true,
+      "decode_timing_samples": 64000,
+      "decode_timing_complete": true
+    }
+  ],
+  "compiled_coefficients": {
+    "rows": [
+      {
+        "variant": "baseline",
+        "probe": "frozen",
+        "compact_only": false,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "baseline",
+        "probe": "frozen",
+        "compact_only": true,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "baseline",
+        "probe": "ordered",
+        "compact_only": false,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      },
+      {
+        "variant": "baseline",
+        "probe": "ordered",
+        "compact_only": true,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      },
+      {
+        "variant": "unit",
+        "probe": "frozen",
+        "compact_only": false,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "unit",
+        "probe": "frozen",
+        "compact_only": true,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "unit",
+        "probe": "ordered",
+        "compact_only": false,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      },
+      {
+        "variant": "unit",
+        "probe": "ordered",
+        "compact_only": true,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      },
+      {
+        "variant": "fold",
+        "probe": "frozen",
+        "compact_only": false,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "fold",
+        "probe": "frozen",
+        "compact_only": true,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "fold",
+        "probe": "ordered",
+        "compact_only": false,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      },
+      {
+        "variant": "fold",
+        "probe": "ordered",
+        "compact_only": true,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      },
+      {
+        "variant": "fold-index",
+        "probe": "frozen",
+        "compact_only": false,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "fold-index",
+        "probe": "frozen",
+        "compact_only": true,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "fold-index",
+        "probe": "ordered",
+        "compact_only": false,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      },
+      {
+        "variant": "fold-index",
+        "probe": "ordered",
+        "compact_only": true,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      },
+      {
+        "variant": "fold-mirror",
+        "probe": "frozen",
+        "compact_only": false,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "fold-mirror",
+        "probe": "frozen",
+        "compact_only": true,
+        "conversions": 34816,
+        "sha256": "f1058263c4dfa7d1860259b97d367086018653c67d49c4cd5f3fd55054f94588"
+      },
+      {
+        "variant": "fold-mirror",
+        "probe": "ordered",
+        "compact_only": false,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      },
+      {
+        "variant": "fold-mirror",
+        "probe": "ordered",
+        "compact_only": true,
+        "conversions": 69632,
+        "sha256": "1b47e930772e2b9194c95e13b448c73448e4933be98b3b4f1251a3aa9719d60d"
+      }
+    ],
+    "ordered_probe_sha256": "e12a46864b682c6444a3ec743c08e06d400834ac1bfa306d17439af3d1997bb7"
+  },
+  "selected_host_tests": {
+    "suite_tests_passed": 18,
+    "additional_ordered_test_passed": true,
+    "factor_cases": 564288
+  },
+  "scope": "8 fixed full clip image costs per variant; selected unit implementation only has full native lifecycle and8 before/after IRQ image checks; rejected folds have compiled coefficient checks and linked size evidence only. No physical-board or startup stack claim."
+}
