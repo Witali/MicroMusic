@@ -1,0 +1,57 @@
+{
+  "schema": "lpx-v5-fixed-fields-equal-size-v1",
+  "groups": [
+    {
+      "percent": 100,
+      "common_cap_fits": 98,
+      "equal_achieved_bytes": 98,
+      "equal_bytes_pcm_sse_better_equal_worse_vs_amplitude": [
+        0,
+        98,
+        0
+      ],
+      "same_cap_pcm_sse_better_equal_worse_vs_amplitude": [
+        0,
+        98,
+        0
+      ],
+      "accepted_uses_fewer_bytes": 0,
+      "accepted_uses_more_bytes_within_cap": 0
+    },
+    {
+      "percent": 95,
+      "common_cap_fits": 79,
+      "equal_achieved_bytes": 79,
+      "equal_bytes_pcm_sse_better_equal_worse_vs_amplitude": [
+        26,
+        53,
+        0
+      ],
+      "same_cap_pcm_sse_better_equal_worse_vs_amplitude": [
+        26,
+        53,
+        0
+      ],
+      "accepted_uses_fewer_bytes": 0,
+      "accepted_uses_more_bytes_within_cap": 0
+    },
+    {
+      "percent": 90,
+      "common_cap_fits": 30,
+      "equal_achieved_bytes": 30,
+      "equal_bytes_pcm_sse_better_equal_worse_vs_amplitude": [
+        5,
+        25,
+        0
+      ],
+      "same_cap_pcm_sse_better_equal_worse_vs_amplitude": [
+        5,
+        25,
+        0
+      ],
+      "accepted_uses_fewer_bytes": 0,
+      "accepted_uses_more_bytes_within_cap": 0
+    }
+  ],
+  "scope": "Same total cap and equal achieved complete-stream bytes are separate comparisons. All accepted outputs preserve the same-cap whole-chain amplitude floors; original-incumbent flags remain separate."
+}
