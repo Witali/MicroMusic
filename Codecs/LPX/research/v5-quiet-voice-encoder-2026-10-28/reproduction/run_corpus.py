@@ -21,6 +21,10 @@ PREFIX = 'Codecs/LPX/01_ACTIVE_Q0_CODEC/'
 HERE = Path(__file__).resolve().parent
 PROTOCOL = HERE.parent / 'PROTOCOL.md'
 PRE_GRID = (0, 8192, 13926)
+REQUIRED_CORE_MODULES = ('encode_speech_voice', 'voice_character', 'speech_voice_objective',
+                         'speech_v4', 'speech_compact', 'q0_model', 'wav_lpc',
+                         'standard_metrics', 'refine_speech_compact', 'batch_decoder',
+                         'benchmark_speech_flash')
 
 
 def sha(data):
@@ -90,6 +94,27 @@ def environment():
                         ('OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'NUMBA_NUM_THREADS')}}
 
 
+def assert_core_module_origins(source_root, modules=None):
+    """Reject a cached local import from any other checkout, even with matching disk hashes."""
+    modules = sys.modules if modules is None else modules
+    tools = (Path(source_root) / PREFIX / 'tools').resolve()
+    known = {p.stem: p.resolve() for p in tools.glob('*.py')}
+    for name in REQUIRED_CORE_MODULES:
+        known[name] = tools / (name + '.py')
+        if name not in modules:
+            raise ValueError('A required core module was not loaded from the frozen source root')
+    project_tail = '/' + PREFIX + 'tools/'
+    for name, module in list(modules.items()):
+        origin = getattr(module, '__file__', None)
+        if name in known:
+            if origin is None or Path(origin).resolve() != known[name]:
+                raise ValueError('Cached core module belongs to another source root: ' + name)
+        elif origin is not None and project_tail.casefold() in Path(origin).as_posix().casefold():
+            # Also inspect project-local dependencies imported under an alias.
+            if Path(origin).resolve().parent != tools:
+                raise ValueError('A loaded local dependency belongs to another source root')
+
+
 def load_core(source_root):
     for name in ('OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'NUMBA_NUM_THREADS'):
         os.environ[name] = '1'
@@ -103,6 +128,7 @@ def load_core(source_root):
     from speech_voice_objective import VoiceObjective
     from standard_metrics import pwm_duties, pwm_pcm16
     from voice_character import track_pitch, compare_voice
+    assert_core_module_origins(source_root)
     return SimpleNamespace(**locals())
 
 
@@ -509,10 +535,11 @@ def run_record(job, record, binding, args, C, common, only):
               'scope': 'Whole actual reset chains; three finite choices, no cap-specific refit or mixture. Auto target level is separate.'}
     save(folder / 'record-private.json', result)
     artifacts = {p.relative_to(folder).as_posix(): sha(p.read_bytes()) for p in folder.rglob('*.l4hy')}
-    save(folder / 'complete-private.json', {'identity': identity,
-        'report_sha256': sha((folder / 'record-private.json').read_bytes()), 'artifacts_sha256': artifacts})
     attempt.update(status='complete', active_segment=None)
     save(attempt_path, attempt)
+    # Last commit point: a complete cache must never retain a running attempt.
+    save(folder / 'complete-private.json', {'identity': identity,
+        'report_sha256': sha((folder / 'record-private.json').read_bytes()), 'artifacts_sha256': artifacts})
     return result, False
 
 
