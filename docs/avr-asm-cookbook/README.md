@@ -3071,3 +3071,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [LPX exact polynomial trailing units](lpx-polynomial-units.md): eliminate a proven unit product; retain measured rejected reciprocal-P alternatives.
 
 - [LPX small kernel boundaries](lpx-small-kernel-boundaries.md): share repeated attenuation under the size recipe; retain measured no-op/rejected Rice and parser alternatives.
+
+## LPX: external observation of a standalone AVR player
+
+[Preserve playback while removing diagnostics](lpx-release-player.md): SPSC publication, atomic final EOF, vendor-derived unlinked metadata, exact timer/PWM/queue observation, and measured full application size.
