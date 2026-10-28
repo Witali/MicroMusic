@@ -132,6 +132,47 @@ class FirmwareCollectorTests(unittest.TestCase):
                     target.unlink()
                 environment.assert_not_called()
 
+    def test_full_chain_timing_and_bounded_decode_statistics(self):
+        def report(samples,timed):
+            return {'done':1,'decoder_error':0,'underruns':0,'played':samples,
+                'produced':samples,'timer_ticks':samples,'decode_calls':timed,
+                'stack_margin_bytes':701,'cpu_hz':16000000,'audio_hz':8000,
+                'decode_wall_cycles_total':timed*850,'decode_wall_cycles_max':990,
+                'occupancy_trace':[{'cycle':1}]}
+        for samples in (1,63999,64000,64001,281632):
+            pwm=bytes([128])*samples;cost={'samples':samples}
+            for timed in {samples,min(samples,64000)}:
+                original=report(samples,timed)
+                result=collector.validate_timing(original,pwm,pwm,cost)
+                self.assertTrue(result['timing_verified'])
+                self.assertTrue(result['pwm_model_exact'])
+                self.assertEqual(result['decode_timing_samples'],timed)
+                self.assertEqual(result['decode_timing_complete'],timed==samples)
+                self.assertEqual(result['decode_timing_statistics_scope'],
+                                 'complete-chain' if timed==samples else 'first-64000-samples')
+                self.assertEqual(result['decode_wall_cycles_total'],timed*850)
+                self.assertNotIn('occupancy_trace',result)
+                self.assertIn('occupancy_trace',original)  # pure, no input mutation
+                self.assertFalse(any('average' in k for k in result))
+            for timed in (0,63998,63999,samples+1):
+                if timed in {samples,min(samples,64000)}:continue
+                with self.subTest(samples=samples,timed=timed):
+                    with self.assertRaises(AssertionError):
+                        collector.validate_timing(report(samples,timed),pwm,pwm,cost)
+        samples=281632;pwm=bytes([128])*samples;original=report(samples,64000)
+        for name,value in (('underruns',1),('decoder_error',1),('done',0),
+                           ('played',samples-1),('produced',samples-1),('timer_ticks',samples-1),
+                           ('stack_margin_bytes',0),('cpu_hz',8000000),('audio_hz',16000)):
+            damaged=dict(original);damaged[name]=value
+            with self.subTest(name=name):
+                with self.assertRaises(AssertionError): collector.validate_timing(damaged,pwm,pwm,{'samples':samples})
+        for actual,expected in ((pwm[:-1],pwm),(pwm,b'\0'+pwm[1:]),(pwm[:-1],pwm[:-1])):
+            with self.assertRaises(AssertionError): collector.validate_timing(original,actual,expected,{'samples':samples})
+        for cost in ({'samples':True},{'samples':0},{'samples':1.5}):
+            with self.assertRaises(ValueError): collector.validate_timing(original,pwm,pwm,cost)
+        damaged=dict(original,decode_calls=64000.)
+        with self.assertRaises(ValueError): collector.validate_timing(damaged,pwm,pwm,{'samples':samples})
+
     def test_exact_embedded_arrays_and_duplicate_storage_proof(self):
         names = ['profile_pwm_address','profile_spl_address','profile_sph_address']
         env = {'required_symbols':names,'retained_profile_symbols':names}

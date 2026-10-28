@@ -165,6 +165,45 @@ def measure(streams,output,avr_bin,*,source=None,assembly=True,irq=0):
     return cost
 
 
+def validate_timing(report,actual_pwm,expected_pwm,cost):
+    """Validate complete-chain playback separately from bounded decode profiling.
+
+    validation/atmega328p/sim_profile.c records at most 64000 decode durations:
+    its durations[64000] array and decode_count guard cap all decode_wall_cycles
+    statistics. Longer runs still verify every PWM byte, output tick, produced
+    sample and underrun counter. A runner that counts every duration is accepted
+    too. The returned coverage fields scope the decode statistics explicitly.
+    This pure check can revalidate saved artifacts without rerunning simulation.
+    """
+    if not isinstance(report,dict) or not isinstance(cost,dict):
+        raise ValueError('Timing report and firmware cost must be objects')
+    if (not isinstance(actual_pwm,(bytes,bytearray,memoryview)) or
+            not isinstance(expected_pwm,(bytes,bytearray,memoryview))):
+        raise ValueError('Actual and expected PWM must be bytes-like')
+    samples=cost.get('samples')
+    if isinstance(samples,bool) or not isinstance(samples,int) or not 1<=samples<=0xffffffff:
+        raise ValueError('Firmware sample count must be a positive 32-bit integer')
+    counts=('played','produced','decode_calls','timer_ticks','underruns','decoder_error',
+            'stack_margin_bytes','cpu_hz','audio_hz')
+    if any(isinstance(report.get(k),bool) or not isinstance(report.get(k),int) for k in counts):
+        raise ValueError('Timing counters must be integers')
+    actual_pwm=bytes(actual_pwm);expected_pwm=bytes(expected_pwm)
+    timed=report['decode_calls'];complete=timed==samples
+    covered=complete or samples>64000 and timed==64000
+    if (len(expected_pwm)!=samples or actual_pwm!=expected_pwm or report['underruns']
+            or report['decoder_error'] or report.get('done')!=1
+            or report['played']!=samples or report['produced']!=samples
+            or not covered or report['timer_ticks']!=samples
+            or report['stack_margin_bytes']<=0 or report['cpu_hz']!=16000000 or report['audio_hz']!=8000):
+        raise AssertionError('Complete-chain IRQ/PWM/timing verification failed')
+    verified={k:v for k,v in report.items() if k!='occupancy_trace'}
+    verified.update(cost=cost,pwm_model_exact=True,pwm_sha256=hashlib.sha256(expected_pwm).hexdigest(),
+        timing_verified=True,decode_timing_samples=timed,decode_timing_complete=complete,
+        decode_timing_statistics_scope='complete-chain' if complete else 'first-64000-samples',
+        decode_timing_limit_reason=None if complete else 'sim_profile.c decode duration buffer limit')
+    return verified
+
+
 def simulate(streams,output,avr_bin,runner,*,lib=None,wsl=None,source=None,irq=0):
     """Verify the entire chain against independent-model PWM with active IRQ."""
     folder=guard_artifacts(output,inputs=[runner])
@@ -182,14 +221,7 @@ def simulate(streams,output,avr_bin,runner,*,lib=None,wsl=None,source=None,irq=0
         if lib:env_vars['LD_LIBRARY_PATH']=str(Path(lib).resolve())
         command=[str(Path(runner).resolve()),str(folder/'profile.elf'),str(valid),str(timing)]
     subprocess.run(command,check=True,capture_output=True,**({} if wsl else {'env':env_vars}))
-    report=json.loads(timing.read_text())
-    if (valid.read_bytes()!=expected or report['underruns'] or report['decoder_error'] or not report['done']
-            or report['played']!=cost['samples'] or report['produced']!=cost['samples']
-            or report['decode_calls']!=cost['samples'] or report['timer_ticks']!=cost['samples']
-            or report['stack_margin_bytes']<=0 or report['cpu_hz']!=16000000 or report['audio_hz']!=8000):
-        raise AssertionError('Complete-chain IRQ/PWM/timing verification failed')
-    report={k:v for k,v in report.items() if k!='occupancy_trace'}
-    report.update(cost=cost,pwm_model_exact=True,pwm_sha256=hashlib.sha256(expected).hexdigest(),timing_verified=True)
+    report=validate_timing(json.loads(timing.read_text()),valid.read_bytes(),expected,cost)
     (folder/'verification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     return report
 

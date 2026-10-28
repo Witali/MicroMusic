@@ -141,3 +141,12 @@ cycles per audio tick. Timing and physical-board status are separate from size
 evidence: a linked image is not real-time admission, and simulator success does
 not establish board/analog-output behavior. The arithmetic C fallback can be
 measured through `measure(..., assembly=False)`; no new assembly is introduced.
+
+
+The existing `sim_profile.c` stores decode-duration statistics for at most
+64000 calls. For longer chains, `decode_timing_samples` and
+`decode_timing_complete=false` explicitly identify this initial window. Full
+PWM, produced/played counts, output ticks, completion, stack observation and
+underruns still cover the entire chain. `validate_timing()` accepts exactly the
+full count or that documented cap, rejects other truncated counts, and never
+labels a partial decode-duration average as a complete-recording measurement.
