@@ -52,7 +52,9 @@ reset geometry and seed provenance, the separate legacy comparison, the three
 complete choices, their full-chain domain floors and true 100/95/90 cap decisions.
 The final completion marker is written after attempt completion and binds saved
 pool streams and attempt journals. Progress output contains phase/counts only;
-all detailed artifacts remain private.
+all detailed artifacts remain private. Unexpected failures save full tracebacks
+under `failures/` and print only phase/status/exception class. Retain those
+receipts too; a failure is not a successful no-fit result.
 
 This corpus uses the original frozen **PCM16** reference files. Recovery of
 sub-PCM16 FLOAT/24-bit input before rounding is a separate input-format check,

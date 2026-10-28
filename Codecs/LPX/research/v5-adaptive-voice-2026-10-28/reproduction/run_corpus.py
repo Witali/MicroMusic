@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import traceback
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -740,12 +741,23 @@ def main():
     tempfile.tempdir = str(temporary)
     os.environ['TMP'] = os.environ['TEMP'] = str(temporary)
     os.environ['NUMBA_CACHE_DIR'] = str(temporary/'numba-cache')
-    C = load_core(args.source_root)
-    if args.prepare:
-        prepare(args,C)
-    else:
-        worker(args,C)
+    try:
+        C = load_core(args.source_root)
+        if args.prepare:
+            prepare(args,C)
+        else:
+            worker(args,C)
+    except Exception as exc:
+        phase = 'prepare' if args.prepare else args.phase+'-shard-'+str(args.shard)
+        failures = args.output/'failures'/phase
+        failures.mkdir(parents=True,exist_ok=True)
+        number = len(list(failures.glob('failure-*-private.json')))
+        save(failures/('failure-%03d-private.json'%number),dict(exception_type=type(exc).__name__,
+            traceback=traceback.format_exc(),phase=phase))
+        print(json.dumps(dict(status='failed',phase=phase,exception_type=type(exc).__name__)),flush=True)
+        return 1
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())
