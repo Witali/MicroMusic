@@ -125,3 +125,10 @@ interrupted-window evidence. Common and compact-only native outputs are checked 
 allocation path. These tests prove contracts, not perceptual corpus gains.
 Record wall and process CPU time, complete synthesis and local excitation
 counts when comparing the new algorithm with default and expanded old search.
+
+For non-speech robustness, pass `speech=False` to `refine` or use CLI
+`--non-speech`. The v5 syntax, integer DSP, complete byte cap and state handling
+stay the same. Metrics contain PCM/PWM numerical errors with STOI unavailable;
+STOI is not computed or used. `quality_kind="non-speech-numerical"` identifies
+this scope. Numerical error reduction alone does not establish music quality.
+Speech remains the default, with its existing four acceptance floors intact.

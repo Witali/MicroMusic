@@ -23,7 +23,7 @@ from enhance_speech_compact import advance, sse
 from q0_model import coefficient_trace, table
 from refine_speech_compact import no_regression, quality
 from refine_speech_lpc import adapt_excitation, coefficient_patch, fit_capacity, frame_order, spectrum_bits
-from standard_metrics import pwm_duties
+from standard_metrics import error_metrics, pwm_duties, pwm_pcm16
 from speech_rate_allocation import bit_accounting, distortion_rate
 from wav_lpc import pack_frames
 
@@ -343,7 +343,7 @@ def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=
            excitation_horizon=80, max_evaluations=512, objective=None,
            objective_name='sse', selection='conservative', capacity_policy='amplitude',
            allocation_evaluations=64, rate_lambda=0.0, frontier=None,
-           screening='local', screening_horizon=640):
+           screening='local', screening_horizon=640, speech=True):
     """Return (selected bytes or None, PCM or None, report, raw feasible bytes or None).
 
     Tuple layout matches the older refine API, but a cap below the seed is
@@ -352,6 +352,8 @@ def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=
     selection='objective' explicitly permits a final metric tradeoff. A supplied
     frontier list receives feasible nondominated alternatives without local metric
     gate filtering, for subsequent whole-reset-chain assembly and evaluation.
+    speech=False uses numerical PCM/PWM errors without computing STOI; it does
+    not change the v5 container or establish perceptual quality for music.
     """
     settings = (max_bytes, frame_limit, window_frames, beam_width, spectral_candidates,
                 excitation_candidates, excitation_horizon, max_evaluations, allocation_evaluations, screening_horizon)
@@ -365,6 +367,14 @@ def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=
         raise ValueError('Unsupported bounded trajectory settings')
     if screening not in ('local', 'full'):
         raise ValueError('Unknown scalar spectral screening mode')
+    if not isinstance(speech, bool):
+        raise ValueError('speech must be boolean')
+    if speech:
+        measure = quality
+    else:
+        def measure(reference, pcm):
+            return {'pcm16': error_metrics(reference, pcm),
+                    'pwm8': error_metrics(reference, pwm_pcm16(pcm))}
     if frontier is not None and not isinstance(frontier, list):
         raise ValueError('Frontier output must be a list')
     if selection not in ('conservative', 'objective') or not (callable(capacity_policy) or capacity_policy in ('none', 'amplitude', 'marginal')):
@@ -392,7 +402,7 @@ def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=
     native = decoder.decode_one_s16(blob, n)
     if native is None or not np.array_equal(pcm, native) or not np.array_equal(pcm, compact.decode_model(blob)):
         raise AssertionError('Trajectory baseline integer/native/model mismatch')
-    before = quality(ref, pcm)
+    before = measure(ref, pcm)
     search = Search(ref64, n, profile, pre, bright, max_bytes, scorer, max_evaluations,
                     capacity_policy, allocation_evaluations, float(rate_lambda), screening, screening_horizon)
     original = PathState(fields, co, pcm, bytes(blob), search.score(pcm), zero, 0, ())
@@ -435,7 +445,7 @@ def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=
         pool.append(original)
     unique = {p.stream: p for p in pool}
     ranked = sorted(unique.values(), key=search.rank)
-    measured = [(p, quality(ref, p.pcm)) for p in ranked]
+    measured = [(p, measure(ref, p.pcm)) for p in ranked]
     eligible = [(p, q) for p, q in measured if p.stream == bytes(blob) or no_regression(q, before)]
     chosen = (measured[0] if selection == 'objective' and measured else eligible[0] if eligible else None)
     raw = ranked[0] if ranked else None
@@ -463,7 +473,8 @@ def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=
         file_bytes=len(chosen[0].stream) if chosen else None,
         fit_status='selected_feasible' if chosen else 'feasible_tradeoff_only' if raw else 'no_feasible_candidate',
         feasible_found=raw is not None, baseline=before, selected=chosen[1] if chosen else None,
-        raw_best=quality(ref, raw.pcm) if raw else None, raw_file_bytes=len(raw.stream) if raw else None,
+        raw_best=measure(ref, raw.pcm) if raw else None, raw_file_bytes=len(raw.stream) if raw else None,
+        quality_kind='speech' if speech else 'non-speech-numerical',
         raw_objective=raw.score if raw else None,
         conservative_floors_passed=bool(chosen and (chosen[0].stream == bytes(blob) or no_regression(chosen[1], before))),
         changed_spectral_indices=int(np.count_nonzero(np.asarray(selected_fields[2]) != fields.spectra)) if chosen else None,
@@ -509,6 +520,7 @@ def main():
     p.add_argument('--excitation-candidates', type=int, default=2)
     p.add_argument('--evaluations', type=int, default=512)
     p.add_argument('--selection', choices=('conservative', 'objective'), default='conservative')
+    p.add_argument('--non-speech', action='store_true', help='Numerical PCM/PWM errors without STOI')
     p.add_argument('--capacity-policy', choices=('none', 'amplitude', 'marginal'), default='amplitude')
     p.add_argument('--rate-lambda', type=float, default=0.0)
     p.add_argument('--screening', choices=('local', 'full'), default='local')
@@ -525,7 +537,7 @@ def main():
             spectral_candidates=a.spectral_candidates, excitation_candidates=a.excitation_candidates,
             max_evaluations=a.evaluations, selection=a.selection,
             capacity_policy=a.capacity_policy, rate_lambda=a.rate_lambda,
-            screening=a.screening, screening_horizon=a.screening_horizon)
+            screening=a.screening, screening_horizon=a.screening_horizon, speech=not a.non_speech)
     a.output.mkdir(parents=True, exist_ok=True)
     if result is None:
         paths[0].unlink(missing_ok=True)
