@@ -23,6 +23,7 @@ from q0_model import coefficient_trace, table
 from refine_speech_compact import no_regression, quality
 from refine_speech_lpc import adapt_excitation, coefficient_patch, fit_capacity, frame_order, spectrum_bits
 from standard_metrics import pwm_duties
+from speech_rate_allocation import distortion_rate
 from wav_lpc import pack_frames
 
 
@@ -102,7 +103,7 @@ class Search:
 
     def rank(self, path):
         return (max(0, len(path.stream)-self.max_bytes),
-                path.score+self.rate_lambda*len(path.stream), len(path.stream), path.moves)
+                distortion_rate(path.score, len(path.stream), self.rate_lambda), len(path.stream), path.moves)
 
     def score(self, pcm):
         value = float(self.objective(pcm))
@@ -440,7 +441,7 @@ def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=
         retained_frontier_limit=16,
         objective_name=str(objective_name), selection=selection,
         capacity_policy=capacity_policy if isinstance(capacity_policy, str) else 'callback',
-        rate_lambda=float(rate_lambda),
+        rate_lambda=float(rate_lambda), rate_unit='complete_serialized_bits',
         full_synthesis_evaluations=search.evaluations, objective_evaluations=search.objective_evaluations,
         spectral_trials=search.spectral_trials, excitation_trials=search.excitation_trials,
         allocation_evaluations=search.allocation_evaluations, state_advances=search.state_advances,
