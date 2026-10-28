@@ -1,0 +1,69 @@
+{
+  "schema": "lpx-v5-bounded-allocation-pilot-v1",
+  "status": "complete",
+  "source_commit": "5865df33",
+  "decoder_sources": {
+    "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+    "Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+    "Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "records": 6,
+  "rows": 18,
+  "scope": "Same six one-segment tuning recordings as exact-greedy pilot, both profiles, full original length/gain. Fixed spectra/params/base pulses/filters; amplitude seed;128-render bound,32-candidate batches. Accepted swaps preserve amplitude-control PCM/PWM SSE/STOI floors. Original strong-baseline admission remains separate. No evaluation/additional cohort, perceptual or firmware claim.",
+  "elapsed_seconds": 8.45037360000424,
+  "python_process_cpu_seconds": 8.3125,
+  "cpu_scope": "Python main process including synthesis/objectives; native decoder child and compiler CPU are excluded. Wall time includes selected-output verification.",
+  "groups": [
+    {
+      "percent": 100,
+      "records": 6,
+      "amplitude_fits": 6,
+      "bounded_fits": 6,
+      "original_cap_fits_better_equal_worse": [
+        0,
+        6,
+        0
+      ],
+      "all_four_amplitude_control_floors_preserved": true,
+      "accepted_swaps": 0,
+      "render_evaluations": 6,
+      "wall_seconds": 1.7800379000254907
+    },
+    {
+      "percent": 95,
+      "records": 6,
+      "amplitude_fits": 4,
+      "bounded_fits": 4,
+      "original_cap_fits_better_equal_worse": [
+        1,
+        3,
+        0
+      ],
+      "all_four_amplitude_control_floors_preserved": true,
+      "accepted_swaps": 1,
+      "render_evaluations": 132,
+      "wall_seconds": 2.5833531000098446
+    },
+    {
+      "percent": 90,
+      "records": 6,
+      "amplitude_fits": 1,
+      "bounded_fits": 1,
+      "original_cap_fits_better_equal_worse": [
+        0,
+        1,
+        0
+      ],
+      "all_four_amplitude_control_floors_preserved": true,
+      "accepted_swaps": 0,
+      "render_evaluations": 6,
+      "wall_seconds": 1.772567699998035
+    }
+  ]
+}

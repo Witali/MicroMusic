@@ -1,0 +1,15 @@
+{
+  "schema": "lpx-v5-allocation-reproduction-v1",
+  "implementation_commits": [
+    "9948ae16",
+    "b17b0876",
+    "5865df33"
+  ],
+  "scripts": {
+    "allocation_pilot.py": "09522d7cf6ea2a6e5c736ce6e2cf9d7e81122db1ab554a80e05daf380b54b5a5",
+    "bounded_matched.py": "e0c74df1a9c498eb07618ca6eab156615435f6973c55a4d9bbd61c6663b9282b",
+    "bounded_pilot.py": "ab42b05a446563ef20666df7578b0796271d4cc9ee6a8c9cf03d0fa421af1d88",
+    "matched_size.py": "0cd0fff4d72bbe7c2ea451547fd31901d42ef44fa925ccc49a3b5da903346f63"
+  },
+  "relation": "Measured local launchers adapted only for argument-supplied manifest/output paths and input/output protection. Original exact launcher hashes and media/artifact bindings remain in ignored receipts. Algorithm settings, selection rule and metric flow are preserved."
+}
