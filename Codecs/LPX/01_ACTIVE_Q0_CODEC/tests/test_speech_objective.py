@@ -140,6 +140,32 @@ class SpeechObjectiveTests(unittest.TestCase):
         self.assertLess(objective.gamma2, .11)
         self.assertTrue(np.isfinite(objective(compact.decode_model(seed))))
 
+    def test_chain_resets_decoder_trace_but_keeps_weighting_history(self):
+        blobs = [compact.repack(fixture(profile, n))[0]
+                 for profile, n in ((4, 300), (6, 321))]
+        reference = np.zeros(621, np.int16)
+        candidate = np.concatenate([compact.decode_model(blob) for blob in blobs])
+        objective = SpeechObjective.from_chain(reference, blobs)
+        traces = []
+        for blob in blobs:
+            n, profile, spectra, *_ = compact.unpack(blob)
+            shift = 5 if profile == 4 else 4
+            vectors = [[(x << shift) + (1 << (shift - 1)) for x in row]
+                       for row in spectra for _ in range(2)]
+            traces.append(coefficient_trace(pack_frames(vectors[:(n + 159) // 160]), n))
+        co = np.concatenate(traces)
+        expected = scipy_variable_filter(candidate.astype(float), co,
+                                         objective.gamma1, objective.gamma2)
+        self.assertAlmostEqual(objective(candidate) / float(expected @ expected), 1., places=11)
+        self.assertEqual(objective.describe()['seed_segment_samples'], [300, 321])
+        independently_reset = np.concatenate([
+            weight_error(candidate[:300], traces[0], objective.gamma1, objective.gamma2),
+            weight_error(candidate[300:], traces[1], objective.gamma1, objective.gamma2)])
+        self.assertFalse(np.allclose(expected, independently_reset, rtol=1e-12, atol=1e-10))
+        for bad in ([], blobs[:1], blobs[0]):
+            with self.assertRaises(ValueError):
+                SpeechObjective.from_chain(reference, bad)
+
     def test_v5_seed_weights_and_native_model_pcm_pwm_partial_tails(self):
         with BatchSession('batch', v3_features=124, speech=True, speech_compact=True) as common, \
                 BatchSession('batch', v3_features=124, speech=True, speech_compact=True,

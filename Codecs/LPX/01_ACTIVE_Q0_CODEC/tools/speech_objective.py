@@ -169,19 +169,41 @@ class SpeechObjective:
         self._coefficients.flags.writeable = False
         self.mode = mode
         self.name = 'v5_' + mode + '_pcm16'
+        self._segment_samples = (len(self._reference),)
 
     @classmethod
     def from_v5(cls, reference, seed_blob, **settings):
+        return cls.from_chain(reference, [seed_blob], **settings)
+
+    @classmethod
+    def from_chain(cls, reference, seed_blobs, **settings):
+        """Join actual per-stream LPC resets, then weight one original clip.
+
+        Decoder interpolation restarts at each encoded segment. The error
+        filter is an encoder criterion over the complete original recording,
+        so its state continues across those resets instead of restarting.
+        """
         from q0_model import coefficient_trace
         import speech_compact as compact
         from wav_lpc import pack_frames
-        n, profile, spectra, *_ = compact.unpack(seed_blob)
-        _pcm16(reference, n)
-        shift = 5 if profile == 4 else 4
-        vectors = [[(v << shift) + (1 << (shift - 1)) for v in row]
-                   for row in spectra for _ in range(2)]
-        co = coefficient_trace(pack_frames(vectors[:(n + 159) // 160]), n)
-        return cls(reference, co, **settings)
+        if isinstance(seed_blobs, (bytes, bytearray, str)):
+            raise ValueError('Expected an ordered collection of v5 streams')
+        blobs = list(seed_blobs)
+        if not blobs:
+            raise ValueError('Expected at least one v5 stream')
+        traces = []
+        lengths = []
+        for blob in blobs:
+            n, profile, spectra, *_ = compact.unpack(blob)
+            shift = 5 if profile == 4 else 4
+            vectors = [[(v << shift) + (1 << (shift - 1)) for v in row]
+                       for row in spectra for _ in range(2)]
+            traces.append(coefficient_trace(pack_frames(vectors[:(n + 159) // 160]), n))
+            lengths.append(n)
+        _pcm16(reference, sum(lengths))
+        result = cls(reference, np.concatenate(traces), **settings)
+        result._segment_samples = tuple(lengths)
+        return result
 
     def score(self, pcm16):
         candidate = _pcm16(pcm16, len(self._reference)).astype(np.int64)
@@ -202,5 +224,7 @@ class SpeechObjective:
                 'effective_gamma2': self.gamma2, 'denominator_l1_bound': self.denominator_bound,
                 'domain': 'original-level clipped PCM16',
                 'weighting_coefficients': 'frozen seed v5 interpolated Q12 LPC',
+                'seed_segment_samples': list(self._segment_samples),
+                'decoder_lpc_state': 'actual independent reset at each seed segment',
                 'weighting_state': 'zero once per complete stream; continuous across frames',
                 'automatic_acceptance': 'unchanged external PCM/PWM no_regression gate'}
