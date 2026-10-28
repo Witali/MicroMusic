@@ -1,0 +1,63 @@
+{
+  "schema": "lpx-v5-trajectory-tuning-pilot-public-v1",
+  "scope": "One tuning recording, complete frozen 64000-sample reference at original level, profiles 4/6, achieved-size 100% cap. No evaluation/additional material used. One timing trial per method/profile.",
+  "methods": [
+    "legacy-default",
+    "legacy-expanded",
+    "initial-full128",
+    "optimized-full128",
+    "local128",
+    "matched-full160"
+  ],
+  "full_screen_byte_parity": true,
+  "all_common_compact_independent_model_pwm_exact": true,
+  "decoder_changed": false,
+  "perceptual_or_listening_gain_claimed": false,
+  "source_modules_sha256": {
+    "initial-full": {
+      "refine_speech_trajectory.py": "ccd6de9f0062cf4b955d2e974593249bb7fb009eede23dd3825d1827116a825d",
+      "refine_speech_lpc.py": "76fa10b8372d3626c4257d294bc98063d4509eba5bf48dd7d31734fc1fd2f804",
+      "speech_rate_allocation.py": "3cfb0eb1ea1b969450f6fee699a629b23ab9ff6804844ea87d5d705f4ced5df3",
+      "speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "enhance_speech_compact.py": "3307b9ad09a7740264c6e4cab1787719148b1191b837f17605e5e5a764785e99",
+      "refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+      "q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c"
+    },
+    "optimized-screen": {
+      "refine_speech_trajectory.py": "dfec30a371b1de0c781bb04987e23573d47168c1738d328287b966a3ecf2d70f",
+      "refine_speech_lpc.py": "76fa10b8372d3626c4257d294bc98063d4509eba5bf48dd7d31734fc1fd2f804",
+      "speech_rate_allocation.py": "3cfb0eb1ea1b969450f6fee699a629b23ab9ff6804844ea87d5d705f4ced5df3",
+      "speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "enhance_speech_compact.py": "3307b9ad09a7740264c6e4cab1787719148b1191b837f17605e5e5a764785e99",
+      "refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+      "q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c"
+    },
+    "matched-full": {
+      "refine_speech_trajectory.py": "dfec30a371b1de0c781bb04987e23573d47168c1738d328287b966a3ecf2d70f",
+      "refine_speech_lpc.py": "76fa10b8372d3626c4257d294bc98063d4509eba5bf48dd7d31734fc1fd2f804",
+      "speech_rate_allocation.py": "3cfb0eb1ea1b969450f6fee699a629b23ab9ff6804844ea87d5d705f4ced5df3",
+      "speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "enhance_speech_compact.py": "3307b9ad09a7740264c6e4cab1787719148b1191b837f17605e5e5a764785e99",
+      "refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+      "q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c"
+    }
+  },
+  "implementation_commits": [
+    "3ad6eb65",
+    "35467f85",
+    "fb15b1a5",
+    "f003b43c"
+  ],
+  "matched_cpu": {
+    "full160_seconds": 18.859375,
+    "local128_seconds": 18.015625,
+    "local_relative_percent": -4.473902236951122
+  },
+  "conservative_result": "Expanded legacy improves accepted PCM SSE on both profiles. New beam variants retain baseline under existing PCM/PWM SSE/STOI floors. Raw beam alternatives remain explicit tradeoffs.",
+  "finite_limits": "Initial full128 completes one window then hits its bound; optimized mode explicitly records incomplete windows. Local128 completes both windows on profile4, and one complete plus one frame of the next on profile6. No optimality/no-fit proof.",
+  "privacy": "Only anonymous numeric rows and public code hashes retained; private media, paths, inventory hashes, stream/PCM/PWM fingerprints remain ignored.",
+  "native_audit_unique_streams": 15
+}
