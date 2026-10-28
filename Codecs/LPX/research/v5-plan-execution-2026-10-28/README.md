@@ -96,3 +96,21 @@ proves the EOF predicate equivalent for every length; every320-sample residue
 in the first two packets is also exercised through the real native decoder.
 A full64000-sample lifecycle run exercises repeated phase wraps. This is not
 an assertion that every complete DSP stream length was individually decoded.
+
+## Remove derived brightness history
+
+At each successful sample boundary, prevBright was assigned exactly
+clipQ14(prevDeemph). Reset sets both histories to zero. Derive that clipped
+old deemphasis value before overwriting prevDeemph, keeping the original
+attenuation, rounding and saturation order. This removes a redundant state
+word across layouts, without changing the filter or stream format.
+
+[Brightness screen](brightness-screen.json) saves2 B Flash and2 B SRAM
+standalone. The measured LSF/counter/phase/brightness combination saves
+188..192 B Flash and25 B SRAM versus corrected baseline, an additional2..4 B
+relative to the preceding combination. Header edge tests compare exact native
+PCM/PWM with the independent model for pre=0/1/8192/16384 and
+brightness=0/1/8192/11469, both profiles, alternating low/high spectral clusters,
+maximum scale and pitch gain. All128 output comparisons pass; the existing
+compact suite (8 tests including reference/copies/EOF) also passes. Final
+whole-corpus and active-IRQ admission remains separate.

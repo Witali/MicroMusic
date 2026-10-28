@@ -1,0 +1,37 @@
+--- a/Lpx4HybridCore.h
++++ b/Lpx4HybridCore.h
+@@ -203,7 +203,7 @@
+ #endif
+     uint32_t sampleCount_,remaining_;
+     uint16_t sampleRate_,preQ14_,brightQ14_,blockStep_;
+-    int16_t prevDeemph_,prevBright_;
++    int16_t prevDeemph_;
+     uint8_t subPos_,subIndex_;
+ #if LPX4_BATCHED_REMAINING
+     uint8_t subEnd_;
+--- a/Lpx4HybridCore.cpp
++++ b/Lpx4HybridCore.cpp
+@@ -157,7 +157,7 @@
+ #if LPX4_ALLOW_SPARSE
+  pulseCount_=pulseIndex_=0;
+ #endif
+- prevDeemph_=prevBright_=0;
++ prevDeemph_=0;
+ #ifdef LPX3_COST_INSTRUMENT
+  lsfConverts_=bitCalls_=romByteCalls_=0;
+ #endif
+@@ -974,12 +974,12 @@
+     hist_[0]=pred;
+ #endif
+     int16_t deemph=preQ14_?lpx4AddClip15(pred,lpx4AttenuateQ14(preQ14_,prevDeemph_)):pred;
++    const int16_t prevBright=lpx4ClipQ14(prevDeemph_);
+     prevDeemph_=deemph;
+     int16_t clipped=lpx4ClipQ14(deemph);
+     // Header validation limits brightness to11469; prevBright/clipped are
+     // +/-16384. The un-clipped difference is within +/-27853, signed16-safe.
+-    int16_t b=brightQ14_?lpx4ClipQ14((int16_t)(clipped-lpx4AttenuateQ14(brightQ14_,prevBright_))):clipped;
+-    prevBright_=clipped;
++    int16_t b=brightQ14_?lpx4ClipQ14((int16_t)(clipped-lpx4AttenuateQ14(brightQ14_,prevBright))):clipped;
+     // Preserve the signed post-deemphasis/post-brightness output BEFORE PWM.
+     // This is the exact integer sample used by both optional 16-bit output
+     // and legacy PWM conversion; no 8-bit quantization has happened yet.

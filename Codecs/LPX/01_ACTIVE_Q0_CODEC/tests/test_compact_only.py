@@ -58,6 +58,23 @@ class CompactOnlyTests(unittest.TestCase):
                     tail=variants[n-(complete-319)]
                     np.testing.assert_array_equal(decode_model(tail),expected[:n])
 
+    def test_postfilter_history_at_coefficient_and_saturation_edges(self):
+        for profile in (4,6):
+            fields=list(components(fixture(profile,1280)))
+            limit=32 if profile==4 else 64
+            fields[2]=[list(range(10)),list(range(limit-10,limit))]*2
+            fields[3]=[(31,18,14)]*8
+            blob=pack(*fields)[0]
+            for pre in (0,1,8192,16384):
+                for bright in (0,1,8192,11469):
+                    candidate=bytearray(blob)
+                    candidate[12:14]=pre.to_bytes(2,'little')
+                    candidate[14:16]=bright.to_bytes(2,'little')
+                    expected=decode_model(bytes(candidate))
+                    for decoder in (self.full,self.only):
+                        np.testing.assert_array_equal(decoder.decode_one_s16(bytes(candidate),1280),expected)
+                        np.testing.assert_array_equal(decoder.decode_one(bytes(candidate),1280),pwm_duties(expected))
+
     def test_every_radix_pair_and_three_entry_merge_sort(self):
         args=list(components(fixture(6,16000)));pulses=list(args[4])
         for i in range(400):pulses[i*2:i*2+2]=[(i%20,5),(i//20,-3)]

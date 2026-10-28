@@ -218,7 +218,7 @@ private:
     uint32_t remaining_;
 #endif
     uint16_t sampleRate_,preQ14_,brightQ14_,blockStep_;
-    int16_t prevDeemph_,prevBright_;
+    int16_t prevDeemph_;
     uint8_t subPos_,subIndex_; // compact: low3 subframe, bit3 post-readFrame half
 #if LPX4_BATCHED_REMAINING
     uint8_t subEnd_;
