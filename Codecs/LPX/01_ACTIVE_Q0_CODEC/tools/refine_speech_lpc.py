@@ -18,9 +18,9 @@ import numpy as np
 from numba import njit
 import speech_compact as compact
 from enhance_speech_compact import advance, sse
-from lpx4 import BitWriter
 from q0_model import _coefficient_trace_vectors, coefficient_trace, table
 from refine_speech_compact import quality, no_regression
+from speech_rate_allocation import spectrum_bits, fit_capacity
 from standard_metrics import pwm_duties
 from wav_lpc import pack_frames
 
@@ -45,38 +45,6 @@ def coefficient_patch(spectra, profile, frame, samples, cosine=None):
     result=_coefficient_trace_vectors(vectors,offset+count,
         table('cos_table.inc') if cosine is None else cosine)
     return result[offset:offset+count]
-
-
-def spectrum_bits(vector, previous, profile):
-    writer=BitWriter()
-    compact.put_spectrum(writer,list(map(int,vector)),
-                         None if previous is None else list(map(int,previous)),
-                         5 if profile==4 else 6)
-    return writer.total
-
-
-def fit_capacity(spectra_bits, frames, profile, extras, max_bytes, start, stop):
-    """Count exact fixed/Rice/marker costs and reclaim optional later pulses.
-
-    Removing only extras at or after start preserves the cached prefix state.
-    Unplayed padded-tail extras go first, then small local pulses, then small
-    later pulses. This bounded proposal is globally checked after synthesis.
-    """
-    base=spectra_bits+frames*(110 if profile==4 else 166)
-    capacity=max(0,min(len(extras),((max_bytes-22)*8-base-frames*8)//10))
-    added=extras.copy();active=int(np.count_nonzero(added[:,1]));removed=0
-    if active>capacity:
-        choices=[i for i in range(start//40,len(added)) if added[i,1]]
-        choices.sort(key=lambda i:(0 if i*40+int(added[i,0])>=stop else 1,
-                                   0 if i*40<start+480 else 1,abs(int(added[i,1])),i))
-        # stop is actual output length: stored, unplayed tail fields are free
-        # to remove, but still counted in the original serialized capacity.
-        for i in choices[:active-capacity]:added[i]=(-1,0);removed+=1
-        active-=removed
-    enhanced=active>0
-    bits=base+(frames*8+active*10 if enhanced else 0)
-    size=22+(bits+7)//8
-    return added,capacity,size,removed
 
 
 @njit(cache=True)
