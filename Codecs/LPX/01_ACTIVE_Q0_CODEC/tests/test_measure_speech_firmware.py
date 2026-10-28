@@ -64,7 +64,9 @@ class FirmwareCollectorTests(unittest.TestCase):
                  patch.object(collector,'command_flags',return_value=['-mmcu=atmega328p']), \
                  patch.object(collector.subprocess,'run',side_effect=run), \
                  patch.object(collector.subprocess,'check_output',return_value='text data bss dec hex filename\n500 20 30 550 226 profile.elf\n'), \
-                 patch.object(collector,'embedded_streams',return_value=proof):
+                 patch.object(collector,'embedded_streams',return_value=proof), \
+                 patch.object(collector,'artifact_provenance',return_value={'tools':'fixed'}), \
+                 patch.object(collector,'validation_sources',return_value={'host':'fixed'}) as validation_sources:
                 cost = collector.measure(streams,folder,'unused')
                 self.assertEqual(cost['flash_bytes'],520)
                 self.assertEqual(cost['program_flash_bytes'],520-len(streams[0]))
@@ -72,6 +74,9 @@ class FirmwareCollectorTests(unittest.TestCase):
                 self.assertFalse(cost['timing_verified'])
                 self.assertEqual(collector.measure(streams,folder,'unused'),cost)
                 self.assertEqual(len(compiles),1)
+                validation_sources.return_value={'host':'changed'}
+                refreshed=collector.measure(streams,folder,'unused')
+                self.assertEqual(refreshed,cost);self.assertEqual(len(compiles),1)
                 # Mutated linked binaries cannot reuse a matching metadata record.
                 (folder/'program.bin').write_bytes(b'changed')
                 collector.measure(streams,folder,'unused'); self.assertEqual(len(compiles),2)
@@ -143,7 +148,11 @@ class FirmwareCollectorTests(unittest.TestCase):
             pwm=bytes([128])*samples;cost={'samples':samples}
             for timed in {samples,min(samples,64000)}:
                 original=report(samples,timed)
-                result=collector.validate_timing(original,pwm,pwm,cost)
+                if timed==samples:
+                    original.update(decode_statistics='streaming-v2',statistics_overflow=0)
+                else:
+                    with self.assertRaises(ValueError):collector.validate_timing(original,pwm,pwm,cost)
+                result=collector.validate_timing(original,pwm,pwm,cost,historical=timed!=samples)
                 self.assertTrue(result['timing_verified'])
                 self.assertTrue(result['pwm_model_exact'])
                 self.assertEqual(result['decode_timing_samples'],timed)
@@ -158,20 +167,20 @@ class FirmwareCollectorTests(unittest.TestCase):
                 if timed in {samples,min(samples,64000)}:continue
                 with self.subTest(samples=samples,timed=timed):
                     with self.assertRaises(AssertionError):
-                        collector.validate_timing(report(samples,timed),pwm,pwm,cost)
+                        collector.validate_timing(report(samples,timed),pwm,pwm,cost,historical=True)
         samples=281632;pwm=bytes([128])*samples;original=report(samples,64000)
         for name,value in (('underruns',1),('decoder_error',1),('done',0),
                            ('played',samples-1),('produced',samples-1),('timer_ticks',samples-1),
                            ('stack_margin_bytes',0),('cpu_hz',8000000),('audio_hz',16000)):
             damaged=dict(original);damaged[name]=value
             with self.subTest(name=name):
-                with self.assertRaises(AssertionError): collector.validate_timing(damaged,pwm,pwm,{'samples':samples})
+                with self.assertRaises(AssertionError): collector.validate_timing(damaged,pwm,pwm,{'samples':samples},historical=True)
         for actual,expected in ((pwm[:-1],pwm),(pwm,b'\0'+pwm[1:]),(pwm[:-1],pwm[:-1])):
-            with self.assertRaises(AssertionError): collector.validate_timing(original,actual,expected,{'samples':samples})
+            with self.assertRaises(AssertionError): collector.validate_timing(original,actual,expected,{'samples':samples},historical=True)
         for cost in ({'samples':True},{'samples':0},{'samples':1.5}):
             with self.assertRaises(ValueError): collector.validate_timing(original,pwm,pwm,cost)
         damaged=dict(original,decode_calls=64000.)
-        with self.assertRaises(ValueError): collector.validate_timing(damaged,pwm,pwm,{'samples':samples})
+        with self.assertRaises(ValueError): collector.validate_timing(damaged,pwm,pwm,{'samples':samples},historical=True)
 
     def test_exact_embedded_arrays_and_duplicate_storage_proof(self):
         names = ['profile_pwm_address','profile_spl_address','profile_sph_address']

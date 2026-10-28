@@ -14,7 +14,8 @@ import subprocess
 from pathlib import Path
 
 from benchmark_speech_flash import (CANDIDATES, HARNESS, canonical, command_flags,
-    digest, environment, parse_symbols, source_hashes, srcdir, toolpath)
+    digest, environment, parse_symbols, source_hashes, srcdir, toolpath,
+    build_provenance, artifact_provenance, validation_sources, validation_provenance, timing_coverage)
 from output_paths import protect_outputs
 from speech_compact import unpack, decode_model
 from standard_metrics import pwm_duties
@@ -123,10 +124,14 @@ def measure(streams,output,avr_bin,*,source=None,assembly=True,irq=0):
     env=environment(source,avr_bin,True)
     spec=CANDIDATES['unroll1-tune0-lto-call-relax'];flags=command_flags(env,spec,assembly,irq)
     derived=chain_harness(sample_counts);source_fingerprint=hashlib.sha256(canonical(env['source_sha256'])).hexdigest()
-    build={'environment':env,'compiler_options':flags,'derived_harness_sha256':hashlib.sha256(derived.encode()).hexdigest(),
-           'collector_sha256':digest(Path(__file__)),'segment_sample_counts':sample_counts}
+    voice=voice_header(streams)
+    build={'voice_layout_sha256':hashlib.sha256(voice_header([b'' for _ in streams]).encode()).hexdigest(),'environment':build_provenance(env),'compiler_options':flags,'derived_harness_sha256':hashlib.sha256(derived.encode()).hexdigest(),
+           'segment_sample_counts':sample_counts}
     build_fingerprint=hashlib.sha256(canonical(build)).hexdigest();hashes=[hashlib.sha256(b).hexdigest() for b in streams]
-    identity=hashlib.sha256(canonical([build_fingerprint,hashes])).hexdigest();cache=folder/'cost.json'
+    identity=hashlib.sha256(canonical([build_fingerprint,hashes,hashlib.sha256(voice.encode()).hexdigest()])).hexdigest();cache=folder/'cost.json'
+    proof_fingerprint=hashlib.sha256(canonical({'artifacts':artifact_provenance(avr_bin),
+                                                'sources':validation_sources()})).hexdigest()
+    cached_cost=None
     if cache.exists():
         old=json.loads(cache.read_text());cost=old.get('cost',{})
         if (old.get('fingerprint')==identity and old.get('cost_sha256')==hashlib.sha256(canonical(cost)).hexdigest()
@@ -134,18 +139,21 @@ def measure(streams,output,avr_bin,*,source=None,assembly=True,irq=0):
                 and digest(folder/'profile.elf')==cost.get('image_sha256')
                 and digest(folder/'program.bin')==cost.get('binary_sha256')):
             if source_hashes(src)!=env['source_sha256']:raise ValueError('Decoder sources changed')
-            return cost
+            if old.get('proof_fingerprint')==proof_fingerprint and cost['source_fingerprint']==source_fingerprint:return cost
+            # Only host inspection changed: re-prove this exact immutable image.
+            cached_cost=cost
     folder.mkdir(parents=True,exist_ok=True)
-    (folder/'voice_data.h').write_text(voice_header(streams),encoding='utf-8',newline='\n')
+    (folder/'voice_data.h').write_text(voice,encoding='utf-8',newline='\n')
     (folder/'chain.cpp').write_text(derived,encoding='utf-8',newline='\n')
     elf=folder/'profile.elf';binary=folder/'program.bin'
-    command=[str(toolpath(avr_bin,'avr-g++')),*flags,'-I'+str(src),'-I'+str(folder),str(folder/'chain.cpp'),
-             str(src/'Lpx4HybridCore.cpp'),'-Wl,-Map='+str(folder/'profile.map'),'-o',str(elf)]
-    result=subprocess.run(command,capture_output=True)
-    (folder/'compile.stdout.log').write_bytes(result.stdout);(folder/'compile.stderr.log').write_bytes(result.stderr)
-    if result.returncode:raise RuntimeError('Firmware link failed; see ignored compile.stderr.log (target memory may be exceeded)')
-    if source_hashes(src)!=env['source_sha256']:raise ValueError('Decoder sources changed during linking')
-    subprocess.run([str(toolpath(avr_bin,'avr-objcopy')),'-O','binary','-R','.eeprom',str(elf),str(binary)],check=True,capture_output=True)
+    if cached_cost is None:
+        command=[str(toolpath(avr_bin,'avr-g++')),*flags,'-I'+str(src),'-I'+str(folder),str(folder/'chain.cpp'),
+                 str(src/'Lpx4HybridCore.cpp'),'-Wl,-Map='+str(folder/'profile.map'),'-o',str(elf)]
+        result=subprocess.run(command,capture_output=True)
+        (folder/'compile.stdout.log').write_bytes(result.stdout);(folder/'compile.stderr.log').write_bytes(result.stderr)
+        if result.returncode:raise RuntimeError('Firmware link failed; see ignored compile.stderr.log (target memory may be exceeded)')
+        if source_hashes(src)!=env['source_sha256']:raise ValueError('Decoder sources changed during linking')
+        subprocess.run([str(toolpath(avr_bin,'avr-objcopy')),'-O','binary','-R','.eeprom',str(elf),str(binary)],check=True,capture_output=True)
     sizes=subprocess.check_output([str(toolpath(avr_bin,'avr-size')),str(elf)],text=True)
     match=re.search(r'^\s*(\d+)\s+(\d+)\s+(\d+)\s+',sizes,re.M)
     if not match:raise ValueError('Cannot parse linked firmware sections')
@@ -160,20 +168,18 @@ def measure(streams,output,avr_bin,*,source=None,assembly=True,irq=0):
           'harness_sha256':build['derived_harness_sha256'],'hardware_address_constants':proof['hardware_address_constants'],
           'embedded_segment_ranges':proof['ranges'],'assembly_enabled':bool(assembly),'extra_irq_cycles':irq,
           'timing_verified':False,'physical_board_measured':False}
+    if source_hashes(src)!=env['source_sha256']:raise ValueError('Decoder sources changed during artifact inspection')
     cache.write_text(json.dumps({'fingerprint':identity,'cost_sha256':hashlib.sha256(canonical(cost)).hexdigest(),
-                                'cost':cost},indent=2)+'\n',encoding='utf-8',newline='\n')
+                                'cost':cost,'proof_fingerprint':proof_fingerprint},indent=2)+'\n',encoding='utf-8',newline='\n')
     return cost
 
 
-def validate_timing(report,actual_pwm,expected_pwm,cost):
-    """Validate complete-chain playback separately from bounded decode profiling.
+def validate_timing(report,actual_pwm,expected_pwm,cost,*,historical=False):
+    """Validate full playback and current statistics; historical evidence is opt-in.
 
-    validation/atmega328p/sim_profile.c records at most 64000 decode durations:
-    its durations[64000] array and decode_count guard cap all decode_wall_cycles
-    statistics. Longer runs still verify every PWM byte, output tick, produced
-    sample and underrun counter. A runner that counts every duration is accepted
-    too. The returned coverage fields scope the decode statistics explicitly.
-    This pure check can revalidate saved artifacts without rerunning simulation.
+    The streaming-v2 runner records every duration using a bounded host ring.
+    historical=True admits explicitly labeled older capped evidence only; the
+    reported scope never turns that initial window into a full-chain average.
     """
     if not isinstance(report,dict) or not isinstance(cost,dict):
         raise ValueError('Timing report and firmware cost must be objects')
@@ -188,29 +194,41 @@ def validate_timing(report,actual_pwm,expected_pwm,cost):
     if any(isinstance(report.get(k),bool) or not isinstance(report.get(k),int) for k in counts):
         raise ValueError('Timing counters must be integers')
     actual_pwm=bytes(actual_pwm);expected_pwm=bytes(expected_pwm)
-    timed=report['decode_calls'];complete=timed==samples
-    covered=complete or samples>64000 and timed==64000
+    coverage=timing_coverage(report,samples,historical=historical)
     if (len(expected_pwm)!=samples or actual_pwm!=expected_pwm or report['underruns']
             or report['decoder_error'] or report.get('done')!=1
             or report['played']!=samples or report['produced']!=samples
-            or not covered or report['timer_ticks']!=samples
+            or report['timer_ticks']!=samples
             or report['stack_margin_bytes']<=0 or report['cpu_hz']!=16000000 or report['audio_hz']!=8000):
         raise AssertionError('Complete-chain IRQ/PWM/timing verification failed')
     verified={k:v for k,v in report.items() if k!='occupancy_trace'}
     verified.update(cost=cost,pwm_model_exact=True,pwm_sha256=hashlib.sha256(expected_pwm).hexdigest(),
-        timing_verified=True,decode_timing_samples=timed,decode_timing_complete=complete,
-        decode_timing_statistics_scope='complete-chain' if complete else 'first-64000-samples',
-        decode_timing_limit_reason=None if complete else 'sim_profile.c decode duration buffer limit')
+        timing_verified=True,**coverage)
     return verified
 
 
-def simulate(streams,output,avr_bin,runner,*,lib=None,wsl=None,source=None,irq=0):
+def simulate(streams,output,avr_bin,runner,*,lib=None,wsl=None,source=None,irq=0,historical=False):
     """Verify the entire chain against independent-model PWM with active IRQ."""
     folder=guard_artifacts(output,inputs=[runner])
     cost=measure(streams,folder,avr_bin,source=source,irq=irq)
     streams=[bytes(b) for b in streams]
     expected=b''.join(pwm_duties(decode_model(b)).tobytes() for b in streams)
-    valid=folder/'valid.pcm8';timing=folder/'timing.json'
+    valid=folder/'valid.pcm8';timing=folder/'timing.json';verification=folder/'verification.json'
+    validator=validation_provenance(runner,lib,wsl)
+    identity=hashlib.sha256(canonical([validator,cost,hashlib.sha256(expected).hexdigest(),historical])).hexdigest()
+    if verification.exists():
+        stored=json.loads(verification.read_text());metadata=stored.pop('verification_cache',{})
+        if (metadata.get('fingerprint')==identity
+                and metadata.get('verification_sha256')==hashlib.sha256(canonical(stored)).hexdigest()
+                and valid.is_file() and timing.is_file()
+                and digest(valid)==metadata.get('actual_pwm_sha256')
+                and digest(timing)==metadata.get('timing_sha256')):
+            checked=validate_timing(json.loads(timing.read_text()),valid.read_bytes(),expected,cost,historical=historical)
+            checked.update(validation_provenance=validator,validation_fingerprint=identity)
+            if checked==stored:
+                if validation_provenance(runner,lib,wsl)!=validator:raise ValueError('Host validator changed during verification')
+                checked['verification_cache']=metadata
+                return checked
     if wsl:
         command=['wsl','-d',wsl,'--','env']
         if lib:command+=['LD_LIBRARY_PATH='+linux_path(lib)]
@@ -221,8 +239,15 @@ def simulate(streams,output,avr_bin,runner,*,lib=None,wsl=None,source=None,irq=0
         if lib:env_vars['LD_LIBRARY_PATH']=str(Path(lib).resolve())
         command=[str(Path(runner).resolve()),str(folder/'profile.elf'),str(valid),str(timing)]
     subprocess.run(command,check=True,capture_output=True,**({} if wsl else {'env':env_vars}))
-    report=validate_timing(json.loads(timing.read_text()),valid.read_bytes(),expected,cost)
-    (folder/'verification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
+    report=validate_timing(json.loads(timing.read_text()),valid.read_bytes(),expected,cost,historical=historical)
+    if validation_provenance(runner,lib,wsl)!=validator:raise ValueError('Host validator changed during simulation')
+    if source_hashes(srcdir(source if source is not None else Path(__file__).resolve().parents[1]))!=cost['environment']['source_sha256']:
+        raise ValueError('Decoder sources changed during simulation')
+    report.update(validation_provenance=validator,validation_fingerprint=identity)
+    report['verification_cache']={'fingerprint':identity,
+        'verification_sha256':hashlib.sha256(canonical(report)).hexdigest(),
+        'actual_pwm_sha256':digest(valid),'timing_sha256':digest(timing)}
+    verification.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
     return report
 
 
@@ -232,10 +257,11 @@ def main():
     parser.add_argument('--avr-bin',type=Path,required=True);parser.add_argument('--source',type=Path)
     parser.add_argument('--runner',type=Path);parser.add_argument('--lib',type=Path);parser.add_argument('--wsl')
     parser.add_argument('--irq',type=int,default=0)
+    parser.add_argument('--historical-runner',action='store_true',help='Explicitly admit older capped statistics')
     args=parser.parse_args();folder=checked_output(args.output)
     guard_artifacts(folder,inputs=args.streams)
     streams=[p.read_bytes() for p in args.streams]
-    report=(simulate(streams,folder,args.avr_bin,args.runner,lib=args.lib,wsl=args.wsl,source=args.source,irq=args.irq)
+    report=(simulate(streams,folder,args.avr_bin,args.runner,lib=args.lib,wsl=args.wsl,source=args.source,irq=args.irq,historical=args.historical_runner)
             if args.runner else measure(streams,folder,args.avr_bin,source=args.source,irq=args.irq))
     cost=report.get('cost',report)
     print(json.dumps({k:cost[k] for k in ('segments','samples','stream_bytes','flash_bytes','program_flash_bytes')}))
