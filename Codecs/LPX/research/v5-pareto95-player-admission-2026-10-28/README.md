@@ -38,7 +38,15 @@ observer reports were rechecked after validation. Private recording/stream/
 PCM/firmware fingerprints, paths, audio and generated images remain only in
 ignored build storage.
 
-This is one held-out point and four complete simulator runs. It is not a
-physical-board, analog-output, blind-listening or universal bitrate-quality
-claim. Existing corpus-level results and later combined-search experiments
-have separate scope and evidence.
+One informal blind A/B comparison of this specific pair was recorded as
+**near-equal sound**. A was the 1,701-byte stream; B was the 1,800-byte
+original. Files retained the complete 32,000 samples, original level and the
+same fixed PWM-to-PCM transfer. No loudness fitting was applied. The private
+key, WAVs and detailed listening receipt stay in ignored build storage.
+This single informal observation supports that description for this pair;
+it does not establish audible improvement or a corpus-wide listening score.
+
+This is one held-out point and four complete simulator runs, with the separate
+informal digital listening observation above. Physical-board/analog behavior
+and universal bitrate-quality conclusions remain unverified. Existing
+corpus-level results and later combined-search experiments have separate scope.
