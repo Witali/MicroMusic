@@ -1,0 +1,17 @@
+--- a/Lpx4HybridCore.h
++++ b/Lpx4HybridCore.h
+@@ -42,10 +42,11 @@
+ #else
+ #define LPX4_MAX_PULSES 10
+ #endif
+-// Mirrored LPC history removes per-sample history shifts, spending 20 B RAM.
+-// Zero retains the smaller linear history with identical output on C/ASM.
++// Mirrored LPC history avoids per-sample shifts, spending 20 B RAM.
++// The compact size profile defaults to linear; explicit 1 restores mirroring.
++// Both histories retain identical output with C and explicit supported ASM.
+ #ifndef LPX4_LPC_RING
+-#define LPX4_LPC_RING 1
++#define LPX4_LPC_RING (!LPX4_COMPACT_ONLY)
+ #endif
+ #if LPX4_LPC_RING != 0 && LPX4_LPC_RING != 1
+ #error LPX4_LPC_RING must be 0 or 1

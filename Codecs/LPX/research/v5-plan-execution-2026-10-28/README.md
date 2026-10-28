@@ -148,3 +148,32 @@ there are no intermediate SRAM spills or repeated history-pointer reloads in
 that boundary. The conditional plan item therefore supplies no demonstrated
 redundant transfer to remove. No new fused handwritten ASM was introduced.
 Every existing C/ASM arithmetic selector and fallback remains available.
+
+## Rescreen existing linear history in the changed context
+
+The original fixed-baseline screen of LPX4_LPC_RING=0 saves0..10 B Flash
+and20 B static SRAM. After byte LSF, narrowed/packed state, derived brightness
+and shared attenuation, repeat the same bounded8-image screen rather than
+assuming that result remains valid. The measured ring combination saves
+214..216 B Flash versus b8f473a6; linear saves218..222 B, an additional2..8 B,
+and brings total static SRAM reduction to45 B. The history algorithm and its
+C/ASM implementations already existed; no assembly kernel was added.
+
+The [new-context cost screen](history-screen.json) and
+[bounded IRQ gate](history-irq-screen.json) preserve exact sources and actual
+AVR macro selection. The latter chooses the worst prior160-sample conversion
+window among complete64000-sample controls in each profile, then compares
+ring/linear at normal/+100-cycle IRQ loads. All8 complete outputs match the
+model, with zero underruns/errors. Linear costs2.85..3.03% more decode wall
+cycles; max160 grows2.38..3.11%, reaching162695 cycles in the worst control.
+The reported producer-side queue minimum remains386 and observed stack margin
+improves920 to940 B. These are bounded gate results, not universal admission.
+
+Only the explicit compact size layout changes its default to linear. Common
+layouts retain mirrored history by default; either layout can still explicitly
+select0/1. The isolated prototype patch forces0 for its screen, while the
+production-default patch preserves that common-layout policy. Final source
+uses the header hash in the cost receipt. All58 core regressions pass, including
+both layouts, frozen coefficients/parser/lifecycle traces, reader/counter/history
+fallbacks, segments1/2/4, bandwidth expansion, tails and snapshots. Full181/204
+corpus and final diagnostic/production IRQ matrices are the remaining gate.
