@@ -12,6 +12,11 @@ import speech_compact as compact
 FIELDS=(('scale',5),('lag',7),('gain_code',3))
 
 
+def parameter_codes(params):
+    """Validated v5 tuples in exact stored units, including otherwise unused lag."""
+    return [(int(scale),int(lag)-18,int(gain)//2) for scale,lag,gain in params]
+
+
 def _counter(counter):
     return {str(key):counter[key] for key in sorted(counter)}
 
@@ -30,7 +35,7 @@ def parameter_histograms(streams):
     for blob in streams:
         n,profile,spectra,params,pulses,pre,bright,extras=compact.unpack(bytes(blob))
         stream_count+=1;samples+=n
-        coded=[(int(scale),int(lag)-18,int(gain)//2) for scale,lag,gain in params]
+        coded=parameter_codes(params)
         for label,packets in (('stored',coded),('audible',coded[:(n+159)//160])):
             group=groups[label];group['packets']+=len(packets);group['first_packets']+=1
             for i,packet in enumerate(packets):
