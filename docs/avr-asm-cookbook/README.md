@@ -2990,6 +2990,12 @@ The fixed-override verifier records actual compiler defines and firmware hashes
 without editing production sources. No board measurements are claimed.
 [Final scope and evidence](../../Codecs/LPX/research/q0-speed-rounds-2026-10-26/FINAL_AUDIT_RU.md).
 
+## LPX v5: exact reachable cosine grid
+
+[Direct even-node cosine](lpx-v5-grid-cosine.md) removes unreachable interpolation
+for compact-only segments 1/2. Complete Flash falls 56 B in six paired images;
+C/reference helpers, exact coefficients and active-IRQ gates are retained.
+
 ## LPX speech: measure CPU independently of bitrate
 
 [Host gain proposals](lpx-host-gain.md) avoid adding a gain operation to the

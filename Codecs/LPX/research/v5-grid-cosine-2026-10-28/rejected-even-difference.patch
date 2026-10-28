@@ -1,0 +1,30 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -96,0 +97,21 @@
++#if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
++static const uint16_t LP_PROGMEM cosineEvenCheckpoints[8]={
++ 8192,8035,7568,6811,5793,4551,3135,1598
++};
++static const uint8_t LP_PROGMEM cosineEvenDrop[64]={
++ 2,8,12,17,23,27,32,36,42,47,51,56,60,66,70,75,79,84,88,92,97,101,106,110,113,118,122,125,130,133,137,140,144,148,150,154,157,160,163,166,168,171,174,176,179,180,183,185,187,188,190,192,193,195,195,197,197,199,199,200,200,201,201,201
++};
++// V5 centered5/6bit spectra with segments1/2 reach only even cosine
++// nodes: all normalized anchors are multiples of32, so fraction is zero.
++static inline __attribute__((always_inline)) int16_t cosineGridEven(uint16_t norm){
++ uint8_t index=(uint8_t)(norm>>5);
++ const bool negative=index>64;
++ if(negative)index=128-index;
++ if(index==64)return 0;
++ const uint8_t group=index>>3;
++ int16_t value=LP_READ_U16(&cosineEvenCheckpoints[group]);
++ for(uint8_t j=group<<3;j<index;j++)value-=LP_READ_U8(&cosineEvenDrop[j]);
++ return negative?-value:value;
++}
++#endif
++
+@@ -777,0 +799,3 @@
++        #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
++        const int16_t cc=(int16_t)-cosineGridEven(lpx4LsfNorm10(prev_[i],cur_[i],t));
++#else
+@@ -778,0 +803 @@
++#endif
