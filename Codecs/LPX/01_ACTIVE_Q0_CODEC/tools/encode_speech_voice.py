@@ -19,7 +19,7 @@ import speech_compact as compact
 import speech_v4
 from speech_voice_objective import VoiceObjective
 from standard_metrics import error_metrics, pwm_duties, pwm_pcm16
-from refine_speech_compact import no_regression
+from refine_speech_compact import no_regression, quality as speech_quality
 from voice_character import track_pitch, compare_voice
 
 
@@ -51,6 +51,10 @@ def prepare_level(reference, policy='preserve'):
 
 
 def _quality(reference, pcm, speech):
+    if speech:
+        # Existing speech policy turns unavailable/nonfinite STOI into None;
+        # NaN must never silently pass a numerical less-than floor check.
+        return speech_quality(reference, pcm)
     return dict(pcm16=error_metrics(reference, pcm, speech),
                 pwm8=error_metrics(reference, pwm_pcm16(pcm), speech))
 
@@ -130,31 +134,38 @@ def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
     cap = int(max_bytes if max_bytes is not None else len(previous) if previous is not None else len(control))
     before = _quality(target, control_pcm, bool(speech))
     before_voice = compare_voice(target, control_pcm, reference_track=track)
+    before_pwm_voice = compare_voice(target, pwm_pcm16(control_pcm), reference_track=track)
+    target_pwm_voice = compare_voice(target, pwm_pcm16(target), reference_track=track)
     before_score = objective(control_pcm)
     selected = control if len(control) <= cap else None
     selected_pcm = control_pcm if selected is not None else None
     selected_score = before_score if selected is not None else np.inf
     raw = selected
     raw_score = selected_score
-    chosen = dict(metrics=before, voice=before_voice) if selected is not None else None
+    chosen = dict(metrics=before, voice=before_voice, pwm_voice=before_pwm_voice) if selected is not None else None
     for pre in values:
         blob, pcm, work = fresh(pre, True)
         score = objective(pcm)
         metrics = _quality(target, pcm, bool(speech))
         voice = compare_voice(target, pcm, reference_track=track)
+        pwm_voice = compare_voice(target, pwm_pcm16(pcm), reference_track=track)
         fits = len(blob) <= cap
         old_floors = no_regression(metrics, before)
-        voice_floors = _voice_gate(voice, before_voice)
+        pcm_voice_floors = _voice_gate(voice, before_voice)
+        pwm_voice_floors = _voice_gate(pwm_voice, before_pwm_voice)
+        voice_floors = pcm_voice_floors and pwm_voice_floors
         trials.append(dict(preQ14=pre, allow_zero_scale=True, file_bytes=len(blob),
             fits_complete_cap=fits, old_pcm_pwm_floors_passed=old_floors,
             voice_proxy_floors_passed=voice_floors, voice_score=score,
-            components=objective.components(pcm), metrics=metrics, voice=voice,
+            pcm_voice_proxy_floors_passed=pcm_voice_floors,
+            pwm_voice_proxy_floors_passed=pwm_voice_floors,
+            components=objective.components(pcm), metrics=metrics, voice=voice, pwm_voice=pwm_voice,
             encoder_seconds=work['seconds']))
         if fits and score < raw_score:
             raw, raw_score = blob, score
         if fits and old_floors and voice_floors and score < selected_score:
             selected, selected_pcm, selected_score = blob, pcm, score
-            chosen = dict(metrics=metrics, voice=voice)
+            chosen = dict(metrics=metrics, voice=voice, pwm_voice=pwm_voice)
     if selected is not None:
         verify(selected, selected_pcm)
     if raw is not None and raw != selected:
@@ -162,6 +173,8 @@ def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
     report = dict(schema='lpx-v5-voice-encoder-v1', profile=profile, samples=len(target),
         complete_byte_cap=cap, level=level, control_kind=control_kind,
         control_bytes=len(control), baseline_metrics=before, baseline_voice=before_voice,
+        baseline_pwm_voice=before_pwm_voice, target_pwm_voice=target_pwm_voice,
+        voice_proxy_gate_domains=['native_pcm16', 'fixed_pwm8'],
         baseline_voice_score=before_score, objective=objective.describe(), trials=trials,
         selected_bytes=None if selected is None else len(selected), selected=chosen,
         selected_voice_score=None if selected is None else selected_score,

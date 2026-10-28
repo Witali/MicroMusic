@@ -8,7 +8,9 @@ MCU code and v5 syntax are unchanged.
 The source-frozen [voice objective](SPEECH_VOICE_OBJECTIVE.md) ranks candidates.
 Conservative selection additionally requires the old complete PCM/PWM SSE/STOI
 floors and nonregression of the measured voice-period coverage, fixed-period
-difference, coarse spectral shape and collapse count. These are numeric proxies;
+difference, coarse spectral shape and collapse count in **both native PCM16 and
+fixed PWM**. The report also measures direct PWM rounding of the source target,
+so loss already caused by the output resolution stays visible. These are numeric proxies;
 selection never establishes perceptual equivalence or reliable F0 in missing
 windows. A uniformly lower pre-emphasis is not imposed on every recording.
 

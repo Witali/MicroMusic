@@ -1,10 +1,11 @@
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
 from batch_decoder import BatchSession
 import speech_compact as compact
-from encode_speech_voice import encode, prepare_level, _voice_gate
+from encode_speech_voice import encode, prepare_level, _voice_gate, _quality
 from voice_character import compare_voice
 
 
@@ -36,6 +37,9 @@ class VoiceEncoderTests(unittest.TestCase):
         self.assertEqual(report['level']['gain'], 1)
         self.assertEqual(report['selected']['voice']['reference_period_frames'], 0)
         self.assertTrue(report['native_v5_only_checked'])
+        self.assertIn('pwm_voice', report['selected'])
+        self.assertIn('target_pwm_voice', report)
+        self.assertIn('pwm_voice_proxy_floors_passed', report['trials'][0])
         self.assertIsNotNone(raw)
 
     def test_no_fit_is_none_instead_of_oversized_fallback(self):
@@ -92,6 +96,15 @@ class VoiceEncoderTests(unittest.TestCase):
         self.assertTrue(_voice_gate(exact, exact))
         self.assertFalse(_voice_gate(compare_voice(ref, tone(amplitude=1024, frequency=100)), exact))
         self.assertFalse(_voice_gate(compare_voice(ref, np.zeros_like(ref)), exact))
+
+    def test_nonfinite_external_intelligibility_is_unavailable(self):
+        # Fault injection represents a failed optional external metric, which
+        # must not compare as an apparently non-regressing numerical score.
+        with patch('refine_speech_compact.error_metrics',
+                   return_value=dict(error_energy=0., stoi=float('nan'))):
+            measured = _quality(tone(640), tone(640), True)
+        self.assertIsNone(measured['pcm16']['stoi'])
+        self.assertIsNone(measured['pwm8']['stoi'])
 
     def test_invalid_settings_rejected_before_encoding(self):
         ref = tone(320)
