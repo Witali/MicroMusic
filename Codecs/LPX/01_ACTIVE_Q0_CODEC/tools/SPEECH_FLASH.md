@@ -143,10 +143,55 @@ not establish board/analog-output behavior. The arithmetic C fallback can be
 measured through `measure(..., assembly=False)`; no new assembly is introduced.
 
 
-The existing `sim_profile.c` stores decode-duration statistics for at most
-64000 calls. For longer chains, `decode_timing_samples` and
-`decode_timing_complete=false` explicitly identify this initial window. Full
-PWM, produced/played counts, output ticks, completion, stack observation and
-underruns still cover the entire chain. `validate_timing()` accepts exactly the
-full count or that documented cap, rejects other truncated counts, and never
-labels a partial decode-duration average as a complete-recording measurement.
+The current `sim_profile.c` records every decode duration. Host-only
+`profile_durations.h` retains a 160-duration ring, 64-bit totals/maxima and exact
+40/80/160-window maxima. Reports identify `decode_statistics=streaming-v2`;
+`decode_timing_samples` must equal the complete produced/played count. Updating
+this host runner changes **zero AVR Flash bytes**. The existing 125 simulated
+second hard stop remains; a timed-out/incomplete run never gains admission.
+
+Historical capped reports require explicit `historical=True` in
+`validate_timing`/`simulate`, or `--historical-runner` on the profiling CLIs.
+They remain labeled historical and may cover only the first64000 durations.
+Never compare those totals with a new complete-chain average. Complete PWM,
+output ticks, produced/played counts, errors, underruns and stack checks remain
+mandatory in either mode. C fallback diagnostic runs can still report underruns;
+they are not declared real-time merely because their output values are exact.
+
+## Separate build and validation provenance
+
+`environment()` and `build_provenance()` describe AVR inputs: compiler/linker,
+AVR/GCC header trees and libraries, the linked core's local include closure,
+harness/flags and retained ABI. The complete source inventory remains available
+for decoder/model correspondence; uncompiled oracle tables do not force a relink.
+The complete generated voice header and ordered streams bind each image cache.
+Host-only Python/runner/model changes no longer enter its compilation key.
+
+Artifact inspection has a separate fingerprint: changing its tools or host code
+requires fresh section/embedding proof against the same ELF. Timing validation
+binds the runner binary, its resolved loader libraries, host code/model tables,
+Python/package versions, expected complete PWM and exact image/cost. Changing
+those inputs forces fresh validation while reusing the identical AVR ELF.
+Corrupt image, metadata, timing or PWM records are rejected; no fingerprint is a
+substitute for independently matching source streams and complete output.
+
+Alternate production builders may pass `harness=`, `required_symbols=` and
+`retained_symbols=` to `environment`, then use the same command-flag and
+provenance helpers. Production and diagnostic harnesses retain separate recipes
+and admission; removing diagnostic code is application savings.
+
+## Replay the immutable111+5 diagnostic matrix
+
+```text
+python tools/validate_v5_runtime.py --study PRIVATE_JOINT_STUDY --source SOURCE_SNAPSHOT --output build/diagnostic --avr-bin AVR_BIN --runner FULL_RUNNER --lib SIM_LIB --wsl Ubuntu
+```
+
+The input study's saved111normal+5stress jobs define the exact ordered streams
+and stress choices. The driver verifies all current files and independent-model
+PWM against frozen complete output, then validates the supplied immutable source
+snapshot with full duration coverage. It guards source/toolchain/validator and
+manifest changes, saves private per-image evidence separately, and exports only
+anonymous numeric rows and source/toolchain provenance under `public/`.
+`--limit` explicitly creates a partial smoke report; it never marks the116-image
+matrix complete. Preserve this same inventory when comparing the fixed baseline
+with a candidate. The old capped duration totals are not a timing baseline.

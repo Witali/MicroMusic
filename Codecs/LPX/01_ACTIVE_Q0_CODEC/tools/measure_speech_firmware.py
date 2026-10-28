@@ -15,7 +15,7 @@ from pathlib import Path
 
 from benchmark_speech_flash import (CANDIDATES, HARNESS, canonical, command_flags,
     digest, environment, parse_symbols, source_hashes, srcdir, toolpath,
-    build_provenance, artifact_provenance, validation_sources, validation_provenance, timing_coverage)
+    build_provenance, artifact_provenance, linked_sizes, validation_sources, validation_provenance, timing_coverage)
 from output_paths import protect_outputs
 from speech_compact import unpack, decode_model
 from standard_metrics import pwm_duties
@@ -154,10 +154,9 @@ def measure(streams,output,avr_bin,*,source=None,assembly=True,irq=0):
         if result.returncode:raise RuntimeError('Firmware link failed; see ignored compile.stderr.log (target memory may be exceeded)')
         if source_hashes(src)!=env['source_sha256']:raise ValueError('Decoder sources changed during linking')
         subprocess.run([str(toolpath(avr_bin,'avr-objcopy')),'-O','binary','-R','.eeprom',str(elf),str(binary)],check=True,capture_output=True)
-    sizes=subprocess.check_output([str(toolpath(avr_bin,'avr-size')),str(elf)],text=True)
-    match=re.search(r'^\s*(\d+)\s+(\d+)\s+(\d+)\s+',sizes,re.M)
-    if not match:raise ValueError('Cannot parse linked firmware sections')
-    text,data,bss=map(int,match.groups());proof=embedded_streams(elf,binary,avr_bin,streams,env)
+    sections=linked_sizes(elf,avr_bin)
+    text,data,bss=(sections[key] for key in ('text_bytes','data_bytes','bss_bytes'))
+    proof=embedded_streams(elf,binary,avr_bin,streams,env)
     cost={'schema':'lpx-v5-firmware-cost-v1','stream_sha256':hashes,'stream_bytes':sum(map(len,streams)),
           'flash_bytes':text+data,'program_flash_bytes':text+data-sum(map(len,streams)),
           'text_bytes':text,'data_bytes':data,'bss_bytes':bss,'static_sram_bytes':data+bss,
@@ -207,14 +206,14 @@ def validate_timing(report,actual_pwm,expected_pwm,cost,*,historical=False):
     return verified
 
 
-def simulate(streams,output,avr_bin,runner,*,lib=None,wsl=None,source=None,irq=0,historical=False):
+def simulate(streams,output,avr_bin,runner,*,lib=None,wsl=None,source=None,irq=0,historical=False,validator_sources=()):
     """Verify the entire chain against independent-model PWM with active IRQ."""
     folder=guard_artifacts(output,inputs=[runner])
     cost=measure(streams,folder,avr_bin,source=source,irq=irq)
     streams=[bytes(b) for b in streams]
     expected=b''.join(pwm_duties(decode_model(b)).tobytes() for b in streams)
     valid=folder/'valid.pcm8';timing=folder/'timing.json';verification=folder/'verification.json'
-    validator=validation_provenance(runner,lib,wsl)
+    validator=validation_provenance(runner,lib,wsl,sources=validator_sources)
     identity=hashlib.sha256(canonical([validator,cost,hashlib.sha256(expected).hexdigest(),historical])).hexdigest()
     if verification.exists():
         stored=json.loads(verification.read_text());metadata=stored.pop('verification_cache',{})
@@ -226,7 +225,7 @@ def simulate(streams,output,avr_bin,runner,*,lib=None,wsl=None,source=None,irq=0
             checked=validate_timing(json.loads(timing.read_text()),valid.read_bytes(),expected,cost,historical=historical)
             checked.update(validation_provenance=validator,validation_fingerprint=identity)
             if checked==stored:
-                if validation_provenance(runner,lib,wsl)!=validator:raise ValueError('Host validator changed during verification')
+                if validation_provenance(runner,lib,wsl,sources=validator_sources)!=validator:raise ValueError('Host validator changed during verification')
                 checked['verification_cache']=metadata
                 return checked
     if wsl:
@@ -240,7 +239,7 @@ def simulate(streams,output,avr_bin,runner,*,lib=None,wsl=None,source=None,irq=0
         command=[str(Path(runner).resolve()),str(folder/'profile.elf'),str(valid),str(timing)]
     subprocess.run(command,check=True,capture_output=True,**({} if wsl else {'env':env_vars}))
     report=validate_timing(json.loads(timing.read_text()),valid.read_bytes(),expected,cost,historical=historical)
-    if validation_provenance(runner,lib,wsl)!=validator:raise ValueError('Host validator changed during simulation')
+    if validation_provenance(runner,lib,wsl,sources=validator_sources)!=validator:raise ValueError('Host validator changed during simulation')
     if source_hashes(srcdir(source if source is not None else Path(__file__).resolve().parents[1]))!=cost['environment']['source_sha256']:
         raise ValueError('Decoder sources changed during simulation')
     report.update(validation_provenance=validator,validation_fingerprint=identity)
