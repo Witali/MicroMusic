@@ -17,6 +17,12 @@ def run(output,wsl=None,v3_features=0,speech=False,speech_compact=False,compact_
     if speech_compact and not speech:raise ValueError('Compact speech requires speech')
     if compact_only and not speech_compact:raise ValueError('Compact-only requires compact speech')
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=True)
+    def source_inventory():
+        return {p.relative_to(ROOT/'src').as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in sorted((ROOT/'src').rglob('*')) if p.is_file()}
+    source_before=source_inventory()
+    harness_before=hashlib.sha256((ROOT/'tests/fuzz_decoder.cpp').read_bytes()).hexdigest()
+    driver_before=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     inputs=[];seeds=list(range(20261101,20261113))
     for seed in seeds:
         p=output/(str(seed)+'.l4hy');p.write_bytes(encode(unpack(gen(seed)),fast=True)[0]);inputs.append(p)
@@ -29,7 +35,7 @@ def run(output,wsl=None,v3_features=0,speech=False,speech_compact=False,compact_
     if speech:
         from test_speech_v4 import fixture
         for profile in (4,6):
-            for n in (1,19,20,39,40,159,160,319,320,321,641,1024):
+            for n in (1,19,20,39,40,159,160,180,200,220,240,260,280,300,319,320,321,500,641,1024):
                 p=output/f'speech-{profile}-{n}.l4hy'
                 p.write_bytes(fixture(profile,n));inputs.append(p)
                 if speech_compact:
@@ -60,11 +66,16 @@ def run(output,wsl=None,v3_features=0,speech=False,speech_compact=False,compact_
         part=json.loads(next(line for line in result.stdout.splitlines() if line.startswith('{')))
         for key in ('cases','rejected','sample_capped'):report[key]+=part[key]
         report['reset_exact']=report['reset_exact'] and part['reset_exact']
-    report.update(compiler=subprocess.check_output(prefix+['g++','--version'],text=True).splitlines()[0],
+    if (source_inventory()!=source_before
+            or hashlib.sha256((ROOT/'tests/fuzz_decoder.cpp').read_bytes()).hexdigest()!=harness_before
+            or hashlib.sha256(Path(__file__).read_bytes()).hexdigest()!=driver_before):
+        raise ValueError('Mutation-check sources changed during validation')
+    report.update(decoder_source_sha256=source_before,driver_sha256=driver_before,
+        core_header_sha256=source_before['Lpx4HybridCore.h'],compiler=subprocess.check_output(prefix+['g++','--version'],text=True).splitlines()[0],
         compiler_options=options,seeds=seeds,input_streams=len(inputs),v3_features=v3_features,speech_enabled=bool(speech),speech_compact_enabled=bool(speech_compact),compact_only=bool(compact_only),extra_inputs=len(extra_inputs),max_samples_per_decode=4096,
-        core_sha256=hashlib.sha256((ROOT/'src/Lpx4HybridCore.cpp').read_bytes()).hexdigest(),
-        math_header_sha256=hashlib.sha256((ROOT/'src/Lpx4Math.h').read_bytes()).hexdigest(),
-        harness_sha256=hashlib.sha256((ROOT/'tests/fuzz_decoder.cpp').read_bytes()).hexdigest())
+        core_sha256=source_before['Lpx4HybridCore.cpp'],
+        math_header_sha256=source_before['Lpx4Math.h'],
+        harness_sha256=harness_before)
     (output/'verification.json').write_bytes((json.dumps(report,indent=2)+'\n').encode())
     print(json.dumps(report,indent=2));return report
 
