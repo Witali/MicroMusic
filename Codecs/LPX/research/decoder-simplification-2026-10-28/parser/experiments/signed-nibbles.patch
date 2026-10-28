@@ -1,0 +1,20 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -511,7 +511,7 @@
+     pos=readBits(5);
+ #endif
+     const uint8_t raw=readBits(4);
+-    amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
++    amp=(int8_t)((raw^8)-8);
+     if(pos>=20){error_=CORRUPT_STREAM;return false;}
+    }
+    pulsePos_[i]=pos+i*20;pulseAmp_[i]=amp;
+@@ -519,7 +519,7 @@
+ #if LPX4_ENABLE_SPEECH_COMPACT
+   if((speechCompact_&128) && readOne()){
+    const uint8_t pos=readBits(6),raw=readBits(4);
+-   const int8_t amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
++   const int8_t amp=(int8_t)((raw^8)-8);
+    if(pos>=40){error_=CORRUPT_STREAM;return false;}
+    uint8_t at=0;
+    while(at<2 && pulsePos_[at]<pos)++at;

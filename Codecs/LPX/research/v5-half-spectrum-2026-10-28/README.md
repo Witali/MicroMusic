@@ -40,3 +40,5 @@ integration, rather than being inferred from this bounded experiment.
 [Exact counts, flags, hashes and measurements](measurements.json). These are
 simulator results for the measured images/settings; no physical-board result
 or universal speedup is claimed. This is original project work.
+
+Per-recording ELF/binary/PWM fingerprints stay in ignored local receipts; the public measurements retain source/toolchain fingerprints and anonymous numeric evidence.

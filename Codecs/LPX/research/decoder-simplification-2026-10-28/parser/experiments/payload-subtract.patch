@@ -1,0 +1,20 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -212,7 +212,7 @@
+ #if LPX4_COMPACT_ONLY
+  const bool geometry=frames==320 && blocks==160;
+  const uint16_t payload=read16();
+- if(sampleCount_>64000 || !sampleCount_ || (uint32_t)size!=22UL+payload){
++ if(sampleCount_>64000 || !sampleCount_ || (size<22 || payload!=(uint16_t)(size-22))){
+   error_=BAD_HEADER;return false;
+  }
+ #else
+@@ -224,7 +224,7 @@
+   // the count before addition/multiplication; reject truncation at begin().
+   bool complete;
+ #if LPX4_ENABLE_SPEECH_COMPACT
+-  if(speechCompact_){const uint16_t payload=read16();complete=(uint32_t)size==22UL+payload;}
++  if(speechCompact_){const uint16_t payload=read16();complete=size>=22 && payload==(uint16_t)(size-22);}
+   else
+ #endif
+   // Accepted counts are <=64000: count+319 and the byte length fit uint16.

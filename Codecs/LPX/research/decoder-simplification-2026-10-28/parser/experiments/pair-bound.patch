@@ -1,0 +1,12 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -512,7 +512,9 @@
+ #endif
+     const uint8_t raw=readBits(4);
+     amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
++#if !LPX4_COMPACT_ONLY
+     if(pos>=20){error_=CORRUPT_STREAM;return false;}
++#endif
+    }
+    pulsePos_[i]=pos+i*20;pulseAmp_[i]=amp;
+   }

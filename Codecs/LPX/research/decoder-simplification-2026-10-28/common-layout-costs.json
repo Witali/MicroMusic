@@ -1,0 +1,165 @@
+{
+  "schema": "lpx-integrated-common-layout-avr-costs-v1",
+  "baseline_commit": "3f717df5",
+  "scope": "Actual complete linked common-layout AVR images at fixed v5selected audio; cost evidence only, not new common-layout IRQ/timing admission.",
+  "compiler": "avr-g++.exe (GCC) 7.3.0",
+  "compiler_options": [
+    "-mmcu=atmega328p",
+    "-DF_CPU=16000000UL",
+    "-Os",
+    "-std=gnu++11",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-DLPX4_PROFILE_QUEUE=512",
+    "-DLPX4_PROFILE_PREFILL=384",
+    "-DLPX4_PROFILE_IRQ_LOAD=0",
+    "-DLPX4_AVR_DOT_UNROLL=1",
+    "-DLPX4_FUNCTION_TUNING=0",
+    "-DLPX4_V3_FEATURES=24",
+    "-DLPX4_ENABLE_SPEECH=1",
+    "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+    "-DLPX4_COMPACT_ONLY=0",
+    "-DLPX4_ENABLE_ASM=1",
+    "-flto",
+    "-mcall-prologues",
+    "-mrelax",
+    "-Wl,-u,profile_decode_active",
+    "-Wl,-u,profile_done",
+    "-Wl,-u,profile_error",
+    "-Wl,-u,profile_min_occupancy",
+    "-Wl,-u,profile_occupancy",
+    "-Wl,-u,profile_output_valid",
+    "-Wl,-u,profile_played",
+    "-Wl,-u,profile_produced",
+    "-Wl,-u,profile_producer_done",
+    "-Wl,-u,profile_pwm_address",
+    "-Wl,-u,profile_ready",
+    "-Wl,-u,profile_running",
+    "-Wl,-u,profile_sph_address",
+    "-Wl,-u,profile_spl_address",
+    "-Wl,-u,profile_underruns"
+  ],
+  "source_sha256": {
+    "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "1b4740906227b9ae52b0da327e179b18aa0b1427224a37087616d9cbd0b2c5e6",
+    "Lpx4HybridCore.h": "4dae1efb0289638110b67d687452795f434525d9a52eaf03f2319b37e62393e3",
+    "Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "toolchain_fingerprints": {
+    "avr-g++.exe": "098f5708a5d70e3abb6b504145b46c9320ef4b6d43b6b8f1c09b431e611d543b",
+    "cc1plus.exe": "ff61dee5e0c6db53996e54a6b4c1b7ad66b4fd7c2f8ef695984aca90ed6f34b8",
+    "profile.cpp": "5c0179ae73a153285826dfc1d608c4c65171f257901399efc9bb0e1488039e4a",
+    "sim_profile.c": "c35b6adbb401978e96973d2a919ebca0bbd2879c5b4d47110c70233bf2516b52",
+    "benchmark_speech_flash.py": "bc6eb37ae8e1f0c11cd4df2590bfe8d793d46062b5e082f77d338d048f4ef467",
+    "standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+    "speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+    "avr-as.exe": "f4742917d141a23f4863086e6c0a3803b4da3c444cf1935303165b6f7e7e754e",
+    "avr-ld.exe": "b8aa2ff51061ff713976e6db14e9adb492436e5b463679a8b9e718c8ff0f2bdf",
+    "avr-objcopy.exe": "5bc07336d3dc78ef13a36db73b66ca206447fc9a40035ba8f481901084f737d5",
+    "avr-size.exe": "caf3b7005c4aee1ac99254b62fb5d4be13912c21d9a750745c859e80000a9590",
+    "avr-nm.exe": "4cf4392a0c0c44144668a1d8b70144708e32fa74b6279bab4e3041cb5345b593",
+    "avr-objdump.exe": "6379ac8e391b100febd0be4f30461e0148cbd59435aa574c1e96ece55eac3726",
+    "libgcc.a": "4753393354a98da210ac6e4746b5ea040dd5606da2590e3d6487c112bdae071d",
+    "libc.a": "18b64b8b3ef540925643bb79e15f574bb5eefcabc137e75306b0066aa89ac1c0",
+    "crtatmega328p.o": "0b539a5729bdaafb268d618235a5ec23fbbab41a3bc80f762cb46fe14035b935",
+    "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+    "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "pgmspace.h": "5e8af74a13ecaf167738a51d5c1179d523d35057fc13d4ac0114e07f41c50f45",
+    "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041",
+    "atomic.h": "7f8086185f093aaeef001a6cfca47bf229c0961a683072bd5dd82caaee8313e9"
+  },
+  "rows": [
+    {
+      "id": "v5-case-001",
+      "profile": 4,
+      "baseline": {
+        "samples": 64000,
+        "segments": 1,
+        "stream_bytes": 3547,
+        "flash_bytes": 10746,
+        "program_flash_bytes": 7199,
+        "static_sram_bytes": 1105
+      },
+      "selected": {
+        "samples": 64000,
+        "segments": 1,
+        "stream_bytes": 3547,
+        "flash_bytes": 10728,
+        "program_flash_bytes": 7181,
+        "static_sram_bytes": 1105
+      },
+      "flash_saved_bytes": 18
+    },
+    {
+      "id": "v5-case-001",
+      "profile": 6,
+      "baseline": {
+        "samples": 64000,
+        "segments": 1,
+        "stream_bytes": 5181,
+        "flash_bytes": 12382,
+        "program_flash_bytes": 7201,
+        "static_sram_bytes": 1105
+      },
+      "selected": {
+        "samples": 64000,
+        "segments": 1,
+        "stream_bytes": 5181,
+        "flash_bytes": 12364,
+        "program_flash_bytes": 7183,
+        "static_sram_bytes": 1105
+      },
+      "flash_saved_bytes": 18
+    },
+    {
+      "id": "v5-case-050",
+      "profile": 4,
+      "baseline": {
+        "samples": 281632,
+        "segments": 5,
+        "stream_bytes": 16142,
+        "flash_bytes": 23482,
+        "program_flash_bytes": 7340,
+        "static_sram_bytes": 1106
+      },
+      "selected": {
+        "samples": 281632,
+        "segments": 5,
+        "stream_bytes": 16142,
+        "flash_bytes": 23458,
+        "program_flash_bytes": 7316,
+        "static_sram_bytes": 1106
+      },
+      "flash_saved_bytes": 24
+    },
+    {
+      "id": "v5-case-050",
+      "profile": 6,
+      "baseline": {
+        "samples": 281632,
+        "segments": 5,
+        "stream_bytes": 23259,
+        "flash_bytes": 30598,
+        "program_flash_bytes": 7339,
+        "static_sram_bytes": 1106
+      },
+      "selected": {
+        "samples": 281632,
+        "segments": 5,
+        "stream_bytes": 23259,
+        "flash_bytes": 30574,
+        "program_flash_bytes": 7315,
+        "static_sram_bytes": 1106
+      },
+      "flash_saved_bytes": 24
+    }
+  ],
+  "published_source_commit": "7c917be114f76051b59eec999aced74cf54cae74",
+  "tested_source_byte_identical_after_metadata_redaction": true
+}

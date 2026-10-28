@@ -1,0 +1,79 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -124,7 +124,7 @@
+ #if LPX4_ENABLE_SPEECH
+  speechProfile_=speechHalf_=0;
+ #endif
+-#if LPX4_ENABLE_SPEECH_COMPACT
++#if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_COMPACT_ONLY
+  speechCompact_=0;
+ #endif
+ #if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY
+@@ -183,7 +183,7 @@
+  const uint8_t version=readByte(),flags=readByte();
+ #if LPX4_COMPACT_ONLY
+  if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
+- speechProfile_=flags&127;speechCompact_=1|(flags&128);
++ speechProfile_=flags;
+ #else
+ #if LPX4_ENABLE_SPEECH_COMPACT
+  if(version==5 && ((flags&127)==4 || (flags&127)==6)){
+@@ -311,7 +311,7 @@
+ #endif
+   staticSpectrum_=true;
+   if(!speechHalf_){
+-   const uint8_t bits=speechProfile_==4?5:6,shift=10-bits;
++   const uint8_t bits=(speechProfile_&2)?6:5,shift=10-bits;
+ #if LPX4_ENABLE_SPEECH_COMPACT
+ #if !LPX4_COMPACT_ONLY
+    if(speechCompact_){
+@@ -331,7 +331,7 @@
+       const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
+       const int16_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
+       if(error_)return false;
+-      if(value<=last || value>=((speechProfile_-2)<<4)){error_=CORRUPT_STREAM;return false;}
++      if(value<=last || value>=(((speechProfile_&2)+2)<<4)){error_=CORRUPT_STREAM;return false;}
+       const int16_t v=(value<<shift)+(1u<<(shift-1));
+       if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
+       cur_[i]=v;last=value;
+@@ -481,7 +481,7 @@
+   uint16_t pair=0;
+   uint8_t second=0;
+ #if LPX4_COMPACT_ONLY
+-  if(speechProfile_==6){
++  if(speechProfile_&2){
+ #else
+   if(speechCompact_ && speechProfile_==6){
+ #endif
+@@ -495,7 +495,7 @@
+   for(uint8_t i=0;i<2;i++){
+    uint8_t pos;
+    int8_t amp;
+-   if(speechProfile_==4){
++   if(!(speechProfile_&2)){
+     pos=readBits(4);pos+=(pos+2)>>2;
+     amp=readOne()?8:-8;
+    }else{
+@@ -517,7 +517,11 @@
+    pulsePos_[i]=pos+i*20;pulseAmp_[i]=amp;
+   }
+ #if LPX4_ENABLE_SPEECH_COMPACT
++#if LPX4_COMPACT_ONLY
++  if((speechProfile_&128) && readOne()){
++#else
+   if((speechCompact_&128) && readOne()){
++#endif
+    const uint8_t pos=readBits(6),raw=readBits(4);
+    const int8_t amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
+    if(pos>=40){error_=CORRUPT_STREAM;return false;}
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -218,7 +218,7 @@
+ #if LPX4_ENABLE_SPEECH
+     uint8_t speechProfile_,speechHalf_;
+ #endif
+-#if LPX4_ENABLE_SPEECH_COMPACT
++#if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_COMPACT_ONLY
+     uint8_t speechCompact_; // bit0 v5, bit7 optional-extra markers
+ #endif
+ #if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY

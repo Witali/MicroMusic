@@ -43,3 +43,5 @@ See[measurements.json](measurements.json) for exact counts, flags, hashes and
 per-image data. This is simulator admission for the measured inputs/settings;
 physical-board output and universal performance are not established. All
 techniques/code are original project work derived from the retained exact table.
+
+Per-recording ELF/binary/PWM fingerprints stay in ignored local receipts; the public measurements retain source/toolchain fingerprints and anonymous numeric evidence.

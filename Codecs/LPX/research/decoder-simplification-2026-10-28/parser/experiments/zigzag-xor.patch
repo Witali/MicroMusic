@@ -1,0 +1,11 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -328,7 +328,7 @@
+      for(uint8_t i=0;i<10;i++){
+       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
+       // Compact Rice codes use at most seven bits: delta is -64..63.
+-      const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
++      const int8_t difference=(int8_t)((code>>1)^-(int8_t)(code&1));
+       const int16_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
+       if(error_)return false;
+       if(value<=last || value>=((speechProfile_-2)<<4)){error_=CORRUPT_STREAM;return false;}
