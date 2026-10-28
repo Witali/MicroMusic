@@ -16,6 +16,17 @@ def metrics(error, stoi):
 
 
 class CombinedProtocolTests(unittest.TestCase):
+    def test_actual_reset_offsets_order_and_complete_length_are_checked(self):
+        record = dict(profile=4, samples=621, segments=[
+            dict(index=0, start=0, samples=300, profile=4),
+            dict(index=1, start=300, samples=321, profile=4)])
+        self.assertEqual(study.reset_geometry(record), [(300, 4), (321, 4)])
+        for field, bad in (('start', 320), ('index', 0), ('profile', 6), ('samples', 320)):
+            changed = dict(record, segments=[dict(s) for s in record['segments']])
+            changed['segments'][1][field] = bad
+            with self.assertRaises(ValueError):
+                study.reset_geometry(changed)
+
     def test_original_integer_caps_and_shared_completion_room(self):
         self.assertEqual(study.complete_cap(1800, 95), 1710)
         self.assertEqual(study.complete_cap(101, 95), 95)
