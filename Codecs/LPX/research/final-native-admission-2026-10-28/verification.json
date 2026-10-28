@@ -1,0 +1,214 @@
+{
+  "schema": "lpx-final-native-admission-v1",
+  "source_commit": "5c7e0592e0ac01e15551ef93b2e30343fd08f4a8",
+  "status": "passed",
+  "immutable_source_snapshot_matches_commit": true,
+  "all_208_source_model_header_harness_files_unchanged": true,
+  "guarded_validation_scripts_unchanged": true,
+  "frozen_corpus": {
+    "all_cases": 181,
+    "unique_segments": 306,
+    "unique_reference_samples": 15188029,
+    "baseline_and_selected_streams": 1224,
+    "samples_per_native_layout_and_output_domain": 60752116,
+    "native_common_and_v5_only_model_frozen_pcm_pwm_exact": true
+  },
+  "current_selected": {
+    "cases": 49,
+    "profile_groups": 98,
+    "across_profile_groups": 49,
+    "counts": {
+      "current_entry_stream_file_checks": 2168,
+      "historical_evaluation_bindings_checked": 3548,
+      "fresh_native_pcm_pwm_comparisons": 976,
+      "fresh_unique_streams": 244,
+      "fresh_unique_stream_samples": 10783850,
+      "fresh_whole_chain_metric_sets": 204
+    },
+    "reference_file_and_pcm_hashes_verified": true,
+    "all_current_stream_files_verified": true,
+    "native_common_v5only_model_exact": true,
+    "historical_pcm_pwm_hashes_exact": true,
+    "whole_original_level_metrics_exact": true,
+    "historical_flash_evidence_accepted_for_new_decoder": false,
+    "physical_board_measured": false
+  },
+  "sanitizers": {
+    "common": {
+      "cases": 627570,
+      "rejected": 163247,
+      "sample_capped": 0,
+      "reset_exact": true,
+      "decoder_source_sha256": {
+        "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+        "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+        "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+        "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+        "Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+        "Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+        "Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+        "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+        "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+      },
+      "driver_sha256": "699546c2a8e00295b6a99b68f312f83af3b44b5fa5f90fa69404a7110c16ada5",
+      "core_header_sha256": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+      "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "compiler_options": [
+        "-O1",
+        "-g",
+        "-std=c++11",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-DLPX4_V3_FEATURES=124",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1"
+      ],
+      "seeds": [
+        20261101,
+        20261102,
+        20261103,
+        20261104,
+        20261105,
+        20261106,
+        20261107,
+        20261108,
+        20261109,
+        20261110,
+        20261111,
+        20261112
+      ],
+      "input_streams": 504,
+      "v3_features": 124,
+      "speech_enabled": true,
+      "speech_compact_enabled": true,
+      "compact_only": false,
+      "extra_inputs": 0,
+      "max_samples_per_decode": 4096,
+      "core_sha256": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+      "math_header_sha256": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+      "harness_sha256": "50b2bf5c1ac59ceffdb8dbe1ac3210a0d2aea1193234b47978153cf0c7f07449"
+    },
+    "compact": {
+      "cases": 627570,
+      "rejected": 602788,
+      "sample_capped": 0,
+      "reset_exact": true,
+      "decoder_source_sha256": {
+        "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+        "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+        "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+        "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+        "Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+        "Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+        "Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+        "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+        "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+      },
+      "driver_sha256": "699546c2a8e00295b6a99b68f312f83af3b44b5fa5f90fa69404a7110c16ada5",
+      "core_header_sha256": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+      "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "compiler_options": [
+        "-O1",
+        "-g",
+        "-std=c++11",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-DLPX4_V3_FEATURES=124",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=1"
+      ],
+      "seeds": [
+        20261101,
+        20261102,
+        20261103,
+        20261104,
+        20261105,
+        20261106,
+        20261107,
+        20261108,
+        20261109,
+        20261110,
+        20261111,
+        20261112
+      ],
+      "input_streams": 504,
+      "v3_features": 124,
+      "speech_enabled": true,
+      "speech_compact_enabled": true,
+      "compact_only": true,
+      "extra_inputs": 0,
+      "max_samples_per_decode": 4096,
+      "core_sha256": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+      "math_header_sha256": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+      "harness_sha256": "50b2bf5c1ac59ceffdb8dbe1ac3210a0d2aea1193234b47978153cf0c7f07449"
+    }
+  },
+  "native_runtime": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "python_executable_sha256": "ceabb31054d429f57cb3825775677eeaf0db35fdabbc5ff6aef661c037154b00",
+    "native_compiler_version": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+    "native_target": "x86_64-pc-windows-msvc",
+    "native_tool_hashes": {
+      "driver": {
+        "sha256": "5ee66476c2d6e2cc5c57b8b373360708d1b01c28d9d90b8c207922b20cc20a13"
+      }
+    },
+    "packages": {
+      "numpy": "2.5.4",
+      "numba": "0.68.0",
+      "scipy": "1.18.1",
+      "pystoi": "0.4.1",
+      "soundfile": "0.14.0"
+    }
+  },
+  "sanitizer_runtime": {
+    "compiler_version": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "tools": {
+      "driver": {
+        "sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769"
+      },
+      "cc1plus": {
+        "sha256": "840b332fb62ec6f694ac77d91fe69ef7f80b0d69512ed89374af0ee7a506255d"
+      },
+      "libasan": {
+        "sha256": "8d5845bdf056b5db4cfb9fff40ad5eeea8f6da05a8ca6f5935a7d1c138ed2558"
+      },
+      "libubsan": {
+        "sha256": "f4a999fcf8392a200e9d93fb066ddb9e89daab8cd94a62137f4506472240a2e8"
+      }
+    }
+  },
+  "native_artifacts": {
+    "frozen-common": {
+      "sha256": "a6b1620cfcd37bc50ddd7e963ed8de4aa90e333cc401eff26a6eae0c6e631c6c",
+      "bytes": 121856
+    },
+    "frozen-v5-only": {
+      "sha256": "294f8af34cda33f6d9007ab0dfaa190491226e5699d4cba3b0bf158db1470586",
+      "bytes": 114176
+    },
+    "selected-library-0": {
+      "sha256": "c2687df5166013e18257ca4cfc588ee5f39f4179af160ec19a82d95c2baa48d3",
+      "bytes": 121856
+    },
+    "selected-library-1": {
+      "sha256": "57cbd63b9922917cf9ac60cc290e0af956d7d3ab39a6346e89f3aa4080362a05",
+      "bytes": 114176
+    }
+  },
+  "sanitizer_artifacts": {
+    "common": {
+      "sha256": "eea1183c74bc257d1620e047841d4dd5fe271e87315c300429eee6ca50e2f874",
+      "bytes": 443360
+    },
+    "compact": {
+      "sha256": "45588c21da08009900584c43f6a2582cb4864611e74d08cd76b4c8dabad921b2",
+      "bytes": 369696
+    }
+  },
+  "source_inventory_file": "sources.json",
+  "scope": "Host exact-output, fresh quality-metric, and bounded mutation/reset admission. No AVR timing or physical-board claim."
+}
