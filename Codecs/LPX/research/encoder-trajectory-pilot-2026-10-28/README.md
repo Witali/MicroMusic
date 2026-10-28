@@ -107,3 +107,6 @@ in ignored build storage. No private-media fingerprints are published here.
 
 
 [Predeclared nonzero-lambda sweep](LAMBDA_SWEEP.md) records actual serialized size/quality points, conservative and raw alternatives, complete native/model/PWM audit and finite-search outcomes at alpha 0 / 0.1 / 1.
+
+
+[Complete release-player check of expanded legacy winners](EXPANDED_RELEASE.md) separately validates all eight baseline/selected normal/+100 IRQ images, with exact full PWM/ticks/EOF, zero underruns and measured complete Flash/SRAM/stack. Raw beam and price alternatives are not admitted by that check.
