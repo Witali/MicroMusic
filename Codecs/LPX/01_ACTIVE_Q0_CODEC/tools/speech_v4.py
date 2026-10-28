@@ -135,7 +135,7 @@ def search_block(target,co,hist,dd,cc,qring,cursor,pre,step,lag,gain,profile):
 
 
 @njit(cache=True)
-def search(reference,co,steps,pre,profile):
+def search(reference,co,steps,pre,profile,*,allow_zero_scale=False):
     n=len(reference);params=np.zeros((n//160,3),np.int64);pulses=np.zeros((n//20,2),np.int64)
     output=np.empty(n,np.int16);h=np.zeros(10,np.int64);ring=np.zeros(256,np.int64);dd=cc=0
     # Open-loop inverse filtering only proposes energy and pitch. All selected
@@ -160,7 +160,25 @@ def search(reference,co,steps,pre,profile):
             if score>pitchscore:
                 pitchscore=score;lag=cand;pitchgain=min(14,max(0,int(np.rint(8*dot/(energy+1)))*2))
         best=np.inf;bestscale=0;bestlag=18;bestgain=0
+        # Retain the legacy scale neighborhood and its tie order. The opt-in
+        # voice frontend may also test silence and the smallest nonzero step:
+        # the desired>=1 floor otherwise excludes every zero-step code.
+        scales=np.empty(7,np.int64);scale_count=0
         for scale in range(max(0,center-2),min(31,center+2)+1):
+            scales[scale_count]=scale;scale_count+=1
+        if allow_zero_scale:
+            for nonzero in (False,True):
+                candidate=-1
+                for code in range(32):
+                    if (steps[code*8]!=0)==nonzero:
+                        candidate=code;break
+                duplicate=candidate<0
+                for index in range(scale_count):
+                    if scales[index]==candidate:duplicate=True
+                if not duplicate:
+                    scales[scale_count]=candidate;scale_count+=1
+        for scale_index in range(scale_count):
+            scale=scales[scale_index]
             for choice in range(3):
                 gain=0 if choice==0 else pitchgain if choice==1 else 14
                 if choice and not gain:continue
@@ -174,7 +192,9 @@ def search(reference,co,steps,pre,profile):
     return params,pulses,output
 
 
-def encode(reference,profile,decoder,pre=13926,bandwidth=.97):
+def encode(reference,profile,decoder,pre=13926,bandwidth=.97,*,allow_zero_scale=False):
+    if not isinstance(allow_zero_scale,(bool,np.bool_)):
+        raise ValueError('Expected boolean allow_zero_scale')
     ref=np.asarray(reference)
     if profile not in (4,6) or ref.ndim!=1 or ref.dtype.kind not in 'iu' or not 1<=len(ref)<=64000 or np.any(ref<-32768) or np.any(ref>32767):
         raise ValueError('Expected 1..64000 PCM16 samples and profile 4/6')
@@ -183,7 +203,8 @@ def encode(reference,profile,decoder,pre=13926,bandwidth=.97):
     spectra=quantize_spectrum(vectors,profile);shift=5 if profile==4 else 4
     quantized=[[(v<<shift)+(1<<(shift-1)) for v in vec] for vec in spectra for _ in range(2)]
     co=coefficient_trace(pack_frames(quantized),len(padded))
-    params,pulses,expected=search(padded,co,table('scale_table.inc'),pre,profile)
+    params,pulses,expected=search(padded,co,table('scale_table.inc'),pre,profile,
+                                  allow_zero_scale=bool(allow_zero_scale))
     blob=pack(n,profile,spectra,params,pulses,pre)
     pcm=decoder.decode_one_s16(blob,n)
     if pcm is None or not np.array_equal(pcm,expected[:n]) or not np.array_equal(pcm,decode_model(blob)):
@@ -191,6 +212,7 @@ def encode(reference,profile,decoder,pre=13926,bandwidth=.97):
     return blob,pcm,{'profile':profile,'samples':n,'file_bytes':len(blob),
         'payload_bps':(len(blob)-20)*64000/n,'file_bps':len(blob)*64000/n,
         'analysis':analysis,'bandwidth':bandwidth,'native_model_exact':True,
+        'allow_zero_scale':bool(allow_zero_scale),
         'algorithmic_packet_ms':40,'synthesis_shift_samples':0,
         'seconds':time.perf_counter()-started}
 
@@ -203,9 +225,12 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('input',type=Path);ap.add_argument('output',type=Path)
     ap.add_argument('--profile',type=int,choices=(4,6),required=True)
+    ap.add_argument('--allow-zero-scale',action='store_true',
+                    help='Also test zero and minimum nonzero excitation scales')
     a=ap.parse_args();paths=[a.output/'audio.l4hy',a.output/'decoded.wav',a.output/'report.json']
     protect_outputs([a.input],paths);reference,_=load_wav(a.input)
-    with BatchSession('batch',speech=True) as decoder:blob,pcm,report=encode(reference,a.profile,decoder)
+    with BatchSession('batch',speech=True) as decoder:
+        blob,pcm,report=encode(reference,a.profile,decoder,allow_zero_scale=a.allow_zero_scale)
     report['metrics']=compare(reference,pcm,True,known_delay=0)[0]
     a.output.mkdir(parents=True,exist_ok=True);paths[0].write_bytes(blob)
     sf.write(paths[1],pcm,8000,subtype='PCM_16');paths[2].write_text(json.dumps(report,indent=2)+'\n')
