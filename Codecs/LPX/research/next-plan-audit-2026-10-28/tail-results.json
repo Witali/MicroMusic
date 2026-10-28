@@ -1,0 +1,209 @@
+{
+  "schema": "lpx-next-plan-tail-audit-v1",
+  "source_commit": "5b7ae1a6",
+  "scope": "Synthetic format-characterization only; no code changes or performance measurements.",
+  "sources_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "1b4740906227b9ae52b0da327e179b18aa0b1427224a37087616d9cbd0b2c5e6",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "4dae1efb0289638110b67d687452795f434525d9a52eaf03f2319b37e62393e3",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/test_speech_v4.py": "d775f266a78a3b98a9103d544c13b9ce91381ca83db0dafa3867c8fcb7bcb6a8"
+  },
+  "observations": [
+    {
+      "profile": 4,
+      "samples": 20,
+      "model_samples": 20,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 4,
+      "samples": 160,
+      "model_samples": 160,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 4,
+      "samples": 180,
+      "model_samples": 180,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 4,
+      "samples": 200,
+      "model_samples": 200,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 4,
+      "samples": 220,
+      "model_samples": 220,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 4,
+      "samples": 240,
+      "model_samples": 240,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 4,
+      "samples": 260,
+      "model_samples": 260,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 4,
+      "samples": 280,
+      "model_samples": 280,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 4,
+      "samples": 300,
+      "model_samples": 300,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 4,
+      "samples": 319,
+      "model_samples": 319,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 4,
+      "samples": 320,
+      "model_samples": 320,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 4,
+      "samples": 340,
+      "model_samples": 340,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 4,
+      "samples": 480,
+      "model_samples": 480,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 4,
+      "samples": 500,
+      "model_samples": 500,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 6,
+      "samples": 20,
+      "model_samples": 20,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 6,
+      "samples": 160,
+      "model_samples": 160,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 6,
+      "samples": 180,
+      "model_samples": 180,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 6,
+      "samples": 200,
+      "model_samples": 200,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 6,
+      "samples": 220,
+      "model_samples": 220,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 6,
+      "samples": 240,
+      "model_samples": 240,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 6,
+      "samples": 260,
+      "model_samples": 260,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 6,
+      "samples": 280,
+      "model_samples": 280,
+      "common_accepts": false,
+      "compact_accepts": false
+    },
+    {
+      "profile": 6,
+      "samples": 300,
+      "model_samples": 300,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 6,
+      "samples": 319,
+      "model_samples": 319,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 6,
+      "samples": 320,
+      "model_samples": 320,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 6,
+      "samples": 340,
+      "model_samples": 340,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 6,
+      "samples": 480,
+      "model_samples": 480,
+      "common_accepts": true,
+      "compact_accepts": true
+    },
+    {
+      "profile": 6,
+      "samples": 500,
+      "model_samples": 500,
+      "common_accepts": false,
+      "compact_accepts": false
+    }
+  ]
+}

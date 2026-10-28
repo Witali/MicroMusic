@@ -87,3 +87,34 @@ pass. [Integrated measurements, scopes and rejected alternatives](../../Codecs/L
 
 Useful rejected ideas belong here as evidence, not dormant production code. [Earlier measured techniques](lpx-program-flash.md) explain
 already-tried in-place recurrences, compact tables and bounded arithmetic.
+
+
+## Next source audit at 5b7ae1a6: unmeasured work
+
+The next roadmap is [saved with the LPX plan](../../Codecs/LPX/NEXT_OPTIMIZATION_PLAN_RU.md).
+No new binary or timing result is claimed by this audit. Keep these proof seams
+separate from the completed simplifications above:
+
+- Byte LSF storage must distinguish untouched reset fields from decoded q0.
+  Screen q+1 with zero sentinel against q with255 sentinel; then separately
+  fuse normalized byte indices into the exact cosine-grid lookup.
+- The only v5 Rice caller uses codes0..127. A failure bit in its byte result
+  could retain sticky error semantics with less caller state; do not use it
+  for unrestricted readBits(8). Legacy and v5 unary escape rules differ.
+- Only the private compact remaining count is a narrowing candidate. Preserve
+  the raw32-bit sampleCount metadata and prove modular produced() for valid,
+  failed and repeated begins in both counter modes.
+- The postfilter invariant prevBright=clipQ14(prevDeemph) may remove one state
+  word if derived before updating deemphasis. Additional clamp cost is unknown.
+- Active LPC coefficients are dead during conversion; polynomial workspace is
+  dead during synthesis. A typed overlay could save20B, but needs C++11 object
+  lifetime/alignment/copy proof. Moving96B scratch to the stack is not a net
+  memory saving.
+- Make non-stateful polynomial ownership explicit, screen shared attenuation,
+  and examine generated code before fusing synthesis epilogues. Preserve every
+  independent floor/saturation and the explicit portable C arithmetic path.
+
+Measure a separate production player rather than counting removed profiling
+counters as a decoder win. A smaller SPSC FIFO requires full active-IRQ output,
+index-wrap, publication-order and EOF proofs. Host-runner duration coverage
+improvements do not change MCU Flash and should be reported separately.
