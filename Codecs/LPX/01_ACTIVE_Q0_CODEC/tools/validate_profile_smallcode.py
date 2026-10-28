@@ -10,7 +10,7 @@ import soundfile as sf
 from batch_decoder import BatchSession
 from benchmark_standards import save
 from benchmark_speech_flash import (ROOT,CANDIDATES,environment,runtime_fingerprint,
-    simulate,compile_image,same_harness,load,sha)
+    simulate,compile_image,same_harness,load,sha,validation_provenance)
 from lpx4 import decode,encode
 from compact_format import pack
 from q0_model import decode_pcm16
@@ -18,15 +18,19 @@ from standard_metrics import pwm_duties
 
 RECIPE='unroll1-tune0-lto-call-relax'
 
-def run(results,output,avr_bin,runner,lib,wsl):
+def run(results,output,avr_bin,runner,lib,wsl,historical_runner=False):
     results,output=Path(results),Path(output);source=ROOT/'src'
     env=environment(source,avr_bin,legacy_only=True);runtime=runtime_fingerprint(runner,lib,wsl)
     spec=CANDIDATES[RECIPE];files=sorted(results.glob('case-*/complete.json'))
     if len(files)!=27:raise ValueError('All27 completed quality cases are required')
     target=output/'verification.json'
-    report=load(target) if target.exists() else {'environment':env,'runtime':runtime,'recipe':RECIPE,
-        'specification':spec,'cases':{},'images':{},'stress':{},'physical_hardware_measured':False}
-    if report['environment']!=env or report['runtime']!=runtime:raise ValueError('Small-code environment changed')
+    validator=validation_provenance(runtime=runtime,sources=(Path(__file__),))
+    previous=load(target) if target.exists() else None
+    report=(previous if previous and previous['environment']==env and previous['runtime']==runtime
+            and previous.get('validator_provenance')==validator else
+            {'environment':env,'runtime':runtime,'recipe':RECIPE,'specification':spec,
+             'cases':{},'images':{},'stress':{},'physical_hardware_measured':False})
+    report['validator_provenance']=validator
     items={};reference=None
     with BatchSession('batch',v3_features=24) as decoder:
         for completed in files:
@@ -44,7 +48,7 @@ def run(results,output,avr_bin,runner,lib,wsl):
                 if reference is None:
                     reference=compile_image(source,env,CANDIDATES['baseline'],item,output/'reference',avr_bin)
                 key=item['stream_sha256'];items[item['id']]=item
-                measured=simulate(source,env,spec,item,output/'images'/key,avr_bin,runner,lib,wsl,runtime)
+                measured=simulate(source,env,spec,item,output/'images'/key,avr_bin,runner,lib,wsl,runtime,historical=historical_runner,validator_sources=(Path(__file__),))
                 same_harness(measured,reference)
                 if measured['underruns']:raise ValueError('Small-code selected stream underruns')
                 report['images'][key]=measured;points.append({'ceiling_bps':rate,'stream_sha256':key,
@@ -65,7 +69,7 @@ def run(results,output,avr_bin,runner,lib,wsl):
             record={'source_case':heaviest['case'],'source_stream_sha256':heaviest['stream_sha256'],
                 'repeat_stream_sha256':sha(blob),'samples':64000,'continuous_state':True,'quality_reference':False,'images':{}}
             for name,assembly,irq in (('normal',True,0),('extra_irq100',True,100),('c_fallback',False,0)):
-                measured=simulate(source,env,spec,item,path.parent/name,avr_bin,runner,lib,wsl,runtime,assembly,irq)
+                measured=simulate(source,env,spec,item,path.parent/name,avr_bin,runner,lib,wsl,runtime,assembly,irq,historical_runner,validator_sources=(Path(__file__),))
                 same_harness(measured,reference)
                 if assembly and measured['underruns']:raise ValueError('Small-code continuous ASM underruns')
                 record['images'][name]=measured
@@ -76,4 +80,5 @@ def run(results,output,avr_bin,runner,lib,wsl):
 if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('results',type=Path);ap.add_argument('output',type=Path)
     ap.add_argument('--avr-bin',type=Path,required=True);ap.add_argument('--runner',type=Path,required=True);ap.add_argument('--lib',type=Path,required=True);ap.add_argument('--wsl',default='Ubuntu')
-    a=ap.parse_args();run(a.results,a.output,a.avr_bin,a.runner,a.lib,a.wsl)
+    ap.add_argument('--historical-runner',action='store_true',help='Explicitly label old capped duration evidence')
+    a=ap.parse_args();run(a.results,a.output,a.avr_bin,a.runner,a.lib,a.wsl,a.historical_runner)
