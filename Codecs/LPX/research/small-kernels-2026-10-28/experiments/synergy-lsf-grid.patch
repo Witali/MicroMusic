@@ -1,0 +1,44 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -366 +366,7 @@
+-      const int8_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
++      const int8_t value=delta?((
++#if LPX4_COMPACT_ONLY
++prev_[i]-1
++#else
++prev_[i]>>shift
++#endif
++)+difference):last+1+code;
+@@ -368,0 +375,3 @@
++      #if LPX4_COMPACT_ONLY
++      const uint8_t v=value+1;
++#else
+@@ -369,0 +379 @@
++#endif
+@@ -810,0 +821,3 @@
++#if LPX4_COMPACT_ONLY
++static inline __attribute__((always_inline)) int16_t centeredLsf(uint8_t q,uint8_t profile){return q ? (int16_t)((uint16_t)(q*2-1)<<((profile&2)?3:4)) : 0;}
++#endif
+@@ -818,3 +831,11 @@
+-        const int16_t cc=(int16_t)-cosineGridEven(lpx4LsfNorm10(prev_[i],cur_[i],t));
+-#else
+-        const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(prev_[i],cur_[i],t));
++        const uint8_t u=t>>3;
++        const uint16_t norm=(uint16_t)(prev_[i]*(2-u)+cur_[i]*u-1)<<((speechProfile_&2)?5:6);
++        const int16_t cc=(int16_t)-cosineGridEven(norm);
++#else
++        const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(
++#if LPX4_COMPACT_ONLY
++centeredLsf(prev_[i],speechProfile_),centeredLsf(cur_[i],speechProfile_),
++#else
++prev_[i],cur_[i],
++#endif
++t));
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -242,0 +243,3 @@
++#if LPX4_COMPACT_ONLY
++    uint8_t prev_[10],cur_[10];
++#else
+@@ -243,0 +247 @@
++#endif

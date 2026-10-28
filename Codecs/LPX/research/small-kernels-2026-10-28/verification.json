@@ -1,0 +1,712 @@
+{
+  "native_focused_tests_passed": 25,
+  "decisions": {
+    "baseline": {
+      "flash_deltas": [
+        0
+      ],
+      "images": 10
+    },
+    "poly-static": {
+      "flash_deltas": [
+        0
+      ],
+      "images": 10
+    },
+    "attenuation-outline": {
+      "flash_deltas": [
+        -38
+      ],
+      "images": 10
+    },
+    "attenuation-auto": {
+      "flash_deltas": [
+        -38
+      ],
+      "images": 10
+    },
+    "rice-tagged": {
+      "flash_deltas": [
+        6,
+        16
+      ],
+      "images": 10
+    },
+    "rice-out": {
+      "flash_deltas": [
+        6,
+        8
+      ],
+      "images": 10
+    },
+    "rice-shape": {
+      "flash_deltas": [
+        8
+      ],
+      "images": 10
+    },
+    "synergy-lsf-grid": {
+      "flash_deltas": [
+        -56,
+        -54
+      ],
+      "images": 10
+    },
+    "synergy-lsf-grid-attenuation": {
+      "flash_deltas": [
+        -94
+      ],
+      "images": 10
+    },
+    "spectrum-auto": {
+      "flash_deltas": [
+        4,
+        8
+      ],
+      "images": 10
+    },
+    "spectrum-outline": {
+      "flash_deltas": [
+        38,
+        42
+      ],
+      "images": 10
+    },
+    "spectrum-inline": {
+      "flash_deltas": [
+        0
+      ],
+      "images": 10
+    },
+    "shared-prefix": {
+      "flash_deltas": [
+        70,
+        74
+      ],
+      "images": 10
+    }
+  },
+  "timings": [
+    {
+      "variant": "baseline",
+      "id": "v5-case-001",
+      "profile": 4,
+      "irq": 0,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "decode_wall_cycles_total": 50961504,
+      "decode_wall_cycles_max": 15714,
+      "decode_wall_cycles_max_40": 44558,
+      "decode_wall_cycles_max_80": 74542,
+      "decode_wall_cycles_max_160": 145116,
+      "stack_margin_bytes": 894,
+      "pwm_model_exact": true,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "baseline",
+      "id": "v5-case-001",
+      "profile": 4,
+      "irq": 100,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "decode_wall_cycles_total": 51627175,
+      "decode_wall_cycles_max": 16661,
+      "decode_wall_cycles_max_40": 47372,
+      "decode_wall_cycles_max_80": 80348,
+      "decode_wall_cycles_max_160": 151184,
+      "stack_margin_bytes": 894,
+      "pwm_model_exact": true,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "baseline",
+      "id": "v5-case-001",
+      "profile": 6,
+      "irq": 0,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "decode_wall_cycles_total": 48605371,
+      "decode_wall_cycles_max": 16365,
+      "decode_wall_cycles_max_40": 43318,
+      "decode_wall_cycles_max_80": 71248,
+      "decode_wall_cycles_max_160": 138699,
+      "stack_margin_bytes": 894,
+      "pwm_model_exact": true,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "baseline",
+      "id": "v5-case-001",
+      "profile": 6,
+      "irq": 100,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "decode_wall_cycles_total": 49313589,
+      "decode_wall_cycles_max": 17165,
+      "decode_wall_cycles_max_40": 45179,
+      "decode_wall_cycles_max_80": 75344,
+      "decode_wall_cycles_max_160": 143587,
+      "stack_margin_bytes": 894,
+      "pwm_model_exact": true,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "attenuation-auto",
+      "id": "v5-case-001",
+      "profile": 4,
+      "irq": 0,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "decode_wall_cycles_total": 52946680,
+      "decode_wall_cycles_max": 15745,
+      "decode_wall_cycles_max_40": 45965,
+      "decode_wall_cycles_max_80": 78000,
+      "decode_wall_cycles_max_160": 149881,
+      "stack_margin_bytes": 894,
+      "pwm_model_exact": true,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "attenuation-auto",
+      "id": "v5-case-001",
+      "profile": 4,
+      "irq": 100,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "decode_wall_cycles_total": 53696390,
+      "decode_wall_cycles_max": 16692,
+      "decode_wall_cycles_max_40": 49353,
+      "decode_wall_cycles_max_80": 83829,
+      "decode_wall_cycles_max_160": 157639,
+      "stack_margin_bytes": 894,
+      "pwm_model_exact": true,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "attenuation-auto",
+      "id": "v5-case-001",
+      "profile": 6,
+      "irq": 0,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "decode_wall_cycles_total": 49398655,
+      "decode_wall_cycles_max": 16377,
+      "decode_wall_cycles_max_40": 43887,
+      "decode_wall_cycles_max_80": 72284,
+      "decode_wall_cycles_max_160": 140913,
+      "stack_margin_bytes": 894,
+      "pwm_model_exact": true,
+      "decode_timing_complete": true
+    },
+    {
+      "variant": "attenuation-auto",
+      "id": "v5-case-001",
+      "profile": 6,
+      "irq": 100,
+      "played": 64000,
+      "produced": 64000,
+      "decode_calls": 64000,
+      "underruns": 0,
+      "decoder_error": 0,
+      "decode_wall_cycles_total": 50131977,
+      "decode_wall_cycles_max": 17177,
+      "decode_wall_cycles_max_40": 45449,
+      "decode_wall_cycles_max_80": 76293,
+      "decode_wall_cycles_max_160": 145273,
+      "stack_margin_bytes": 894,
+      "pwm_model_exact": true,
+      "decode_timing_complete": true
+    }
+  ],
+  "rice_oracles": [
+    {
+      "variant": "baseline",
+      "compact_only": 0,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "baseline",
+      "compact_only": 0,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "baseline",
+      "compact_only": 1,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "baseline",
+      "compact_only": 1,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-out",
+      "compact_only": 0,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-out",
+      "compact_only": 0,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-out",
+      "compact_only": 1,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-out",
+      "compact_only": 1,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-shape",
+      "compact_only": 0,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-shape",
+      "compact_only": 0,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-shape",
+      "compact_only": 1,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-shape",
+      "compact_only": 1,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-tagged",
+      "compact_only": 0,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-tagged",
+      "compact_only": 0,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-tagged",
+      "compact_only": 1,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "rice-tagged",
+      "compact_only": 1,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "shared-prefix",
+      "compact_only": 0,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "shared-prefix",
+      "compact_only": 0,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "shared-prefix",
+      "compact_only": 1,
+      "rom_pointer": 0,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    },
+    {
+      "variant": "shared-prefix",
+      "compact_only": 1,
+      "rom_pointer": 1,
+      "cases": 9418752,
+      "result": "9418752 Rice interface states exact",
+      "probe_sha256": "fb28405d76d7bc80eca7761911d498bdfbc6a6b55cf6ab12e3a65c5466c4efc6"
+    }
+  ],
+  "parser_oracles": [
+    {
+      "variant": "shared-prefix",
+      "probe_sha256": "5154050962c5a755d06043690369d0b2432f2873f00f581db41f5ae5cd41fcd8",
+      "rows": [
+        {
+          "compact_only": 0,
+          "rom_pointer": 0,
+          "cases": 1838989,
+          "result": "1838989 parser cases f349867a8a8be23a",
+          "seconds": 6.0177168999944115
+        },
+        {
+          "compact_only": 0,
+          "rom_pointer": 1,
+          "cases": 1838989,
+          "result": "1838989 parser cases f349867a8a8be23a",
+          "seconds": 4.966741600001114
+        },
+        {
+          "compact_only": 1,
+          "rom_pointer": 0,
+          "cases": 1838989,
+          "result": "1838989 parser cases 1add0d08489dfb2f",
+          "seconds": 4.024375599998166
+        },
+        {
+          "compact_only": 1,
+          "rom_pointer": 1,
+          "cases": 1838989,
+          "result": "1838989 parser cases 1add0d08489dfb2f",
+          "seconds": 3.176229799995781
+        }
+      ]
+    },
+    {
+      "variant": "spectrum-auto",
+      "probe_sha256": "5154050962c5a755d06043690369d0b2432f2873f00f581db41f5ae5cd41fcd8",
+      "rows": [
+        {
+          "compact_only": 0,
+          "rom_pointer": 0,
+          "cases": 1838989,
+          "result": "1838989 parser cases f349867a8a8be23a",
+          "seconds": 6.359498899997561
+        },
+        {
+          "compact_only": 0,
+          "rom_pointer": 1,
+          "cases": 1838989,
+          "result": "1838989 parser cases f349867a8a8be23a",
+          "seconds": 4.406493500006036
+        },
+        {
+          "compact_only": 1,
+          "rom_pointer": 0,
+          "cases": 1838989,
+          "result": "1838989 parser cases 1add0d08489dfb2f",
+          "seconds": 4.063996099997894
+        },
+        {
+          "compact_only": 1,
+          "rom_pointer": 1,
+          "cases": 1838989,
+          "result": "1838989 parser cases 1add0d08489dfb2f",
+          "seconds": 3.387881600006949
+        }
+      ]
+    },
+    {
+      "variant": "spectrum-inline",
+      "probe_sha256": "5154050962c5a755d06043690369d0b2432f2873f00f581db41f5ae5cd41fcd8",
+      "rows": [
+        {
+          "compact_only": 0,
+          "rom_pointer": 0,
+          "cases": 1838989,
+          "result": "1838989 parser cases f349867a8a8be23a",
+          "seconds": 5.843876300001284
+        },
+        {
+          "compact_only": 0,
+          "rom_pointer": 1,
+          "cases": 1838989,
+          "result": "1838989 parser cases f349867a8a8be23a",
+          "seconds": 4.07785660000809
+        },
+        {
+          "compact_only": 1,
+          "rom_pointer": 0,
+          "cases": 1838989,
+          "result": "1838989 parser cases 1add0d08489dfb2f",
+          "seconds": 4.581480699998792
+        },
+        {
+          "compact_only": 1,
+          "rom_pointer": 1,
+          "cases": 1838989,
+          "result": "1838989 parser cases 1add0d08489dfb2f",
+          "seconds": 3.5506295999948634
+        }
+      ]
+    },
+    {
+      "variant": "spectrum-outline",
+      "probe_sha256": "5154050962c5a755d06043690369d0b2432f2873f00f581db41f5ae5cd41fcd8",
+      "rows": [
+        {
+          "compact_only": 0,
+          "rom_pointer": 0,
+          "cases": 1838989,
+          "result": "1838989 parser cases f349867a8a8be23a",
+          "seconds": 6.118201000004774
+        },
+        {
+          "compact_only": 0,
+          "rom_pointer": 1,
+          "cases": 1838989,
+          "result": "1838989 parser cases f349867a8a8be23a",
+          "seconds": 4.27006490000349
+        },
+        {
+          "compact_only": 1,
+          "rom_pointer": 0,
+          "cases": 1838989,
+          "result": "1838989 parser cases 1add0d08489dfb2f",
+          "seconds": 4.396942999999737
+        },
+        {
+          "compact_only": 1,
+          "rom_pointer": 1,
+          "cases": 1838989,
+          "result": "1838989 parser cases 1add0d08489dfb2f",
+          "seconds": 3.351167600005283
+        }
+      ]
+    }
+  ],
+  "legacy_unary_oracle": {
+    "rows": [
+      {
+        "unary_mode": 0,
+        "rom_pointer": 0,
+        "cases": 784896,
+        "result": "784896 unary states",
+        "seconds": 4.9343848999997135
+      },
+      {
+        "unary_mode": 0,
+        "rom_pointer": 1,
+        "cases": 784896,
+        "result": "784896 unary states",
+        "seconds": 3.9740320999990217
+      },
+      {
+        "unary_mode": 1,
+        "rom_pointer": 0,
+        "cases": 784896,
+        "result": "784896 unary states",
+        "seconds": 3.6292638999875635
+      },
+      {
+        "unary_mode": 1,
+        "rom_pointer": 1,
+        "cases": 784896,
+        "result": "784896 unary states",
+        "seconds": 3.133755699993344
+      },
+      {
+        "unary_mode": 2,
+        "rom_pointer": 0,
+        "cases": 784896,
+        "result": "784896 unary states",
+        "seconds": 3.0125829999888083
+      },
+      {
+        "unary_mode": 2,
+        "rom_pointer": 1,
+        "cases": 784896,
+        "result": "784896 unary states",
+        "seconds": 2.3798844999982975
+      }
+    ],
+    "probe_sha256": "982f5be712efede996a93d19c8de18952c6568884b2a7ae7e56bca8827869dbe"
+  },
+  "avr_math": {
+    "cpu": "ATmega328P / AVR5",
+    "simulator": "simavr 1.6",
+    "dot_unroll": 1,
+    "compiler": "avr-g++.exe (GCC) 7.3.0",
+    "fixture_sha256": "09d4b208286955b02bb90be37a5d4286980348da6b768f7895bae5310bdd0e21",
+    "math_header_sha256": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+    "runner_source_sha256": "1103eff398f0a37aa3e4ff86a9cb46cfdbc51f08933594d0fa7831c32c0ec0d5",
+    "variants": [
+      {
+        "done": 1,
+        "error": 0,
+        "zero_error": 0,
+        "cases": 5768584,
+        "irqs": 1038611,
+        "backend": 0,
+        "cycles": 2077224978,
+        "name": "c",
+        "compiler_options": [
+          "-mmcu=atmega328p",
+          "-DF_CPU=16000000UL",
+          "-Os",
+          "-std=gnu++11",
+          "-DLPX4_AVR_DOT_UNROLL=1",
+          "-DLPX4_ENABLE_ASM=0"
+        ],
+        "elf_sha256": "bef50dc309a2a208036c459273f6927888d7a8e344719846aef2dbce50795015"
+      },
+      {
+        "done": 1,
+        "error": 0,
+        "zero_error": 0,
+        "cases": 5768584,
+        "irqs": 836886,
+        "backend": 1,
+        "cycles": 1673773954,
+        "name": "avr5",
+        "compiler_options": [
+          "-mmcu=atmega328p",
+          "-DF_CPU=16000000UL",
+          "-Os",
+          "-std=gnu++11",
+          "-DLPX4_AVR_DOT_UNROLL=1",
+          "-DLPX4_ENABLE_ASM=1"
+        ],
+        "elf_sha256": "1daa229a82f2231c53e23f8057163dc92b03a438d5edf41ebcb276e2bfefb27a"
+      },
+      {
+        "done": 1,
+        "error": 0,
+        "zero_error": 0,
+        "cases": 5768584,
+        "irqs": 1038611,
+        "backend": 0,
+        "cycles": 2077224978,
+        "name": "forced-generic",
+        "compiler_options": [
+          "-mmcu=atmega328p",
+          "-DF_CPU=16000000UL",
+          "-Os",
+          "-std=gnu++11",
+          "-DLPX4_AVR_DOT_UNROLL=1",
+          "-DLPX4_ENABLE_ASM=1",
+          "-DLPX4_ARCH=LPX4_ARCH_GENERIC"
+        ],
+        "elf_sha256": "bef50dc309a2a208036c459273f6927888d7a8e344719846aef2dbce50795015"
+      }
+    ],
+    "physical_hardware_measured": false
+  },
+  "selected": "attenuation-auto",
+  "scope": "Only attenuation-auto has full native/AVR math and before/after IRQ validation. Other variants have linked cost and their specified differential oracle checks; no timing admission is claimed for rejected variants. No physical board measurement.",
+  "patch_reconstruction": [
+    {
+      "variant": "poly-static",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "attenuation-outline",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "attenuation-auto",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "rice-tagged",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "rice-out",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "rice-shape",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "synergy-lsf-grid",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "synergy-lsf-grid-attenuation",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "spectrum-auto",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "spectrum-outline",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "spectrum-inline",
+      "patch_reconstructs_measured_source": true
+    },
+    {
+      "variant": "shared-prefix",
+      "patch_reconstructs_measured_source": true
+    }
+  ]
+}

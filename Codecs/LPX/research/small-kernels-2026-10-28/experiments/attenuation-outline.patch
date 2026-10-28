@@ -1,0 +1,5 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h
+@@ -412 +412 @@
+-static inline __attribute__((always_inline)) int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
++static __attribute__((noinline)) int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){

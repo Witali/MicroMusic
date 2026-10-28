@@ -409,7 +409,7 @@ static inline __attribute__((always_inline)) uint8_t lpx4PwmQ14(int16_t sample,u
 
 // Bounded attenuation: coefficient 0..16384, signed16 state, exact floor Q14.
 // The result fits signed16. Keep the generic full-range MulQ14 below.
-static inline __attribute__((always_inline)) int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
+static inline int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
 #if LPX4_USE_AVR_ASM
     int16_t result;
     int32_t wide;
