@@ -5,7 +5,8 @@ Reference output is the saved PCM WAV, never an active native decoder build.
 All generated headers, binaries, logs and caches must stay in ignored build/.
 """
 from __future__ import annotations
-import argparse, hashlib, json, os, re, subprocess
+import argparse, ast, copy, hashlib, json, os, re, subprocess, sys
+from importlib.metadata import version
 from pathlib import Path
 import numpy as np
 import soundfile as sf
@@ -66,43 +67,139 @@ def source_hashes(src):
     return {p.relative_to(src).as_posix():digest(p) for p in sorted(src.rglob('*')) if p.is_file()}
 
 
-def external_symbols():
-    runner=(HARNESS/'sim_profile.c').read_text(encoding='utf-8')
-    required=set(re.findall(r'symbol\(&firmware,\s*"([A-Za-z_][A-Za-z_0-9]*)"\)',runner))
-    block=(HARNESS/'profile.cpp').read_text(encoding='utf-8').split('extern "C" {',1)[1].split('}',1)[0]
-    retained=sorted(set(re.findall(r'\bprofile_[A-Za-z_0-9]+\b',block))|{x for x in required if x.startswith('profile_')})
-    need({'profile_pwm_address','profile_spl_address','profile_sph_address'}<=set(retained),'Harness address metadata inventory failed')
-    return sorted(required),retained
+def compilation_sources(src):
+    """Local quoted include closure of the linked core, excluding model oracles."""
+    src=Path(src).resolve();pending=[src/'Lpx4HybridCore.cpp'];seen={}
+    while pending:
+        path=pending.pop().resolve()
+        if path in seen:continue
+        need(path.is_relative_to(src),'Local core dependency escapes source root')
+        seen[path]=digest(path)
+        for name in re.findall(r'^\s*#\s*include\s*["<]([^">]+)[">]',path.read_text(encoding='utf-8'),re.M):
+            local=path.parent/name
+            if not local.is_file():local=src/name
+            if local.is_file():pending.append(local)
+    return {p.relative_to(src).as_posix():value for p,value in sorted(seen.items())}
+
+
+def external_symbols(harness=None):
+    """Profiling ABI comes from AVR declarations, never the host runner source."""
+    harness=Path(harness) if harness is not None else HARNESS/'profile.cpp'
+    block=harness.read_text(encoding='utf-8').split('extern "C" {',1)[1].split('}',1)[0]
+    retained=sorted(set(re.findall(r'\bprofile_[A-Za-z_0-9]+\b',block)))
+    need({'profile_pwm_address','profile_spl_address','profile_sph_address'}<=set(retained),
+         'Harness address metadata inventory failed')
+    return sorted(set(retained)|{'__bss_end'}),retained
 
 
 def toolpath(avr_bin,name):return Path(avr_bin)/(name+('.exe' if os.name=='nt' else ''))
 
 
-def environment(source,avr_bin,compact_only=False,legacy_only=False):
+def environment(source,avr_bin,compact_only=False,legacy_only=False,*,harness=None,
+                required_symbols=None,retained_symbols=None):
+    """Only inputs affecting the linked AVR image belong in this environment.
+
+    An alternate harness supplies its own required/retained ABI explicitly.
+    Runner/model/Python and artifact-inspection tools have separate provenance.
+    """
     need(not (compact_only and legacy_only),'Compact-only and legacy-only environments are mutually exclusive')
     src=srcdir(source);compiler=toolpath(avr_bin,'avr-g++')
+    harness=Path(harness) if harness is not None else HARNESS/'profile.cpp'
     if compact_only:
         need('LPX4_COMPACT_ONLY' in (src/'Lpx4HybridCore.h').read_text(encoding='utf-8'),
              '--compact-only requested for a source without that profile')
     cc1=Path(subprocess.check_output([str(compiler),'-print-prog-name=cc1plus'],text=True).strip())
-    files=[compiler,cc1,HARNESS/'profile.cpp',HARNESS/'sim_profile.c',Path(__file__),
-           ROOT/'tools/standard_metrics.py',ROOT/'tools/speech_compact.py',ROOT/'tools/q0_model.py']
-    files.extend(toolpath(avr_bin,n) for n in ('avr-as','avr-ld','avr-objcopy','avr-size','avr-nm','avr-objdump'))
+    files=[compiler,cc1]
+    files.extend(toolpath(avr_bin,n) for n in ('avr-as','avr-ld'))
     for name in ('libgcc.a','libc.a','crtatmega328p.o'):
         path=Path(subprocess.check_output([str(compiler),'-mmcu=atmega328p','-print-file-name='+name],text=True).strip())
         if path.is_file():files.append(path)
     vendor=Path(avr_bin).parent/'avr/include'
     for name in ('avr/io.h','avr/iom328p.h','avr/pgmspace.h','avr/interrupt.h','util/atomic.h'):
         if (vendor/name).is_file():files.append(vendor/name)
-    required,retained=external_symbols()
-    result={'source_sha256':source_hashes(src),'dependencies':{p.name:digest(p) for p in files},
+    if required_symbols is None or retained_symbols is None:
+        required,retained=external_symbols(harness)
+    else:required,retained=list(required_symbols),list(retained_symbols)
+    required=required if required_symbols is None else list(required_symbols)
+    retained=retained if retained_symbols is None else list(retained_symbols)
+    need(all(re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*',name) for name in required+retained),
+         'Invalid harness symbol name')
+    result={'schema':'lpx-avr-build-environment-v2','source_sha256':source_hashes(src),
+        'compile_source_sha256':compilation_sources(src),
+        'dependencies':{p.name:digest(p) for p in files},'harness_sha256':digest(harness),
         'compiler':subprocess.check_output([str(compiler),'--version'],text=True).splitlines()[0],
-        'settings':BASE,'compact_only':bool(compact_only),'required_symbols':required,
-        'retained_profile_symbols':retained}
+        'settings':dict(BASE),'compact_only':bool(compact_only),'required_symbols':sorted(set(required)),
+        'retained_profile_symbols':sorted(set(retained))}
     if legacy_only:
         result['settings']={**BASE,'speech':False,'speech_compact':False}
         result['legacy_only']=True
     return result
+
+
+def build_provenance(env):
+    """Stable AVR-only identity, also usable by alternate production builders."""
+    keys=('schema','source_sha256','dependencies','harness_sha256','compiler','settings',
+          'compact_only','legacy_only','required_symbols','retained_profile_symbols')
+    result={key:env[key] for key in keys if key in env}
+    if 'compile_source_sha256' in env:
+        result.pop('source_sha256',None);result['compile_source_sha256']=env['compile_source_sha256']
+    return copy.deepcopy(result)
+
+
+def artifact_provenance(avr_bin):
+    return {'tools':{name:digest(toolpath(avr_bin,name))
+                     for name in ('avr-objcopy','avr-size','avr-nm','avr-objdump')}}
+
+
+def validation_sources(sources=()):
+    """Transitive local host code and independent model tables, not build inputs."""
+    pending=[Path(__file__),ROOT/'tools/measure_speech_firmware.py',*map(Path,sources)]
+    visited={}
+    while pending:
+        path=pending.pop().resolve()
+        label=path.relative_to(ROOT.parent).as_posix() if path.is_relative_to(ROOT.parent) else path.name
+        if label in visited:continue
+        data=path.read_bytes();visited[label]=sha(data)
+        if path.suffix!='.py':continue
+        for node in ast.walk(ast.parse(data,filename=path.name)):
+            modules=([a.name for a in node.names] if isinstance(node,ast.Import)
+                     else [node.module] if isinstance(node,ast.ImportFrom) and node.module else [])
+            for module in modules:
+                local=ROOT/'tools'/(module.split('.')[0]+'.py')
+                if local.is_file():pending.append(local)
+    for name in ('cos_table.inc','scale_table.inc'):
+        visited['01_ACTIVE_Q0_CODEC/src/'+name]=digest(ROOT/'src'/name)
+    return visited
+
+
+def validation_provenance(runner=None,lib=None,wsl=None,*,sources=(),runtime=None):
+    """Bind host validation independently of the immutable linked AVR image."""
+    if runtime is None:
+        need(runner is not None,'A runner or previously measured runtime is required')
+        runtime=runtime_fingerprint(runner,lib,wsl)
+    runner_sources={p.name:digest(p) for p in (HARNESS/'sim_profile.c',HARNESS/'profile_durations.h') if p.is_file()}
+    return {'schema':'lpx-host-validation-v2','runtime':copy.deepcopy(runtime),
+        'runner_sources':runner_sources,'sources':validation_sources(sources),
+        'python':sys.version,'packages':{name:version(name) for name in ('numpy','numba','scipy','pystoi','soundfile')}}
+
+
+def timing_coverage(report,samples,*,historical=False):
+    """New runners must profile every duration; old capped evidence is opt-in."""
+    count=report.get('decode_calls')
+    need(type(count) is int and count>=0 and type(samples) is int and samples>0,'Invalid timing count')
+    current=report.get('decode_statistics')=='streaming-v2'
+    if current:
+        if type(report.get('statistics_overflow')) is not int or report['statistics_overflow']!=0 or count!=samples:
+            raise AssertionError('Incomplete streaming duration statistics')
+    else:
+        need(historical and 'decode_statistics' not in report,'Historical runner requires explicit admission')
+        if not(count==samples or samples>64000 and count==64000):
+            raise AssertionError('Invalid historical duration coverage')
+    complete=count==samples
+    return {'decode_timing_samples':count,'decode_timing_complete':complete,
+        'decode_timing_statistics_scope':'complete-chain' if complete else 'first-64000-samples',
+        'decode_timing_limit_reason':None if complete else 'historical sim_profile.c duration buffer limit',
+        'historical_runner':not current,'decode_statistics_provenance':'streaming-v2' if current else 'historical'}
 
 
 def fixed_inputs(study,cases=CASES,profiles=PROFILES,model=True):
@@ -124,7 +221,7 @@ def fixed_inputs(study,cases=CASES,profiles=PROFILES,model=True):
 
 def command_flags(env,spec,assembly=True,irq=0):
     flags=['-mmcu=atmega328p','-DF_CPU=16000000UL','-Os','-std=gnu++11','-fno-exceptions','-fno-rtti',
-        '-DLPX4_PROFILE_QUEUE=512','-DLPX4_PROFILE_PREFILL=384',f'-DLPX4_PROFILE_IRQ_LOAD={irq}',
+        f'-DLPX4_PROFILE_QUEUE={env["settings"]["queue"]}',f'-DLPX4_PROFILE_PREFILL={env["settings"]["prefill"]}',f'-DLPX4_PROFILE_IRQ_LOAD={irq}',
         f'-DLPX4_AVR_DOT_UNROLL={spec["unroll"]}',f'-DLPX4_FUNCTION_TUNING={spec["tuning"]}',
         '-DLPX4_V3_FEATURES=24',f'-DLPX4_ENABLE_SPEECH={int(env["settings"]["speech"])}',
         f'-DLPX4_ENABLE_SPEECH_COMPACT={int(env["settings"]["speech_compact"])}',
@@ -180,7 +277,11 @@ def same_harness(image,reference):
 
 def compile_image(source,env,spec,item,folder,avr_bin,assembly=True,irq=0,require=False):
     src=srcdir(source);folder=Path(folder);flags=command_flags(env,spec,assembly,irq)
-    identity=sha(canonical([env,spec,item['stream_sha256'],assembly,irq]));cache=folder/'compile.json'
+    blob=item['blob']
+    header='#pragma once\n#include <stdint.h>\n#include <avr/pgmspace.h>\nstatic const uint8_t profile_voice[] PROGMEM __attribute__((used)) = {\n'
+    header+='\n'.join(','.join(str(x) for x in blob[i:i+24])+',' for i in range(0,len(blob),24))+'\n};\n'
+    identity=sha(canonical([build_provenance(env),flags,item['stream_sha256'],sha(header.encode()),assembly,irq]));cache=folder/'compile.json'
+    proof_fingerprint=sha(canonical([artifact_provenance(avr_bin),validation_sources()]))
     if cache.exists():
         old=load(cache)
         if old.get('fingerprint')==identity and old.get('metadata_sha256')==sha(canonical(old.get('image'))):
@@ -188,12 +289,14 @@ def compile_image(source,env,spec,item,folder,avr_bin,assembly=True,irq=0,requir
             if all((folder/name).exists() and digest(folder/name)==image[key] for name,key in
                    (('profile.elf','elf_sha256'),('profile.hex','hex_sha256'),('program.bin','program_sha256'))):
                 need(source_hashes(src)==env['source_sha256'],'Source changed during study')
+                if old.get('proof_fingerprint')!=proof_fingerprint:
+                    image.update(embedded_audio_and_metadata(folder/'profile.elf',folder/'program.bin',avr_bin,item['blob'],env))
+                    save(cache,{'fingerprint':identity,'metadata_sha256':sha(canonical(image)),
+                                'environment':env,'image':image,'proof_fingerprint':proof_fingerprint})
                 return image
     need(not require,'Missing/stale compilation cache')
     need(source_hashes(src)==env['source_sha256'],'Source changed before compilation')
     folder.mkdir(parents=True,exist_ok=True);blob=item['blob']
-    header='#pragma once\n#include <stdint.h>\n#include <avr/pgmspace.h>\nstatic const uint8_t profile_voice[] PROGMEM __attribute__((used)) = {\n'
-    header+='\n'.join(','.join(str(x) for x in blob[i:i+24])+',' for i in range(0,len(blob),24))+'\n};\n'
     (folder/'voice_data.h').write_bytes(header.encode())
     elf=folder/'profile.elf';hexfile=folder/'profile.hex';binary=folder/'program.bin'
     command=[str(toolpath(avr_bin,'avr-g++')),*flags,'-I'+str(src),'-I'+str(folder),
@@ -213,7 +316,7 @@ def compile_image(source,env,spec,item,folder,avr_bin,assembly=True,irq=0,requir
         'text_bytes':text,'data_bytes':data,'bss_bytes':bss,'static_sram_bytes':data+bss,
         'elf_sha256':digest(elf),'hex_sha256':digest(hexfile),'program_sha256':digest(binary),
         'compiler_options':flags,'assembly_enabled':bool(assembly),'extra_irq_cycles':irq,**metadata}
-    save(cache,{'fingerprint':identity,'metadata_sha256':sha(canonical(image)),'environment':env,'image':image})
+    save(cache,{'fingerprint':identity,'metadata_sha256':sha(canonical(image)),'environment':env,'image':image,'proof_fingerprint':proof_fingerprint})
     return image
 
 
@@ -246,16 +349,17 @@ def screen(source,study,output,avr_bin,candidates=None,case='case-03',profile=4,
 
 def runtime_fingerprint(runner,lib,wsl):
     result={'sim_runner_sha256':digest(runner),'wsl':wsl}
-    if wsl:
+    if wsl and lib is not None:
         code='import pathlib,hashlib,json,sys; p=pathlib.Path(sys.argv[1]); print(json.dumps({q.name:{"sha256":hashlib.sha256(q.read_bytes()).hexdigest(),"target":q.resolve().name} for q in sorted(p.glob("*.so*")) if q.is_file()},sort_keys=True))'
         result['libraries']=json.loads(subprocess.check_output(['wsl','-d',wsl,'--','python3','-c',code,linux_path(lib)],text=True))
-    else:result['libraries']={p.name:digest(p) for p in sorted(Path(lib).glob('*.so*')) if p.is_file()}
+    else:result['libraries']=({p.name:digest(p) for p in sorted(Path(lib).glob('*.so*')) if p.is_file()} if lib is not None else {})
     return result
 
 
-def simulate(source,env,spec,item,folder,avr_bin,runner,lib,wsl,runtime,assembly=True,irq=0):
+def simulate(source,env,spec,item,folder,avr_bin,runner,lib,wsl,runtime,assembly=True,irq=0,historical=False):
     folder=Path(folder);image=compile_image(source,env,spec,item,folder,avr_bin,assembly,irq)
-    identity=sha(canonical([env,spec,runtime,image['elf_sha256'],sha(item['pwm']),assembly,irq]));cache=folder/'verification.json'
+    validator=validation_provenance(runtime=runtime)
+    identity=sha(canonical([validator,image['elf_sha256'],sha(item['pwm']),assembly,irq,historical]));cache=folder/'verification.json'
     measured=None
     if cache.exists():
         old=load(cache);row=old.get('measurement',{})
@@ -272,15 +376,17 @@ def simulate(source,env,spec,item,folder,avr_bin,runner,lib,wsl,runtime,assembly
             subprocess.run([str(Path(runner).resolve()),str(folder/'profile.elf'),str(valid),str(timing)],
                            check=True,capture_output=True,env=environment_vars)
         measured=load(timing)
+        measured.update(timing_coverage(measured,item['samples'],historical=historical))
         need(valid.read_bytes()==item['pwm'],'Complete saved-WAV/AVR PWM mismatch')
         measured.update(image);measured['pwm_sha256']=sha(item['pwm']);measured['pwm_saved_reference_exact']=True
         measured['mean_decode_wall_cycles']=measured['decode_wall_cycles_total']/measured['decode_calls']
         measured['first_output_from_reset_ms']=measured['occupancy_trace'][0]['cycle']/16000
         measured['stack_high_water_bytes_after_ready']=2304-measured['minimum_stack_pointer']
         measured={k:v for k,v in measured.items() if k!='occupancy_trace'}
-        save(cache,{'fingerprint':identity,'environment':env,'runtime':runtime,
+        save(cache,{'fingerprint':identity,'environment':env,'runtime':runtime,'validation_provenance':validator,
                     'measurement_sha256':sha(canonical(measured)),'measurement':measured})
         print(folder.name,round(measured['mean_decode_wall_cycles'],3),measured['underruns'],'underruns',flush=True)
+    measured.update(timing_coverage(measured,item['samples'],historical=historical))
     need(measured['done'] and not measured['decoder_error'] and measured['stack_margin_bytes']>0,'AVR completion/error/stack failed')
     need(measured['played']==measured['produced']==measured['decode_calls']==item['samples'],'Incomplete useful AVR output')
     need(measured['timer_ticks']==item['samples']+measured['underruns'],'AVR timer accounting failed')
@@ -300,7 +406,7 @@ def repeated(item):
             'samples':64000,'stream_sha256':sha(blob),'pcm_sha256':sha(pcm.astype('<i2').tobytes())}
 
 
-def verify(source,study,output,avr_bin,runner,lib,wsl,candidate='baseline',compact_only=False):
+def verify(source,study,output,avr_bin,runner,lib,wsl,candidate='baseline',compact_only=False,historical_runner=False):
     env=environment(source,avr_bin,compact_only);runtime=runtime_fingerprint(runner,lib,wsl);items=fixed_inputs(study)
     output=Path(output);spec=CANDIDATES[candidate]
     reference=compile_image(source,env,CANDIDATES['baseline'],items[0],output/'reference'/items[0]['id'],avr_bin)
@@ -309,7 +415,7 @@ def verify(source,study,output,avr_bin,runner,lib,wsl,candidate='baseline',compa
         'physical_hardware_measured':False,'wall_scope':'Includes active IRQ and instrumentation.',
         'stack_scope':'Observed after profile_ready, not a startup/worst-case proof.'}
     for item in items:
-        row=simulate(source,env,spec,item,output/'verify'/candidate/item['id'],avr_bin,runner,lib,wsl,runtime)
+        row=simulate(source,env,spec,item,output/'verify'/candidate/item['id'],avr_bin,runner,lib,wsl,runtime,historical=historical_runner)
         same_harness(row,reference)
         need(row['underruns']==0,'Main ASM workload underruns')
         report['images'][item['id']]=row;save(output/f'verification-{candidate}.json',report)
@@ -320,7 +426,7 @@ def verify(source,study,output,avr_bin,runner,lib,wsl,candidate='baseline',compa
                                    'repeat_stream_sha256':item['stream_sha256'],'images':{}}
         for name,assembly,irq in (('normal',True,0),('extra_irq100',True,100),('c_fallback',False,0)):
             measured=simulate(source,env,spec,item,output/'verify'/candidate/'stress'/f'{p}-{name}',
-                avr_bin,runner,lib,wsl,runtime,assembly,irq)
+                avr_bin,runner,lib,wsl,runtime,assembly,irq,historical_runner)
             same_harness(measured,reference)
             if assembly:need(measured['underruns']==0,'ASM continuous-state control underruns')
             row['images'][name]=measured
@@ -342,6 +448,7 @@ def main():
             p.add_argument('--candidate',choices=tuple(CANDIDATES),default='baseline')
             p.add_argument('--runner',type=Path,required=True);p.add_argument('--lib',type=Path,required=True)
             p.add_argument('--wsl',default=None)
+            p.add_argument('--historical-runner',action='store_true',help='Explicitly admit old capped duration evidence')
     args=vars(ap.parse_args());mode=args.pop('mode');globals()[mode](**args)
 
 
