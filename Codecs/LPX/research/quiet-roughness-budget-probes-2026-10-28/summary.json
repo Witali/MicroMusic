@@ -1,0 +1,48 @@
+{
+  "schema": "lpx-quiet-roughness-budget-summary-v1",
+  "scope": "Seven predeclared helper calls on one user-targeted diagnostic; no corpus-general/perceptual/firmware-admission claim",
+  "samples": 32000,
+  "input_gain": 64,
+  "input_peak_pcm16": 19584,
+  "input_clipped_or_resampled": false,
+  "caps": [
+    1800,
+    1930,
+    2060
+  ],
+  "helper_calls": 7,
+  "completed_helper_calls": 7,
+  "failed_helper_calls": 0,
+  "final_output_bindings": 14,
+  "distinct_serialized_outputs": 10,
+  "explicit_final_native_domain_comparisons": 56,
+  "explicit_final_native_sample_domain_comparisons": 1792000,
+  "all_final_model_common_v5_pcm_pwm_exact": true,
+  "any_output_above90percent_fs": false,
+  "selected_marker_layer_bits": 800,
+  "selected_base_bytes": 1702,
+  "selected_first_extra_file_bytes": 1803,
+  "b1800_selected_extra_capacity": 0,
+  "b1930_selected_extra_capacity": 103,
+  "b2060_selected_extra_capacity": 207,
+  "best_all_selected_metric_and_voice_gate_endpoint": {
+    "role": "selected-extras1930",
+    "bytes": 1913,
+    "extras": 89,
+    "voice_score": 0.1701616405206801,
+    "pcm_within_tolerance_frames": 63,
+    "pwm_within_tolerance_frames": 63
+  },
+  "larger2060_extras_bytes_identical_to1930": true,
+  "larger2060_finite_evaluation_limit_reached": true,
+  "chain1930_and_lpc1800_remain_voice_gate_tradeoffs": true,
+  "existing_p6_capacity_reference_bytes": 2519,
+  "existing_p6_within_tolerance_pcm_pwm": [
+    69,
+    69
+  ],
+  "new_mcu_or_format_changes": false,
+  "new_avr_player_images": 0,
+  "automatic_adoption": false,
+  "timed_helper_region_wall_seconds": 27.977314900010242
+}
