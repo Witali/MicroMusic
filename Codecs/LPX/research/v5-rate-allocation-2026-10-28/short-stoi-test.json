@@ -1,0 +1,28 @@
+{
+  "schema": "lpx-preexisting-short-stoi-test-v1",
+  "source_baseline_commit": "22e50e01",
+  "failure_observed_before_allocation_edits": true,
+  "test": "test_enhance_speech_compact.EnhanceCompactSpeechTests.test_known_innovation_improves_with_frozen_fields_and_whole_file_budget",
+  "fixture_samples": 640,
+  "sample_rate_hz": 8000,
+  "duration_seconds": 0.08,
+  "pystoi_resampled_rate_hz": 10000,
+  "pystoi_stft_window": 256,
+  "pystoi_intermediate_frames": 30,
+  "guard_resampled_minimum_exclusive": 4096,
+  "minimum_original_samples_before_silence_filter": 3277,
+  "shared_metrics_returns_none_before_stoi_call": true,
+  "raw_pystoi_sentinel": 1e-05,
+  "raw_pystoi_warning_count": 1,
+  "raw_pystoi_warning_messages": [
+    "Not enough STFT frames to compute intermediate intelligibility measure after removing silent frames. Returning 1e-5. Please check you wav files"
+  ],
+  "baseline_stoi": null,
+  "selected_stoi": null,
+  "baseline_error_energy": 322452.0,
+  "selected_error_energy": 0.0,
+  "native_model_exact": true,
+  "production_quality_floor_changed": false,
+  "failure": "Test evaluates baseline_stoi - 1e-12 even when baseline_stoi is unavailable.",
+  "interpretation": "No valid STOI comparison for this80ms synthetic fixture. The production unavailable-metric policy is preserved. This does not establish behavior on sufficient-duration speech."
+}
