@@ -1,0 +1,72 @@
+--- a/Lpx4HybridCore.cpp
++++ b/Lpx4HybridCore.cpp
+@@ -208,12 +208,12 @@
+  }
+  const uint8_t version=readByte(),flags=readByte();
+ #if LPX4_COMPACT_ONLY
+- if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
++ if(version!=6 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
+  // Compact-only needs one flags byte: bit1 selects6k, bit7 extra pulses.
+  speechProfile_=flags;
+ #else
+ #if LPX4_ENABLE_SPEECH_COMPACT
+- if(version==5 && ((flags&127)==4 || (flags&127)==6)){
++ if(version==6 && ((flags&127)==4 || (flags&127)==6)){
+   speechProfile_=flags&127;speechCompact_=1|(flags&128);
+  }else
+ #endif
+@@ -266,6 +266,15 @@
+ #endif
+  if(error_||sampleRate_!=8000||!sampleCount_||!geometry||
+     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
++#if LPX4_ENABLE_SPEECH_COMPACT
++#if !LPX4_COMPACT_ONLY
++ if(speechCompact_)
++#endif
++ {
++  // Experimental v6: selector is included in the existing payload length.
++  if(readByte()!=1){if(!error_)error_=UNSUPPORTED;return false;}
++ }
++#endif
+  return true;
+ }
+ // LSB-first bit and entropy readers.
+@@ -413,20 +422,29 @@
+   speechHalf_^=1;
+ #endif
+ #if LPX4_COMPACT_ONLY
+-  const uint8_t blockScale=readBits(5);
+-#else
++  // Decoded lag is zero only before the first tuple; encoded lag zero is 18.
++  const bool newScale=!lag_ || readOne();
++  const uint8_t blockScale=newScale?readBits(5):0;
++#else
++#if LPX4_ENABLE_SPEECH_COMPACT
++  const bool newScale=!speechCompact_ || !lag_ || readOne();
++#else
++  const bool newScale=true;
++#endif
+   mode_=6;quantLimit_=32;
+-  blockScale_=readBits(5)<<3;
++  if(newScale)blockScale_=readBits(5)<<3;
+ #endif
+   lag_=18+readBits(7);gain_=readBits(3)<<1;
+-#if LPX4_COMPACT_ONLY
+-  blockStep_=scaleStep(blockScale);
+-#else
+-  blockStep_=scaleStep(blockScale_);
++  if(newScale){
++#if LPX4_COMPACT_ONLY
++   blockStep_=scaleStep(blockScale);
++#else
++   blockStep_=scaleStep(blockScale_);
+ #endif
+ #if LPX4_EXCITATION_Q4
+-  blockStep_<<=4;
+-#endif
++   blockStep_<<=4;
++#endif
++  }
+   return !error_;
+  }
+ #endif
