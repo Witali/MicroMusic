@@ -105,9 +105,10 @@ flags remain separate in both matched-size reports.
 The exact-greedy pilot took 225.63 s wall time, including actual packing of
 every trial. The bounded original-cap pilot took 8.45 s wall time / 8.31 s
 Python-process CPU; its matched-size checks took 6.38 s wall time. These are
-different protocols and render limits, not a controlled speedup claim. Python
-CPU excludes native decoder/compiler child processes; wall time includes
-selected-output validation. All selected outputs were checked against the
+different protocols and render limits, not a controlled speedup claim. Process
+CPU includes the in-process native decoder, NumPy/SciPy/Numba DSP and metrics;
+compiler subprocess CPU is excluded. Wall time includes selected-output
+validation. All selected outputs were checked against the
 independent full model and both native common/v5-only PCM **and PWM** outputs.
 Target real-time support still requires linked player images with active IRQ.
 
