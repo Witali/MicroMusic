@@ -3069,3 +3069,5 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 
 - [Systematic exact LPX decoder simplification](lpx-decode-simplification.md): range proofs, quantized grids, integer symmetry, state lifecycle and isolated full-image experiments; unmeasured candidates are labelled explicitly.
 - [LPX exact polynomial trailing units](lpx-polynomial-units.md): eliminate a proven unit product; retain measured rejected reciprocal-P alternatives.
+
+- [LPX small kernel boundaries](lpx-small-kernel-boundaries.md): share repeated attenuation under the size recipe; retain measured no-op/rejected Rice and parser alternatives.

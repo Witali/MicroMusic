@@ -1,0 +1,34 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -317,0 +318,10 @@
++// Nonzero cache contains its terminator; caller retains protocol/error rules.
++uint8_t Lpx4HybridCore::readCachedPrefix(){
++ uint8_t high=0,cache=bitBuffer_;
++ while(!(cache&1)){cache>>=1;++high;}
++ bitBuffer_=cache>>1;bitsLeft_-=high+1;
++#ifdef LPX3_COST_INSTRUMENT
++ bitCalls_+=high+1;
++#endif
++ return high;
++}
+@@ -319,0 +330,4 @@
++ if(!error_ && bitBuffer_){
++  const uint8_t high=readCachedPrefix();
++  return (high<<k)|(k?readBits(k):0);
++ }
+@@ -694,0 +709,3 @@
++#if LPX4_FAST_UNARY==1
++   high=readCachedPrefix();
++#else
+@@ -696 +712,0 @@
+-#if LPX4_FAST_UNARY==2
+@@ -700,3 +715,0 @@
+-#else
+-   while(!(cache&1)){cache>>=1;++high;}
+-#endif
+@@ -705,0 +719 @@
++#endif
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -170,0 +171 @@
++    uint8_t readCachedPrefix();

@@ -1,0 +1,26 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -319,2 +319,2 @@
+-uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
+- uint8_t high=0;
++bool Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width,uint8_t& code){
++ code=0;uint8_t high=0;
+@@ -322 +322 @@
+-  if(error_)return 0;
++  if(error_)return false;
+@@ -325,2 +325,2 @@
+- if(high==8)return readBits(width);
+- return (high<<k)|(k?readBits(k):0);
++ code=high==8?readBits(width):(uint8_t)((high<<k)|(k?readBits(k):0));
++ return !error_;
+@@ -363 +363,2 @@
+-      const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
++      uint8_t code;
++      if(!readSpeechRice(k,bits+(delta?1:0),code))return false;
+@@ -367 +367,0 @@
+-      if(error_)return false;
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -177 +177 @@
+-    uint8_t readSpeechRice(uint8_t k,uint8_t width);
++    bool readSpeechRice(uint8_t k,uint8_t width,uint8_t& code);

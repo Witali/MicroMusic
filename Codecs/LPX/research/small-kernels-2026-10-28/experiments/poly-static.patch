@@ -1,0 +1,5 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -195 +195 @@
+-    void polyFactor(int32_t* p,int16_t c,uint8_t n);
++    static void polyFactor(int32_t* p,int16_t c,uint8_t n);

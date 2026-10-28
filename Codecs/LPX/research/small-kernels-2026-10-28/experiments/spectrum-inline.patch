@@ -1,0 +1,46 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -328,0 +329,22 @@
++// Transmitted compact spectrum, after repeat/delta marker validation.
++#if LPX4_ENABLE_SPEECH_COMPACT
++bool Lpx4HybridCore::readCompactSpectrum(uint8_t bits,bool delta){
++ const uint8_t shift=10-bits;
++ const uint8_t k=bits-4-(uint8_t)delta;
++ // Gap max:63+1+63=127. Delta range:-64..126. Reject before widening.
++ int8_t last=-1;
++ const uint8_t limit=((speechProfile_&2)+2)<<4;
++ for(uint8_t i=0;i<10;i++){
++  const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
++  // Compact Rice codes use at most seven bits: delta is -64..63.
++  const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
++  const int8_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
++  if(error_)return false;
++  if(value<=last || (uint8_t)value>=limit){error_=CORRUPT_STREAM;return false;}
++  const int16_t v=(value<<shift)+(1u<<(shift-1));
++  if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
++  cur_[i]=v;last=value;
++ }
++ return true;
++}
++#endif
+@@ -358,15 +380 @@
+-     const uint8_t k=bits-4-(uint8_t)delta;
+-     // Gap max:63+1+63=127. Delta range:-64..126. Reject before widening.
+-     int8_t last=-1;
+-     const uint8_t limit=((speechProfile_&2)+2)<<4;
+-     for(uint8_t i=0;i<10;i++){
+-      const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
+-      // Compact Rice codes use at most seven bits: delta is -64..63.
+-      const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
+-      const int8_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
+-      if(error_)return false;
+-      if(value<=last || (uint8_t)value>=limit){error_=CORRUPT_STREAM;return false;}
+-      const int16_t v=(value<<shift)+(1u<<(shift-1));
+-      if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
+-      cur_[i]=v;last=value;
+-     }
++      if(!readCompactSpectrum(bits,delta))return false;
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -177,0 +178 @@
++    __attribute__((always_inline)) inline bool readCompactSpectrum(uint8_t bits,bool delta);

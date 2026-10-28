@@ -1,0 +1,17 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -319 +319,2 @@
+-uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
++uint8_t Lpx4HybridCore::readSpeechRice(uint8_t shape){
++ const uint8_t k=shape&3;
+@@ -325 +326 @@
+- if(high==8)return readBits(width);
++ if(high==8)return readBits(shape>>2);
+@@ -363 +364 @@
+-      const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
++      const uint8_t code=readSpeechRice((uint8_t)((bits+(uint8_t)delta)<<2)|k);
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -177 +177 @@
+-    uint8_t readSpeechRice(uint8_t k,uint8_t width);
++    uint8_t readSpeechRice(uint8_t shape);
