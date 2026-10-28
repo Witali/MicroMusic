@@ -10,6 +10,7 @@ from pathlib import Path
 import numpy as np
 from numba import njit
 import speech_compact as compact
+from speech_rate_allocation import bit_accounting, extra_capacity
 from q0_model import coefficient_trace, table, clamp
 from wav_lpc import pack_frames
 from standard_metrics import error_metrics
@@ -111,8 +112,8 @@ def enhance(reference,blob,decoder,max_bytes,horizon=160,position_candidates=6,
     pcm=render(extras);native=decoder.decode_one_s16(base,n)
     if native is None or not np.array_equal(native,pcm):raise AssertionError('Extra snapshot baseline/native mismatch')
     initial=error_metrics(ref,pcm,True);current=initial
-    _,marker_meta=compact.pack(*args,force_extras=True)
-    capacity=max(0,min((n+39)//40,((int(max_bytes)-22)*8-marker_meta['payload_bits'])//10))
+    layout=bit_accounting(spectra,profile)
+    capacity=extra_capacity(layout['spectrum_bits'],len(spectra),profile,int(max_bytes),(n+39)//40)
     evaluations=0;full_evaluations=0;accepted=0;checkpoints=[];rejected_sse=0;rejected_stoi=0
     if capacity and initial['error_energy']:
         choices,benefits,evaluations=proposals(ref.astype(np.int64),co,parameters,innovations,

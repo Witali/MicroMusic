@@ -16,6 +16,7 @@ import time
 import numpy as np
 from numba import njit
 import speech_compact as compact
+from speech_rate_allocation import bit_accounting, extra_capacity
 from enhance_speech_compact import advance, sse
 from refine_speech_compact import quality, no_regression
 from q0_model import coefficient_trace, table
@@ -129,8 +130,8 @@ def refine(reference,blob,decoder,max_bytes,*,horizon=160,group_samples=1280,pas
     if native is None or not np.array_equal(native,pcm) or not np.array_equal(pcm,compact.decode_model(blob)):
         raise AssertionError('Joint baseline snapshot/native/model mismatch')
     before=quality(ref,pcm);after=before;result=bytes(blob);raw=bytes(blob);raw_sse=before['pcm16']['error_energy']
-    _,marker=compact.pack(n,profile,spectra,params,pulses,pre,bright,force_extras=True)
-    capacity=max(0,min(len(extras),((int(max_bytes)-22)*8-marker['payload_bits'])//10))
+    layout=bit_accounting(spectra,profile)
+    capacity=extra_capacity(layout['spectrum_bits'],len(spectra),profile,int(max_bytes),len(extras))
     if capacity<np.count_nonzero(added[:,1]):raise AssertionError('Existing extras exceed derived capacity')
     evaluations=0;accepted=0;checks=[]
     for pass_index in range(passes if before['pcm16']['error_energy'] else 0):
