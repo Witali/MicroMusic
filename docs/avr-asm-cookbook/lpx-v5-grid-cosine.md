@@ -26,3 +26,18 @@ Keep the full 4096-input generic helper regression, the frozen 34816-arbitrary-
 anchor LPC fingerprint, and separate exhaustive legal-grid scalar/anchor tests.
 Do not send arbitrary scalar bins/anchors through this reduced-grid helper.
 [Source-bound measurements, rejected exact alternative and scope](../../Codecs/LPX/research/v5-grid-cosine-2026-10-28/README.md).
+
+## Skip work on the implicit second spectral half
+
+The existing compact-only `!speechHalf_` branch can also own the `cur_→prev_`
+LSF copy. The second half uses its cached endpoint and the next first half
+refreshes previous LSFs before delta decoding. Keep common-format behavior,
+partial tails, all segment modes, bandwidth expansion and snapshots intact.
+
+Against the direct-cosine baseline, six complete images save another 14 B
+(single segment) or 152 B (two/five segments); this difference includes linked
+inlining/layout effects. Static SRAM is unchanged; observed stack margin
+improves by four/six bytes. Six normal and four +100 IRQ-cycle final images
+produce exact complete model PWM with zero underruns. Available decode
+statistics improve 0.156–2.284%, scoped to at most the first 64000 samples.
+[Separate experiment, regression matrix and limitations](../../Codecs/LPX/research/v5-half-spectrum-2026-10-28/README.md).

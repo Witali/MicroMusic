@@ -328,7 +328,9 @@ uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
 #endif
 // Container parsing: frame, block, and subframe headers.
 bool Lpx4HybridCore::readFrame(){
+#if !LPX4_COMPACT_ONLY
  for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+#endif
 #if LPX4_ENABLE_SPEECH
 #if !LPX4_COMPACT_ONLY
  if(speechProfile_){
@@ -337,6 +339,10 @@ bool Lpx4HybridCore::readFrame(){
 #endif
   staticSpectrum_=true;
   if(!speechHalf_){
+#if LPX4_COMPACT_ONLY
+   // The second half uses cached LPC; the next first half refreshes prev.
+   for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+#endif
    const uint8_t bits=(speechProfile_&2)?6:5,shift=10-bits;
 #if LPX4_ENABLE_SPEECH_COMPACT
 #if !LPX4_COMPACT_ONLY
