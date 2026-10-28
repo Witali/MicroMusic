@@ -84,7 +84,7 @@ summary={'schema':'lpx-v5-bounded-allocation-pilot-v1','status':'complete','sour
     'manifest_sha256':sha(manifest_bytes),'pilot_source_sha256':sha(Path(__file__).read_bytes()),'records':len(selection),'rows':len(records),
     'scope':'Same six one-segment tuning recordings as exact-greedy pilot, both profiles, full original length/gain. Fixed spectra/params/base pulses/filters; amplitude seed;128-render bound,32-candidate batches. Accepted swaps preserve amplitude-control PCM/PWM SSE/STOI floors. Original strong-baseline admission remains separate. No evaluation/additional cohort, perceptual or firmware claim.',
     'elapsed_seconds':time.perf_counter()-started,'python_process_cpu_seconds':time.process_time()-started_cpu,
-    'cpu_scope':'Python main process including synthesis/objectives; native decoder child and compiler CPU are excluded. Wall time includes selected-output verification.',
+    'cpu_scope':'Python process CPU includes in-process native decoder, synthesis and metrics; compiler subprocess CPU is excluded. Wall time includes selected-output verification.',
     'groups':[]}
 for percent in (100,95,90):
     rows=[r for r in records if r['percent']==percent];fitted=[r for r in rows if r['fits']]
