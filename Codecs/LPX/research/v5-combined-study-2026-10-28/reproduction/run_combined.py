@@ -118,6 +118,20 @@ def complete_cap(original_bytes, percent):
     return original_bytes * percent // 100
 
 
+def reset_geometry(record):
+    position = 0
+    result = []
+    for index, segment in enumerate(record['segments']):
+        if (segment['index'] != index or segment['start'] != position
+                or segment['profile'] != record['profile'] or segment['samples'] <= 0):
+            raise ValueError('Original reset offsets/order/profile changed')
+        result.append((segment['samples'], record['profile']))
+        position += segment['samples']
+    if position != record['samples']:
+        raise ValueError('Original reset segments do not cover the complete recording')
+    return result
+
+
 def generation_caps(total_caps, frozen_pools, index):
     """Candidate-generation room with the cheapest fixed old-pool completion.
 
@@ -258,7 +272,7 @@ def run(manifest_path, expanded_paths, output, *, mode, shard=0, shards=1, limit
             reference, rate = sf.read(record['reference']['path'], dtype='int16')
             if rate != 8000 or reference.ndim != 1 or len(reference) != record['samples'] or sha(reference.astype('<i2').tobytes()) != record['reference']['pcm16_sha256']:
                 raise ValueError('Original reference PCM/geometry changed')
-            pcm_cache = {}; chains = {}; geometry = [(s['samples'], record['profile']) for s in record['segments']]
+            pcm_cache = {}; chains = {}; geometry = reset_geometry(record)
             def decode(blob):
                 key = sha(blob)
                 if key not in pcm_cache:
