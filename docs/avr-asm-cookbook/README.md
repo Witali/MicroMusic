@@ -3069,3 +3069,8 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 
 - [Systematic exact LPX decoder simplification](lpx-decode-simplification.md): range proofs, quantized grids, integer symmetry, state lifecycle and isolated full-image experiments; unmeasured candidates are labelled explicitly.
 - [LPX exact polynomial trailing units](lpx-polynomial-units.md): eliminate a proven unit product; retain measured rejected reciprocal-P alternatives.
+
+
+## LPX: external observation of a standalone AVR player
+
+[Preserve playback while removing diagnostics](lpx-release-player.md): SPSC publication, atomic final EOF, vendor-derived unlinked metadata, exact timer/PWM/queue observation, and measured full application size.
