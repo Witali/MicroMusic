@@ -74,7 +74,8 @@ prefix boundary. Changing optional fields before that cached boundary is
 rejected. The shared full-synthesis limit also bounds allocator render calls.
 The separate allocation limit counts the calls actually made by the hook.
 
-`rate_lambda` ranks feasible paths by `D + lambda * actual_file_bytes`.
+`rate_lambda` ranks feasible paths by `D + lambda * (8 * actual_file_bytes)` using the shared `distortion_rate`
+helper; lambda is per serialized bit, including headers and padding.
 Infeasible paths first minimize remaining cap excess. Defaults do not imply
 an optimum lambda. A 64-entry full-wave cache, eight quality finalists and a
 16-point size/objective frontier bound retained output; each new window has
