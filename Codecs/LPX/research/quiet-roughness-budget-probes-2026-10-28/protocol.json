@@ -1,0 +1,74 @@
+{
+  "source": "Exact original PCM16 times64; no clipping/resampling/trimming/fitted gain",
+  "gain": 64,
+  "samples": 32000,
+  "complete_caps": [
+    1800,
+    1930,
+    2060
+  ],
+  "extras_settings": {
+    "horizon": 320,
+    "position_candidates": 6,
+    "batch_size": 16,
+    "max_full_evaluations": 128
+  },
+  "lpc_settings": {
+    "frame_limit": 64,
+    "spectral_candidates": 4,
+    "lookahead": 1280,
+    "excitation_horizon": 160,
+    "passes": 2,
+    "refit": true
+  },
+  "calls": [
+    [
+      "selected-extras1800",
+      "E",
+      "p4-capture-2",
+      1800
+    ],
+    [
+      "selected-extras1930",
+      "E",
+      "p4-capture-2",
+      1930
+    ],
+    [
+      "selected-extras2060",
+      "E",
+      "p4-capture-2",
+      2060
+    ],
+    [
+      "selected-lpc1800",
+      "L",
+      "p4-capture-2",
+      1800
+    ],
+    [
+      "selected-extras1930-lpc1930",
+      "L",
+      "selected-extras1930",
+      1930
+    ],
+    [
+      "pre13926-extras1800",
+      "E",
+      "p4-capture-3",
+      1800
+    ],
+    [
+      "pre13926-extras1930",
+      "E",
+      "p4-capture-3",
+      1930
+    ]
+  ],
+  "harmonic_balance": "77source-voiced windows,80ms/20ms;source-frozen sinusoid/cosine grid through3800Hz;windowed least-squares residual balance and>2kHz energy; source natural aspiration retained in comparison; no gate tuning from descriptor.",
+  "schema": "lpx-quiet-roughness-budget-protocol-v1",
+  "predeclared_before_fitting": true,
+  "level_policy": "Already authorized fixed source gain64; every seed/candidate uses the same exact target and duration",
+  "helper_bridge": "No-extra captured v5 seed -> v4.pack -> assert v5 repack byte-identical -> enhancer; every budget is final v5 bytes",
+  "staged_gate_policy": "Helper selections retain their own original policy; independent PCM/PWM metric and voice gates versus V1 selected and legacy controls are reported separately"
+}
