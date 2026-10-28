@@ -1,0 +1,1569 @@
+{
+  "schema": "lpx-v5-trajectory-lambda-pilot-public-v1",
+  "scope": "Same single tuning recording, profiles 4/6, complete frozen 64000-sample original-level reference and 100% achieved-size cap.",
+  "implementation_commit": "f003b43c",
+  "source_modules_sha256": {
+    "refine_speech_trajectory.py": "dfec30a371b1de0c781bb04987e23573d47168c1738d328287b966a3ecf2d70f",
+    "refine_speech_lpc.py": "76fa10b8372d3626c4257d294bc98063d4509eba5bf48dd7d31734fc1fd2f804",
+    "speech_rate_allocation.py": "3cfb0eb1ea1b969450f6fee699a629b23ab9ff6804844ea87d5d705f4ced5df3",
+    "speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "enhance_speech_compact.py": "3307b9ad09a7740264c6e4cab1787719148b1191b837f17605e5e5a764785e99",
+    "refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+    "q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+    "wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c"
+  },
+  "alpha_values": [
+    0,
+    0.1,
+    1
+  ],
+  "lambda_definition": "alpha*baseline_PCM_SSE/(8*baseline_complete_bytes)",
+  "rate_unit": "Complete serialized bits, including all headers and padding.",
+  "prices_fixed_before_outcomes": true,
+  "rows": [
+    {
+      "case_id": "tuning-pilot-01",
+      "profile": 4,
+      "alpha": 0,
+      "rate_lambda_per_bit": 0.0,
+      "baseline_bytes": 3547,
+      "baseline_serialized_bits": 28376,
+      "baseline": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45184014310.0,
+          "ser_db": 9.806546990918894,
+          "ser_status": "finite",
+          "rmse_pcm16": 840.2381945577993,
+          "max_abs_error_pcm16": 6836,
+          "max_abs_error_percent_fs": 20.86181640625,
+          "max_error_signed_pcm16": -6836,
+          "max_error_sample": 61019,
+          "max_error_seconds": 7.627375,
+          "stoi": 0.7575680300770123
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45709233254.0,
+          "ser_db": 9.756355753595901,
+          "ser_status": "finite",
+          "rmse_pcm16": 845.1075491283639,
+          "max_abs_error_pcm16": 6662,
+          "max_abs_error_percent_fs": 20.330810546875,
+          "max_error_signed_pcm16": -6662,
+          "max_error_sample": 61019,
+          "max_error_seconds": 7.627375,
+          "stoi": 0.7499636419806402
+        }
+      },
+      "settings": {
+        "frame_limit": 2,
+        "window_frames": 2,
+        "beam_width": 2,
+        "spectral_candidates": 2,
+        "excitation_candidates": 1,
+        "max_evaluations": 128,
+        "screening": "local"
+      },
+      "capacity_policy": "amplitude",
+      "cpu_seconds": 11.6875,
+      "wall_seconds": 11.736399199988227,
+      "full_synthesis_evaluations": 125,
+      "local_synthesis_evaluations": 108,
+      "local_synthesized_samples": 69120,
+      "local_excitation_trials": 5739,
+      "serialization_calls": 164,
+      "completed_windows": 2,
+      "incomplete_windows": 0,
+      "window_states": [
+        {
+          "status": "complete",
+          "completed_frames": 2,
+          "planned_frames": 2
+        },
+        {
+          "status": "complete",
+          "completed_frames": 2,
+          "planned_frames": 2
+        }
+      ],
+      "outputs": [
+        {
+          "role": "selected",
+          "file_bytes": 3547,
+          "serialized_bits": 28376,
+          "pcm_sse": 45184014310.0,
+          "rd": 45184014310.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45184014310.0,
+              "ser_db": 9.806546990918894,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.2381945577993,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7575680300770123
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45709233254.0,
+              "ser_db": 9.756355753595901,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.1075491283639,
+              "max_abs_error_pcm16": 6662,
+              "max_abs_error_percent_fs": 20.330810546875,
+              "max_error_signed_pcm16": -6662,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7499636419806402
+            }
+          },
+          "conservative_floors_passed": true
+        },
+        {
+          "role": "raw",
+          "file_bytes": 3547,
+          "serialized_bits": 28376,
+          "pcm_sse": 45177448078.0,
+          "rd": 45177448078.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45177448078.0,
+              "ser_db": 9.807178162273175,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.1771397858608,
+              "max_abs_error_pcm16": 6964,
+              "max_abs_error_percent_fs": 21.25244140625,
+              "max_error_signed_pcm16": -6964,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7575657441250394
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45699091046.0,
+              "ser_db": 9.757319496235432,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.0137854459831,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7499580668379282
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 0,
+          "file_bytes": 3546,
+          "serialized_bits": 28368,
+          "objective": 45216633874.0,
+          "rd": 45216633874.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45216633874.0,
+              "ser_db": 9.80341283258116,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.5414351959396,
+              "max_abs_error_pcm16": 6932,
+              "max_abs_error_percent_fs": 21.15478515625,
+              "max_error_signed_pcm16": -6932,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7573329736622535
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45758121062.0,
+              "ser_db": 9.751713286908789,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.559366096639,
+              "max_abs_error_pcm16": 6918,
+              "max_abs_error_percent_fs": 21.112060546875,
+              "max_error_signed_pcm16": -6918,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7496482088210124
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 1,
+          "file_bytes": 3547,
+          "serialized_bits": 28376,
+          "objective": 45177448078.0,
+          "rd": 45177448078.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45177448078.0,
+              "ser_db": 9.807178162273175,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.1771397858608,
+              "max_abs_error_pcm16": 6964,
+              "max_abs_error_percent_fs": 21.25244140625,
+              "max_error_signed_pcm16": -6964,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7575657441250394
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45699091046.0,
+              "ser_db": 9.757319496235432,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.0137854459831,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7499580668379282
+            }
+          },
+          "conservative_floors_passed": false
+        }
+      ]
+    },
+    {
+      "case_id": "tuning-pilot-01",
+      "profile": 4,
+      "alpha": 0.1,
+      "rate_lambda_per_bit": 159233.205208627,
+      "baseline_bytes": 3547,
+      "baseline_serialized_bits": 28376,
+      "baseline": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45184014310.0,
+          "ser_db": 9.806546990918894,
+          "ser_status": "finite",
+          "rmse_pcm16": 840.2381945577993,
+          "max_abs_error_pcm16": 6836,
+          "max_abs_error_percent_fs": 20.86181640625,
+          "max_error_signed_pcm16": -6836,
+          "max_error_sample": 61019,
+          "max_error_seconds": 7.627375,
+          "stoi": 0.7575680300770123
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45709233254.0,
+          "ser_db": 9.756355753595901,
+          "ser_status": "finite",
+          "rmse_pcm16": 845.1075491283639,
+          "max_abs_error_pcm16": 6662,
+          "max_abs_error_percent_fs": 20.330810546875,
+          "max_error_signed_pcm16": -6662,
+          "max_error_sample": 61019,
+          "max_error_seconds": 7.627375,
+          "stoi": 0.7499636419806402
+        }
+      },
+      "settings": {
+        "frame_limit": 2,
+        "window_frames": 2,
+        "beam_width": 2,
+        "spectral_candidates": 2,
+        "excitation_candidates": 1,
+        "max_evaluations": 128,
+        "screening": "local"
+      },
+      "capacity_policy": "amplitude",
+      "cpu_seconds": 12.21875,
+      "wall_seconds": 12.275008099997649,
+      "full_synthesis_evaluations": 125,
+      "local_synthesis_evaluations": 108,
+      "local_synthesized_samples": 69120,
+      "local_excitation_trials": 5760,
+      "serialization_calls": 162,
+      "completed_windows": 2,
+      "incomplete_windows": 0,
+      "window_states": [
+        {
+          "status": "complete",
+          "completed_frames": 2,
+          "planned_frames": 2
+        },
+        {
+          "status": "complete",
+          "completed_frames": 2,
+          "planned_frames": 2
+        }
+      ],
+      "outputs": [
+        {
+          "role": "selected",
+          "file_bytes": 3547,
+          "serialized_bits": 28376,
+          "pcm_sse": 45184014310.0,
+          "rd": 49702415741.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45184014310.0,
+              "ser_db": 9.806546990918894,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.2381945577993,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7575680300770123
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45709233254.0,
+              "ser_db": 9.756355753595901,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.1075491283639,
+              "max_abs_error_pcm16": 6662,
+              "max_abs_error_percent_fs": 20.330810546875,
+              "max_error_signed_pcm16": -6662,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7499636419806402
+            }
+          },
+          "conservative_floors_passed": true
+        },
+        {
+          "role": "raw",
+          "file_bytes": 3547,
+          "serialized_bits": 28376,
+          "pcm_sse": 45177448078.0,
+          "rd": 49695849509.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45177448078.0,
+              "ser_db": 9.807178162273175,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.1771397858608,
+              "max_abs_error_pcm16": 6964,
+              "max_abs_error_percent_fs": 21.25244140625,
+              "max_error_signed_pcm16": -6964,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7575657441250394
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45699091046.0,
+              "ser_db": 9.757319496235432,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.0137854459831,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7499580668379282
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 0,
+          "file_bytes": 3546,
+          "serialized_bits": 28368,
+          "objective": 45216633874.0,
+          "rd": 49733761439.35833,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45216633874.0,
+              "ser_db": 9.80341283258116,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.5414351959396,
+              "max_abs_error_pcm16": 6932,
+              "max_abs_error_percent_fs": 21.15478515625,
+              "max_error_signed_pcm16": -6932,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7573329736622535
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45758121062.0,
+              "ser_db": 9.751713286908789,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.559366096639,
+              "max_abs_error_pcm16": 6918,
+              "max_abs_error_percent_fs": 21.112060546875,
+              "max_error_signed_pcm16": -6918,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7496482088210124
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 1,
+          "file_bytes": 3547,
+          "serialized_bits": 28376,
+          "objective": 45177448078.0,
+          "rd": 49695849509.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45177448078.0,
+              "ser_db": 9.807178162273175,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.1771397858608,
+              "max_abs_error_pcm16": 6964,
+              "max_abs_error_percent_fs": 21.25244140625,
+              "max_error_signed_pcm16": -6964,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7575657441250394
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45699091046.0,
+              "ser_db": 9.757319496235432,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.0137854459831,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7499580668379282
+            }
+          },
+          "conservative_floors_passed": false
+        }
+      ]
+    },
+    {
+      "case_id": "tuning-pilot-01",
+      "profile": 4,
+      "alpha": 1,
+      "rate_lambda_per_bit": 1592332.0520862702,
+      "baseline_bytes": 3547,
+      "baseline_serialized_bits": 28376,
+      "baseline": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45184014310.0,
+          "ser_db": 9.806546990918894,
+          "ser_status": "finite",
+          "rmse_pcm16": 840.2381945577993,
+          "max_abs_error_pcm16": 6836,
+          "max_abs_error_percent_fs": 20.86181640625,
+          "max_error_signed_pcm16": -6836,
+          "max_error_sample": 61019,
+          "max_error_seconds": 7.627375,
+          "stoi": 0.7575680300770123
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45709233254.0,
+          "ser_db": 9.756355753595901,
+          "ser_status": "finite",
+          "rmse_pcm16": 845.1075491283639,
+          "max_abs_error_pcm16": 6662,
+          "max_abs_error_percent_fs": 20.330810546875,
+          "max_error_signed_pcm16": -6662,
+          "max_error_sample": 61019,
+          "max_error_seconds": 7.627375,
+          "stoi": 0.7499636419806402
+        }
+      },
+      "settings": {
+        "frame_limit": 2,
+        "window_frames": 2,
+        "beam_width": 2,
+        "spectral_candidates": 2,
+        "excitation_candidates": 1,
+        "max_evaluations": 128,
+        "screening": "local"
+      },
+      "capacity_policy": "amplitude",
+      "cpu_seconds": 11.296875,
+      "wall_seconds": 11.318361700003152,
+      "full_synthesis_evaluations": 125,
+      "local_synthesis_evaluations": 108,
+      "local_synthesized_samples": 69120,
+      "local_excitation_trials": 5781,
+      "serialization_calls": 158,
+      "completed_windows": 2,
+      "incomplete_windows": 0,
+      "window_states": [
+        {
+          "status": "complete",
+          "completed_frames": 2,
+          "planned_frames": 2
+        },
+        {
+          "status": "complete",
+          "completed_frames": 2,
+          "planned_frames": 2
+        }
+      ],
+      "outputs": [
+        {
+          "role": "selected",
+          "file_bytes": 3547,
+          "serialized_bits": 28376,
+          "pcm_sse": 45184014310.0,
+          "rd": 90368028620.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45184014310.0,
+              "ser_db": 9.806546990918894,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.2381945577993,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7575680300770123
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45709233254.0,
+              "ser_db": 9.756355753595901,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.1075491283639,
+              "max_abs_error_pcm16": 6662,
+              "max_abs_error_percent_fs": 20.330810546875,
+              "max_error_signed_pcm16": -6662,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7499636419806402
+            }
+          },
+          "conservative_floors_passed": true
+        },
+        {
+          "role": "raw",
+          "file_bytes": 3547,
+          "serialized_bits": 28376,
+          "pcm_sse": 45177448078.0,
+          "rd": 90361462388.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45177448078.0,
+              "ser_db": 9.807178162273175,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.1771397858608,
+              "max_abs_error_pcm16": 6964,
+              "max_abs_error_percent_fs": 21.25244140625,
+              "max_error_signed_pcm16": -6964,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7575657441250394
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45699091046.0,
+              "ser_db": 9.757319496235432,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.0137854459831,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7499580668379282
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 0,
+          "file_bytes": 3546,
+          "serialized_bits": 28368,
+          "objective": 45297782026.0,
+          "rd": 90469057679.58331,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45297782026.0,
+              "ser_db": 9.795625740608724,
+              "ser_status": "finite",
+              "rmse_pcm16": 841.2953370584256,
+              "max_abs_error_pcm16": 7124,
+              "max_abs_error_percent_fs": 21.74072265625,
+              "max_error_signed_pcm16": -7124,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7573918433563915
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45840449638.0,
+              "ser_db": 9.74390642799941,
+              "ser_status": "finite",
+              "rmse_pcm16": 846.3196946743884,
+              "max_abs_error_pcm16": 7092,
+              "max_abs_error_percent_fs": 21.64306640625,
+              "max_error_signed_pcm16": -7092,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7497098430834617
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 1,
+          "file_bytes": 3547,
+          "serialized_bits": 28376,
+          "objective": 45177448078.0,
+          "rd": 90361462388.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45177448078.0,
+              "ser_db": 9.807178162273175,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.1771397858608,
+              "max_abs_error_pcm16": 6964,
+              "max_abs_error_percent_fs": 21.25244140625,
+              "max_error_signed_pcm16": -6964,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7575657441250394
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45699091046.0,
+              "ser_db": 9.757319496235432,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.0137854459831,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61299,
+              "max_error_seconds": 7.662375,
+              "stoi": 0.7499580668379282
+            }
+          },
+          "conservative_floors_passed": false
+        }
+      ]
+    },
+    {
+      "case_id": "tuning-pilot-01",
+      "profile": 6,
+      "alpha": 0,
+      "rate_lambda_per_bit": 0.0,
+      "baseline_bytes": 5181,
+      "baseline_serialized_bits": 41448,
+      "baseline": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25280506238.0,
+          "ser_db": 12.328537452974581,
+          "ser_status": "finite",
+          "rmse_pcm16": 628.4965473005799,
+          "max_abs_error_pcm16": 5673,
+          "max_abs_error_percent_fs": 17.3126220703125,
+          "max_error_signed_pcm16": -5673,
+          "max_error_sample": 15,
+          "max_error_seconds": 0.001875,
+          "stoi": 0.7851294938269741
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25732374118.0,
+          "ser_db": 12.251596547732738,
+          "ser_status": "finite",
+          "rmse_pcm16": 634.0885944359432,
+          "max_abs_error_pcm16": 5602,
+          "max_abs_error_percent_fs": 17.095947265625,
+          "max_error_signed_pcm16": -5602,
+          "max_error_sample": 26246,
+          "max_error_seconds": 3.28075,
+          "stoi": 0.7737233018166338
+        }
+      },
+      "settings": {
+        "frame_limit": 2,
+        "window_frames": 2,
+        "beam_width": 2,
+        "spectral_candidates": 2,
+        "excitation_candidates": 1,
+        "max_evaluations": 128,
+        "screening": "local"
+      },
+      "capacity_policy": "amplitude",
+      "cpu_seconds": 6.046875,
+      "wall_seconds": 6.041601399992942,
+      "full_synthesis_evaluations": 128,
+      "local_synthesis_evaluations": 118,
+      "local_synthesized_samples": 75520,
+      "local_excitation_trials": 9912,
+      "serialization_calls": 156,
+      "completed_windows": 1,
+      "incomplete_windows": 1,
+      "window_states": [
+        {
+          "status": "complete",
+          "completed_frames": 2,
+          "planned_frames": 2
+        },
+        {
+          "status": "evaluation_limit",
+          "completed_frames": 1,
+          "planned_frames": 2
+        }
+      ],
+      "outputs": [
+        {
+          "role": "selected",
+          "file_bytes": 5181,
+          "serialized_bits": 41448,
+          "pcm_sse": 25280506238.0,
+          "rd": 25280506238.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25280506238.0,
+              "ser_db": 12.328537452974581,
+              "ser_status": "finite",
+              "rmse_pcm16": 628.4965473005799,
+              "max_abs_error_pcm16": 5673,
+              "max_abs_error_percent_fs": 17.3126220703125,
+              "max_error_signed_pcm16": -5673,
+              "max_error_sample": 15,
+              "max_error_seconds": 0.001875,
+              "stoi": 0.7851294938269741
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25732374118.0,
+              "ser_db": 12.251596547732738,
+              "ser_status": "finite",
+              "rmse_pcm16": 634.0885944359432,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7737233018166338
+            }
+          },
+          "conservative_floors_passed": true
+        },
+        {
+          "role": "raw",
+          "file_bytes": 5181,
+          "serialized_bits": 41448,
+          "pcm_sse": 25214397530.0,
+          "rd": 25214397530.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25214397530.0,
+              "ser_db": 12.339909160355534,
+              "ser_status": "finite",
+              "rmse_pcm16": 627.674247843776,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7851046008362939
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25657919590.0,
+              "ser_db": 12.264180719160564,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.1705880675049,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7732645866512426
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 0,
+          "file_bytes": 5180,
+          "serialized_bits": 41440,
+          "objective": 25237072746.0,
+          "rd": 25237072746.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25237072746.0,
+              "ser_db": 12.33600532096533,
+              "ser_status": "finite",
+              "rmse_pcm16": 627.9564170037997,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7849975921011427
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25668282982.0,
+              "ser_db": 12.262426931116632,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.298445911365,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7732863303543288
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 1,
+          "file_bytes": 5181,
+          "serialized_bits": 41448,
+          "objective": 25214397530.0,
+          "rd": 25214397530.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25214397530.0,
+              "ser_db": 12.339909160355534,
+              "ser_status": "finite",
+              "rmse_pcm16": 627.674247843776,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7851046008362939
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25657919590.0,
+              "ser_db": 12.264180719160564,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.1705880675049,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7732645866512426
+            }
+          },
+          "conservative_floors_passed": false
+        }
+      ]
+    },
+    {
+      "case_id": "tuning-pilot-01",
+      "profile": 6,
+      "alpha": 0.1,
+      "rate_lambda_per_bit": 60993.30785080101,
+      "baseline_bytes": 5181,
+      "baseline_serialized_bits": 41448,
+      "baseline": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25280506238.0,
+          "ser_db": 12.328537452974581,
+          "ser_status": "finite",
+          "rmse_pcm16": 628.4965473005799,
+          "max_abs_error_pcm16": 5673,
+          "max_abs_error_percent_fs": 17.3126220703125,
+          "max_error_signed_pcm16": -5673,
+          "max_error_sample": 15,
+          "max_error_seconds": 0.001875,
+          "stoi": 0.7851294938269741
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25732374118.0,
+          "ser_db": 12.251596547732738,
+          "ser_status": "finite",
+          "rmse_pcm16": 634.0885944359432,
+          "max_abs_error_pcm16": 5602,
+          "max_abs_error_percent_fs": 17.095947265625,
+          "max_error_signed_pcm16": -5602,
+          "max_error_sample": 26246,
+          "max_error_seconds": 3.28075,
+          "stoi": 0.7737233018166338
+        }
+      },
+      "settings": {
+        "frame_limit": 2,
+        "window_frames": 2,
+        "beam_width": 2,
+        "spectral_candidates": 2,
+        "excitation_candidates": 1,
+        "max_evaluations": 128,
+        "screening": "local"
+      },
+      "capacity_policy": "amplitude",
+      "cpu_seconds": 6.71875,
+      "wall_seconds": 6.7456194999977015,
+      "full_synthesis_evaluations": 128,
+      "local_synthesis_evaluations": 118,
+      "local_synthesized_samples": 75520,
+      "local_excitation_trials": 9912,
+      "serialization_calls": 156,
+      "completed_windows": 1,
+      "incomplete_windows": 1,
+      "window_states": [
+        {
+          "status": "complete",
+          "completed_frames": 2,
+          "planned_frames": 2
+        },
+        {
+          "status": "evaluation_limit",
+          "completed_frames": 1,
+          "planned_frames": 2
+        }
+      ],
+      "outputs": [
+        {
+          "role": "selected",
+          "file_bytes": 5181,
+          "serialized_bits": 41448,
+          "pcm_sse": 25280506238.0,
+          "rd": 27808556861.8,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25280506238.0,
+              "ser_db": 12.328537452974581,
+              "ser_status": "finite",
+              "rmse_pcm16": 628.4965473005799,
+              "max_abs_error_pcm16": 5673,
+              "max_abs_error_percent_fs": 17.3126220703125,
+              "max_error_signed_pcm16": -5673,
+              "max_error_sample": 15,
+              "max_error_seconds": 0.001875,
+              "stoi": 0.7851294938269741
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25732374118.0,
+              "ser_db": 12.251596547732738,
+              "ser_status": "finite",
+              "rmse_pcm16": 634.0885944359432,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7737233018166338
+            }
+          },
+          "conservative_floors_passed": true
+        },
+        {
+          "role": "raw",
+          "file_bytes": 5181,
+          "serialized_bits": 41448,
+          "pcm_sse": 25214397530.0,
+          "rd": 27742448153.8,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25214397530.0,
+              "ser_db": 12.339909160355534,
+              "ser_status": "finite",
+              "rmse_pcm16": 627.674247843776,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7851046008362939
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25657919590.0,
+              "ser_db": 12.264180719160564,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.1705880675049,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7732645866512426
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 0,
+          "file_bytes": 5180,
+          "serialized_bits": 41440,
+          "objective": 25237072746.0,
+          "rd": 27764635423.337193,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25237072746.0,
+              "ser_db": 12.33600532096533,
+              "ser_status": "finite",
+              "rmse_pcm16": 627.9564170037997,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7849975921011427
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25668282982.0,
+              "ser_db": 12.262426931116632,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.298445911365,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7732863303543288
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 1,
+          "file_bytes": 5181,
+          "serialized_bits": 41448,
+          "objective": 25214397530.0,
+          "rd": 27742448153.8,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25214397530.0,
+              "ser_db": 12.339909160355534,
+              "ser_status": "finite",
+              "rmse_pcm16": 627.674247843776,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7851046008362939
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25657919590.0,
+              "ser_db": 12.264180719160564,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.1705880675049,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7732645866512426
+            }
+          },
+          "conservative_floors_passed": false
+        }
+      ]
+    },
+    {
+      "case_id": "tuning-pilot-01",
+      "profile": 6,
+      "alpha": 1,
+      "rate_lambda_per_bit": 609933.07850801,
+      "baseline_bytes": 5181,
+      "baseline_serialized_bits": 41448,
+      "baseline": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25280506238.0,
+          "ser_db": 12.328537452974581,
+          "ser_status": "finite",
+          "rmse_pcm16": 628.4965473005799,
+          "max_abs_error_pcm16": 5673,
+          "max_abs_error_percent_fs": 17.3126220703125,
+          "max_error_signed_pcm16": -5673,
+          "max_error_sample": 15,
+          "max_error_seconds": 0.001875,
+          "stoi": 0.7851294938269741
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25732374118.0,
+          "ser_db": 12.251596547732738,
+          "ser_status": "finite",
+          "rmse_pcm16": 634.0885944359432,
+          "max_abs_error_pcm16": 5602,
+          "max_abs_error_percent_fs": 17.095947265625,
+          "max_error_signed_pcm16": -5602,
+          "max_error_sample": 26246,
+          "max_error_seconds": 3.28075,
+          "stoi": 0.7737233018166338
+        }
+      },
+      "settings": {
+        "frame_limit": 2,
+        "window_frames": 2,
+        "beam_width": 2,
+        "spectral_candidates": 2,
+        "excitation_candidates": 1,
+        "max_evaluations": 128,
+        "screening": "local"
+      },
+      "capacity_policy": "amplitude",
+      "cpu_seconds": 6.921875,
+      "wall_seconds": 7.030392900007428,
+      "full_synthesis_evaluations": 128,
+      "local_synthesis_evaluations": 118,
+      "local_synthesized_samples": 75520,
+      "local_excitation_trials": 9912,
+      "serialization_calls": 155,
+      "completed_windows": 1,
+      "incomplete_windows": 1,
+      "window_states": [
+        {
+          "status": "complete",
+          "completed_frames": 2,
+          "planned_frames": 2
+        },
+        {
+          "status": "evaluation_limit",
+          "completed_frames": 1,
+          "planned_frames": 2
+        }
+      ],
+      "outputs": [
+        {
+          "role": "selected",
+          "file_bytes": 5181,
+          "serialized_bits": 41448,
+          "pcm_sse": 25280506238.0,
+          "rd": 50561012476.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25280506238.0,
+              "ser_db": 12.328537452974581,
+              "ser_status": "finite",
+              "rmse_pcm16": 628.4965473005799,
+              "max_abs_error_pcm16": 5673,
+              "max_abs_error_percent_fs": 17.3126220703125,
+              "max_error_signed_pcm16": -5673,
+              "max_error_sample": 15,
+              "max_error_seconds": 0.001875,
+              "stoi": 0.7851294938269741
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25732374118.0,
+              "ser_db": 12.251596547732738,
+              "ser_status": "finite",
+              "rmse_pcm16": 634.0885944359432,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7737233018166338
+            }
+          },
+          "conservative_floors_passed": true
+        },
+        {
+          "role": "raw",
+          "file_bytes": 5181,
+          "serialized_bits": 41448,
+          "pcm_sse": 25214397530.0,
+          "rd": 50494903768.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25214397530.0,
+              "ser_db": 12.339909160355534,
+              "ser_status": "finite",
+              "rmse_pcm16": 627.674247843776,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7851046008362939
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25657919590.0,
+              "ser_db": 12.264180719160564,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.1705880675049,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7732645866512426
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 0,
+          "file_bytes": 5180,
+          "serialized_bits": 41440,
+          "objective": 25237072746.0,
+          "rd": 50512699519.37193,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25237072746.0,
+              "ser_db": 12.33600532096533,
+              "ser_status": "finite",
+              "rmse_pcm16": 627.9564170037997,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7849975921011427
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25668282982.0,
+              "ser_db": 12.262426931116632,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.298445911365,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7732863303543288
+            }
+          },
+          "conservative_floors_passed": false
+        },
+        {
+          "role": "frontier",
+          "index": 1,
+          "file_bytes": 5181,
+          "serialized_bits": 41448,
+          "objective": 25214397530.0,
+          "rd": 50494903768.0,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25214397530.0,
+              "ser_db": 12.339909160355534,
+              "ser_status": "finite",
+              "rmse_pcm16": 627.674247843776,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7851046008362939
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25657919590.0,
+              "ser_db": 12.264180719160564,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.1705880675049,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7732645866512426
+            }
+          },
+          "conservative_floors_passed": false
+        }
+      ]
+    }
+  ],
+  "union_metric_points": [
+    {
+      "profile": 4,
+      "dominated_within_sweep": false,
+      "file_bytes": 3546,
+      "serialized_bits": 28368,
+      "metrics": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45216633874.0,
+          "ser_db": 9.80341283258116,
+          "ser_status": "finite",
+          "rmse_pcm16": 840.5414351959396,
+          "max_abs_error_pcm16": 6932,
+          "max_abs_error_percent_fs": 21.15478515625,
+          "max_error_signed_pcm16": -6932,
+          "max_error_sample": 61019,
+          "max_error_seconds": 7.627375,
+          "stoi": 0.7573329736622535
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45758121062.0,
+          "ser_db": 9.751713286908789,
+          "ser_status": "finite",
+          "rmse_pcm16": 845.559366096639,
+          "max_abs_error_pcm16": 6918,
+          "max_abs_error_percent_fs": 21.112060546875,
+          "max_error_signed_pcm16": -6918,
+          "max_error_sample": 61019,
+          "max_error_seconds": 7.627375,
+          "stoi": 0.7496482088210124
+        }
+      },
+      "conservative_floors_passed": false
+    },
+    {
+      "profile": 4,
+      "dominated_within_sweep": true,
+      "file_bytes": 3546,
+      "serialized_bits": 28368,
+      "metrics": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45297782026.0,
+          "ser_db": 9.795625740608724,
+          "ser_status": "finite",
+          "rmse_pcm16": 841.2953370584256,
+          "max_abs_error_pcm16": 7124,
+          "max_abs_error_percent_fs": 21.74072265625,
+          "max_error_signed_pcm16": -7124,
+          "max_error_sample": 61299,
+          "max_error_seconds": 7.662375,
+          "stoi": 0.7573918433563915
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45840449638.0,
+          "ser_db": 9.74390642799941,
+          "ser_status": "finite",
+          "rmse_pcm16": 846.3196946743884,
+          "max_abs_error_pcm16": 7092,
+          "max_abs_error_percent_fs": 21.64306640625,
+          "max_error_signed_pcm16": -7092,
+          "max_error_sample": 61299,
+          "max_error_seconds": 7.662375,
+          "stoi": 0.7497098430834617
+        }
+      },
+      "conservative_floors_passed": false
+    },
+    {
+      "profile": 4,
+      "dominated_within_sweep": false,
+      "file_bytes": 3547,
+      "serialized_bits": 28376,
+      "metrics": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45177448078.0,
+          "ser_db": 9.807178162273175,
+          "ser_status": "finite",
+          "rmse_pcm16": 840.1771397858608,
+          "max_abs_error_pcm16": 6964,
+          "max_abs_error_percent_fs": 21.25244140625,
+          "max_error_signed_pcm16": -6964,
+          "max_error_sample": 61299,
+          "max_error_seconds": 7.662375,
+          "stoi": 0.7575657441250394
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 45699091046.0,
+          "ser_db": 9.757319496235432,
+          "ser_status": "finite",
+          "rmse_pcm16": 845.0137854459831,
+          "max_abs_error_pcm16": 6836,
+          "max_abs_error_percent_fs": 20.86181640625,
+          "max_error_signed_pcm16": -6836,
+          "max_error_sample": 61299,
+          "max_error_seconds": 7.662375,
+          "stoi": 0.7499580668379282
+        }
+      },
+      "conservative_floors_passed": false
+    },
+    {
+      "profile": 6,
+      "dominated_within_sweep": false,
+      "file_bytes": 5180,
+      "serialized_bits": 41440,
+      "metrics": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25237072746.0,
+          "ser_db": 12.33600532096533,
+          "ser_status": "finite",
+          "rmse_pcm16": 627.9564170037997,
+          "max_abs_error_pcm16": 5542,
+          "max_abs_error_percent_fs": 16.912841796875,
+          "max_error_signed_pcm16": -5542,
+          "max_error_sample": 26246,
+          "max_error_seconds": 3.28075,
+          "stoi": 0.7849975921011427
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25668282982.0,
+          "ser_db": 12.262426931116632,
+          "ser_status": "finite",
+          "rmse_pcm16": 633.298445911365,
+          "max_abs_error_pcm16": 5602,
+          "max_abs_error_percent_fs": 17.095947265625,
+          "max_error_signed_pcm16": -5602,
+          "max_error_sample": 26246,
+          "max_error_seconds": 3.28075,
+          "stoi": 0.7732863303543288
+        }
+      },
+      "conservative_floors_passed": false
+    },
+    {
+      "profile": 6,
+      "dominated_within_sweep": false,
+      "file_bytes": 5181,
+      "serialized_bits": 41448,
+      "metrics": {
+        "pcm16": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25214397530.0,
+          "ser_db": 12.339909160355534,
+          "ser_status": "finite",
+          "rmse_pcm16": 627.674247843776,
+          "max_abs_error_pcm16": 5542,
+          "max_abs_error_percent_fs": 16.912841796875,
+          "max_error_signed_pcm16": -5542,
+          "max_error_sample": 26246,
+          "max_error_seconds": 3.28075,
+          "stoi": 0.7851046008362939
+        },
+        "pwm8": {
+          "samples": 64000,
+          "reference_energy": 432154969702.0,
+          "error_energy": 25657919590.0,
+          "ser_db": 12.264180719160564,
+          "ser_status": "finite",
+          "rmse_pcm16": 633.1705880675049,
+          "max_abs_error_pcm16": 5602,
+          "max_abs_error_percent_fs": 17.095947265625,
+          "max_error_signed_pcm16": -5602,
+          "max_error_sample": 26246,
+          "max_error_seconds": 3.28075,
+          "stoi": 0.7732645866512426
+        }
+      },
+      "conservative_floors_passed": false
+    }
+  ],
+  "native_audit": {
+    "unique_streams": 7,
+    "common_pcm_pwm_exact": true,
+    "compact_pcm_pwm_exact": true,
+    "independent_model": true
+  },
+  "conclusion": "No selected/raw file-size reduction and no improvement to the alpha 0 size/SSE frontier. One-byte-smaller tradeoffs already exist at alpha 0 and fail existing automatic floors. Finite search, no optimum-lambda claim."
+}
