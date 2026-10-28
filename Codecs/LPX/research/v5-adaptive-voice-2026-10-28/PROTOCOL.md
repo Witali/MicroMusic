@@ -78,9 +78,11 @@ separate comparison, not another selectable chain. For nonspeech, original
 streams are both the rollback and the only starting seeds. No new fitting is
 needed for either cohort.
 
-All local searches use the original **whole-source** complete-byte cap, avoiding
-arbitrary proportional caps. The serialized complete chain must pass its real
-whole cap again. Record the frozen LPC preset, extra-pulse settings, header
+All local searches use `min(original whole-source complete bytes, 65535)`,
+respecting the single-stream format/API limit while avoiding arbitrary
+proportional caps. The 65535 bound excludes no representable single stream.
+The serialized complete chain must pass its real whole cap again, including
+long nonspeech caps above 65535. Record the frozen LPC preset, extra-pulse settings, header
 search limits, operator order, objective descriptions and all internal work
 counters. A refinement-call count does not imply a wall-time limit.
 
