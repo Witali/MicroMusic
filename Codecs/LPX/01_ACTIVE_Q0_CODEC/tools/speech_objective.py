@@ -9,15 +9,19 @@ only an explicit independent-stream reset starts that history at zero.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from numbers import Real
 
 import numpy as np
 from numba import njit
 from perceptual_rate import weight_error
 
+MAX_SAMPLES = (1 << 32) - 1
+CHUNK_SAMPLES = 6400  # Whole 160-sample LPC frames and 20-sample subframes.
+
 
 @njit(cache=True)
-def _weight_error_state(error, co, gamma1, gamma2, input_history, output_history):
+def _weight_error_repeated(error, co, repeat, gamma1, gamma2, input_history, output_history):
     e = input_history.copy()
     w = output_history.copy()
     out = np.empty(len(error), np.float64)
@@ -26,7 +30,7 @@ def _weight_error_state(error, co, gamma1, gamma2, input_history, output_history
         g1 = gamma1
         g2 = gamma2
         for k in range(10):
-            a = co[n, k] / 4096.
+            a = co[n // repeat, k] / 4096.
             value += a * (g1 * e[k] - g2 * w[k])
             g1 *= gamma1
             g2 *= gamma2
@@ -37,6 +41,12 @@ def _weight_error_state(error, co, gamma1, gamma2, input_history, output_history
         w[0] = value
         out[n] = value
     return out, e, w
+
+
+@njit(cache=True)
+def _weight_error_state(error, co, gamma1, gamma2, input_history, output_history):
+    return _weight_error_repeated(error, co, 1, gamma1, gamma2,
+                                  input_history, output_history)
 
 
 def _gammas(gamma1, gamma2):
@@ -51,9 +61,9 @@ def _gammas(gamma1, gamma2):
 def _pcm16(pcm, samples=None):
     value = np.asarray(pcm)
     if (value.ndim != 1 or value.dtype.kind not in 'iu'
-            or not 1 <= len(value) <= 1000000
+            or not 1 <= len(value) <= MAX_SAMPLES
             or samples is not None and len(value) != samples
-            or np.any(value < -32768) or np.any(value > 32767)):
+            or int(value.min()) < -32768 or int(value.max()) > 32767):
         raise ValueError('Expected original-length mono integer PCM16')
     return value
 
@@ -157,19 +167,42 @@ class SpeechObjective:
     """
     def __init__(self, reference, coefficients, *, mode='perceptual',
                  gamma1=.9, gamma2=.6):
+        self._configure(reference, mode=mode, gamma1=gamma1, gamma2=gamma2)
+        co = np.asarray(coefficients)
+        if (co.shape != (len(self._reference), 10) or co.dtype.kind not in 'iu'
+                or int(co.min()) < -32768 or int(co.max()) > 32767):
+            raise ValueError('Expected signed Q12 LPC coefficient trace')
+        if mode == 'perceptual':
+            self._blocks = tuple(self._block(co[start:start + CHUNK_SAMPLES],
+                                             min(CHUNK_SAMPLES, len(co) - start), 1)
+                                 for start in range(0, len(co), CHUNK_SAMPLES))
+            self._freeze_damping()
+
+    def _configure(self, reference, *, mode='perceptual', gamma1=.9, gamma2=.6):
         if mode not in ('sse', 'perceptual'):
             raise ValueError('Expected sse or perceptual objective')
         self.gamma1, self.requested_gamma2 = _gammas(gamma1, gamma2)
-        self._reference = np.array(_pcm16(reference), dtype=np.int64, copy=True)
-        self._coefficients = _coefficients(coefficients, len(self._reference))
+        self._reference = np.array(_pcm16(reference), dtype=np.int16, copy=True)
         self.denominator_bound = .95
-        self.gamma2 = denominator_gamma(self._coefficients, self.requested_gamma2,
-                                       self.denominator_bound)
+        self.gamma2 = self.requested_gamma2
         self._reference.flags.writeable = False
-        self._coefficients.flags.writeable = False
+        self._blocks = ()
         self.mode = mode
         self.name = 'v5_' + mode + '_pcm16'
         self._segment_samples = (len(self._reference),)
+
+    @staticmethod
+    def _block(rows, samples, repeat):
+        values = np.array(rows, dtype=np.int16, copy=True)
+        values.flags.writeable = False
+        return values, samples, repeat
+
+    def _freeze_damping(self):
+        # A seed-wide solution is the minimum of its chunk solutions: each
+        # contraction expression is monotone and uses identical settings.
+        self.gamma2 = min(denominator_gamma(rows, self.requested_gamma2,
+                                            self.denominator_bound)
+                          for rows, _, _ in self._blocks)
 
     @classmethod
     def from_v5(cls, reference, seed_blob, **settings):
@@ -183,35 +216,68 @@ class SpeechObjective:
         filter is an encoder criterion over the complete original recording,
         so its state continues across those resets instead of restarting.
         """
-        from q0_model import coefficient_trace
+        from q0_model import _coefficient_trace_vectors, table
         import speech_compact as compact
-        from wav_lpc import pack_frames
         if isinstance(seed_blobs, (bytes, bytearray, str)):
             raise ValueError('Expected an ordered collection of v5 streams')
         blobs = list(seed_blobs)
         if not blobs:
             raise ValueError('Expected at least one v5 stream')
-        traces = []
+        prepared = []
         lengths = []
         for blob in blobs:
-            n, profile, spectra, *_ = compact.unpack(blob)
-            shift = 5 if profile == 4 else 4
-            vectors = [[(v << shift) + (1 << (shift - 1)) for v in row]
-                       for row in spectra for _ in range(2)]
-            traces.append(coefficient_trace(pack_frames(vectors[:(n + 159) // 160]), n))
+            fields = compact.unpack(blob)
+            n, profile, spectra = fields[:3]
+            prepared.append((n, profile, spectra))
             lengths.append(n)
         _pcm16(reference, sum(lengths))
-        result = cls(reference, np.concatenate(traces), **settings)
+        result = cls.__new__(cls)
+        result._configure(reference, **settings)
         result._segment_samples = tuple(lengths)
+        if result.mode == 'perceptual':
+            cosine = table('cos_table.inc')
+            blocks = []
+            for n, profile, spectra in prepared:
+                shift = 5 if profile == 4 else 4
+                vectors = np.repeat((np.asarray(spectra, np.int64) << shift)
+                                    + (1 << (shift - 1)), 2, axis=0)[:(n + 159) // 160]
+                for start in range(0, n, CHUNK_SAMPLES):
+                    stop = min(n, start + CHUNK_SAMPLES)
+                    frame = start // 160
+                    offset = 160 if frame else 0
+                    # One preceding vector supplies exact interpolation context;
+                    # this context is restarted only at the actual stream reset.
+                    trace = _coefficient_trace_vectors(
+                        vectors[max(0, frame - 1):(stop + 159) // 160],
+                        stop - start + offset, cosine)
+                    # Integer model coefficients repeat exactly for 20 samples.
+                    blocks.append(cls._block(trace[offset::20], stop - start, 20))
+            result._blocks = tuple(blocks)
+            result._freeze_damping()
         return result
 
     def score(self, pcm16):
-        candidate = _pcm16(pcm16, len(self._reference)).astype(np.int64)
-        error = candidate - self._reference
+        candidate = _pcm16(pcm16, len(self._reference))
         if self.mode == 'sse':
-            return float(np.dot(error, error))
-        weighted = weight_error(error, self._coefficients, self.gamma1, self.gamma2)
-        result = float(np.dot(weighted, weighted))
+            # Each dot fits int64, but their uint32-length total may not. Python
+            # integers accumulate exactly before the scalar float API conversion.
+            total = 0
+            for start in range(0, len(candidate), CHUNK_SAMPLES):
+                error = (candidate[start:start + CHUNK_SAMPLES].astype(np.int64)
+                         - self._reference[start:start + CHUNK_SAMPLES])
+                total += int(np.dot(error, error))
+            return float(total)
+        history = np.zeros(10, np.float64)
+        weighted_history = np.zeros(10, np.float64)
+        energies = []
+        start = 0
+        for rows, count, repeat in self._blocks:
+            error = candidate[start:start + count].astype(np.int64) - self._reference[start:start + count]
+            weighted, history, weighted_history = _weight_error_repeated(
+                error, rows, repeat, self.gamma1, self.gamma2, history, weighted_history)
+            energies.append(float(np.dot(weighted, weighted)))
+            start += count
+        result = math.fsum(energies)
         if not np.isfinite(result):
             raise ValueError('Non-finite perceptual objective')
         return result
@@ -226,5 +292,11 @@ class SpeechObjective:
                 'weighting_coefficients': 'frozen seed v5 interpolated Q12 LPC',
                 'seed_segment_samples': list(self._segment_samples),
                 'decoder_lpc_state': 'actual independent reset at each seed segment',
+                'weighting_enabled': self.mode == 'perceptual',
+                'coefficient_storage_bytes': sum(rows.nbytes for rows, _, _ in self._blocks),
+                'reference_storage_bytes': self._reference.nbytes,
+                'working_chunk_samples': CHUNK_SAMPLES,
+                'maximum_original_samples': MAX_SAMPLES,
+                'score_accumulation': 'Python integer SSE or compensated sum of weighted chunk energies',
                 'weighting_state': 'zero once per complete stream; continuous across frames',
                 'automatic_acceptance': 'unchanged external PCM/PWM no_regression gate'}
