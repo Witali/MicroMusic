@@ -21,6 +21,7 @@ from speech_voice_objective import VoiceObjective
 from standard_metrics import error_metrics, pwm_duties, pwm_pcm16
 from refine_speech_compact import no_regression, quality as speech_quality
 from voice_character import track_pitch, compare_voice
+from voice_input import plan_level, quantize_target, load_voice_wav
 
 
 def prepare_level(reference, policy='preserve'):
@@ -32,22 +33,11 @@ def prepare_level(reference, policy='preserve'):
     if policy not in ('preserve', 'auto-quiet'):
         raise ValueError('Expected preserve or explicit auto-quiet level policy')
     values = ref.astype(np.int64)
-    rms = float(np.std(values.astype(np.float64)))
-    peak = int(np.max(np.abs(values)))
-    gain = 1
-    # Fixed engineering bounds, not fitted to a recording: only sources below
-    # one 8-bit PCM step RMS, target >=1024 RMS when peak headroom permits.
-    if policy == 'auto-quiet' and 0 < rms < 256:
-        while rms * gain < 1024 and peak * gain * 2 <= 29490:
-            gain *= 2
-    target = values * gain
-    if int(target.min()) < -32768 or int(target.max()) > 32767:
+    plan = plan_level(values, policy)
+    target, clipped = quantize_target(values, plan)
+    if clipped:
         raise AssertionError('Declared quiet gain clipped the input')
-    return target.astype(np.int16), dict(policy=policy, gain=gain,
-        gain_db=float(20 * np.log10(gain)), input_ac_rms_pcm16=rms,
-        input_peak_pcm16=peak, target_ac_rms_pcm16=rms * gain,
-        output_level_matches_original=gain == 1,
-        scope='Exact power-of-two input transform; no fitted output gain, clipping or trimming')
+    return target, plan
 
 
 def _quality(reference, pcm, speech):
@@ -73,7 +63,7 @@ def _voice_gate(new, old):
 
 def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
            pre_values=(0, 8192, 13926), level_policy='preserve', speech=True,
-           compact_decoder=None):
+           compact_decoder=None, candidate_sink=None):
     """Return selected stream/PCM, numeric report and best raw feasible stream.
 
     ``decoder`` must support both legacy v4 and compact v5. ``compact_decoder``
@@ -84,6 +74,8 @@ def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
     Missing feasible output is None, never a larger silent fallback.
     """
     target, level = prepare_level(reference, level_policy)
+    if candidate_sink is not None and not callable(candidate_sink):
+        raise ValueError('Expected a callable candidate sink')
     if isinstance(profile, bool) or profile not in (4, 6):
         raise ValueError('Expected speech profile 4 or 6')
     values = tuple(pre_values)
@@ -103,6 +95,7 @@ def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
     track = track_pitch(target)
     objective = VoiceObjective(target, track.period)
     trials = []
+    fresh_fit_calls = 0
 
     def verify(blob, expected=None):
         modeled = compact.decode_model(blob)
@@ -119,6 +112,8 @@ def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
         return modeled
 
     def fresh(pre, allow_zero):
+        nonlocal fresh_fit_calls
+        fresh_fit_calls += 1
         legacy, expected, work = speech_v4.encode(target, profile, decoder, pre=pre,
                                                  allow_zero_scale=allow_zero)
         blob, _ = compact.repack(legacy)
@@ -137,6 +132,8 @@ def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
     before_pwm_voice = compare_voice(target, pwm_pcm16(control_pcm), reference_track=track)
     target_pwm_voice = compare_voice(target, pwm_pcm16(target), reference_track=track)
     before_score = objective(control_pcm)
+    if candidate_sink is not None:
+        candidate_sink(control)
     selected = control if len(control) <= cap else None
     selected_pcm = control_pcm if selected is not None else None
     selected_score = before_score if selected is not None else np.inf
@@ -145,6 +142,8 @@ def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
     chosen = dict(metrics=before, voice=before_voice, pwm_voice=before_pwm_voice) if selected is not None else None
     for pre in values:
         blob, pcm, work = fresh(pre, True)
+        if candidate_sink is not None:
+            candidate_sink(blob)
         score = objective(pcm)
         metrics = _quality(target, pcm, bool(speech))
         voice = compare_voice(target, pcm, reference_track=track)
@@ -171,7 +170,7 @@ def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
     if raw is not None and raw != selected:
         verify(raw)
     report = dict(schema='lpx-v5-voice-encoder-v1', profile=profile, samples=len(target),
-        complete_byte_cap=cap, level=level, control_kind=control_kind,
+        complete_byte_cap=cap, level=level, control_kind=control_kind, fresh_fit_calls=fresh_fit_calls,
         control_bytes=len(control), baseline_metrics=before, baseline_voice=before_voice,
         baseline_pwm_voice=before_pwm_voice, target_pwm_voice=target_pwm_voice,
         voice_proxy_gate_domains=['native_pcm16', 'fixed_pwm8'],
@@ -191,28 +190,41 @@ def main():
     import soundfile as sf
     from batch_decoder import BatchSession
     from output_paths import protect_outputs
-    from wav_lpc import load_wav
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('reference', type=Path)
     parser.add_argument('output', type=Path)
     parser.add_argument('--baseline', type=Path)
     parser.add_argument('--profile', type=int, choices=(4, 6), default=4)
     parser.add_argument('--max-bytes', type=int)
-    parser.add_argument('--level-policy', choices=('preserve', 'auto-quiet'), default='preserve')
+    parser.add_argument('--level-policy', choices=('preserve', 'auto-quiet'), default='auto-quiet')
     parser.add_argument('--non-speech', action='store_true')
+    parser.add_argument('--search-mode', choices=('adaptive', 'grid'), default='adaptive')
+    parser.add_argument('--refinement-calls', type=int, default=4,
+                        help='Bound expensive refinement calls; each has separate local work bounds')
     args = parser.parse_args()
-    paths = [args.output/name for name in ('audio.l4hy', 'decoded.wav', 'raw.l4hy', 'raw.wav', 'report.json')]
+    paths = [args.output/name for name in ('audio.l4hy', 'decoded.wav', 'raw.l4hy', 'raw.wav', 'report.json', 'target.wav')]
     inputs = [args.reference] + ([] if args.baseline is None else [args.baseline])
     protect_outputs(inputs, paths)
     if any(path.exists() for path in paths):
         raise ValueError('Use fresh output names; an absent result must not leave stale audio')
-    reference, input_info = load_wav(args.reference)
+    reference, input_info = load_voice_wav(args.reference, args.level_policy)
     old = None if args.baseline is None else args.baseline.read_bytes()
+    if old is not None:
+        fields = compact.unpack(old)
+        if fields[0] != len(reference) or fields[1] != args.profile:
+            raise ValueError('Original stream profile/length does not match reference')
+    gain_changed = input_info['input_level']['gain_power2_exponent'] != 0
+    cap = args.max_bytes if args.max_bytes is not None else len(old) if old is not None else None
     with BatchSession('batch', speech=True, speech_compact=True) as common, BatchSession(
             'batch', speech=True, speech_compact=True, compact_only=True) as only:
-        selected, pcm, report, raw = encode(reference, args.profile, common, baseline=old,
-            max_bytes=args.max_bytes, level_policy=args.level_policy,
-            speech=not args.non_speech, compact_decoder=only)
+        search = encode
+        settings = {}
+        if args.search_mode == 'adaptive':
+            from adaptive_speech_voice import encode as search
+            settings['max_refinement_calls'] = args.refinement_calls
+        selected, pcm, report, raw = search(reference, args.profile, common,
+            baseline=None if gain_changed else old, max_bytes=cap, level_policy='preserve',
+            speech=not args.non_speech, compact_decoder=only, **settings)
     args.output.mkdir(parents=True, exist_ok=True)
     if selected is not None:
         paths[0].write_bytes(selected)
@@ -220,7 +232,12 @@ def main():
     if raw is not None:
         paths[2].write_bytes(raw)
         sf.write(paths[3], compact.decode_model(raw), 8000, subtype='PCM_16')
+    sf.write(paths[5], reference, 8000, subtype='PCM_16')
+    report['prepared_target_encoding_level'] = report['level']
+    report['level'] = input_info['input_level']
+    report['original_baseline_used_as_byte_cap_only'] = old is not None and gain_changed
     report['input_conversion'] = input_info
+    report['search_mode'] = args.search_mode
     paths[4].write_text(json.dumps(report, indent=2, allow_nan=False)+'\n', encoding='utf-8')
     print(json.dumps({key: report[key] for key in ('profile', 'samples', 'complete_byte_cap',
                                                  'selected_bytes', 'raw_bytes', 'seconds')}))

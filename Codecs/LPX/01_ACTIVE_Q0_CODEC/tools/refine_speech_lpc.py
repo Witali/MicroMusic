@@ -138,7 +138,7 @@ def frame_order(reference, pcm, limit):
 
 
 def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates=2,
-           lookahead=640,excitation_horizon=80,passes=1,refit=True):
+           lookahead=640,excitation_horizon=80,passes=1,refit=True,speech=True):
     """Return selected v5 bytes/PCM/report plus a raw best-encountered stream."""
     values=(max_bytes,frame_limit,spectral_candidates,lookahead,excitation_horizon,passes)
     if any(isinstance(v,bool) or not isinstance(v,Integral) for v in values):
@@ -162,7 +162,7 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
     native=decoder.decode_one_s16(blob,n)
     if native is None or not np.array_equal(pcm,native) or not np.array_equal(pcm,compact.decode_model(blob)):
         raise AssertionError('Joint LPC baseline native/model mismatch')
-    before=quality(ref,pcm);after=before;result=bytes(blob);raw=bytes(blob);raw_loss=before['pcm16']['error_energy']
+    before=quality(ref,pcm,speech);after=before;result=bytes(blob);raw=bytes(blob);raw_loss=before['pcm16']['error_energy']
     costs=[spectrum_bits(row,None if f==0 else sp[f-1],profile) for f,row in enumerate(sp)]
     spectral_trials=excitation_trials=full_evaluations=accepted=cap_rejections=0;checkpoints=[]
     for pass_index in range(passes if before['pcm16']['error_energy'] else 0):
@@ -201,7 +201,7 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
                 if loss>=after['pcm16']['error_energy']:co[start:patch_end]=old_patch;continue
                 candidate,metadata=compact.pack(n,profile,trial_sp.tolist(),trial_pp.tolist(),trial_ii.tolist(),pre,bright,extras=trial_ee.tolist())
                 if len(candidate)>max_bytes:raise AssertionError('Joint LPC serialized cap failed')
-                measured=quality(ref,trial);full_evaluations+=1;allowed=no_regression(measured,before)
+                measured=quality(ref,trial,speech);full_evaluations+=1;allowed=no_regression(measured,before)
                 checkpoints.append({'pass':pass_index,'frame':frame,'lsf_index':field,'lsf_delta':delta,
                     'file_bytes':len(candidate),'cap_extra_pulses_removed':removed,'metrics':measured,
                     'conservative_floors_passed':bool(allowed)})
@@ -226,7 +226,7 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
     if result[12:16]!=blob[12:16]:raise AssertionError('Joint LPC changed frozen header filters')
     report={'proposal':'compact_joint_lpc_excitation','samples':n,'profile':profile,
         'baseline_bytes':len(blob),'file_bytes':len(result),'max_file_bytes':int(max_bytes),
-        'baseline':before,'selected':after,'raw_best_sse':quality(ref,decoder.decode_one_s16(raw,n)),
+        'baseline':before,'selected':after,'raw_best_sse':quality(ref,decoder.decode_one_s16(raw,n),speech),
         'raw_file_bytes':len(raw),'raw_stream_sha256':hashlib.sha256(raw).hexdigest(),
         'changed_spectral_indices':int(np.count_nonzero(sp!=np.asarray(spectra,np.int64))),
         'changed_excitation_fields':int(np.count_nonzero(pp!=np.asarray(params,np.int64))+np.count_nonzero(ii!=np.asarray(pulses,np.int64))+np.count_nonzero(ee!=np.asarray(extras,np.int64))),
