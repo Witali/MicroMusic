@@ -752,7 +752,8 @@ void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
     // p[j-1] and p[j-2]. Eliminates 12*4=48 bytes of SRAM and two passes.
     // Retain the same ascending-contribution order as the old polyTmp method.
     p[n+1]=p[n-1];
-    p[n]=p[n-2]+polyMulQ12(p[n-1],c);
+    // The trailing unit is +/-4096, so this product has no rounding.
+    p[n]=p[n-2]+(p[n-1]<0?-(int32_t)c:(int32_t)c);
     for(uint8_t j=(uint8_t)(n-1);j>=2;--j){
         p[j]=p[j-2]+polyMulQ12(p[j-1],c)+p[j];
     }

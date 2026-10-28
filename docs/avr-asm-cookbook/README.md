@@ -3060,3 +3060,5 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 [Admission, bounds, workload and reproduction](../../Codecs/Speex/AVR/HIGHER_BITRATES.md).
 
 - [LPX learned-period excitation pilot](lpx-period-excitation.md): host-only comparison with silence ablation; no new AVR admission.
+
+- [LPX exact polynomial trailing units](lpx-polynomial-units.md): eliminate a proven unit product; retain measured rejected reciprocal-P alternatives.
