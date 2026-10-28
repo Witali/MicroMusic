@@ -1,0 +1,16 @@
+{
+  "schema": "lpx-scale-repeat-independent-player-audit-v1",
+  "status": "passed",
+  "actual_complete_linked_images_checked": 34,
+  "exact_embedded_segment_regions": 50,
+  "complete_valid_pwm_samples_checked_including_c_observations": 2024532,
+  "asm_full_pwm_eof_tick_queue_stack_and_zero_underrun_passes": 32,
+  "c_exact_valid_sample_sequence_but_timing_failures_retained": 2,
+  "static_sram_bytes_all_images": 756,
+  "source_toolchain_image_stream_and_adapter_bindings_checked": true,
+  "private_media_fingerprints_exported": false,
+  "production_source_unchanged": true,
+  "audit_source_sha256": "3a132d73b696190e29e620f69aa1a953a69c4c78f7d90c988af4c3a9dcf7b320",
+  "seconds": 4.395907900005113,
+  "scope": "ASM images compare every physical output tick. C valid-sample output is exact but underruns add idle ticks, so physical C output is not equivalent in real time. No board or audibility claim."
+}
