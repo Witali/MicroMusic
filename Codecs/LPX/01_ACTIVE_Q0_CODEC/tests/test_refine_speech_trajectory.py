@@ -243,6 +243,16 @@ class TrajectoryTests(unittest.TestCase):
         self.assertTrue(report['conservative_floors_passed'])
         np.testing.assert_array_equal(pcm, reference)
 
+    def test_beam_and_allocator_use_the_same_lambda_per_serialized_bit(self):
+        search = trajectory.Search(np.zeros(1, np.int64), 1, 4, 0, 0, 100,
+            lambda out: 0.0, 1, 'none', 0, 1.0)
+        short = trajectory.OutputCandidate(b'x'*30, np.zeros(1, np.int16), 100.0, ())
+        long = trajectory.OutputCandidate(b'x'*31, np.zeros(1, np.int16), 96.0, ())
+        self.assertEqual(search.rank(short)[1], trajectory.distortion_rate(100.0, 30, 1.0))
+        self.assertEqual(search.rank(long)[1], trajectory.distortion_rate(96.0, 31, 1.0))
+        # Per-byte lambda would incorrectly prefer the longer alternative here.
+        self.assertLess(search.rank(short), search.rank(long))
+
     def test_validation_and_hard_evaluation_bound(self):
         blob = seed();reference = compact.decode_model(blob)
         for kwargs in ({'beam_width':True},{'window_frames':1},{'max_evaluations':0},
