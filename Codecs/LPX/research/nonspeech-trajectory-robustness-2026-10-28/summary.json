@@ -1,0 +1,141 @@
+{
+  "schema": "lpx-v5-nonspeech-new-encoder-robustness-public-v1",
+  "scope": "All 132 non-speech original references in profiles 4/6, complete original-level reset chains; bounded NEW trajectory encoder, not baseline playback only.",
+  "references": 132,
+  "profile_groups": 264,
+  "original_samples_across_profile_groups": 25111466,
+  "min_reference_samples": 10400,
+  "max_reference_samples": 3786111,
+  "original_reset_segments": 494,
+  "searched_segments": 268,
+  "untouched_independently_verified_segments": 226,
+  "settings": {
+    "frame_limit": 2,
+    "window_frames": 2,
+    "beam_width": 2,
+    "spectral_candidates": 2,
+    "excitation_candidates": 1,
+    "excitation_horizon": 80,
+    "max_evaluations": 64,
+    "screening": "local",
+    "screening_horizon": 640,
+    "capacity_policy": "amplitude",
+    "rate_lambda": 0.0,
+    "selection": "conservative",
+    "speech": false
+  },
+  "selection_policy": "Largest original exact PCM SSE/sample with earliest tie; final segment if distinct.",
+  "objective_policy": "Exact additive whole-record PCM SSE, centered by its frozen constant.",
+  "source": {
+    "core": {
+      "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+      "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+      "Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+      "Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+      "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+      "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+    },
+    "encoder": {
+      "benchmark_nonspeech_trajectory.py": "b1e9a1134f5e703da8bc203f85834502a613c281ef6a573d458f655b76a08bb2",
+      "refine_speech_trajectory.py": "a8f08aa94e2356922226728853c473932255af7724493cd6b6cd9097db60029d",
+      "refine_speech_lpc.py": "76fa10b8372d3626c4257d294bc98063d4509eba5bf48dd7d31734fc1fd2f804",
+      "refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+      "enhance_speech_compact.py": "3307b9ad09a7740264c6e4cab1787719148b1191b837f17605e5e5a764785e99",
+      "speech_rate_allocation.py": "3cfb0eb1ea1b969450f6fee699a629b23ab9ff6804844ea87d5d705f4ced5df3",
+      "speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+      "q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+      "batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178"
+    }
+  },
+  "independent_auditor_source": {
+    "core": {
+      "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+      "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+      "Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+      "Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+      "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+      "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+    },
+    "encoder": {
+      "benchmark_nonspeech_trajectory.py": "b1e9a1134f5e703da8bc203f85834502a613c281ef6a573d458f655b76a08bb2",
+      "refine_speech_trajectory.py": "a8f08aa94e2356922226728853c473932255af7724493cd6b6cd9097db60029d",
+      "refine_speech_lpc.py": "76fa10b8372d3626c4257d294bc98063d4509eba5bf48dd7d31734fc1fd2f804",
+      "refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+      "enhance_speech_compact.py": "3307b9ad09a7740264c6e4cab1787719148b1191b837f17605e5e5a764785e99",
+      "speech_rate_allocation.py": "3cfb0eb1ea1b969450f6fee699a629b23ab9ff6804844ea87d5d705f4ced5df3",
+      "speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+      "q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+      "batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178"
+    },
+    "independent_auditor": "024766778fdc29921371112bfee6f3e6435fbbb476bf8c18367e09d69b057fd6"
+  },
+  "source_commits": {
+    "non_speech_metric_mode": "509db927",
+    "frozen_harness": "e30ed737",
+    "independent_auditor": "fd8e3021"
+  },
+  "smoke": {
+    "policy": "Shortest and longest original source cases by geometry only; both profiles, before full outcomes.",
+    "profile_groups": 4,
+    "full_run_output_byte_parity": true
+  },
+  "all_264_search_and_audit_groups_passed": true,
+  "all_complete_native_common_v5_model_pcm_pwm_exact": true,
+  "all_original_lengths_and_gains_preserved": true,
+  "all_actual_segment_and_whole_chain_caps_passed": true,
+  "stoi_computed": false,
+  "subjective_quality_assessed": false,
+  "quality_adoption_claimed": false,
+  "hardware_admission_attempted": false,
+  "descriptors": {
+    "activity": "Fraction with absolute PCM16 amplitude>=256; not VAD.",
+    "full_scale": "Fraction equal to -32768 or +32767; descriptive proxy, not proof of source ADC clipping.",
+    "rms": "Direct original-level PCM16 RMS; no normalization or fitted gain.",
+    "pwm_endpoint": "Fraction at fixed transfer duty 0 or 255."
+  },
+  "results": {
+    "encoded_selected_changed_groups": 231,
+    "pcm_selected_changed_groups": 230,
+    "selected_pcm_sse_strictly_lower_groups": 230,
+    "selected_whole_pcm_pwm_floors_passed_groups": 264,
+    "raw_whole_pcm_pwm_floors_passed_groups": 245,
+    "raw_pcm_sse_regressed_groups": 0,
+    "raw_pwm_sse_regressed_groups": 19,
+    "selected_fewer_complete_bytes_groups": 26,
+    "selected_complete_byte_saving_min": 0,
+    "selected_complete_byte_saving_max": 4
+  },
+  "work": {
+    "full_synthesis_evaluations": 17152,
+    "local_synthesis_evaluations": 18901,
+    "local_excitation_trials": 1190736,
+    "all_searches_hit_full64_bound": true,
+    "complete_adjacent_windows": 184,
+    "incomplete_windows": 268,
+    "total_process_cpu_seconds": 768.109375,
+    "max_shard_wall_seconds": 273.1999341000046
+  },
+  "hardware_scope": {
+    "max_baseline_complete_stream_bytes": 299058,
+    "baseline_data_only_exceeds32768_bytes_groups": 5,
+    "claim": "Host numerical robustness only. No claim that any chain fits or meets real-time on the AVR player."
+  },
+  "runtime": {
+    "python": "3.12.14",
+    "numpy": "2.5.4",
+    "numba": "0.68.0",
+    "scipy": "1.18.1",
+    "soundfile": "0.14.0",
+    "numerical_threads": 1
+  }
+}
