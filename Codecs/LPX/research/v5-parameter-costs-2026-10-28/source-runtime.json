@@ -1,0 +1,188 @@
+{
+  "decoder_sources": {
+    "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+    "Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+    "Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "host_sources": {
+    "study.py": "32b859c774c3551529b5d1fc7a6e41a1165d78a56e8fe32bc13d63a606d71af7",
+    "01_ACTIVE_Q0_CODEC/tools/output_paths.py": "17d34b7471e9af6ad14c5261db3242194fc66f703af5173253644f0f2e2fe571",
+    "01_ACTIVE_Q0_CODEC/tools/measure_speech_firmware.py": "d37ad0e4c258ab52bbb186b0eb9b6d841405b30c1c7530930f33c680dec700c1",
+    "01_ACTIVE_Q0_CODEC/tools/profile_avr.py": "37809f1fefcf2dd50293e378264b52083aee71f5c2df4a2d3de354a1f989478b",
+    "01_ACTIVE_Q0_CODEC/tools/batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178",
+    "01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+    "01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+    "01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+    "01_ACTIVE_Q0_CODEC/tools/lpx4.py": "d732e76ed807089d02bea837f07e77f1a64cc94ce63a6be2fab286548b94acc0",
+    "01_ACTIVE_Q0_CODEC/tools/compact_format.py": "118ed178c5910d4590faaef7f1119a4fab2a9c66ebe263f9bdc82d8a0ac7ad4f",
+    "01_ACTIVE_Q0_CODEC/tools/rice_v7.py": "a263dd86f37e0fd467b3c46b42f7ff25e6259ba5f647b6a6d2451ff56f76739b",
+    "01_ACTIVE_Q0_CODEC/tools/rice_v4_reference.py": "5cc2b9f0f0f6b5cfebbf4e1afe65326eb017b3564ab40163b3c25cbdc418013c",
+    "01_ACTIVE_Q0_CODEC/tools/rice_v3.py": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+    "01_ACTIVE_Q0_CODEC/tools/l3av_parse.py": "41d61c89ed0bce196eaa44cfd3dbe98bad93ce0d29a2c0cb82f39974fa0d2ab0",
+    "01_ACTIVE_Q0_CODEC/tools/lossless_repack.py": "e267771f096c22ea31f05fa11289753be44f904f263231209b2bfbb5a971ad51",
+    "01_ACTIVE_Q0_CODEC/tools/avr_timing_gate.py": "2cc594b7de7b50684a1d21b0c62c56d6dcb9cdbbe4622444b106ae6fd3cac2fa",
+    "01_ACTIVE_Q0_CODEC/tools/fast_lpx4.py": "2f794c219e8d585da06a8762c6b428c6fa1379eec359e04ee36b4788b1bd5938",
+    "01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "d7c17a39dbaad71df99ff1d46916bd263080cc6727f94b79e98aa86381f562cc",
+    "01_ACTIVE_Q0_CODEC/tools/benchmark_speech_flash.py": "ab1dc4cdf84825c86c5340773fa32094cabee0cd55c9d12716298f4b9c236e70",
+    "01_ACTIVE_Q0_CODEC/tools/benchmark_standards.py": "01f160bbff3275feb0cb750681e6b747b7dc008f1871e5d336001af61fc2cd51",
+    "01_ACTIVE_Q0_CODEC/tools/wav_to_lpx4.py": "26295e84688bb6801875504229341a998c261f72df46e84989daee3a58cc257d",
+    "01_ACTIVE_Q0_CODEC/tools/level_policy.py": "59d16e07b74390b334383efdd648c6e5f69364e833f4d31c56fa76dbd71df04b",
+    "01_ACTIVE_Q0_CODEC/tools/tune_pcm16.py": "ae6c2b0aba038254b5555cd4cdf054d7a9e549f72485f483a880807b3d5d0c9a",
+    "01_ACTIVE_Q0_CODEC/tools/optimize_q0.py": "cfc2d55683c3f0a7214db2922f12b87e143568c12cc9c5adf98fc81d4f17ee42",
+    "01_ACTIVE_Q0_CODEC/tools/global_rate_pcm16.py": "b6597aa626c48add4e909fc83f648ff73c55c5583e341afa68f414ff88132735",
+    "01_ACTIVE_Q0_CODEC/tools/refine_lsf_pcm16.py": "02b20220c76809fe85dde4c84ebd543c75b26c018a93176c0d9fd427323163ea",
+    "01_ACTIVE_Q0_CODEC/tools/beam_excitation_pcm16.py": "a1928bb71f01c05e0fb6534b90b4906145c33aec380463fba84351137db2dee1",
+    "01_ACTIVE_Q0_CODEC/tools/refine_excitation_pcm16.py": "4f2c7b45b4ffdecbac135331bc59f75cec3778a89f43984fa64a7fc64b1128ec",
+    "01_ACTIVE_Q0_CODEC/tools/speech_parameter_histograms.py": "5847af8434ce8f4b349f6728fbb3f2b37140878e319fc77282ad1e30257b5fab",
+    "01_ACTIVE_Q0_CODEC/tools/speech_parameter_costs.py": "e551fffaa67077df817df076c7379fd1676e90072c3071245bc9f6b198a3d821",
+    "01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "packages": {
+    "numpy": "2.5.4",
+    "numba": "0.68.0",
+    "scipy": "1.18.1",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0"
+  },
+  "assumptions": {
+    "source_format": "actual existing v5 bytes; untouched fields are not repacked",
+    "proposed_header_bytes": 23,
+    "additional_method_selector_bytes_per_segment": 1,
+    "first_tuple_bits_per_segment": 15,
+    "field_widths": [
+      5,
+      7,
+      3
+    ],
+    "repeat": "one flag per selected later field; changed fields retain full absolute width",
+    "rice": "zigzag delta q<8 costs q+1+k; q>=8 is eight zero bits then full absolute field",
+    "masks_repeat": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "masks_rice": [
+      5,
+      7
+    ],
+    "rice_common_k": [
+      0,
+      1,
+      2
+    ],
+    "history": "reset only per segment; update every stored tuple, including unused lag and tail",
+    "alignment": "continuous LSB packing within segment, exact independent final byte padding",
+    "nomination": "tuning baseline and expanded100 only; positive aggregate savings in both, minimum repeat field count then best worst-source fractional saving; best Rice is separate higher-complexity point",
+    "fallback": "optional per-segment min(v5,new) is a data-only envelope; dual decoder cost is not free",
+    "flash": "saved complete stream bytes are optimistic added-decoder/table/layout allowance only; no linked firmware saving is measured",
+    "quality": "no STOI, music quality, perceived gain or implemented new-decoder exactness claim"
+  },
+  "methods": [
+    {
+      "selector": 1,
+      "name": "repeat-mask1",
+      "kind": "repeat",
+      "mask": 1,
+      "k": null
+    },
+    {
+      "selector": 2,
+      "name": "repeat-mask2",
+      "kind": "repeat",
+      "mask": 2,
+      "k": null
+    },
+    {
+      "selector": 3,
+      "name": "repeat-mask3",
+      "kind": "repeat",
+      "mask": 3,
+      "k": null
+    },
+    {
+      "selector": 4,
+      "name": "repeat-mask4",
+      "kind": "repeat",
+      "mask": 4,
+      "k": null
+    },
+    {
+      "selector": 5,
+      "name": "repeat-mask5",
+      "kind": "repeat",
+      "mask": 5,
+      "k": null
+    },
+    {
+      "selector": 6,
+      "name": "repeat-mask6",
+      "kind": "repeat",
+      "mask": 6,
+      "k": null
+    },
+    {
+      "selector": 7,
+      "name": "repeat-mask7",
+      "kind": "repeat",
+      "mask": 7,
+      "k": null
+    },
+    {
+      "selector": 8,
+      "name": "rice-mask5-k0",
+      "kind": "rice",
+      "mask": 5,
+      "k": 0
+    },
+    {
+      "selector": 9,
+      "name": "rice-mask5-k1",
+      "kind": "rice",
+      "mask": 5,
+      "k": 1
+    },
+    {
+      "selector": 10,
+      "name": "rice-mask5-k2",
+      "kind": "rice",
+      "mask": 5,
+      "k": 2
+    },
+    {
+      "selector": 11,
+      "name": "rice-mask7-k0",
+      "kind": "rice",
+      "mask": 7,
+      "k": 0
+    },
+    {
+      "selector": 12,
+      "name": "rice-mask7-k1",
+      "kind": "rice",
+      "mask": 7,
+      "k": 1
+    },
+    {
+      "selector": 13,
+      "name": "rice-mask7-k2",
+      "kind": "rice",
+      "mask": 7,
+      "k": 2
+    }
+  ],
+  "measurement_driver_sha256": "32b859c774c3551529b5d1fc7a6e41a1165d78a56e8fe32bc13d63a606d71af7",
+  "private_input_fingerprints_exported": false
+}

@@ -1,0 +1,202 @@
+{
+  "schema": "lpx-hypothetical-parameter-byte-budget-context-v1",
+  "groups": [
+    {
+      "family": "baseline-v2",
+      "split": "additional",
+      "method": "repeat-mask1",
+      "records": 18,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 18,
+      "data_within32768_saved_bytes_min_median_max": [
+        0,
+        9.0,
+        146
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "baseline-v2",
+      "split": "additional",
+      "method": "rice-mask5-k1",
+      "records": 18,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 18,
+      "data_within32768_saved_bytes_min_median_max": [
+        0,
+        23.0,
+        296
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "baseline-v2",
+      "split": "evaluation",
+      "method": "repeat-mask1",
+      "records": 40,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 40,
+      "data_within32768_saved_bytes_min_median_max": [
+        3,
+        24.0,
+        156
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "baseline-v2",
+      "split": "evaluation",
+      "method": "rice-mask5-k1",
+      "records": 40,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 40,
+      "data_within32768_saved_bytes_min_median_max": [
+        17,
+        48.5,
+        160
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "baseline-v2",
+      "split": "tuning",
+      "method": "repeat-mask1",
+      "records": 40,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 40,
+      "data_within32768_saved_bytes_min_median_max": [
+        5,
+        23.0,
+        117
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "baseline-v2",
+      "split": "tuning",
+      "method": "rice-mask5-k1",
+      "records": 40,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 40,
+      "data_within32768_saved_bytes_min_median_max": [
+        25,
+        56.5,
+        171
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "expanded100",
+      "split": "additional",
+      "method": "repeat-mask1",
+      "records": 18,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 18,
+      "data_within32768_saved_bytes_min_median_max": [
+        0,
+        8.5,
+        141
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "expanded100",
+      "split": "additional",
+      "method": "rice-mask5-k1",
+      "records": 18,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 18,
+      "data_within32768_saved_bytes_min_median_max": [
+        0,
+        23.5,
+        305
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "expanded100",
+      "split": "evaluation",
+      "method": "repeat-mask1",
+      "records": 40,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 40,
+      "data_within32768_saved_bytes_min_median_max": [
+        2,
+        23.5,
+        155
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "expanded100",
+      "split": "evaluation",
+      "method": "rice-mask5-k1",
+      "records": 40,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 40,
+      "data_within32768_saved_bytes_min_median_max": [
+        17,
+        48.5,
+        160
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "expanded100",
+      "split": "tuning",
+      "method": "repeat-mask1",
+      "records": 40,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 40,
+      "data_within32768_saved_bytes_min_median_max": [
+        5,
+        22.0,
+        117
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "expanded100",
+      "split": "tuning",
+      "method": "rice-mask5-k1",
+      "records": 40,
+      "original_data_alone_over32768": 0,
+      "original_data_alone_within32768": 40,
+      "data_within32768_saved_bytes_min_median_max": [
+        25,
+        57.0,
+        171
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "non-speech-baseline-v1",
+      "split": "non_speech",
+      "method": "repeat-mask1",
+      "records": 264,
+      "original_data_alone_over32768": 5,
+      "original_data_alone_within32768": 259,
+      "data_within32768_saved_bytes_min_median_max": [
+        9,
+        104,
+        635
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    },
+    {
+      "family": "non-speech-baseline-v1",
+      "split": "non_speech",
+      "method": "rice-mask5-k1",
+      "records": 264,
+      "original_data_alone_over32768": 5,
+      "original_data_alone_within32768": 259,
+      "data_within32768_saved_bytes_min_median_max": [
+        -2,
+        119,
+        834
+      ],
+      "scope": "Data alone is only an optimistic eligibility filter. Program, directories, tables and layout still have to fit; this is not firmware admission."
+    }
+  ],
+  "scope": "Five non-speech profile groups exceed 32 KiB before adding any program. Their large full-recording savings are not a usable whole-image ATmega328P budget. No actual added Flash allowance is guaranteed."
+}
