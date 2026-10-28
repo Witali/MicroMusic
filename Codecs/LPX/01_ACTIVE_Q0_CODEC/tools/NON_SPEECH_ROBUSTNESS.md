@@ -66,3 +66,19 @@ chunked worst-amplitude SSE, no-STOI metrics, descriptive activity/clipping
 proxies, geometry-only smoke selection, safe output aliases and complete
 partial-tail reset-chain native/model/PWM reconstruction. The refiner's own
 non-speech mode also retains the original speech policy unchanged.
+
+## Independent saved-output audit
+
+After each full shard completes, reopen its input/output bytes in a fresh process:
+
+```text
+python Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/audit_nonspeech_trajectory.py --manifest /private/manifest.json --run build/non-speech/full-0/results-private.json --output build/non-speech/audit-0
+```
+
+Repeat for the other shards. The independent audit derives segment choice again
+from frozen baseline error/sample counts, redecodes all distinct saved complete
+chains through the model and both native PCM/PWM interfaces, and recomputes
+full metrics, descriptive levels, hashes and true caps. It does not trust
+optimizer snapshots or a callback's predicted delta. It rejects changed saved
+metrics, files, reset geometry, source/settings or manifest identity. Audit
+outputs remain private; only anonymous numeric evidence is publishable.

@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 import os
 from pathlib import Path
 import tempfile
@@ -9,6 +10,7 @@ import numpy as np
 import soundfile as sf
 
 import benchmark_nonspeech_trajectory as robustness
+import audit_nonspeech_trajectory as independent_audit
 from batch_decoder import BatchSession
 import speech_compact as compact
 from standard_metrics import pwm_duties
@@ -92,6 +94,12 @@ class NonSpeechRobustnessTests(unittest.TestCase):
             with BatchSession('batch', speech=True, speech_compact=True) as common, BatchSession('batch', speech=True, speech_compact=True, compact_only=True) as narrow:
                 with patch('refine_speech_trajectory.quality', side_effect=AssertionError('Speech metrics forbidden')):
                     result = robustness.run_group(record, 1, folder/'output', common, narrow, settings)
+                    checked = independent_audit.audit_group(record, result, folder/'output', common, narrow)
+                    self.assertTrue(checked['full_reference_metrics_caps_and_policy_exact'])
+                    forged = deepcopy(result)
+                    forged['outputs']['selected']['metrics']['pcm16']['exact_error_energy'] += 1
+                    with self.assertRaises(AssertionError):
+                        independent_audit.audit_group(record, forged, folder/'output', common, narrow)
             self.assertEqual(result['samples'], 458)
             self.assertEqual(result['selected_segments'], [0, 1])
             self.assertTrue(result['all_native_common_v5_model_pcm_pwm_exact'])
