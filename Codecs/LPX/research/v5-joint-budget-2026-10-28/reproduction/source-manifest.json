@@ -1,0 +1,89 @@
+{
+  "schema": "lpx-v5-study-reproduction-v1",
+  "assets": {
+    "benchmark.py": {
+      "recorded_origin": "build/v5-joint/corpus/benchmark.py",
+      "sha256": "ecca99f5ddc291bef556b80972a7d654e2d1695ef41f409294074997abbb1c4a"
+    },
+    "audit.py": {
+      "recorded_origin": "build/v5-joint/corpus/audit.py",
+      "sha256": "26bbded0f62eb45f368b999bd059c079ee9b454922c0b866cae964046fbd51e2"
+    },
+    "subsets/all-shard-0.json": {
+      "recorded_origin": "build/v5-joint/corpus/subsets/all-shard-0.json",
+      "sha256": "f85a4ba56a431d414c229cb7f536511e0a6a0f409025a16455f3f2302819459d"
+    },
+    "subsets/all-shard-1.json": {
+      "recorded_origin": "build/v5-joint/corpus/subsets/all-shard-1.json",
+      "sha256": "b5094cc947d2bed9f84843ee277e7ba6c4eb881dba59741f9e35d4ae83af33be"
+    },
+    "subsets/all-shard-2.json": {
+      "recorded_origin": "build/v5-joint/corpus/subsets/all-shard-2.json",
+      "sha256": "83f3392e5217488415a6c4a5e755c3209525874faff1cade0373d974c525256b"
+    }
+  },
+  "benchmark_source_inventory": {
+    "build/v5-joint/corpus/benchmark.py": "ecca99f5ddc291bef556b80972a7d654e2d1695ef41f409294074997abbb1c4a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "9c82ed7193f01c684398117088ecb4185fb0a1528560340d09ca9a9d29a97a85",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "332b71ad188491b9c57c27f79aff34aa98be89af57a62d129a6c69c22c58277f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/avr_timing_gate.py": "2cc594b7de7b50684a1d21b0c62c56d6dcb9cdbbe4622444b106ae6fd3cac2fa",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/compact_format.py": "118ed178c5910d4590faaef7f1119a4fab2a9c66ebe263f9bdc82d8a0ac7ad4f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/enhance_speech_compact.py": "44aacfa31522b8780f19560bda152a49c3c6bd92f850040aa4d99331b938dc40",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/fast_lpx4.py": "2f794c219e8d585da06a8762c6b428c6fa1379eec359e04ee36b4788b1bd5938",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/l3av_parse.py": "41d61c89ed0bce196eaa44cfd3dbe98bad93ce0d29a2c0cb82f39974fa0d2ab0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lossless_repack.py": "e267771f096c22ea31f05fa11289753be44f904f263231209b2bfbb5a971ad51",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lpx4.py": "d732e76ed807089d02bea837f07e77f1a64cc94ce63a6be2fab286548b94acc0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/output_paths.py": "17d34b7471e9af6ad14c5261db3242194fc66f703af5173253644f0f2e2fe571",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/profile_avr.py": "37809f1fefcf2dd50293e378264b52083aee71f5c2df4a2d3de354a1f989478b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_lpc.py": "2cdb02ac37728b4a315ba0bb36410780055b2067e8699816293c66686106d656",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v3.py": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v4_reference.py": "5cc2b9f0f0f6b5cfebbf4e1afe65326eb017b3564ab40163b3c25cbdc418013c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v7.py": "a263dd86f37e0fd467b3c46b42f7ff25e6259ba5f647b6a6d2451ff56f76739b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "d7c17a39dbaad71df99ff1d46916bd263080cc6727f94b79e98aa86381f562cc",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_pcm16.py": "ae6c2b0aba038254b5555cd4cdf054d7a9e549f72485f483a880807b3d5d0c9a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c"
+  },
+  "packages": {
+    "numpy": "2.5.4",
+    "numba": "0.68.0",
+    "scipy": "1.18.1",
+    "pystoi": "0.4.1",
+    "soundfile": "0.14.0"
+  },
+  "baseline_commit": "4b399def40f187935f806d95fc6684a23281a0a5",
+  "benchmark_settings": {
+    "frame_limit": 32,
+    "spectral_candidates": 2,
+    "lookahead": 640,
+    "excitation_horizon": 80,
+    "passes": 1,
+    "refit": true
+  },
+  "growth_percent": [
+    0,
+    5,
+    10
+  ],
+  "input_data_public": false,
+  "recorded_origin_note": "Assets are byte-for-byte copies. Restore to recorded_origin before running so sources() preserves recorded inventory keys. Private manifests, voices, incumbent streams and listening media are intentionally absent.",
+  "support_files": {
+    "reproduce.py": {
+      "sha256": "2dd05332873681ed64c98f8666b69cb10b9b75ba72282d21a5adecb6fec8849a"
+    },
+    "PROTOCOL.md": {
+      "sha256": "3431361c414343a4d1913cec937af5300c62b571e7ee7bbb985eec0aa47ead85"
+    }
+  }
+}

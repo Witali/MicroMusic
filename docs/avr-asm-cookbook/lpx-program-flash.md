@@ -241,3 +241,5 @@ are recorded in the linked research report below; physical-board support is
 not inferred from simulation.
 
 [Collector contract and use](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/SPEECH_FLASH.md#complete-recording-firmware-cost).
+
+[Complete corpus image costs and selected-chain IRQ checks](../../Codecs/LPX/research/v5-joint-budget-2026-10-28/README.md).

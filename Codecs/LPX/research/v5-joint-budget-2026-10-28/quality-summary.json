@@ -1,0 +1,661 @@
+{
+  "schema": "lpx-v5-search-branches-quality-v1",
+  "branches": {
+    "joint_lpc_excitation": {
+      "schema": "lpx-v5-joint-independent-audit-v1",
+      "status": "complete",
+      "branch": "full",
+      "cases": 49,
+      "segments": 59,
+      "variants": 294,
+      "counts": {
+        "native_pcm_pwm_checks": 2680,
+        "distinct_streams": 670,
+        "serialized_stream_instances": 1416,
+        "fresh_unique_quality_evaluations": 567,
+        "joined_metric_sets": 1176
+      },
+      "source_sha256": {
+        "build/v5-joint/corpus/benchmark.py": "ecca99f5ddc291bef556b80972a7d654e2d1695ef41f409294074997abbb1c4a",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "9c82ed7193f01c684398117088ecb4185fb0a1528560340d09ca9a9d29a97a85",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "332b71ad188491b9c57c27f79aff34aa98be89af57a62d129a6c69c22c58277f",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/avr_timing_gate.py": "2cc594b7de7b50684a1d21b0c62c56d6dcb9cdbbe4622444b106ae6fd3cac2fa",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/compact_format.py": "118ed178c5910d4590faaef7f1119a4fab2a9c66ebe263f9bdc82d8a0ac7ad4f",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/enhance_speech_compact.py": "44aacfa31522b8780f19560bda152a49c3c6bd92f850040aa4d99331b938dc40",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/fast_lpx4.py": "2f794c219e8d585da06a8762c6b428c6fa1379eec359e04ee36b4788b1bd5938",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/l3av_parse.py": "41d61c89ed0bce196eaa44cfd3dbe98bad93ce0d29a2c0cb82f39974fa0d2ab0",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lossless_repack.py": "e267771f096c22ea31f05fa11289753be44f904f263231209b2bfbb5a971ad51",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lpx4.py": "d732e76ed807089d02bea837f07e77f1a64cc94ce63a6be2fab286548b94acc0",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/output_paths.py": "17d34b7471e9af6ad14c5261db3242194fc66f703af5173253644f0f2e2fe571",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/profile_avr.py": "37809f1fefcf2dd50293e378264b52083aee71f5c2df4a2d3de354a1f989478b",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_lpc.py": "2cdb02ac37728b4a315ba0bb36410780055b2067e8699816293c66686106d656",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v3.py": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v4_reference.py": "5cc2b9f0f0f6b5cfebbf4e1afe65326eb017b3564ab40163b3c25cbdc418013c",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v7.py": "a263dd86f37e0fd467b3c46b42f7ff25e6259ba5f647b6a6d2451ff56f76739b",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "d7c17a39dbaad71df99ff1d46916bd263080cc6727f94b79e98aa86381f562cc",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_pcm16.py": "ae6c2b0aba038254b5555cd4cdf054d7a9e549f72485f483a880807b3d5d0c9a",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c"
+      },
+      "audit_sha256": "26bbded0f62eb45f368b999bd059c079ee9b454922c0b866cae964046fbd51e2",
+      "manifest_sha256": "a8aa6f7ab877b1b89ee3b0d34dcb01b4b22e4e27afa24b507e4ec8590a24d383",
+      "groups": [
+        {
+          "profile": 4,
+          "growth_percent": 0,
+          "cases": 49,
+          "improved": 46,
+          "original_stream_bytes": 150962,
+          "incumbent_stream_bytes": 150962,
+          "selected_stream_bytes": 150955,
+          "selected_variants": {
+            "candidate": 45,
+            "incumbent": 3,
+            "raw": 1
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 3365402943676.0,
+              "selected_error_energy": 3122036560928.0,
+              "sse_reduction_percent": 7.231418847045194,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0023839040231930114
+            },
+            "incumbent": {
+              "baseline_error_energy": 3170158189068.0,
+              "selected_error_energy": 3122036560928.0,
+              "sse_reduction_percent": 1.5179566844942636,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0009095065735632477
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 3413703149594.0,
+              "selected_error_energy": 3149049815578.0,
+              "sse_reduction_percent": 7.752675684394991,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.004168122830014626
+            },
+            "incumbent": {
+              "baseline_error_energy": 3199872924186.0,
+              "selected_error_energy": 3149049815578.0,
+              "sse_reduction_percent": 1.5882852166989925,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0011473575120675105
+            }
+          }
+        },
+        {
+          "profile": 4,
+          "growth_percent": 5,
+          "cases": 49,
+          "improved": 45,
+          "original_stream_bytes": 150962,
+          "incumbent_stream_bytes": 151221,
+          "selected_stream_bytes": 156498,
+          "selected_variants": {
+            "candidate": 45,
+            "incumbent": 4
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 3365402943676.0,
+              "selected_error_energy": 3070165905060.0,
+              "sse_reduction_percent": 8.772709941636741,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0029015357266834883
+            },
+            "incumbent": {
+              "baseline_error_energy": 3170154040876.0,
+              "selected_error_energy": 3070165905060.0,
+              "sse_reduction_percent": 3.154046602365434,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.00139995121342766
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 3413703149594.0,
+              "selected_error_energy": 3095931244570.0,
+              "sse_reduction_percent": 9.308715230900887,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.00493761490353102
+            },
+            "incumbent": {
+              "baseline_error_energy": 3199869728794.0,
+              "selected_error_energy": 3095931244570.0,
+              "sse_reduction_percent": 3.2482098658176755,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0018812730723934258
+            }
+          }
+        },
+        {
+          "profile": 4,
+          "growth_percent": 10,
+          "cases": 49,
+          "improved": 44,
+          "original_stream_bytes": 150962,
+          "incumbent_stream_bytes": 162504,
+          "selected_stream_bytes": 163823,
+          "selected_variants": {
+            "candidate": 42,
+            "incumbent": 5,
+            "raw": 2
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 3365402943676.0,
+              "selected_error_energy": 3005778599109.0,
+              "sse_reduction_percent": 10.685922327451983,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.003203918424224109
+            },
+            "incumbent": {
+              "baseline_error_energy": 3082366591363.0,
+              "selected_error_energy": 3005778599109.0,
+              "sse_reduction_percent": 2.484713935993361,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0009493559681325444
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 3413703149594.0,
+              "selected_error_energy": 3030062034970.0,
+              "sse_reduction_percent": 11.238268174244364,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.005519935723173219
+            },
+            "incumbent": {
+              "baseline_error_energy": 3109900875290.0,
+              "selected_error_energy": 3030062034970.0,
+              "sse_reduction_percent": 2.567247109204244,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0015784341163683378
+            }
+          }
+        },
+        {
+          "profile": 6,
+          "growth_percent": 0,
+          "cases": 49,
+          "improved": 44,
+          "original_stream_bytes": 216081,
+          "incumbent_stream_bytes": 216081,
+          "selected_stream_bytes": 216075,
+          "selected_variants": {
+            "candidate": 41,
+            "incumbent": 5,
+            "raw": 3
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 2379106980939.0,
+              "selected_error_energy": 2154821691777.0,
+              "sse_reduction_percent": 9.427288934837128,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0022254381131360315
+            },
+            "incumbent": {
+              "baseline_error_energy": 2219774391989.0,
+              "selected_error_energy": 2154821691777.0,
+              "sse_reduction_percent": 2.926094671891407,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0007649223646405842
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 2409382602266.0,
+              "selected_error_energy": 2171268680730.0,
+              "sse_reduction_percent": 9.882777492958414,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0034223556101160885
+            },
+            "incumbent": {
+              "baseline_error_energy": 2238180013594.0,
+              "selected_error_energy": 2171268680730.0,
+              "sse_reduction_percent": 2.989542059065922,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0009106132675171977
+            }
+          }
+        },
+        {
+          "profile": 6,
+          "growth_percent": 5,
+          "cases": 49,
+          "improved": 47,
+          "original_stream_bytes": 216081,
+          "incumbent_stream_bytes": 216599,
+          "selected_stream_bytes": 221483,
+          "selected_variants": {
+            "candidate": 43,
+            "incumbent": 2,
+            "raw": 4
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 2379106980939.0,
+              "selected_error_energy": 2107561334365.0,
+              "sse_reduction_percent": 11.41376359909737,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.003064609426273995
+            },
+            "incumbent": {
+              "baseline_error_energy": 2218939881641.0,
+              "selected_error_energy": 2107561334365.0,
+              "sse_reduction_percent": 5.0194486203759086,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0013455758207015444
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 2409382602266.0,
+              "selected_error_energy": 2124346143258.0,
+              "sse_reduction_percent": 11.830269660780571,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.004286120893163312
+            },
+            "incumbent": {
+              "baseline_error_energy": 2237352325658.0,
+              "selected_error_energy": 2124346143258.0,
+              "sse_reduction_percent": 5.050888995177152,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.001545296530396945
+            }
+          }
+        },
+        {
+          "profile": 6,
+          "growth_percent": 10,
+          "cases": 49,
+          "improved": 46,
+          "original_stream_bytes": 216081,
+          "incumbent_stream_bytes": 233359,
+          "selected_stream_bytes": 234544,
+          "selected_variants": {
+            "candidate": 43,
+            "incumbent": 3,
+            "raw": 3
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 2379106980939.0,
+              "selected_error_energy": 2089991406712.0,
+              "sse_reduction_percent": 12.152272955497367,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0036651651494884023
+            },
+            "incumbent": {
+              "baseline_error_energy": 2155549905764.0,
+              "selected_error_energy": 2089991406712.0,
+              "sse_reduction_percent": 3.0413816389356034,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0012721138615045954
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 2409382602266.0,
+              "selected_error_energy": 2105463687706.0,
+              "sse_reduction_percent": 12.613974811396385,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.005307505983953371
+            },
+            "incumbent": {
+              "baseline_error_energy": 2172366924314.0,
+              "selected_error_energy": 2105463687706.0,
+              "sse_reduction_percent": 3.0797392401436516,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0016913385187193783
+            }
+          }
+        }
+      ],
+      "elapsed_seconds": 69.89746969999396
+    },
+    "lsf_without_local_excitation_refit": {
+      "schema": "lpx-v5-joint-independent-audit-v1",
+      "status": "complete",
+      "branch": "lsf-only",
+      "cases": 49,
+      "segments": 59,
+      "variants": 294,
+      "counts": {
+        "native_pcm_pwm_checks": 2288,
+        "distinct_streams": 572,
+        "serialized_stream_instances": 1416,
+        "fresh_unique_quality_evaluations": 489,
+        "joined_metric_sets": 1176
+      },
+      "source_sha256": {
+        "build/v5-joint/corpus/benchmark.py": "ecca99f5ddc291bef556b80972a7d654e2d1695ef41f409294074997abbb1c4a",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "9c82ed7193f01c684398117088ecb4185fb0a1528560340d09ca9a9d29a97a85",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "332b71ad188491b9c57c27f79aff34aa98be89af57a62d129a6c69c22c58277f",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/avr_timing_gate.py": "2cc594b7de7b50684a1d21b0c62c56d6dcb9cdbbe4622444b106ae6fd3cac2fa",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/compact_format.py": "118ed178c5910d4590faaef7f1119a4fab2a9c66ebe263f9bdc82d8a0ac7ad4f",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/enhance_speech_compact.py": "44aacfa31522b8780f19560bda152a49c3c6bd92f850040aa4d99331b938dc40",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/fast_lpx4.py": "2f794c219e8d585da06a8762c6b428c6fa1379eec359e04ee36b4788b1bd5938",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/l3av_parse.py": "41d61c89ed0bce196eaa44cfd3dbe98bad93ce0d29a2c0cb82f39974fa0d2ab0",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lossless_repack.py": "e267771f096c22ea31f05fa11289753be44f904f263231209b2bfbb5a971ad51",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lpx4.py": "d732e76ed807089d02bea837f07e77f1a64cc94ce63a6be2fab286548b94acc0",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/output_paths.py": "17d34b7471e9af6ad14c5261db3242194fc66f703af5173253644f0f2e2fe571",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/profile_avr.py": "37809f1fefcf2dd50293e378264b52083aee71f5c2df4a2d3de354a1f989478b",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_lpc.py": "2cdb02ac37728b4a315ba0bb36410780055b2067e8699816293c66686106d656",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v3.py": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v4_reference.py": "5cc2b9f0f0f6b5cfebbf4e1afe65326eb017b3564ab40163b3c25cbdc418013c",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v7.py": "a263dd86f37e0fd467b3c46b42f7ff25e6259ba5f647b6a6d2451ff56f76739b",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "d7c17a39dbaad71df99ff1d46916bd263080cc6727f94b79e98aa86381f562cc",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_pcm16.py": "ae6c2b0aba038254b5555cd4cdf054d7a9e549f72485f483a880807b3d5d0c9a",
+        "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c"
+      },
+      "audit_sha256": "26bbded0f62eb45f368b999bd059c079ee9b454922c0b866cae964046fbd51e2",
+      "manifest_sha256": "a8aa6f7ab877b1b89ee3b0d34dcb01b4b22e4e27afa24b507e4ec8590a24d383",
+      "groups": [
+        {
+          "profile": 4,
+          "growth_percent": 0,
+          "cases": 49,
+          "improved": 46,
+          "original_stream_bytes": 150962,
+          "incumbent_stream_bytes": 150962,
+          "selected_stream_bytes": 150943,
+          "selected_variants": {
+            "candidate": 44,
+            "incumbent": 3,
+            "raw": 2
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 3365402943676.0,
+              "selected_error_energy": 3104289562515.0,
+              "sse_reduction_percent": 7.758755356521681,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.002474456575004032
+            },
+            "incumbent": {
+              "baseline_error_energy": 3170158189068.0,
+              "selected_error_energy": 3104289562515.0,
+              "sse_reduction_percent": 2.0777709699201106,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0010000591253742687
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 3413703149594.0,
+              "selected_error_energy": 3131922126362.0,
+              "sse_reduction_percent": 8.254409094285569,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.004348198782801746
+            },
+            "incumbent": {
+              "baseline_error_energy": 3199872924186.0,
+              "selected_error_energy": 3131922126362.0,
+              "sse_reduction_percent": 2.123546760572865,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0013274334648546307
+            }
+          }
+        },
+        {
+          "profile": 4,
+          "growth_percent": 5,
+          "cases": 49,
+          "improved": 47,
+          "original_stream_bytes": 150962,
+          "incumbent_stream_bytes": 151221,
+          "selected_stream_bytes": 151357,
+          "selected_variants": {
+            "candidate": 44,
+            "incumbent": 2,
+            "raw": 3
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 3365402943676.0,
+              "selected_error_energy": 3104310423843.0,
+              "sse_reduction_percent": 7.75813548043703,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0025230957697349302
+            },
+            "incumbent": {
+              "baseline_error_energy": 3170154040876.0,
+              "selected_error_energy": 3104310423843.0,
+              "sse_reduction_percent": 2.0769847832001758,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.001021511256479102
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 3413703149594.0,
+              "selected_error_energy": 3131975747610.0,
+              "sse_reduction_percent": 8.252838329469466,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.004420096633772394
+            },
+            "incumbent": {
+              "baseline_error_energy": 3199869728794.0,
+              "selected_error_energy": 3131975747610.0,
+              "sse_reduction_percent": 2.1217732888641248,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0013637548026347998
+            }
+          }
+        },
+        {
+          "profile": 4,
+          "growth_percent": 10,
+          "cases": 49,
+          "improved": 46,
+          "original_stream_bytes": 150962,
+          "incumbent_stream_bytes": 162504,
+          "selected_stream_bytes": 162527,
+          "selected_variants": {
+            "candidate": 44,
+            "incumbent": 3,
+            "raw": 2
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 3365402943676.0,
+              "selected_error_energy": 3027510187586.0,
+              "sse_reduction_percent": 10.040187215172597,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.003172964334513118
+            },
+            "incumbent": {
+              "baseline_error_energy": 3082366591363.0,
+              "selected_error_energy": 3027510187586.0,
+              "sse_reduction_percent": 1.779684607622966,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0009184018784215538
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 3413703149594.0,
+              "selected_error_energy": 3053349352474.0,
+              "sse_reduction_percent": 10.556096453871737,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0052730330364787106
+            },
+            "incumbent": {
+              "baseline_error_energy": 3109900875290.0,
+              "selected_error_energy": 3053349352474.0,
+              "sse_reduction_percent": 1.8184348982096266,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.001331531429673828
+            }
+          }
+        },
+        {
+          "profile": 6,
+          "growth_percent": 0,
+          "cases": 49,
+          "improved": 46,
+          "original_stream_bytes": 216081,
+          "incumbent_stream_bytes": 216081,
+          "selected_stream_bytes": 216064,
+          "selected_variants": {
+            "candidate": 46,
+            "incumbent": 3
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 2379106980939.0,
+              "selected_error_energy": 2170984146700.0,
+              "sse_reduction_percent": 8.747939285893603,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.002331401531068111
+            },
+            "incumbent": {
+              "baseline_error_energy": 2219774391989.0,
+              "selected_error_energy": 2170984146700.0,
+              "sse_reduction_percent": 2.1979821672454802,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0008708857825726635
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 2409382602266.0,
+              "selected_error_energy": 2190964249626.0,
+              "sse_reduction_percent": 9.065324553874497,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.003767262942123715
+            },
+            "incumbent": {
+              "baseline_error_energy": 2238180013594.0,
+              "selected_error_energy": 2190964249626.0,
+              "sse_reduction_percent": 2.1095606109082525,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.001255520599524824
+            }
+          }
+        },
+        {
+          "profile": 6,
+          "growth_percent": 5,
+          "cases": 49,
+          "improved": 45,
+          "original_stream_bytes": 216081,
+          "incumbent_stream_bytes": 216599,
+          "selected_stream_bytes": 216631,
+          "selected_variants": {
+            "candidate": 45,
+            "incumbent": 4
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 2379106980939.0,
+              "selected_error_energy": 2168980370292.0,
+              "sse_reduction_percent": 8.832163174270793,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0026781513488105535
+            },
+            "incumbent": {
+              "baseline_error_energy": 2218939881641.0,
+              "selected_error_energy": 2168980370292.0,
+              "sse_reduction_percent": 2.2515036014429026,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0009591177432381028
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 2409382602266.0,
+              "selected_error_energy": 2188921582106.0,
+              "sse_reduction_percent": 9.150104261260068,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.003908853399349474
+            },
+            "incumbent": {
+              "baseline_error_energy": 2237352325658.0,
+              "selected_error_energy": 2188921582106.0,
+              "sse_reduction_percent": 2.1646453710752342,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0011680290365831073
+            }
+          }
+        },
+        {
+          "profile": 6,
+          "growth_percent": 10,
+          "cases": 49,
+          "improved": 45,
+          "original_stream_bytes": 216081,
+          "incumbent_stream_bytes": 233359,
+          "selected_stream_bytes": 233358,
+          "selected_variants": {
+            "candidate": 43,
+            "incumbent": 4,
+            "raw": 2
+          },
+          "pcm16": {
+            "original_metrics": {
+              "baseline_error_energy": 2379106980939.0,
+              "selected_error_energy": 2109409701267.0,
+              "sse_reduction_percent": 11.336071972919616,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0033193170100331397
+            },
+            "incumbent": {
+              "baseline_error_energy": 2155549905764.0,
+              "selected_error_energy": 2109409701267.0,
+              "sse_reduction_percent": 2.1405305613022376,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0009262657220493329
+            }
+          },
+          "pwm8": {
+            "original_metrics": {
+              "baseline_error_energy": 2409382602266.0,
+              "selected_error_energy": 2128403418138.0,
+              "sse_reduction_percent": 11.661874866355468,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.004850249800457726
+            },
+            "incumbent": {
+              "baseline_error_energy": 2172366924314.0,
+              "selected_error_energy": 2128403418138.0,
+              "sse_reduction_percent": 2.023760612626847,
+              "stoi_pairs": 49,
+              "mean_stoi_gain": 0.0012340823352237345
+            }
+          }
+        }
+      ],
+      "elapsed_seconds": 72.83637409999938
+    }
+  },
+  "rows": 588
+}

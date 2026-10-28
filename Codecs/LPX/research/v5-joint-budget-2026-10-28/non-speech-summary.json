@@ -1,0 +1,92 @@
+{
+  "schema": "lpx-v5-joint-budget-non-speech-robustness-v1",
+  "scope": "Non-speech numerical robustness; STOI is diagnostic and not interpreted as music intelligibility. No AVR timing or firmware fit is established by this host audit.",
+  "case_count": 132,
+  "settings": {
+    "frame_limit": 4,
+    "spectral_candidates": 2,
+    "lookahead": 640,
+    "excitation_horizon": 80,
+    "passes": 1,
+    "refit": true
+  },
+  "growth_percent": 0,
+  "baseline": "Previous v5 header-refined selected streams, all whole-case metrics independently checked.",
+  "completed_variants": 264,
+  "improved_variants": 124,
+  "fits_executed": 486,
+  "fits_reused": 8,
+  "serialized_receiver_checks": 1482,
+  "elapsed_seconds": 452.8414952000021,
+  "profiles": [
+    {
+      "profile": 4,
+      "case_profiles": 132,
+      "unique_reference_samples": 12555733,
+      "baseline_stream_bytes": 671803,
+      "selected_stream_bytes": 671779,
+      "improved_variants": 66,
+      "selected_branches": {
+        "raw": 46,
+        "candidate": 20,
+        "incumbent": 66
+      },
+      "selected_stoi_floor_diagnostics_passed": 87,
+      "domains": {
+        "pcm16": {
+          "baseline_sse": 14042941769180.0,
+          "selected_sse": 14036925567144.0,
+          "sse_reduction_percent": 0.04284146537731903,
+          "ser_gain_db": 0.0018609798649937036,
+          "stoi_diagnostic_pairs": 128,
+          "mean_stoi_diagnostic_gain": -0.000998406728569234,
+          "stoi_diagnostic_declines": 41
+        },
+        "pwm8": {
+          "baseline_sse": 14048193462858.0,
+          "selected_sse": 14041746031178.0,
+          "sse_reduction_percent": 0.04589509460448671,
+          "ser_gain_db": 0.001993656163509532,
+          "stoi_diagnostic_pairs": 128,
+          "mean_stoi_diagnostic_gain": -0.00032022420563838433,
+          "stoi_diagnostic_declines": 36
+        }
+      }
+    },
+    {
+      "profile": 6,
+      "case_profiles": 132,
+      "unique_reference_samples": 12555733,
+      "baseline_stream_bytes": 988134,
+      "selected_stream_bytes": 988104,
+      "improved_variants": 58,
+      "selected_branches": {
+        "raw": 47,
+        "candidate": 11,
+        "incumbent": 74
+      },
+      "selected_stoi_floor_diagnostics_passed": 86,
+      "domains": {
+        "pcm16": {
+          "baseline_sse": 12400610624696.0,
+          "selected_sse": 12394361621280.0,
+          "sse_reduction_percent": 0.05039270730390344,
+          "ser_gain_db": 0.0021890790854703253,
+          "stoi_diagnostic_pairs": 128,
+          "mean_stoi_diagnostic_gain": -0.000613366696989059,
+          "stoi_diagnostic_declines": 44
+        },
+        "pwm8": {
+          "baseline_sse": 12549767354442.0,
+          "selected_sse": 12543190886986.0,
+          "sse_reduction_percent": 0.05240310254573943,
+          "ser_gain_db": 0.002276434340240794,
+          "stoi_diagnostic_pairs": 128,
+          "mean_stoi_diagnostic_gain": -0.0002708158657832014,
+          "stoi_diagnostic_declines": 39
+        }
+      }
+    }
+  ],
+  "result_sha256": "b1a8876f66950bad4a587d0f548f3c230296d2ab630203cade5ed33bec0b7541"
+}
