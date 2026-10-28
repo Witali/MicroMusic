@@ -94,6 +94,30 @@ static inline __attribute__((always_inline)) int16_t cosineInterpolate(uint16_t 
  const uint16_t loss=((uint16_t)drop*fraction+15)>>4;
  return (int16_t)((negative?-hi:lo)-(int16_t)loss);
 }
+#if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
+// Exact cos_table.inc nodes0,2,...128; existing oracle tables stay unchanged.
+static const uint16_t LP_PROGMEM cosineEven[65]={
+ 8192,8190,8182,8170,8153,8130,8103,8071,
+ 8035,7993,7946,7895,7839,7779,7713,7643,
+ 7568,7489,7405,7317,7225,7128,7027,6921,
+ 6811,6698,6580,6458,6333,6203,6070,5933,
+ 5793,5649,5501,5351,5197,5040,4880,4717,
+ 4551,4383,4212,4038,3862,3683,3503,3320,
+ 3135,2948,2760,2570,2378,2185,1990,1795,
+ 1598,1401,1202,1003,803,603,402,201,
+ 0
+};
+// V5 centered5/6bit spectra with segments1/2 reach only even cosine
+// nodes: all normalized anchors are multiples of32, so fraction is zero.
+static inline __attribute__((always_inline)) int16_t cosineGridEven(uint16_t norm){
+ uint8_t index=(uint8_t)(norm>>5);
+ const bool negative=index>64;
+ if(negative)index=128-index;
+ int16_t value=LP_READ_U16(&cosineEven[index]);
+ return negative?-value:value;
+}
+#endif
+
 
 
 Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
@@ -776,7 +800,11 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
 #endif
     polyP_[0]=polyQ_[0]=4096;
     for(uint8_t i=0;i<10;i++){
+#if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
+        const int16_t cc=(int16_t)-cosineGridEven(lpx4LsfNorm10(prev_[i],cur_[i],t));
+#else
         const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(prev_[i],cur_[i],t));
+#endif
         // P/Q polynomials are independent; each pair retains the same degree.
         int32_t* p=(i&1)?polyQ_:polyP_;
         if(i<2){
