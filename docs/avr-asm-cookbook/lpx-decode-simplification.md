@@ -118,3 +118,26 @@ Measure a separate production player rather than counting removed profiling
 counters as a decoder win. A smaller SPSC FIFO requires full active-IRQ output,
 index-wrap, publication-order and EOF proofs. Host-runner duration coverage
 improvements do not change MCU Flash and should be reported separately.
+
+
+## Measured byte-grid and private-count follow-up
+
+For v5-only, store q+1 (1..32/64) and reserve0 for untouched fields. At
+segments1/2 anchors u=t/8, the exact even-table index is
+`(P*(2-u)+C*u-1)*(profile4 ? 2 : 1)`. Factor directly to the table index:
+reconstructing a wide normalized coordinate and immediately shifting it back
+costs code on AVR. Keep the full centered conversion for quarter anchors in
+segments4, and normalize private probes to preserve semantic frozen oracles.
+Eight fixed full diagnostic images save100 B Flash and20 B static SRAM.
+
+Keep untrusted public sample metadata wide. A compact private uint16 remaining
+is sufficient only with explicit modulo16 subtraction before produced widens;
+this preserves zero progress after invalid/null/short begins as well as valid
+counts. Standalone linked savings are74..78 B Flash and2 B SRAM. Combined
+with byte-grid LSF, measured savings are174..176 B and22 B respectively.
+These screens use AVR-GCC7.3.0, ATmega328P/AVR5, GNU ABI,
+`-Os -flto -mcall-prologues -mrelax`, LPC segments2, unroll1/tuning0,
+explicit ASM and identical streams/reset geometry.56 core regression tests
+plus the new frozen lifecycle/count probe pass. Full campaign IRQ/corpus
+admission is still pending; no new supported real-time profile is claimed by
+these local screens. [Source patches, proofs and measurements](../../Codecs/LPX/research/v5-plan-execution-2026-10-28/README.md).

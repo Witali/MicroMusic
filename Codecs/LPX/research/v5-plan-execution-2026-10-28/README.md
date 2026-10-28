@@ -52,3 +52,25 @@ both layouts and segments1/2/4,1,838,989 parser cases per layout/reader mode,
 reference reader/counter/history paths, snapshots and bandwidth expansion.
 This is exact output preservation; no sound-quality gain is claimed.
 Full181-case,204-chain and IRQ admission remains the final campaign stage.
+
+## Narrow only the private v5 remaining count
+
+The valid v5 count is at most64000. The public sampleCount remains uint32:
+failed begin may retain an invalid raw count, including65536 or UINT32_MAX.
+Only compact remaining becomes uint16. produced performs explicit modulo16
+subtraction before widening (and adds subPos in batched mode). Valid progress
+is at most64000; after a failed/repeated begin both counts have identical low
+words and progress remains zero. Common/legacy counters retain their width.
+
+[Counter screen](counter-screen.json) saves74..78 B standalone and2 B static
+SRAM. With selected byte LSF, the measured combined delta is -174..-176 B
+Flash and -22 B SRAM, rather than an assumed sum of independent LTO savings.
+The frozen public lifecycle probe was first compiled against b8f473a6 and
+matches after narrowing in both layouts, batched/per-sample counters and
+ROM-pointer/base-cursor readers. It covers full64000-sample outputs in both
+profiles; header lengths0..22; invalid/null/short/valid transitions; count
+edges through UINT32_MAX; parser errors; copy/assignment after errors and
+mid-stream. Getter arithmetic independently exhausts every legal total count
+and every position in its final subframe. It does not claim a fresh complete
+DSP decode for every one of the64000 possible lengths. The existing parser
+frozen trace also matches all1,838,989 cases per layout/reader build.

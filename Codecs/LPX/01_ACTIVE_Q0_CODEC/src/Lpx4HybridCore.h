@@ -145,11 +145,21 @@ public:
 #endif
     }
     uint32_t samples() const {return sampleCount_;}
+    // Compact metadata stays wide even after invalid begin; subtract low
+    // words modulo16 before widening to preserve its zero-progress contract.
     uint32_t produced() const {
 #if LPX4_BATCHED_REMAINING
+#if LPX4_COMPACT_ONLY
+        return (uint16_t)((uint16_t)sampleCount_-remaining_)+subPos_;
+#else
         return sampleCount_-remaining_+subPos_;
+#endif
+#else
+#if LPX4_COMPACT_ONLY
+        return (uint16_t)((uint16_t)sampleCount_-remaining_);
 #else
         return sampleCount_-remaining_;
+#endif
 #endif
     }
     uint16_t sampleRate() const {return sampleRate_;}
@@ -201,7 +211,12 @@ private:
 #if !LPX4_ROM_POINTER
     uint16_t cursor_;
 #endif
-    uint32_t sampleCount_,remaining_;
+    uint32_t sampleCount_;
+#if LPX4_COMPACT_ONLY
+    uint16_t remaining_;
+#else
+    uint32_t remaining_;
+#endif
     uint16_t sampleRate_,preQ14_,brightQ14_,blockStep_;
     int16_t prevDeemph_,prevBright_;
     uint8_t subPos_,subIndex_;
