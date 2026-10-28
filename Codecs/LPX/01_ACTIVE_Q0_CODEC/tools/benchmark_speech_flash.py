@@ -124,9 +124,13 @@ def environment(source,avr_bin,compact_only=False,legacy_only=False,*,harness=No
     retained=retained if retained_symbols is None else list(retained_symbols)
     need(all(re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*',name) for name in required+retained),
          'Invalid harness symbol name')
+    header_trees={}
+    internal=Path(subprocess.check_output([str(compiler),'-print-file-name=include'],text=True).strip())
+    for label,tree in (('avr_headers',vendor),('gcc_internal_headers',internal)):
+        if tree.is_dir():header_trees[label]=sha(canonical(source_hashes(tree)))
     result={'schema':'lpx-avr-build-environment-v2','source_sha256':source_hashes(src),
         'compile_source_sha256':compilation_sources(src),
-        'dependencies':{p.name:digest(p) for p in files},'harness_sha256':digest(harness),
+        'dependencies':{**{p.name:digest(p) for p in files},**header_trees},'harness_sha256':digest(harness),
         'compiler':subprocess.check_output([str(compiler),'--version'],text=True).splitlines()[0],
         'settings':dict(BASE),'compact_only':bool(compact_only),'required_symbols':sorted(set(required)),
         'retained_profile_symbols':sorted(set(retained))}
@@ -242,6 +246,16 @@ def parse_symbols(text):
     return result
 
 
+def linked_sizes(elf,avr_bin):
+    """Count linked Flash and static SRAM with one shared section parser."""
+    sizes=subprocess.check_output([str(toolpath(avr_bin,'avr-size')),str(elf)],text=True)
+    match=re.search(r'^\s*(\d+)\s+(\d+)\s+(\d+)\s+',sizes,re.M)
+    need(match is not None,'Cannot parse linked firmware sections')
+    text,data,bss=map(int,match.groups())
+    return {'text_bytes':text,'data_bytes':data,'bss_bytes':bss,
+            'flash_bytes':text+data,'static_sram_bytes':data+bss}
+
+
 def embedded_audio_and_metadata(elf,binary,avr_bin,blob,env):
     text=subprocess.check_output([str(toolpath(avr_bin,'avr-nm')),'-S','--defined-only',str(elf)],text=True)
     symbols=parse_symbols(text)
@@ -290,6 +304,8 @@ def compile_image(source,env,spec,item,folder,avr_bin,assembly=True,irq=0,requir
                    (('profile.elf','elf_sha256'),('profile.hex','hex_sha256'),('program.bin','program_sha256'))):
                 need(source_hashes(src)==env['source_sha256'],'Source changed during study')
                 if old.get('proof_fingerprint')!=proof_fingerprint:
+                    image.update(linked_sizes(folder/'profile.elf',avr_bin))
+                    image['flash_excluding_stream_bytes']=image['flash_bytes']-len(item['blob'])
                     image.update(embedded_audio_and_metadata(folder/'profile.elf',folder/'program.bin',avr_bin,item['blob'],env))
                     save(cache,{'fingerprint':identity,'metadata_sha256':sha(canonical(image)),
                                 'environment':env,'image':image,'proof_fingerprint':proof_fingerprint})
@@ -307,9 +323,7 @@ def compile_image(source,env,spec,item,folder,avr_bin,assembly=True,irq=0,requir
     need(source_hashes(src)==env['source_sha256'],'Source changed during compilation')
     subprocess.run([str(toolpath(avr_bin,'avr-objcopy')),'-O','ihex','-R','.eeprom',str(elf),str(hexfile)],check=True,capture_output=True)
     subprocess.run([str(toolpath(avr_bin,'avr-objcopy')),'-O','binary','-R','.eeprom',str(elf),str(binary)],check=True,capture_output=True)
-    sizes=subprocess.check_output([str(toolpath(avr_bin,'avr-size')),str(elf)],text=True)
-    match=re.search(r'^\s*(\d+)\s+(\d+)\s+(\d+)\s+',sizes,re.M)
-    need(match is not None,'Cannot parse avr-size');text,data,bss=map(int,match.groups())
+    sections=linked_sizes(elf,avr_bin);text=sections['text_bytes'];data=sections['data_bytes'];bss=sections['bss_bytes']
     metadata=embedded_audio_and_metadata(elf,binary,avr_bin,blob,env)
     image={'input_bytes':len(blob),'input_sha256':item['stream_sha256'],'input_samples':item['samples'],
         'flash_bytes':text+data,'flash_excluding_stream_bytes':text+data-len(blob),
@@ -353,12 +367,36 @@ def runtime_fingerprint(runner,lib,wsl):
         code='import pathlib,hashlib,json,sys; p=pathlib.Path(sys.argv[1]); print(json.dumps({q.name:{"sha256":hashlib.sha256(q.read_bytes()).hexdigest(),"target":q.resolve().name} for q in sorted(p.glob("*.so*")) if q.is_file()},sort_keys=True))'
         result['libraries']=json.loads(subprocess.check_output(['wsl','-d',wsl,'--','python3','-c',code,linux_path(lib)],text=True))
     else:result['libraries']=({p.name:digest(p) for p in sorted(Path(lib).glob('*.so*')) if p.is_file()} if lib is not None else {})
+    result['resolved_libraries']=resolved_runtime_libraries(runner,lib,wsl)
     return result
 
 
-def simulate(source,env,spec,item,folder,avr_bin,runner,lib,wsl,runtime,assembly=True,irq=0,historical=False):
+
+def resolved_runtime_libraries(runner,lib=None,wsl=None):
+    """Hash actual ELF loader dependencies as well as explicitly supplied libs."""
+    code=r'''import hashlib,json,os,pathlib,re,subprocess,sys
+runner,library=sys.argv[1:];env=os.environ.copy()
+if library:env["LD_LIBRARY_PATH"]=library
+listing=subprocess.check_output(["ldd",runner],env=env,text=True)
+result={}
+for name in re.findall(r"(?:=>\s*)?(/[^\s()]+)",listing):
+ path=pathlib.Path(name).resolve()
+ if path.is_file():
+  digest=hashlib.sha256(path.read_bytes()).hexdigest()
+  if path.name in result and result[path.name]!=digest:raise ValueError("Ambiguous runtime library basename")
+  result[path.name]=digest
+print(json.dumps(result,sort_keys=True))'''
+    if wsl:
+        command=['wsl','-d',wsl,'--','python3','-c',code,linux_path(runner),linux_path(lib) if lib else '']
+    elif os.name!='nt':
+        command=[sys.executable,'-c',code,str(Path(runner).resolve()),str(Path(lib).resolve()) if lib else '']
+    else:
+        return {'scope':'provided-directory-only on native Windows'}
+    return json.loads(subprocess.check_output(command,text=True))
+
+def simulate(source,env,spec,item,folder,avr_bin,runner,lib,wsl,runtime,assembly=True,irq=0,historical=False,validator_sources=()):
     folder=Path(folder);image=compile_image(source,env,spec,item,folder,avr_bin,assembly,irq)
-    validator=validation_provenance(runtime=runtime)
+    validator=validation_provenance(runtime=runtime,sources=validator_sources)
     identity=sha(canonical([validator,image['elf_sha256'],sha(item['pwm']),assembly,irq,historical]));cache=folder/'verification.json'
     measured=None
     if cache.exists():
