@@ -104,3 +104,6 @@ ownership, lower-cap/no-fit behavior, local-screen parity, actual packing
 counts and interrupted windows. Strong seeds, ordered private manifests,
 recording paths, media/PCM/PWM/stream hashes and complete alternatives remain
 in ignored build storage. No private-media fingerprints are published here.
+
+
+[Predeclared nonzero-lambda sweep](LAMBDA_SWEEP.md) records actual serialized size/quality points, conservative and raw alternatives, complete native/model/PWM audit and finite-search outcomes at alpha 0 / 0.1 / 1.
