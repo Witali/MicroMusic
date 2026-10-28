@@ -1,0 +1,39 @@
+{
+  "schema": "lpx-v5-encoder-quality-baseline-v1",
+  "status": "complete",
+  "baseline_commit": "22e50e01",
+  "decoder_source_sha256": {
+    "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+    "Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+    "Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "quality_source_fingerprint": "e649afa8ef4e661dde8178327947d82c7e1aefefeca5185ba073f9e309171447",
+  "preparer_source_sha256": "2e4825f27ffb585eadde590720d9721967a154ac091c9c989737884bb213261f",
+  "speech_cases": 49,
+  "original_reference_samples": 2632296,
+  "counts": {
+    "native_pcm_pwm_comparisons": 472,
+    "budget_points": 294,
+    "prior_feasible_100": 98,
+    "prior_feasible_95": 0,
+    "prior_feasible_90": 0,
+    "profile_groups": 98,
+    "segments": 118
+  },
+  "profile_split_counts": {
+    "tuning": 40,
+    "evaluation": 40,
+    "additional": 18
+  },
+  "all_fresh_baseline_metrics_exact": true,
+  "all_common_compact_model_pcm_pwm_exact": true,
+  "historical_flash_reused": false,
+  "budgets": "floor(achieved complete-chain bytes * percent /100), percent100/95/90",
+  "elapsed_seconds": 11.227204700000584
+}
