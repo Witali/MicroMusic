@@ -1,0 +1,61 @@
+{
+  "schema": "lpx-host-runtime-validation-protocol-v1",
+  "implementation_commits": [
+    "fd71fb2d",
+    "b433623d"
+  ],
+  "tests": [
+    {
+      "file": "01_ACTIVE_Q0_CODEC/tests/test_profile_durations.py",
+      "sha256": "3d11d7b865d2b812b501711d8c59e5b2c7def0e58e2653d803ddfe89458496b3",
+      "cases": [
+        "test_rolling_totals_and_window_maxima_include_long_tail"
+      ]
+    },
+    {
+      "file": "01_ACTIVE_Q0_CODEC/tests/test_measurement_provenance.py",
+      "sha256": "a1ef704a5bfa1d3a5c27aa4f2660bb8e2ffca63979faa092342710a519523a25",
+      "cases": [
+        "test_compilation_inventory_excludes_uncompiled_model_oracles",
+        "test_alternate_harness_and_default_abi_do_not_read_runner_sources",
+        "test_streaming_coverage_is_strict_and_historical_is_explicit",
+        "test_timing_cache_revalidates_host_changes_without_changing_image_cost"
+      ]
+    },
+    {
+      "file": "01_ACTIVE_Q0_CODEC/tests/test_measure_speech_firmware.py",
+      "sha256": "05c5419c9c918708ab207d95a2dccf18cbce44e2a6e684490bc8f410004adf4d",
+      "cases": [
+        "test_invalid_api_inputs_fail_before_tool_invocation",
+        "test_output_escape_and_chain_harness_fail_closed",
+        "test_complete_link_cost_and_cache_bind_exact_inputs_and_artifacts",
+        "test_api_guards_source_runner_and_output_aliases_before_tools",
+        "test_full_chain_timing_and_bounded_decode_statistics",
+        "test_exact_embedded_arrays_and_duplicate_storage_proof"
+      ]
+    },
+    {
+      "file": "01_ACTIVE_Q0_CODEC/tests/test_select_speech_budget.py",
+      "sha256": "787db10bd7d1a6778bf76e9f7798845111a8b6fa9c8c4549662c68839c9e80fd",
+      "cases": [
+        "test_transitive_parser_dependency_invalidates_cached_metrics",
+        "test_exact_integer_caps_and_round_down_full_flash_limit",
+        "test_default_uses_actual_full_flash_and_keeps_growth_for_listening",
+        "test_four_floors_domination_ties_and_baseline_rollback",
+        "test_explicit_proxy_requires_both_domains_and_preserves_anchor",
+        "test_hard_cap_no_feasible_image_and_baseline_cost_required",
+        "test_stale_or_mismatched_cost_evaluation_reference_and_geometry_rejected",
+        "test_whole_original_reference_chain_metrics_and_firmware_binding",
+        "test_cli_writes_selected_streams_and_protects_existing_outputs",
+        "test_reference_stream_candidate_and_native_validation"
+      ]
+    }
+  ],
+  "receipt": "tests.json",
+  "actual_cache_smoke": "cache-validation.json",
+  "actual_old_new_runner": "runner-equivalence.json",
+  "current_complete_duration_marker": "streaming-v2",
+  "historical_capped_runner_requires_explicit_opt_in": true,
+  "host_only_avr_flash_saving_bytes": 0,
+  "per_recording_artifacts_exported": false
+}
