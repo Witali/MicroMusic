@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 from collections import OrderedDict
+from copy import deepcopy
 from dataclasses import dataclass
 import json
 from numbers import Integral
@@ -421,7 +422,7 @@ def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=
         q = metric_lookup[path.stream]
         floor = path.stream == bytes(blob) or no_regression(q, before)
         alternatives.append(dict(stream=path.stream, pcm=path.pcm.copy(), objective=path.score,
-                                 file_bytes=len(path.stream), metrics=q,
+                                 file_bytes=len(path.stream), metrics=deepcopy(q),
                                  conservative_floors_passed=bool(floor)))
     if frontier is not None:
         frontier.extend(alternatives)
@@ -437,7 +438,7 @@ def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=
         changed_spectral_indices=int(np.count_nonzero(np.asarray(selected_fields[2]) != fields.spectra)) if chosen else None,
         changed_excitation_fields=sum(int(np.count_nonzero(np.asarray(selected_fields[index]) != original))
             for index, original in ((3, fields.params), (4, fields.pulses), (7, fields.extras))) if chosen else None,
-        retained_frontier=[{k: v for k, v in entry.items() if k not in ('stream', 'pcm')} for entry in alternatives],
+        retained_frontier=[{k: deepcopy(v) for k, v in entry.items() if k not in ('stream', 'pcm')} for entry in alternatives],
         retained_frontier_limit=16,
         objective_name=str(objective_name), selection=selection,
         capacity_policy=capacity_policy if isinstance(capacity_policy, str) else 'callback',

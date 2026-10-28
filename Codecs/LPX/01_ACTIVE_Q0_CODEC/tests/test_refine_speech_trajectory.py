@@ -165,6 +165,18 @@ class TrajectoryTests(unittest.TestCase):
             self.assertNotIn('stream', report['retained_frontier'][0])
             self.assertNotIn('pcm', report['retained_frontier'][0])
 
+    def test_frontier_arrays_and_nested_metrics_do_not_alias_returned_evidence(self):
+        blob = seed();reference = compact.decode_model(blob);alternatives = []
+        _, pcm, report, _ = trajectory.refine(reference, blob, self.decoder, len(blob), frontier=alternatives)
+        self.assertEqual(len(alternatives), 1)
+        alternatives[0]['metrics']['pcm16']['error_energy'] = -1
+        alternatives[0]['pcm'][:] = 123
+        self.assertEqual(report['selected']['pcm16']['error_energy'], 0)
+        self.assertEqual(report['retained_frontier'][0]['metrics']['pcm16']['error_energy'], 0)
+        np.testing.assert_array_equal(pcm, reference)
+        report['retained_frontier'][0]['metrics']['pcm16']['error_energy'] = -2
+        self.assertEqual(alternatives[0]['metrics']['pcm16']['error_energy'], -1)
+
     def test_exact_marginal_policy_integrates_with_the_shared_synthesis_budget(self):
         blob = seed()
         reference = compact.decode_model(blob)
