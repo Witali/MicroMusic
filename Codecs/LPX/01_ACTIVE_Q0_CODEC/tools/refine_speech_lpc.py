@@ -25,6 +25,14 @@ from standard_metrics import pwm_duties
 from wav_lpc import pack_frames
 
 
+SEARCH_PRESETS = {
+    'default': dict(frame_limit=32, spectral_candidates=2, lookahead=640,
+                    excitation_horizon=80, passes=1),
+    'expanded': dict(frame_limit=64, spectral_candidates=4, lookahead=1280,
+                     excitation_horizon=160, passes=2),
+}
+
+
 def coefficient_patch(spectra, profile, frame, samples, cosine=None):
     """Exact changed compact frame plus the next160-sample interpolation tail.
 
@@ -237,16 +245,25 @@ def main():
     from output_paths import protect_outputs
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('reference',type=Path);parser.add_argument('input',type=Path);parser.add_argument('output',type=Path)
-    parser.add_argument('--max-bytes',type=int,required=True);parser.add_argument('--frames',type=int,default=32)
-    parser.add_argument('--spectral-candidates',type=int,default=2);parser.add_argument('--lookahead',type=int,default=640,choices=(320,640,1280))
-    parser.add_argument('--excitation-horizon',type=int,default=80,choices=(80,160));parser.add_argument('--passes',type=int,default=1,choices=(1,2))
+    parser.add_argument('--max-bytes',type=int,required=True)
+    parser.add_argument('--preset',choices=tuple(SEARCH_PRESETS),default='default',
+                        help='Named host search settings; explicit options override the preset')
+    parser.add_argument('--frames',type=int,help='Override preset anchor count')
+    parser.add_argument('--spectral-candidates',type=int,help='Override preset spectral finalists')
+    parser.add_argument('--lookahead',type=int,choices=(320,640,1280),help='Override preset screening samples')
+    parser.add_argument('--excitation-horizon',type=int,choices=(80,160),help='Override preset refit samples')
+    parser.add_argument('--passes',type=int,choices=(1,2),help='Override preset pass count')
     args=parser.parse_args();paths=[args.output/'audio.l4hy',args.output/'decoded.wav',args.output/'raw.l4hy',args.output/'report.json']
+    settings=SEARCH_PRESETS[args.preset].copy()
+    for argument,option in (('frames','frame_limit'),('spectral_candidates','spectral_candidates'),
+                            ('lookahead','lookahead'),('excitation_horizon','excitation_horizon'),('passes','passes')):
+        value=getattr(args,argument)
+        if value is not None:settings[option]=value
     protect_outputs([args.reference,args.input],paths);ref,rate=sf.read(args.reference,dtype='int16')
     if rate!=8000:raise ValueError('Reference must be8kHz')
     with BatchSession('batch',speech=True,speech_compact=True,compact_only=True) as decoder:
-        result,pcm,report,raw=refine(ref,args.input.read_bytes(),decoder,args.max_bytes,
-            frame_limit=args.frames,spectral_candidates=args.spectral_candidates,lookahead=args.lookahead,
-            excitation_horizon=args.excitation_horizon,passes=args.passes)
+        result,pcm,report,raw=refine(ref,args.input.read_bytes(),decoder,args.max_bytes,**settings)
+    report['search_preset']=args.preset
     args.output.mkdir(parents=True,exist_ok=True);paths[0].write_bytes(result);paths[2].write_bytes(raw)
     sf.write(paths[1],pcm,8000,subtype='PCM_16');paths[3].write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print(json.dumps({k:report[k] for k in ('profile','file_bytes','accepted_frames','spectral_trials','seconds')}))
