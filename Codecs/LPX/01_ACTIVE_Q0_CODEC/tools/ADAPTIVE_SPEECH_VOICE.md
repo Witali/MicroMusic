@@ -31,7 +31,7 @@ operator acceptance; waveform, spectral, noise and period descriptors remain.
 
 Every contender is fully serialized, checked against actual native/model output,
 and compared with this exact source target. Duplicate streams are evaluated
-once. The report retains an admissible size/score Pareto frontier, rejected raw
+once. The report retains an admissible serialized-data-byte/score Pareto frontier, rejected raw
 alternatives, stage provenance and work counters. It selects the best measured
 admissible score within the ceiling, breaking ties by smaller size and stable
 discovery order. It does not claim global optimality or minimum required bitrate.
@@ -62,7 +62,10 @@ measured seed pool. `--search-mode grid` retains the historical seed-only gate.
 reproducible studies without repeating their fitting. It revalidates every seed
 and never trusts cached quality claims. Its optional `firmware_cost(blob)`
 callback must supply an actual complete image size to enforce `max_flash_bytes`;
-a Flash ceiling without this callback is rejected. Ordinary CLI byte caps cover
+a Flash ceiling without this callback is rejected. This callback filters full
+image feasibility; the reported frontier and size tie-break still use serialized
+data bytes even when Flash is measured. They are not a complete-image Pareto
+frontier. Ordinary CLI byte caps cover
 the stream only. Selected outputs still need actual complete-player Flash/SRAM
 and interrupt-active playback admission before a hardware-support claim.
 An optional `candidate_sink(blob)` receives each distinct verified pool stream
