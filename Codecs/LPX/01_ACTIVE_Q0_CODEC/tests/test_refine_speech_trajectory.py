@@ -11,7 +11,7 @@ import refine_speech_trajectory as trajectory
 from refine_speech_lpc import coefficient_patch
 import speech_compact as compact
 from speech_objective import SpeechObjective
-from standard_metrics import pwm_duties
+from standard_metrics import error_metrics, pwm_duties, pwm_pcm16
 from test_speech_v4 import fixture
 from wav_lpc import pack_frames
 
@@ -42,6 +42,40 @@ class TrajectoryTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.session.__exit__()
+
+    def test_non_speech_never_calls_stoi_and_keeps_exact_full_tail_output(self):
+        for profile in (4, 6):
+            blob = seed(profile, 641)
+            reference = compact.decode_model(altered(blob, [0]))
+            with patch.object(trajectory, 'quality', side_effect=AssertionError('Speech metrics used')):
+                result, pcm, report, _ = trajectory.refine(reference, blob, self.decoder,
+                    len(blob) + 32, frame_limit=1, spectral_candidates=1,
+                    excitation_candidates=0, max_evaluations=16, speech=False)
+            self.assertIsNotNone(result)
+            self.assertEqual(report['quality_kind'], 'non-speech-numerical')
+            self.assertGreater(report['full_synthesis_evaluations'], 0)
+            self.assertEqual(report['selected']['pcm16'], error_metrics(reference, pcm))
+            self.assertEqual(report['selected']['pwm8'], error_metrics(reference, pwm_pcm16(pcm)))
+            self.assertIsNone(report['selected']['pcm16']['stoi'])
+            self.assertIsNone(report['selected']['pwm8']['stoi'])
+            np.testing.assert_array_equal(pcm, compact.decode_model(result))
+            with BatchSession('batch', speech=True, speech_compact=True) as common:
+                np.testing.assert_array_equal(pcm, common.decode_one_s16(result, 641))
+                np.testing.assert_array_equal(pwm_duties(pcm), common.decode_one(result, 641))
+
+    def test_default_speech_policy_is_identical_to_explicit_true(self):
+        blob = seed()
+        reference = compact.decode_model(altered(blob, [0]))
+        options = dict(frame_limit=1, spectral_candidates=1, excitation_candidates=0, max_evaluations=16)
+        implicit = trajectory.refine(reference, blob, self.decoder, len(blob) + 32, **options)
+        explicit = trajectory.refine(reference, blob, self.decoder, len(blob) + 32, speech=True, **options)
+        self.assertEqual(implicit[0], explicit[0])
+        self.assertEqual(implicit[3], explicit[3])
+        self.assertEqual(implicit[2]['selected'], explicit[2]['selected'])
+        self.assertEqual(implicit[2]['quality_kind'], 'speech')
+        for invalid in (None, 1, 'speech'):
+            with self.assertRaisesRegex(ValueError, 'boolean'):
+                trajectory.refine(reference, blob, self.decoder, len(blob) + 32, speech=invalid)
 
     def test_beam_crosses_a_nonimproving_first_frame_with_exact_integer_output(self):
         for profile in (4, 6):
