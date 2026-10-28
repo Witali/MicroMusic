@@ -114,3 +114,37 @@ brightness=0/1/8192/11469, both profiles, alternating low/high spectral clusters
 maximum scale and pitch gain. All128 output comparisons pass; the existing
 compact suite (8 tests including reference/copies/EOF) also passes. Final
 whole-corpus and active-IRQ admission remains separate.
+
+## Rejected workspace and static-endpoint experiments
+
+The [full-image screen](workspace-endpoint-screen.json) retains reproducible
+source patches. These are rejected experiments, with no production wiring:
+
+- A typed overlay uses a union of a20-byte coefficient struct and48-byte
+  polynomial-P struct. Explicit single-object placement activation precedes
+  every workspace phase and restores synthesis lifetime after conversion;
+  no raw reinterpret_cast, array-new cookie, heap or96-byte stack relocation
+  is used. A distinct placement tag avoids replacing a platform allocator.
+  The union provides alignment; trivial representation copying follows
+  [C++11 draft copy rules](https://timsong-cpp.github.io/cppwp/n3337/class.copy#16),
+  with explicit active-member transitions following
+  [its union guidance](https://timsong-cpp.github.io/cppwp/n3337/class.union#4).
+  The host prototype passes36 output comparisons and saves20 B static SRAM,
+  but every full AVR image grows4 B Flash. It is rejected under the Flash
+  priority before expensive final copy/sanitizer/IRQ admission. No claim of
+  a supported overlaid decoder is made.
+- Reading static coefficients directly from the cached endpoint removes its
+  frame-start copy but adds coefficient selection to every sample. The local
+  pointer is derived from owned arrays/offsets, and bandwidth expansion keeps
+  its original a[] fallback.36 output comparisons pass; full Flash changes
+  -2 B for single-reset images and +10 B for multiple-reset chains. Static
+  RAM is unchanged. Reject as a universal default; no final timing claim.
+
+The actual linked synthesis epilogue was also inspected under the baseline
+AVR recipe. It already flows directly from the Q4 accumulator into clipping,
+then four contiguous mirrored-history byte stores. Its one movw transfers the
+low result to the upper-register pair required by the current CPI-based clip;
+there are no intermediate SRAM spills or repeated history-pointer reloads in
+that boundary. The conditional plan item therefore supplies no demonstrated
+redundant transfer to remove. No new fused handwritten ASM was introduced.
+Every existing C/ASM arithmetic selector and fallback remains available.

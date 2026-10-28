@@ -1,0 +1,40 @@
+--- a/Lpx4HybridCore.cpp
++++ b/Lpx4HybridCore.cpp
+@@ -849,7 +849,7 @@
+         // nextCore expands a_ after interpolation: reload before every expansion.
+         for(uint8_t i=0;i<10;i++)a_[i]=curLpc[i];
+ #else
+-        if(sub==0)for(uint8_t i=0;i<10;i++)a_[i]=curLpc[i];
++        // Static synthesis reads the cached endpoint directly.
+ #endif
+         return;
+     }
+@@ -957,6 +957,15 @@
+ #ifdef LPX3_Q_DIAG
+     lastQ_=q;
+ #endif
++#ifndef LPX3_BANDWIDTH_EXPAND_Q14
++#if LPX4_ROTATE_LPC_ANCHORS
++    const int16_t* coefficients=staticSpectrum_ ? lpcAnchors_+lpcAnchorOffset_ : a_;
++#else
++    const int16_t* coefficients=staticSpectrum_ ? curLpc_ : a_;
++#endif
++#else
++    const int16_t* coefficients=a_;
++#endif
+     const uint16_t step=blockStep_;
+ #if LPX4_EXCITATION_Q4
+     const int32_t excitation=lpx4Mul8xU16(q,step);
+@@ -967,10 +976,10 @@
+ #if LPX4_LPC_RING
+     // subPos already repeats every20 samples; no separate ring cursor is needed.
+     int16_t* history=hist_+(subPos_<10?subPos_:subPos_-10)+10;
+-    int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,a_,history));
++    int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,coefficients,history));
+     history[0]=history[10]=pred;
+ #else
+-    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,a_,hist_));
++    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,coefficients,hist_));
+     hist_[0]=pred;
+ #endif
+     int16_t deemph=preQ14_?lpx4AddClip15(pred,lpx4AttenuateQ14(preQ14_,prevDeemph_)):pred;

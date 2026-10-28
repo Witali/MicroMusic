@@ -1,0 +1,116 @@
+--- a/Lpx4HybridCore.h
++++ b/Lpx4HybridCore.h
+@@ -234,7 +234,10 @@
+ #if LPX4_ROTATE_LPC_ANCHORS
+     uint8_t lpcAnchorOffset_;
+ #endif
+-    int16_t a_[10],hist_[LPX4_LPC_RING?20:10];
++    struct Synthesis {int16_t a[10];};
++    struct Polynomial {int32_t p[12];};
++    union Workspace {Synthesis synthesis;Polynomial polynomial;} workspace_;
++    int16_t hist_[LPX4_LPC_RING?20:10];
+     int8_t ringQ_[256];
+ #if LPX4_ALLOW_SPARSE
+     uint8_t pulsePos_[LPX4_MAX_PULSES];
+@@ -246,7 +249,7 @@
+ #else
+     int16_t prevLpc_[10],curLpc_[10];
+ #endif
+-    int32_t polyP_[12],polyQ_[12];
++    int32_t polyQ_[12];
+ #ifdef LPX3_Q_DIAG
+     int8_t lastQ_;
+ #endif
+--- a/Lpx4HybridCore.cpp
++++ b/Lpx4HybridCore.cpp
+@@ -120,6 +120,10 @@
+ 
+ 
+ 
++// Distinct placement tag avoids a heap dependency or a replacement of the
++// platform's standard placement-new overload. Used only in this experiment.
++struct Lpx4WorkspacePlace {void* address;};
++inline void* operator new(__SIZE_TYPE__,Lpx4WorkspacePlace place) noexcept {return place.address;}
+ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
+ #if !LPX4_ROM_POINTER
+  cursor_(0),
+@@ -166,7 +170,8 @@
+  lpcAnchorOffset_=0;
+ #endif
+  memset(prev_,0,sizeof(prev_));memset(cur_,0,sizeof(cur_));
+- memset(a_,0,sizeof(a_));memset(hist_,0,sizeof(hist_));
++ new (Lpx4WorkspacePlace{&workspace_.synthesis}) Synthesis;
++ memset(workspace_.synthesis.a,0,sizeof(workspace_.synthesis.a));memset(hist_,0,sizeof(hist_));
+  memset(ringQ_,0,sizeof(ringQ_));
+ }
+ int16_t Lpx4HybridCore::clamp(int32_t n,int16_t low,int16_t high){
+@@ -812,6 +817,8 @@
+ #ifdef LPX3_COST_INSTRUMENT
+     ++lsfConverts_;
+ #endif
++    new (Lpx4WorkspacePlace{&workspace_.polynomial}) Polynomial;
++    int32_t* polyP_=workspace_.polynomial.p;
+     polyP_[0]=polyQ_[0]=4096;
+     for(uint8_t i=0;i<10;i++){
+ #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
+@@ -828,6 +835,7 @@
+         }else polyFactor(p,cc,(uint8_t)((i&254)+2));
+     }
+     for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
++    new (Lpx4WorkspacePlace{&workspace_.synthesis}) Synthesis;
+ }
+ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
+ #if LPX4_ROTATE_LPC_ANCHORS
+@@ -840,16 +848,16 @@
+     // interpolation. The cached endpoint is valid across repeated frames.
+     if(staticSpectrum_){
+         if(!lsfCached_){convertLsfAt(0,curLpc);lsfCached_=true;}
+-        // The endpoint is unchanged for the whole frame. Refresh a_ at its
++        // The endpoint is unchanged for the whole frame. Refresh workspace_.synthesis.a at its
+         // first subframe, because the previous dynamic frame ended at a midpoint.
+ #if !LPX4_ROTATE_LPC_ANCHORS
+         if(sub==0)for(uint8_t i=0;i<10;i++)prevLpc[i]=curLpc[i];
+ #endif
+ #ifdef LPX3_BANDWIDTH_EXPAND_Q14
+-        // nextCore expands a_ after interpolation: reload before every expansion.
+-        for(uint8_t i=0;i<10;i++)a_[i]=curLpc[i];
+-#else
+-        if(sub==0)for(uint8_t i=0;i<10;i++)a_[i]=curLpc[i];
++        // nextCore expands workspace_.synthesis.a after interpolation: reload before every expansion.
++        for(uint8_t i=0;i<10;i++)workspace_.synthesis.a[i]=curLpc[i];
++#else
++        if(sub==0)for(uint8_t i=0;i<10;i++)workspace_.synthesis.a[i]=curLpc[i];
+ #endif
+         return;
+     }
+@@ -884,7 +892,7 @@
+     const uint8_t t=(uint8_t)(sub*2+1);
+     const uint8_t localT=(uint8_t)(t%width);
+     for(uint8_t i=0;i<10;i++){
+-        a_[i]=lpx4LpcInterpolate(prevLpc[i],curLpc[i],localT,
++        workspace_.synthesis.a[i]=lpx4LpcInterpolate(prevLpc[i],curLpc[i],localT,
+             LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2);
+     }
+ 
+@@ -915,7 +923,7 @@
+         uint16_t weight=16384;
+         for(uint8_t k=0;k<10;k++){
+             weight=(uint16_t)(((int32_t)weight*LPX3_BANDWIDTH_EXPAND_Q14+8192)>>14);
+-            a_[k]=clamp(((int32_t)a_[k]*weight+8192)>>14,-32767,32767);
++            workspace_.synthesis.a[k]=clamp(((int32_t)workspace_.synthesis.a[k]*weight+8192)>>14,-32767,32767);
+         }
+ #endif
+     }
+@@ -967,10 +975,10 @@
+ #if LPX4_LPC_RING
+     // subPos already repeats every20 samples; no separate ring cursor is needed.
+     int16_t* history=hist_+(subPos_<10?subPos_:subPos_-10)+10;
+-    int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,a_,history));
++    int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,workspace_.synthesis.a,history));
+     history[0]=history[10]=pred;
+ #else
+-    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,a_,hist_));
++    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,workspace_.synthesis.a,hist_));
+     hist_[0]=pred;
+ #endif
+     int16_t deemph=preQ14_?lpx4AddClip15(pred,lpx4AttenuateQ14(preQ14_,prevDeemph_)):pred;
