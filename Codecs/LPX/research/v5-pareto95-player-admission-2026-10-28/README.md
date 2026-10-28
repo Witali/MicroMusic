@@ -46,6 +46,18 @@ key, WAVs and detailed listening receipt stay in ignored build storage.
 This single informal observation supports that description for this pair;
 it does not establish audible improvement or a corpus-wide listening score.
 
+A later source-versus-output inspection found that this particular input is
+very quiet: its full-record RMS is about -61.49 dBFS. In the 20 lowest-energy
+20-ms reference frames (10% of the recording, not certified silence), reference
+RMS is -98.88 dBFS, versus -75.00 / -74.54 dBFS for A/B native PCM16. This
+establishes an added low-level codec residual in those frames; it does not
+identify every audible sound as noise. All corresponding fixed-PWM samples
+are at neutral duty. Across the complete recording, only 378 / 400 of 32,000
+A/B PWM samples are non-neutral, so 8-bit rounding strongly affects this quiet
+example. No gain fitting, denoising, trimming or new encoding was performed.
+The exact pre-LPX reference listening copy and numeric inspection receipt stay
+in ignored storage. Near-equal A/B feedback remains scoped to this pair.
+
 This is one held-out point and four complete simulator runs, with the separate
 informal digital listening observation above. Physical-board/analog behavior
 and universal bitrate-quality conclusions remain unverified. Existing
