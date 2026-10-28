@@ -7,7 +7,7 @@ from batch_decoder import BatchSession
 from enhance_speech_compact import advance
 from q0_model import coefficient_trace, table
 from speech_rate_allocation import (bit_accounting, extra_capacity, fit_capacity,
-    reclaim_extras, spectrum_bits, distortion_rate)
+    reclaim_extras, improve_extras, spectrum_bits, distortion_rate)
 from test_speech_v4 import fixture
 from wav_lpc import pack_frames
 
@@ -145,6 +145,79 @@ class SpeechRateAllocationTests(unittest.TestCase):
         with self.assertRaises(ValueError):reclaim_extras(sp,4,extras,100,render=render,objective=lambda pcm:float('inf'))
         with self.assertRaises(AssertionError):reclaim_extras(sp,4,extras,100,render=render,objective=score,serialize=lambda ee:b'bad')
         self.assertEqual(distortion_rate(12,30,2),492)
+
+    def test_bounded_swaps_preserve_feasibility_and_confirm_exact_improvement(self):
+        for profile in (4,6):
+            values=fields(profile)
+            values[2]=[[2+3*i for i in range(10)] if profile==4 else [3+6*i for i in range(10)] for _ in values[2]]
+            values[3]=[(18,60,8)]*len(values[3]);values[5]=values[6]=0
+            sp=values[2];extras=np.full((24,2),(-1,0),np.int64)
+            for i,position,amp in ((0,4,7),(1,3,-6),(4,22,4),(8,6,-3),(15,1,2)):
+                extras[i]=(position,amp)
+            def serialize(ee):return compact.pack(*values[:7],extras=ee)[0]
+            render=snapshot_renderer(values);cost=bit_accounting(sp,profile,extras);cap=cost['file_bytes']-3
+            control,_,_,_=fit_capacity(cost['spectrum_bits'],len(sp),profile,extras,cap,0,values[0])
+            retained=np.flatnonzero(control[:,1]);removed=np.flatnonzero((extras[:,1]!=0)&(control[:,1]==0))
+            baseline_pcm=compact.decode_model(serialize(control));reference=None
+            for incoming in removed:
+                for outgoing in retained:
+                    target=control.copy();target[outgoing]=(-1,0);target[incoming]=extras[incoming]
+                    candidate=compact.decode_model(serialize(target))
+                    if not np.array_equal(candidate,baseline_pcm):reference=candidate.astype(np.int64);break
+                if reference is not None:break
+            self.assertIsNotNone(reference)
+            def score(pcm):return int(np.sum((reference-pcm.astype(np.int64))**2))
+            result=improve_extras(sp,profile,extras,cap,render=render,objective=score,serialize=serialize,
+                stop=values[0],max_evaluations=100,candidate_batch=32)
+            self.assertTrue(result.feasible);self.assertEqual(result.score,0)
+            self.assertGreater(result.accepted_swaps,0)
+            self.assertEqual(result.evaluations,1+result.candidate_evaluations+result.confirmation_evaluations)
+            self.assertEqual(result.accepted_swaps,result.confirmation_evaluations)
+            self.assertEqual(result.file_bytes,len(serialize(control)))
+            self.assertLessEqual(len(result.stream),cap)
+            self.assertEqual(bit_accounting(sp,profile,result.extras),bit_accounting(sp,profile,control))
+            for step in result.trace:self.assertLess(step['after_score'],step['before_score'])
+            np.testing.assert_array_equal(result.pcm,compact.decode_model(result.stream))
+            for compact_only in (False,True):
+                with BatchSession('batch',speech=True,speech_compact=True,compact_only=compact_only) as decoder:
+                    np.testing.assert_array_equal(decoder.decode_one_s16(result.stream,values[0]),result.pcm)
+            for limit in (1,2,3,6):
+                bounded=improve_extras(sp,profile,extras,cap,render=render,objective=score,serialize=serialize,
+                    stop=values[0],max_evaluations=limit,candidate_batch=2)
+                self.assertTrue(bounded.feasible);self.assertLessEqual(bounded.evaluations,limit)
+                self.assertLessEqual(bounded.score,score(render(control)))
+                self.assertEqual(bounded.file_bytes,result.file_bytes)
+
+    def test_swap_gate_no_fit_prefix_and_unstable_confirmation(self):
+        values=fields(6,641);sp=values[2];extras=np.full((24,2),(-1,0),np.int64)
+        extras[0]=(3,7);extras[8]=(1,1);extras[9]=(2,2);extras[10]=(3,3)
+        cost=bit_accounting(sp,6,extras);cap=cost['file_bytes']-1
+        control,_,_,_=fit_capacity(cost['spectrum_bits'],len(sp),6,extras,cap,320,641)
+        missing=np.flatnonzero((extras[:,1]!=0)&(control[:,1]==0))[0]
+        def serialize(ee):return compact.pack(*values[:7],extras=ee)[0]
+        def render(ee):
+            pcm=np.zeros(641,np.int64);pcm[0]=0 if ee[missing,1] else 10
+            return pcm
+        score=lambda pcm:int(pcm[0])
+        denied=improve_extras(sp,6,extras,cap,render=render,objective=score,serialize=serialize,stop=641,start=320,
+            max_evaluations=30,admissible=lambda pcm:False)
+        self.assertTrue(denied.feasible);self.assertEqual(denied.accepted_swaps,0)
+        self.assertFalse(denied.seed_admissible);self.assertFalse(denied.quality_admissible)
+        self.assertGreater(denied.rejected_by_admissible,0)
+        np.testing.assert_array_equal(denied.extras,control)
+        allowed=improve_extras(sp,6,extras,cap,render=render,objective=score,serialize=serialize,stop=641,start=320)
+        np.testing.assert_array_equal(allowed.extras[0],extras[0])
+        nofit=improve_extras(sp,6,extras,22,render=render,objective=score,serialize=serialize,stop=641)
+        self.assertFalse(nofit.feasible);self.assertEqual(nofit.status,'no_fit')
+        publications=[]
+        def unstable_serialize(ee):publications.append(1);return serialize(ee)
+        def unstable_render(ee):
+            pcm=render(ee)
+            if len(publications)>1:pcm[0]+=1
+            return pcm
+        with self.assertRaises(AssertionError):
+            improve_extras(sp,6,extras,cap,render=unstable_render,objective=score,serialize=unstable_serialize,
+                stop=641,start=320,max_evaluations=30)
 
 
 if __name__=='__main__':unittest.main()

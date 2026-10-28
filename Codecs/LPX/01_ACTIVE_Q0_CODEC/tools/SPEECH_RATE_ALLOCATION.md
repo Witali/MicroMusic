@@ -56,3 +56,29 @@ The focused tests independently compare snapshot reconstruction with the full
 integer model and both native decoder layouts, check serialized costs including
 tails/marker disappearance, and force a coupled-removal ranking reversal.
 No perceptual gain or target real-time admission follows from these unit tests.
+
+## Feasible bounded improvement
+
+`improve_extras(..., stop=samples, render=..., objective=..., serialize=...,
+max_evaluations=128, candidate_batch=32, admissible=None)` is a separate policy.
+It first obtains the preserved amplitude fit. If that seed fits, exhaustion
+always retains a fitting incumbent. It tests exchanging one retained original
+extra for one removed original extra, keeping spectra, parameters, base pulses,
+filters and geometry frozen. Active count and all markers/padding stay equal;
+every accepted state is actually serialized and independently reconstructed
+again, with all renders included in the bound.
+
+Batches choose improvements among the pairs actually tested; they do not claim
+the all-removal minimum promised by a complete `reclaim_extras` round. Accepted
+swaps restart proposals from the new state. `stop` is required so partial tails
+retain the control's actual unplayed-field ordering. Prefix extras before
+`start` stay frozen. No new spectral proposal is introduced in this stage;
+changed spectra need new accounting/reconstruction outside it.
+
+An optional `admissible(full_pcm)` preserves the caller's frozen quality floors
+for every accepted swap. `seed_admissible` and `quality_admissible` separately
+report that predicate; byte `feasible=True` does not silently approve quality.
+Without a predicate these fields are unknown (`None`). `accepted_swaps`,
+`candidate_evaluations`, `confirmation_evaluations` and `rejected_by_admissible`
+make the finite search cost explicit. Only the best retained output is needed
+because accepted swaps reduce the objective at the same complete stored size.

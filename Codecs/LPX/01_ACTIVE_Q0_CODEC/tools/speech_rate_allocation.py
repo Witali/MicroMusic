@@ -113,6 +113,28 @@ class AllocationResult:
     trace: list
 
 
+def _render_score(candidate,render,objective,frames,samples=None):
+    pcm=np.asarray(render(candidate.copy())).copy()
+    if (pcm.ndim!=1 or pcm.dtype.kind not in 'iu' or not len(pcm)
+            or np.any(pcm<-32768) or np.any(pcm>32767)):
+        raise ValueError('Renderer must return full PCM16 integers')
+    if samples is None:
+        if not (frames-1)*320<len(pcm)<=frames*320:
+            raise ValueError('Renderer length differs from stored v5 frame geometry')
+    elif len(pcm)!=samples:raise ValueError('Renderer changed full PCM length')
+    score=objective(pcm.copy())
+    if isinstance(score,bool) or not isinstance(score,Real) or not math.isfinite(score):
+        raise ValueError('Objective must return a finite scalar')
+    return pcm,int(score) if isinstance(score,Integral) else float(score)
+
+
+def _serialize(candidate,serialize,cost):
+    stream=None if serialize is None else bytes(serialize(candidate.copy()))
+    if stream is not None and len(stream)!=cost['file_bytes']:
+        raise AssertionError('V5 bit cost differs from actual serialization')
+    return stream
+
+
 def reclaim_extras(spectra,profile,extras,max_bytes,*,render,objective,start=0,
                    max_evaluations=4096,rate_lambda=0.0,serialize=None):
     """Greedy exact marginal removals, refreshing every score after each step.
@@ -140,20 +162,8 @@ def reclaim_extras(spectra,profile,extras,max_bytes,*,render,objective,start=0,
     evaluations=0;trace=[];expected_samples=None
     def evaluate(candidate,cost):
         nonlocal evaluations,expected_samples
-        pcm=np.asarray(render(candidate.copy())).copy()
-        if (pcm.ndim!=1 or pcm.dtype.kind not in 'iu' or not len(pcm)
-                or np.any(pcm<-32768) or np.any(pcm>32767)):
-            raise ValueError('Renderer must return full PCM16 integers')
-        if expected_samples is None:
-            expected_samples=len(pcm)
-            if not (layout['frames']-1)*320<expected_samples<=layout['frames']*320:
-                raise ValueError('Renderer length differs from stored v5 frame geometry')
-        elif len(pcm)!=expected_samples:raise ValueError('Renderer changed full PCM length')
-        score=objective(pcm.copy())
-        if isinstance(score,bool) or not isinstance(score,Real) or not math.isfinite(score):raise ValueError('Objective must return a finite scalar')
-        score=int(score) if isinstance(score,Integral) else float(score)
-        stream=None if serialize is None else bytes(serialize(candidate.copy()))
-        if stream is not None and len(stream)!=cost['file_bytes']:raise AssertionError('V5 bit cost differs from actual serialization')
+        pcm,score=_render_score(candidate,render,objective,layout['frames'],expected_samples)
+        expected_samples=len(pcm);stream=_serialize(candidate,serialize,cost)
         evaluations+=1
         return pcm,score,stream
     pcm,score,stream=evaluate(added,layout)
@@ -177,3 +187,102 @@ def reclaim_extras(spectra,profile,extras,max_bytes,*,render,objective,start=0,
     else:status='fit'
     return AllocationResult(added,pcm,stream,layout['file_bytes']<=max_bytes,status,
         layout['file_bytes'],layout['payload_bits'],capacity,len(trace),evaluations,score,trace)
+
+
+@dataclass
+class SwapAllocationResult(AllocationResult):
+    accepted_swaps: int
+    candidate_evaluations: int
+    confirmation_evaluations: int
+    rejected_by_admissible: int
+    seed_admissible: bool | None
+    quality_admissible: bool | None
+
+
+def improve_extras(spectra,profile,extras,max_bytes,*,render,objective,serialize,
+                   stop,start=0,max_evaluations=128,candidate_batch=32,
+                   admissible=None):
+    """Keep the amplitude fit feasible, then improve exact bounded pulse swaps.
+
+    Fixed spectra/parameters/base pulses/geometry must remain unchanged. Swap
+    one retained original extra for one removed original extra, preserving all
+    marker/value/padding bits. Each accepted state is actually serialized and
+    re-rendered; every subsequent batch uses that new state. Partial batches
+    may improve the incumbent but never claim an exact greedy minimum.
+
+    admissible(full_pcm)->bool can preserve a caller's frozen quality floors.
+    No-fit means this fixed-fields amplitude seed did not fit, rather than a
+    claim about the existence of another stream. A feasible seed is retained
+    on exhaustion, including when no improvement is found.
+    """
+    for name,value,low,high in (('max_bytes',max_bytes,22,65535),('start',start,0,64000),
+                               ('max_evaluations',max_evaluations,1,10000000),
+                               ('candidate_batch',candidate_batch,1,4096)):
+        if isinstance(value,bool) or not isinstance(value,Integral) or not low<=value<=high:
+            raise ValueError('Invalid '+name)
+    if start%40:raise ValueError('Reclamation start must be aligned to40 samples')
+    if not all(callable(cb) for cb in (render,objective,serialize)) or admissible is not None and not callable(admissible):
+        raise ValueError('Expected render/objective/serialize and optional admissible callbacks')
+    layout=bit_accounting(spectra,profile,extras);original=np.asarray(extras,np.int64).copy()
+    # stop preserves the control's actual unplayed-tail ordering.
+    if isinstance(stop,bool) or not isinstance(stop,Integral) or not 1<=stop<=layout['frames']*320:
+        raise ValueError('Invalid actual sample stop')
+    added,capacity,size,removed=fit_capacity(layout['spectrum_bits'],layout['frames'],profile,original,int(max_bytes),int(start),int(stop))
+    cost=bit_accounting(spectra,profile,added)
+    pcm,score=_render_score(added,render,objective,layout['frames'])
+    stream=_serialize(added,serialize,cost);evaluations=1;candidates=confirmations=rejected=0;trace=[]
+    seed_admissible=None if admissible is None else admissible(pcm.copy())
+    if seed_admissible is not None and not isinstance(seed_admissible,(bool,np.bool_)):
+        raise ValueError('Admissible callback must return bool')
+    seed_admissible=None if seed_admissible is None else bool(seed_admissible)
+    quality_admissible=seed_admissible
+    if size!=cost['file_bytes']:raise AssertionError('Amplitude fit cost differs from exact stored bits')
+    if stop!=len(pcm):raise ValueError('Actual sample stop differs from full renderer length')
+    if size>max_bytes:
+        return SwapAllocationResult(added,pcm,stream,False,'no_fit',size,cost['payload_bits'],capacity,
+            removed,evaluations,score,trace,0,candidates,confirmations,rejected,seed_admissible,quality_admissible)
+    pool=[i for i in range(start//40,len(original)) if original[i,1]]
+    def commit(batch):
+        nonlocal added,pcm,score,stream,evaluations,confirmations,rejected,quality_admissible
+        for loss,incoming,outgoing,proposal,expected in sorted(batch,key=lambda v:v[:3]):
+            if admissible is not None:
+                allowed=admissible(expected.copy())
+                if not isinstance(allowed,(bool,np.bool_)):raise ValueError('Admissible callback must return bool')
+                if not allowed:rejected+=1;continue
+            proposal_cost=bit_accounting(spectra,profile,proposal)
+            if proposal_cost!=cost:raise AssertionError('Pulse swap changed stored rate')
+            proposal_stream=_serialize(proposal,serialize,proposal_cost)
+            confirmed,confirmed_loss=_render_score(proposal,render,objective,layout['frames'],len(pcm))
+            evaluations+=1;confirmations+=1
+            if confirmed_loss!=loss or not np.array_equal(confirmed,expected):raise AssertionError('Unstable accepted reconstruction/objective')
+            trace.append({'restored_chunk':int(incoming),'removed_chunk':int(outgoing),
+                'before_score':score,'after_score':loss,'file_bytes':size})
+            added=proposal;pcm=confirmed;score=loss;stream=proposal_stream
+            quality_admissible=None if admissible is None else True
+            return True
+        return False
+    status='fit_complete'
+    while True:
+        kept=[i for i in pool if added[i,1]];missing=[i for i in pool if not added[i,1]]
+        if not kept or not missing:break
+        accepted=False;batch=[];batch_count=0
+        for restore in missing:
+            for remove in kept:
+                # Reserve one full reconstruction to confirm a chosen state
+                # after its actual serialized image has been produced.
+                if evaluations>=max_evaluations-1:status='fit_evaluation_limit';break
+                trial=added.copy();trial[remove]=(-1,0);trial[restore]=original[restore]
+                trial_pcm,loss=_render_score(trial,render,objective,layout['frames'],len(pcm))
+                evaluations+=1;candidates+=1;batch_count+=1
+                if loss<score:batch.append((loss,restore,remove,trial,trial_pcm))
+                if batch_count<candidate_batch and evaluations<max_evaluations-1:continue
+                accepted=commit(batch);batch=[];batch_count=0
+                if accepted:break
+            if accepted or status=='fit_evaluation_limit':break
+        # A final partial batch supplies tested feasible improvements, without
+        # claiming an exact all-pairs minimum.
+        if not accepted and batch:accepted=commit(batch)
+        if not accepted:break
+        if evaluations>=max_evaluations-1:status='fit_evaluation_limit';break
+    return SwapAllocationResult(added,pcm,stream,True,status,size,cost['payload_bits'],capacity,
+        removed,evaluations,score,trace,len(trace),candidates,confirmations,rejected,seed_admissible,quality_admissible)
