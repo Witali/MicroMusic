@@ -1,6 +1,6 @@
 import json,os,subprocess,tempfile,unittest
 from pathlib import Path
-from build_release_player import REPOSITORY,guard,validate
+from build_release_player import REPOSITORY,build,guard,validate
 class ReleasePlayerTests(unittest.TestCase):
     def valid(self,n=3):
         return dict(stopped=1,eof=1,decoder_error=0,observer_errors=0,observer_exit_code=0,underruns=0,
@@ -20,6 +20,10 @@ class ReleasePlayerTests(unittest.TestCase):
         self.assertTrue(validate(bad,b'',b'',expected_error=1))
         self.assertFalse(validate(bad,b'',b''))
         self.assertFalse(validate(bad,b'',b'',expected_error=True))
+    def test_invalid_queue_types_fail_before_building(self):
+        for queue in (0,512.0,True,None,'256'):
+            with self.subTest(queue=queue):
+                with self.assertRaises(ValueError):build([b'x'],REPOSITORY/'build/unused-player-test',Path('unused'),queue=queue,prefill=192)
     def test_outputs_cannot_alias_inputs_or_escape_build(self):
         build=REPOSITORY/'build';build.mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(dir=build) as temporary:

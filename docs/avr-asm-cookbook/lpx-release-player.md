@@ -41,3 +41,13 @@ and [full measured scope and anonymous receipts](../../Codecs/LPX/research/relea
 The observer is original project code using an unchanged external GPL-3.0-or-later
 simavr library; API references and licensing are linked from the example.
 Simulator timing does not establish board/analog behavior.
+
+The admitted 256 / 192 byte-index profile saves a further 202–208 B full
+Flash and 258 B static SRAM at the fixed decoder, across the same 116 images.
+Its capacities and final publication were checked at wrap and EOF boundaries.
+With the final decoder, all 116 production images still pass; queue minimum
+is 192, observed stack margin 1,231 B, and the actual combined Flash saving
+against original diagnostic controls is 410–498 B. This total is measured,
+not the sum of marginal range endpoints. The ten-image 128 / 96 cost screen
+adds 6 B Flash everywhere while saving only RAM, so it is rejected before
+expensive timing admission under the project's Flash priority.

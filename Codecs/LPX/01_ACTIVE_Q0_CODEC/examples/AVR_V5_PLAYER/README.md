@@ -7,10 +7,13 @@ Timer1 stops. Timer2 holds the final duty, as in the diagnostic player.
 The production ELF contains no PB0 tick marker, profiling counters, decode
 markers or hardware-address metadata.
 
-The initial default is FIFO 512 / prefill 384.
+The selected default is FIFO 256 / prefill 192; FIFO 512 / prefill 384 remains
+explicitly available as the measured baseline.
 
 `head`, `tail`, `eof`, `error` and `stopped` are actual playback state. The
-foreground owns head/eof/error; the ISR owns tail/stopped. Compiler memory
+foreground publishes head/EOF/error; the ISR publishes tail and terminal
+stopped after draining. An abort can also publish stopped while the timer is
+inactive or interrupts are masked. Compiler memory
 barriers publish queue data before head and finish consumption before tail.
 The 512-slot baseline uses short atomic sections for shared 16-bit indices.
 The 256/128 builds use byte indices; final head+EOF still publish together
@@ -35,7 +38,7 @@ not belong in this example.
 Run from the repository root with the project's Python packages available:
 
 ```text
-python Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py build/release input.l4hy --avr-bin /path/to/avr/bin --queue 512 --enable-asm
+python Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py build/release input.l4hy --avr-bin /path/to/avr/bin --queue 256 --enable-asm
 ```
 
 The tool uses the measured small-code recipe and explicit v5-only flags. It
@@ -57,7 +60,7 @@ with its zlib and zstd dependencies:
 
 ```text
 python Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_observer.py build/observer --include /path/to/native/include/simavr --lib /path/to/native/lib
-python Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py build/release input.l4hy --avr-bin /path/to/avr/bin --queue 512 --enable-asm --observer build/observer/sim_player --lib /path/to/native/lib
+python Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py build/release input.l4hy --avr-bin /path/to/avr/bin --queue 256 --enable-asm --observer build/observer/sim_player --lib /path/to/native/lib
 ```
 
 On Windows add `--wsl Ubuntu` to both commands and provide local paths to the
@@ -87,3 +90,10 @@ and [IO-register notification API](https://github.com/buserror/simavr/blob/v1.6/
 No simulator implementation is copied. The existing simavr library is
 GPL-3.0-or-later; its sources and licensing remain external and unchanged.
 Simulator results do not establish physical-board or analog output behavior.
+
+The selected 256 / 192 profile passes the declared 111 normal + 5 active-IRQ
+stress matrix on the frozen final decoder; the complete scope and
+[anonymous measured receipts](../../../research/release-player-2026-10-28/README.md)
+are retained separately. FIFO 512 remains an explicit validated baseline.
+FIFO 128 is available for experiments but rejected by the bounded Flash-size
+screen and has no timing admission.

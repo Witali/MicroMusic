@@ -1,0 +1,183 @@
+{
+  "schema": "lpx-release-player-final-public-v1",
+  "scope": "Measured standalone 256 final core versus fixed-tail baseline diagnostic 512. Separate exact paired controls distinguish FIFO, core-in-player, and same-final-core application+FIFO changes; do not add independent range endpoints.",
+  "cpu": "ATmega328P / AVR5",
+  "cpu_hz": 16000000,
+  "audio_hz": 8000,
+  "compiler": "avr-g++.exe (GCC) 7.3.0",
+  "compiler_options": [
+    "-mmcu=atmega328p",
+    "-DF_CPU=16000000UL",
+    "-Os",
+    "-std=gnu++11",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-DLPX4_AVR_DOT_UNROLL=1",
+    "-DLPX4_FUNCTION_TUNING=0",
+    "-DLPX4_V3_FEATURES=24",
+    "-DLPX4_ENABLE_SPEECH=1",
+    "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+    "-DLPX4_COMPACT_ONLY=1",
+    "-DLPX4_ENABLE_ASM=1",
+    "-flto",
+    "-mcall-prologues",
+    "-mrelax",
+    "-DLPX_PLAYER_QUEUE=256",
+    "-DLPX_PLAYER_PREFILL=192",
+    "-DLPX_PLAYER_IRQ_LOAD=0",
+    "-DLPX_PLAYER_DATA_HEADER=\"voice_data.h\""
+  ],
+  "queue": 256,
+  "prefill": 192,
+  "usable_queue_capacity": 255,
+  "normal_runs": 111,
+  "extra100cycle_irq_runs": 5,
+  "all_116_passed": true,
+  "normal_samples": 5743258,
+  "complete_pwm_exact": true,
+  "model_and_frozen_baseline_pwm_exact": true,
+  "zero_underruns": true,
+  "exact_ticks_and_eof": true,
+  "source": {
+    "core": {
+      "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+      "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+      "Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+      "Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+      "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+      "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+    },
+    "player": {
+      "player.cpp": "ebaa83e7e47eb8e26d38e74cf6ba693de1682c8c98f079af927dff808a683674",
+      "player_config.h": "52492e9a832bc567c02cfaa6253fedcd0ea3a9a813930e4e609f79f0e43b62c9",
+      "sim_player.c": "86dd48ebe3b8cf70ba9828ee37e887ba03684be4ce5e82320f1ce750f1f31a71",
+      "player_hardware.cpp": "f65df39755a35177697b4945dcb367678ca32d160f564eeec20bde135731f427",
+      "build_release_player.py": "1fba71295fbe982ae57a10678a32bfc490a7f1e5a32a5e47c994275c653ce97c"
+    }
+  },
+  "decoder_commit": "5c7e0592",
+  "player512_baseline_commit": "b67350ba",
+  "toolchain_and_vendor_header_sha256": {
+    "avr-g++.exe": "098f5708a5d70e3abb6b504145b46c9320ef4b6d43b6b8f1c09b431e611d543b",
+    "cc1plus.exe": "ff61dee5e0c6db53996e54a6b4c1b7ad66b4fd7c2f8ef695984aca90ed6f34b8",
+    "avr-as.exe": "f4742917d141a23f4863086e6c0a3803b4da3c444cf1935303165b6f7e7e754e",
+    "avr-ld.exe": "b8aa2ff51061ff713976e6db14e9adb492436e5b463679a8b9e718c8ff0f2bdf",
+    "libgcc.a": "4753393354a98da210ac6e4746b5ea040dd5606da2590e3d6487c112bdae071d",
+    "libc.a": "18b64b8b3ef540925643bb79e15f574bb5eefcabc137e75306b0066aa89ac1c0",
+    "crtatmega328p.o": "0b539a5729bdaafb268d618235a5ec23fbbab41a3bc80f762cb46fe14035b935",
+    "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+    "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "pgmspace.h": "5e8af74a13ecaf167738a51d5c1179d523d35057fc13d4ac0114e07f41c50f45",
+    "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041",
+    "atomic.h": "7f8086185f093aaeef001a6cfca47bf229c0961a683072bd5dd82caaee8313e9",
+    "avr_headers": "66533380ad9a1ee890ae9ce57edada3eeed0ce3424b7fe9d8c1a45b378acc90e",
+    "gcc_internal_headers": "9c6dac19c88afdd7e878e4ad204c10a8e41b70e47186d5812b38a68830585ce5"
+  },
+  "ranges": {
+    "final_flash_bytes": {
+      "min": 5094,
+      "max": 27858
+    },
+    "final_program_flash_bytes": {
+      "min": 4573,
+      "max": 4600
+    },
+    "final_static_sram_bytes": {
+      "min": 756,
+      "max": 756
+    },
+    "fifo_only_flash_saving_bytes": {
+      "min": 202,
+      "max": 208
+    },
+    "core_in_player256_flash_saving_bytes": {
+      "min": 182,
+      "max": 184
+    },
+    "same_final_core_application_and_fifo_flash_saving_bytes": {
+      "min": 188,
+      "max": 280
+    },
+    "combined_flash_saving_bytes": {
+      "min": 410,
+      "max": 498
+    },
+    "combined_sram_saving_bytes": {
+      "min": 328,
+      "max": 329
+    },
+    "min_queue_before_producer_eof": {
+      "min": 192,
+      "max": 192
+    },
+    "irq_cycles_max": {
+      "min": 68,
+      "max": 168
+    },
+    "stack_margin_all_bytes": {
+      "min": 1231,
+      "max": 1231
+    },
+    "stack_margin_playback_bytes": {
+      "min": 1231,
+      "max": 1231
+    },
+    "pwm_interval_min_cycles": {
+      "min": 1995,
+      "max": 1997
+    },
+    "pwm_interval_max_cycles": {
+      "min": 2003,
+      "max": 2005
+    }
+  },
+  "baseline256_admission": {
+    "all_116_passed": true,
+    "source": {
+      "core": {
+        "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+        "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+        "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+        "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+        "Lpx4HybridCore.cpp": "f29ba9dac47b4508c98dbc1d6c617ccf26c2c0d9e0d6b516d7ccfc84f20ab85a",
+        "Lpx4HybridCore.h": "4dae1efb0289638110b67d687452795f434525d9a52eaf03f2319b37e62393e3",
+        "Lpx4Math.h": "6f579fdcfc050fc082675fab91b1ed26ffd4d110238cd8ece19b079122845494",
+        "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+        "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+      },
+      "player": {
+        "player.cpp": "df8113a6e237aa74a447c69081ed3be82789c7b9a1fa4a532809443ec93e8643",
+        "player_config.h": "2dbdad2ac12cc87f2d07913123b97ae6518518f9fb9ad64ac995494e643ea7ef",
+        "sim_player.c": "86dd48ebe3b8cf70ba9828ee37e887ba03684be4ce5e82320f1ce750f1f31a71",
+        "player_hardware.cpp": "f65df39755a35177697b4945dcb367678ca32d160f564eeec20bde135731f427",
+        "build_release_player.py": "e417484364059613f1c00faf15f1a15835e5b75ad937cc10b06ecbb682185e37"
+      }
+    },
+    "program_flash_bytes": {
+      "min": 4757,
+      "max": 4784
+    },
+    "static_sram_bytes": 801,
+    "min_queue": 192,
+    "minimum_stack_margin_bytes": 1180
+  },
+  "physical_board_measured": false,
+  "smaller_fifo": {
+    "queue": 128,
+    "prefill": 96,
+    "screened_images": 10,
+    "scope": "Five exact selected stress chains at normal and +100 IRQ cycles. Full linked costs only; no128 timing admission.",
+    "flash_growth_bytes": 6,
+    "static_sram_saving_bytes": 128,
+    "rejected": true
+  },
+  "final_boundary_cases": 37,
+  "final_boundary_cases_all_passed": true,
+  "baseline256_boundary_cases": 37,
+  "baseline256_boundary_cases_all_passed": true,
+  "focused_test_methods": 5,
+  "metadata_rejection_cases": 65
+}

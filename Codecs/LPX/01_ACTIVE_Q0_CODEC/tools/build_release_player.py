@@ -64,10 +64,10 @@ def checked_image(folder,avr_bin,streams,queue):
         syms[name]=matches[0]
     return syms,ranges
 
-def build(streams,output,avr_bin,*,source=None,queue=512,prefill=None,irq=0,assembly=False):
+def build(streams,output,avr_bin,*,source=None,queue=256,prefill=None,irq=0,assembly=False):
     if not isinstance(streams,(list,tuple)) or not 1<=len(streams)<=255 or any(not isinstance(b,(bytes,bytearray,memoryview)) or not 1<=len(b)<=65535 for b in streams):
         raise ValueError('Expected 1..255 nonempty bounded byte streams')
-    if queue not in (128,256,512) or isinstance(queue,bool):raise ValueError('Unsupported queue')
+    if isinstance(queue,bool) or not isinstance(queue,int) or queue not in (128,256,512):raise ValueError('Unsupported queue')
     prefill=queue*3//4 if prefill is None else prefill
     if isinstance(prefill,bool) or not isinstance(prefill,int) or not 1<=prefill<queue:raise ValueError('Invalid prefill')
     if isinstance(irq,bool) or not isinstance(irq,int) or not 0<=irq<=600 or not isinstance(assembly,bool):raise ValueError('Invalid backend or IRQ load')
@@ -152,7 +152,7 @@ def validate(report,actual,expected,*,expected_error=0):
     if expected_error==0:good=good and report.get('produced')==len(expected) and report.get('queued_at_stop')==0 and report.get('timer_started')==1
     return bool(good)
 
-def simulate(streams,output,avr_bin,runner,*,source=None,queue=512,prefill=None,irq=0,assembly=False,lib=None,wsl=None,expected_pwm=None,expected_error=0,require_valid=True):
+def simulate(streams,output,avr_bin,runner,*,source=None,queue=256,prefill=None,irq=0,assembly=False,lib=None,wsl=None,expected_pwm=None,expected_error=0,require_valid=True):
     folder=guard(output,[runner]);cost=build(streams,folder,avr_bin,source=source,queue=queue,prefill=prefill,irq=irq,assembly=assembly)
     observer_metadata(folder,cost,avr_bin)
     expected=b''.join(pwm_duties(decode_model(b)).tobytes() for b in streams) if expected_pwm is None else bytes(expected_pwm)
@@ -192,7 +192,7 @@ def simulate(streams,output,avr_bin,runner,*,source=None,queue=512,prefill=None,
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('output',type=Path);p.add_argument('streams',nargs='+',type=Path);p.add_argument('--avr-bin',required=True,type=Path)
-    p.add_argument('--source',type=Path);p.add_argument('--queue',type=int,default=512);p.add_argument('--prefill',type=int);p.add_argument('--irq',type=int,default=0);p.add_argument('--enable-asm',action='store_true')
+    p.add_argument('--source',type=Path);p.add_argument('--queue',type=int,default=256);p.add_argument('--prefill',type=int);p.add_argument('--irq',type=int,default=0);p.add_argument('--enable-asm',action='store_true')
     p.add_argument('--observer',type=Path);p.add_argument('--lib',type=Path);p.add_argument('--wsl');a=p.parse_args();guard(a.output,a.streams);streams=[f.read_bytes() for f in a.streams]
     if a.observer:r=simulate(streams,a.output,a.avr_bin,a.observer,source=a.source,queue=a.queue,prefill=a.prefill,irq=a.irq,assembly=a.enable_asm,lib=a.lib,wsl=a.wsl);cost=r['cost']
     else:cost=build(streams,a.output,a.avr_bin,source=a.source,queue=a.queue,prefill=a.prefill,irq=a.irq,assembly=a.enable_asm)
