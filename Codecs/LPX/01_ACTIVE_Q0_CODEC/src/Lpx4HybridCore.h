@@ -216,9 +216,10 @@ private:
     uint8_t subType_,lag_,gain_,ringCursor_;
 #endif
 #if LPX4_ENABLE_SPEECH
+    // Common:profile4/6. Compact-only:validated v5 flags (bit1 profile,bit7 extras).
     uint8_t speechProfile_,speechHalf_;
 #endif
-#if LPX4_ENABLE_SPEECH_COMPACT
+#if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_COMPACT_ONLY
     uint8_t speechCompact_; // bit0 v5, bit7 optional-extra markers
 #endif
 #if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY

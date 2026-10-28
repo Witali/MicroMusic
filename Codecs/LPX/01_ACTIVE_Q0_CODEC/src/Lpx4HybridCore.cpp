@@ -148,7 +148,7 @@ void Lpx4HybridCore::resetState(){
 #if LPX4_ENABLE_SPEECH
  speechProfile_=speechHalf_=0;
 #endif
-#if LPX4_ENABLE_SPEECH_COMPACT
+#if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_COMPACT_ONLY
  speechCompact_=0;
 #endif
 #if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY
@@ -207,7 +207,8 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  const uint8_t version=readByte(),flags=readByte();
 #if LPX4_COMPACT_ONLY
  if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
- speechProfile_=flags&127;speechCompact_=1|(flags&128);
+ // Compact-only needs one flags byte: bit1 selects6k, bit7 extra pulses.
+ speechProfile_=flags;
 #else
 #if LPX4_ENABLE_SPEECH_COMPACT
  if(version==5 && ((flags&127)==4 || (flags&127)==6)){
@@ -336,7 +337,7 @@ bool Lpx4HybridCore::readFrame(){
 #endif
   staticSpectrum_=true;
   if(!speechHalf_){
-   const uint8_t bits=speechProfile_==4?5:6,shift=10-bits;
+   const uint8_t bits=(speechProfile_&2)?6:5,shift=10-bits;
 #if LPX4_ENABLE_SPEECH_COMPACT
 #if !LPX4_COMPACT_ONLY
    if(speechCompact_){
@@ -351,7 +352,7 @@ bool Lpx4HybridCore::readFrame(){
      const uint8_t k=bits-4-(uint8_t)delta;
      // Gap max:63+1+63=127. Delta range:-64..126. Reject before widening.
      int8_t last=-1;
-     const uint8_t limit=(speechProfile_-2)<<4;
+     const uint8_t limit=((speechProfile_&2)+2)<<4;
      for(uint8_t i=0;i<10;i++){
       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
       // Compact Rice codes use at most seven bits: delta is -64..63.
@@ -508,7 +509,7 @@ bool Lpx4HybridCore::readSubframe(){
   uint16_t pair=0;
   uint8_t second=0;
 #if LPX4_COMPACT_ONLY
-  if(speechProfile_==6){
+  if(speechProfile_&2){
 #else
   if(speechCompact_ && speechProfile_==6){
 #endif
@@ -522,7 +523,7 @@ bool Lpx4HybridCore::readSubframe(){
   for(uint8_t i=0;i<2;i++){
    uint8_t pos;
    int8_t amp;
-   if(speechProfile_==4){
+   if(!(speechProfile_&2)){
     pos=readBits(4);pos+=(pos+2)>>2;
     amp=readOne()?8:-8;
    }else{
@@ -544,7 +545,11 @@ bool Lpx4HybridCore::readSubframe(){
    pulsePos_[i]=pos+i*20;pulseAmp_[i]=amp;
   }
 #if LPX4_ENABLE_SPEECH_COMPACT
+#if LPX4_COMPACT_ONLY
+  if((speechProfile_&128) && readOne()){
+#else
   if((speechCompact_&128) && readOne()){
+#endif
    const uint8_t pos=readBits(6),raw=readBits(4);
    const int8_t amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
    if(pos>=40){error_=CORRUPT_STREAM;return false;}
