@@ -14,7 +14,17 @@ objective to survive in the beam; later frames can make that trajectory useful.
 Outside a window, the best encountered center seeds the next bounded window.
 This is a finite heuristic search, not an optimality or no-fit proof.
 
-All branches use the existing integer `advance` recurrence. Ranking evaluates
+All branches use the existing integer `advance` recurrence. Scalar LSF
+proposals default to exact bounded local screening (320/640/1280 samples,
+including current interpolation and the parent's actual prefix state). The
+local screening proxy is unweighted PCM SSE plus exact stored rate; it does
+not reset or approximate the state used by final synthesis. Only shortlisted
+spectral alternatives are fully reconstructed, crossed with excitation and
+ranked. `screening="full"` retains full-suffix scalar screening as an explicit
+experimental control. Local screening is heuristic and can miss a candidate
+preferred by a full perceptual objective.
+
+Final branch ranking evaluates
 the complete reconstructed original-length waveform and the actual serialized
 file size, including headers, Rice gap/delta/repeat modes, extras markers and
 padding. No weighting state resets at frame boundaries. The original stream
@@ -34,6 +44,7 @@ selected, pcm, report, raw = refine(
     objective=None, objective_name="sse",
     selection="conservative", capacity_policy="amplitude",
     allocation_evaluations=64, rate_lambda=0.0, frontier=frontier,
+    screening="local", screening_horizon=640,
 )
 ```
 
@@ -73,6 +84,11 @@ Each callback gets exact full-wave render/serialize closures and its path's
 prefix boundary. Changing optional fields before that cached boundary is
 rejected. The shared full-synthesis limit also bounds allocator render calls.
 The separate allocation limit counts the calls actually made by the hook.
+Local screening calls and their total synthesized samples are reported
+separately from full-wave evaluations. `serialization_calls` counts actual
+serializer invocations, including necessary reserialization after reclamation;
+an unchanged candidate is not serialized twice. Each shortlist still uses
+actual serialization before full ranking and final cap checks.
 
 `rate_lambda` ranks feasible paths by `D + lambda * (8 * actual_file_bytes)` using the shared `distortion_rate`
 helper; lambda is per serialized bit, including headers and padding.
@@ -93,12 +109,19 @@ The explicit CLI writes selected audio only when feasible, keeps a separate
 raw alternative and records no-fit/tradeoff status. Generated media and
 private manifests belong in ignored build storage; do not commit them.
 
+`checkpoints` records every started window with `planned_frames`, completed
+`frames`, and status `complete` or `evaluation_limit`. An interrupted window
+also identifies `interrupted_frame`; partial discovery is never reported as
+completed adjacent-frame search. Aggregate complete/incomplete window counts
+are explicit.
+
 The regression suite covers a delayed two-frame combination that beam width
 one misses, native-exact branch state and partial interpolation tails, real
 unpatched joint LPC/excitation improvement against a synthetic target,
 oversized seeds, honest finite no-fit, unfiltered frontier export, marginal
 allocation, full-length objective hooks, prefix protection and hard synthesis
-bounds. Common and compact-only native outputs are checked on the shared
+bounds, independent local-shortlist parity, exact serializer counts and
+interrupted-window evidence. Common and compact-only native outputs are checked on the shared
 allocation path. These tests prove contracts, not perceptual corpus gains.
 Record wall and process CPU time, complete synthesis and local excitation
 counts when comparing the new algorithm with default and expanded old search.

@@ -202,7 +202,6 @@ class TrajectoryTests(unittest.TestCase):
         self.assertEqual(report['fit_status'], 'no_feasible_candidate')
         self.assertGreater(report['best_encountered_oversize_bytes'], 22)
         self.assertLessEqual(report['full_synthesis_evaluations'], 16)
-        self.assertTrue(report['search_limit_reached'])
 
     def test_original_remains_eligible_and_rejected_floor_cannot_overwrite_it(self):
         blob = seed()
@@ -254,6 +253,53 @@ class TrajectoryTests(unittest.TestCase):
         self.assertEqual(report['raw_objective'], 0.0)
         self.assertTrue(report['conservative_floors_passed'])
         np.testing.assert_array_equal(pcm, reference)
+
+    def test_local_screen_matches_independent_suffix_context_and_serializes_only_finalists(self):
+        blob = altered(seed(6, 1280), [0])
+        target = altered(blob, [1]);reference = compact.decode_model(target)
+        n, profile, spectra, params, pulses, pre, bright, extras = compact.unpack(blob)
+        fields = trajectory.Fields(*(np.asarray(x, np.int64) for x in (spectra, params, pulses, extras)))
+        vectors = [[(int(v) << 4)+8 for v in row] for row in spectra for _ in range(2)]
+        co = coefficient_trace(pack_frames(vectors), n);pcm = compact.decode_model(blob)
+        search = trajectory.Search(reference.astype(np.int64), n, profile, pre, bright, len(blob)+30,
+            lambda out: float(sse(reference, out)), 64, 'none', 0, 0.0, 'local', 640)
+        root = trajectory.PathState(fields, co, pcm, blob, 0.0, trajectory.State.zero(), 0, ())
+        parent = search.at_position(root, 320)
+        expected = []
+        for changed, move in trajectory._spectral_neighbours(fields, 1, profile):
+            packed = compact.pack(n, profile, changed.spectra.tolist(), changed.params.tolist(),
+                changed.pulses.tolist(), pre, bright, extras=changed.extras.tolist())[0]
+            independent = compact.decode_model(packed)
+            expected.append((int(sse(reference[320:960], independent[320:960])), len(packed), move))
+        children = trajectory._expand(search, parent, 1, 2, 0, 80)
+        selected = {child.moves[-1] for child in children if child.moves[-1][0] == 'lsf'}
+        self.assertEqual(selected, {item[2] for item in sorted(expected)[:2]})
+        self.assertEqual(search.local_evaluations, len(expected))
+        self.assertEqual(search.local_samples, 640*len(expected))
+        self.assertEqual(search.serializations, 3)
+        self.assertEqual(search.evaluations, 3)
+        for child in children:
+            np.testing.assert_array_equal(child.pcm, compact.decode_model(child.stream))
+        full = trajectory.Search(reference.astype(np.int64), n, profile, pre, bright, len(blob)+30,
+            lambda out: float(sse(reference, out)), 64, 'none', 0, 0.0, 'full', 640)
+        trajectory._expand(full, full.at_position(root, 320), 1, 2, 0, 80)
+        self.assertEqual(full.local_evaluations, 0)
+        self.assertEqual(full.serializations, 1+len(expected))
+
+    def test_interrupted_adjacent_window_reports_completed_frames_explicitly(self):
+        blob = seed();reference = compact.decode_model(altered(blob, [0]))
+        with patch.object(trajectory, 'frame_order', return_value=[0]):
+            _, _, report, _ = trajectory.refine(reference, blob, self.decoder, len(blob)+30,
+                frame_limit=1, beam_width=1, spectral_candidates=1,
+                excitation_candidates=0, max_evaluations=2)
+        self.assertTrue(report['search_limit_reached'])
+        self.assertEqual(report['completed_windows'], 0)
+        self.assertEqual(report['incomplete_windows'], 1)
+        window = report['checkpoints'][0]
+        self.assertEqual(window['status'], 'evaluation_limit')
+        self.assertEqual(window['frames'], 1)
+        self.assertEqual(window['planned_frames'], 2)
+        self.assertEqual(window['interrupted_frame'], 1)
 
     def test_beam_and_allocator_use_the_same_lambda_per_serialized_bit(self):
         search = trajectory.Search(np.zeros(1, np.int64), 1, 4, 0, 0, 100,
