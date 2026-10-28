@@ -22,3 +22,19 @@ control lengths. The end-of-output predicate at core line1013 also runs on
 must be settled before changing phase/count representations; do not refresh
 oracles merely to hide a disagreement. No source audio, private paths or
 recording fingerprints are involved.
+
+## Corrected packet boundary
+
+v5 stores complete 320-sample packets even when the requested output ends
+inside a packet. The decoder now checks trailing bytes and nonzero pad bits
+only after both the half and subframe indices return to the full-packet
+boundary. Merely being in the second half does not establish that boundary.
+Unread fields in a partial final packet remain permitted by the native
+streaming contract; the strict host unpacker still validates the whole packet.
+
+The historical table above is retained unchanged. Regression coverage checks
+every output offset in the first two packets, both spectrum profiles, common
+and v5-only layouts. The formerly failing aligned tails also run with the
+reference counter/reader/history settings, snapshot copies, LPC segments
+1/2/4 and bandwidth expansion. Complete-packet trailing bytes and nonzero
+padding remain rejected. This is a correctness fix, not a size optimization.

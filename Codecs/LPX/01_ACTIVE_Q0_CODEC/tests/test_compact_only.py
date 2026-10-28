@@ -40,6 +40,24 @@ class CompactOnlyTests(unittest.TestCase):
                     np.testing.assert_array_equal(self.full.decode_one_s16(blob,n),expected)
                     np.testing.assert_array_equal(self.only.decode_one(blob,n),pwm_duties(expected))
 
+    def test_every_partial_packet_output_boundary(self):
+        # v5 stores a whole 320-sample packet even for a shorter output tail.
+        # At 180..280 the final half is active but still has unread pulses.
+        for profile in (4,6):
+            for complete in (320,640):
+                blob,_=repack(fixture(profile,complete))
+                expected=decode_model(blob)
+                variants=[]
+                for n in range(complete-319,complete+1):
+                    tail=bytearray(blob);tail[8:12]=n.to_bytes(4,'little')
+                    variants.append(bytes(tail))
+                for decoder in (self.full,self.only):
+                    for n,tail in zip(range(complete-319,complete+1),variants):
+                        np.testing.assert_array_equal(decoder.decode_one_s16(tail,n),expected[:n])
+                for n in range(complete-140,complete,20):
+                    tail=variants[n-(complete-319)]
+                    np.testing.assert_array_equal(decode_model(tail),expected[:n])
+
     def test_every_radix_pair_and_three_entry_merge_sort(self):
         args=list(components(fixture(6,16000)));pulses=list(args[4])
         for i in range(400):pulses[i*2:i*2+2]=[(i%20,5),(i//20,-3)]
@@ -92,7 +110,7 @@ class CompactOnlyTests(unittest.TestCase):
                     '-o',str(exe)],check=True,capture_output=True)
                 decoder=BatchDecoder(dll)
                 for p in (4,6):
-                    for n in (640,641):
+                    for n in (180,200,220,240,260,280,500,640,641):
                         blob=repack(fixture(p,n),extras=[(i%40,-8 if i&1 else 7) for i in range(((n+319)//320)*8)])[0]
                         path=folder/f'input{index}-{p}-{n}.l4hy';path.write_bytes(blob)
                         np.testing.assert_array_equal(decoder.decode_one_s16(blob,n),decode_model(blob))

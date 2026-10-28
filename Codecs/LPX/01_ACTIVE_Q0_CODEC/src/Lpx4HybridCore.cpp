@@ -1007,12 +1007,14 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
         if(++subIndex_==8)subIndex_=0;
 #if LPX4_ENABLE_SPEECH_COMPACT
         // A complete final packet must consume the declared payload, with
-        // only zero bits left in its final byte. Partial sample tails retain
+        // only zero bits left in its final byte. The subframe index also has
+        // to wrap: second-half partial tails still have stored pulse fields.
+        // Partial sample tails retain
         // the documented unconsumed-padding behavior.
 #if LPX4_COMPACT_ONLY
-        if(!remaining_ && !speechHalf_){
+        if(!remaining_ && !speechHalf_ && !subIndex_){
 #else
-        if(speechCompact_ && !remaining_ && !speechHalf_){
+        if(speechCompact_ && !remaining_ && !speechHalf_ && !subIndex_){
 #endif
 #if LPX4_ROM_POINTER
             const bool trailing=bytes_!=0;
