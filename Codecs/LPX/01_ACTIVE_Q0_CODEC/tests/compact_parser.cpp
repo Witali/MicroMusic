@@ -21,6 +21,11 @@ template<class T> static auto flagsImpl(T& d,uint8_t value,int)->decltype(d.spee
 }
 template<class T> static void flagsImpl(T& d,uint8_t value,long){d.speechProfile_=value;}
 static void flags(Lpx4HybridCore& d,uint8_t value){flagsImpl(d,value,0);}
+// Trace semantic centered values, independently of compact private storage.
+static uint16_t lsf(const Lpx4HybridCore& d,uint16_t stored){
+ if(sizeof(d.cur_[0])!=1)return stored;
+ return stored ? (uint16_t)((stored*2-1)<<((d.speechProfile_&2)?3:4)) : 0;
+}
 static void snapshot(const Lpx4HybridCore& d,bool accepted){
  ++cases;word(accepted);word(d.samples());word(d.produced());word(d.sampleRate());word(d.error());word(d.finished());
 #if LPX4_ROM_POINTER
@@ -30,7 +35,7 @@ static void snapshot(const Lpx4HybridCore& d,bool accepted){
 #endif
  word(d.bitBuffer_);word(d.bitsLeft_);word(d.speechProfile_&127);word(extras(d));
  word(d.speechHalf_);word(d.initializedFrame_);word(d.staticSpectrum_);word(d.blockStep_);word(d.lag_);word(d.gain_);
- for(uint8_t i=0;i<10;i++){word((uint16_t)d.prev_[i]);word((uint16_t)d.cur_[i]);}
+ for(uint8_t i=0;i<10;i++){word(lsf(d,d.prev_[i]));word(lsf(d,d.cur_[i]));}
 #ifdef LPX3_COST_INSTRUMENT
  word(d.bitCalls_);word(d.romByteCalls_);word(d.lsfConverts_);
 #endif
@@ -71,7 +76,7 @@ static void frame(Lpx4HybridCore& d,uint8_t profile,bool delta,uint8_t old,int16
  const uint8_t trials=serial%257==0?4:1;
  for(uint8_t j=0;j<trials;j++){
   setup(d,w,sizes[j],profile);d.initializedFrame_=true;
-  for(uint8_t i=0;i<10;i++)d.cur_[i]=(old<<shift)+(1u<<(shift-1));
+  for(uint8_t i=0;i<10;i++)d.cur_[i]=sizeof(d.cur_[0])==1 ? old+1 : (old<<shift)+(1u<<(shift-1));
   snapshot(d,d.readFrame());
  }
 }

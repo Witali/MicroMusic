@@ -26,7 +26,7 @@ int main(){
  unsigned nodes=0,anchors=0;
  for(unsigned n=0;n<4096;n++){
 #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS!=4 && defined(TEST_GRID)
-  if(!(n&31) && cosineGridEven(n)!=reference(n))return 6;
+  if(!(n&31) && cosineEvenNode(n>>5)!=reference(n))return 6;
 #endif
   if(cosineInterpolate(n)!=reference(n))return 1;
   ++nodes;
@@ -39,7 +39,7 @@ int main(){
    if(norm!=expected)return 2;
 #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS!=4 && defined(TEST_GRID)
    if(norm&31)return 3;
-   if(cosineGridEven(norm)!=reference(norm))return 7;
+   if(cosineEvenNode(norm>>5)!=reference(norm))return 7;
 #endif
    if(cosineInterpolate(norm)!=reference(norm))return 4;
    ++anchors;
@@ -53,11 +53,13 @@ int main(){
   for(unsigned i=size-1;i;i--){unsigned j=nextRandom()%(i+1);uint8_t tmp=a[i];a[i]=a[j];a[j]=tmp;j=nextRandom()%(i+1);tmp=b[i];b[i]=b[j];b[j]=tmp;}
   // Sort ten legal LSF indices, with endpoint clusters and repeated vectors.
   for(unsigned i=0;i<10;i++)for(unsigned j=i+1;j<10;j++){if(a[j]<a[i]){uint8_t z=a[i];a[i]=a[j];a[j]=z;}if(b[j]<b[i]){uint8_t z=b[i];b[i]=b[j];b[j]=z;}}
+  decoder.speechProfile_=bits==5?4:6;
   for(unsigned i=0;i<10;i++){
    if(test<4){a[i]=(test&1)?size-10+i:i;b[i]=(test&2)?size-10+i:i;}
    if(test%4==0)b[i]=a[i];
    const unsigned shift=10-bits;
-   decoder.prev_[i]=(a[i]<<shift)+(1U<<(shift-1));decoder.cur_[i]=(b[i]<<shift)+(1U<<(shift-1));
+   decoder.prev_[i]=sizeof(decoder.prev_[0])==1 ? a[i]+1 : (a[i]<<shift)+(1U<<(shift-1));
+   decoder.cur_[i]=sizeof(decoder.cur_[0])==1 ? b[i]+1 : (b[i]<<shift)+(1U<<(shift-1));
   }
   for(unsigned t=0;t<=16;t+=16/LPX3_LPC_SEGMENTS){
    int16_t out[10];decoder.convertLsfAt(t,out);

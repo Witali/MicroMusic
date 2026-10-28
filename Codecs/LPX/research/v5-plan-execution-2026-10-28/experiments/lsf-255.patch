@@ -1,0 +1,85 @@
+--- a/Lpx4HybridCore.h
++++ b/Lpx4HybridCore.h
+@@ -240,7 +240,11 @@
+     uint8_t pulsePos_[LPX4_MAX_PULSES];
+     int8_t pulseAmp_[LPX4_MAX_PULSES];
+ #endif
++#if LPX4_COMPACT_ONLY
++    uint8_t prev_[10],cur_[10];
++#else
+     int16_t prev_[10],cur_[10];
++#endif
+ #if LPX4_ROTATE_LPC_ANCHORS
+     int16_t lpcAnchors_[20];
+ #else
+--- a/Lpx4HybridCore.cpp
++++ b/Lpx4HybridCore.cpp
+@@ -165,7 +165,11 @@
+ #if LPX4_ROTATE_LPC_ANCHORS
+  lpcAnchorOffset_=0;
+ #endif
++ #if LPX4_COMPACT_ONLY
++ memset(prev_,255,sizeof(prev_));memset(cur_,255,sizeof(cur_));
++#else
+  memset(prev_,0,sizeof(prev_));memset(cur_,0,sizeof(cur_));
++#endif
+  memset(a_,0,sizeof(a_));memset(hist_,0,sizeof(hist_));
+  memset(ringQ_,0,sizeof(ringQ_));
+ }
+@@ -363,10 +367,20 @@
+       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
+       // Compact Rice codes use at most seven bits: delta is -64..63.
+       const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
+-      const int8_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
++      const int8_t value=delta?((
++#if LPX4_COMPACT_ONLY
++prev_[i]
++#else
++prev_[i]>>shift
++#endif
++)+difference):last+1+code;
+       if(error_)return false;
+       if(value<=last || (uint8_t)value>=limit){error_=CORRUPT_STREAM;return false;}
++      #if LPX4_COMPACT_ONLY
++      const uint8_t v=value;
++#else
+       const int16_t v=(value<<shift)+(1u<<(shift-1));
++#endif
+       if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
+       cur_[i]=v;last=value;
+      }
+@@ -808,6 +822,9 @@
+ // LSF->LPC only on predicted polynomial anchors, not every subframe.
+ // Anchor arithmetic is identical to the reference integer polynomial at t=0..16.
+ // PCM synthesis still uses the exact same 10-pole filter and quantized residual.
++#if LPX4_COMPACT_ONLY
++static inline __attribute__((always_inline)) int16_t centeredLsf(uint8_t q,uint8_t profile){return q==255 ? 0 : (int16_t)((uint16_t)(q*2+1)<<((profile&2)?3:4));}
++#endif
+ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
+ #ifdef LPX3_COST_INSTRUMENT
+     ++lsfConverts_;
+@@ -815,9 +832,21 @@
+     polyP_[0]=polyQ_[0]=4096;
+     for(uint8_t i=0;i<10;i++){
+ #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
+-        const int16_t cc=(int16_t)-cosineGridEven(lpx4LsfNorm10(prev_[i],cur_[i],t));
+-#else
+-        const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(prev_[i],cur_[i],t));
++        const int16_t cc=(int16_t)-cosineGridEven(lpx4LsfNorm10(
++#if LPX4_COMPACT_ONLY
++centeredLsf(prev_[i],speechProfile_),centeredLsf(cur_[i],speechProfile_),
++#else
++prev_[i],cur_[i],
++#endif
++t));
++#else
++        const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(
++#if LPX4_COMPACT_ONLY
++centeredLsf(prev_[i],speechProfile_),centeredLsf(cur_[i],speechProfile_),
++#else
++prev_[i],cur_[i],
++#endif
++t));
+ #endif
+         // P/Q polynomials are independent; each pair retains the same degree.
+         int32_t* p=(i&1)?polyQ_:polyP_;

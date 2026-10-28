@@ -240,7 +240,11 @@ private:
     uint8_t pulsePos_[LPX4_MAX_PULSES];
     int8_t pulseAmp_[LPX4_MAX_PULSES];
 #endif
+#if LPX4_COMPACT_ONLY
+    uint8_t prev_[10],cur_[10]; // v5 grid index + 1; zero means untouched
+#else
     int16_t prev_[10],cur_[10];
+#endif
 #if LPX4_ROTATE_LPC_ANCHORS
     int16_t lpcAnchors_[20];
 #else
