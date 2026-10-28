@@ -28,7 +28,7 @@ class V5HalfSpectrumTests(unittest.TestCase):
                                     str(ROOT/'tests/anchor_copy.cpp'),str(ROOT/'src/Lpx4HybridCore.cpp'),'-o',str(exe)],
                                    check=True,capture_output=True)
                     for profile in (4,6):
-                        for n in (1,19,159,160,161,319,320,321,641,1280):
+                        for n in (1,19,159,160,161,180,200,220,240,260,280,300,319,320,321,500,641,1280):
                             for pattern in (0,1,2):
                                 fields=list(components(fixture(profile,n)))
                                 spectra=fields[2]
