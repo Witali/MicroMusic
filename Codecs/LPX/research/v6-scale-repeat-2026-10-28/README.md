@@ -1,5 +1,10 @@
 # Isolated scale-repeat prototype
 
+The bounded pilot is complete and further work is paused. The four fixed tuning
+chains **grow by 14, 18, 24 and 36 bytes of complete Flash**. One long reset
+chain saves 28 bytes. Production remains V5 with no new default. Saving this
+checkpoint does not resume optimization or expand the corpus.
+
 This opt-in experiment reserves **L4HY version 6, selector 1** locally. Before
 the prototype, source/tool/documentation searches at `9a89b1f8` found no L4HY v6
 format. Historical **L3AV** v6 uses a different magic. This is a provisional
@@ -34,8 +39,8 @@ The new decoder uses decoded `lag_ == 0` before the first tuple and retains
 `blockStep_` for scale repeats. A decoded lag is always 18..145 afterward,
 including for zero gain. Encoded lag code 0 means decoded lag 18. Scale aliases
 are retained exactly by the host converter; no reverse lookup from derived
-step is attempted. No persistent class member was added. Actual AVR SRAM and
-stack still require measurement.
+step is attempted. No persistent class member was added. The completed pilot
+measures unchanged 756 B static SRAM and unchanged observed stack margins.
 
 The derived compact build accepts experimental V6 only. The original V5-only
 decoder is kept as a separate measured control; simultaneous V5+V6 decoding
@@ -67,9 +72,102 @@ reset/restart, sticky errors, copies/assignment and lag-zero lifetime; selector,
 truncation/header bounds; alternate ROM cursor, Q4, history, anchor and remaining
 counter settings; and frozen-source/output tamper protection.
 
-Complete-player Flash includes actual code, tables, headers, ordered audio
-segments and linker layout. A future pilot must preserve both original V5 and
-experimental results at normal/+100 IRQ with complete PWM/EOF/tick/queue/stack
-checks. C arithmetic remains explicitly selectable on AVR; offline correctness
-does not establish C real-time support. No audibility improvement is expected
-or claimed because the output is required to be exact.
+## Completed bounded pilot
+
+The fixed selection was manifest indices 0/1 and 40/41 from the tuning split,
+index 85 as one long-chain correctness control, and three synthetic boundaries.
+No result changed that selection or the scale-only tuning nomination. Each of
+the eight cases has separate original V5 and derived V6 complete player images
+at normal and +100-cycle IRQ load: **32 ASM images**. Two additional explicit-C
+images use the fixed 64,000-sample profile-6 tuning control. Nothing was dropped;
+all 34 images fit within 32,768 B Flash. This is not the full frozen corpus.
+
+Complete-player Flash is actual linked `.text + .data`, including code, tables,
+headers, exact ordered audio segments, directories and linker layout. Positive
+saved bytes mean a smaller complete image. The paired ASM deltas are identical
+at normal and +100 IRQ load:
+
+| Anonymous control | Profile / samples / segments | Data saved, B | Program growth, B | Net complete Flash saved, B |
+| --- | --- | ---: | ---: | ---: |
+| tuning index 00 | 4 / 64,000 / 1 | 33 | 47 | **-14** |
+| tuning index 01 | 6 / 64,000 / 1 | 29 | 47 | **-18** |
+| tuning index 40 | 4 / 32,000 / 1 | 22 | 46 | **-24** |
+| tuning index 41 | 6 / 32,000 / 1 | 10 | 46 | **-36** |
+| long correctness index 85 | 6 / 281,632 / 5 | 74 | 46 | **28** |
+| synthetic partial tail | 4 / 1 / 1 | 0 | 46 | -46 |
+| synthetic partial tail | 6 / 180 / 1 | -1 | 47 | -48 |
+| synthetic nonzero repeated scale | 6 / 320 / 1 | -1 | 45 | -46 |
+
+The long chain measures 27,850 -> 27,822 B complete Flash at normal load and
+27,858 -> 27,830 B stressed. The code/table/directory cost grows while stored
+audio shrinks by 74 B. The measured 28 B net gain applies to this chain; the
+four tuning losses prevent a general size-win or adoption claim. The 45..47 B
+program delta varies with linked layout; it is not a portable constant.
+
+All 32 ASM images pass complete physical PWM equality, exact produced/played
+sample counts, EOF, timer ticks/events, empty queue termination, zero decoder
+or observer errors, zero underruns, and positive stack margin. Together they
+verify **1,896,532 physical output ticks**. Static `.data + .bss` is 756 B in
+all 34 images. ASM stack margin is 1,231 B on speech/long controls and 1,240 B
+on the short synthetic controls, unchanged between versions; explicit C retains
+1,219 B. The configured queue is 256 B with prefill 192 samples; shorter streams
+can finish before reaching that prefill.
+
+Both C versions reconstruct all 64,000 valid PWM samples exactly, with zero
+decoder/observer errors, but V5 has **36,410 underruns / 100,410 ticks** and V6
+has **36,416 underruns / 100,416 ticks**. They fail the 8 kHz timing admission.
+In the original receipt fields `full_pwm_exact`, `all_full_pwm_exact` and
+`both_complete_pwm_exact`, equality compares the observer's retained **valid
+samples**. It implies full physical tick equality only when underruns are zero
+and tick counts match. C inserts idle ticks, so its physical output is not
+equivalent in real time. C remains explicitly selectable; this is an arithmetic
+and valid-sample correctness observation, not C real-time support.
+
+The already completed independent audit rechecked 34 ELF images and 50 exact
+embedded segment regions, regenerated their binary representation from the ELF,
+rechecked linked size and current source/toolchain/runtime/adapter bindings, and
+compared 2,024,532 retained valid PWM samples including the two C observations.
+It retained both timing failures. Five focused test groups passed before the
+pilot. The study took 166.39 s and the independent audit 4.40 s. These are
+simulator results; no physical board measurement or audibility improvement is
+claimed. Output equality is the requirement.
+
+## Saved evidence and recipe
+
+`pilot-summary.json`, `pilot-rows.json` and `pilot-audit.json` are exact copies
+of the completed anonymous receipts. `pilot-source-runtime.json` preserves the
+original source/runtime fields except the raw local native compiler wrapper/version
+line, which remains private; the omission
+is labeled in that file. No source hash, measurement or runtime value was changed.
+`checkpoint.json` states the paused scope and clarifies the PWM field names.
+`pilot-compiler-recipe.json` retains shared compiler/header/library hashes,
+flags, harness identity and source variants without per-recording fingerprints.
+The existing measured `prototype/pilot.py` and independent
+`reproduction/audit_pilot.py` are retained unchanged; their source hashes bind
+the receipts. Private manifests, original/experimental audio, media/PCM/ELF
+fingerprints, images, paths and logs remain in ignored local `build/` receipts.
+
+The recipe below documents the completed run for a later explicitly authorized
+reproduction. It was not rerun when saving the checkpoint. Supply the frozen
+manifest and local toolchain/runtime paths through environment variables:
+
+```sh
+python Codecs/LPX/research/v6-scale-repeat-2026-10-28/prototype/pilot.py \
+  "$LPX_BASELINE_MANIFEST" build/scale-repeat-replay \
+  --avr-bin "$LPX_AVR_BIN" --include "$LPX_SIMAVR_INCLUDE" \
+  --lib "$LPX_SIMAVR_LIB" --wsl "$LPX_WSL"
+python Codecs/LPX/research/v6-scale-repeat-2026-10-28/reproduction/audit_pilot.py \
+  build/scale-repeat-replay "$LPX_BASELINE_MANIFEST" \
+  build/scale-repeat-replay/audit.json \
+  --avr-bin "$LPX_AVR_BIN" --lib "$LPX_SIMAVR_LIB" --wsl "$LPX_WSL"
+```
+
+Use Python 3.12 and the source/runtime versions recorded in the receipts. Do
+not use Python optimization flags: the independent audit uses assertions.
+The pilot is a frozen-manifest research recipe; a failed admission remains
+visible instead of changing a quality or timing gate. No native decode, AVR
+build or new experiment was needed to export this checkpoint.
+
+Full frozen corpus expansion, alternate syntax/parser work, simultaneous V5+V6
+support costs and an adoption decision remain unperformed and paused. The
+production decoder and player are unchanged.

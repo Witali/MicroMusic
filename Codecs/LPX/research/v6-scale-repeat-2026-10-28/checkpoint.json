@@ -1,0 +1,58 @@
+{
+  "schema": "lpx-scale-repeat-paused-checkpoint-v1",
+  "status": "completed bounded pilot; further optimization remains paused",
+  "prototype_code_commit": "64ffe977",
+  "production_decoder_commit": "5c7e0592",
+  "production_sources_unchanged": true,
+  "new_default": false,
+  "focused_test_groups_passed_before_pilot": 5,
+  "new_builds_or_experiments_for_checkpoint_export": 0,
+  "cases": 8,
+  "actual_complete_linked_images": 34,
+  "asm_normal_and_plus100_images_passed": 32,
+  "asm_complete_physical_pwm_ticks_verified": 1896532,
+  "tuning_net_full_flash_saved_bytes": [
+    -14,
+    -18,
+    -24,
+    -36
+  ],
+  "tuning_conclusion": "All four fixed tuning chains lose complete Flash after charging the decoder overhead.",
+  "long_chain_net_full_flash_saved_bytes": 28,
+  "long_chain_samples": 281632,
+  "long_chain_segments": 5,
+  "asm_program_growth_bytes_min_max": [
+    45,
+    47
+  ],
+  "static_sram_bytes_all_images": 756,
+  "asm_stack_margin_all_bytes_min_max": [
+    1231,
+    1240
+  ],
+  "explicit_c_underruns": [
+    36410,
+    36416
+  ],
+  "explicit_c_timer_ticks": [
+    100410,
+    100416
+  ],
+  "explicit_c_valid_samples_each": 64000,
+  "explicit_c_real_time_supported": false,
+  "pwm_field_interpretation": "The original full_pwm_exact/all_full_pwm_exact fields compare retained valid samples. They imply full physical tick equality only with zero underruns and matching ticks. Both C runs add idle ticks and fail timing; no physical C PWM equivalence is claimed.",
+  "no_fit_cases_in_this_bounded_pilot": 0,
+  "corpus_expansion_performed": false,
+  "remaining_work": "Full frozen corpus expansion, alternate syntax or parser experiments, simultaneous V5+V6 costs, and any adoption decision remain unperformed and paused.",
+  "scope": "Exact output and simulator evidence only; no board measurement or audibility improvement claim.",
+  "anonymous_evidence_sha256": {
+    "pilot-summary.json": "424fbd6879f5ad4b40c2f8e3485b9e7243af755d1aa2e0b6117d6734d097bffc",
+    "pilot-rows.json": "644a92792220e5170cb196a0d6d41d69ed7c905709b3f64fd8345a8553efb512",
+    "pilot-source-runtime.json": "cb9ea3deff4ac40cf9139c44aba7dd25b82c3481e37ed207dcc04c889c188644",
+    "pilot-audit.json": "f5ee4e44041a3931bd44496d1dd565add9d21dd4ed3505c57164d61aa256be46"
+  },
+  "reproduction_sources_sha256": {
+    "prototype/pilot.py": "a51a39e1eac66ca6fcb95ed7223de8befc7b7728e35478e72700f1363de31c1f",
+    "reproduction/audit_pilot.py": "3a132d73b696190e29e620f69aa1a953a69c4c78f7d90c988af4c3a9dcf7b320"
+  }
+}
