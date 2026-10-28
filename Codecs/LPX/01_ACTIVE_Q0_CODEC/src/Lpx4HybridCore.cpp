@@ -236,7 +236,8 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if LPX4_COMPACT_ONLY
  const bool geometry=frames==320 && blocks==160;
  const uint16_t payload=read16();
- if(sampleCount_>64000 || !sampleCount_ || (uint32_t)size!=22UL+payload){
+ // Subtract the header from the bounded input span; no untrusted wide sum.
+ if(sampleCount_>64000 || !sampleCount_ || (size<22 || payload!=(uint16_t)(size-22))){
   error_=BAD_HEADER;return false;
  }
 #else
@@ -248,7 +249,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
   // the count before addition/multiplication; reject truncation at begin().
   bool complete;
 #if LPX4_ENABLE_SPEECH_COMPACT
-  if(speechCompact_){const uint16_t payload=read16();complete=(uint32_t)size==22UL+payload;}
+  if(speechCompact_){const uint16_t payload=read16();complete=size>=22 && payload==(uint16_t)(size-22);}
   else
 #endif
   // Accepted counts are <=64000: count+319 and the byte length fit uint16.
