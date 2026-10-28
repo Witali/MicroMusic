@@ -1,0 +1,17 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -521,10 +521,11 @@
+    const uint8_t pos=readBits(6),raw=readBits(4);
+    const int8_t amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
+    if(pos>=40){error_=CORRUPT_STREAM;return false;}
+-   uint8_t at=0;
+-   while(at<2 && pulsePos_[at]<pos)++at;
+-   if(at<2 && pulsePos_[at]==pos)pulseAmp_[at]+=amp;
++   // One base pulse is in each half: only its own half can collide.
++   uint8_t at=pos>=20;
++   if(pulsePos_[at]==pos)pulseAmp_[at]+=amp;
+    else{
++    if(pulsePos_[at]<pos)++at;
+     for(uint8_t j=2;j>at;--j){pulsePos_[j]=pulsePos_[j-1];pulseAmp_[j]=pulseAmp_[j-1];}
+     pulsePos_[at]=pos;pulseAmp_[at]=amp;pulseCount_=3;
+    }

@@ -74,3 +74,28 @@ stream list and reset geometry with baseline/candidate `source` directories.
 Use `simulate(...,irq=0)` and `irq=100` with the retained simavr runner to repeat
 PWM/IRQ validation. The real recordings are private prerequisites; deterministic
 coefficient tests do not require them.
+
+## Rejected bounded optional-pulse insertion
+
+One base pulse is always in 0..19 and the other in 20..39. A proposed merge first
+selects the half containing the extra position, tests that one collision, then
+chooses the adjacent insertion slot. This removes the original two-entry search
+loop without changing collision-before-clamp arithmetic. A byte-arithmetic form
+uses `(uint8_t)(pos+12)>>5` for the half index under the validated 0..39 bound.
+Both candidate native builds pass all six compact-only tests, including radix
+pairs/collisions, malformed inputs, tails, snapshots/restart and reference flags.
+The independent position probe also checks 32000 insertion cases.
+
+Measured against selected commit `e76d8bad` on the same eight complete images:
+
+| Form | Six single-reset images | Two five-reset images | Static SRAM |
+|---|---:|---:|---:|
+| Compare position with 20 | +26 B each | -124 B each | Unchanged |
+| Byte arithmetic | +144 B each | -110 B each | Unchanged |
+
+Both forms remain unselected because the single-reset images grow, with no
+quality change. These linked size differences depend on the complete caller
+context; this screen does not identify a particular compiler pass as the cause.
+[Anonymous costs](pulse-insertion.json) and source-only rejected patches retain
+the exact experiment. No active-IRQ, timing or general size claim is made for
+either candidate. Production retains the original bounded insertion loop.

@@ -26,3 +26,8 @@ antisymmetry is insufficient under per-product negative floor rounding. Do not
 fold Q, or trade precision to mirror it, under an exact-output claim.
 
 [Source, hashes, measured constraints and rejected patches](../../Codecs/LPX/research/decoder-polynomial-2026-10-28/README.md).
+
+The same study also retains a rejected bounded two-half pulse insertion: it
+saves 124 B in two five-reset images but grows six single-reset images by 26 B.
+Caller-specific size effects require actual complete images; the existing loop
+remains selected.
