@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -163,6 +164,25 @@ class QuietVoiceProtocolTests(unittest.TestCase):
         binding['records'][0]['baseline_bytes'] = 1000
         with self.assertRaises(ValueError):
             study.validate_binding(binding)
+
+    def test_cached_modules_from_another_worktree_cannot_attest_this_core(self):
+        root = Path(__file__).resolve().parents[5]
+        tools = root / study.PREFIX / 'tools'
+        modules = {name: SimpleNamespace(__file__=str(tools / (name + '.py')))
+                   for name in study.REQUIRED_CORE_MODULES}
+        study.assert_core_module_origins(root, modules)
+        bad = dict(modules)
+        bad['speech_v4'] = SimpleNamespace(__file__=str(root / 'other-worktree' / study.PREFIX / 'tools/speech_v4.py'))
+        with self.assertRaises(ValueError):
+            study.assert_core_module_origins(root, bad)
+        bad = dict(modules)
+        bad['private_alias'] = SimpleNamespace(__file__=str(root / 'other-worktree' / study.PREFIX / 'tools/lpx4.py'))
+        with self.assertRaises(ValueError):
+            study.assert_core_module_origins(root, bad)
+        bad = dict(modules)
+        del bad['encode_speech_voice']
+        with self.assertRaises(ValueError):
+            study.assert_core_module_origins(root, bad)
 
 
 if __name__ == '__main__':
