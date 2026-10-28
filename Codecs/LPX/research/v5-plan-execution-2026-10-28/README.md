@@ -1,8 +1,9 @@
 # v5 plan execution: exact decoder and application reductions
 
 The corrected decoder baseline is `b8f473a6` (complete-packet EOF guard).
-The campaign is in progress. Local screens do not establish final corpus or
-real-time support; the final combination must pass the complete plan matrix.
+The campaign is complete. Each plan item was implemented or checked with
+measured rejection evidence. Final combined admission is recorded below; local
+screen results alone are not the supported-profile evidence.
 Private streams, recording identities/fingerprints, generated firmware and
 full binding receipts stay in ignored build storage.
 
@@ -51,7 +52,7 @@ existing regression tests, including the frozen legal-grid LPC digests for
 both layouts and segments1/2/4,1,838,989 parser cases per layout/reader mode,
 reference reader/counter/history paths, snapshots and bandwidth expansion.
 This is exact output preservation; no sound-quality gain is claimed.
-Full181-case,204-chain and IRQ admission remains the final campaign stage.
+Final181-case,204-chain and IRQ admission is recorded below.
 
 ## Narrow only the private v5 remaining count
 
@@ -112,8 +113,7 @@ relative to the preceding combination. Header edge tests compare exact native
 PCM/PWM with the independent model for pre=0/1/8192/16384 and
 brightness=0/1/8192/11469, both profiles, alternating low/high spectral clusters,
 maximum scale and pitch gain. All128 output comparisons pass; the existing
-compact suite (8 tests including reference/copies/EOF) also passes. Final
-whole-corpus and active-IRQ admission remains separate.
+compact suite (8 tests including reference/copies/EOF) also passes. Final whole-corpus and active-IRQ admission is recorded below.
 
 ## Rejected workspace and static-endpoint experiments
 
@@ -175,5 +175,66 @@ select0/1. The isolated prototype patch forces0 for its screen, while the
 production-default patch preserves that common-layout policy. Final source
 uses the header hash in the cost receipt. All58 core regressions pass, including
 both layouts, frozen coefficients/parser/lifecycle traces, reader/counter/history
-fallbacks, segments1/2/4, bandwidth expansion, tails and snapshots. Full181/204
-corpus and final diagnostic/production IRQ matrices are the remaining gate.
+fallbacks, segments1/2/4, bandwidth expansion, tails and snapshots. Final181/204 corpus and diagnostic/production IRQ admission is recorded below.
+
+## Final combined admission
+
+Decoder source is pinned to `5c7e0592`; the standalone player uses the admitted
+256-slot FIFO / prefill192, with255 usable slots. These are actual linked
+images with exact fixed stream bytes and reset order; isolated savings are
+not added. Normal workload111 images plus five extra100-cycle IRQ controls:
+
+| Comparison | Actual full Flash saving | Actual static SRAM saving |
+| --- | ---: | ---: |
+| Decoder alone, identical diagnostic512 application | 218..222 B | 45 B |
+| Remove diagnostics, fixed-b8 core and FIFO512 | 24..110 B | 25..26 B |
+| FIFO256 alone, identical fixed-b8 standalone core | 202..208 B | 258 B |
+| Decoder alone inside standalone256 | 182..184 B | 45 B |
+| Final standalone256 versus original fixed-b8 diagnostic512 | **410..498 B** | **328..329 B** |
+
+Final program Flash is **4573..4600 B**, excluding only proven embedded audio
+arrays; it includes startup/runtime, decoder/tables, player and segment lookup.
+Complete firmware with these fixed corpus payloads is5094..27858 B and fits
+32768 B in every measured image. Static SRAM is756 B. The external observer
+checks the complete useful PWM, timer events/IRQs, EOF, queue publication and
+consumption, terminal drain and intervals: all116 images pass with zero
+underruns/errors, minimum queue192, observed startup/playback stack margin1231 B,
+maximum IRQ68 cycles (168 with stress), and PWM intervals1995..2005 cycles.
+The128/96 screen grows every one of ten full images by6 B while saving only
+128 B SRAM; reject it before timing admission under the Flash priority.
+
+The same-harness decoder comparison measures every duration, including long
+chains: mean783.147 ->827.149 cycles/sample (+5.619%), a measured size/time
+tradeoff. It is not an average formed from capped historical runs. Host-only
+streaming statistics and provenance changes save0 B AVR Flash. Their compiled
+300000-duration test, short8000/long281632 old/new executions and cache/tamper
+proof preserve full input/image/model binding without unnecessary AVR relinks.
+
+All58 core tests pass;11 host provenance/statistics checks and the player
+validation/descriptor tests pass. Native admission checks all181 frozen cases,
+1224 baseline/selected streams (60752116 samples per native layout/output
+domain), common/v5-only, independent model and frozen PCM/PWM.204 selected
+whole-chain metric sets are freshly exact, with244 unique streams and976
+native comparisons. ASan+UBSan passes627570 mutations/resets in each layout
+(1255140 total),504 inputs each, zero sample caps and exact reset. Source/model/
+harness inventories and the executed fuzz driver remain unchanged.
+
+The diagnostic runner is retained. Production512/384 and256/192 have separate
+complete admissions;57 baseline and37 final synthetic boundary/error/C controls,
+plus65 direct malformed-descriptor rejections, exercise short tails, wrap,
+segment starts, prefill abort and post-start draining. The C arithmetic default
+and explicit supported-target ASM remain selectable; continuous8kHz target
+admission is for the measured ASM configuration. Final C/ASM/forced-generic
+arithmetic checks each cover5768584 cases with active IRQ and zero arithmetic
+or ABI r1 errors. No physical-board or analog-output result is claimed.
+
+- [Complete source-bound native/corpus/sanitizer receipt](../final-native-admission-2026-10-28/README.md).
+- [Full-duration diagnostic pairs and cache proof](../full-duration-runtime-2026-10-28/README.md).
+- [Standalone application/FIFO and final complete images](../release-player-2026-10-28/README.md).
+- [Completed action plan](../../NEXT_OPTIMIZATION_PLAN_RU.md).
+
+Useful methods are retained in the AVR cookbook. Rejected/no-op mechanisms
+remain reproducible source patches and measurements, without dormant production
+switches. Private media, paths, per-recording fingerprints, firmware and full
+binding receipts remain ignored. Audio bytes and numerical sound quality are
+unchanged; byte LSF is a representation of the existing grid, not new quantization.

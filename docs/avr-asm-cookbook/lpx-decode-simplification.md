@@ -89,36 +89,14 @@ Useful rejected ideas belong here as evidence, not dormant production code. [Ear
 already-tried in-place recurrences, compact tables and bounded arithmetic.
 
 
-## Next source audit at 5b7ae1a6: unmeasured work
+## Completed source-audit iteration
 
-The next roadmap is [saved with the LPX plan](../../Codecs/LPX/NEXT_OPTIMIZATION_PLAN_RU.md).
-No new binary or timing result is claimed by this audit. Keep these proof seams
-separate from the completed simplifications above:
-
-- Byte LSF storage must distinguish untouched reset fields from decoded q0.
-  Screen q+1 with zero sentinel against q with255 sentinel; then separately
-  fuse normalized byte indices into the exact cosine-grid lookup.
-- The only v5 Rice caller uses codes0..127. A failure bit in its byte result
-  could retain sticky error semantics with less caller state; do not use it
-  for unrestricted readBits(8). Legacy and v5 unary escape rules differ.
-- Only the private compact remaining count is a narrowing candidate. Preserve
-  the raw32-bit sampleCount metadata and prove modular produced() for valid,
-  failed and repeated begins in both counter modes.
-- The postfilter invariant prevBright=clipQ14(prevDeemph) may remove one state
-  word if derived before updating deemphasis. Additional clamp cost is unknown.
-- Active LPC coefficients are dead during conversion; polynomial workspace is
-  dead during synthesis. A typed overlay could save20B, but needs C++11 object
-  lifetime/alignment/copy proof. Moving96B scratch to the stack is not a net
-  memory saving.
-- Make non-stateful polynomial ownership explicit, screen shared attenuation,
-  and examine generated code before fusing synthesis epilogues. Preserve every
-  independent floor/saturation and the explicit portable C arithmetic path.
-
-Measure a separate production player rather than counting removed profiling
-counters as a decoder win. A smaller SPSC FIFO requires full active-IRQ output,
-index-wrap, publication-order and EOF proofs. Host-runner duration coverage
-improvements do not change MCU Flash and should be reported separately.
-
+The [action plan](../../Codecs/LPX/NEXT_OPTIMIZATION_PLAN_RU.md) is complete:
+every item was implemented or checked with measured rejection evidence.
+Do not retain rejected prototype branches in the production decoder.
+The methods and their range/lifecycle proofs remain below and in the linked
+experiment archive; a result from a local screen does not replace final IRQ
+and corpus admission.
 
 ## Measured byte-grid and private-count follow-up
 
@@ -135,9 +113,36 @@ is sufficient only with explicit modulo16 subtraction before produced widens;
 this preserves zero progress after invalid/null/short begins as well as valid
 counts. Standalone linked savings are74..78 B Flash and2 B SRAM. Combined
 with byte-grid LSF, measured savings are174..176 B and22 B respectively.
-These screens use AVR-GCC7.3.0, ATmega328P/AVR5, GNU ABI,
+These independent screens use AVR-GCC7.3.0, ATmega328P/AVR5, GNU ABI,
 `-Os -flto -mcall-prologues -mrelax`, LPC segments2, unroll1/tuning0,
 explicit ASM and identical streams/reset geometry.56 core regression tests
-plus the new frozen lifecycle/count probe pass. Full campaign IRQ/corpus
-admission is still pending; no new supported real-time profile is claimed by
-these local screens. [Source patches, proofs and measurements](../../Codecs/LPX/research/v5-plan-execution-2026-10-28/README.md).
+plus the new frozen lifecycle/count probe pass. Final campaign IRQ/corpus admission is now complete for the selected
+combination; individual rejected prototypes retain only their stated scope. [Source patches, proofs and measurements](../../Codecs/LPX/research/v5-plan-execution-2026-10-28/README.md).
+
+
+## Final source and application admission, 2026-10-28
+
+Decoder source5c7e0592 reduces the same diagnostic images by218..222 B Flash
+and45 B static SRAM. All111 normal plus5 extra100-cycle IRQ controls have
+complete duration coverage, exact full PWM and zero underruns/errors. Normal
+mean decode wall time rises5.619%, a measured size/time tradeoff with retained
+headroom. The raw32-bit public sample metadata, common formats, C
+fallback and explicit real supported-target ASM selection remain intact.
+
+The separate standalone256/prefill192 player ends at4573..4600 B program
+Flash (only proven embedded audio arrays subtracted) and756 B static SRAM.
+Actual combined savings versus fixed-b8 diagnostic512 controls are410..498 B
+Flash and328..329 B SRAM. These are measured pairs, not added LTO estimates:
+the same core change saves only182..184 B inside the standalone application.
+Startup/prefill/playback stack observation gives1231 B minimum margin; full
+PWM/ticks/EOF, buffer publication and zero underruns pass all116 images.
+The128 profile grows Flash6 B and is rejected before timing admission.
+
+ATmega328P/AVR5 GNU ABI, AVR-GCC7.3.0,16MHz/8kHz, LPC segments2,
+`-Os -flto -mcall-prologues -mrelax`, unroll1/tuning0 and explicit ASM.
+Native common/v5-only/model/frozen PCM/PWM agree on181 cases/1224 streams;
+204 whole-chain metrics are freshly exact;1255140 ASan/UBSan mutation/reset
+cases pass. These are simulator and host results, with no physical-board or
+analog-output claim. No new arithmetic assembly kernel was introduced.
+[Complete admission and source-only experiment archive](../../Codecs/LPX/research/v5-plan-execution-2026-10-28/README.md),
+[external player/observer method](lpx-release-player.md).
