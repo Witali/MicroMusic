@@ -1,0 +1,49 @@
+{
+  "schema": "lpx-v5-exact-cleanup-paused-checkpoint-v1",
+  "status": "paused_checkpoint",
+  "component_commit": "5172ce23",
+  "decoder_source_commit": "5c7e0592",
+  "scope": {
+    "original_references": 181,
+    "original_speech_profile_groups": 98,
+    "original_non_speech_profile_groups": 264,
+    "expanded100_speech_profile_groups": 98,
+    "required_original_and_expanded_profile_groups": 460,
+    "combined_selected_and_raw_chain_requests": 610,
+    "total_source_group_requests": 1070,
+    "unique_ordered_chains": 752,
+    "unique_reset_streams": 1049,
+    "unique_reset_stream_samples": 48960174
+  },
+  "already_completed": {
+    "component_checked_reset_streams": 1049,
+    "byte_unchanged_reset_streams": 1049,
+    "changed_reset_streams": 0,
+    "saved_serialized_bytes": 0,
+    "native_output_domain_comparisons": 4196,
+    "all_model_common_v5_pcm_pwm_exact": true,
+    "all_private_fixed_point_checks_passed": true,
+    "all_non_extra_fields_and_mandatory_packet_tails_preserved": true,
+    "component_test_groups_previously_passed": 7
+  },
+  "not_executed": {
+    "independent_752_chain_audit": true,
+    "new_production_player_admission": true,
+    "new_avr_flash_or_sram_measurement": true,
+    "new_irq_timing_experiment": true
+  },
+  "saving_checkpoint_checks": {
+    "recorded_worker_runner_matches_saved_script": true,
+    "recorded_component_decoder_test_protocol_inventory_matches": true,
+    "receipt_coverage_and_zero_change_metadata_checked": true,
+    "research_tool_syntax_checks": 2,
+    "cli_help_parsing_checks": 2
+  },
+  "scope_limits": [
+    "Per-reset component checks do not replace the pending independent whole-chain audit.",
+    "No Flash saving or new timing admission is claimed.",
+    "No further optimization was run while saving this paused checkpoint.",
+    "Equality is relative to decoded input-stream PCM/PWM, not original-WAV losslessness.",
+    "Recording, stream, PCM and firmware fingerprints and paths remain private."
+  ]
+}
