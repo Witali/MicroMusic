@@ -219,7 +219,7 @@ private:
 #endif
     uint16_t sampleRate_,preQ14_,brightQ14_,blockStep_;
     int16_t prevDeemph_,prevBright_;
-    uint8_t subPos_,subIndex_;
+    uint8_t subPos_,subIndex_; // compact: low3 subframe, bit3 post-readFrame half
 #if LPX4_BATCHED_REMAINING
     uint8_t subEnd_;
 #endif
@@ -232,7 +232,10 @@ private:
 #endif
 #if LPX4_ENABLE_SPEECH
     // Common:profile4/6. Compact-only:validated v5 flags (bit1 profile,bit7 extras).
-    uint8_t speechProfile_,speechHalf_;
+    uint8_t speechProfile_;
+#if !LPX4_COMPACT_ONLY
+    uint8_t speechHalf_;
+#endif
 #endif
 #if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_COMPACT_ONLY
     uint8_t speechCompact_; // bit0 v5, bit7 optional-extra markers

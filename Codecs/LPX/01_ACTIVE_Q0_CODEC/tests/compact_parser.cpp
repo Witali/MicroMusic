@@ -26,6 +26,8 @@ static uint16_t lsf(const Lpx4HybridCore& d,uint16_t stored){
  if(sizeof(d.cur_[0])!=1)return stored;
  return stored ? (uint16_t)((stored*2-1)<<((d.speechProfile_&2)?3:4)) : 0;
 }
+template<class T> static auto halfImpl(const T& d,int)->decltype(d.speechHalf_){return d.speechHalf_;}
+template<class T> static uint8_t halfImpl(const T& d,long){return (d.subIndex_>>3)&1;}
 static void snapshot(const Lpx4HybridCore& d,bool accepted){
  ++cases;word(accepted);word(d.samples());word(d.produced());word(d.sampleRate());word(d.error());word(d.finished());
 #if LPX4_ROM_POINTER
@@ -34,7 +36,7 @@ static void snapshot(const Lpx4HybridCore& d,bool accepted){
  word(d.bytes_-d.cursor_);
 #endif
  word(d.bitBuffer_);word(d.bitsLeft_);word(d.speechProfile_&127);word(extras(d));
- word(d.speechHalf_);word(d.initializedFrame_);word(d.staticSpectrum_);word(d.blockStep_);word(d.lag_);word(d.gain_);
+ word(halfImpl(d,0));word(d.initializedFrame_);word(d.staticSpectrum_);word(d.blockStep_);word(d.lag_);word(d.gain_);
  for(uint8_t i=0;i<10;i++){word(lsf(d,d.prev_[i]));word(lsf(d,d.cur_[i]));}
 #ifdef LPX3_COST_INSTRUMENT
  word(d.bitCalls_);word(d.romByteCalls_);word(d.lsfConverts_);

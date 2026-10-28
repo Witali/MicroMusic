@@ -1,0 +1,99 @@
+--- a/Lpx4HybridCore.h
++++ b/Lpx4HybridCore.h
+@@ -217,7 +217,10 @@
+ #endif
+ #if LPX4_ENABLE_SPEECH
+     // Common:profile4/6. Compact-only:validated v5 flags (bit1 profile,bit7 extras).
+-    uint8_t speechProfile_,speechHalf_;
++    uint8_t speechProfile_;
++#if !LPX4_COMPACT_ONLY
++    uint8_t speechHalf_;
++#endif
+ #endif
+ #if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_COMPACT_ONLY
+     uint8_t speechCompact_; // bit0 v5, bit7 optional-extra markers
+--- a/Lpx4HybridCore.cpp
++++ b/Lpx4HybridCore.cpp
+@@ -146,7 +146,10 @@
+  subType_=lag_=gain_=ringCursor_=quantLimit_=0;
+ #endif
+ #if LPX4_ENABLE_SPEECH
+- speechProfile_=speechHalf_=0;
++ speechProfile_=0;
++#if !LPX4_COMPACT_ONLY
++ speechHalf_=0;
++#endif
+ #endif
+ #if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_COMPACT_ONLY
+  speechCompact_=0;
+@@ -338,7 +341,11 @@
+  {
+ #endif
+   staticSpectrum_=true;
++  #if LPX4_COMPACT_ONLY
++  if(!(subIndex_&8)){
++#else
+   if(!speechHalf_){
++#endif
+ #if LPX4_COMPACT_ONLY
+    // The second half uses cached LPC; the next first half refreshes prev.
+    for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+@@ -389,7 +396,12 @@
+ #endif
+   }
+   if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+-  initializedFrame_=true;speechHalf_^=1;
++  initializedFrame_=true;
++#if LPX4_COMPACT_ONLY
++  subIndex_^=8;
++#else
++  speechHalf_^=1;
++#endif
+ #if LPX4_COMPACT_ONLY
+   const uint8_t blockScale=readBits(5);
+ #else
+@@ -904,12 +916,22 @@
+ #endif
+     if(subPos_==0){
+         // All frame/block/excitation headers coincide with a 20-sample boundary.
++        #if LPX4_COMPACT_ONLY
++        if(!(subIndex_&7)&&!readFrame())return false;
++#else
+         if(subIndex_==0&&!readFrame())return false;
++#endif
+ #if !LPX4_COMPACT_ONLY
+         if(!(subIndex_&3)&&!readBlock())return false;
+ #endif
+         if(!(subIndex_&1)&&!readSubframe())return false;
+-        interpolateLsf(subIndex_);
++        interpolateLsf(
++#if LPX4_COMPACT_ONLY
++            subIndex_&7
++#else
++            subIndex_
++#endif
++        );
+ #ifdef LPX3_BANDWIDTH_EXPAND_Q14
+         // Bandwidth expansion a[k] *= gamma^(k+1), once per 20 samples.
+         uint16_t weight=16384;
+@@ -1004,7 +1026,11 @@
+         remaining_-=20;
+         subEnd_=remaining_<20?(uint8_t)remaining_:20;
+ #endif
++        #if LPX4_COMPACT_ONLY
++        subIndex_=(subIndex_&8)|((subIndex_+1)&7);
++#else
+         if(++subIndex_==8)subIndex_=0;
++#endif
+ #if LPX4_ENABLE_SPEECH_COMPACT
+         // A complete final packet must consume the declared payload, with
+         // only zero bits left in its final byte. The subframe index also has
+@@ -1012,7 +1038,7 @@
+         // Partial sample tails retain
+         // the documented unconsumed-padding behavior.
+ #if LPX4_COMPACT_ONLY
+-        if(!remaining_ && !speechHalf_ && !subIndex_){
++        if(!remaining_ && !subIndex_){
+ #else
+         if(speechCompact_ && !remaining_ && !speechHalf_ && !subIndex_){
+ #endif

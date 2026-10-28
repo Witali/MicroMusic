@@ -74,3 +74,25 @@ mid-stream. Getter arithmetic independently exhausts every legal total count
 and every position in its final subframe. It does not claim a fresh complete
 DSP decode for every one of the64000 possible lengths. The existing parser
 frozen trace also matches all1,838,989 cases per layout/reader build.
+
+## Pack the packet phase without changing commit points
+
+Compact subIndex stores the subframe in low3 bits and the old post-readFrame
+half in bit3. readFrame toggles the same half bit at its original point;
+subframe advance preserves it and wraps only the low3 bits. Tests of frame
+boundaries use low3 bits, pulse parity is unchanged, and interpolation receives
+only the original0..7 index. The corrected full-packet predicate is now simply
+zero packed phase: exactly the conjunction of the old zero half and zero
+subframe, after the same advance. There are no special sample-length cases.
+Common layouts retain their separate fields and behavior.
+
+[Phase screen](phase-screen.json) saves4..10 B Flash and1 B static SRAM
+standalone. The actual byte-LSF/counter/phase combination saves184..190 B
+Flash and23 B SRAM in the8 full images,10..14 B better than the counter/LSF
+combination. Frozen malformed parser and lifecycle/count digests remain exact.
+The native half-spectrum matrix covers segments1/2/4, bandwidth expansion,
+static/changed spectra, copies and corrected partial tails. The bit encoding
+proves the EOF predicate equivalent for every length; every320-sample residue
+in the first two packets is also exercised through the real native decoder.
+A full64000-sample lifecycle run exercises repeated phase wraps. This is not
+an assertion that every complete DSP stream length was individually decoded.
