@@ -1,5 +1,51 @@
 # Standalone v5 player and external AVR observation
 
+
+The selected standalone default is **FIFO 256 / prefill 192**. With the frozen
+final decoder `5c7e0592`, the complete program occupies **4,573–4,600 B**,
+excluding exact embedded audio, and **756 B static SRAM**. All 111 normal and
+5 extra-100-cycle IRQ runs pass full model/frozen PWM, exact ticks and EOF,
+with zero underruns. Full Flash including payload is 5,094–27,858 B.
+
+| Paired application build | Program Flash excluding exact audio | Static SRAM |
+| --- | ---: | ---: |
+| Fixed-tail core, standalone 512 / 384 | 4,959–4,988 B | 1,059 B |
+| Fixed-tail core, standalone 256 / 192 | 4,757–4,784 B | 801 B |
+| Final core, standalone 256 / 192 | 4,573–4,600 B | 756 B |
+
+At the fixed-tail core, FIFO 256 alone saves **202–208 B full Flash** and
+**258 B static SRAM**, after all 116 runs passed. Byte indices remove wider
+index arithmetic and atomic publication/read sections, while the final
+head+EOF publication remains atomic. The measured core change inside the
+256 application saves another 182–184 B; the diagnostic application sees a
+different core delta because LTO and application context differ.
+
+The actual combined final image saves **410–498 B full Flash** and
+**328–329 B static SRAM** against each exact fixed-tail diagnostic control.
+The same final core with standalone 256 instead of diagnostic 512 saves
+188–280 B Flash. These are separate whole-image comparisons; independent
+range endpoints cannot be added to predict the final linked result.
+
+Final minimum queue before producer EOF is 192; minimum observed stack margin
+including startup/prefill is 1,231 B. Maximum audio IRQ duration is 68 cycles
+normal / 168 cycles with the deliberate 100-cycle load. Complete PWM intervals
+are 1,995–2,005 cycles around the 2,000-cycle timer period. Both the fixed-tail
+and final 256 variants also pass 37 synthetic boundary/error/C cases, including
+20/100-sample prefill aborts. The C check is short prefilled playback, without
+a continuous 8 kHz C admission claim.
+
+FIFO 128 / prefill 96 is **rejected before timing admission**: ten complete
+linked-image pairs (the five exact stress chains, each at normal/+100 IRQ)
+all grow Flash by 6 B and save only 128 B static SRAM. Flash is the primary
+constraint and no smaller RAM limit requires that tradeoff. FIFO 128 has no
+supported timing claim.
+
+[Final anonymous summary and source pins](final256-summary.json),
+[paired final rows](final256-rows.json), and
+[bounded rejected-128 size screen](rejected128-size-screen.json).
+
+## Preserved 512 baseline
+
 The fixed-tail decoder from `b8f473a6` is unchanged in this first comparison.
 Replacing its diagnostic application with a standalone one-shot ROM player
 saves **24–110 bytes of full Flash** and **25–26 bytes of static SRAM** on the

@@ -12,7 +12,7 @@
 #error voice_data.h must define LPX_PLAYER_SEGMENTS and lpx_voices/lpx_sizes
 #endif
 #if LPX_PLAYER_SEGMENTS<1 || LPX_PLAYER_SEGMENTS>255
-#error Player supports1..255 reset segments
+#error Player supports 1..255 reset segments
 #endif
 static Lpx4HybridCore decoder;
 static uint8_t segment;
