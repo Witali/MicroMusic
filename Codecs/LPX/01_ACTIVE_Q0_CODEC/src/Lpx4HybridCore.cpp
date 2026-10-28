@@ -349,14 +349,16 @@ bool Lpx4HybridCore::readFrame(){
      const bool delta=readOne()!=0;
      if(delta&&!initializedFrame_){error_=CORRUPT_STREAM;return false;}
      const uint8_t k=bits-4-(uint8_t)delta;
-     int16_t last=-1;
+     // Gap max:63+1+63=127. Delta range:-64..126. Reject before widening.
+     int8_t last=-1;
+     const uint8_t limit=(speechProfile_-2)<<4;
      for(uint8_t i=0;i<10;i++){
       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
       // Compact Rice codes use at most seven bits: delta is -64..63.
       const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
-      const int16_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
+      const int8_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
       if(error_)return false;
-      if(value<=last || value>=((speechProfile_-2)<<4)){error_=CORRUPT_STREAM;return false;}
+      if(value<=last || (uint8_t)value>=limit){error_=CORRUPT_STREAM;return false;}
       const int16_t v=(value<<shift)+(1u<<(shift-1));
       if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
       cur_[i]=v;last=value;
