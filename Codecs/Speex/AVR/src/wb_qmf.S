@@ -13,17 +13,35 @@
     ld r24,-X
     ld r21,-X
 .endm
-.macro WB_MAC a,b,c,coefficient
+/* first=1 initializes with separate moves; first=2 uses an aligned MOVW.
+ * Initialization must ADD the middle byte: MOV of the low byte does not
+ * clear the carry left by the sign correction. Later taps propagate ADC. */
+.macro WB_MAC a,b,c,coefficient,first=0
     ldi r20,lo8(\coefficient)
     muls r20,r24
+    .if \first
+    .if \first == 2
+    movw \b,r0
+    .else
+    mov \b,r0
+    mov \c,r1
+    .endif
+    .else
     add \b,r0
     adc \c,r1
+    .endif
     mulsu r20,r21
     sbc \c,r2
+    .if \first
+    mov \a,r0
+    add \b,r1
+    .else
     add \a,r0
     adc \b,r1
+    .endif
     adc \c,r2
 .endm
+/* r20=128 on entry and exit, so adjacent inputs share the bias constant. */
 .macro WB_INPUT
     movw r30,r16
     ld r4,Z+
@@ -33,26 +51,22 @@
     ld r7,Z+
     ld r8,Z+
     movw r18,r30
-    mov r6,r5
-    lsl r6
-    sbc r6,r6
-    mov r9,r8
-    lsl r9
-    sbc r9,r9
+    /* Bias signed16 into unsigned16. The SUB borrow is the sign bit of
+     * the exact signed17 difference; the ADD carry is bit16 of the sum.
+     * ROR consumes that bit, retaining floor rounding for negative odds.
+     * Re-bias only the half-sum; the difference cancels both biases. */
+    eor r5,r20
+    eor r8,r20
     movw r10,r4
-    mov r12,r6
     sub r10,r7
     sbc r11,r8
-    sbc r12,r9
-    add r4,r7
-    adc r5,r8
-    adc r6,r9
-    asr r12
     ror r11
     ror r10
-    asr r6
+    add r4,r7
+    adc r5,r8
     ror r5
     ror r4
+    eor r5,r20
     st Y,r10
     std Y+1,r11
     std Y+2,r4
@@ -121,20 +135,18 @@ speex_wb_qmf40_avr:
     ldd r1,Y+5
     ldd r26,Y+6
     ldd r27,Y+7
+    ldi r20,128
     WB_INPUT
     WB_INPUT
-    .irp reg,4,5,6,7,8,9,10,11,12,13,14,15
-    clr r\reg
-    .endr
-    movw r10,r0
+    /* The first tap initializes each signed24 accumulator. Consume the
+     * saved oldest difference before MUL clobbers r0:r1, then its sum.
+     * This also avoids an intermediate copy through r10:r11. */
+    mov r21,r0
+    mov r24,r1
+    WB_MAC r4,r5,r6,-10,1
     mov r21,r26
     mov r24,r27
-    WB_MAC r7,r8,r9,-4
-    mov r21,r10
-    mov r24,r11
-    clr r10
-    clr r11
-    WB_MAC r4,r5,r6,-10
+    WB_MAC r7,r8,r9,-4,2
     movw r26,r28
     adiw r26,32
     cp r28,r25
@@ -143,9 +155,9 @@ speex_wb_qmf40_avr:
 .Lcursor:
     /* Newest record belongs only to the second output pair. */
     WB_LOAD
-    WB_MAC r13,r14,r15,-10
+    WB_MAC r13,r14,r15,-10,2
     WB_LOAD
-    WB_MAC r10,r11,r12,-4
+    WB_MAC r10,r11,r12,-4,1
     /* Seven history records contribute to both output pairs. */
     WB_LOAD
     WB_MAC r7,r8,r9,-10

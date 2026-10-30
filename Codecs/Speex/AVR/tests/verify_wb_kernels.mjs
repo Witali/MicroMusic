@@ -101,6 +101,10 @@ for(let test=0;test<8;test++) {
    cpu.data[status]=1;cpu.data[command]=1;const begin=cpu.cycles;until(()=>cpu.data[status]===3);cycles.push(cpu.cycles-begin);
    const output=family===1||family===3?buffer+4:buffer+168;
    assert.deepEqual(expected.map((_,i)=>cpu.dataView.getInt16(output+2*i,true)),expected,fn+' block '+f);
+   if(family===0)for(let i=0;i<8;i++)for(const mirror of [0,32]){
+    assert.equal(cpu.dataView.getInt16(buffer+332+mirror+4*i,true),(lowMem[i]-highMem[i])>>1,'QMF difference history');
+    assert.equal(cpu.dataView.getInt16(buffer+334+mirror+4*i,true),(lowMem[i]+highMem[i])>>1,'QMF sum history');
+   }
    for(const offset of [0,164,328,396])for(let j=0;j<4;j++)assert.equal(cpu.data[buffer+offset+j],165,'guard '+fn);
    for(let i=family===1||family===3?40:0;i<80;i++)assert.equal(cpu.dataView.getInt16(buffer+4+2*i,true),input[i],'read-only input');
    assert.deepEqual([...cpu.data.subarray(indices,indices+4)],codes,'read-only indices');
@@ -109,6 +113,7 @@ for(let test=0;test<8;test++) {
  rows.push({kernel:fn,blocks,samples:blocks*(family===0?80:40),pcmExact:true,
    minCycles:Math.min(...cycles),maxCycles:Math.max(...cycles),calleeSavedAndR1Returns:isAsm?returns:null,
    guards:true,readOnlyInputs:true,aliasQmf:family===0,
+   mirroredHistoryExact:family===0,
    qmfRoundingAndClippingBoundaryBlocks:family===0?qmfEdges.length:0,peakStackBytes:2303-minSP});
  console.log(JSON.stringify(rows.at(-1)));
 }

@@ -71,3 +71,12 @@ The extended QMF unit driver also passes the unchanged kernel: 2244 blocks,
 179520 output words, 92 clipping/rounding boundary blocks, all signed16 input
 values in both channels, alternating permitted alias, read-only inputs,
 guards and 2244 callee-saved/r1 return checks. See `wb-qmf-unit-before.json`.
+
+## Exact optimization completed
+
+Biased half-input arithmetic, a shared bias constant and first-tap
+initialization save exactly 2560 cycles/frame and 64 B Flash in both modes.
+The fresh full-corpus profiles attribute the entire reduction to QMF.
+All 21126 sequential decoder frames and 34 reset checks preserve signed16
+PCM; direct QMF tests also preserve mirrored state, alias and ABI.
+SRAM and peak stack do not change. See [WB_QMF.md](WB_QMF.md) and the cookbook.

@@ -3040,6 +3040,11 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Exact QMF averages and first-tap initialization](speex-qmf-input.md): use
+unsigned borrow/carry to retain signed floor rounding, initialize accumulators
+without a zeroing pass, preserve first-product carry semantics and overlapping
+input lifetimes. Includes measured target results and reference/IRQ evidence.
+
 Measured on classic AVR5/ATmega328P with hardware MUL, GNU ABI, AVR GCC 7.3.0,
 `-Os -flto -mcall-prologues -mrelax`. NB3 uses 4 x 10-sample vectors; NB4 uses
 5 x 8. Keep a shared source template with compile-time geometry checks, then
