@@ -168,6 +168,7 @@ def prepare(args):
     require(saved.player_union(originals, inputs)==old_bytes, 'Prior union differs from original decisions')
 
     actual, decisions, comparison_contexts = {}, [], {}
+    view_counts = Counter()
     pcm_cache = {}
     def register(entry, profile, blobs, role):
         import numpy as np
@@ -208,6 +209,7 @@ def prepare(args):
             identifier = decision['selected_id']
             if identifier is None:
                 require(decision['selected_player_status'] is None, 'Missing selection gained player status')
+                view_counts['no-automatic-selection'] += 1
                 continue
             chosen = candidates[identifier]
             require(chosen['automatic_quality_eligible'] and all(chosen[name] for name in FLAGS),
@@ -215,6 +217,7 @@ def prepare(args):
             entry, blobs = entry_for(identifier)
             status = 'unchanged-baseline' if blobs==original_bytes else ('old-union' if blobs in old_bytes else 'requires-new-proof')
             require(decision['selected_player_status']==status, 'New-player classification changed')
+            view_counts[status] += 1
             if status!='requires-new-proof':
                 continue
             context = dict(phase=row['phase'],source_ordinal=row['source_ordinal'],profile=row['profile'],percent=decision['percent'],mode=row['mode'])
@@ -224,7 +227,7 @@ def prepare(args):
             require(union.registry[original_bytes]['entry']['pcm16_sha256']==rollback['pcm16_sha256']
                     and union.registry[original_bytes]['entry']['pwm_sha256']==rollback['pwm_sha256'],
                     'Declared rollback output proof changed')
-            ckey = row['source_ordinal'],row['profile'],row['mode'],record['level']['gain'],old,new
+            ckey = record['speech'],row['source_ordinal'],row['profile'],row['mode'],record['level']['gain'],old,new
             if ckey not in comparison_contexts:
                 comparison_contexts[ckey] = dict(id='comparison-%03d'%(len(comparison_contexts)+1),
                     rollback_chain=old,candidate_chain=new,profile=row['profile'],
@@ -237,6 +240,7 @@ def prepare(args):
     require(inventory_map(manifest,union.chain)=={blobs:sorted(contexts) for blobs,contexts in actual.items()},
             'Final inventory is not exactly all genuinely new selected chains/contexts')
     require(len(actual)==summary['distinct_new_selected_chains_requiring_player_proof'], 'Export new-chain count differs')
+    require(sum(view_counts.values())==354, 'Cap-view partition changed')
     inputs.verify()
     for path, digest in inputs.pins.items():
         union.read(path, digest)
@@ -256,7 +260,9 @@ def prepare(args):
         image_launch_allowed=bool(actual),independent_audit_gate='passed',all_six_workers_complete=True,
         expected_records=118,observed_complete_records=118,missing_records=0,
         replay_shards_complete=2,cap_views=354,automatic_changed_selection_views=len(decisions),
-        unchanged_selection_views_skipped=0,no_automatic_selection_views=0,
+        unchanged_selection_views_skipped=view_counts['unchanged-baseline'],
+        previous_union_selection_views_skipped=view_counts['old-union'],
+        no_automatic_selection_views=view_counts['no-automatic-selection'],
         distinct_union_chains=len(chains),distinct_candidate_chains=len(selected),distinct_rollback_chains=len(rollbacks),
         candidate_rollback_overlap=len(selected & rollbacks),distinct_comparisons=len(comparison_contexts),
         chains_already_in_prior_union=sum(blobs in old_bytes for blobs in union.registry),
