@@ -1,0 +1,162 @@
+{
+  "schema": "lpx-v5-adaptive-player-union-cost-projection-v1",
+  "unique_comparison_pairs": 41,
+  "changed_cap_views": 42,
+  "comparison_distribution_by_irq": {
+    "0": {
+      "views": 41,
+      "full_flash_smaller": 0,
+      "same_full_flash": 31,
+      "full_flash_larger": 10,
+      "minimum_full_flash_growth_bytes": 0,
+      "maximum_full_flash_growth_bytes": 220,
+      "minimum_program_growth_bytes": -1,
+      "maximum_program_growth_bytes": 1
+    },
+    "100": {
+      "views": 41,
+      "full_flash_smaller": 0,
+      "same_full_flash": 31,
+      "full_flash_larger": 10,
+      "minimum_full_flash_growth_bytes": 0,
+      "maximum_full_flash_growth_bytes": 220,
+      "minimum_program_growth_bytes": -1,
+      "maximum_program_growth_bytes": 1
+    }
+  },
+  "phase_cap_view_distribution": [
+    {
+      "phase": "nonspeech-default",
+      "percent": 100,
+      "extra_irq_cycles": 0,
+      "views": 4,
+      "full_flash_smaller": 0,
+      "same_full_flash": 4,
+      "full_flash_larger": 0,
+      "minimum_full_flash_growth_bytes": 0,
+      "maximum_full_flash_growth_bytes": 0,
+      "minimum_program_growth_bytes": 0,
+      "maximum_program_growth_bytes": 0
+    },
+    {
+      "phase": "nonspeech-default",
+      "percent": 100,
+      "extra_irq_cycles": 100,
+      "views": 4,
+      "full_flash_smaller": 0,
+      "same_full_flash": 4,
+      "full_flash_larger": 0,
+      "minimum_full_flash_growth_bytes": 0,
+      "maximum_full_flash_growth_bytes": 0,
+      "minimum_program_growth_bytes": 0,
+      "maximum_program_growth_bytes": 0
+    },
+    {
+      "phase": "speech-default",
+      "percent": 95,
+      "extra_irq_cycles": 0,
+      "views": 1,
+      "full_flash_smaller": 0,
+      "same_full_flash": 0,
+      "full_flash_larger": 1,
+      "minimum_full_flash_growth_bytes": 8,
+      "maximum_full_flash_growth_bytes": 8,
+      "minimum_program_growth_bytes": 0,
+      "maximum_program_growth_bytes": 0
+    },
+    {
+      "phase": "speech-default",
+      "percent": 95,
+      "extra_irq_cycles": 100,
+      "views": 1,
+      "full_flash_smaller": 0,
+      "same_full_flash": 0,
+      "full_flash_larger": 1,
+      "minimum_full_flash_growth_bytes": 8,
+      "maximum_full_flash_growth_bytes": 8,
+      "minimum_program_growth_bytes": 0,
+      "maximum_program_growth_bytes": 0
+    },
+    {
+      "phase": "speech-default",
+      "percent": 100,
+      "extra_irq_cycles": 0,
+      "views": 10,
+      "full_flash_smaller": 0,
+      "same_full_flash": 4,
+      "full_flash_larger": 6,
+      "minimum_full_flash_growth_bytes": 0,
+      "maximum_full_flash_growth_bytes": 220,
+      "minimum_program_growth_bytes": -1,
+      "maximum_program_growth_bytes": 1
+    },
+    {
+      "phase": "speech-default",
+      "percent": 100,
+      "extra_irq_cycles": 100,
+      "views": 10,
+      "full_flash_smaller": 0,
+      "same_full_flash": 4,
+      "full_flash_larger": 6,
+      "minimum_full_flash_growth_bytes": 0,
+      "maximum_full_flash_growth_bytes": 220,
+      "minimum_program_growth_bytes": -1,
+      "maximum_program_growth_bytes": 1
+    },
+    {
+      "phase": "speech-screen",
+      "percent": 100,
+      "extra_irq_cycles": 0,
+      "views": 27,
+      "full_flash_smaller": 0,
+      "same_full_flash": 23,
+      "full_flash_larger": 4,
+      "minimum_full_flash_growth_bytes": 0,
+      "maximum_full_flash_growth_bytes": 220,
+      "minimum_program_growth_bytes": -1,
+      "maximum_program_growth_bytes": 1
+    },
+    {
+      "phase": "speech-screen",
+      "percent": 100,
+      "extra_irq_cycles": 100,
+      "views": 27,
+      "full_flash_smaller": 0,
+      "same_full_flash": 23,
+      "full_flash_larger": 4,
+      "minimum_full_flash_growth_bytes": 0,
+      "maximum_full_flash_growth_bytes": 220,
+      "minimum_program_growth_bytes": -1,
+      "maximum_program_growth_bytes": 1
+    }
+  ],
+  "paired_growth_equal_across_irqs": true,
+  "images": {
+    "minimum_full_flash_bytes": 5210,
+    "maximum_full_flash_bytes": 27858,
+    "minimum_program_flash_bytes": 4573,
+    "maximum_program_flash_bytes": 4599,
+    "minimum_static_sram_bytes": 756,
+    "maximum_static_sram_bytes": 756,
+    "minimum_observed_stack_margin_bytes": 1231,
+    "maximum_reset_segments": 5,
+    "largest_image": {
+      "chain": "chain-041",
+      "profile": 6,
+      "samples": 281632,
+      "segments": 5,
+      "stream_bytes": 23259,
+      "extra_irq_cycles": 100,
+      "flash_bytes": 27858
+    }
+  },
+  "physical_samples": {
+    "total": 6924372,
+    "new_images": 6092372,
+    "proven_reuses": 832000
+  },
+  "new_fits": 0,
+  "new_builds_or_simulations_during_export": 0,
+  "perceptual_adoption": false,
+  "scope": "Full-Flash growth is candidate minus same-level rollback. Phase/cap views overlap; source quality and audibility are not measured here."
+}
