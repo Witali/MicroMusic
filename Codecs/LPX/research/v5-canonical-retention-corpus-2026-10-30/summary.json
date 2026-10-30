@@ -1,0 +1,62 @@
+{
+  "status": "PASS",
+  "records": 118,
+  "cap_views": 354,
+  "new_fits": 0,
+  "new_refinements": 0,
+  "reused_old_whole_metric_rows": 0,
+  "canonical_selector_commit": "976c50c8a341d86eeac7600f51057e575ee87a0a",
+  "counters": {
+    "model_reset_calls_started": 449,
+    "model_reset_calls_completed": 449,
+    "model_samples_completed": 22414920,
+    "whole_metric_rows_started": 281,
+    "whole_metric_rows_completed": 281,
+    "reproduced_audited_whole_rows": 396,
+    "records_completed": 118,
+    "canonical_unique_reset_streams": 449,
+    "canonical_model_samples": 22414920,
+    "canonical_native_output_domain_comparisons": 1796,
+    "canonical_whole_metric_rows": 281
+  },
+  "shards": [
+    {
+      "shard": 0,
+      "records": 62,
+      "wall_seconds": 214.92294800002128
+    },
+    {
+      "shard": 1,
+      "records": 56,
+      "wall_seconds": 432.13947170000756
+    }
+  ],
+  "by_phase": {
+    "speech-screen": {
+      "cap_views": 294,
+      "admitted": 102,
+      "unchanged-baseline": 72,
+      "no-admission": 192,
+      "old-union": 27,
+      "requires-new-proof": 3
+    },
+    "speech-default": {
+      "cap_views": 42,
+      "admitted": 18,
+      "old-union": 12,
+      "requires-new-proof": 3,
+      "no-admission": 24,
+      "unchanged-baseline": 3
+    },
+    "nonspeech-default": {
+      "cap_views": 18,
+      "admitted": 6,
+      "old-union": 4,
+      "no-admission": 12,
+      "requires-new-proof": 1,
+      "unchanged-baseline": 1
+    }
+  },
+  "distinct_new_selected_chains_requiring_player_proof": 4,
+  "scope": "Saved-corpus regression only; no new full Flash/player or perceptual admission"
+}

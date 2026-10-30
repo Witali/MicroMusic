@@ -1,0 +1,41 @@
+{
+  "pure_driver_tests": {
+    "status": "PASS",
+    "tests": 4
+  },
+  "actual_saved_rows": {
+    "status": "PASS",
+    "counts": {
+      "actual_pool_bytes_bound": 8774314,
+      "prefix_local_ranks": 386,
+      "pool_rows": 2820,
+      "records": 118,
+      "target_records_auto_quiet": 16,
+      "partial_history_records": 2,
+      "searched_resets": 148,
+      "paired_prefix1_byte_comparisons": 44
+    },
+    "old_player_union_chains": 75,
+    "model_calls": 0,
+    "whole_metric_calls": 0,
+    "new_fits": 0,
+    "new_refinements": 0,
+    "wall_seconds": 44.0841884999827
+  },
+  "independent_prefix_bytes": {
+    "status": "PASS",
+    "scope": "Post-replay independent static-rank ordered-byte assertion only",
+    "counts": {
+      "incumbent_label_byte_comparisons": 390,
+      "prefix_label_byte_comparisons": 592,
+      "records": 118,
+      "paired_prefix1_actual_whole_byte_comparisons": 28,
+      "fixed_unsearched_reset_byte_comparisons": 1160
+    },
+    "new_fits": 0,
+    "new_refinements": 0,
+    "model_calls": 0,
+    "native_calls": 0,
+    "whole_metric_calls": 0
+  }
+}
