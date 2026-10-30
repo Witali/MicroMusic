@@ -81,8 +81,10 @@ analysis executes in a worker process while its helper clock runs.
 
 The shared cooperative budget uses process CPU, including helper initialization
 and the search loop. Check the budget at safe atomic work boundaries. A chunk
-already started may complete after the quota; report actual overshoot and the
-largest completed chunk, rather than describing the quota as a hard deadline.
+already started may complete after the quota; report actual search/total
+overshoot and safe-checkpoint granularity, rather than describing the quota as
+a hard deadline. Individual maximum atomic-chunk CPU is not measured by the
+shared clock and must remain unknown.
 Always keep verified baseline/best encountered bytes on exhaustion. Record
 local screening, full render, objective, serialization, accepted-state, sink,
 cache and incomplete-work counters where the implementation supplies them.
@@ -113,6 +115,15 @@ Its comparability flag uses each arm's summed actual 2-second and 8-second
 helper CPU. Standalone 8-second cost can be shown separately. Campaign totals
 count each of the 312 actual helper calls once; prior 2-second work is never
 free or counted twice.
+
+The helper-CPU ratio is the primary comparator only. Report the independent
+every-sink serialized model-SSE audit separately from required bounded endpoint
+pruning and whole admission. Publish both the helper-matched subgroup and the
+actual complete workflow/candidate-audit cost. Shared whole-metric and source-
+feature cache work is attributed to its creating event, with exact reuse
+provenance; per-arm workflow times can depend on execution order. Do not call
+the workflow end-to-end same-CPU or treat cached second-arm work as an intrinsic
+algorithm advantage. This experiment makes no end-to-end matched-cost claim.
 
 ## Candidate capture and finite whole assembly
 
