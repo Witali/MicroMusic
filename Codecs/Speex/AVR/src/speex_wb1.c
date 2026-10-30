@@ -149,8 +149,8 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
     if(ratio<=0) {wb.error=1;return;}
     g=PDIV32(AVR_READ_I32(exp_gain+wb.gain[wb.sub]),ratio);
     speex_wb_iir40(wb.exc,wb.den,wb.pcm+40,wb.mem);
-#if SPEEX_ENABLE_NB2
-    if(wb.low_mode==2)speex_wb_excitation_low40(wb.exc,indices,scale,g);
+#if SPEEX_ENABLE_NB2 || SPEEX_ENABLE_NB8
+    if(wb.low_mode==2 || wb.low_mode==8)speex_wb_excitation_low40(wb.exc,indices,scale,g,wb.low_mode);
     else
 #endif
 #if SPEEX_ENABLE_NB4

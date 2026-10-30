@@ -38,8 +38,8 @@
 #error Lower-rate feature switches must be 0 or 1
 #endif
 #define SPEEX_ENABLE_LOW_RATES (SPEEX_ENABLE_NB2 || SPEEX_ENABLE_NB8 || SPEEX_ENABLE_NB1)
-#if SPEEX_ENABLE_NB8 || SPEEX_ENABLE_NB1
-#error NB8/NB1 are reserved until their excitation paths are implemented
+#if SPEEX_ENABLE_NB1
+#error NB1 is reserved until its excitation path is implemented
 #endif
 #if SPEEX_ENABLE_NB4 != 0 && SPEEX_ENABLE_NB4 != 1
 #error SPEEX_ENABLE_NB4 must be 0 or 1

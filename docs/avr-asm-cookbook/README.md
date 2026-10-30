@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Recover forced-pitch ancestry](speex-forced-history.md): preserve the
+prediction-before-innovation contract while replacing an extra frame buffer
+with bounded recomputation and existing C/ASM vector routines.
+
 [Exact QMF averages and first-tap initialization](speex-qmf-input.md): use
 unsigned borrow/carry to retain signed floor rounding, initialize accumulators
 without a zeroing pass, preserve first-product carry semantics and overlapping

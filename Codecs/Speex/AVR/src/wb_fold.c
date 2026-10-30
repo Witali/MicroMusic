@@ -4,19 +4,31 @@
 #include "zero_innovation.h"
 extern const int8_t exc_8_128_table[1024];
 extern const int8_t exc_10_32_table[320];
-#if SPEEX_ENABLE_NB2
+#if SPEEX_ENABLE_NB2 || SPEEX_ENABLE_NB8
 extern const int8_t exc_10_16_table[160];
+extern const int8_t exc_20_32_table[640];
 /* Same ten-sample primitive and folding as NB3, different Flash codebook.
  * The existing forty-word excitation buffer is the intermediate; no copy. */
-SPEEX_NB3_STAGE void speex_wb_excitation_low40(int16_t *exc,const uint8_t *indices,int32_t scale,int32_t g)
+SPEEX_NB3_STAGE void speex_wb_excitation_low40(int16_t *exc,const uint8_t *indices,int32_t scale,int32_t g,uint8_t mode)
 {
-    for(uint8_t v=0;v<4;v++) {
-        const int8_t *shape=exc_10_16_table+10*(unsigned)indices[v];
-#if SPEEX_NB3_USE_AVR_ASM
-        speex_avr_zero_innovation10(exc+10*v,shape,scale);
-#else
-        speex_nb3_zero_innovation_n_c(exc+10*v,shape,scale,10);
+    const int8_t *table;uint8_t vectors,width;
+#if SPEEX_ENABLE_NB2
+    if(mode==2){table=exc_10_16_table;vectors=4;width=10;}else
 #endif
+#if SPEEX_ENABLE_NB8
+    {table=exc_20_32_table;vectors=2;width=20;}
+#else
+    {table=exc_10_16_table;vectors=4;width=10;}
+#endif
+    for(uint8_t v=0;v<vectors;v++) {
+        const int8_t *shape=table+width*(unsigned)indices[v];
+        for(uint8_t at=0;at<width;at+=10) {
+#if SPEEX_NB3_USE_AVR_ASM
+            speex_avr_zero_innovation10(exc+width*v+at,shape+at,scale);
+#else
+            speex_nb3_zero_innovation_n_c(exc+width*v+at,shape+at,scale,10);
+#endif
+        }
     }
     speex_wb_fold40(exc,g);
 }

@@ -83,7 +83,8 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
    }
 #if SPEEX_ENABLE_LOW_RATES
    uint8_t packet_mode=packet[0]>>3;
-   qe=packet_mode==2?speex_packet_field(packet,30,5):speex_nb3_frame_gain(packet);
+   qe=packet_mode==2?speex_packet_field(packet,30,5):
+      packet_mode==8?speex_packet_field(packet,34,5):speex_nb3_frame_gain(packet);
 #else
    qe=speex_nb3_frame_gain(packet);
 #endif
@@ -98,6 +99,10 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
 #endif
 #if SPEEX_ENABLE_NB2
    if(packet_mode==2)speex_nb2_excitation_frame(frame_exc,packet,AVR_READ_I32(nb_low_gain_table+qe),indices);
+   else
+#endif
+#if SPEEX_ENABLE_NB8
+   if(packet_mode==8)speex_nb8_excitation_frame(frame_exc,packet,AVR_READ_I32(nb_low_gain_table+qe),indices);
    else
 #endif
    {
@@ -172,8 +177,8 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
          /* Interpolated angles are dead once LPC is ready. HB consumes the
           * reconstructed indices synchronously, before the next quarter. */
          indices=(uint8_t *)interp_qlsp;
-#if SPEEX_ENABLE_NB2
-         if(packet_mode==2) {
+#if SPEEX_ENABLE_NB2 || SPEEX_ENABLE_NB8
+         if(packet_mode==2 || packet_mode==8) {
              speex_low_unpack(packet,(uint8_t)sub,indices);
              speex_wb_low_ready(sp,st->interp_qlpc,indices,AVR_READ_I32(nb_low_gain_table+qe));
          } else

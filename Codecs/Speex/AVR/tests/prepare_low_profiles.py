@@ -27,6 +27,10 @@ def main():
     p.add_argument('--out',type=Path,default=ROOT/'build/low-corpus');args=p.parse_args()
     names=sorted(d.name for d in args.speech_root.iterdir()
                  if d.is_dir() and re.search(args.filter,d.name) and (d/'16000/input.wav').is_file())
+    manifest=args.speech_root.parent/'corpus.json'
+    if manifest.exists():
+        natural={c['id'] for c in json.loads(manifest.read_text(encoding='utf-8'))['clips'] if c['condition']=='natural'}
+        names=[name for name in names if name in natural]
     if not names:p.error('No retained voice clips')
     rows=[]
     for label,hz,rate,mode,meaningful in PROFILES:

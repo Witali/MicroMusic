@@ -11,7 +11,7 @@ Original Xiph 1.2.1 files, mode tables and BSD provenance stay unchanged.
 samples at 8 kHz. Combined with HB1 it uses 155 bits / 20 bytes, 320 samples
 at 16 kHz. Padding is ignored; length/mode/HB checks precede state updates.
 Feature defaults to zero. `--low-rates 1` selects it in the AVR builders.
-The other feature bits are reserved and produce a compile error at this stage.
+Feature bits select NB2=1, NB8=2, NB1=4; availability is described per stage.
 
 LBR LSP/LPC and IIR are shared. Ten-sample pitch/innovation primitives are
 reused with `exc_10_16_table` (160 B), and the 32 no-subframe-correction
@@ -42,3 +42,22 @@ vocoder processing, preserving the original random sequence and state across
 rate changes. Follow with full corpus, padding/error/reset/mixed-mode checks,
 default-image identity, C export, Flash delivery and active-IRQ admission.
 Do not infer reduced CPU cost merely from reduced bitrate.
+
+## Stage 2: NB3.95 / WB5.75
+
+`SPEEX_ENABLE_NB8=1` adds 79-bit / 10-byte NB and 115-bit / 15-byte WB
+packets. `--low-rates 3` enables both new pairs. The original forced pitch
+builds prediction before adding innovation; feeding completed output back
+would change PCM. For lags 17..144, at most two rounded predictor ancestors
+are needed within a 40-sample subframe. Recover those from completed history
+and pass small ranges through the existing three-tap kernel with outer gains
+zero. A 24-byte stack edge replaces an additional 80-byte frame buffer.
+The common HB1 controller selects the 20-sample/32-vector Flash codebook and
+feeds the same ten-sample and folding primitives. LSP/LPC/IIR/QMF stay shared.
+
+The same three-clip initial screen passes 120 NB and 120 WB exact/reset frames.
+The WB player passes 120 continuous frames with timers/IRQ, exact PCM/PWM,
+zero underruns, queue minimum 13 and 397 B free SRAM at zero extra load.
+Both pairs together use 13044 B NB / 20024 B WB bare Flash. The original
+minimum WB image remains byte-identical with lower rates disabled.
+Full-corpus timing and mixed-mode admission remain the final stage.

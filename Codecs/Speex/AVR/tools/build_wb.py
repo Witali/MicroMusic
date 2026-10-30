@@ -89,7 +89,7 @@ def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packe
         build.run([prefix+'objcopy'+extension,'-O',format,'-R','.eeprom',executable,out/('wb.'+suffix)])
     (out/'symbols.txt').write_text(subprocess.check_output([prefix+'nm'+extension,'-n',executable],text=True))
     (out/'backend.json').write_text(json.dumps(dict(backend=backend,
-        handwrittenAssembly=backend=='asm',profile='WB1-Q7-16',sampleRate=16000,packetBytes=width,bitrate=9800 if width==25 else 12800,nb4Enabled=enabled,
+        handwrittenAssembly=backend=='asm',profile='WB1-Q7-16',sampleRate=16000,packetBytes=width,bitrate={10:3950,15:5750,20:7750,25:9800,32:12800}[width],nb4Enabled=enabled,
         lowRates=low_rates,binarySha256=hashlib.sha256((out/'wb.bin').read_bytes()).hexdigest()),indent=2)+'\n')
     if (out/'wb.bin').stat().st_size>32768:raise ValueError('Firmware and stream exceed ATmega328P Flash')
     build.run([prefix+'size'+extension,'-C','--mcu=atmega328p',executable])
