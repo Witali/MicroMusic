@@ -1,0 +1,62 @@
+{
+  "binarySha256": "4f09e6756031161154cfff715830d1c87414e019ded20d96a6f541b00fe1fc2d",
+  "packetBytes": 20,
+  "flashBytes": 18774,
+  "staticSramBytes": 1416,
+  "includesInterrupts": true,
+  "simulator": "avr8js 0.21.1 + tests/avr_tick.mjs",
+  "physicalBoardTested": false,
+  "extraCpuCyclesPerFrame": 0,
+  "scope": "Ready RAM packets supplied by host; production IRQ/queue reused; no transport delay modeled; no resets inside a recording",
+  "frames": 120,
+  "underruns": 0,
+  "minQueuedSamplesBeforeOutput": 29,
+  "freeSramAtPeak": 423,
+  "streams": [
+    {
+      "stream": "en_letter_a.spxraw",
+      "frames": 40,
+      "inputSha256": "0245d3ef0bb086869bc1fba0ed52a032dba85511bca62dd49f74ad8dd919ec8b",
+      "pcmSha256": "233a744ed923d0f8e56adad8f836278fd31dfefbcffbfe7dd87ef04af424b8f1",
+      "fullHistoryWithoutChunkReset": true,
+      "s16AndPwmExact": true,
+      "underruns": 0,
+      "minQueuedSamplesBeforeOutput": 29,
+      "freeSramAtPeak": 423,
+      "peakStackBytes": 209,
+      "timerIntervalMinCycles": 996,
+      "timerIntervalMaxCycles": 1004,
+      "measuredLoads": 0
+    },
+    {
+      "stream": "ru_slutskaya_a.spxraw",
+      "frames": 40,
+      "inputSha256": "1b756e4ddc4162e6b7d5e6b115bd16a18674b9f7a6fbeac0ae0871c93ce749f3",
+      "pcmSha256": "6612653dc933cbfcc6c59d1001a28705119465af68b4942a4677d9ea252a5d21",
+      "fullHistoryWithoutChunkReset": true,
+      "s16AndPwmExact": true,
+      "underruns": 0,
+      "minQueuedSamplesBeforeOutput": 30,
+      "freeSramAtPeak": 423,
+      "peakStackBytes": 209,
+      "timerIntervalMinCycles": 996,
+      "timerIntervalMaxCycles": 1004,
+      "measuredLoads": 0
+    },
+    {
+      "stream": "ru_square_b.spxraw",
+      "frames": 40,
+      "inputSha256": "56f209238f86604da8d6c8f79bf9ecd2e9dd5661ca8070e8a9e248c196ba3693",
+      "pcmSha256": "c267b5fcb15ec96ec98e35a48e2c56de6c500ff38ac644a459955dfd8d6bc8ec",
+      "fullHistoryWithoutChunkReset": true,
+      "s16AndPwmExact": true,
+      "underruns": 0,
+      "minQueuedSamplesBeforeOutput": 30,
+      "freeSramAtPeak": 423,
+      "peakStackBytes": 209,
+      "timerIntervalMinCycles": 996,
+      "timerIntervalMaxCycles": 1005,
+      "measuredLoads": 0
+    }
+  ]
+}

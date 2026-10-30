@@ -4,6 +4,23 @@
 #include "zero_innovation.h"
 extern const int8_t exc_8_128_table[1024];
 extern const int8_t exc_10_32_table[320];
+#if SPEEX_ENABLE_NB2
+extern const int8_t exc_10_16_table[160];
+/* Same ten-sample primitive and folding as NB3, different Flash codebook.
+ * The existing forty-word excitation buffer is the intermediate; no copy. */
+SPEEX_NB3_STAGE void speex_wb_excitation_low40(int16_t *exc,const uint8_t *indices,int32_t scale,int32_t g)
+{
+    for(uint8_t v=0;v<4;v++) {
+        const int8_t *shape=exc_10_16_table+10*(unsigned)indices[v];
+#if SPEEX_NB3_USE_AVR_ASM
+        speex_avr_zero_innovation10(exc+10*v,shape,scale);
+#else
+        speex_nb3_zero_innovation_n_c(exc+10*v,shape,scale,10);
+#endif
+    }
+    speex_wb_fold40(exc,g);
+}
+#endif
 /* g is the original HB1 exp gain divided by the filter ratio.
  * Keep the two distinct quantization/rounding steps; combining their gains
  * changes PCM. Unsigned product arithmetic preserves modulo32 behavior. */

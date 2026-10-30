@@ -1,0 +1,44 @@
+# Optional low-rate profiles
+
+Work proceeds in separate implementation/admission stages. Target remains
+ATmega328P, 16 MHz, 2 KB SRAM; explicit AVR ASM is the playback target.
+Portable C fallback selection and the existing compact Q7/16-tap QMF remain.
+Original Xiph 1.2.1 files, mode tables and BSD provenance stay unchanged.
+
+## Stage 1: NB5.95 / WB7.75
+
+`SPEEX_ENABLE_NB2=1` adds submode 2: 119 meaningful bits / 15 bytes, 160
+samples at 8 kHz. Combined with HB1 it uses 155 bits / 20 bytes, 320 samples
+at 16 kHz. Padding is ignored; length/mode/HB checks precede state updates.
+Feature defaults to zero. `--low-rates 1` selects it in the AVR builders.
+The other feature bits are reserved and produce a compile error at this stage.
+
+LBR LSP/LPC and IIR are shared. Ten-sample pitch/innovation primitives are
+reused with `exc_10_16_table` (160 B), and the 32 no-subframe-correction
+energies are generated from upstream constants. NB3 and NB2 share one
+short-pitch controller with the codebook selected outside its sample loop.
+HB1 reuses the existing excitation buffer and fold kernel, not a new frame.
+The no-correction maximum scale is 115088100, within the existing 121000000
+primitive domain; the same pitch gain codebook keeps existing signed24 bounds.
+
+Initial screening: three retained RU/EN clips, 40 frames each. NB matches
+untouched Xiph PCM; WB matches the independent established compact-profile
+oracle, including first-frame reset replay. The continuous WB player checks
+the same 120 frames with timers/IRQ, exact s16/PWM and zero underruns.
+These are initial tests, not the final full-corpus admission.
+
+AVR GCC 7.3.0, existing mixed Os/O2/O3, LTO/mcall-prologues/mrelax;
+avr8js 0.21.1. NB-only mailbox is 11546 B Flash / 1094 B static SRAM;
+WB mailbox 18350 / 1275 B, or +948 / +1342 B Flash versus the minimum
+NB8/WB9.8 images. The smaller packet mailbox accounts for the SRAM difference;
+no new core synthesis buffer is allocated. WB screen mean 245158.833 cycles,
+maximum 251095; these exclude output/interrupts. IRQ player leaves 423 B SRAM,
+minimum queue 29 with no added foreground load. No board timing is claimed.
+
+## Next stages
+
+Add NB3.95/WB5.75 forced-pitch reconstruction, then NB2.15/WB3.95 noise and
+vocoder processing, preserving the original random sequence and state across
+rate changes. Follow with full corpus, padding/error/reset/mixed-mode checks,
+default-image identity, C export, Flash delivery and active-IRQ admission.
+Do not infer reduced CPU cost merely from reduced bitrate.

@@ -18,7 +18,7 @@ function address(n){assert.ok(symbols.has(n),n);return symbols.get(n)&65535;}
 const names=['speex_test_packet','speex_test_status','speex_test_command','speex_test_result','speex_test_chunks','speex_test_pcm','__bss_end'];
 const [packet,status,command,result,chunks,pcm,end]=names.map(address);
 const binary=readFileSync(join(dir,'wb.bin')),metadata=JSON.parse(readFileSync(join(dir,'backend.json')));
-const packetBytes=metadata.packetBytes||25;assert.ok([25,32].includes(packetBytes));
+const packetBytes=metadata.packetBytes||25;assert.ok([10,15,20,25,32].includes(packetBytes));
 assert.equal(metadata.backend,backend);assert.ok(binary.length<=32768);
 assert.equal(createHash('sha256').update(binary).digest('hex'),metadata.binarySha256);
 for(const table of ['high_lsp_cdbk','high_lsp_cdbk2','nb3_gain_table'])assert.ok(symbols.get(table)<32768,table+' in Flash');

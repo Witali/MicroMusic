@@ -28,9 +28,10 @@ def sources(source):
     return [source/'libspeex'/(s+'.c') for s in build.PROFILE_SOURCES+['high_lsp_tables']]+[
         build.ROOT/'src'/s for s in ['speex_avr.c','bits.c']+C_SOURCES]
 
-def flags(source,backend,enable_nb4=True):
+def flags(source,backend,enable_nb4=True,low_rates=0):
     return ['-std=c11','-fwrapv','-fno-strict-aliasing',
         *['-D'+d for d in DEFINES],'-DSPEEX_NB3_ENABLE_ASM='+str(int(backend=='asm')),'-DSPEEX_ENABLE_NB4='+str(int(enable_nb4)),
+        *['-DSPEEX_ENABLE_NB'+str(mode)+'=1' for bit,mode in [(1,2),(2,8),(4,1)] if low_rates&bit],
         '-I'+str(source/'include'),'-I'+str(source/'libspeex'),'-I'+str(build.ROOT/'src')]
 
 def host(compiler,enable_nb4=True):
@@ -54,9 +55,9 @@ def oracle(compiler):
         *[source/'libspeex'/(s+'.c') for s in units],build.ROOT/'tests/wb_oracle_qmf.c',
         build.ROOT/'tests/decode_rates.c','-o',out/('decode.exe' if sys.platform=='win32' else 'decode')])
 
-def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packet_bytes=None,enable_nb4=None):
+def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packet_bytes=None,enable_nb4=None,low_rates=0):
     if load<0 or load>320000 or (load and stream is None):raise ValueError('Load requires a player stream and 0..320000 cycles')
-    if packet_bytes not in (None,25,32):raise ValueError('WB mailbox width must be 25 or 32 bytes')
+    if packet_bytes not in (None,10,15,20,25,32):raise ValueError('Invalid WB packet width')
     width=packet_bytes or 25
     source=prepare();out=destination or build.ROOT/'build'/('wb-'+backend+('-player' if stream else '-decoder'))
     out=out.resolve();out.mkdir(parents=True,exist_ok=True)
@@ -78,7 +79,7 @@ def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packe
         if load:options+=['-DSPEEX_AVR_FRAME_LOAD_CYCLES='+str(load)]
     enabled=width==32 if enable_nb4 is None else bool(enable_nb4)
     if width==32 and not enabled:raise ValueError('32-byte packets require the NB4 feature')
-    options=flags(source,backend,enabled)+options+['-DSPEEX_TEST_PACKET_BYTES='+str(width)]
+    options=flags(source,backend,enabled,low_rates)+options+['-DSPEEX_TEST_PACKET_BYTES='+str(width)]
     units=sources(source)
     if backend=='asm':units +=[build.ROOT/'src'/s for s in build.ASM_SOURCES+ASM_SOURCES]
     executable=out/'wb.elf'
@@ -89,7 +90,7 @@ def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packe
     (out/'symbols.txt').write_text(subprocess.check_output([prefix+'nm'+extension,'-n',executable],text=True))
     (out/'backend.json').write_text(json.dumps(dict(backend=backend,
         handwrittenAssembly=backend=='asm',profile='WB1-Q7-16',sampleRate=16000,packetBytes=width,bitrate=9800 if width==25 else 12800,nb4Enabled=enabled,
-        binarySha256=hashlib.sha256((out/'wb.bin').read_bytes()).hexdigest()),indent=2)+'\n')
+        lowRates=low_rates,binarySha256=hashlib.sha256((out/'wb.bin').read_bytes()).hexdigest()),indent=2)+'\n')
     if (out/'wb.bin').stat().st_size>32768:raise ValueError('Firmware and stream exceed ATmega328P Flash')
     build.run([prefix+'size'+extension,'-C','--mcu=atmega328p',executable])
     return out
@@ -117,7 +118,8 @@ def main():
     parser.add_argument('--avr-gcc');parser.add_argument('--backend',choices=['asm','c'],default='c')
     parser.add_argument('--stream',type=Path);parser.add_argument('--frame-load-cycles',type=int,default=0)
     parser.add_argument('--out',type=Path);parser.add_argument('--export-c',type=Path)
-    parser.add_argument('--packet-bytes',type=int,choices=[25,32],help='Bare mailbox width; player width is inferred')
+    parser.add_argument('--packet-bytes',type=int,choices=[10,15,20,25,32],help='Bare mailbox width; player width is inferred')
+    parser.add_argument('--low-rates',type=int,choices=range(8),default=0,help='Feature mask: NB2=1, NB8=2, NB1=4')
     parser.add_argument('--enable-nb4',action='store_true',default=None,help='Enable WB 12.8/NB 11 kbit/s (automatic for 32-byte AVR input)')
     parser.add_argument('--kernels',action='store_true',help='AVR mailbox comparing C and ASM kernels')
     args=parser.parse_args()
@@ -128,7 +130,7 @@ def main():
     if args.cc:
         host(args.cc)
         if args.reference:oracle(args.cc)
-    if args.avr_gcc:avr(args.avr_gcc,args.backend,args.stream,args.frame_load_cycles,args.out,args.kernels,args.packet_bytes,args.enable_nb4)
+    if args.avr_gcc:avr(args.avr_gcc,args.backend,args.stream,args.frame_load_cycles,args.out,args.kernels,args.packet_bytes,args.enable_nb4,args.low_rates)
     if args.export_c:export_c(args.export_c.resolve(),bool(args.enable_nb4))
     if not(args.cc or args.avr_gcc or args.export_c):parser.error('Select --cc, --avr-gcc or --export-c')
 if __name__=='__main__':main()

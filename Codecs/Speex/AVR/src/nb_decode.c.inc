@@ -18,6 +18,9 @@
 #if SPEEX_ENABLE_NB4
 #include "nb4_excitation.h"
 #endif
+#if SPEEX_ENABLE_LOW_RATES
+#include "lowrate_excitation.h"
+#endif
 #if SPEEX_NB3_USE_AVR_ASM
 static SPEEX_NB3_NOINLINE
 #else
@@ -78,7 +81,12 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
       else for(i=0;i<NB_ORDER;i++)lsp_delta[i]-=st->old_qlsp[i]>>2;
       st->lsp_key[0]=packet[0]&7;st->lsp_key[1]=packet[1];st->lsp_key[2]=packet[2]&254;
    }
+#if SPEEX_ENABLE_LOW_RATES
+   uint8_t packet_mode=packet[0]>>3;
+   qe=packet_mode==2?speex_packet_field(packet,30,5):speex_nb3_frame_gain(packet);
+#else
    qe=speex_nb3_frame_gain(packet);
+#endif
    /* The validated packet map supplies the complete 33-bit group once.
     * This four-byte slot is dead when LPC synthesis reuses offset 20. */
 #if SPEEX_ENABLE_NB4
@@ -87,6 +95,10 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
    else
 #else
    ALLOC(indices,4,uint8_t);
+#endif
+#if SPEEX_ENABLE_NB2
+   if(packet_mode==2)speex_nb2_excitation_frame(frame_exc,packet,AVR_READ_I32(nb_low_gain_table+qe),indices);
+   else
 #endif
    {
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
@@ -108,7 +120,11 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
           * source in this block; fuse the three sums with innovation. */
          speex_nb3_long_innovation(exc,exc-pitch-1,indices,ener,index);
       } else {
-         speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,indices,ener,index);
+         speex_nb3_short_innovation(exc,exc,(uint8_t)pitch,indices,ener,index
+#if SPEEX_ENABLE_NB2
+                                   ,exc_10_32_table
+#endif
+                                   );
       }
    }
    }
@@ -156,6 +172,13 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
          /* Interpolated angles are dead once LPC is ready. HB consumes the
           * reconstructed indices synchronously, before the next quarter. */
          indices=(uint8_t *)interp_qlsp;
+#if SPEEX_ENABLE_NB2
+         if(packet_mode==2) {
+             speex_low_unpack(packet,(uint8_t)sub,indices);
+             speex_wb_low_ready(sp,st->interp_qlpc,indices,AVR_READ_I32(nb_low_gain_table+qe));
+         } else
+#endif
+         {
 #if SPEEX_ENABLE_NB4
          header=(packet[0]>>3)==4?speex_nb4_unpack_subframe(packet,(uint8_t)sub,indices):speex_nb3_unpack_subframe(packet,(uint8_t)sub,indices);
 #else
@@ -163,6 +186,7 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
 #endif
          speex_wb_low_ready(sp,st->interp_qlpc,indices,
              AVR_READ_I32(nb3_gain_table+(qe<<1)+(header&1)));
+         }
       }
 #endif
 #ifdef SPEEX_AVR_OUTPUT_HOOK

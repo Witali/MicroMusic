@@ -30,7 +30,7 @@ const packet = address('speex_test_packet'), pcm = address('speex_test_pcm');
 const result = address('speex_test_result'), end = address('__bss_end');
 const binary = readFileSync(join(build, 'speex-test.bin'));
 const backend=JSON.parse(readFileSync(join(build,'backend.json'),'utf8'));
-const packetBytes=backend.packetBytes||20;assert.ok([20,28].includes(packetBytes));
+const packetBytes=backend.packetBytes||20;assert.ok([6,10,15,20,28].includes(packetBytes));
 assert.equal(createHash('sha256').update(binary).digest('hex'),backend.binarySha256,
   'Backend metadata must describe the executed binary');
 const backendIndex=process.argv.indexOf('--backend');

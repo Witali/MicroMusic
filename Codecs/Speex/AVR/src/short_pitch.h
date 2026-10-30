@@ -24,12 +24,20 @@ static SPEEX_NB3_ALWAYS_INLINE int16_t speex_nb3_segment_finish_c(int32_t adapti
 #define SPEEX_SHORT_NAME speex_nb3_short_innovation
 #define SPEEX_SHORT_VECTORS 4
 #define SPEEX_SHORT_SIZE 10
+#if SPEEX_ENABLE_NB2
+#define SPEEX_SHORT_DYNAMIC_TABLE 1
+#define SPEEX_SHORT_TABLE table
+#else
 #define SPEEX_SHORT_TABLE exc_10_32_table
+#endif
 #include "short_pitch_kernel.inc"
 #undef SPEEX_SHORT_NAME
 #undef SPEEX_SHORT_VECTORS
 #undef SPEEX_SHORT_SIZE
 #undef SPEEX_SHORT_TABLE
+#ifdef SPEEX_SHORT_DYNAMIC_TABLE
+#undef SPEEX_SHORT_DYNAMIC_TABLE
+#endif
 #if SPEEX_ENABLE_NB4
 #define SPEEX_SHORT_NAME speex_nb4_short_innovation
 #define SPEEX_SHORT_VECTORS 5

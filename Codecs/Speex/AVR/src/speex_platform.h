@@ -21,6 +21,26 @@
 #ifndef SPEEX_ENABLE_NB4
 #define SPEEX_ENABLE_NB4 0
 #endif
+/* Optional lower rates: NB2=5.95, NB8=3.95, NB1=2.15 kbit/s.
+ * With WB enabled their HB1 combinations are 7.75, 5.75, 3.95 kbit/s. */
+#ifndef SPEEX_ENABLE_NB2
+#define SPEEX_ENABLE_NB2 0
+#endif
+#ifndef SPEEX_ENABLE_NB8
+#define SPEEX_ENABLE_NB8 0
+#endif
+#ifndef SPEEX_ENABLE_NB1
+#define SPEEX_ENABLE_NB1 0
+#endif
+#if (SPEEX_ENABLE_NB2 != 0 && SPEEX_ENABLE_NB2 != 1) || \
+    (SPEEX_ENABLE_NB8 != 0 && SPEEX_ENABLE_NB8 != 1) || \
+    (SPEEX_ENABLE_NB1 != 0 && SPEEX_ENABLE_NB1 != 1)
+#error Lower-rate feature switches must be 0 or 1
+#endif
+#define SPEEX_ENABLE_LOW_RATES (SPEEX_ENABLE_NB2 || SPEEX_ENABLE_NB8 || SPEEX_ENABLE_NB1)
+#if SPEEX_ENABLE_NB8 || SPEEX_ENABLE_NB1
+#error NB8/NB1 are reserved until their excitation paths are implemented
+#endif
 #if SPEEX_ENABLE_NB4 != 0 && SPEEX_ENABLE_NB4 != 1
 #error SPEEX_ENABLE_NB4 must be 0 or 1
 #endif

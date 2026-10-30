@@ -53,6 +53,10 @@ def apply(source: Path):
     values = [(c*((28406*g)//32768))//16384 for g in gains for c in corrections]
     assert len(values)==64 and min(values)>0 and max(values)==120988612
     table = '\nstatic const spx_word32_t nb3_gain_table[64] AVR_TABLE={' + ','.join(map(str,values)) + '};\n'
+    # Lower modes have no subframe energy correction. Keep their 32-entry
+    # table optional so the original minimum build remains unchanged.
+    lower = [(28406*g)//32768 for g in gains]
+    table += '#if SPEEX_ENABLE_LOW_RATES\nstatic const spx_word32_t nb_low_gain_table[32] AVR_TABLE={' + ','.join(map(str,lower)) + '};\n#endif\n'
     text = text[:start] + table + fragment.read_text() + '\n#endif /* DISABLE_DECODER */\n'
     path.write_text(text)
 
@@ -100,7 +104,8 @@ def apply(source: Path):
 
     # Tables are marked at their definitions. Every decoder access uses an
     # explicit width/sign read, while parameter structs retain ordinary pointers.
-    for name in ['lsp_tables_nb.c', 'gain_table_lbr.c', 'exc_10_32_table.c', 'exc_8_128_table.c']:
+    for name in ['lsp_tables_nb.c', 'gain_table_lbr.c', 'exc_10_32_table.c', 'exc_8_128_table.c',
+                 'exc_10_16_table.c', 'exc_20_32_table.c']:
         path = lib / name
         text = path.read_text()
         text, n = re.subn(r'(const signed char \w+\[\d+\])\s*=', r'\1 AVR_TABLE =', text)

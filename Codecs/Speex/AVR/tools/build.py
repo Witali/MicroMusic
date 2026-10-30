@@ -78,7 +78,7 @@ def host(compiler, variant, enable_nb4=False):
     return executable
 
 
-PROFILE_SOURCES = '''cb_search exc_10_32_table exc_8_128_table filters gain_table_lbr lsp
+PROFILE_SOURCES = '''cb_search exc_10_32_table exc_8_128_table exc_10_16_table exc_20_32_table filters gain_table_lbr lsp
 lsp_tables_nb ltp nb_celp quant_lsp'''.split()
 
 
@@ -150,11 +150,11 @@ def export_c(destination, enable_nb4=False):
     return destination
 
 
-def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_bytes=None, enable_nb4=None):
+def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_bytes=None, enable_nb4=None,low_rates=0):
     if backend not in ('asm', 'c'):
         raise ValueError('Unknown arithmetic backend: ' + backend)
-    if packet_bytes not in (None,20,28):
-        raise ValueError('NB test packet width must be 20 or 28 bytes')
+    if packet_bytes not in (None,6,10,15,20,28):
+        raise ValueError('Invalid NB test packet width')
     width=packet_bytes or 20
     if not 0 <= frame_load_cycles <= 320000 or (frame_load_cycles and packet_file is None):
         raise ValueError('Frame load requires a player stream and 0..320000 cycles')
@@ -187,6 +187,7 @@ def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_byt
     enabled=width==28 if enable_nb4 is None else bool(enable_nb4)
     if width==28 and not enabled:raise ValueError('28-byte packets require the NB4 feature')
     definitions+=['SPEEX_TEST_PACKET_BYTES='+str(width),'SPEEX_ENABLE_NB4='+str(int(enabled))]
+    definitions+=['SPEEX_ENABLE_NB'+str(mode)+'=1' for bit,mode in [(1,2),(2,8),(4,1)] if low_rates&bit]
     # Share repeated register saves/restores; shorten in-range calls and jumps.
     flags = ['-std=c11', '-mmcu=atmega328p', '-mcall-prologues', '-mrelax',
              '-Os', '-flto', '-fwrapv', '-fno-strict-aliasing',
@@ -207,7 +208,7 @@ def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_byt
     run([prefix + 'size' + extension, '-C', '--mcu=atmega328p', executable])
     symbols = subprocess.check_output([prefix + 'nm' + extension, '-n', str(executable)], text=True)
     (output / 'symbols.txt').write_text(symbols, encoding='utf-8')
-    (output / 'backend.json').write_text(json.dumps({'backend': backend,'packetBytes':width,'nb4Enabled':enabled,
+    (output / 'backend.json').write_text(json.dumps({'backend': backend,'packetBytes':width,'nb4Enabled':enabled,'lowRates':low_rates,
         'handwrittenAssembly': backend == 'asm',
         'binarySha256': hashlib.sha256((output / (name + '.bin')).read_bytes()).hexdigest()
         }, indent=2) + '\n', encoding='utf-8')
@@ -224,7 +225,8 @@ if __name__ == '__main__':
     parser.add_argument('--export-c', type=Path,
                         help='Export a self-contained portable C/CMake library to a new directory')
     parser.add_argument('--player', type=Path, help='Embed a uniform NB3/NB4 raw stream and build the PWM player (requires --avr-gcc)')
-    parser.add_argument('--packet-bytes',type=int,choices=[20,28],help='Bare AVR mailbox width; player width is inferred')
+    parser.add_argument('--packet-bytes',type=int,choices=[6,10,15,20,28],help='Bare AVR mailbox width; player width is inferred')
+    parser.add_argument('--low-rates',type=int,choices=range(8),default=0,help='Feature mask: NB2=1, NB8=2, NB1=4')
     parser.add_argument('--enable-nb4',action='store_true',default=None,help='Enable NB 11 kbit/s (automatic for 28-byte AVR input)')
     parser.add_argument('--frame-load-cycles', type=int, default=0,
                         help='Inject this many extra CPU cycles per player frame to verify headroom (test only)')
@@ -240,5 +242,5 @@ if __name__ == '__main__':
         parser.error('--frame-load-cycles requires --player and --avr-gcc')
     if args.backend == 'asm' and not args.avr_gcc:
         parser.error('The asm backend requires --avr-gcc')
-    print(avr(args.avr_gcc, args.player, args.frame_load_cycles, args.backend or 'c',args.packet_bytes,args.enable_nb4)
+    print(avr(args.avr_gcc, args.player, args.frame_load_cycles, args.backend or 'c',args.packet_bytes,args.enable_nb4,args.low_rates)
           if args.avr_gcc else host(args.cc, args.variant,bool(args.enable_nb4)))

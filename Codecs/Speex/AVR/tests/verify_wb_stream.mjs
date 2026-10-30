@@ -11,7 +11,7 @@ function option(n,f){const i=process.argv.indexOf(n);return i<0?f:resolve(proces
 const dir=option('--firmware',join(root,'build/angle-wb-stream-32')),streams=option('--streams',join(root,'build/higher-corpus/wb128/streams'));
 const oracle=option('--oracle',join(root,'build/higher-corpus/wb128/oracle'));
 const metadata=JSON.parse(readFileSync(join(dir,'backend.json'),'utf8')),width=metadata.packetBytes;
-assert.ok([25,32].includes(width));assert.equal(metadata.backend,'asm');
+assert.ok([10,15,20,25,32].includes(width));assert.equal(metadata.backend,'asm');
 const binary=readFileSync(join(dir,'wb.bin'));assert.ok(binary.length<=32768);assert.equal(createHash('sha256').update(binary).digest('hex'),metadata.binarySha256);
 const symbols=new Map(readFileSync(join(dir,'symbols.txt'),'utf8').split(/\r?\n/).map(l=>l.match(/^([0-9a-f]+)\s+\w\s+(.+)$/)).filter(Boolean).map(m=>[m[2],parseInt(m[1],16)]));
 function address(n){assert.ok(symbols.has(n),n);return symbols.get(n)&65535;}

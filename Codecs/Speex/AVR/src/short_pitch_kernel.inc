@@ -7,7 +7,11 @@ static SPEEX_NB3_HOT SPEEX_NB3_NOINLINE
 static SPEEX_NB3_STAGE_O2
 #endif
 void SPEEX_SHORT_NAME(int16_t *out,const int16_t *exc,uint8_t pitch,
-                               const uint8_t *input_indices,int32_t scale,unsigned index)
+                               const uint8_t *input_indices,int32_t scale,unsigned index
+#ifdef SPEEX_SHORT_DYNAMIC_TABLE
+                               ,const int8_t *table
+#endif
+                               )
 {
 #if SPEEX_NB3_USE_AVR_ASM
     const uint8_t *indices=input_indices;

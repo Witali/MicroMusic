@@ -1,6 +1,7 @@
 #include "speex_avr.h"
 #include "speex_platform.h"
 #include "nb_celp.h"
+#include "packet_mode.h"
 #include <string.h>
 #if SPEEX_NB3_CHECK_SCRATCH
 #include <stdlib.h>
@@ -38,7 +39,11 @@ void speex_avr_init(void)
 
 int speex_avr_decode(const uint8_t *packet, size_t bytes, int16_t *pcm)
 {
-#if SPEEX_ENABLE_NB4
+#if SPEEX_ENABLE_LOW_RATES
+    if(!packet || !pcm || !bytes)return -1;
+    unsigned bits=speex_nb_packet_bits(packet[0]>>3);
+    if(!bits || bytes!=(bits+7)/8)return -1;
+#elif SPEEX_ENABLE_NB4
     if (!packet || !pcm) return -1;
     if((bytes!=20 || (packet[0]>>3)!=3) && (bytes!=28 || (packet[0]>>3)!=4)) return -1;
 #else

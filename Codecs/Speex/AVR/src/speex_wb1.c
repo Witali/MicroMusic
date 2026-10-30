@@ -12,6 +12,7 @@
 #include "wb_iir.h"
 #include "wb_fold.h"
 #include "wb_qmf.h"
+#include "packet_mode.h"
 #include <string.h>
 extern const int8_t high_lsp_cdbk[512],high_lsp_cdbk2[512];
 typedef struct {
@@ -19,7 +20,9 @@ typedef struct {
     int32_t mem[12];
     int16_t low[40],pcm[80];
     uint8_t qmf[64],gain[4],first,sub,error,repeat_lsp;
-#if SPEEX_ENABLE_NB4
+#if SPEEX_ENABLE_LOW_RATES
+    uint8_t low_mode;
+#elif SPEEX_ENABLE_NB4
     uint8_t mode4;
 #endif
     speex_wb1_output_fn output;
@@ -39,6 +42,15 @@ size_t speex_wb1_state_bytes(void)
 int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn output,void *context)
 {
     unsigned a,b,i;
+#if SPEEX_ENABLE_LOW_RATES
+    if(!packet || !output || !bytes)return -1;
+    uint8_t mode=packet[0]>>3;
+    unsigned nb_bits=speex_nb_packet_bits(mode);
+    if(!nb_bits || bytes!=(nb_bits+36+7)/8 || speex_packet_field(packet,nb_bits,4)!=9)return -1;
+    wb.low_mode=mode;
+    a=8*(unsigned)speex_packet_field(packet,nb_bits+4,6);
+    b=8*(unsigned)speex_packet_field(packet,nb_bits+10,6);
+#else
 #if SPEEX_ENABLE_NB4
     if(!packet || !output)return -1;
     if((bytes!=25 || (packet[0]>>3)!=3 || (packet[20]>>4)!=9) &&
@@ -59,6 +71,7 @@ int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn outp
         a=(((unsigned)(packet[20]&15)<<2)|(packet[21]>>6))*8;
         b=(unsigned)(packet[21]&63)*8;
     }
+#endif
     wb.repeat_lsp=1;
     for(i=0;i<8;i++) {
         wb.lsp[i]=(int16_t)(6144+2560*i+32*(int16_t)AVR_READ_I8(high_lsp_cdbk+a+i)+16*(int16_t)AVR_READ_I8(high_lsp_cdbk2+b+i));
@@ -66,6 +79,9 @@ int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn outp
         if(wb.first)wb.old_lsp[i]=wb.lsp[i];
     }
     if(wb.first)wb.repeat_lsp=1;
+#if SPEEX_ENABLE_LOW_RATES
+    for(i=0;i<4;i++)wb.gain[i]=speex_packet_field(packet,nb_bits+16+5*i,5);
+#else
 #if SPEEX_ENABLE_NB4
     if(wb.mode4) {
         wb.gain[0]=((packet[29]&15)<<1)|(packet[30]>>7);
@@ -80,6 +96,7 @@ int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn outp
     wb.gain[2]=(packet[23]>>1)&31;
     wb.gain[3]=((packet[23]&1)<<4)|(packet[24]>>4);
     }
+#endif
     wb.output=output;wb.context=context;wb.sub=0;wb.error=0;
     int result=speex_wb_decode_low(packet);
     memcpy(wb.old_lsp,wb.lsp,sizeof(wb.lsp));wb.first=0;
@@ -132,8 +149,16 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
     if(ratio<=0) {wb.error=1;return;}
     g=PDIV32(AVR_READ_I32(exp_gain+wb.gain[wb.sub]),ratio);
     speex_wb_iir40(wb.exc,wb.den,wb.pcm+40,wb.mem);
+#if SPEEX_ENABLE_NB2
+    if(wb.low_mode==2)speex_wb_excitation_low40(wb.exc,indices,scale,g);
+    else
+#endif
 #if SPEEX_ENABLE_NB4
+#if SPEEX_ENABLE_LOW_RATES
+    if(wb.low_mode==4)speex_wb_excitation8_40(wb.exc,indices,scale,g);
+#else
     if(wb.mode4)speex_wb_excitation8_40(wb.exc,indices,scale,g);
+#endif
     else
 #endif
     speex_wb_excitation40(wb.exc,indices,scale,g);
