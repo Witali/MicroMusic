@@ -86,6 +86,16 @@ def prepare(args):
             'Canonical selector epoch changed')
     for path, digest in exported['inputs_sha256'].items():
         union.read(path, digest)
+    postcheck = read(args.postcheck/'postcheck.json')
+    post_binding = read(args.postcheck/'binding-private.json')
+    require(postcheck['status']=='PASS' and postcheck['counts']['records']==118
+            and postcheck['new_fits']==postcheck['new_refinements']==postcheck['model_calls']
+            ==postcheck['native_calls']==postcheck['whole_metric_calls']==0,
+            'Independent post-replay ordered-byte coverage must pass without new work')
+    for path, digest in post_binding['inputs_sha256'].items():
+        union.read(path, digest)
+    union.read(args.replay_source/'postcheck_prefix_bytes.py')
+    union.read(args.replay_source.parent/'v5-prefix-retention-2026-10-30/prefixes.py')
 
     bindings, rows = [], []
     for shard, folder in enumerate(args.shards):
@@ -282,7 +292,8 @@ def prepare(args):
         admission_gate={**prior['admission_gate'],'prior_paths':list(map(str,prior_paths))},
         configuration=dict(irq_loads=[0,100],queue=256,prefill=192,assembly=True,flash_bytes=FLASH_BYTES),
         retention_gate=dict(selector_commit=SELECTOR,export_root=str(args.export),replay_source=str(args.replay_source),
-            replay_shards=list(map(str,args.shards)),new_selected_chains=len(actual),original_union_chains=75))
+            replay_shards=list(map(str,args.shards)),postcheck_root=str(args.postcheck),
+            independent_ordered_byte_postcheck='passed',new_selected_chains=len(actual),original_union_chains=75))
     require(epoch.snapshot()==prior['source_inventory'], 'Consumer sources changed during preparation')
     for path, digest in union.inputs.items():
         require(sha(Path(path).read_bytes())==digest, 'A prepared input changed')
@@ -297,11 +308,11 @@ def prepare(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('source-root','export','replay-source','prior-handoff','prior-proof','output','public-output'):
+    for name in ('source-root','export','replay-source','postcheck','prior-handoff','prior-proof','output','public-output'):
         parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--shards',nargs=2,type=Path,required=True)
     args = parser.parse_args()
-    for name in ('source_root','export','replay_source','prior_handoff','prior_proof','output','public_output'):
+    for name in ('source_root','export','replay_source','postcheck','prior_handoff','prior_proof','output','public_output'):
         setattr(args,name,getattr(args,name).resolve())
     args.shards = list(map(Path.resolve,args.shards))
     try:
