@@ -1,0 +1,145 @@
+{
+  "schema": "lpx-adaptive-original-split-summary-v1",
+  "phases": {
+    "speech-screen": {
+      "additional": {
+        "groups": 18,
+        "sources": 9,
+        "targeted_not_independent_heldout": 0,
+        "budgets": {
+          "100": {
+            "admissions": 18,
+            "changed_vs_rollback": 7
+          },
+          "95": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          },
+          "90": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          }
+        }
+      },
+      "evaluation": {
+        "groups": 40,
+        "sources": 20,
+        "targeted_not_independent_heldout": 2,
+        "budgets": {
+          "100": {
+            "admissions": 40,
+            "changed_vs_rollback": 11
+          },
+          "95": {
+            "admissions": 2,
+            "changed_vs_rollback": 0
+          },
+          "90": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          }
+        }
+      },
+      "tuning": {
+        "groups": 40,
+        "sources": 20,
+        "targeted_not_independent_heldout": 0,
+        "budgets": {
+          "100": {
+            "admissions": 40,
+            "changed_vs_rollback": 9
+          },
+          "95": {
+            "admissions": 2,
+            "changed_vs_rollback": 0
+          },
+          "90": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          }
+        }
+      }
+    },
+    "speech-default": {
+      "additional": {
+        "groups": 4,
+        "sources": 2,
+        "targeted_not_independent_heldout": 0,
+        "budgets": {
+          "100": {
+            "admissions": 4,
+            "changed_vs_rollback": 1
+          },
+          "95": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          },
+          "90": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          }
+        }
+      },
+      "evaluation": {
+        "groups": 6,
+        "sources": 3,
+        "targeted_not_independent_heldout": 2,
+        "budgets": {
+          "100": {
+            "admissions": 6,
+            "changed_vs_rollback": 5
+          },
+          "95": {
+            "admissions": 2,
+            "changed_vs_rollback": 1
+          },
+          "90": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          }
+        }
+      },
+      "tuning": {
+        "groups": 4,
+        "sources": 2,
+        "targeted_not_independent_heldout": 0,
+        "budgets": {
+          "100": {
+            "admissions": 4,
+            "changed_vs_rollback": 4
+          },
+          "95": {
+            "admissions": 2,
+            "changed_vs_rollback": 0
+          },
+          "90": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          }
+        }
+      }
+    },
+    "nonspeech-default": {
+      "nonspeech_control": {
+        "groups": 6,
+        "sources": 3,
+        "targeted_not_independent_heldout": 0,
+        "budgets": {
+          "100": {
+            "admissions": 6,
+            "changed_vs_rollback": 4
+          },
+          "95": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          },
+          "90": {
+            "admissions": 0,
+            "changed_vs_rollback": 0
+          }
+        }
+      }
+    }
+  },
+  "scope": "Original split names are historical dataset labels, not proof of untouched or speaker-independent holdout. Targeted flags and paired-subset overlap remain explicit. Nonspeech control label is a public scope tag; original private metadata is retained in source records."
+}
