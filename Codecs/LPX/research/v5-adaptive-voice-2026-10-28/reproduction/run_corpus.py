@@ -31,8 +31,25 @@ V1_HELPER = HERE.parents[1] / 'v5-quiet-voice-encoder-2026-10-28/reproduction/ru
 spec = importlib.util.spec_from_file_location('adaptive_study_v1_utilities', V1_HELPER)
 V1 = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(V1)
-sha, canonical, save = V1.sha, V1.canonical, V1.save
+sha, canonical = V1.sha, V1.canonical
+_save_once = V1.save
 immutable_bytes, geometry, assert_close = V1.immutable_bytes, V1.geometry, V1.assert_close
+
+
+def save(path, value):
+    """Retry only transient Windows access/sharing failures of atomic save.
+
+    No operator is retried. Every attempt retains V1's alias checks and exact
+    bytes, and persistent permissions failures still propagate to the caller.
+    """
+    delays = (.02, .05, .1, .2, .4)
+    for attempt in range(len(delays) + 1):
+        try:
+            return _save_once(path, value)
+        except PermissionError as exc:
+            if getattr(exc, 'winerror', None) not in (5, 32) or attempt == len(delays):
+                raise
+            time.sleep(delays[attempt])
 
 REQUIRED_MODULES = ('adaptive_speech_voice', 'speech_noise_objective', 'speech_voice_objective',
     'voice_character', 'voice_input', 'speech_v4', 'speech_compact', 'q0_model', 'wav_lpc',

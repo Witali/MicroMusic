@@ -64,3 +64,7 @@ as if playback gain had stayed the same.
 
 Independent saved-output audit and actual-player admission are required before
 publishing claims. None of the data byte caps measures a complete player image.
+
+Atomic journal writes retry Windows access/sharing errors at most six times
+(0.77 seconds total backoff). Search operators are never retried by this I/O
+recovery. Persistent failures remain visible, and alias checks are unchanged.

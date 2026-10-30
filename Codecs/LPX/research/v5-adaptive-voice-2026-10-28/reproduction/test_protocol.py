@@ -41,6 +41,33 @@ class AdaptiveProtocolTests(unittest.TestCase):
         self.assertEqual(whole['cap'],300000)
         self.assertEqual(whole['selected'],'control')
 
+    def test_transient_windows_atomic_save_does_not_repeat_operator_work(self):
+        with self.owned_temp() as directory:
+            target = Path(directory)/'attempt-private.json'
+            failure = PermissionError('synthetic sharing failure')
+            failure.winerror = 32
+            original = study._save_once
+            calls = []
+            def flaky(path, value):
+                calls.append(1)
+                if len(calls) == 1:
+                    raise failure
+                return original(path, value)
+            with patch.object(study,'_save_once',side_effect=flaky), patch.object(study.time,'sleep'):
+                study.save(target,dict(status='complete',operator_calls=1))
+            self.assertEqual(len(calls),2)
+            self.assertEqual(json.loads(target.read_text()),dict(status='complete',operator_calls=1))
+
+    def test_persistent_atomic_permission_failure_is_bounded(self):
+        failure = PermissionError('synthetic persistent failure')
+        failure.winerror = 5
+        with patch.object(study,'_save_once',side_effect=failure) as writes, patch.object(study.time,'sleep'), self.assertRaises(PermissionError):
+            study.save(Path('unused-private.json'),{})
+        self.assertEqual(writes.call_count,6)
+        with patch.object(study,'_save_once',side_effect=ValueError('alias rejected')) as writes, self.assertRaises(ValueError):
+            study.save(Path('unused-private.json'),{})
+        self.assertEqual(writes.call_count,1)
+
     def test_predeclared_representatives_use_lengths_ordinals_and_exclusion(self):
         records = [dict(samples=n) for n in (30,10,20,20,50,40)]
         groups = [[i] for i in range(len(records))]
