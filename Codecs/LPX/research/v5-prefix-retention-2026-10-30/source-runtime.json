@@ -1,0 +1,40 @@
+{
+  "replay_core_commit": "5a6cd1ab9593cac6f7e81756a639fa11d6c21276",
+  "replay_research_commit": "2b5ab642554a36a3bbb563450da8200f197062f7",
+  "protocol_commit": "8ade28e",
+  "executed_replay_sources_sha256": {
+    "prefixes.py": "e07cee3db14ea965470ee54f1de9216fe1de1f3bfde8fb74da7332e86d9b2e21",
+    "PROTOCOL.md": "2b85e718e7b24295eda24ce336adaf2c451ee1611002af2587207c3b37e4180a",
+    "README.md": "9a657dd2feda3564175f7478876d85d8d3738e3a8918efb32741e9ca8109750c",
+    "replay.py": "92787d81dd1a81c11262721fcac7961805c834a472681e9306ad4f8acf560aef",
+    "saved_inputs.py": "83ce1e24a8447bfe12ab269a907c52aa3178bb3be3ca036b220ae7a7f0def502",
+    "test_prefixes.py": "dcc02760cef49bfcf735eaf217c5e5436581137751bc3c1f2b13eefffc8a6408",
+    "test_saved_rows.py": "ce191daee7a084e1f167c618d785961c144191ea58c1aab731a5ca170b356d3b"
+  },
+  "runtime": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "packages": {
+      "numpy": "2.5.4",
+      "numba": "0.68.0",
+      "scipy": "1.18.1",
+      "pystoi": "0.4.1",
+      "soundfile": "0.14.0"
+    },
+    "compiler_version": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+    "threads": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "NUMBA_NUM_THREADS": "1"
+    }
+  },
+  "full_independent_audit": {
+    "status": "passed",
+    "completed_records": 118,
+    "expected_records": 118,
+    "missing_records": 0,
+    "all_final_worker_receipts_verified": true
+  },
+  "public_projection_source_sha256": "9806cb4d0bb2855f735e790d0a144c17a8ec080f8685d73562ce7419bd1603da",
+  "private_inputs": "All input, media, ordered stream, PCM/PWM and native fingerprints stay in ignored receipts"
+}

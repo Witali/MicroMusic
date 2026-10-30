@@ -1,0 +1,344 @@
+[
+  {
+    "source_ordinal": 42,
+    "profile": 4,
+    "samples": 281632,
+    "reset_segments": 5,
+    "original_bytes": 16142,
+    "raw_role_views": 15,
+    "distinct_whole_chains": 5,
+    "duplicate_role_views_not_remeasured": 10,
+    "decisions": [
+      {
+        "percent": 100,
+        "cap": 16142,
+        "selected_id": 0,
+        "raw_id": 2,
+        "fitting_chains": 2,
+        "eligible_chains": 1,
+        "no_fit": false,
+        "no_automatic_admission": false,
+        "known_admitted_incumbent_ids": [
+          0,
+          0
+        ],
+        "never_worse_than_known_incumbents": true
+      },
+      {
+        "percent": 95,
+        "cap": 15334,
+        "selected_id": null,
+        "raw_id": null,
+        "fitting_chains": 0,
+        "eligible_chains": 0,
+        "no_fit": true,
+        "no_automatic_admission": true,
+        "known_admitted_incumbent_ids": [],
+        "never_worse_than_known_incumbents": true
+      },
+      {
+        "percent": 90,
+        "cap": 14527,
+        "selected_id": null,
+        "raw_id": null,
+        "fitting_chains": 0,
+        "eligible_chains": 0,
+        "no_fit": true,
+        "no_automatic_admission": true,
+        "known_admitted_incumbent_ids": [],
+        "never_worse_than_known_incumbents": true
+      }
+    ],
+    "whole_chains": [
+      {
+        "id": 0,
+        "labels": [
+          "default-control",
+          "screen-100-selected",
+          "prefix-0-selected",
+          "prefix-0-raw",
+          "prefix-1-selected"
+        ],
+        "stream_bytes": 16142,
+        "score": 0.1951054005822384,
+        "automatic_quality_eligible": true,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 525366748389.0,
+        "pwm_sse": 528729442073.0,
+        "within_tolerance_pcm": 180,
+        "within_tolerance_pwm": 179
+      },
+      {
+        "id": 1,
+        "labels": [
+          "default-concat-selected",
+          "default-concat-raw",
+          "prefix-4-selected",
+          "prefix-4-raw"
+        ],
+        "stream_bytes": 19669,
+        "score": 0.17343407875257233,
+        "automatic_quality_eligible": true,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 432070798529.0,
+        "pwm_sse": 435255641369.0,
+        "within_tolerance_pcm": 207,
+        "within_tolerance_pwm": 200
+      },
+      {
+        "id": 2,
+        "labels": [
+          "screen-100-raw",
+          "prefix-1-raw"
+        ],
+        "stream_bytes": 16142,
+        "score": 0.19441003559461434,
+        "automatic_quality_eligible": false,
+        "old_pcm_pwm_floors_passed": false,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 525005132073.0,
+        "pwm_sse": 528620171545.0,
+        "within_tolerance_pcm": 181,
+        "within_tolerance_pwm": 180
+      },
+      {
+        "id": 3,
+        "labels": [
+          "prefix-2-selected",
+          "prefix-2-raw",
+          "prefix-3-selected"
+        ],
+        "stream_bytes": 19316,
+        "score": 0.1793114777368372,
+        "automatic_quality_eligible": true,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 453329754509.0,
+        "pwm_sse": 456227371289.0,
+        "within_tolerance_pcm": 198,
+        "within_tolerance_pwm": 198
+      },
+      {
+        "id": 4,
+        "labels": [
+          "prefix-3-raw"
+        ],
+        "stream_bytes": 19316,
+        "score": 0.17924945168578693,
+        "automatic_quality_eligible": true,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 453137700409.0,
+        "pwm_sse": 456033113369.0,
+        "within_tolerance_pcm": 198,
+        "within_tolerance_pwm": 198
+      }
+    ],
+    "absent_role_views": 0
+  },
+  {
+    "source_ordinal": 42,
+    "profile": 6,
+    "samples": 281632,
+    "reset_segments": 5,
+    "original_bytes": 23259,
+    "raw_role_views": 15,
+    "distinct_whole_chains": 7,
+    "duplicate_role_views_not_remeasured": 8,
+    "decisions": [
+      {
+        "percent": 100,
+        "cap": 23259,
+        "selected_id": 3,
+        "raw_id": 4,
+        "fitting_chains": 3,
+        "eligible_chains": 2,
+        "no_fit": false,
+        "no_automatic_admission": false,
+        "known_admitted_incumbent_ids": [
+          0,
+          3
+        ],
+        "never_worse_than_known_incumbents": true
+      },
+      {
+        "percent": 95,
+        "cap": 22096,
+        "selected_id": null,
+        "raw_id": null,
+        "fitting_chains": 0,
+        "eligible_chains": 0,
+        "no_fit": true,
+        "no_automatic_admission": true,
+        "known_admitted_incumbent_ids": [],
+        "never_worse_than_known_incumbents": true
+      },
+      {
+        "percent": 90,
+        "cap": 20933,
+        "selected_id": null,
+        "raw_id": null,
+        "fitting_chains": 0,
+        "eligible_chains": 0,
+        "no_fit": true,
+        "no_automatic_admission": true,
+        "known_admitted_incumbent_ids": [],
+        "never_worse_than_known_incumbents": true
+      }
+    ],
+    "whole_chains": [
+      {
+        "id": 0,
+        "labels": [
+          "default-control",
+          "prefix-0-selected",
+          "prefix-0-raw"
+        ],
+        "stream_bytes": 23259,
+        "score": 0.13613320806467044,
+        "automatic_quality_eligible": true,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 344759719722.0,
+        "pwm_sse": 346645712665.0,
+        "within_tolerance_pcm": 277,
+        "within_tolerance_pwm": 276
+      },
+      {
+        "id": 1,
+        "labels": [
+          "default-concat-selected",
+          "prefix-4-selected"
+        ],
+        "stream_bytes": 25980,
+        "score": 0.12225542671763129,
+        "automatic_quality_eligible": true,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 283399713112.0,
+        "pwm_sse": 285569296665.0,
+        "within_tolerance_pcm": 282,
+        "within_tolerance_pwm": 281
+      },
+      {
+        "id": 2,
+        "labels": [
+          "default-concat-raw",
+          "prefix-4-raw"
+        ],
+        "stream_bytes": 26060,
+        "score": 0.12105257624180432,
+        "automatic_quality_eligible": true,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 281468432580.0,
+        "pwm_sse": 283632706841.0,
+        "within_tolerance_pcm": 280,
+        "within_tolerance_pwm": 279
+      },
+      {
+        "id": 3,
+        "labels": [
+          "screen-100-selected",
+          "prefix-1-selected"
+        ],
+        "stream_bytes": 23259,
+        "score": 0.1361295932218511,
+        "automatic_quality_eligible": true,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 344714765206.0,
+        "pwm_sse": 346535898905.0,
+        "within_tolerance_pcm": 277,
+        "within_tolerance_pwm": 276
+      },
+      {
+        "id": 4,
+        "labels": [
+          "screen-100-raw",
+          "prefix-1-raw"
+        ],
+        "stream_bytes": 23259,
+        "score": 0.13612505624288412,
+        "automatic_quality_eligible": false,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": false,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 344714093079.0,
+        "pwm_sse": 346516519705.0,
+        "within_tolerance_pcm": 277,
+        "within_tolerance_pwm": 276
+      },
+      {
+        "id": 5,
+        "labels": [
+          "prefix-2-selected",
+          "prefix-3-selected"
+        ],
+        "stream_bytes": 25176,
+        "score": 0.12728303181698902,
+        "automatic_quality_eligible": true,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": true,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 312703130454.0,
+        "pwm_sse": 314783408921.0,
+        "within_tolerance_pcm": 281,
+        "within_tolerance_pwm": 279
+      },
+      {
+        "id": 6,
+        "labels": [
+          "prefix-2-raw",
+          "prefix-3-raw"
+        ],
+        "stream_bytes": 25652,
+        "score": 0.12544925624856051,
+        "automatic_quality_eligible": false,
+        "old_pcm_pwm_floors_passed": true,
+        "clipped_sample_floor_passed": false,
+        "pcm_period_coverage_floor_passed": true,
+        "pwm_period_coverage_floor_passed": true,
+        "joint_objective_nonregression": true,
+        "pcm_sse": 296990921039.0,
+        "pwm_sse": 299229195545.0,
+        "within_tolerance_pcm": 282,
+        "within_tolerance_pwm": 280
+      }
+    ],
+    "absent_role_views": 0
+  }
+]
