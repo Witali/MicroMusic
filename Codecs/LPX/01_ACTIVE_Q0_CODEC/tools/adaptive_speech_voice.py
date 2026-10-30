@@ -13,9 +13,9 @@ import numpy as np
 
 import speech_compact as compact
 import speech_v4
-from encode_speech_voice import prepare_level, _quality
+from voice_input import prepare_level
 from enhance_speech_compact import enhance
-from refine_speech_compact import no_regression, refine as refine_header
+from refine_speech_compact import no_regression, quality as _quality, refine as refine_header
 from refine_speech_lpc import refine, SEARCH_PRESETS
 from speech_rate_allocation import bit_accounting, extra_capacity
 from speech_noise_objective import NoiseObjective

@@ -13,6 +13,22 @@ import soundfile as sf
 from scipy.signal import resample_poly
 
 
+def prepare_level(reference, policy='preserve'):
+    """Return owned PCM16 segment and declared power-of-two playback gain."""
+    ref = np.asarray(reference)
+    if (ref.ndim != 1 or ref.dtype.kind not in 'iu' or not 1 <= len(ref) <= 64000
+            or int(ref.min()) < -32768 or int(ref.max()) > 32767):
+        raise ValueError('Expected 1..64000 original PCM16 samples')
+    if policy not in ('preserve', 'auto-quiet'):
+        raise ValueError('Expected preserve or explicit auto-quiet level policy')
+    values = ref.astype(np.int64)
+    plan = plan_level(values, policy)
+    target, clipped = quantize_target(values, plan)
+    if clipped:
+        raise AssertionError('Declared quiet gain clipped the input')
+    return target, plan
+
+
 def plan_level(pcm_units, policy='auto-quiet'):
     values = np.asarray(pcm_units, dtype=np.float64)
     if (values.ndim != 1 or not len(values) or not np.isfinite(values).all()

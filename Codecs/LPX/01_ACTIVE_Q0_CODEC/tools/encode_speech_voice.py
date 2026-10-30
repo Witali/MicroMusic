@@ -21,23 +21,7 @@ from speech_voice_objective import VoiceObjective
 from standard_metrics import error_metrics, pwm_duties, pwm_pcm16
 from refine_speech_compact import no_regression, quality as speech_quality
 from voice_character import track_pitch, compare_voice
-from voice_input import plan_level, quantize_target, load_voice_wav
-
-
-def prepare_level(reference, policy='preserve'):
-    """Return owned PCM16 target and declared power-of-two playback gain."""
-    ref = np.asarray(reference)
-    if (ref.ndim != 1 or ref.dtype.kind not in 'iu' or not 1 <= len(ref) <= 64000
-            or int(ref.min()) < -32768 or int(ref.max()) > 32767):
-        raise ValueError('Expected 1..64000 original PCM16 samples')
-    if policy not in ('preserve', 'auto-quiet'):
-        raise ValueError('Expected preserve or explicit auto-quiet level policy')
-    values = ref.astype(np.int64)
-    plan = plan_level(values, policy)
-    target, clipped = quantize_target(values, plan)
-    if clipped:
-        raise AssertionError('Declared quiet gain clipped the input')
-    return target, plan
+from voice_input import prepare_level, load_voice_wav
 
 
 def _quality(reference, pcm, speech):
