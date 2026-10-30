@@ -1,0 +1,2357 @@
+{
+  "schema": "lpx-v5-adaptive-player-union-admission-v1",
+  "status": "complete",
+  "unique_chains": 75,
+  "changed_selected_cap_views": 42,
+  "unchanged_views_skipped": 84,
+  "rows": 150,
+  "passed": 150,
+  "new_images": 132,
+  "reused_images": 18,
+  "no_fit": 0,
+  "timing_or_output_failures": 0,
+  "verified_physical_samples": 6924372,
+  "workers": [
+    {
+      "schema": "lpx-v5-adaptive-player-union-worker-v1",
+      "status": "complete",
+      "shard": 0,
+      "chains": 38,
+      "rows": 76,
+      "passed": 76,
+      "newly_built_and_simulated": 60,
+      "reused_frozen_images": 16,
+      "no_fit": 0,
+      "timing_or_output_failures": 0,
+      "new_fits": 0,
+      "worker_wall_seconds": 307.33562659999006
+    },
+    {
+      "schema": "lpx-v5-adaptive-player-union-worker-v1",
+      "status": "complete",
+      "shard": 1,
+      "chains": 37,
+      "rows": 74,
+      "passed": 74,
+      "newly_built_and_simulated": 72,
+      "reused_frozen_images": 2,
+      "no_fit": 0,
+      "timing_or_output_failures": 0,
+      "new_fits": 0,
+      "worker_wall_seconds": 362.57042799997726
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "comparison-001",
+      "rollback_chain": "chain-001",
+      "candidate_chain": "chain-002",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 1,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 5183,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 5183,
+      "candidate_stream_bytes": 5183,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-001",
+      "rollback_chain": "chain-001",
+      "candidate_chain": "chain-002",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 1,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 5183,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 5183,
+      "candidate_stream_bytes": 5183,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-002",
+      "rollback_chain": "chain-003",
+      "candidate_chain": "chain-004",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 4,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 5383,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 5383,
+      "candidate_stream_bytes": 5383,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-002",
+      "rollback_chain": "chain-003",
+      "candidate_chain": "chain-004",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 4,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 5383,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 5383,
+      "candidate_stream_bytes": 5383,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-003",
+      "rollback_chain": "chain-005",
+      "candidate_chain": "chain-006",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 12,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3674,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3674,
+      "candidate_stream_bytes": 3674,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-003",
+      "rollback_chain": "chain-005",
+      "candidate_chain": "chain-006",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 12,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3674,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3674,
+      "candidate_stream_bytes": 3674,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-004",
+      "rollback_chain": "chain-007",
+      "candidate_chain": "chain-008",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 14,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3563,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3563,
+      "candidate_stream_bytes": 3563,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-004",
+      "rollback_chain": "chain-007",
+      "candidate_chain": "chain-008",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 14,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3563,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3563,
+      "candidate_stream_bytes": 3563,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-005",
+      "rollback_chain": "chain-009",
+      "candidate_chain": "chain-010",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 15,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3625,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3625,
+      "candidate_stream_bytes": 3625,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-005",
+      "rollback_chain": "chain-009",
+      "candidate_chain": "chain-010",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 15,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3625,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3625,
+      "candidate_stream_bytes": 3625,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-006",
+      "rollback_chain": "chain-011",
+      "candidate_chain": "chain-012",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3580,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3361,
+      "candidate_stream_bytes": 3580,
+      "data_saved_bytes": -219,
+      "complete_flash_saved_bytes": -220,
+      "program_flash_change_bytes": 1
+    },
+    {
+      "id": "comparison-006",
+      "rollback_chain": "chain-011",
+      "candidate_chain": "chain-012",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3580,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3361,
+      "candidate_stream_bytes": 3580,
+      "data_saved_bytes": -219,
+      "complete_flash_saved_bytes": -220,
+      "program_flash_change_bytes": 1
+    },
+    {
+      "id": "comparison-007",
+      "rollback_chain": "chain-013",
+      "candidate_chain": "chain-014",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 5006,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 5003,
+      "candidate_stream_bytes": 5003,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-007",
+      "rollback_chain": "chain-013",
+      "candidate_chain": "chain-014",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 5006,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 5003,
+      "candidate_stream_bytes": 5003,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-008",
+      "rollback_chain": "chain-015",
+      "candidate_chain": "chain-016",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 17,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3646,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3646,
+      "candidate_stream_bytes": 3646,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-008",
+      "rollback_chain": "chain-015",
+      "candidate_chain": "chain-016",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 17,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3646,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3646,
+      "candidate_stream_bytes": 3646,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-009",
+      "rollback_chain": "chain-017",
+      "candidate_chain": "chain-018",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3532,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3328,
+      "candidate_stream_bytes": 3532,
+      "data_saved_bytes": -204,
+      "complete_flash_saved_bytes": -204,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-009",
+      "rollback_chain": "chain-017",
+      "candidate_chain": "chain-018",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 3532,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3328,
+      "candidate_stream_bytes": 3532,
+      "data_saved_bytes": -204,
+      "complete_flash_saved_bytes": -204,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-010",
+      "rollback_chain": "chain-019",
+      "candidate_chain": "chain-020",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 4956,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 4956,
+      "candidate_stream_bytes": 4956,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-010",
+      "rollback_chain": "chain-019",
+      "candidate_chain": "chain-020",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 4956,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 4956,
+      "candidate_stream_bytes": 4956,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-011",
+      "rollback_chain": "chain-021",
+      "candidate_chain": "chain-022",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 21,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2603,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 2603,
+      "candidate_stream_bytes": 2603,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-011",
+      "rollback_chain": "chain-021",
+      "candidate_chain": "chain-022",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 21,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2603,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 2603,
+      "candidate_stream_bytes": 2603,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-012",
+      "rollback_chain": "chain-023",
+      "candidate_chain": "chain-024",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 22,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1830,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1830,
+      "candidate_stream_bytes": 1830,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-012",
+      "rollback_chain": "chain-023",
+      "candidate_chain": "chain-024",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 22,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1830,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1830,
+      "candidate_stream_bytes": 1830,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-013",
+      "rollback_chain": "chain-025",
+      "candidate_chain": "chain-026",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 25,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1908,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1908,
+      "candidate_stream_bytes": 1908,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-013",
+      "rollback_chain": "chain-025",
+      "candidate_chain": "chain-026",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 25,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1908,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1908,
+      "candidate_stream_bytes": 1908,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-014",
+      "rollback_chain": "chain-027",
+      "candidate_chain": "chain-028",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 26,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1930,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1930,
+      "candidate_stream_bytes": 1930,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-014",
+      "rollback_chain": "chain-027",
+      "candidate_chain": "chain-028",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 26,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1930,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1930,
+      "candidate_stream_bytes": 1930,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-015",
+      "rollback_chain": "chain-029",
+      "candidate_chain": "chain-030",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 35,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1855,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1855,
+      "candidate_stream_bytes": 1855,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-015",
+      "rollback_chain": "chain-029",
+      "candidate_chain": "chain-030",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 35,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1855,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1855,
+      "candidate_stream_bytes": 1855,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-016",
+      "rollback_chain": "chain-031",
+      "candidate_chain": "chain-032",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1806,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1696,
+      "candidate_stream_bytes": 1805,
+      "data_saved_bytes": -109,
+      "complete_flash_saved_bytes": -108,
+      "program_flash_change_bytes": -1
+    },
+    {
+      "id": "comparison-016",
+      "rollback_chain": "chain-031",
+      "candidate_chain": "chain-032",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1806,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1696,
+      "candidate_stream_bytes": 1805,
+      "data_saved_bytes": -109,
+      "complete_flash_saved_bytes": -108,
+      "program_flash_change_bytes": -1
+    },
+    {
+      "id": "comparison-017",
+      "rollback_chain": "chain-033",
+      "candidate_chain": "chain-034",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2621,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 2516,
+      "candidate_stream_bytes": 2621,
+      "data_saved_bytes": -105,
+      "complete_flash_saved_bytes": -104,
+      "program_flash_change_bytes": -1
+    },
+    {
+      "id": "comparison-017",
+      "rollback_chain": "chain-033",
+      "candidate_chain": "chain-034",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2621,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 2516,
+      "candidate_stream_bytes": 2621,
+      "data_saved_bytes": -105,
+      "complete_flash_saved_bytes": -104,
+      "program_flash_change_bytes": -1
+    },
+    {
+      "id": "comparison-018",
+      "rollback_chain": "chain-035",
+      "candidate_chain": "chain-036",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 37,
+      "mode": "auto-quiet",
+      "input_gain": 64,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": true,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2519,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 2519,
+      "candidate_stream_bytes": 2519,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-018",
+      "rollback_chain": "chain-035",
+      "candidate_chain": "chain-036",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 37,
+      "mode": "auto-quiet",
+      "input_gain": 64,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": true,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2519,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 2519,
+      "candidate_stream_bytes": 2519,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-019",
+      "rollback_chain": "chain-037",
+      "candidate_chain": "chain-038",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 39,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1832,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1832,
+      "candidate_stream_bytes": 1832,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-019",
+      "rollback_chain": "chain-037",
+      "candidate_chain": "chain-038",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 39,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1832,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1832,
+      "candidate_stream_bytes": 1832,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-020",
+      "rollback_chain": "chain-039",
+      "candidate_chain": "chain-040",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 39,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2645,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 2645,
+      "candidate_stream_bytes": 2645,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-020",
+      "rollback_chain": "chain-039",
+      "candidate_chain": "chain-040",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 39,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2645,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 2645,
+      "candidate_stream_bytes": 2645,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-021",
+      "rollback_chain": "chain-041",
+      "candidate_chain": "chain-042",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 42,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 23259,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 23259,
+      "candidate_stream_bytes": 23259,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-021",
+      "rollback_chain": "chain-041",
+      "candidate_chain": "chain-042",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 42,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 23259,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 23259,
+      "candidate_stream_bytes": 23259,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-022",
+      "rollback_chain": "chain-043",
+      "candidate_chain": "chain-044",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 44,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1426,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1426,
+      "candidate_stream_bytes": 1426,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-022",
+      "rollback_chain": "chain-043",
+      "candidate_chain": "chain-044",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 44,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1426,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1426,
+      "candidate_stream_bytes": 1426,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-023",
+      "rollback_chain": "chain-045",
+      "candidate_chain": "chain-046",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 45,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1174,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1174,
+      "candidate_stream_bytes": 1174,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-023",
+      "rollback_chain": "chain-045",
+      "candidate_chain": "chain-046",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 45,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1174,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1174,
+      "candidate_stream_bytes": 1174,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-024",
+      "rollback_chain": "chain-047",
+      "candidate_chain": "chain-048",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 45,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1768,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1768,
+      "candidate_stream_bytes": 1768,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-024",
+      "rollback_chain": "chain-047",
+      "candidate_chain": "chain-048",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 45,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1768,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1768,
+      "candidate_stream_bytes": 1768,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-025",
+      "rollback_chain": "chain-049",
+      "candidate_chain": "chain-050",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 46,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 739,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 739,
+      "candidate_stream_bytes": 739,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-025",
+      "rollback_chain": "chain-049",
+      "candidate_chain": "chain-050",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 46,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 739,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 739,
+      "candidate_stream_bytes": 739,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-026",
+      "rollback_chain": "chain-051",
+      "candidate_chain": "chain-052",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 47,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1901,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1901,
+      "candidate_stream_bytes": 1901,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-026",
+      "rollback_chain": "chain-051",
+      "candidate_chain": "chain-052",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 47,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 1901,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1901,
+      "candidate_stream_bytes": 1901,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-027",
+      "rollback_chain": "chain-053",
+      "candidate_chain": "chain-054",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 47,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2639,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 2639,
+      "candidate_stream_bytes": 2639,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-027",
+      "rollback_chain": "chain-053",
+      "candidate_chain": "chain-054",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 47,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 100,
+          "cap": 2639,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 2639,
+      "candidate_stream_bytes": 2639,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-028",
+      "rollback_chain": "chain-011",
+      "candidate_chain": "chain-055",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 3580,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3361,
+      "candidate_stream_bytes": 3580,
+      "data_saved_bytes": -219,
+      "complete_flash_saved_bytes": -220,
+      "program_flash_change_bytes": 1
+    },
+    {
+      "id": "comparison-028",
+      "rollback_chain": "chain-011",
+      "candidate_chain": "chain-055",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 3580,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3361,
+      "candidate_stream_bytes": 3580,
+      "data_saved_bytes": -219,
+      "complete_flash_saved_bytes": -220,
+      "program_flash_change_bytes": 1
+    },
+    {
+      "id": "comparison-029",
+      "rollback_chain": "chain-013",
+      "candidate_chain": "chain-056",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 5006,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 5003,
+      "candidate_stream_bytes": 5006,
+      "data_saved_bytes": -3,
+      "complete_flash_saved_bytes": -4,
+      "program_flash_change_bytes": 1
+    },
+    {
+      "id": "comparison-029",
+      "rollback_chain": "chain-013",
+      "candidate_chain": "chain-056",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 5006,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 5003,
+      "candidate_stream_bytes": 5006,
+      "data_saved_bytes": -3,
+      "complete_flash_saved_bytes": -4,
+      "program_flash_change_bytes": 1
+    },
+    {
+      "id": "comparison-030",
+      "rollback_chain": "chain-017",
+      "candidate_chain": "chain-057",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 3532,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3328,
+      "candidate_stream_bytes": 3532,
+      "data_saved_bytes": -204,
+      "complete_flash_saved_bytes": -204,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-030",
+      "rollback_chain": "chain-017",
+      "candidate_chain": "chain-057",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 3532,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3328,
+      "candidate_stream_bytes": 3532,
+      "data_saved_bytes": -204,
+      "complete_flash_saved_bytes": -204,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-031",
+      "rollback_chain": "chain-019",
+      "candidate_chain": "chain-058",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 4956,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 4956,
+      "candidate_stream_bytes": 4956,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-031",
+      "rollback_chain": "chain-019",
+      "candidate_chain": "chain-058",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 4956,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 4956,
+      "candidate_stream_bytes": 4956,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-032",
+      "rollback_chain": "chain-031",
+      "candidate_chain": "chain-059",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 1806,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1696,
+      "candidate_stream_bytes": 1806,
+      "data_saved_bytes": -110,
+      "complete_flash_saved_bytes": -110,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-032",
+      "rollback_chain": "chain-031",
+      "candidate_chain": "chain-059",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 1806,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1696,
+      "candidate_stream_bytes": 1806,
+      "data_saved_bytes": -110,
+      "complete_flash_saved_bytes": -110,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-033",
+      "rollback_chain": "chain-033",
+      "candidate_chain": "chain-060",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 2621,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 2516,
+      "candidate_stream_bytes": 2621,
+      "data_saved_bytes": -105,
+      "complete_flash_saved_bytes": -104,
+      "program_flash_change_bytes": -1
+    },
+    {
+      "id": "comparison-033",
+      "rollback_chain": "chain-033",
+      "candidate_chain": "chain-060",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 2621,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 2516,
+      "candidate_stream_bytes": 2621,
+      "data_saved_bytes": -105,
+      "complete_flash_saved_bytes": -104,
+      "program_flash_change_bytes": -1
+    },
+    {
+      "id": "comparison-034",
+      "rollback_chain": "chain-061",
+      "candidate_chain": "chain-062",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 37,
+      "mode": "auto-quiet",
+      "input_gain": 64,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": true,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 1800,
+          "role": "concat-selected"
+        },
+        {
+          "phase": "speech-default",
+          "percent": 95,
+          "cap": 1710,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1702,
+      "candidate_stream_bytes": 1710,
+      "data_saved_bytes": -8,
+      "complete_flash_saved_bytes": -8,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-034",
+      "rollback_chain": "chain-061",
+      "candidate_chain": "chain-062",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 37,
+      "mode": "auto-quiet",
+      "input_gain": 64,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": true,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 1800,
+          "role": "concat-selected"
+        },
+        {
+          "phase": "speech-default",
+          "percent": 95,
+          "cap": 1710,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1702,
+      "candidate_stream_bytes": 1710,
+      "data_saved_bytes": -8,
+      "complete_flash_saved_bytes": -8,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-035",
+      "rollback_chain": "chain-035",
+      "candidate_chain": "chain-063",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 37,
+      "mode": "auto-quiet",
+      "input_gain": 64,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": true,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 2519,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 2519,
+      "candidate_stream_bytes": 2519,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-035",
+      "rollback_chain": "chain-035",
+      "candidate_chain": "chain-063",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 37,
+      "mode": "auto-quiet",
+      "input_gain": 64,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": true,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 2519,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 2519,
+      "candidate_stream_bytes": 2519,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-036",
+      "rollback_chain": "chain-064",
+      "candidate_chain": "chain-065",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 38,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 2768,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 2768,
+      "candidate_stream_bytes": 2768,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-036",
+      "rollback_chain": "chain-064",
+      "candidate_chain": "chain-065",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 38,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 2768,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 2768,
+      "candidate_stream_bytes": 2768,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-037",
+      "rollback_chain": "chain-066",
+      "candidate_chain": "chain-067",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 41,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 769,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 769,
+      "candidate_stream_bytes": 769,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-037",
+      "rollback_chain": "chain-066",
+      "candidate_chain": "chain-067",
+      "profile": 6,
+      "cohort": "speech",
+      "source_ordinal": 41,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-default",
+          "percent": 100,
+          "cap": 769,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 769,
+      "candidate_stream_bytes": 769,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-038",
+      "rollback_chain": "chain-068",
+      "candidate_chain": "chain-069",
+      "profile": 4,
+      "cohort": "nonspeech",
+      "source_ordinal": 10,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 636,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 636,
+      "candidate_stream_bytes": 636,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-038",
+      "rollback_chain": "chain-068",
+      "candidate_chain": "chain-069",
+      "profile": 4,
+      "cohort": "nonspeech",
+      "source_ordinal": 10,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 636,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 636,
+      "candidate_stream_bytes": 636,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-039",
+      "rollback_chain": "chain-070",
+      "candidate_chain": "chain-071",
+      "profile": 6,
+      "cohort": "nonspeech",
+      "source_ordinal": 10,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 883,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 883,
+      "candidate_stream_bytes": 883,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-039",
+      "rollback_chain": "chain-070",
+      "candidate_chain": "chain-071",
+      "profile": 6,
+      "cohort": "nonspeech",
+      "source_ordinal": 10,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 883,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 883,
+      "candidate_stream_bytes": 883,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-040",
+      "rollback_chain": "chain-072",
+      "candidate_chain": "chain-073",
+      "profile": 4,
+      "cohort": "nonspeech",
+      "source_ordinal": 65,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 2117,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 2117,
+      "candidate_stream_bytes": 2117,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-040",
+      "rollback_chain": "chain-072",
+      "candidate_chain": "chain-073",
+      "profile": 4,
+      "cohort": "nonspeech",
+      "source_ordinal": 65,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 2117,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 2117,
+      "candidate_stream_bytes": 2117,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-041",
+      "rollback_chain": "chain-074",
+      "candidate_chain": "chain-075",
+      "profile": 6,
+      "cohort": "nonspeech",
+      "source_ordinal": 65,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 3178,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3178,
+      "candidate_stream_bytes": 3178,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-041",
+      "rollback_chain": "chain-074",
+      "candidate_chain": "chain-075",
+      "profile": 6,
+      "cohort": "nonspeech",
+      "source_ordinal": 65,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 3178,
+          "role": "concat-selected"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3178,
+      "candidate_stream_bytes": 3178,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": 0
+    }
+  ],
+  "new_fits": 0,
+  "perceptual_adoption": false,
+  "scope": "Audited changed automatic whole selections versus exact same-level rollbacks; actual complete images/IRQs. No raw-ineligible admission, refitting, trimming, quality-policy or original-level gain claim."
+}
