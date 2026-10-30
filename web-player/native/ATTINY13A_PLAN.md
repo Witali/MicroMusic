@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Deadline-counter checkpoint, 2026-10-30: optional ignored-build probes split
+cache queries, invalidation attempts/valid losses, overlapping miss reasons and
+conversion scope. Nine cases preserve production snapshots/PCM/tail pins;
+seven default controls preserve all 490 common source-entry counts. Zero-time
+elapse spans already have a cached future event, but servicing remains required
+unless independently proven otherwise. The plain internal kernel's 500001
+duration entries are all outside the scanner. Next isolate zero-delta arithmetic
+without removing invalidation/service, then apply full parity and balanced
+uninstrumented controls. Production is unchanged; counts are not time and the
+24/31 count remains. See the [evidence](../reports/deadline-counters-20261030.md).
+
 Current sampling checkpoint, 2026-10-30: fresh post-optimization kernel and
 long stereo captures conserve 4296/6578 whole-process ticks, including
 2146/3139 certain-interior ticks. All six marked runs match production PCM and

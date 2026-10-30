@@ -15,7 +15,8 @@ import {AT13_MASK as MASK} from '../lib/attiny13a-registers.js';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{'out-dir':{type:'string',default:'build/traces/current'},emsdk:{type:'string'},
   'physical-firmware':{type:'boolean',default:false},'eager-collector':{type:'boolean',default:false},
-  'full-publication':{type:'boolean',default:false},'gpio-full-dispatch':{type:'boolean',default:false}}});
+  'full-publication':{type:'boolean',default:false},'gpio-full-dispatch':{type:'boolean',default:false},
+  'deadline-counters':{type:'boolean',default:false}}});
 const out=resolve(root,values['out-dir']),native=join(out,'native');mkdirSync(out,{recursive:true});
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const source=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
@@ -51,6 +52,16 @@ for(const helper of ['mirror_configuration','mirror_dynamic'])
   if(source('web-player/native/peripherals/device.c').includes('static void '+helper+'('))
     selected['peripherals/device.c'].push(helper);
 const functions=[];
+const deadline=!!values['deadline-counters'];
+const deviceSource=source('web-player/native/peripherals/device.c');
+const reasonEnums=deadline?[...deviceSource.matchAll(/enum deadline_reason\s*\{([^}]+)\}/g)]:[];
+if(deadline)assert.equal(reasonEnums.length,1,'One original deadline-reason enum required');
+const reasons=deadline?reasonEnums[0][1].split(',').map(s=>s.trim()).filter(Boolean):[];
+assert.ok(reasons.length<32&&reasons.every(s=>/^DEADLINE_[A-Z_]+$/.test(s)));
+if(deadline)selected['peripherals/device.c'].push('deadline_invalidate','at_half','at_cycle','after_units');
+const probe=(name,kind='deadline-outcome')=>{
+  const id=functions.length;functions.push({id,name,source:'web-player/native/peripherals/device.c',kind});return id;
+};
 for(const [file,names] of Object.entries(selected)){
   let text=readFileSync(join(native,file),'utf8');
   for(const name of names){
@@ -58,6 +69,56 @@ for(const [file,names] of Object.entries(selected)){
     const matches=[...text.matchAll(pattern)];assert.equal(matches.length,1,file+': '+name+' definition');
     functions.push({id,name,source:'web-player/native/'+file,kind:'function-entry'});
     let hits=' MM_TRACE_HIT('+id+');';
+    if(deadline&&name==='next_event_scan'){
+      const exit=probe('next_event_scan:exit');
+      const body=/(static uint64_t next_event_scan\(void\)\s*\{)([\s\S]*?)(\n\})/g;
+      const matches=[...text.matchAll(body)];assert.equal(matches.length,1,'One scanner body required');
+      assert.equal((matches[0][2].replace(/\/\*[\s\S]*?\*\//g,'').match(/\breturn\b/g)||[]).length,1,
+        'Scanner instrumentation requires its single original return');
+      assert.equal((matches[0][2].match(/\breturn next;/g)||[]).length,1);
+      text=text.replace(body,(_,start,code,end)=>start+code.replace(/\breturn next;/,
+        `--mm_trace_scan_level; MM_TRACE_HIT(${exit}); return next;`)+end);
+      hits+=' ++mm_trace_scan_level;';
+    }
+    if(deadline&&name==='duration'){
+      const inside=probe('duration:scan'),outside=probe('duration:outside-scan');
+      hits+=` if(mm_trace_scan_level) { MM_TRACE_HIT(${inside}); } else { MM_TRACE_HIT(${outside}); }`;
+    }
+    if(deadline&&name==='deadline_invalidate'){
+      const attempts=reasons.map(s=>probe('invalidate:'+s,'deadline-invalidation-attempt'));
+      const valid=reasons.map(s=>probe('invalidate-valid:'+s,'deadline-valid-invalidation'));
+      hits+=` MM_TRACE_HIT(${attempts[0]}+reason);
+        if(board.deadline.valid) { MM_TRACE_HIT(${valid[0]}+reason); }
+        mm_trace_deadline_pending|=UINT32_C(1)<<reason;`;
+    }
+    if(deadline&&name==='next_event'){
+      const hit=probe('next_event:hit'),miss=probe('next_event:miss'),none=probe('miss:no-pending-reason');
+      const pending=reasons.map(s=>probe('miss:'+s,'deadline-miss-reason'));
+      hits+=` if(board.deadline.valid&&board.deadline.base==board.base) { MM_TRACE_HIT(${hit}); }
+        else { MM_TRACE_HIT(${miss});
+          if(!mm_trace_deadline_pending) { MM_TRACE_HIT(${none}); }
+          for(unsigned n=0;n<${reasons.length};n++)if(mm_trace_deadline_pending&(UINT32_C(1)<<n)) { MM_TRACE_HIT(${pending[0]}+n); }
+          mm_trace_deadline_pending=0;
+        }`;
+    }
+    if(deadline&&name==='at_half'){
+      const ids=['never','due','unknown-clki','convert'].map(s=>probe('at_half:'+s));
+      const scan=probe('at_half:scan'),convert=probe('at_half:scan-convert');
+      hits+=` if(mm_trace_scan_level) { MM_TRACE_HIT(${scan});
+        if(half!=UINT64_MAX&&half>board.half&&!board.clki_enabled) { MM_TRACE_HIT(${convert}); } }`;
+      hits+=` if(half==UINT64_MAX) { MM_TRACE_HIT(${ids[0]}); }
+        else if(half<=board.half) { MM_TRACE_HIT(${ids[1]}); }
+        else if(board.clki_enabled) { MM_TRACE_HIT(${ids[2]}); }
+        else { MM_TRACE_HIT(${ids[3]}); }`;
+    }
+    if(deadline&&name==='elapse'){
+      const ids=['zero','positive','backwards'].map(s=>probe('elapse:'+s));
+      const future=probe('elapse:zero-cached-future');
+      hits+=` if(target==board.base&&board.deadline.valid&&board.deadline.base==board.base&&board.deadline.at>board.base) { MM_TRACE_HIT(${future}); }`;
+      hits+=` if(target==board.base) { MM_TRACE_HIT(${ids[0]}); }
+        else if(target>board.base) { MM_TRACE_HIT(${ids[1]}); }
+        else { MM_TRACE_HIT(${ids[2]}); }`;
+    }
     if(name==='analog_adc_advance'){
       const states=['disabled','enabled-idle','converting','clock-gated'];
       const ids=states.map(state=>{
@@ -84,6 +145,8 @@ const diagHeader=join(out,'trace-counters.h');
 writeFileSync(diagHeader,`#include <stdint.h>
 extern uint64_t mm_trace_counts[${functions.length}];
 extern uint32_t mm_trace_length;
+extern uint32_t mm_trace_deadline_pending;
+extern uint32_t mm_trace_scan_level;
 void mm_trace_record(uint32_t id);
 #define MM_TRACE_HIT(id) do { ++mm_trace_counts[id]; if(mm_trace_length<256)mm_trace_record(id); } while(0)
 `);
@@ -92,6 +155,8 @@ writeFileSync(diagSource,`#include "trace-counters.h"
 #include "native/peripherals/device.h"
 uint64_t mm_trace_counts[${functions.length}];
 uint32_t mm_trace_length;
+uint32_t mm_trace_deadline_pending;
+uint32_t mm_trace_scan_level;
 typedef struct {uint64_t sequence,time,half;uint32_t id,reserved;} trace_entry_t;
 static trace_entry_t entries[256];
 void mm_trace_record(uint32_t id){
@@ -99,7 +164,7 @@ void mm_trace_record(uint32_t id){
   device_physical_mode()?device_time_ps():device_base_half(),device_virtual_half(),id,0};
  ++mm_trace_length;
 }
-void mm_trace_clear(void){for(unsigned n=0;n<${functions.length};n++)mm_trace_counts[n]=0;mm_trace_length=0;}
+void mm_trace_clear(void){for(unsigned n=0;n<${functions.length};n++)mm_trace_counts[n]=0;mm_trace_length=0;mm_trace_deadline_pending=0;mm_trace_scan_level=0;}
 uint64_t mm_trace_count(uint32_t id){return id<${functions.length}?mm_trace_counts[id]:0;}
 uintptr_t mm_trace_buffer(void){return (uintptr_t)entries;}
 uint32_t mm_trace_size(void){return mm_trace_length;}
@@ -145,6 +210,12 @@ for(const divisor of [1,256])cases.push({id:'kernel-clki-20m-div'+divisor,binary
     clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}}});
 for(const adcState of ['enabled-idle','converting'])cases.push({
   ...cases.find(row=>row.id==='kernel-clki-20m-div1'),id:'kernel-clki-20m-div1-adc-'+adcState,adcState});
+if(deadline)for(const adcState of [undefined,'converting']){
+  const calibration=Array(128).fill(0);calibration[0]=20000000;
+  cases.push({id:'kernel-internal-20m-direct'+(adcState?'-adc-converting':''),binary:program,channels:1,
+    instructions:1000000,adcState,options:{oscillatorHz:20000000,resumable:true,fastIdle:false,
+      fuseLow:0x72,osccalHz:calibration}});
+}
 function make(entry,runtimeModule){
   const c=new ATtiny13A(entry.binary,entry.eeprom,{...entry.options,runtimeModule,
     optimizeIOPublication:!values['full-publication']});
@@ -158,6 +229,7 @@ function make(entry,runtimeModule){
   return c;
 }
 function capture(c,entry){
+  if(entry.instructions){assert.equal(c.run(entry.instructions),entry.instructions);return Buffer.alloc(0);}
   const blocks=[];
   for(let offset=0;offset<entry.frames;offset+=1024){
     const block=c.capturePhysical(Math.min(1024,entry.frames-offset),48000,entry.channels);
@@ -168,6 +240,7 @@ function capture(c,entry){
 const stringify=v=>JSON.stringify(v,(_,v)=>typeof v==='bigint'?v.toString():v,2)+'\n';
 const report={schema:'micromusic-native-call-trace-v1',createdAt:new Date().toISOString(),
   policy:{physicalFirmware:values['physical-firmware'],eagerCollector:values['eager-collector'],fullPublication:values['full-publication'],gpioFullDispatch:values['gpio-full-dispatch'],
+    deadlineCounters:deadline,
     description:'Optional eager collection forces the copied PCM pressure query true. GPIO full dispatch defines DEVICE_GPIO_IDLE_CACHE=0 only for the counted build; production remains the correctness reference. Counters never establish production elapsed time.'},
   git:{head:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim()},
   productionRuntimeSha256:sha(production),countedRuntimeSha256:sha(countedBytes),
@@ -187,6 +260,7 @@ for(const entry of cases){
     function:functions[view.getUint32(n*32+24,true)].name});
   assert.ok(actual.equals(expected),entry.id+' PCM');
   assert.deepEqual(counted.state(),original.state(),entry.id+' public state');
+  assert.equal(counted.state().deviceFault,0,entry.id+' device fault');
   assert.deepEqual(counted._state,original._state,entry.id+' full diagnostics');
   for(const name of ['data','rom','eeprom'])assert.deepEqual(counted[name],original[name],entry.id+' '+name);
   assert.deepEqual(counted.irqFrames,original.irqFrames);
@@ -205,9 +279,33 @@ for(const entry of cases){
   }
   if(entry.adcState==='converting'){assert.ok(BigInt(adcActivity.converting)>0n);assert.ok(counted.data[32+IO.ADCSRA]&MASK.ADIF);}
   const row={id:entry.id,frames:entry.frames,sampleRate:48000,channels:entry.channels,adcActivity,adcState:entry.adcState,
+    ...(entry.instructions?{operation:'direct',instructions:entry.instructions}:{operation:'capture'}),
     requestedFirmwareId:entry.requestedFirmwareId,firmwareId:entry.firmwareId,flashSha256:sha(entry.binary),
     timeUnits:physical?'picoseconds':'oscillator half ticks',divisor:entry.divisor??1,
     cycles:counted.cyc,productionEquality:true,rawPcmSha256:sha(actual),pinSha256:sha(stringify(actualPins)),counts,prefix};
+  if(deadline){
+    assert.equal(entries('next_event:hit')+entries('next_event:miss'),entries('next_event'));
+    assert.equal(entries('next_event:miss'),entries('next_event_scan'));
+    assert.equal(entries('next_event_scan:exit'),entries('next_event_scan'));
+    assert.equal(entries('duration:scan')+entries('duration:outside-scan'),entries('duration'));
+    assert.ok(entries('at_half:scan')<=entries('at_half'));
+    assert.ok(entries('at_half:scan-convert')<=entries('at_half:convert'));
+    assert.equal(reasons.reduce((n,s)=>n+entries('invalidate:'+s),0n),entries('deadline_invalidate'));
+    assert.equal(['never','due','unknown-clki','convert'].reduce((n,s)=>n+entries('at_half:'+s),0n),entries('at_half'));
+    assert.equal(['zero','positive','backwards'].reduce((n,s)=>n+entries('elapse:'+s),0n),entries('elapse'));
+    assert.equal(entries('elapse:backwards'),0n);
+    assert.ok(entries('elapse:zero-cached-future')<=entries('elapse:zero'));
+    for(const reason of reasons){assert.ok(entries('invalidate-valid:'+reason)<=entries('invalidate:'+reason));
+      assert.ok(entries('miss:'+reason)<=entries('next_event:miss'));}
+    assert.ok(entries('miss:no-pending-reason')+reasons.reduce((n,s)=>n+entries('miss:'+s),0n)>=entries('next_event:miss'));
+    row.deadline={queries:entries('next_event').toString(),hits:entries('next_event:hit').toString(),
+      misses:entries('next_event:miss').toString(),noPendingReason:entries('miss:no-pending-reason').toString(),
+      scanDurationCalls:entries('duration:scan').toString(),outsideScanDurationCalls:entries('duration:outside-scan').toString(),
+      zeroElapseCachedFuture:entries('elapse:zero-cached-future').toString(),
+      reasons:reasons.map(s=>({reason:s,attempts:entries('invalidate:'+s).toString(),
+        validInvalidations:entries('invalidate-valid:'+s).toString(),missesWithReason:entries('miss:'+s).toString()})),
+      missReasonsOverlap:true,counterResetClearsPendingReasons:true};
+  }
   report.results.push(row);console.log(entry.id,JSON.stringify(counts.filter(r=>[
     'clki_service','pin_voltages','analog_input','analog_adc_advance','next_event_scan','mirror'].includes(r.name))));
 }
