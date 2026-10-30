@@ -1,0 +1,48 @@
+{
+  "schema": "micromusic-qemu-m25p80-provenance-v1",
+  "source_project": "QEMU",
+  "source_commit": "9135fc89ce3eba7bbb1c2dbed103cd2854436940",
+  "public_project_reference": "https://www.qemu.org/",
+  "public_source_reference": "https://gitlab.com/qemu-project/qemu/-/tree/master/hw/block",
+  "source_commit_public_availability_asserted": false,
+  "vendored_bytes": "Exact committed Git blobs; no source edits",
+  "license": "GPL-2.0-or-later; see upstream/COPYING and per-file notices",
+  "files": [
+    {
+      "source_path": "hw/block/m25p80.c",
+      "vendored_path": "upstream/m25p80.c",
+      "committed_bytes": 65258,
+      "committed_sha256": "bccc20cc5776720c3b2064b35d2f2d3efdd6c92bdde477fbbeed9ceab523f3dc",
+      "observed_checkout_bytes": 67334,
+      "observed_checkout_sha256": "42b9a7cb23d653020c2882a9c0142792c9d69a9ea40976e1d5f825bb487accce",
+      "checkout_difference": "CRLF only"
+    },
+    {
+      "source_path": "hw/block/m25p80_sfdp.c",
+      "vendored_path": "upstream/m25p80_sfdp.c",
+      "committed_bytes": 22427,
+      "committed_sha256": "53c6ff4b2e2fa4830c1d081897b0b986032ce23392917e7defa29370bf54a92c",
+      "observed_checkout_bytes": 22908,
+      "observed_checkout_sha256": "c3c9accc0100754b7ec2fc5771e7c95a71959949661bb993e0bc7f1d87db5e48",
+      "checkout_difference": "CRLF only"
+    },
+    {
+      "source_path": "hw/block/m25p80_sfdp.h",
+      "vendored_path": "upstream/m25p80_sfdp.h",
+      "committed_bytes": 839,
+      "committed_sha256": "609f75bdaaa3217f0915129a67f58e77b78481424e4fd734bb48eb99fed06d73",
+      "observed_checkout_bytes": 872,
+      "observed_checkout_sha256": "be5c41ab46473e85980ad7641d9eb6b1f30978efbe178541f5d74e156b4f7259",
+      "checkout_difference": "CRLF only"
+    },
+    {
+      "source_path": "COPYING",
+      "vendored_path": "upstream/COPYING",
+      "committed_bytes": 17992,
+      "committed_sha256": "6f04ae8364d0079a192b14635f4b1da294ce18724c034c39a6a41d1b09df6100",
+      "observed_checkout_bytes": 18331,
+      "observed_checkout_sha256": "4a23228ae08d3cffaf83f5c716ea27e0098d8b0ecf8a5f0e8c5250cd9eeabfc3",
+      "checkout_difference": "CRLF only"
+    }
+  ]
+}
