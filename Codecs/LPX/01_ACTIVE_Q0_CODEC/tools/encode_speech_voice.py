@@ -245,7 +245,7 @@ def main():
     parser.add_argument('--non-speech', action='store_true')
     parser.add_argument('--search-mode', choices=('adaptive', 'grid'), default='adaptive')
     parser.add_argument('--refinement-calls', type=int, default=4,
-                        help='Bound expensive refinement calls; each has separate local work bounds')
+                        help='Bound expensive refinement calls per reset; each has separate local work bounds')
     args = parser.parse_args()
     if args.baseline_chain is not None:
         return _main_chain(args)

@@ -38,15 +38,16 @@ Flash, real-time playback, physical-board, analog-audio or perceptual admission.
 ## Actual measured work
 
 Two fixed source-parity workers completed successfully, with both profiles
-kept together. Shard 0 covered 62 records and 163 distinct whole chains in
-214.92 s; shard 1 covered 56 records and 118 whole chains in 432.14 s. These
+kept together. Shard 0 covered 62 records and 163 whole-chain measurements in
+214.92 s; shard 1 covered 56 records and 118 whole-chain measurements in 432.14 s. These
 timed regions ran in parallel and must not be added as elapsed time. Both
 actual attempts finished with exit 0 and final source/input guards intact;
 there were no failed attempts, retries or bootstrap failures.
 
-Across the two shards, all **281 distinct ordered whole chains receive fresh
-complete metrics**; no old whole-metric rows are reused. Exact reset-byte
-caches verify 449 reset streams, covering 22,414,920 modeled work samples,
+Across the two shards, all **281 whole-chain rows receive fresh complete
+metrics**, with exact ordered-byte deduplication within each record; no old
+whole-metric rows are reused. Reset-byte caches make 449 stream verifications
+within their respective record contexts, covering 22,414,920 modeled work samples,
 against common and v5-only native PCM/PWM output in 1,796 domain comparisons.
 The sample count measures repeated work across candidates and records, not
 unique source duration. Fresh results reproduce 396 previously audited whole
