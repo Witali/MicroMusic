@@ -27,6 +27,16 @@ SETTINGS = dict(frame_limit=8,window_frames=2,beam_width=3,spectral_candidates=2
     rate_lambda=0.,screening='local',screening_horizon=640,speech=True)
 
 
+def endpoint_streams(seed,selected,raw,frontier):
+    """Read the existing refiner's dictionary export, retaining input order."""
+    streams=[seed]+[b for b in (selected,raw) if b is not None]
+    for point in frontier:
+        if not isinstance(point,dict) or not isinstance(point.get('stream'),(bytes,bytearray)):
+            raise ValueError('Unexpected trajectory frontier export')
+        streams.append(point['stream'])
+    return list(dict.fromkeys(map(bytes,streams)))
+
+
 def sha(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -42,6 +52,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('source-root','producer-study','reference','v1-control','adaptive-control','output'):
         parser.add_argument('--'+name,type=Path,required=True)
+    parser.add_argument('--prior-failure',type=Path)
     args=parser.parse_args()
     root,out=args.source_root.resolve(),args.output.resolve()
     if not out.is_relative_to(root/'build') or out.exists():
@@ -69,7 +80,19 @@ def main():
                 raise ValueError('Expected declared profile-4 seeds')
         protocol=Path(__file__).resolve().parents[1]/'PROTOCOL.md'
         source_bytes=Path(__file__).read_bytes()
-        save(out/'binding-private.json',dict(producer=producer,settings=SETTINGS,
+        prior=None
+        if args.prior_failure is not None:
+            prior_binding=json.loads((args.prior_failure/'binding-private.json').read_text())
+            failure=json.loads((args.prior_failure/'failure-private.json').read_text())
+            if (prior_binding['settings']!=SETTINGS or prior_binding['seed_sha256']!=[sha(b) for _,b in seeds]
+                    or failure['exception']!='AttributeError' or "point.stream" not in failure['traceback']):
+                raise ValueError('Unexpected prior failed probe')
+            prior=dict(path=str(args.prior_failure.resolve()),failed_postprocessing_attempts=1,
+                binding_sha256=sha((args.prior_failure/'binding-private.json').read_bytes()),
+                failure_sha256=sha((args.prior_failure/'failure-private.json').read_bytes()),
+                completed_target_helper_calls=1,inner_evaluation_count_known=False,
+                inner_evaluation_upper_bound=SETTINGS['max_evaluations'])
+        save(out/'binding-private.json',dict(producer=producer,settings=SETTINGS,prior_failure=prior,
             source_sha256=sha(source_bytes),protocol_sha256=sha(protocol.read_bytes()),
             reference_sha256=producer['target_sha256'],seed_sha256=[sha(b) for _,b in seeds]))
         track=track_pitch(target)
@@ -89,11 +112,13 @@ def main():
                     complete_byte_cap=len(seed),new_seed_fits=0))
                 frontier=[]
                 start_wall,start_cpu=time.perf_counter(),time.process_time()
+                save(folder/'helper-start-private.json',dict(helper_calls_started=1,new_seed_fits=0))
                 selected,_,detail,raw=refine(target,seed,common,len(seed),objective=objective,
                     objective_name='voice_noise_pcm_pwm_frozen_v2',frontier=frontier,**SETTINGS)
                 wall,cpu=time.perf_counter()-start_wall,time.process_time()-start_cpu
-                blobs=list(dict.fromkeys([seed]+[b for b in (selected,raw) if b is not None]
-                                         +[point.stream for point in frontier]))
+                save(folder/'helper-return-private.json',dict(report=detail,helper_calls_completed=1,
+                    wall_seconds=wall,cpu_seconds=cpu))
+                blobs=endpoint_streams(seed,selected,raw,frontier)
                 rows=[]
                 for index,blob in enumerate(blobs):
                     pcm=compact.decode_model(blob)

@@ -39,3 +39,19 @@ build output. Public evidence contains numerical results and source-code
 provenance. A potential numerical gain requires later unchanged-size listening,
 held-out/corpus evaluation and actual full-player admission before adoption.
 Negative or marginal results do not justify another production search branch.
+
+## Adapter correction before any validated endpoint outcome
+
+The first run completed its V1 helper call, then failed while treating the
+existing dictionary frontier export as an object. No endpoint assessment or
+second helper call completed. Preserve that failed directory. Its exact inner
+counters were not saved: they are unknown, bounded by the declared 128 renders,
+and must not be invented or omitted from campaign cost accounting.
+
+After correcting this adapter and checking the actual export contract on a
+synthetic stream, permit one fresh two-seed run with identical search settings.
+Bind it explicitly to the prior failure. Save the helper report immediately
+after every return, before postprocessing. This is a documented source-fix
+recovery, not a hidden budget extension or a new tuned search grid. The full
+campaign has three target helper calls if recovery succeeds, including the
+first completed call with failed postprocessing; no further retry is declared.
