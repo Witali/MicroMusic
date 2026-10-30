@@ -33,6 +33,16 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Zero-ratio experiment, 2026-10-30: a mathematically exact zero-product shortcut
+passed seven clock tests/225 new cases and 16 workload parity comparisons, but
+did not pass the speed gate. Initial music controls were inconclusive; longer
+Rhythmic old/new was 0.957x with only 2/8 positive pairs and material null
+variation. The remaining confirmation was stopped. All 160 completed timings,
+80 warmups and 3567 checkpoints remain recorded. Production header/native/
+manifest were restored exactly to 702450d8; 23 focused checks pass afterward.
+Do not revive the shortcut from entry counts alone. Stage 5 and the 24/31 count
+remain open/unchanged. See the [rejection evidence](../reports/clock-zero-20261030.md).
+
 Deadline-counter checkpoint, 2026-10-30: optional ignored-build probes split
 cache queries, invalidation attempts/valid losses, overlapping miss reasons and
 conversion scope. Nine cases preserve production snapshots/PCM/tail pins;

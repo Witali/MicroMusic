@@ -1,0 +1,4196 @@
+{
+  "schema": "micromusic-clock-zero-rejected-v1",
+  "baselineCommit": "702450d88f32f1606129e4f0ee426752a4ff2fe0",
+  "decision": "rejected",
+  "productionRestored": true,
+  "baseline": {
+    "bytes": 124614,
+    "sha256": "b9a8fa14a971fd5f82f8175f978e9a0b1e03f31fc8612a6892d202d7f93635a1"
+  },
+  "candidate": {
+    "bytes": 124631,
+    "sha256": "eea8e51960022da56d211519da8e1b61e87d386040343f8d9fdbd6e462f1957e",
+    "headerSha256": "a97df4b81f66624a618ab3f51a4c472506b99b43d6d86f85ca5c2d85061dc163",
+    "insertionAfter": " if (!divisor) return 0;\n",
+    "insertedText": " /* A zero elapsed span with a proper carry has no quotient to calculate.\n  * Keep invalid divisors and carry normalization on their original paths. */\n if (!a && carry<divisor) {\n  *quotient=0; *remainder=carry; return 1;\n }\n",
+    "changedBodies": [
+      {
+        "index": 155,
+        "beforeBytes": 522,
+        "afterBytes": 539
+      }
+    ]
+  },
+  "sources": {
+    "web-player/scripts/verify-clock-zero.mjs": "11cc61aec1e75f3c9701248fd1cdba8d050fd2b521b7737e93c99577c0ea2ea0",
+    "web-player/scripts/benchmark-runtime-controls.mjs": "42daa92e43ab93fc3810c9a17903d845a37912fab5e42ff034a0e9050259c4e5",
+    "web-player/scripts/lib/runtime-control-design.mjs": "9a52ba1ab6bf6c1e9864bddf5413eacaae81899f73dfb859617777e8d7d59e43",
+    "web-player/tests/device-clock.test.mjs": "c51df01ee7f452331dcc27c2451ed360d03df760ed19af1be0740f5a3086777b",
+    "web-player/native/peripherals/device_clock.h": "81b468b4809e8777a763b13f10893c7cc0db501710153dcd6e6b54787f155693"
+  },
+  "inputs": {
+    "parity.json": "2616fb0b3f203ffd7c79809873cf3712cf739f4fb336919625665c345330373b",
+    "screen.json": "9b3cbf918efc2cab328df279429fff19d6e467c752cf9ebc42fdb0104c41ea07",
+    "confirmation.json": "7426353812aeb3473283a2aa661fbcb90a3e4c6195e89ffe355c57ef526b505b"
+  },
+  "taps": {
+    "baseline": {
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "sha256": "eaf37166cf3797244b0c181c5c160ba36678f491a0ecd7c37b5612aa984321b5"
+    },
+    "clock": {
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "sha256": "d077cce30ac0bb8d867b52c37f5ba9d93b63f5bb57efeba80d5f5f09ed252f39"
+    },
+    "restored": {
+      "tests": 23,
+      "pass": 23,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "sha256": "302e1e6ef8b02a35e0ad585b153811c06ca6f54afcf828070d514c1fd1353c89"
+    }
+  },
+  "completedTimedRuns": 160,
+  "completedWarmups": 80,
+  "exactCheckpoints": 3567,
+  "captures": [
+    {
+      "id": "parity",
+      "complete": true,
+      "parameters": {
+        "trials": 8,
+        "warmups": 4,
+        "frames": 12000,
+        "kernelFrames": 1200,
+        "instructions": 1000000,
+        "rate": 48000,
+        "block": 1024,
+        "schedule": [
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ]
+        ],
+        "changeSet": "clock-zero"
+      },
+      "host": {
+        "node": "v22.22.3",
+        "v8": "12.4.254.21-node.56",
+        "flags": [],
+        "platform": "win32",
+        "release": "10.0.26300",
+        "cpu": "AMD Ryzen 5 5600X 6-Core Processor             "
+      },
+      "cases": [
+        {
+          "id": "rhythmic-compatible",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+          "translationSha256": "b04c50df891f782000c439272c535928df2caf7012efd3a493e1d03659e8deff",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "outputHashes": {
+            "rawSha256": "af34e1fb8dd92e06220a4eb8ed51f8bac5d3735abb76daa2ed15ed52811699b1",
+            "architectureSha256": "4bc370d5ef06fc924f4126f1c7723108144f54650f684d48c1a3cd92af7aa5ed",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "rhythmic-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+          "translationSha256": "91ed703e52c68b2deb7c22b8d70002ea7fdc2b5731a26e3fbb27a7deee44b39c",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "outputHashes": {
+            "rawSha256": "7b01c8e0e49590efff48753682bc35863db2e3157481304d19db2c34f9288562",
+            "architectureSha256": "cc209655ceab5045f680af23a1339dcd8fd6ba60bf503bc127a3cc8510fa4503",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "lumiere-stereo-compatible",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true
+          },
+          "frames": 12000,
+          "channels": 2,
+          "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+          "translationSha256": "91d5ebf8d4996955da9ccad652325edffc149d83f634cadce7f7c105d6e04ae6",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "outputHashes": {
+            "rawSha256": "280dfaed7185f54cb9c2c97c396833cffa35ba588fabe110b608483f0b8044b7",
+            "architectureSha256": "c55815acf7583282de05e9557bc111d390678b85c7401bd07705c3428eacd29d",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "lumiere-stereo-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000
+          },
+          "frames": 12000,
+          "channels": 2,
+          "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+          "translationSha256": "7b341651555326184c2737c3bc449d7f5a78f0757ffde0e598f91cf6bd09a83e",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "outputHashes": {
+            "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+            "architectureSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "hq4-chego-auto-compatible",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+          "translationSha256": "e53b652f93ba48442c43097dce61f35559382d37b8be92661fcfbe415115e9aa",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "outputHashes": {
+            "rawSha256": "7941f799b068eed20a09b338855d7f00994a97ed73fcfc0faa34344b8e066a3f",
+            "architectureSha256": "57cd37b68b95bff1ad445d0a5470e8bf6231018be136819b15994a5872e0180c",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "hq4-chego-auto-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+          "translationSha256": "ae9ae19d40636e75a46c48e76d62e9752a9db015544fc8e11632cbb1e0c3e256",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "outputHashes": {
+            "rawSha256": "c1a79eac7b8ce7f705b2811014114fac1d9d23e92515727bb02a370e310369c2",
+            "architectureSha256": "f7e5f3cafea9f6cfc35daab82956f957350debbfd30a7864a962a39661eaa588",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-compatible-direct",
+          "options": {
+            "oscillatorHz": 9600000,
+            "fuseLow": 114
+          },
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "c036ec8ca67fc9f83e9d70056b884eb7675f020e2d9de69da0b4a9dc4e2584e7",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 1
+          },
+          "outputHashes": {
+            "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "architectureSha256": "e2a3c0f0e00c0ec5837ab876c32d5198622b3dbf22d4f5de2f8636f304847d6a",
+            "pinSha256": "c76cc9098cb5c0bb03f7f0d82cad967338482b49628b54c47ed38586e7c55348"
+          }
+        },
+        {
+          "id": "kernel-physical-direct",
+          "options": {
+            "oscillatorHz": 9600000,
+            "fuseLow": 114,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "218e10b27f083b98d0d0491c732789ead1aa6593ae5d39e3299a136dceea8307",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 1
+          },
+          "outputHashes": {
+            "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "architectureSha256": "f71ee0105b06de947acec8ff55cfd42f99e30acb5328c0e9792af542af56c99a",
+            "pinSha256": "bab6051c8674b2955d410dd548dfb2d4f57cd61cdbdf1f488e18bfa3592ee4b4"
+          }
+        },
+        {
+          "id": "kernel-clki-20m-div1",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 112,
+            "clkiProfile": {
+              "phasePolicy": "digital-noninverting-zero-seed-v1",
+              "initialLevel": 1
+            }
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "218e10b27f083b98d0d0491c732789ead1aa6593ae5d39e3299a136dceea8307",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "43159dadde832cf8f7e68daac97bcdcd21fdfc6e412cb19797b222bcf5302761",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-clki-20m-div256",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 112,
+            "clkiProfile": {
+              "phasePolicy": "digital-noninverting-zero-seed-v1",
+              "initialLevel": 1
+            }
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "218e10b27f083b98d0d0491c732789ead1aa6593ae5d39e3299a136dceea8307",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "97647d187136dd1a8ea55d1ae065460e247c39df6f7a3442e7c6e1326f7c060e",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "218e10b27f083b98d0d0491c732789ead1aa6593ae5d39e3299a136dceea8307",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "7aabaa0c8a214d0ff36c15fa7ba24b2d69bf697f234e5e5704d8fe8098bae31a",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1-direct",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "218e10b27f083b98d0d0491c732789ead1aa6593ae5d39e3299a136dceea8307",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 1
+          },
+          "outputHashes": {
+            "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "architectureSha256": "741e24cb41e357501b9f4ddcffec88b8c6eb6174bfc600b7c651c519b0ad9df9",
+            "pinSha256": "bab6051c8674b2955d410dd548dfb2d4f57cd61cdbdf1f488e18bfa3592ee4b4"
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1-adc-active",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "218e10b27f083b98d0d0491c732789ead1aa6593ae5d39e3299a136dceea8307",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "1cb0d8a6bae2257a575de628bf7ad9e47dde7ab8ada8ba69be4d36ebbbc2a20c",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-clki-20m-div1-adc-active",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 112,
+            "clkiProfile": {
+              "phasePolicy": "digital-noninverting-zero-seed-v1",
+              "initialLevel": 1
+            }
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "218e10b27f083b98d0d0491c732789ead1aa6593ae5d39e3299a136dceea8307",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "062162d44e934fc4f10f1642ea453355b35920f1f973b804652e9e0d2864497b",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1-watchdog-active",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "b6660768cebbce80b9ccc79970905c81f79a9fd121bdc25a4ea2597bff6ebfb8",
+          "translationSha256": "4da3180a2613661e07b1e72ad93398fc5df88bcc35a874cf3ca94521b1d9874e",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "0be408667e0de275b4a74a073ce238aa3c04565aa2e0a539a7e88f571b9a3e0c",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-clki-20m-div1-watchdog-active",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 112,
+            "clkiProfile": {
+              "phasePolicy": "digital-noninverting-zero-seed-v1",
+              "initialLevel": 1
+            }
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "b6660768cebbce80b9ccc79970905c81f79a9fd121bdc25a4ea2597bff6ebfb8",
+          "translationSha256": "4da3180a2613661e07b1e72ad93398fc5df88bcc35a874cf3ca94521b1d9874e",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "21a79cf4e27b2a097ecdda4d2e86ac3b3dcaba9056755cd76207874a46bd14d8",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        }
+      ]
+    },
+    {
+      "id": "screen",
+      "complete": true,
+      "parameters": {
+        "trials": 8,
+        "warmups": 4,
+        "frames": 12000,
+        "kernelFrames": 1200,
+        "instructions": 1000000,
+        "rate": 48000,
+        "block": 1024,
+        "schedule": [
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ]
+        ],
+        "changeSet": "clock-zero"
+      },
+      "host": {
+        "node": "v22.22.3",
+        "v8": "12.4.254.21-node.56",
+        "flags": [],
+        "platform": "win32",
+        "release": "10.0.26300",
+        "cpu": "AMD Ryzen 5 5600X 6-Core Processor             "
+      },
+      "cases": [
+        {
+          "id": "rhythmic-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+          "translationSha256": "91ed703e52c68b2deb7c22b8d70002ea7fdc2b5731a26e3fbb27a7deee44b39c",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 564
+          },
+          "outputHashes": {
+            "rawSha256": "7b01c8e0e49590efff48753682bc35863db2e3157481304d19db2c34f9288562",
+            "architectureSha256": "cc209655ceab5045f680af23a1339dcd8fd6ba60bf503bc127a3cc8510fa4503",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 496.7555999999968
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 466.26800000000185
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 483.1471999999976
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 471.57410000000164
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 479.15149999999994
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 453.13970000000336
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 520.1281999999956
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 578.7523000000037
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 568.3941000000013
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 798.4926000000087
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 608.7852999999959
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 544.6642999999931
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 523.3015000000087
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 481.0714999999982
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 610.2582000000002
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 536.669300000005
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 490.43260000000373
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 493.8410999999978
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 490.00180000000546
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 486.0504000000001
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 468.8300000000054
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 478.15999999999985
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 480.21280000000115
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 476.97489999999743
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 474.3472000000147
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 490.4128999999921
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 517.2113999999965
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 456.0361000000048
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 457.3866999999991
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 457.0778999999966
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 464.0896999999968
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 457.1287000000011
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 494.04999999999836
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 502.84149999999954
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 621.625100000002
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 540.9265000000032
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 482.857100000002
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 463.9440999999979
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 482.8826999999983
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 476.6899000000012
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 473.5182999999979
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 493.53499999999985
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 570.8728000000028
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 494.58730000000105
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 507.0727999999981
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 484.0558000000019
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 476.2817000000032
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 467.99359999999797
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 1.0653864301217215,
+                "newIdentity": 0.9760464305702361,
+                "crossVersion": 1.0082645210996537
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 1.0855192981760375,
+                "newIdentity": 0.782959653032913,
+                "crossVersion": 0.974830716190874
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 0.894673869424897,
+                "newIdentity": 0.7118338980223425,
+                "crossVersion": 0.8547444811137623
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 0.8964021232442282,
+                "newIdentity": 1.1661694071199684,
+                "crossVersion": 0.8991360050560431
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 0.9919359479903842,
+                "newIdentity": 0.9930979823267158,
+                "crossVersion": 0.9916449602392144
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 1.0024846171150776,
+                "newIdentity": 1.0242791630228347,
+                "crossVersion": 1.0064908272526403
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.9672404620678257,
+                "newIdentity": 0.8817208978765895,
+                "crossVersion": 0.9931056611927196
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 1.0146549954338369,
+                "newIdentity": 0.9998888715584812,
+                "crossVersion": 1.0079253657017795
+              }
+            ],
+            "oldIdentity": {
+              "median": 0.9972102825527309,
+              "min": 0.894673869424897,
+              "max": 1.0855192981760375
+            },
+            "newIdentity": {
+              "median": 0.9845722064484759,
+              "min": 0.7118338980223425,
+              "max": 1.1661694071199684
+            },
+            "crossVersion": {
+              "median": 0.992375310715967,
+              "min": 0.8547444811137623,
+              "max": 1.0082645210996537
+            }
+          }
+        },
+        {
+          "id": "lumiere-stereo-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000
+          },
+          "frames": 12000,
+          "channels": 2,
+          "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+          "translationSha256": "7b341651555326184c2737c3bc449d7f5a78f0757ffde0e598f91cf6bd09a83e",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 564
+          },
+          "outputHashes": {
+            "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+            "architectureSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 449.7185000000027
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 447.000300000007
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 437.3697999999931
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 488.25520000001416
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 505.1706000000049
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 446.104499999994
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 452.08000000000175
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 481.59040000000095
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 456.37439999998605
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 444.8244999999806
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 455.7366000000111
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 464.6126999999906
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 450.1049999999959
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 446.42129999998724
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 454.63420000001497
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 443.9744999999966
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 459.8083000000115
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 557.0713000000105
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 466.282500000023
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 478.2489999999889
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 482.1989000000103
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 491.75129999999626
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 476.50390000000334
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 479.9273000000103
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 479.19109999999637
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 482.2488999999914
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 441.00129999999626
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 466.1394999999975
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 461.107600000003
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 460.4578000000038
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 472.32440000000497
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 440.32250000000204
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 453.1457999999948
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 450.2335999999923
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 462.3019000000022
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 626.4236999999957
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 476.3648000000103
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 450.12599999999657
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 453.7231999999967
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 443.8405000000057
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 443.2639999999956
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 452.8949000000066
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 467.97409999999945
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 450.8264999999956
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 440.52659999999014
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 439.56620000001567
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 464.98769999999786
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 438.6757999999754
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 1.0060809802588402,
+                "newIdentity": 1.1163441097213886,
+                "crossVersion": 0.9702339100896299
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 0.8949056021866619,
+                "newIdentity": 0.9263151840235875,
+                "crossVersion": 1.0310256461922882
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 1.0194763817520456,
+                "newIdentity": 1.0259650716181459,
+                "crossVersion": 1.0212862980869544
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 1.0055111273282376,
+                "newIdentity": 1.0100625409627066,
+                "crossVersion": 0.9841549866704296
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 1.0256636266640187,
+                "newIdentity": 0.825402960087879,
+                "crossVersion": 0.9330561892118627
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 1.0246370648220797,
+                "newIdentity": 0.9881895209632231,
+                "crossVersion": 1.013477586132404
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.9936592908765679,
+                "newIdentity": 1.0570025530537017,
+                "crossVersion": 1.060259339376374
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 1.0243257755890423,
+                "newIdentity": 1.0457285285217122,
+                "crossVersion": 1.0364323852518371
+              }
+            ],
+            "oldIdentity": {
+              "median": 1.0127786810054429,
+              "min": 0.8949056021866619,
+              "max": 1.0256636266640187
+            },
+            "newIdentity": {
+              "median": 1.0180138062904263,
+              "min": 0.825402960087879,
+              "max": 1.1163441097213886
+            },
+            "crossVersion": {
+              "median": 1.017381942109679,
+              "min": 0.9330561892118627,
+              "max": 1.060259339376374
+            }
+          }
+        },
+        {
+          "id": "kernel-physical-direct",
+          "options": {
+            "oscillatorHz": 9600000,
+            "fuseLow": 114,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "218e10b27f083b98d0d0491c732789ead1aa6593ae5d39e3299a136dceea8307",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 47
+          },
+          "outputHashes": {
+            "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "architectureSha256": "f71ee0105b06de947acec8ff55cfd42f99e30acb5328c0e9792af542af56c99a",
+            "pinSha256": "bab6051c8674b2955d410dd548dfb2d4f57cd61cdbdf1f488e18bfa3592ee4b4"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 97.47929999999906
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 98.37900000000081
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 90.62870000000112
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 93.68830000000162
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 96.6027000000031
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 100.24150000000373
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 98.37619999999879
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 99.7051999999967
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 92.66380000000208
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 93.13709999999992
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 98.96680000000197
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 97.71459999999934
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 89.53609999999753
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 105.21540000000095
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 100.63799999999901
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 96.77729999999428
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 93.47179999999935
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 90.73599999999715
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 96.14979999999923
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 97.29629999999452
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 92.83980000000156
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 97.34360000000015
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 101.53459999999905
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 105.85940000000119
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 103.30010000000038
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 96.33990000000631
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 92.09659999999712
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 92.51959999999963
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 107.0673999999999
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 92.87899999999354
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 95.22439999999915
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 92.97530000000552
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 101.0060999999987
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 95.9233000000022
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 93.98440000000119
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 90.15110000000277
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 97.96279999999388
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 93.42890000000625
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 102.65310000000318
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 90.3752999999997
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 95.26460000000225
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 93.9406999999992
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 96.0089999999982
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 97.75269999999728
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 93.1903999999995
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 96.11260000000038
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 89.8810999999987
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 101.83570000000327
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 0.990854755588065,
+                "newIdentity": 1.0337597251201933,
+                "crossVersion": 1.0627517977097736
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 1.0183587001191026,
+                "newIdentity": 1.0053788568701236,
+                "crossVersion": 0.9751175459442658
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 0.987347272014427,
+                "newIdentity": 0.9949182441798399,
+                "crossVersion": 1.0585419765331818
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 1.0871909011721466,
+                "newIdentity": 1.1239935623731856,
+                "crossVersion": 1.0630319571839644
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 1.0119241017661533,
+                "newIdentity": 1.0301512078998665,
+                "crossVersion": 1.050248904466738
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 0.919555561433364,
+                "newIdentity": 1.0936537993403403,
+                "crossVersion": 1.0455487486269917
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 1.0722462863257447,
+                "newIdentity": 1.0045930034333788,
+                "crossVersion": 1.0807239964467168
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 0.8893874325891843,
+                "newIdentity": 0.9989642410402335,
+                "crossVersion": 1.0865762073459746
+              }
+            ],
+            "oldIdentity": {
+              "median": 1.0013894286771092,
+              "min": 0.8893874325891843,
+              "max": 1.0871909011721466
+            },
+            "newIdentity": {
+              "median": 1.017765032384995,
+              "min": 0.9949182441798399,
+              "max": 1.1239935623731856
+            },
+            "crossVersion": {
+              "median": 1.0606468871214778,
+              "min": 0.9751175459442658,
+              "max": 1.0865762073459746
+            }
+          }
+        },
+        {
+          "id": "kernel-clki-20m-div1",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 112,
+            "clkiProfile": {
+              "phasePolicy": "digital-noninverting-zero-seed-v1",
+              "initialLevel": 1
+            }
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "218e10b27f083b98d0d0491c732789ead1aa6593ae5d39e3299a136dceea8307",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 94
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "43159dadde832cf8f7e68daac97bcdcd21fdfc6e412cb19797b222bcf5302761",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 316.01319999999396
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 314.793700000002
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 319.09590000000026
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 357.14599999999336
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 409.55509999999776
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 416.10310000000027
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 341.0316000000021
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 333.82590000000346
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 349.0919999999969
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 334.4109000000026
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 445.2832999999955
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 318.5957000000053
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 344.8237000000081
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 336.5344000000041
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 365.9661000000051
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 367.8272000000143
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 340.56380000000354
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 348.00889999998617
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 318.31059999999707
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 318.28179999998247
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 319.7755000000034
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 316.7823999999964
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 320.9206000000122
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 316.59820000000764
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 316.1736000000092
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 316.80220000000554
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 316.66909999999916
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 321.2768000000069
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 335.47010000002047
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 341.09990000000107
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 344.67390000000887
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 371.12929999998596
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 320.98999999999796
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 340.4080000000031
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 321.4073999999964
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 320.06969999999274
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 316.67949999999837
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 337.6952999999994
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 333.6759999999922
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 453.7046999999948
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 326.69459999999526
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 321.98359999999957
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 317.2598000000071
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 316.54389999999694
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 317.35310000000027
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 317.45010000000184
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 317.8568000000014
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 314.8150999999998
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 1.0038739657114866,
+                "newIdentity": 1.1192434625452508,
+                "crossVersion": 0.93429090395278
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 0.8326879582258991,
+                "newIdentity": 1.2464673951302039,
+                "crossVersion": 1.0027507386102086
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 0.7154898914915707,
+                "newIdentity": 1.0439013800088282,
+                "crossVersion": 1.1023715545603008
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 0.914925269256844,
+                "newIdentity": 1.0613136510048367,
+                "crossVersion": 0.9904160502423773
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 0.9999095223344288,
+                "newIdentity": 0.9786065816133354,
+                "crossVersion": 0.9245641219106242
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 1.000581810003938,
+                "newIdentity": 1.0035809497600936,
+                "crossVersion": 0.988583487300553
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.9980157966074845,
+                "newIdentity": 1.0145505197697147,
+                "crossVersion": 0.9922346062861294
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 1.0274355300218643,
+                "newIdentity": 0.9190864208242625,
+                "crossVersion": 0.9557134344269058
+              }
+            ],
+            "oldIdentity": {
+              "median": 0.9989626594709566,
+              "min": 0.7154898914915707,
+              "max": 1.0274355300218643
+            },
+            "newIdentity": {
+              "median": 1.0292259498892715,
+              "min": 0.9190864208242625,
+              "max": 1.2464673951302039
+            },
+            "crossVersion": {
+              "median": 0.9894997687714652,
+              "min": 0.9245641219106242,
+              "max": 1.1023715545603008
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "confirmation",
+      "complete": false,
+      "parameters": {
+        "trials": 8,
+        "warmups": 4,
+        "frames": 48000,
+        "kernelFrames": 4800,
+        "instructions": 10000000,
+        "rate": 48000,
+        "block": 1024,
+        "schedule": [
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ]
+        ],
+        "changeSet": "clock-zero"
+      },
+      "host": {
+        "node": "v22.22.3",
+        "v8": "12.4.254.21-node.56",
+        "flags": [],
+        "platform": "win32",
+        "release": "10.0.26300",
+        "cpu": "AMD Ryzen 5 5600X 6-Core Processor             "
+      },
+      "cases": [
+        {
+          "id": "rhythmic-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000
+          },
+          "frames": 48000,
+          "channels": 1,
+          "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+          "translationSha256": "91ed703e52c68b2deb7c22b8d70002ea7fdc2b5731a26e3fbb27a7deee44b39c",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2209
+          },
+          "outputHashes": {
+            "rawSha256": "83860f3dae49e99faaf31a99f6a557eeda466db280fb6091c3ac7b4791ce7601",
+            "architectureSha256": "7461be020667cecb901819f160bdbe22b34fff4e126b936533a0c8e5a22e53fb",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 2357.418299999961
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 2077.312299999998
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 2139.7235999999684
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 2541.4915999999866
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 1780.3789000000106
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 1858.8275000000067
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 1794.4496999999974
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 1843.0441999999675
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 1866.0338999999585
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 1981.8314999999566
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 2018.3645999999426
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 1961.5400000000081
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 1866.5340999999898
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 1782.6864000000205
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 1951.6120000000083
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 1778.5072999999975
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 1918.45460000007
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 1834.054300000018
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 1750.3976000000257
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 1922.0727000000334
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 1973.7231000000465
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 1816.0437999999413
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 1928.578800000003
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 2189.7075999999797
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 1778.8003000000172
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 1773.498099999997
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 1991.7853000000468
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 2050.6171000000177
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 2150.6513000000414
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 2703.056999999957
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 2405.5394999999844
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 2509.1641999999556
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 2074.673499999998
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 2015.7203000000136
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 1940.0885999999991
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 2366.639500000003
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 2199.828500000005
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 2002.3741999999947
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 1831.688400000021
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 2393.4132000000027
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 2955.7661000000007
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 2799.749200000024
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 3658.676499999994
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 4438.314300000009
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 3460.8574999999837
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 2172.2431000000215
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 2236.0337000000145
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 2273.529899999987
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 1.1348405822273153,
+                "newIdentity": 1.187766307760509,
+                "crossVersion": 0.9489559296648021
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 1.0079032614911279,
+                "newIdentity": 1.0085637121453948,
+                "crossVersion": 0.9656826843390964
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 0.971846216486389,
+                "newIdentity": 0.9415704110061827,
+                "crossVersion": 1.034678122888815
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 1.0023497795033076,
+                "newIdentity": 1.0455806834710488,
+                "crossVersion": 0.9329333054250663
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 1.0980777738726362,
+                "newIdentity": 1.0460184303158588,
+                "crossVersion": 0.9778481128080142
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 0.8293544763693372,
+                "newIdentity": 0.977127338682897,
+                "crossVersion": 1.0221024187196976
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 1.0029896846238628,
+                "newIdentity": 1.0295372196993167,
+                "crossVersion": 0.8788513254764253
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 1.118516748856469,
+                "newIdentity": 1.0772738587614175,
+                "crossVersion": 0.8733716763982222
+              }
+            ],
+            "oldIdentity": {
+              "median": 1.0054464730574955,
+              "min": 0.8293544763693372,
+              "max": 1.1348405822273153
+            },
+            "newIdentity": {
+              "median": 1.0375589515851829,
+              "min": 0.9415704110061827,
+              "max": 1.187766307760509
+            },
+            "crossVersion": {
+              "median": 0.9573193070019492,
+              "min": 0.8733716763982222,
+              "max": 1.034678122888815
+            }
+          }
+        }
+      ],
+      "termination": "Stopped intentionally after the first completed longer workload failed the performance gate. Unpublished partial work is excluded."
+    }
+  ],
+  "meaning": "The zero-product shortcut is mathematically exact and passes scoped parity, but longer Rhythmic measurements do not establish a useful speedup. Only the original production arithmetic remains enabled. No full candidate runtime suite, real-time or silicon claim."
+}

@@ -15,6 +15,20 @@ uint64_t r(void) { return remainder; }
 `);
 const U64=(1n<<64n)-1n,unsigned=n=>BigInt.asUintN(64,n);
 
+test('zero elapsed ratios retain proper carries, normalize improper carries and reject zero divisors',()=>{
+  const c=create();let cases=0;
+  for(const rate of [0n,1n,40000000n,1000000000n,U64])
+    for(const divisor of [0n,1n,2n,3n,63n,64n,65535n,1n<<32n,1000000000000n,U64])
+      for(const carry of new Set([0n,divisor?divisor-1n:0n,divisor,divisor<U64?divisor+1n:U64,U64])){
+        assert.equal(c.ratio(7n,13n,5n,11n),1);const before=[c.q(),c.r()];
+        assert.equal(c.ratio(0n,rate,carry,divisor),Number(divisor!==0n));
+        if(divisor){assert.equal(unsigned(c.q()),carry/divisor);assert.equal(unsigned(c.r()),carry%divisor);}
+        else assert.deepEqual([c.q(),c.r()],before,'Rejected input must not change outputs');
+        cases++;
+      }
+  assert.equal(cases,225);
+});
+
 test('clock products around32-bit bounds and64-bit addition wrap match a BigInt oracle',()=>{
   const c=create(),U32=(1n<<32n)-1n;
   const values=[0n,1n,U32-1n,U32,U32+1n,U64];
