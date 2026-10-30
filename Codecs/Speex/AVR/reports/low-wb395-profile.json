@@ -1,0 +1,249 @@
+{
+  "scope": "Instruction cycles in frame-command intervals; mailbox included, startup/reset/ISR excluded.",
+  "binarySha256": "a891507e765d03c83b05be8904f96204535650f8de1e7ce596dd537988bce37a",
+  "frames": 640,
+  "streams": 16,
+  "totalCycles": 170711354,
+  "functions": [
+    {
+      "name": "speex_avr_iir40",
+      "cycles": 35428156,
+      "cyclesPerFrame": 55356.49375,
+      "percent": 20.753251128217283
+    },
+    {
+      "name": "speex_wb_qmf40_avr",
+      "cycles": 31919470,
+      "cyclesPerFrame": 49874.171875,
+      "percent": 18.697918593042147
+    },
+    {
+      "name": "speex_wb_iir40_avr",
+      "cycles": 29410792,
+      "cyclesPerFrame": 45954.3625,
+      "percent": 17.22837486251793
+    },
+    {
+      "name": "speex_nb1_excitation_frame",
+      "cycles": 13656167,
+      "cyclesPerFrame": 21337.7609375,
+      "percent": 7.999565746517364
+    },
+    {
+      "name": "speex_wb_fold40_avr",
+      "cycles": 8507264,
+      "cyclesPerFrame": 13292.6,
+      "percent": 4.983420142048665
+    },
+    {
+      "name": "speex_low_noise_indices40",
+      "cycles": 6711360,
+      "cyclesPerFrame": 10486.5,
+      "percent": 3.931408100717191
+    },
+    {
+      "name": "speex_avr_lsp_pair4",
+      "cycles": 6427456,
+      "cyclesPerFrame": 10042.9,
+      "percent": 3.765101646373211
+    },
+    {
+      "name": "__mulsi3",
+      "cycles": 5529600,
+      "cyclesPerFrame": 8640,
+      "percent": 3.2391518609828376
+    },
+    {
+      "name": "speex_avr_lsp_angle",
+      "cycles": 5177298,
+      "cyclesPerFrame": 8089.528125,
+      "percent": 3.0327789445100413
+    },
+    {
+      "name": "__umulhisi3",
+      "cycles": 4547840,
+      "cyclesPerFrame": 7106,
+      "percent": 2.664052444924079
+    },
+    {
+      "name": "__muluhisi3",
+      "cycles": 3697920,
+      "cyclesPerFrame": 5778,
+      "percent": 2.1661828070322726
+    },
+    {
+      "name": "speex_wb_low_ready",
+      "cycles": 3378560,
+      "cyclesPerFrame": 5279,
+      "percent": 1.9791067909870834
+    },
+    {
+      "name": "speex_low_noise40",
+      "cycles": 2647040,
+      "cyclesPerFrame": 4136,
+      "percent": 1.5505939927112289
+    },
+    {
+      "name": "nb_decode.constprop.2",
+      "cycles": 2293326,
+      "cyclesPerFrame": 3583.321875,
+      "percent": 1.3433939490632825
+    },
+    {
+      "name": "__udivmodsi4_loop",
+      "cycles": 1708480,
+      "cyclesPerFrame": 2669.5,
+      "percent": 1.0008004505663988
+    },
+    {
+      "name": "wb_interpolate",
+      "cycles": 1348032,
+      "cyclesPerFrame": 2106.3,
+      "percent": 0.7896557366652953
+    },
+    {
+      "name": "speex_low_noise_values5",
+      "cycles": 1254400,
+      "cyclesPerFrame": 1960,
+      "percent": 0.734807598093329
+    },
+    {
+      "name": "__udivmodsi4_ep",
+      "cycles": 1239040,
+      "cyclesPerFrame": 1936,
+      "percent": 0.7258099540350432
+    },
+    {
+      "name": "speex_avr_lsp_finish10",
+      "cycles": 938154,
+      "cyclesPerFrame": 1465.865625,
+      "percent": 0.5495557137927686
+    },
+    {
+      "name": "speex_avr_lsp_mul_q14",
+      "cycles": 832000,
+      "cyclesPerFrame": 1300,
+      "percent": 0.48737238649047326
+    },
+    {
+      "name": "speex_avr_lsp_first",
+      "cycles": 599808,
+      "cyclesPerFrame": 937.2,
+      "percent": 0.35135800047605503
+    },
+    {
+      "name": "speex_packet_field.constprop.4",
+      "cycles": 520320,
+      "cyclesPerFrame": 813,
+      "percent": 0.30479519247442677
+    },
+    {
+      "name": "main",
+      "cycles": 501584,
+      "cyclesPerFrame": 783.725,
+      "percent": 0.29381994123249705
+    },
+    {
+      "name": "__epilogue_restores__",
+      "cycles": 470336,
+      "cyclesPerFrame": 734.9,
+      "percent": 0.27551535910142216
+    },
+    {
+      "name": "speex_nb3_interpolate_lpc",
+      "cycles": 445440,
+      "cyclesPerFrame": 696,
+      "percent": 0.26093167769028414
+    },
+    {
+      "name": "speex_avr_nb3_advance10",
+      "cycles": 419920,
+      "cyclesPerFrame": 656.125,
+      "percent": 0.24598246698927828
+    },
+    {
+      "name": "__prologue_saves__",
+      "cycles": 405040,
+      "cyclesPerFrame": 632.875,
+      "percent": 0.23726599930781406
+    },
+    {
+      "name": "speex_avr_lsp_pair2",
+      "cycles": 204480,
+      "cyclesPerFrame": 319.5,
+      "percent": 0.11978113652592785
+    },
+    {
+      "name": "speex_avr_lsp_pair3",
+      "cycles": 204480,
+      "cyclesPerFrame": 319.5,
+      "percent": 0.11978113652592785
+    },
+    {
+      "name": "speex_avr_mul16_32_q14",
+      "cycles": 76800,
+      "cyclesPerFrame": 120,
+      "percent": 0.0449882202914283
+    },
+    {
+      "name": "__divmodsi4",
+      "cycles": 66560,
+      "cyclesPerFrame": 104,
+      "percent": 0.03898979091923786
+    },
+    {
+      "name": "__udivmodsi4",
+      "cycles": 35840,
+      "cyclesPerFrame": 56,
+      "percent": 0.020994502802666543
+    },
+    {
+      "name": "output",
+      "cycles": 33280,
+      "cyclesPerFrame": 52,
+      "percent": 0.01949489545961893
+    },
+    {
+      "name": "lsp_first",
+      "cycles": 27264,
+      "cyclesPerFrame": 42.6,
+      "percent": 0.015970818203457048
+    },
+    {
+      "name": "__divmodsi4_exit",
+      "cycles": 20480,
+      "cyclesPerFrame": 32,
+      "percent": 0.01199685874438088
+    },
+    {
+      "name": "iir_mem16.constprop.5",
+      "cycles": 7680,
+      "cyclesPerFrame": 12,
+      "percent": 0.00449882202914283
+    },
+    {
+      "name": "__usmulhisi3_tail",
+      "cycles": 6967,
+      "cyclesPerFrame": 10.8859375,
+      "percent": 0.0040811579527393355
+    },
+    {
+      "name": "lsp_finish10",
+      "cycles": 6960,
+      "cyclesPerFrame": 10.875,
+      "percent": 0.00407705746391069
+    },
+    {
+      "name": "__usmulhisi3",
+      "cycles": 3840,
+      "cyclesPerFrame": 6,
+      "percent": 0.002249411014571415
+    },
+    {
+      "name": "__mulshisi3",
+      "cycles": 1920,
+      "cyclesPerFrame": 3,
+      "percent": 0.0011247055072857075
+    }
+  ]
+}

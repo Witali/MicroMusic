@@ -72,7 +72,7 @@ def host(compiler, variant, enable_nb4=False):
          '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),
          '-I' + str(ROOT / 'src'),
          *[source / 'libspeex' / (s + '.c') for s in sources],
-         *([ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c'] if variant == 'profile' else []),
+         *([ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c', ROOT / 'src/lowrate_noise.c'] if variant == 'profile' else []),
          ROOT / 'tests/decode.c', '-o', executable,
          *([] if os.name == 'nt' else ['-lm'])])
     return executable
@@ -128,7 +128,7 @@ def export_c(destination, enable_nb4=False):
     for name in PROFILE_SOURCES:
         shutil.copyfile(source / 'libspeex' / (name + '.c'), private / (name + '.c'))
         sources.append('src/' + name + '.c')
-    for name in ['speex_avr.c', 'bits.c']:
+    for name in ['speex_avr.c', 'bits.c','lowrate_noise.c']:
         shutil.copyfile(ROOT / 'src' / name, private / name)
         sources.append('src/' + name)
     definitions = DEFINES + ['SPEEX_AVR_COMPACT_LSP', 'SPEEX_AVR_TIGHT_EXC',
@@ -198,7 +198,7 @@ def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_byt
     executable = output / (name + '.elf')
     run([compiler, *flags,
          *[source / 'libspeex' / (s + '.c') for s in PROFILE_SOURCES],
-         ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c',
+         ROOT / 'src/speex_avr.c', ROOT / 'src/bits.c', ROOT / 'src/lowrate_noise.c',
          *([ROOT / 'src' / s for s in ASM_SOURCES] if backend == 'asm' else []), main,
          '-Wl,--gc-sections,-Map=' + str(output / (name + '.map')), '-o', executable], cwd=output)
     prefix = str(Path(compiler).with_name('avr-'))

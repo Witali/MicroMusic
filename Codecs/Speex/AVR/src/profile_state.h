@@ -10,4 +10,9 @@ typedef struct DecState {
    spx_lsp_t old_qlsp[NB_ORDER];
    spx_coef_t interp_qlpc[NB_ORDER];
    spx_mem_t mem_sp[15]; /* 60-byte direct LPC history and coefficient ages */
+#if SPEEX_ENABLE_NB1
+   uint32_t seed;
+   int16_t voc_m1,voc_previous,voc_mean;
+   uint8_t voc_offset;
+#endif
 } DecState;

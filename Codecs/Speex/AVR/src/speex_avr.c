@@ -33,6 +33,9 @@ void speex_avr_init(void)
     memset(&decoder, 0, sizeof(decoder));
     memset(scratch, 0, sizeof(scratch));
     decoder.first = 1;
+#if SPEEX_ENABLE_NB1
+    decoder.seed=1000;
+#endif
     decoder.stack = (char *)scratch;
     scratch_peak = 0;
 }
@@ -56,6 +59,9 @@ size_t speex_avr_state_bytes(void) { return sizeof(decoder) + sizeof(scratch); }
 size_t speex_avr_scratch_peak(void) { return scratch_peak; }
 
 #if SPEEX_ENABLE_WB1
+#if SPEEX_ENABLE_NB1
+uint32_t speex_wb_noise_seed(void){return decoder.seed;}
+#endif
 int speex_wb_decode_low(const uint8_t *packet)
 {
     return nb_decode(&decoder,packet,0);

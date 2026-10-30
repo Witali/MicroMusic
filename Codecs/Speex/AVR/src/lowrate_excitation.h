@@ -6,6 +6,10 @@
 #define MICROMUSIC_SPEEX_LOWRATE_EXCITATION_H
 #include "packet_mode.h"
 #include "short_pitch.h"
+#if SPEEX_ENABLE_NB1
+#include "lowrate_noise.h"
+#include "math_approx.h"
+#endif
 extern const int8_t exc_10_16_table[160];
 static SPEEX_NB3_NOINLINE void speex_low_unpack(const uint8_t *packet,uint8_t sub,uint8_t indices[4])
 {
@@ -96,6 +100,55 @@ static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
             }
         }
     }
+}
+#endif
+#if SPEEX_ENABLE_NB1
+static SPEEX_NB3_ALWAYS_INLINE int16_t speex_low_q15(int16_t a,int16_t b)
+{return speex_avr_asr15_word(MULT16_16(a,b));}
+/* NB1's provisional adaptive+innovation sum is overwritten by the vocoder.
+ * Keep only its observable rounded noise words and original vocoder state.
+ * voc_m2 is used solely as PSHR32(...,14), so retain that exact signed16
+ * word instead; voc_m1 retains Q15(.3*previous pulse). Offset stays 0..143;
+ * pulse amplitude and gains are frame
+ * constants. Original seed progression remains 160 LCG steps per NB1 frame. */
+static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *frame,
+    const uint8_t *packet,int32_t scale)
+{
+    uint8_t pitch=17+speex_packet_field(packet,23,7);
+    int16_t coefficient=(2185L*(int16_t)(speex_packet_field(packet,30,4)<<6)+16384)>>15;
+    int16_t g=(int16_t)((24576L*(coefficient-13)+8192)>>14);
+    if(g<0)g=0;if(g>64)g=64;
+    int16_t amplitude=(int16_t)((int32_t)spx_sqrt(2*(int16_t)pitch)*
+        (int16_t)(((int32_t)g*((scale+8192)>>14)+32)>>6));
+    int16_t noise_gain=32767-435*g,previous_gain=77*g;
+    int16_t pulse_now=speex_low_q15(22938,amplitude);
+    int16_t pulse_previous=speex_low_q15(9830,amplitude);
+    int16_t noise[5],current[5],previous[5];
+    speex_low_noise_values5(noise,scale);
+    for(uint8_t i=0;i<5;i++) {
+        current[i]=speex_low_q15(noise_gain,noise[i]);
+        previous[i]=speex_low_q15(previous_gain,noise[i]);
+    }
+    int16_t prior_noise=speex_low_q15(previous_gain,st->voc_previous);
+    int16_t prior_pulse=st->voc_m1,mean_state=st->voc_mean;
+    uint8_t offset=st->voc_offset,last=2;
+    for(uint8_t sub=0;sub<4;sub++) {
+        int16_t *exc=frame+40*sub;uint8_t phase=offset;
+        uint8_t *symbols=(uint8_t *)exc+40;
+        speex_low_noise_indices40(symbols,&st->seed);
+        for(uint8_t i=0;i<40;i++) {
+            uint8_t is_pulse=i==phase;last=symbols[i];
+            if(is_pulse)phase+=pitch;
+            int16_t value=(int16_t)(
+                (is_pulse?pulse_now:0)+prior_pulse+current[last]-prior_noise);
+            prior_pulse=is_pulse?pulse_previous:0;prior_noise=previous[last];
+            int32_t mean=MULT16_16(26214,mean_state)+MULT16_16(6554,value)+16384;
+            mean_state=speex_avr_asr15_word(mean);
+            exc[i]=(int16_t)(value-mean_state);
+        }
+        offset=phase-40;
+    }
+    st->voc_offset=offset;st->voc_m1=prior_pulse;st->voc_mean=mean_state;st->voc_previous=noise[last];
 }
 #endif
 #endif

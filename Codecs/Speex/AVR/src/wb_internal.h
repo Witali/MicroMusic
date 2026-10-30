@@ -1,6 +1,10 @@
 #ifndef SPEEX_WB_INTERNAL_H
 #define SPEEX_WB_INTERNAL_H
 #include <stdint.h>
+#include "speex_platform.h"
+#if SPEEX_ENABLE_NB1
+uint32_t speex_wb_noise_seed(void);
+#endif
 int16_t *speex_wb_low_buffer(void);
 void speex_wb_low_ready(const int16_t *,const int16_t *,const uint8_t *,int32_t);
 int speex_wb_decode_low(const uint8_t *);

@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Five-symbol noise and narrow observable state](speex-five-symbol-noise.md):
+precompute a finite domain, preserve the RNG and feedback precision, reuse
+the output buffer for forward expansion, and retain only observable state.
+
 [Recover forced-pitch ancestry](speex-forced-history.md): preserve the
 prediction-before-innovation contract while replacing an extra frame buffer
 with bounded recomputation and existing C/ASM vector routines.

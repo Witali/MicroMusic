@@ -61,3 +61,37 @@ zero underruns, queue minimum 13 and 397 B free SRAM at zero extra load.
 Both pairs together use 13044 B NB / 20024 B WB bare Flash. The original
 minimum WB image remains byte-identical with lower rates disabled.
 Full-corpus timing and mixed-mode admission remain the final stage.
+
+## Stage 3: NB2.15 / WB3.95 (approximately 4 kbit/s WB)
+
+`SPEEX_ENABLE_NB1=1` adds 43-bit / 6-byte NB and 79-bit / 10-byte WB packets.
+`--low-rates 7` enables all three new pairs; the NB4 feature is independent.
+There is no invented 4.000-kbit/s format: WB3.95 is the standard HB1 combination.
+DTX/PLC, enhancer and highpass remain outside the restricted profile.
+
+The original 32-bit LCG sequence starts at 1000 and advances 160 times per
+NB1 frame. HB1 regenerates it from a four-byte frame-start seed snapshot.
+Its five possible symbols are scaled once, with pulse/noise weights hoisted
+out of the sample loop. The existing 80-byte output area holds 40 byte indices
+in its upper half and is expanded forward safely. Vocoder phase fits uint8;
+only exact rounded/weighted signed16 state is retained. The feedback mean
+keeps its required int32 accumulator and original rounding. No PCM precision
+change or new full-frame buffer is involved.
+
+The initial literal version passes 640 exact/reset WB frames but averages
+415676.1 cycles (maximum 419657), exceeding the frame budget. Exact finite-
+domain/word optimizations reduce the same 16x40-frame screen to 266736.491
+cycles (maximum 270622). These timings exclude ISR/output. All PCM is still
+exact to the established compact-profile oracle. All three new pairs together
+use 22022 B WB bare Flash, 1288 B static SRAM at a 10-byte mailbox width.
+The initial three-clip/120-frame WB IRQ screen passes with exact s16/PWM,
+zero underruns, min queue 18 and 395 B free SRAM, at zero extra load.
+NB2.15 independently passes 120 original-Xiph exact/reset frames.
+
+`tests/prove_low_noise.py` checks every signed16 high word against the
+original noise equation, all 32 legal scales, state/phase bounds and both
+byte orders for alias expansion. The literal slow comparison patch is retained
+under the cookbook examples; it is not an admitted playback backend.
+See [the reusable technique](../../../docs/avr-asm-cookbook/speex-five-symbol-noise.md).
+Final full-recording, mixed-mode, bad-packet and production delivery checks
+are still required before concluding the admission stage.
