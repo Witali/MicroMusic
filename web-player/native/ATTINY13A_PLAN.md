@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+CLR lowering checkpoint, 2026-10-30: aliased `EOR Rd,Rd` emits a constant zero
+and only required constant Z/N/V/S bits. Original clock/retirement boundaries
+and unaffected flags remain; cached regions retain their local publication.
+All 48 catalog/policy modules shrink 708–2237 bytes, with unchanged manifests
+and unaffected function bodies; all 2659 default/shared checks pass. Six
+compatible/physical audio comparisons keep
+exact full state, PCM and pins with active IRQs. This reduces operand traffic
+and bytecode size; speed, silicon behavior and full stage 5 completion are not
+inferred. The 24/31 count remains. See the
+[technique and reproduction](../../docs/avr-asm-cookbook/clr-constant-lowering.md).
+
 Official reference-host preparation, 2026-10-30: original signed Studio Shell
 prerequisites and terms are cached, registered and statically inspected. No
 installer or official simulator session has run. Read-only registry/event checks
