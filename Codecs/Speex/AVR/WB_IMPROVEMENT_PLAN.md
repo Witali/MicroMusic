@@ -80,3 +80,13 @@ The fresh full-corpus profiles attribute the entire reduction to QMF.
 All 21126 sequential decoder frames and 34 reset checks preserve signed16
 PCM; direct QMF tests also preserve mirrored state, alias and ABI.
 SRAM and peak stack do not change. See [WB_QMF.md](WB_QMF.md) and the cookbook.
+
+## Integration and timing completed
+
+Both full-history ASM players pass all 21126 frames with exact signed16/PWM,
+zero underruns and 8% extra foreground work. Minimum queues improve 6 -> 7
+and 5 -> 6 samples. Two Flash-fed 128-frame production slices also pass at
+8% load. Five final images rebuild identically; the source-bound audit checks
+the preserved 48 C/header files against prior evidence without rerunning C.
+Ready RAM and embedded Flash do not measure external delivery latency or a
+physical board. See `reports/wb-qmf-admission.json` and `WB_QMF.md`.

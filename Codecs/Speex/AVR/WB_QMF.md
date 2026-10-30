@@ -36,7 +36,40 @@ The QMF unit test checks 2244 blocks / 179520 output words, exact mirrored
 state, guards, alias and callee-saved/r1 at every external return.
 `reports/wb-qmf-after-*.json`, `wb-qmf-profile-after-*.json` and
 `wb-qmf-unit-after.json` retain the results beside the fresh baseline reports.
-Continuous PWM/IRQ admission is reported separately below when completed.
+Continuous PWM/IRQ admission is reported below.
+
+## Continuous output and source binding
+
+Both complete corpora pass again through the production timer/IRQ and queue
+code with **25600 extra foreground cycles/frame (8%)**, without resetting
+history inside a recording: 21126 frames, exact signed16 and PWM u8 output,
+zero underruns. Packets are ready in RAM; storage/serial latency is excluded.
+
+| Full-history ASM player | Min queue, previous -> current | Static SRAM | Free SRAM at peak |
+| --- | ---: | ---: | ---: |
+| WB9.8 | 6 -> 7 samples | 1420 B | 437 B |
+| WB12.8 | 5 -> 6 samples | 1428 B | 429 B |
+
+Two additional production Flash-fed images use 128 consecutive frames each
+from `ru_square_b` WB9.8 and `en_portrait_b` WB12.8. At the same 8% load
+both pass exact PWM with zero underruns, queues 7 / 6, and free SRAM
+450 / 428 B. These slices check the Flash delivery path; the RAM-input tests
+cover each entire recording. No physical board measurement is claimed.
+
+`reports/wb-qmf-admission.json` binds runtime/build/test sources, binary
+fixtures, original corpus/oracle hashes and all reports. Forty-eight C/header
+files match the preceding admission unchanged; no new C tests are implied.
+Five current images (two decoders, two continuous players and QMF mailbox)
+rebuild byte-identically. Verify with:
+
+```sh
+python Codecs/Speex/AVR/tests/audit_wb_qmf.py --corpus-root ORIGINAL_CODEC_ROOT --avr-gcc avr-gcc
+```
+
+Omit `--avr-gcc` to audit retained evidence without rebuilding. The corpus
+root contains the historical `build/wb-corpus` and `build/higher-corpus/wb128`
+directories. Queue margins remain small: this evidence does not admit an
+unmeasured external transport or a different filter.
 
 ## Reproduce
 

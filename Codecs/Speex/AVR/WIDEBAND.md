@@ -75,9 +75,12 @@ on ATmega328P**. Use ASM for this MCU's WB playback. Other MCU timing requires
 its own admission test. The exported C11 manifest and CMake static library
 include both public APIs; the compatible CMake target remains `speex_nb3`.
 
-The latest [grouped IIR and phase-specific caches](IIR_GROUPS.md) bring the WB9.8 ASM decoder to
-17,072 B Flash and 1,279 B static SRAM in the mailbox harness, averaging
-238,611.592 cycles over 10,563 frames. Stack is now 180 B, two bytes higher. The historical
+The latest [exact QMF acceleration](WB_QMF.md), following the
+[grouped IIR and phase-specific caches](IIR_GROUPS.md), brings the WB9.8 ASM decoder to
+17,008 B Flash and 1,279 B static SRAM in the mailbox harness, averaging
+236,051.592 cycles over 10,563 frames. Stack remains 180 B. Both full-history
+WB ASM players pass with 8% extra work, exact PCM/PWM and zero underruns.
+The historical
 table below ends at the preceding deferred-r1 stage:
 
 | Decoder-only measurement | Initial WB | Fused WB/QMF | Third IIR cache | NB LSP | Subframe map | Complete prefix | LSP lifetime/bounds | ASM margin/LPC | Paired LPC | ASM stages | Two-root ASM | Deferred r1 |

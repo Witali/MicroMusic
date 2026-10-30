@@ -18,7 +18,7 @@ the portable C fallback retains correctness but exceeds its frame deadline.
 
 The optional **NB 11 / WB 12.8 kbit/s** extension is enabled by
 `SPEEX_ENABLE_NB4=1`; the default stays 0 for minimum Flash. The new WB ASM
-decoder uses **19,870 B Flash** and averages **75.11% CPU** on 16 natural
+decoder uses **19,806 B Flash** and averages **74.31% CPU** on 16 natural
 Russian/English clips. Its PWM player passes 48 Flash-sized chunks / 6,467
 frames with zero underruns and **428 B SRAM free**, including a separate
 8% added-CPU run over all chunks. NB11 also passes two complete clips with
@@ -31,10 +31,15 @@ images stayed byte-identical at the initial higher-profile stage. After the
 1.00–1.03% NB and 0.81–0.82% WB mean cycles. Flash falls another 4/6 B;
 static SRAM is unchanged, while WB peak stack grows two bytes. All four C
 decoder images and all 62 existing C PWM images remain byte-identical. Current ASM admission
-covers 198 fresh PWM images, with timers/interrupts and zero underruns.
+covers 198 PWM images at that preceding stage, with timers/interrupts and zero underruns.
 Two additional RAM-input test images retain full decoder history across
 10,563 frames per WB mode, including coverage streams, and pass exact PCM/PWM
 with 8% extra foreground work. Input transport latency is outside that test.
+The latest [exact QMF optimization](WB_QMF.md) saves 2560 cycles/frame and
+64 B Flash in both WB modes, without changing PCM, SRAM or stack. Fresh
+full-history IRQ runs again pass both 10563-frame corpora at 8% extra work:
+zero underruns, minimum queues 7 / 6, with 437 / 429 B free SRAM. C fallback
+sources and prior evidence are unchanged; only ASM is newly simulated.
 
 The primary optimization target is the explicitly enabled AVR ASM backend.
 The narrowband decoder also has a selectable C backend and an architecture-neutral

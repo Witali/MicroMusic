@@ -44,16 +44,18 @@ results, not a worst-case execution proof or a physical board measurement.
 | --- | ---: | ---: | ---: | ---: |
 | NB8 | 30.65% | 32.36% | 10,598 B | 1,099 B |
 | NB11 | 31.29% | 32.84% | 12,940 B | 1,107 B |
-| WB9.8 | 74.37% | 76.69% | 17,072 B | 1,279 B |
-| WB12.8 | 75.11% | 77.08% | 19,870 B | 1,287 B |
+| WB9.8 | 73.57% | 75.89% | 17,008 B | 1,279 B |
+| WB12.8 | 74.31% | 76.28% | 19,806 B | 1,287 B |
 
 The same 16 Russian/English voice excerpts are used. New modes and WB9.8
 include 6,467 frames; historical NB8 uses 6,434 because encoder padding differs.
 Natural-row means are frame-weighted from per-stream rounded cycle counts.
-These figures include [grouped IIR, phase-specific caches and cosine negation](IIR_GROUPS.md).
+These figures include [grouped IIR, phase-specific caches and cosine negation](IIR_GROUPS.md)
+and the [exact QMF acceleration](WB_QMF.md). The latter saves 2560 cycles/frame
+and 64 B Flash in WB; C source and NB images are unaffected.
 The larger adversarial corpus reaches 105,733 cycles/frame for NB11 (33.04%)
-and 246,660 for WB12.8 (77.08%). WB12.8 averages 241,085.577 cycles over all
-10,563 natural/coverage frames (75.34%). Its bare harness peaks at 192 B stack,
+and 244,100 for WB12.8 (76.28%). WB12.8 averages 238,525.577 cycles over all
+10,563 natural/coverage frames (74.54%). Its bare harness peaks at 192 B stack,
 leaving 569 B SRAM; caller buffers and the output ISR require their own space.
 
 C retains exact output: NB11 averages 69.10% CPU on voice; WB12.8 takes
@@ -61,6 +63,12 @@ C retains exact output: NB11 averages 69.10% CPU on voice; WB12.8 takes
 playback on this AVR. Other architectures need their own timing test.
 
 ## Output timing and quality checks
+
+The following original higher-profile tests are historical. The latest
+[QMF admission](WB_QMF.md) freshly executes ASM only: 10563 exact/reset
+decoder frames and 10563 full-history IRQ/PWM frames per mode, with 8% extra
+foreground work, zero underruns and min queues 7 / 6. Two Flash-fed slices
+also pass; C evidence is retained unchanged rather than newly executed.
 
 - Both backends pass 11,587 NB11 and 10,563 WB12.8 frames, with per-stream
   reset replay. Corpus includes 16 natural clips, all short/long pitch and
