@@ -1,0 +1,159 @@
+{
+  "schema": "lpx-adaptive-independent-audit-v1",
+  "status": "passed",
+  "completed_records": 118,
+  "expected_records": 118,
+  "missing_records": 0,
+  "all_final_worker_receipts_verified": true,
+  "counters": {
+    "unique_native_domain_comparisons": 10384,
+    "unique_streams": 2596,
+    "unique_model_samples": 119056937,
+    "unique_metric_rows": 2469,
+    "decoded_cache_hits": 2088,
+    "metric_cache_hits": 1277,
+    "all_attempt_started_calls": 238,
+    "all_attempt_completed_calls": 238,
+    "prior_incomplete_attempts": 0,
+    "local_pool_rows": 2820,
+    "local_searches": 148,
+    "actual_refinement_calls": 238,
+    "completed_records": 118
+  },
+  "phases": {
+    "speech-screen": {
+      "groups": 98,
+      "views": {
+        "preserve": {
+          "groups": 90,
+          "sources": 45,
+          "targeted_groups": 0,
+          "budgets": {
+            "100": {
+              "admissions": 90,
+              "changed_vs_rollback": 20,
+              "no_fit": 0
+            },
+            "95": {
+              "admissions": 0,
+              "changed_vs_rollback": 0,
+              "no_fit": 73
+            },
+            "90": {
+              "admissions": 0,
+              "changed_vs_rollback": 0,
+              "no_fit": 84
+            }
+          }
+        },
+        "auto-quiet": {
+          "groups": 8,
+          "sources": 4,
+          "targeted_groups": 2,
+          "budgets": {
+            "100": {
+              "admissions": 8,
+              "changed_vs_rollback": 7,
+              "no_fit": 0
+            },
+            "95": {
+              "admissions": 4,
+              "changed_vs_rollback": 0,
+              "no_fit": 4
+            },
+            "90": {
+              "admissions": 0,
+              "changed_vs_rollback": 0,
+              "no_fit": 8
+            }
+          }
+        }
+      },
+      "actual_refinement_calls": 118,
+      "measured_pool_rows": 1862
+    },
+    "speech-default": {
+      "groups": 14,
+      "views": {
+        "preserve": {
+          "groups": 6,
+          "sources": 3,
+          "targeted_groups": 0,
+          "budgets": {
+            "100": {
+              "admissions": 6,
+              "changed_vs_rollback": 2,
+              "no_fit": 0
+            },
+            "95": {
+              "admissions": 0,
+              "changed_vs_rollback": 0,
+              "no_fit": 6
+            },
+            "90": {
+              "admissions": 0,
+              "changed_vs_rollback": 0,
+              "no_fit": 6
+            }
+          }
+        },
+        "auto-quiet": {
+          "groups": 8,
+          "sources": 4,
+          "targeted_groups": 2,
+          "budgets": {
+            "100": {
+              "admissions": 8,
+              "changed_vs_rollback": 8,
+              "no_fit": 0
+            },
+            "95": {
+              "admissions": 4,
+              "changed_vs_rollback": 1,
+              "no_fit": 4
+            },
+            "90": {
+              "admissions": 0,
+              "changed_vs_rollback": 0,
+              "no_fit": 8
+            }
+          }
+        }
+      },
+      "actual_refinement_calls": 88,
+      "measured_pool_rows": 731
+    },
+    "nonspeech-default": {
+      "groups": 6,
+      "views": {
+        "preserve": {
+          "groups": 6,
+          "sources": 3,
+          "targeted_groups": 0,
+          "budgets": {
+            "100": {
+              "admissions": 6,
+              "changed_vs_rollback": 4,
+              "no_fit": 0
+            },
+            "95": {
+              "admissions": 0,
+              "changed_vs_rollback": 0,
+              "no_fit": 6
+            },
+            "90": {
+              "admissions": 0,
+              "changed_vs_rollback": 0,
+              "no_fit": 6
+            }
+          }
+        }
+      },
+      "actual_refinement_calls": 32,
+      "measured_pool_rows": 227
+    }
+  },
+  "source_core_commit": "5a6cd1ab9593cac6f7e81756a639fa11d6c21276",
+  "scope": "Independent saved-byte selection audit; primitive source features/metrics reused. No new fitting, refinement, perceptual or firmware admission.",
+  "audit_wall_seconds": 1785.7382161999994
+}
