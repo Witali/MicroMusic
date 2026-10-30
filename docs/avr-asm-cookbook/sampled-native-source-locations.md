@@ -125,3 +125,20 @@ to a peripheral, convert sparse samples into exclusive durations or prove an
 execution-speed improvement. Keep the source-map gaps and the existing host
 clock/marker assumptions explicit. See the
 [offline replay evidence](../../web-player/reports/native-function-containers-20261030.md).
+
+## Recheck priorities after changing native arithmetic
+
+The [current capture](../../web-player/reports/native-current-profile-20261030.md)
+rebuilds maps against the exact post-optimization native bytes and extends the
+kernel to 100 million instructions and music to 262144 stereo frames. Phase
+handling and `next_event_scan` are the next investigation candidates; counts
+remain sampled containers, not exclusive subsystem costs. Different workloads,
+versions and capture lengths do not form an old/new timing comparison.
+
+Before pruning dominated deadlines, preserve conversion faults as well as the
+minimum timestamp. `min(at_half(a),at_half(b))` is not generally interchangeable
+with `at_half(min(a,b))`: converting the later candidate can fail even when the
+earlier one fits. Prove every skipped candidate's representability, or retain
+its fault check. This is a source-review constraint, not an implemented or
+benchmarked optimization. Start with scan/conversion counts and invalidation
+causes; a smaller helper-call count alone does not establish speed.

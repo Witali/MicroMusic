@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Current sampling checkpoint, 2026-10-30: fresh post-optimization kernel and
+long stereo captures conserve 4296/6578 whole-process ticks, including
+2146/3139 certain-interior ticks. All six marked runs match production PCM and
+recorded architecture; each music run has 204798 IRQs. Verified containers put
+the phase bridge and next-event scan ahead of ratio in these observations.
+68 focused checks pass; production is unchanged. The next bounded investigation
+is scan counts/invalidation/conversion behavior, preserving all fault paths.
+Sparse sampling and inlining still prevent exclusive-duration claims; no
+performance or hardware item closes and the 24/31 count remains. See the
+[workloads, policies and full budgets](../reports/native-current-profile-20261030.md).
+
 CLR lowering checkpoint, 2026-10-30: aliased `EOR Rd,Rd` emits a constant zero
 and only required constant Z/N/V/S bits. Original clock/retirement boundaries
 and unaffected flags remain; cached regions retain their local publication.
