@@ -21,6 +21,7 @@ from enhance_speech_compact import advance, sse
 from q0_model import _coefficient_trace_vectors, coefficient_trace, table
 from refine_speech_compact import quality, no_regression
 from speech_rate_allocation import spectrum_bits, fit_capacity
+from search_cpu_budget import CpuBudget, CpuBudgetExceeded
 from standard_metrics import pwm_duties
 from wav_lpc import pack_frames
 
@@ -138,8 +139,18 @@ def frame_order(reference, pcm, limit):
 
 
 def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates=2,
-           lookahead=640,excitation_horizon=80,passes=1,refit=True,speech=True):
-    """Return selected v5 bytes/PCM/report plus a raw best-encountered stream."""
+           lookahead=640,excitation_horizon=80,passes=1,refit=True,speech=True,
+           cpu_seconds=None,candidate_sink=None):
+    """Return selected bytes/PCM/report/raw, with optional cooperative CPU quota.
+
+    Sink receives (stream, measured PCM-SSE) once per distinct baseline/full-metric
+    contender after local selection bookkeeping. These serialized contenders
+    require independent validation before use. Original native/model/PWM checks
+    on baseline/result/raw remain in finalization, outside the search quota.
+    """
+    CpuBudget.validate(cpu_seconds)
+    if candidate_sink is not None and not callable(candidate_sink):
+        raise ValueError('Expected a callable candidate sink')
     values=(max_bytes,frame_limit,spectral_candidates,lookahead,excitation_horizon,passes)
     if any(isinstance(v,bool) or not isinstance(v,Integral) for v in values):
         raise ValueError('Expected integer byte cap and bounded search settings')
@@ -152,6 +163,7 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
         raise ValueError('Expected mono PCM16 reference')
     n,profile,spectra,params,pulses,pre,bright,extras=compact.unpack(blob)
     if len(ref)!=n:raise ValueError('Reference/stream sample count mismatch')
+    budget=CpuBudget(cpu_seconds)
     started=time.perf_counter();reference64=ref.astype(np.int64)
     sp=np.asarray(spectra,np.int64);pp=np.asarray(params,np.int64);ii=np.asarray(pulses,np.int64);ee=np.asarray(extras,np.int64)
     shift=5 if profile==4 else 4
@@ -165,57 +177,72 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
     before=quality(ref,pcm,speech);after=before;result=bytes(blob);raw=bytes(blob);raw_loss=before['pcm16']['error_energy']
     costs=[spectrum_bits(row,None if f==0 else sp[f-1],profile) for f,row in enumerate(sp)]
     spectral_trials=excitation_trials=full_evaluations=accepted=cap_rejections=0;checkpoints=[]
-    for pass_index in range(passes if before['pcm16']['error_energy'] else 0):
-        pass_changes=0
-        for frame in frame_order(reference64,pcm,frame_limit):
-            start=frame*320;stop=min(n,start+lookahead);patch_end=min(n,start+480)
-            old_patch=co[start:patch_end].copy()
-            _,hist,dd,cc,ring=advance(co,pp,ii,ee,steps,pre,bright,0,start,zero_h,0,0,zero_ring)
-            proposals=[]
-            for field in range(10):
-                for delta in (-1,1):
-                    vec=sp[frame].copy();vec[field]+=delta
-                    if not 0<=vec[field]<(32 if profile==4 else 64):continue
-                    if field and vec[field]<=vec[field-1] or field<9 and vec[field]>=vec[field+1]:continue
-                    trial_sp=sp.copy();trial_sp[frame]=vec
+    emitted=set()
+    def publish(candidate,score):
+        if candidate_sink is None or candidate in emitted:return
+        candidate_sink(candidate,score)
+        emitted.add(candidate)
+    publish(bytes(blob),before['pcm16']['error_energy'])
+    try:
+        budget.check()
+        for pass_index in range(passes if before['pcm16']['error_energy'] else 0):
+            pass_changes=0
+            for frame in frame_order(reference64,pcm,frame_limit):
+                budget.check()
+                start=frame*320;stop=min(n,start+lookahead);patch_end=min(n,start+480)
+                old_patch=co[start:patch_end].copy()
+                _,hist,dd,cc,ring=advance(co,pp,ii,ee,steps,pre,bright,0,start,zero_h,0,0,zero_ring)
+                proposals=[]
+                for field in range(10):
+                    for delta in (-1,1):
+                        budget.check()
+                        vec=sp[frame].copy();vec[field]+=delta
+                        if not 0<=vec[field]<(32 if profile==4 else 64):continue
+                        if field and vec[field]<=vec[field-1] or field<9 and vec[field]>=vec[field+1]:continue
+                        trial_sp=sp.copy();trial_sp[frame]=vec
+                        co[start:patch_end]=coefficient_patch(trial_sp,profile,frame,n,cosine)
+                        trial=advance(co,pp,ii,ee,steps,pre,bright,start,stop,hist,dd,cc,ring)[0]
+                        loss=int(sse(reference64[start:stop],trial));spectral_trials+=1
+                        proposals.append((loss,field,delta,trial_sp))
+                co[start:patch_end]=old_patch
+                proposals.sort(key=lambda p:(p[0],p[1],p[2]))
+                for _,field,delta,trial_sp in proposals[:spectral_candidates]:
+                    budget.check()
                     co[start:patch_end]=coefficient_patch(trial_sp,profile,frame,n,cosine)
-                    trial=advance(co,pp,ii,ee,steps,pre,bright,start,stop,hist,dd,cc,ring)[0]
-                    loss=int(sse(reference64[start:stop],trial));spectral_trials+=1
-                    proposals.append((loss,field,delta,trial_sp))
-            co[start:patch_end]=old_patch
-            proposals.sort(key=lambda p:(p[0],p[1],p[2]))
-            for _,field,delta,trial_sp in proposals[:spectral_candidates]:
-                co[start:patch_end]=coefficient_patch(trial_sp,profile,frame,n,cosine)
-                trial_costs=costs.copy()
-                for f in range(frame,min(frame+2,len(sp))):
-                    trial_costs[f]=spectrum_bits(trial_sp[f],None if f==0 else trial_sp[f-1],profile)
-                trial_ee,capacity,size,removed=fit_capacity(sum(trial_costs),len(sp),profile,ee,int(max_bytes),start,n)
-                if size>max_bytes:cap_rejections+=1;co[start:patch_end]=old_patch;continue
-                trial_pp=pp;trial_ii=ii
-                if refit:
-                    trial_pp,trial_ii,trial_ee,count=adapt_excitation(reference64,co,pp,ii,trial_ee,steps,pre,bright,
-                        profile,start,min(n,start+480),excitation_horizon,hist,dd,cc,ring,capacity)
-                    excitation_trials+=int(count)
-                suffix=advance(co,trial_pp,trial_ii,trial_ee,steps,pre,bright,start,n,hist,dd,cc,ring)[0]
-                trial=np.concatenate((pcm[:start],suffix));loss=int(sse(reference64,trial))
-                if loss>=after['pcm16']['error_energy']:co[start:patch_end]=old_patch;continue
-                candidate,metadata=compact.pack(n,profile,trial_sp.tolist(),trial_pp.tolist(),trial_ii.tolist(),pre,bright,extras=trial_ee.tolist())
-                if len(candidate)>max_bytes:raise AssertionError('Joint LPC serialized cap failed')
-                measured=quality(ref,trial,speech);full_evaluations+=1;allowed=no_regression(measured,before)
-                checkpoints.append({'pass':pass_index,'frame':frame,'lsf_index':field,'lsf_delta':delta,
-                    'file_bytes':len(candidate),'cap_extra_pulses_removed':removed,'metrics':measured,
-                    'conservative_floors_passed':bool(allowed)})
-                if loss<raw_loss:raw=candidate;raw_loss=loss
-                if allowed:
-                    sp=trial_sp;pp=trial_pp;ii=trial_ii;ee=trial_ee;costs=trial_costs
-                    pcm=trial;after=measured;result=candidate;accepted+=1;pass_changes+=1
-                    old_patch=co[start:patch_end].copy()
+                    trial_costs=costs.copy()
+                    for f in range(frame,min(frame+2,len(sp))):
+                        trial_costs[f]=spectrum_bits(trial_sp[f],None if f==0 else trial_sp[f-1],profile)
+                    trial_ee,capacity,size,removed=fit_capacity(sum(trial_costs),len(sp),profile,ee,int(max_bytes),start,n)
+                    if size>max_bytes:cap_rejections+=1;co[start:patch_end]=old_patch;continue
+                    trial_pp=pp;trial_ii=ii
+                    if refit:
+                        trial_pp,trial_ii,trial_ee,count=adapt_excitation(reference64,co,pp,ii,trial_ee,steps,pre,bright,
+                            profile,start,min(n,start+480),excitation_horizon,hist,dd,cc,ring,capacity)
+                        excitation_trials+=int(count)
+                    suffix=advance(co,trial_pp,trial_ii,trial_ee,steps,pre,bright,start,n,hist,dd,cc,ring)[0]
+                    trial=np.concatenate((pcm[:start],suffix));loss=int(sse(reference64,trial))
+                    if loss>=after['pcm16']['error_energy']:co[start:patch_end]=old_patch;continue
+                    candidate,metadata=compact.pack(n,profile,trial_sp.tolist(),trial_pp.tolist(),trial_ii.tolist(),pre,bright,extras=trial_ee.tolist())
+                    if len(candidate)>max_bytes:raise AssertionError('Joint LPC serialized cap failed')
+                    measured=quality(ref,trial,speech);full_evaluations+=1;allowed=no_regression(measured,before)
+                    checkpoints.append({'pass':pass_index,'frame':frame,'lsf_index':field,'lsf_delta':delta,
+                        'file_bytes':len(candidate),'cap_extra_pulses_removed':removed,'metrics':measured,
+                        'conservative_floors_passed':bool(allowed)})
+                    if loss<raw_loss:raw=candidate;raw_loss=loss
+                    if allowed:
+                        sp=trial_sp;pp=trial_pp;ii=trial_ii;ee=trial_ee;costs=trial_costs
+                        pcm=trial;after=measured;result=candidate;accepted+=1;pass_changes+=1
+                        old_patch=co[start:patch_end].copy()
+                    publish(candidate,measured['pcm16']['error_energy'])
                     # The shortlisted neighbours were based on the old vector.
                     # Accept at most one change per frame, then refresh next sweep.
-                    break
+                    if allowed:break
+                    co[start:patch_end]=old_patch
                 co[start:patch_end]=old_patch
-            co[start:patch_end]=old_patch
-        if not pass_changes:break
+            if not pass_changes:break
+    except CpuBudgetExceeded:
+        pass
+    budget.finish_search()
     for candidate in set((bytes(blob),result,raw)):
         received=decoder.decode_one_s16(candidate,n)
         if received is None or not np.array_equal(received,compact.decode_model(candidate)):
@@ -236,6 +263,7 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
         'excitation_horizon':int(excitation_horizon),'passes':int(passes),'refit':refit,
         'header_filters_exact':True,'native_model_pwm_exact':True,'checkpoints':checkpoints,
         'seconds':time.perf_counter()-started}
+    report['cpu_budget']=budget.report()
     return result,pcm,report,raw
 
 
