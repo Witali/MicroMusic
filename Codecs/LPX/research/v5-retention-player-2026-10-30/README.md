@@ -17,7 +17,7 @@ Five preparation contracts pass: raw eligibility, cap/tie ordering, invalid
 whole IDs/objectives, ordered-byte identity and duplicate inventory rejection.
 The contracts import no codec and perform no fitting, decoding or image work.
 
-Preparation accepts explicit `--source-root`, `--export`, `--replay-source`,
+Preparation accepts explicit `--source-root`, `--export`, `--replay-source`, `--postcheck`,
 `--shards SHARD0 SHARD1`, `--prior-handoff`, `--prior-proof`, `--output` and
 `--public-output`. Use fresh ignored output names. The prepared private handoff
 then supplies `--handoff` to the unchanged generic `measure_union.py` actions

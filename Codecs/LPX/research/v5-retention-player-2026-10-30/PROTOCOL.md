@@ -7,6 +7,10 @@ inconclusive. New player jobs may start only after both full-corpus replay shard
 and the final exporter are terminal PASS, their input/source receipts reopen
 exactly, and the finite new-chain inventory has been reported.
 
+Require the independent post-replay ordered-byte check over all 118 records,
+with prefix/incumbent/fixed-reset comparisons and zero new measurements. Pin
+its receipt, binding, executed script and independent prefix implementation.
+
 Reopen all 118 records (98 screen speech, 14 default speech, six nonspeech),
 their 354 cap decisions and the export binding. Independently reproduce each
 recorded budget choice from its freshly measured whole rows. Require every
