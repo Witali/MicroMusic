@@ -1,0 +1,231 @@
+{
+  "scope": "Instruction cycles in frame-command intervals; mailbox included, startup/reset/ISR excluded.",
+  "binarySha256": "4108f40ec48eddf5aedc038b1618730a1afb5a12964d9e2e7b046cda54ea4492",
+  "frames": 10563,
+  "streams": 17,
+  "totalCycles": 2546586954,
+  "functions": [
+    {
+      "name": "speex_avr_iir40",
+      "cycles": 584719932,
+      "cyclesPerFrame": 55355.47969326896,
+      "percent": 22.960925448925394
+    },
+    {
+      "name": "speex_wb_qmf40_avr",
+      "cycles": 553814890,
+      "cyclesPerFrame": 52429.69705576068,
+      "percent": 21.74733869307335
+    },
+    {
+      "name": "speex_wb_iir40_avr",
+      "cycles": 485459560,
+      "cyclesPerFrame": 45958.492852409356,
+      "percent": 19.06314485894441
+    },
+    {
+      "name": "speex_avr_long_innovation10",
+      "cycles": 233460620,
+      "cyclesPerFrame": 22101.734355770142,
+      "percent": 9.167588785189386
+    },
+    {
+      "name": "speex_wb_excitation8_40_avr",
+      "cycles": 207171531,
+      "cyclesPerFrame": 19612.944333996023,
+      "percent": 8.135262401882233
+    },
+    {
+      "name": "speex_avr_lsp_pair4",
+      "cycles": 112033852,
+      "cyclesPerFrame": 10606.253147779988,
+      "percent": 4.399372729999464
+    },
+    {
+      "name": "speex_avr_lsp_angle",
+      "cycles": 90542207,
+      "cyclesPerFrame": 8571.637508283631,
+      "percent": 3.555433552260317
+    },
+    {
+      "name": "speex_wb_low_ready",
+      "cycles": 58290691,
+      "cyclesPerFrame": 5518.38407649342,
+      "percent": 2.2889731257140493
+    },
+    {
+      "name": "nb_decode.constprop.2",
+      "cycles": 38148214,
+      "cyclesPerFrame": 3611.4942724604753,
+      "percent": 1.4980134073207068
+    },
+    {
+      "name": "__udivmodsi4_loop",
+      "cycles": 28246152,
+      "cyclesPerFrame": 2674.0653223516047,
+      "percent": 1.1091768123461454
+    },
+    {
+      "name": "wb_interpolate",
+      "cycles": 23932221,
+      "cyclesPerFrame": 2265.66515194547,
+      "percent": 0.9397763136424204
+    },
+    {
+      "name": "__udivmodsi4_ep",
+      "cycles": 20449968,
+      "cyclesPerFrame": 1936,
+      "percent": 0.8030343502655044
+    },
+    {
+      "name": "speex_avr_lsp_finish10",
+      "cycles": 16196679,
+      "cyclesPerFrame": 1533.3408122692417,
+      "percent": 0.6360151564649852
+    },
+    {
+      "name": "speex_nb4_long_innovation",
+      "cycles": 12611808,
+      "cyclesPerFrame": 1193.9608065890372,
+      "percent": 0.4952435643397237
+    },
+    {
+      "name": "speex_avr_lsp_first",
+      "cycles": 10497432,
+      "cyclesPerFrame": 993.7926725362113,
+      "percent": 0.4122157299012064
+    },
+    {
+      "name": "speex_nb4_unpack_subframe",
+      "cycles": 9126432,
+      "cyclesPerFrame": 864,
+      "percent": 0.3583789662341921
+    },
+    {
+      "name": "speex_avr_long_innovation_n",
+      "cycles": 8386720,
+      "cyclesPerFrame": 793.9714096374136,
+      "percent": 0.32933177431175986
+    },
+    {
+      "name": "speex_nb3_interpolate_lpc",
+      "cycles": 7687104,
+      "cyclesPerFrame": 727.7387105935813,
+      "percent": 0.30185908193418004
+    },
+    {
+      "name": "main",
+      "cycles": 7469146,
+      "cyclesPerFrame": 707.1046104326423,
+      "percent": 0.2933002538267146
+    },
+    {
+      "name": "speex_avr_nb3_advance10",
+      "cycles": 7246715,
+      "cyclesPerFrame": 686.0470510271703,
+      "percent": 0.284565778860108
+    },
+    {
+      "name": "__epilogue_restores__",
+      "cycles": 5322290,
+      "cyclesPerFrame": 503.86159235065793,
+      "percent": 0.20899698679599849
+    },
+    {
+      "name": "speex_nb4_short_innovation",
+      "cycles": 5048712,
+      "cyclesPerFrame": 477.9619426299347,
+      "percent": 0.19825405891088219
+    },
+    {
+      "name": "__prologue_saves__",
+      "cycles": 4265415,
+      "cyclesPerFrame": 403.8071570576541,
+      "percent": 0.1674953605373728
+    },
+    {
+      "name": "speex_avr_lsp_pair2",
+      "cycles": 3578670,
+      "cyclesPerFrame": 338.7929565464357,
+      "percent": 0.14052808973904765
+    },
+    {
+      "name": "speex_avr_lsp_pair3",
+      "cycles": 3578670,
+      "cyclesPerFrame": 338.7929565464357,
+      "percent": 0.14052808973904765
+    },
+    {
+      "name": "speex_nb4_excitation_frame",
+      "cycles": 3230958,
+      "cyclesPerFrame": 305.87503550127803,
+      "percent": 0.1268740497914292
+    },
+    {
+      "name": "speex_avr_zero_innovation10",
+      "cycles": 1406100,
+      "cyclesPerFrame": 133.1155921613178,
+      "percent": 0.05521507906067754
+    },
+    {
+      "name": "speex_avr_long_innovation1",
+      "cycles": 1138830,
+      "cyclesPerFrame": 107.8131212723658,
+      "percent": 0.044719855263972264
+    },
+    {
+      "name": "__divmodsi4",
+      "cycles": 1098552,
+      "cyclesPerFrame": 104,
+      "percent": 0.043138208898560154
+    },
+    {
+      "name": "__udivmodsi4",
+      "cycles": 591528,
+      "cyclesPerFrame": 56,
+      "percent": 0.02322826632999393
+    },
+    {
+      "name": "output",
+      "cycles": 549276,
+      "cyclesPerFrame": 52,
+      "percent": 0.021569104449280077
+    },
+    {
+      "name": "lsp_first",
+      "cycles": 477156,
+      "cyclesPerFrame": 45.17239420619142,
+      "percent": 0.01873707863187302
+    },
+    {
+      "name": "__divmodsi4_exit",
+      "cycles": 338016,
+      "cyclesPerFrame": 32,
+      "percent": 0.013273295045710816
+    },
+    {
+      "name": "speex_nb4_zero_innovation",
+      "cycles": 129315,
+      "cyclesPerFrame": 12.24226072138597,
+      "percent": 0.005077973080671016
+    },
+    {
+      "name": "iir_mem16.constprop.3",
+      "cycles": 126756,
+      "cyclesPerFrame": 12,
+      "percent": 0.004977485642141556
+    },
+    {
+      "name": "lsp_finish10",
+      "cycles": 120111,
+      "cyclesPerFrame": 11.370917353024709,
+      "percent": 0.004716548155221563
+    },
+    {
+      "name": "speex_avr_zero_innovation_n",
+      "cycles": 94725,
+      "cyclesPerFrame": 8.96762283442204,
+      "percent": 0.003719684491873039
+    }
+  ]
+}

@@ -25,23 +25,26 @@ for(const table of ['high_lsp_cdbk','high_lsp_cdbk2','nb3_gain_table'])assert.ok
 for(const name of ['malloc','calloc','realloc','free'])assert.ok(!symbols.has(name),'No heap');
 if(backend==='c')for(const name of ['speex_wb_iir40_avr','speex_wb_fold40_avr','speex_wb_excitation40_avr','speex_wb_excitation8_40_avr','speex_wb_qmf40_avr','speex_avr_iir40','speex_avr_long_innovation40','speex_avr_lsp_pair2','speex_avr_lsp_pair3','speex_avr_lsp_pair4','speex_avr_lsp_angle'])assert.ok(!symbols.has(name),'No ASM in C build');
 const report={backend,binarySha256:metadata.binarySha256,includesInterrupts:false,physicalBoardTested:false,flashBytes:binary.length,staticSramBytes:end-256,frames:0,maxCycles:0,minSP:2303,streams:[]};
-let totalCycles=0;
+let totalCycles=0,collectingProfile=false;
+const profiling=process.argv.includes('--profile'),hits=new Map();
 for(const name of readdirSync(streams).filter(s=>s.endsWith('.spxraw')).sort()){
  const raw=readFileSync(join(streams,name));assert.equal(raw.length%packetBytes,0);
  const expected=readFileSync(join(oracle,name.replace('.spxraw','.pcm')));assert.equal(expected.length,raw.length/packetBytes*640);
  const program=new Uint16Array(16384).fill(65535);new Uint8Array(program.buffer).set(binary);
- const cpu=new CPU(program,2048);let minSP=2303,lastChunk=0,output=[],hits=new Map();
+ const cpu=new CPU(program,2048);let minSP=2303,lastChunk=0,output=[];
  function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
    assert.ok(cpu.cycles<deadline,'timeout '+cpu.pc.toString(16));
-   if(process.argv.includes('--profile'))hits.set(cpu.pc*2,(hits.get(cpu.pc*2)||0)+1);
-   avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
+   const pc=cpu.pc*2,before=cpu.cycles;
+   avrInstruction(cpu);cpu.tick();
+   if(profiling&&collectingProfile)hits.set(pc,(hits.get(pc)||0)+cpu.cycles-before);
+   minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
    if(cpu.data[chunks]!==lastChunk){lastChunk=cpu.data[chunks];const ptr=cpu.dataView.getUint16(pcm,true);output.push(Buffer.from(cpu.data.subarray(ptr,ptr+160)));}
  }}
  until(()=>cpu.data[status]===1);
  const cycles=[];const frames=Math.min(raw.length/packetBytes,limit);
  for(let f=0;f<frames;f++){
    output=[];cpu.data.set(raw.subarray(f*packetBytes,(f+1)*packetBytes),packet);cpu.data[status]=1;cpu.data[command]=1;
-   const start=cpu.cycles;until(()=>cpu.data[status]===2);cycles.push(cpu.cycles-start);
+   const start=cpu.cycles;collectingProfile=true;until(()=>cpu.data[status]===2);collectingProfile=false;cycles.push(cpu.cycles-start);
    assert.equal(cpu.data[result],0,name+' result');assert.equal(output.length,4);
    const actual=Buffer.concat(output),exp=expected.subarray(f*640,(f+1)*640);
    if(!actual.equals(exp)){
@@ -55,7 +58,20 @@ for(const name of readdirSync(streams).filter(s=>s.endsWith('.spxraw')).sort()){
  const row={name,frames,minCycles:Math.min(...cycles),maxCycles:Math.max(...cycles),meanCycles:Math.round(cycles.reduce((a,b)=>a+b,0)/frames),peakStack:2303-minSP,freeSram:minSP-end+1,reset:true,pcmExact:true};
  report.streams.push(row);report.frames+=frames;report.maxCycles=Math.max(report.maxCycles,row.maxCycles);report.minSP=Math.min(report.minSP,minSP);totalCycles+=cycles.reduce((a,b)=>a+b,0);
  console.log(JSON.stringify(row));
- if(process.argv.includes('--profile'))writeFileSync(join(dir,'profile.json'),JSON.stringify([...hits]));
 }
 report.meanCycles=totalCycles/report.frames;report.peakStack=2303-report.minSP;report.freeSram=report.minSP-end+1;
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));
+if(profiling){
+ const functions=[...symbols].filter(([,at])=>at<binary.length).sort((a,b)=>a[1]-b[1]);
+ const totals=new Map();
+ for(const [pc,cycles] of hits){
+  const fn=functions.findLast(([,at])=>at<=pc)?.[0];assert.ok(fn,'Profile symbol at '+pc);
+  totals.set(fn,(totals.get(fn)||0)+cycles);
+ }
+ assert.equal([...totals.values()].reduce((a,b)=>a+b,0),totalCycles,'Only measured frame intervals');
+ writeFileSync(join(dir,'profile.json'),JSON.stringify({
+  scope:'Instruction cycles in frame-command intervals; mailbox included, startup/reset/ISR excluded.',
+  binarySha256:metadata.binarySha256,frames:report.frames,streams:report.streams.length,totalCycles,
+  functions:[...totals].sort((a,b)=>b[1]-a[1]).map(([name,cycles])=>({name,cycles,
+   cyclesPerFrame:cycles/report.frames,percent:100*cycles/totalCycles}))},null,2)+'\n');
+}

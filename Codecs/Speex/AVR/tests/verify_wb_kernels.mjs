@@ -1,10 +1,14 @@
 // Independent equations, full-scale inputs, state transitions, alias and ABI.
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import {join} from 'node:path';
+import {join,resolve} from 'node:path';
 import {CPU,avrInstruction} from 'avr8js';
-const dir=fileURLToPath(new URL('../build/wb-kernels/',import.meta.url));
+const firmware=process.argv.indexOf('--firmware');
+const dir=firmware<0?fileURLToPath(new URL('../build/wb-kernels/',import.meta.url)):resolve(process.argv[firmware+1]);
+const asmOnly=process.argv.includes('--asm-only'),qmfOnly=process.argv.includes('--qmf-only');
+const fullInputs=process.argv.includes('--full-inputs');
 const symbols=new Map(readFileSync(join(dir,'symbols.txt'),'utf8').split(/\r?\n/)
  .map(l=>l.match(/^([0-9a-f]+)\s+\w\s+(.+)$/)).filter(Boolean).map(m=>[m[2],parseInt(m[1],16)]));
 function addr(n){assert.ok(symbols.has(n),n);return symbols.get(n)&65535;}
@@ -22,6 +26,7 @@ const qmfEdges=[-2097152,2097152].flatMap(base=>edgeOffsets.flatMap(offset=>
  [{phase:0,target:base+offset},{phase:1,target:base+offset}]));
 const callee=[...Array.from({length:16},(_,i)=>i+2),28,29];
 for(let test=0;test<8;test++) {
+ if((asmOnly&&(test&1))||(qmfOnly&&test>1))continue;
  const program=new Uint16Array(16384).fill(65535);new Uint8Array(program.buffer).set(binary);
  const cpu=new CPU(program,2048),family=Math.floor(test/2),isAsm=!(test&1);
  const fn=['speex_wb_qmf40_avr','speex_wb_qmf40_c','speex_wb_fold40_avr','speex_wb_fold40_c','speex_wb_iir40_avr','speex_wb_iir40_c','speex_wb_excitation40_avr','speex_wb_excitation40_c'][test];
@@ -41,11 +46,15 @@ for(let test=0;test<8;test++) {
  const lowMem=Array(8).fill(0),highMem=Array(8).fill(0),iirMem=Array(8).fill(0);
  const scales=[0,1,255,256,4095,4096,262143,262144,524287,524288,120988612,121000000];
  const gains=[0,1,255,256,511,512,513,32767,32768,65535,65536,904448,0x7fffffff,-2147483648,-1];
- const blocks=family===0?512+qmfEdges.length:family===1?1640:family===3?32*scales.length*gains.length:512,cycles=[];
+ const sweepBlocks=fullInputs?1640:0;
+ const blocks=family===0?512+qmfEdges.length+sweepBlocks:family===1?1640:family===3?32*scales.length*gains.length:512,cycles=[];
  for(let f=0;f<blocks;f++) {
    const edge=family===0&&f<qmfEdges.length?qmfEdges[f]:null;
    const normal=family===0?f-qmfEdges.length:f;
-   const input=Array.from({length:80},(_,i)=>edge?0:family===1?s16(f*40+i-32768):normal===0?0:normal===1?32767:normal===2?-32768:normal===3?(i<40?32767:-32768):normal===4?(i&1?-32768:32767):random());
+   const sweep=family===0&&normal>=512;
+   const input=Array.from({length:80},(_,i)=>edge?0:sweep?
+    s16(i<40?(normal-512)*40+i-32768:257*((normal-512)*40+i-40)+12345):
+    family===1?s16(f*40+i-32768):normal===0?0:normal===1?32767:normal===2?-32768:normal===3?(i<40?32767:-32768):normal===4?(i&1?-32768:32767):random());
    const coeff=Array.from({length:8},()=>random());
    const g=gains[family===3?Math.floor(f/(32*scales.length)):f%gains.length],expected=[];
    const s=scales[Math.floor(f/32)%scales.length],codes=Array.from({length:4},(_,v)=>(f+7*v)&31);
@@ -103,4 +112,7 @@ for(let test=0;test<8;test++) {
    qmfRoundingAndClippingBoundaryBlocks:family===0?qmfEdges.length:0,peakStackBytes:2303-minSP});
  console.log(JSON.stringify(rows.at(-1)));
 }
-writeFileSync(join(dir,'verification.json'),JSON.stringify({scope:'AVR machine code; independent mathematical/Xiph equations, both backends',streams:rows},null,2)+'\n');
+writeFileSync(join(dir,'verification.json'),JSON.stringify({
+ scope:'AVR machine code; independent mathematical/Xiph equations; selected kernels/backends',
+ binarySha256:createHash('sha256').update(binary).digest('hex'),asmOnly,qmfOnly,fullInputs,
+ fullSigned16InputPairs:fullInputs?65536:0,streams:rows},null,2)+'\n');

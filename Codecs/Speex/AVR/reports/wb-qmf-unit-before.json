@@ -1,0 +1,24 @@
+{
+  "scope": "AVR machine code; independent mathematical/Xiph equations; selected kernels/backends",
+  "binarySha256": "4b4cc3e4fe26bf5385fe0d5d9d3ae1ea4cbdf5c8476af63c1335f9f9df7c6e7f",
+  "asmOnly": true,
+  "qmfOnly": true,
+  "fullInputs": true,
+  "fullSigned16InputPairs": 65536,
+  "streams": [
+    {
+      "kernel": "speex_wb_qmf40_avr",
+      "blocks": 2244,
+      "samples": 179520,
+      "pcmExact": true,
+      "minCycles": 12882,
+      "maxCycles": 13808,
+      "calleeSavedAndR1Returns": 2244,
+      "guards": true,
+      "readOnlyInputs": true,
+      "aliasQmf": true,
+      "qmfRoundingAndClippingBoundaryBlocks": 92,
+      "peakStackBytes": 30
+    }
+  ]
+}
