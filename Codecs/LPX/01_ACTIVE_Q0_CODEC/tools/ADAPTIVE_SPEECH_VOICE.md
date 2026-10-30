@@ -72,7 +72,53 @@ An optional `candidate_sink(blob)` receives each distinct verified pool stream
 in report ID order, enabling independent reproduction without retaining every
 internal screening probe. Saved streams and their fingerprints remain private.
 
-One invocation covers at most 64000 samples. Long chains need one whole-input
-gain and a separate whole-chain admission; locally good segments do not establish
-whole-record metric or size feasibility. Generated source audio, streams, player
-images and detailed private receipts belong in ignored `build/`.
+## Retained intermediate chains
+
+The single-stream API still covers at most 64000 samples. The same CLI can now
+refine an existing ordered reset chain, including longer recordings:
+
+```text
+python Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/encode_speech_voice.py input.wav build/chain --profile 6 --max-bytes 24000 --baseline-chain segment-000.l4hy segment-001.l4hy
+```
+
+`--baseline-chain` accepts 1..255 v5 files in playback order and preserves each
+reset's sample count/profile. The files must cover the complete source after
+resampling. It is mutually exclusive with `--baseline` and requires adaptive
+mode. The default complete data cap is the sum of supplied file sizes. The input
+receives one gain before segmentation; changed gain requires fresh legacy
+controls at that target level. Segments are never independently amplified.
+
+`adaptive_speech_chain.encode` performs those seed grids and calls
+`refine_candidates`. The latter can reuse existing per-reset seed pools and
+anchors without initial fitting. Each local controller runs once, under the
+whole data cap (bounded by the 65535-byte per-stream limit), and captures its
+verified pool. Whole candidates include the immutable baseline and selected/raw
+snapshots after every common completed-call depth, including zero. Unsearched
+resets stay byte-identical to baseline. A locally rejected raw snapshot can
+still be tested against whole-record gates. There is no independent mixture of
+different search depths or proportional division of the byte cap.
+
+Every distinct ordered byte chain gets fresh full-record PCM16/PWM metrics,
+period coverage, clipping and the shared voice/noise objective. The complete
+quality gates compare against the immutable whole baseline. Exact reset bytes
+can share native/model verification inside this call; different serializations
+never share whole metric rows. Ties use score, actual total bytes and stable
+discovery order. Missing feasible output remains absent. Earlier feasible
+snapshots therefore survive deeper exploration with the same seeds, target and
+settings. Earlier results from different runs can be passed explicitly as
+`incumbents`; their whole output and quality are rechecked, not trusted.
+
+`select_candidates` accepts saved local histories (`index`, actual `pool`
+streams in ID order, and `report`) for reproducible replay. Their local scores
+only define snapshot recipes; they do not establish whole quality. Sparse
+histories are supported. Candidate provenance and actual work counters are in
+the report. The optional complete-chain `firmware_cost(streams)` callback and
+`max_flash_bytes` enforce measured image feasibility; a guessed program constant
+is not accepted as a substitute. The reported frontier still uses data bytes.
+
+Selected chain output uses `manifest.json`, `audio-NNN.l4hy`, and `decoded.wav`;
+raw output uses `raw-manifest.json`, `raw-NNN.l4hy`, and `raw.wav`. A manifest is
+written only when that whole choice exists. `report.json` and `target.wav` retain
+the declared gain and complete target. Output names are protected against input
+aliases and stale artifacts. Generated source audio, streams, player images and
+detailed private receipts belong in ignored `build/`.

@@ -170,6 +170,64 @@ def encode(reference, profile, decoder, *, baseline=None, max_bytes=None,
     return selected, selected_pcm, report, raw
 
 
+def _main_chain(args):
+    """Encode existing reset geometry with whole-prefix retention and one gain."""
+    import soundfile as sf
+    from adaptive_speech_chain import encode as encode_chain
+    from batch_decoder import BatchSession
+    from output_paths import protect_outputs
+    if args.search_mode != 'adaptive':
+        raise ValueError('Whole-chain retention requires adaptive search mode')
+    if not 1 <= len(args.baseline_chain) <= 255:
+        raise ValueError('Expected 1..255 baseline reset files')
+    names = ['manifest.json', 'raw-manifest.json', 'decoded.wav', 'raw.wav', 'report.json', 'target.wav']
+    names += ['%s-%03d.l4hy' % (role, i) for role in ('audio', 'raw')
+              for i in range(len(args.baseline_chain))]
+    outputs = [args.output/name for name in names]
+    protect_outputs([args.reference, *args.baseline_chain], outputs)
+    if any(path.exists() for path in outputs):
+        raise ValueError('Use fresh output names; an absent result must not leave stale audio')
+    reference, input_info = load_voice_wav(args.reference, args.level_policy)
+    baseline = tuple(path.read_bytes() for path in args.baseline_chain)
+    if any(compact.unpack(blob)[1] != args.profile for blob in baseline):
+        raise ValueError('Baseline reset profile differs from requested profile')
+    gain_changed = input_info['input_level']['gain_power2_exponent'] != 0
+    with BatchSession('batch', speech=True, speech_compact=True) as common, BatchSession(
+            'batch', speech=True, speech_compact=True, compact_only=True) as only:
+        selected, pcm, report, raw = encode_chain(reference, baseline, common,
+            max_bytes=args.max_bytes, level_policy='preserve', baseline_at_target_level=not gain_changed,
+            compact_decoder=only, speech=not args.non_speech, max_refinement_calls=args.refinement_calls)
+    args.output.mkdir(parents=True, exist_ok=True)
+    for role, blobs, filename in (('audio', selected, 'manifest.json'),
+                                  ('raw', raw, 'raw-manifest.json')):
+        if blobs is None:
+            continue
+        segments, start = [], 0
+        for i, blob in enumerate(blobs):
+            count, profile = compact.unpack(blob)[:2]
+            name = '%s-%03d.l4hy' % (role, i)
+            (args.output/name).write_bytes(blob)
+            segments.append(dict(file=name, samples=count, offset_samples=start,
+                                 profile=profile, file_bytes=len(blob)))
+            start += count
+        manifest = dict(schema='lpx-v5-reset-chain-v1', samples=start,
+                        stream_bytes=sum(map(len, blobs)), segments=segments)
+        (args.output/filename).write_text(json.dumps(manifest, indent=2)+'\n', encoding='utf-8')
+    if selected is not None:
+        sf.write(args.output/'decoded.wav', pcm, 8000, subtype='PCM_16')
+    if raw is not None:
+        sf.write(args.output/'raw.wav', np.concatenate([compact.decode_model(blob) for blob in raw]),
+                 8000, subtype='PCM_16')
+    sf.write(args.output/'target.wav', reference, 8000, subtype='PCM_16')
+    report['prepared_target_encoding_level'] = report['level']
+    report['level'] = input_info['input_level']
+    report['input_conversion'] = input_info
+    report['search_mode'] = args.search_mode
+    (args.output/'report.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n', encoding='utf-8')
+    print(json.dumps({key: report[key] for key in ('samples', 'reset_segments', 'complete_byte_cap',
+                                                 'selected_bytes', 'raw_bytes', 'seconds')}))
+
+
 def main():
     import soundfile as sf
     from batch_decoder import BatchSession
@@ -177,7 +235,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('reference', type=Path)
     parser.add_argument('output', type=Path)
-    parser.add_argument('--baseline', type=Path)
+    baselines = parser.add_mutually_exclusive_group()
+    baselines.add_argument('--baseline', type=Path)
+    baselines.add_argument('--baseline-chain', type=Path, nargs='+',
+                           help='Ordered existing reset files; retain intermediate whole chains')
     parser.add_argument('--profile', type=int, choices=(4, 6), default=4)
     parser.add_argument('--max-bytes', type=int)
     parser.add_argument('--level-policy', choices=('preserve', 'auto-quiet'), default='auto-quiet')
@@ -186,6 +247,8 @@ def main():
     parser.add_argument('--refinement-calls', type=int, default=4,
                         help='Bound expensive refinement calls; each has separate local work bounds')
     args = parser.parse_args()
+    if args.baseline_chain is not None:
+        return _main_chain(args)
     paths = [args.output/name for name in ('audio.l4hy', 'decoded.wav', 'raw.l4hy', 'raw.wav', 'report.json', 'target.wav')]
     inputs = [args.reference] + ([] if args.baseline is None else [args.baseline])
     protect_outputs(inputs, paths)
