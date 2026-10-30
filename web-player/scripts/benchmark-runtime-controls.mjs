@@ -50,7 +50,7 @@ for(const key of ['exports','flags','compilerVersion','sources']){
 }
 if(scopeChange)for(const name of scopeExports){assert.ok(current.manifest.exports.includes(name));assert.ok(!old.manifest.exports.includes(name));}
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','ns-remainder','watchdog-period','watchdog-lazy','adc-idle','io-publication-scope','deadline-dispatch','gpio-idle','timer-deadline-budget'].includes(changeSet));
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','clock-power2','ns-remainder','watchdog-period','watchdog-lazy','adc-idle','io-publication-scope','deadline-dispatch','gpio-idle','timer-deadline-budget'].includes(changeSet));
 assert.deepEqual(changedInputs,scopeChange?
   ['web-player/native/avr-device.inc','web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:changeSet==='long-internal-span'?
   ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:
@@ -82,6 +82,7 @@ for(const divisor of [1,256])cases.push({id:'kernel-clki-20m-div'+divisor,binary
   options:{oscillatorHz:20000000,resumable:true,fuseLow:0x70,clkiProfile:{phasePolicy:'digital-noninverting-zero-seed-v1',initialLevel:1}}});
 cases.push({id:'kernel-internal-20m-div1',binary:kernel,frames:kernelFrames,channels:1,physical:true,divisor:1,
   options:{oscillatorHz:20000000,resumable:true,fuseLow:0x72,osccalHz:table(20000000)}});
+cases.push({...cases.find(row=>row.id==='kernel-internal-20m-div1'),id:'kernel-internal-20m-div1-direct',instructions});
 for(const id of ['kernel-internal-20m-div1','kernel-clki-20m-div1'])
   cases.push({...cases.find(row=>row.id===id),id:id+'-adc-active',adcEnabled:true});
 const wdtVector=VECTOR.WDT; // ATtiny13A vector indices already equal AVR word PCs.

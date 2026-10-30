@@ -33,6 +33,19 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Wide clock-ratio checkpoint, 2026-10-30: common binary factors reduce the wide
+intermediate while restoring the exact original remainder and overflow checks.
+Only native `ratio`/`duration` bodies change; the runtime grows 109 bytes to 124614,
+with 117 exports, no imports and fixed two-page memory. All 2642 default/shared
+checks and 16 final parity workloads pass; 41 virtual-event fixtures retain 17890
+events/max 1 ps. Two unbounded synthetic 20 MHz direct screens measure 1.169x/1.232x
+(16/16 positive). Music/capture gains remain unproven; possible small capture
+losses remain recorded. 480 timings/240 warmups conserve 3948 checkpoints. Native
+loader/cache identities are refreshed with generated CPU bytes unchanged.
+This is a scoped runtime gain, not exclusive profiling, register-traffic,
+real-time or hardware closure; the 24/31 count remains. See
+[the proof and measurements](../reports/clock-power2-20261030.md).
+
 Native function-container checkpoint, 2026-10-30: offline replay preserves all
 prior 724 tick classifications and work-window boundaries while identifying
 verified native instruction ranges for all 162 source-unresolved observations

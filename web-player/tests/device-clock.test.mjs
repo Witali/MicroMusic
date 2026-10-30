@@ -59,6 +59,31 @@ test('clock multiply-add/divide matches128-bit oracle across overflow boundaries
   }
   assert.equal(c.ratio(1n,1n,0n,0n),0);
 });
+
+test('wide clock ratios preserve low carry bits for every common power of two',()=>{
+  const c=create();let seed=0xc10c20261030n,cases=0;
+  const random=()=>seed=(seed*6364136223846793005n+1442695040888963407n)&U64;
+  const check=(a,b,carry,divisor)=>{
+    const beforeQ=unsigned(c.q()),beforeR=unsigned(c.r()),n=a*b+carry,q=n/divisor;
+    const accepted=q<=U64;
+    assert.equal(c.ratio(a,b,carry,divisor),Number(accepted));
+    assert.equal(unsigned(c.q()),accepted?q:beforeQ);
+    assert.equal(unsigned(c.r()),accepted?n%divisor:beforeR);cases++;
+  };
+  for(let shift=0n;shift<64n;shift++){
+    const scale=1n<<shift,mask=scale-1n,oddMask=U64>>shift;
+    for(let i=0;i<40;i++){
+      const b=((random()&oddMask)|1n)*scale,d=((random()&oddMask)|1n)*scale;
+      for(const carry of [0n,mask,scale,U64,random()])check(random(),b,carry,d);
+    }
+  }
+  // Actual physical/compatible clock factors and unbounded-run horizon tails.
+  for(const rate of [128000n,18000000n,19200000n,19392000n,40000000n])
+    for(const denominator of [19200000n,1000000000000n,2000000000000n,256000000000000n])
+      for(const at of [0n,73709551615n,100000000000n,499999999999n,1n<<53n])
+        for(const carry of [0n,1n,denominator-1n,U64])check(U64-1n-at,rate,carry,denominator);
+  assert.equal(cases,13200);
+});
 test('clock deadline calculation preserves phase before rounding and detects overflow',()=>{
   const c=create();
   for(const denominator of [2n,19200000n,1000000000000n,256000000000000n])

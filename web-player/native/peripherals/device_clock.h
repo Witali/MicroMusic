@@ -12,6 +12,12 @@ static inline int device_clock_ratio(uint64_t a,uint64_t b,uint64_t carry,
   uint64_t n=a*b+carry;
   *quotient=n/divisor; *remainder=n%divisor; return 1;
  }
+ /* Reduce a common power of two only on the wide-intermediate path.
+  * carry = carry_hi*scale + carry_low; its low bits cannot affect the
+  * quotient, and restoring them gives the original numerator remainder. */
+ unsigned shift=(unsigned)__builtin_ctzll(b|divisor);
+ uint64_t scale=UINT64_C(1)<<shift,carry_low=carry&(scale-1);
+ b>>=shift; divisor>>=shift; carry>>=shift;
  /* Long sample/frame counters commonly reduce to a small remainder. Avoid
   * wide division when quotient/remainder decomposition fits native64 bits. */
  uint64_t whole=a/divisor,tail=a%divisor;
@@ -19,7 +25,7 @@ static inline int device_clock_ratio(uint64_t a,uint64_t b,uint64_t carry,
   if (whole>UINT64_MAX/b) return 0;
   uint64_t n=tail*b+carry,q=whole*b,extra=n/divisor;
   if (extra>UINT64_MAX-q) return 0;
-  *quotient=q+extra; *remainder=n%divisor; return 1;
+  *quotient=q+extra; *remainder=(n%divisor)*scale+carry_low; return 1;
  }
  uint64_t a0=(uint32_t)a,a1=a>>32,b0=(uint32_t)b,b1=b>>32;
  uint64_t p=a0*b0,t=a1*b0+(p>>32),middle=(uint32_t)t;
@@ -34,7 +40,7 @@ static inline int device_clock_ratio(uint64_t a,uint64_t b,uint64_t carry,
   r=(r<<1)|((low>>bit)&1);
   if (overflow || r>=divisor) { r-=divisor; q|=(uint64_t)1<<bit; }
  }
- *quotient=q; *remainder=r; return 1;
+ *quotient=q; *remainder=r*scale+carry_low; return 1;
 }
 
 /* ceil((units*denominator-phase)/rate). Phase is an already elapsed fraction
