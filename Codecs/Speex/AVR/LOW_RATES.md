@@ -95,3 +95,14 @@ under the cookbook examples; it is not an admitted playback backend.
 See [the reusable technique](../../../docs/avr-asm-cookbook/speex-five-symbol-noise.md).
 Final full-recording, mixed-mode, bad-packet and production delivery checks
 are still required before concluding the admission stage.
+
+## Exact forced-prediction arithmetic
+
+Use the existing selectable signed16 multiply and arithmetic >>13 primitive
+for the at-most-two forced-pitch ancestors. Each input/product bound is
+unchanged, every rounding step remains, and no new ASM implementation is added.
+On the same three-clip/120-frame WB5.75 screen, mean cycles decrease
+247514.067 -> 245738.742 and maximum 265776 -> 255464. Flash changes
+20024 -> 20052 B (+28), stack 221 -> 219 B; PCM/reset remain exact.
+The original literal WB3.95 comparison patch is pinned to stage-3 commit
+`aa928a00`, before this independent forced-pitch change.

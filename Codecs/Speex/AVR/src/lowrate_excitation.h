@@ -65,7 +65,8 @@ static SPEEX_NB3_ALWAYS_INLINE int16_t speex_forced_source(const int16_t *exc,
     int at=(int)sample-pitch;uint8_t depth=0;
     while(at>=0){at-=pitch;++depth;}
     int16_t value=exc[at];
-    while(depth--)value=(int16_t)(((int32_t)value*((int16_t)coefficient<<7)+4096)>>13);
+    while(depth--)value=(int16_t)speex_avr_asr13(
+        MULT16_16(value,(int16_t)coefficient<<7)+4096);
     return value;
 }
 static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,

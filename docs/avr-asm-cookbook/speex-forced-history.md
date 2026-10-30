@@ -25,3 +25,9 @@ frames preserves original/reference PCM and reset. The WB IRQ player checks
 Those are initial measurements, not full-corpus or physical-board admission;
 final evidence belongs in [LOW_RATES.md](../../Codecs/Speex/AVR/LOW_RATES.md).
 No performance or portability claim beyond these bounds is implied.
+
+An exact follow-up selects the existing signed16 hardware multiply and >>13
+primitive instead of generic 32-bit C expressions for ancestor prediction.
+On the same three-clip WB5.75 screen, mean cycles fall 247514.067 ->
+245738.742 and max 265776 -> 255464, for +28 B Flash and -2 B stack.
+Only 120 frames are screened here; full active-IRQ admission is separate.
