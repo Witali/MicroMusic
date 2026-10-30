@@ -602,7 +602,7 @@ class Auditor:
         self.counts['completed_records'] += 1
         return row
 
-    def run(self, partial=False):
+    def run(self, partial=False, watch_seconds=0):
         self.context()
         b = self.binding
         speech_pairs, other_pairs = groups(b['speech_records']), groups(b['nonspeech_records'])
@@ -633,20 +633,35 @@ class Auditor:
                 equal(value,actual[name],'predeclared-job-'+name)
         if len({(j['phase'],j['source_ordinal'],(b['speech_records'] if j['speech'] else b['nonspeech_records'])[j['record_index']]['profile']) for j in b['jobs']}) != len(b['jobs']):
             raise AssertionError('Duplicate source/profile/phase job')
-        todo, missing = [], []
-        for job in b['jobs']:
+        def completed(job):
             records = b['speech_records'] if job['speech'] else b['nonspeech_records']
             profile = records[job['record_index']]['profile']
-            folder = self.study/'records'/job['phase']/('source-%03d'%job['source_ordinal'])/('profile-%d'%profile)
-            (todo if (folder/'complete-private.json').exists() else missing).append(job)
-        if missing and not partial:
+            return (self.study/'records'/job['phase']/('source-%03d'%job['source_ordinal'])/
+                    ('profile-%d'%profile)/'complete-private.json').exists()
+        if not partial and not watch_seconds and not all(completed(job) for job in b['jobs']):
             raise AssertionError('Not all predeclared records are complete')
-        if not partial:
-            self.workers()
+        missing, full = list(b['jobs']), False
+        deadline = time.monotonic()+watch_seconds
         with self.C.BatchSession('batch',prebuilt=self.study/'native/common.so') as self.common, self.C.BatchSession('batch',prebuilt=self.study/'native/v5-only.so') as self.only:
-            for number, job in enumerate(todo,1):
-                self.completed_record(job)
-                print(json.dumps(dict(status='audited',completed=number,available=len(todo),phase=job['phase'],source_ordinal=job['source_ordinal'])),flush=True)
+            while True:
+                ready = [job for job in missing if completed(job)]
+                for job in ready:
+                    self.completed_record(job)
+                    missing.remove(job)
+                    print(json.dumps(dict(status='audited',completed=len(self.rows),expected=len(b['jobs']),phase=job['phase'],source_ordinal=job['source_ordinal'])),flush=True)
+                worker_ready = all((self.study/'workers'/(phase+'-shard-%d-private.json'%shard)).exists()
+                    and json.loads((self.study/'workers'/(phase+'-shard-%d-private.json'%shard)).read_text()).get('status')=='complete'
+                    for phase in PHASES for shard in (0,1))
+                if not missing and worker_ready:
+                    self.workers()
+                    full = True
+                    break
+                if not watch_seconds or time.monotonic() >= deadline:
+                    break
+                print(json.dumps(dict(status='waiting_for_saved_outputs',completed=len(self.rows),missing_records=len(missing))),flush=True)
+                time.sleep(min(30.,max(0.,deadline-time.monotonic())))
+        if not partial and not watch_seconds and not full:
+            raise AssertionError('Final worker receipts are incomplete')
         self.context()
         phase_summaries = {}
         for phase in PHASES:
@@ -664,8 +679,9 @@ class Auditor:
             phase_summaries[phase] = dict(groups=len(cohort),views=views,
                 actual_refinement_calls=sum(r['actual_refinement_calls'] for r in cohort),
                 measured_pool_rows=sum(r['measured_pool_rows'] for r in cohort))
-        result = dict(schema='lpx-adaptive-independent-audit-v1',status='partial' if missing else 'passed',
-            completed_records=len(todo),expected_records=len(b['jobs']),missing_records=len(missing),
+        result = dict(schema='lpx-adaptive-independent-audit-v1',status='passed' if full else 'partial',
+            completed_records=len(self.rows),expected_records=len(b['jobs']),missing_records=len(missing),
+            all_final_worker_receipts_verified=full,
             counters=dict(self.counts),phases=phase_summaries,source_core_commit=b['core_commit'],
             scope='Independent saved-byte selection audit; primitive source features/metrics reused. No new fitting, refinement, perceptual or firmware admission.')
         save(self.output/'audit.json',result)
@@ -706,7 +722,11 @@ def main():
     parser.add_argument('--study',required=True,type=Path)
     parser.add_argument('--output',required=True,type=Path)
     parser.add_argument('--partial',action='store_true')
+    parser.add_argument('--watch-seconds',type=int,default=0,
+                        help='Bounded incremental read-only audit; final PASS still needs every record and worker')
     args = parser.parse_args()
+    if args.watch_seconds < 0 or args.watch_seconds > 43200 or args.partial and args.watch_seconds:
+        parser.error('Use either partial mode or a bounded watch in 1..43200 seconds')
     root,study,output = [p.resolve() for p in (args.source_root,args.study,args.output)]
     if not output.is_relative_to((root/'build').resolve()) and not output.is_relative_to((Path.cwd()/'build').resolve()):
         parser.error('Audit output must stay in owned ignored build storage')
@@ -717,7 +737,7 @@ def main():
         os.environ[name] = '1'
     started = time.perf_counter()
     try:
-        result = Auditor(root,study,output).run(args.partial)
+        result = Auditor(root,study,output).run(args.partial,args.watch_seconds)
         result['audit_wall_seconds'] = time.perf_counter()-started
         save(output/'audit.json',result)
         print(json.dumps(dict(status=result['status'],completed_records=result['completed_records'],missing_records=result['missing_records'])),flush=True)

@@ -62,6 +62,13 @@ failure details are written privately, while console output contains only
 status and exception class. The auditor checks its own source bytes at both
 boundaries so a source edit during execution cannot change the reported epoch.
 
+`--watch-seconds N` instead audits immutable records once as they finish, retaining
+read-only decoding/feature caches. It waits at most 30 seconds between checks
+and stops waiting at the declared deadline. A running record audit may finish
+after that deadline. PASS still requires every prepared record and all six final
+worker receipts; expiration produces an explicit partial receipt. This mode
+does not start, restart or modify any study worker.
+
 Neither a numerical audit nor unchanged decoder source establishes audibility
 or real-time support. Complete-player Flash/SRAM/stack/PWM/timing checks with
 interrupts active remain a separate admission step. The ordinary frontier is
