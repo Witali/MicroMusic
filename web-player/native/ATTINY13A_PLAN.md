@@ -33,6 +33,15 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Official reference-host preparation, 2026-10-30: original signed Studio Shell
+prerequisites and terms are cached, registered and statically inspected. No
+installer or official simulator session has run. Read-only registry/event checks
+leave the earlier GUI exit cause unknown. The concrete
+[installation review](devices/attiny13a/reference-host-setup.md) separates pending
+system-component approval from existing GUI launch permission. The core MSI,
+drivers and programming remain outside that proposal. This is host preparation,
+not oracle/hardware evidence; the 24/31 count remains unchanged.
+
 Wide clock-ratio checkpoint, 2026-10-30: common binary factors reduce the wide
 intermediate while restoring the exact original remainder and overflow checks.
 Only native `ratio`/`duration` bodies change; the runtime grows 109 bytes to 124614,

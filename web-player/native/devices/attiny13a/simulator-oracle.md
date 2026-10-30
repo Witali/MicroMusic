@@ -388,6 +388,28 @@ MDB route still needs an accessible supported MPLAB X installation/distribution.
 
 ## Oracle limits
 
+### Host prerequisite preparation, 2026-10-30
+
+The user confirms no local MPLAB X installation or installer is available.
+The alternative [Studio host installation review](reference-host-setup.md)
+now pins original signed Shell 14.0.23107.10 and KB3095681 prerequisites,
+their terms, static inspection and offline checks. Neither installer has run.
+Both registry views lack AppEnv 14.0 and the Shell servicing marker; the x86
+VCRUNTIME140 DLL is present. Newly permitted targeted event queries succeeded
+but found no Studio Application Error/.NET Runtime matches. The earlier exit
+cause is still unknown; missing Shell registration is not a diagnosis.
+
+Computer-use inventory now initializes, superseding the earlier kernel-path
+failure, but browser access is disabled in Work settings. No settings changed
+or tab was created. No Windows Sandbox launcher is present. The proposed next
+step requires installation approval beyond existing GUI-only permission;
+it excludes the Microchip core MSI, its declared LocalSubnet firewall exceptions,
+drivers and programming. Original licenses are ready for local review.
+See the [sanitized preparation report](../../../reports/reference-host-preparation-20261030.json).
+**No official simulator session has executed and no hardware item is closed.**
+
+### Supported model coverage
+
 The official MPLAB X [debug feature matrix](https://ww1.microchip.com/downloads/aemDocuments/documents/DEV/ProductDocuments/SupportingCollateral/SimDebugFeatures.pdf)
 lists ATtiny13A. The [peripheral matrix](https://ww1.microchip.com/downloads/aemDocuments/documents/DEV/ProductDocuments/SupportingCollateral/SimPeripheralSupport.pdf)
 lists NVMController, PORTB, TC0 and WDT for it; ADC, comparator and external

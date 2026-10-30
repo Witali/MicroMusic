@@ -1,0 +1,83 @@
+{
+  "schema": "micromusic-reference-host-preparation-v1",
+  "date": "2026-10-30",
+  "result": "Original prerequisites and terms prepared for review; no official simulator session, installer execution, system change or checklist closure.",
+  "observations": {
+    "browserInventoryInitialized": true,
+    "browserUseDisabledInWorkSettings": true,
+    "browserTabsCreated": 0,
+    "settingsChanged": false,
+    "appEnv14Registered32": false,
+    "appEnv14Registered64": false,
+    "x86Vcruntime140Present": true,
+    "x86Vcruntime140Version": "14.51.36247.0",
+    "matchingStudioApplicationErrorEvents": 0,
+    "matchingStudioNetRuntimeEvents": 0,
+    "targetedEventQueriesSucceeded": true,
+    "appEnv14ActivityLogPresent": false,
+    "windowsSandboxLauncherPresent": false,
+    "studioExitCauseEstablished": false,
+    "officialSimulatorSessionExecuted": false,
+    "shellServicingMarker32Present": false,
+    "shellServicingMarker64Present": false
+  },
+  "staticInspection": {
+    "shellMsiCount": 33,
+    "shellMsiWithFirewallNamedTables": 0,
+    "microchipCoreFirewallRows": [
+      {
+        "program": "[STUDIODIR]\\atbackend\\atbackend.exe",
+        "remoteAddresses": "LocalSubnet",
+        "profile": 2147483647
+      },
+      {
+        "program": "[STUDIODIR]\\AtmelStudio.exe",
+        "remoteAddresses": "LocalSubnet",
+        "profile": 2147483647
+      }
+    ],
+    "meaning": "Original metadata inspected read-only. No MSI custom actions were called and absence of a named table does not prove every installer side effect."
+  },
+  "proposedApprovalScope": {
+    "install": [
+      "microchip-studio-isolated-shell",
+      "microchip-studio-shell-kb3095681"
+    ],
+    "retryPreviouslyAuthorizedExtractedStudio": true,
+    "includesMicrochipCoreMsi": false,
+    "includesDriversOrProgrammer": false,
+    "automaticRestart": false,
+    "guaranteesSuccessfulStudioLaunch": false
+  },
+  "registry": "tools/downloads.json",
+  "downloadAssetIds": [
+    "microchip-studio-user-guide",
+    "microchip-studio-isolated-shell",
+    "microchip-studio-shell-kb3095681",
+    "microchip-studio-vc2010-x86",
+    "microsoft-vs2015-shell-license"
+  ],
+  "derivedAssetIds": [
+    "studio-shell-ux-inspection",
+    "studio-shell-payload-cab",
+    "studio-shell-msi-inspection",
+    "studio-shell-update-ux-inspection",
+    "studio-vc2010-license-inspection",
+    "studio-shell-license-text"
+  ],
+  "checks": {
+    "downloadBytes": 373989724,
+    "downloadAssets": 5,
+    "validMicrosoftAuthenticodeSignatures": 3,
+    "sizeAndSha1MatchMicrochipBootstrap": true,
+    "derivedAssets": 6,
+    "shellMsiMatchBurnManifest": 33,
+    "termsAccepted": false,
+    "installersExecuted": 0,
+    "systemChanges": false,
+    "derivedFilesVerified": 42,
+    "localReviewLinksVerified": 6,
+    "nativeAndSiteArtifactsUnchanged": true,
+    "compilerIdentityUnchanged": true
+  }
+}

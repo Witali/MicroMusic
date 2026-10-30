@@ -44,6 +44,18 @@
       "license": "Microchip document copyright and usage notices in the PDF; cached locally, not vendored."
     },
     {
+      "id": "microchip-studio-user-guide",
+      "version": "DS50002718E",
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/Microchip-Studio-UserGuide-DS50002718.pdf",
+      "publisherPage": "https://onlinedocs.microchip.com/oxy/GUID-ECD8A826-B1DA-44FC-BE0B-5A53418A47BD-en-US-12/index.html",
+      "bytes": 16564274,
+      "sha256": "0a7a6f61870128aa4d39203cbe7cc4bf799c18c27d7fb1ab4395e444c6180ec3",
+      "path": "build/reference-downloads/Microchip-Studio-UserGuide-DS50002718.pdf",
+      "purpose": "Inspect official Studio startup and simulator-host prerequisites; no system installation, programming or UI setting changes.",
+      "license": "Microchip document copyright and usage notices in the original PDF; local cache only, not vendored or redistributed.",
+      "provenance": "Exact official PDF URL registered before local acquisition on 2026-10-30. The web reader rejected the 16564274-byte PDF as too large; ordinary HTTPS download then succeeded. Revision E and 358 pages verified from the PDF; size/SHA-256 computed locally, not a separately published checksum."
+    },
+    {
       "id": "mplab-x-sdk",
       "version": "6.25",
       "url": "https://ww1.microchip.com/downloads/mplab/x/sdk/mplab-x-sdk-v6.25.zip",
@@ -117,6 +129,78 @@
       "provenance": "Exact HTTPS update-center URL documented by Microchip; registered before ordinary GET on 2026-10-27. Received200 XML, size/SHA256 computed locally, not a separately published vendor checksum. No module installed or executed.",
       "bytes": 87530,
       "sha256": "86615a8559bd001092d13517806d49ea628701abcdd30037139460efa137b21a"
+    },
+    {
+      "id": "microchip-studio-isolated-shell",
+      "version": "14.0.23107.10",
+      "url": "https://s3-us-west-2.amazonaws.com/atmel-studio/visual-studio-isolated-shell-14.0.23107.10.exe",
+      "publisherManifestSha1": "FE948F0DAB52EB8CB5A740A77D8934B9E1A8E301",
+      "publisherSourceAsset": "microchip-studio-web",
+      "publisherManifestMember": "0",
+      "path": "build/reference-downloads/visual-studio-isolated-shell-14.0.23107.10.exe",
+      "purpose": "Prepare original prerequisite payload and inspect its license/metadata for a reviewable official Studio host installation; no execution, installation, registry changes or drivers.",
+      "license": "Original Microsoft 2015 Shell/Extensions/C++ terms selected by bundle LicenseFwlinkId=614950; cached as microsoft-vs2015-shell-license. No terms accepted; local cache only, no redistribution.",
+      "provenance": "Exact URL, size and SHA-1 registered from the acquired Authenticode-valid Microchip Studio 7.0.2594 Burn manifest before acquisition. Ordinary HTTPS download completed on 2026-10-30; publisher size/SHA-1, local SHA-256 and Valid Microsoft Authenticode signature verified. No package executed or installed.",
+      "bytes": 349077264,
+      "sha256": "cbcd5fb989b26dc3ad89f2a6d7ba249f7eb863586321fca3d75975410537cbf0",
+      "authenticode": {
+        "status": "Valid",
+        "signer": "Microsoft Corporation",
+        "checkedOn": "2026-10-30"
+      }
+    },
+    {
+      "id": "microchip-studio-shell-kb3095681",
+      "version": "14.0.23317.0",
+      "url": "https://s3-us-west-2.amazonaws.com/atmel-studio/VS14-KB3095681-14.0.23317.0.exe",
+      "publisherManifestSha1": "02A26E554FBB4232ACD36E70D09F2C7893D399CD",
+      "publisherSourceAsset": "microchip-studio-web",
+      "publisherManifestMember": "0",
+      "path": "build/reference-downloads/VS14-KB3095681-14.0.23317.0.exe",
+      "purpose": "Prepare the exact Studio shell prerequisite update for static license/metadata inspection and an installation review; no execution, installation or system changes.",
+      "license": "Original Microsoft supplemental terms in UX cabinet member u76 (License.htm), retained in the linked inspection asset; no terms accepted or redistribution.",
+      "provenance": "Exact URL, size and SHA-1 registered from the acquired Authenticode-valid Microchip Studio 7.0.2594 Burn manifest before acquisition. Ordinary HTTPS download completed on 2026-10-30; publisher size/SHA-1, local SHA-256 and Valid Microsoft Authenticode signature verified. No package executed or installed.",
+      "bytes": 3029768,
+      "sha256": "271dc2d7dd9fe171618cb4d1f8bd02a7b7cebb75288277f859e6b247b2d01e2d",
+      "authenticode": {
+        "status": "Valid",
+        "signer": "Microsoft Corporation",
+        "checkedOn": "2026-10-30"
+      }
+    },
+    {
+      "id": "microchip-studio-vc2010-x86",
+      "version": "10.0.30319.01",
+      "url": "https://s3-us-west-2.amazonaws.com/atmel-studio/vcredist_x86-10.0.30319.01.exe",
+      "publisherManifestSha1": "372D9C1670343D3FB252209BA210D4DC4D67D358",
+      "publisherSourceAsset": "microchip-studio-web",
+      "publisherManifestMember": "0",
+      "path": "build/reference-downloads/vcredist_x86-10.0.30319.01.exe",
+      "purpose": "Prepare the exact x86 runtime prerequisite and inspect original metadata/terms before any installation review; no execution, installation or system changes.",
+      "license": "Original English EULA from embedded cabinet member .\\.\\1033\\eula.rtf retained in the linked inspection asset; no terms accepted or redistribution.",
+      "provenance": "Exact URL, size and SHA-1 registered from the acquired Authenticode-valid Microchip Studio 7.0.2594 Burn manifest before acquisition. Ordinary HTTPS download completed on 2026-10-30; publisher size/SHA-1, local SHA-256 and Valid Microsoft Authenticode signature verified. No package executed or installed.",
+      "bytes": 5073240,
+      "sha256": "8162b2d665ca52884507ede19549e99939ce4ea4a638c537fa653539819138c8",
+      "authenticode": {
+        "status": "Valid",
+        "signer": "Microsoft Corporation",
+        "checkedOn": "2026-10-30"
+      }
+    },
+    {
+      "id": "microsoft-vs2015-shell-license",
+      "version": "mt171552 web snapshot, 2026-10-30",
+      "url": "https://visualstudio.microsoft.com/license-terms/mt171552/",
+      "publisherPage": "https://visualstudio.microsoft.com/license-terms/",
+      "publisherSourceAsset": "microchip-studio-isolated-shell",
+      "publisherManifestMember": "UX/0: LicenseFwlinkId=614950; UX/u7: license-link template",
+      "licenseLink": "https://go.microsoft.com/fwlink/?LinkID=614950",
+      "path": "build/reference-downloads/microsoft-vs2015-shell-license-mt171552.html",
+      "purpose": "Preserve the exact public license page selected by the verified Shell bootstrap for user review before installation approval; no terms accepted.",
+      "license": "Microsoft license-page copyright and terms; local review cache only, no redistribution.",
+      "provenance": "Official license directory names this as the 2015 add-ons/Shells/C++ terms. Ordinary HTTPS HEAD of the bootstrap-declared public fwlink resolved to this canonical URL with status 200 on 2026-10-30. Registered before GET. GET succeeded on 2026-10-30; actual page title and the 2015 Shell/Extensions/C++ terms verified. Local size/SHA-256 recorded; no terms accepted.",
+      "bytes": 245178,
+      "sha256": "e3850d4c9a02e89cb9c6d97213c267cd9aae033622b30d7ee7472f744899575f"
     }
   ],
   "derivedAssets": [
@@ -181,6 +265,367 @@
       "license": "Keep the original archive and complete7.0/License/ plus component notices; no redistribution.",
       "fileCount": 1723,
       "bytes": 279065945
+    },
+    {
+      "id": "studio-shell-ux-inspection",
+      "sourceAsset": "microchip-studio-isolated-shell",
+      "path": "build/reference-host-preparation-20261030/shell-ux",
+      "sourceContainer": "First embedded UX cabinet; static 7-Zip extraction only.",
+      "files": [
+        {
+          "path": "build/reference-host-preparation-20261030/shell-ux/0",
+          "bytes": 90696,
+          "sha256": "ecb6c04d4dc1743517bb88ffbda5c6efcc5d806e3a660bfe6175b13227ad40ec",
+          "member": "0",
+          "originalName": "Burn manifest"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-ux/u7",
+          "bytes": 85341,
+          "sha256": "6e02f89206201aeed15984b5f57468de828058556a962845e226c85f2191d718",
+          "member": "u7",
+          "originalName": "LocalizableStrings.xml"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-ux/u8",
+          "bytes": 8615,
+          "sha256": "b1de715b3ed3ce17c47268a6661f3dc8c9ed729ca503dc673170e6aa6e032719",
+          "member": "u8",
+          "originalName": "SkuResources.xaml"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-ux/u44",
+          "bytes": 86792,
+          "sha256": "b57c2c5c91b28ee58294e05f9a010ba0b933bc8ca59ac480b9c7c0c8b4ac0537",
+          "member": "u44",
+          "originalName": "BootstrapperApplicationData.xml"
+        }
+      ],
+      "licenseReference": "Bundle variable LicenseFwlinkId=614950 resolves to microsoft-vs2015-shell-license; no agreement accepted."
+    },
+    {
+      "id": "studio-shell-payload-cab",
+      "sourceAsset": "microchip-studio-isolated-shell",
+      "sourceOffset": 1889280,
+      "path": "build/reference-host-preparation-20261030/shell-payloads.cab",
+      "bytes": 347171929,
+      "sha256": "57512fb62f455740f364fc98684a21271eec871f8dc34c1345f025d608f3f6e4",
+      "cabinetFiles": 77,
+      "provenance": "Exact validated MSCF container bounds in the original signed bundle; copied without executing it."
+    },
+    {
+      "id": "studio-shell-msi-inspection",
+      "sourceAsset": "microchip-studio-isolated-shell",
+      "sourceContainerAsset": "studio-shell-payload-cab",
+      "path": "build/reference-host-preparation-20261030/shell-msi",
+      "fileCount": 33,
+      "files": [
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a3",
+          "bytes": 69632,
+          "sha256": "1aadf5c66cc170435d0a15726e5e8e92c6e5639b68a57707d4b4a1000c835724",
+          "member": "a3",
+          "originalName": "packages\\vcRedistD14\\debug\\x86\\vc_runtimeDebug_x86.msi",
+          "publisherSha1": "B3D3591EDC5D2B4ED6FFC4B98C758EBC3B964314"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a4",
+          "bytes": 69632,
+          "sha256": "31db683c8a5b4f05b120eedbdabd80f06d23b2c1e578a126f7126eedbc5e6b13",
+          "member": "a4",
+          "originalName": "packages\\vcRedistD14\\debug\\x64\\vc_runtimeDebug_x64.msi",
+          "publisherSha1": "EE802952FCDB303FC95F62C02EBFA32640A26736"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a5",
+          "bytes": 69632,
+          "sha256": "f19a1f50c43bedbee6937ae93311a56a2933c9762cb65e70b72dc77289a61b49",
+          "member": "a5",
+          "originalName": "packages\\vcRuntimeDebug_x86\\vc_runtimeDebug_x86.msi",
+          "publisherSha1": "1628827510B46DA07FD3E663A77FDFE5A3BB3352"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a6",
+          "bytes": 69632,
+          "sha256": "b28028fb632bef7817af69d99ecfa0ca2d0069a99b0054da637ea0fd05648286",
+          "member": "a6",
+          "originalName": "packages\\vcRuntimeDebug_amd64\\vc_runtimeDebug_x64.msi",
+          "publisherSha1": "E70D2932D2644E738A88FB1E783D4FA19F2912E1"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a9",
+          "bytes": 2064384,
+          "sha256": "b5f74d221970b171c656151bdd4e8342cfd480b659fe2d80e615b2a0b6b26db0",
+          "member": "a9",
+          "originalName": "packages\\vs_vshub\\VsHub_Core.msi",
+          "publisherSha1": "3B8A55ED7A927552356DF6CE6CCECA4D0768DED1"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a10",
+          "bytes": 729088,
+          "sha256": "ac0a51aa9f7f44d0e6b4b5539407be86ef0ab7bb65646165154cfbc99a17248b",
+          "member": "a10",
+          "originalName": "packages\\64bitPrereq\\x64\\VS_Prerequisites_x64_neutral.msi",
+          "publisherSha1": "927A0ACB7AD058708FE7E1408FE9008A9BD8E2DF"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a11",
+          "bytes": 143360,
+          "sha256": "d2733ddbfed05e2d1a6503bf870929c32a0dc46bcc5e6ed83aea85f453df7e5a",
+          "member": "a11",
+          "originalName": "packages\\64bitPrereq\\x64\\VS_Prerequisites_x64_LP_enu.msi",
+          "publisherSha1": "0F7452843D054EF6B221020F842D4121B18D3467"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a12",
+          "bytes": 593920,
+          "sha256": "b36f22a9ef37ab93ed30c05300d611c253d5f71397e68994a8a6f5133ffe3b0d",
+          "member": "a12",
+          "originalName": "packages\\netfx_451mtpack\\netfx_451mtpack.msi",
+          "publisherSha1": "9CE3D4D3754A053BC975D0994053B01550B85C7D"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a13",
+          "bytes": 577536,
+          "sha256": "2e8bc81d52c4316951746535aec190bfca0d70ed1025bac9235e5dba12cc2b02",
+          "member": "a13",
+          "originalName": "packages\\netfx_451mtpack\\enu\\netfx_451mtpacklp.msi",
+          "publisherSha1": "8DD127D1D4E73CC699F8FD717EEB96C356664E97"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a14",
+          "bytes": 602112,
+          "sha256": "ed8bd169d41fc11e4de0da4b8ac5a6f8b138ea456846779e465c524f3f556ea9",
+          "member": "a14",
+          "originalName": "packages\\netfx_452mtpack\\netfx_452mtpack.msi",
+          "publisherSha1": "86BFF6619D052F617E7696161B106F7AF7ECD48F"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a15",
+          "bytes": 585728,
+          "sha256": "e64636187e8b7bb68d87f8644618a874561e5a02f2acb2ebbef068ee2a0df113",
+          "member": "a15",
+          "originalName": "packages\\netfx_452mtpack\\enu\\netfx_452mtpacklp.msi",
+          "publisherSha1": "79B16CC63D5368824D7E30D011BD0BF4732A25BB"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a16",
+          "bytes": 274432,
+          "sha256": "2d65742e3082c5caf58a90ab061dcb2fc74877ae83ccb15a8cb261b247fdb310",
+          "member": "a16",
+          "originalName": "packages\\NetFxDTP\\NetFx45_DTP.msi",
+          "publisherSha1": "3A3B3D4CD3E4E18BCFA1D2D309FF85EDA9C2262D"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a17",
+          "bytes": 176640,
+          "sha256": "1985af77a68a4d352066fba75caaada09b62c76d787e2c5bcd7a62b8bd13f8b2",
+          "member": "a17",
+          "originalName": "packages\\NetFxDTP\\NetFx_DTP.msi",
+          "publisherSha1": "6237E5DD58DB306A20C8EDF60AC50785945E2B46"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a19",
+          "bytes": 409600,
+          "sha256": "735b383383f5403808365b8052a94a517a573c3c01e988a50c8e87d9bd9f1d30",
+          "member": "a19",
+          "originalName": "packages\\BuildTools_MSBuild_x86\\BuildTools_MSBuild.msi",
+          "publisherSha1": "8579023A502393C3AD86ACB56842CD849D33ECA7"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a20",
+          "bytes": 442368,
+          "sha256": "d2c31acaa24a957ef4500a142a4636aed4d3c73e8fb5fb1022d536bc223d4874",
+          "member": "a20",
+          "originalName": "packages\\BuildTools_MSBuild_amd64\\BuildTools_MSBuild.msi",
+          "publisherSha1": "28AADCAFED7132FE14F1DADD686F5940D50020C1"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a21",
+          "bytes": 319488,
+          "sha256": "d0fa8c6e981be24f6cb7e9d35b1fd80a6a44bcf4ccf5ed4f4aec9078805b2574",
+          "member": "a21",
+          "originalName": "packages\\BuildTools_MSBuildResMsi_x86\\BuildTools_MSBuildResMsi.msi",
+          "publisherSha1": "3D9A4CAA55ADCD80F4DD52FC39CE8B3A0A171570"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a22",
+          "bytes": 319488,
+          "sha256": "616808539f9e9901212ceead8f734aa8b5fbe94199cf8c760227fc44f42fb545",
+          "member": "a22",
+          "originalName": "packages\\BuildTools_MSBuildResMsi_amd64\\BuildTools_MSBuildResMsi.msi",
+          "publisherSha1": "095C0487AAF08B214B1A25E7DDE1845CE265DA01"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a23",
+          "bytes": 417792,
+          "sha256": "7cc478ff55506846e452136ba82bf639f31ea57c777b439f67f468371f76f58c",
+          "member": "a23",
+          "originalName": "packages\\sdk_tools451\\sdk_tools451.msi",
+          "publisherSha1": "CB7DB5E4B430065051DA455DFB223484B552BD93"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a24",
+          "bytes": 249856,
+          "sha256": "62eeb8b96765fada6abf048de406d482cc98595b0eb0b05e43f5e4a83d811e91",
+          "member": "a24",
+          "originalName": "packages\\sdk_tools35\\sdk_tools35.msi",
+          "publisherSha1": "07DA327675FF5BCC9E1B0C68CFC535AC3BE9BEB8"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a25",
+          "bytes": 3125248,
+          "sha256": "d99d572baae44cc5b79a1759761e1d1f0491382f64cfb547d2efbe56cd01cc84",
+          "member": "a25",
+          "originalName": "packages\\SQLSysClrTypes_x86\\SQLSysClrTypes.msi",
+          "publisherSha1": "C968DDA9B581AC41BDFF3574F68D8C8446751C6C"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a26",
+          "bytes": 6631424,
+          "sha256": "654e7a016340a262f63f143984dcef42c85c06aa92671bcac22508f7c5b7ba41",
+          "member": "a26",
+          "originalName": "packages\\SharedManagementObjects_x86\\SharedManagementObjects.msi",
+          "publisherSha1": "2A1FF0E595005E062876F4CCCBBB85FCCAC186A2"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a27",
+          "bytes": 307200,
+          "sha256": "21ef0144e6c6b8ed5c4ce1fe0c1560d4c2699ce00be528aef1342202926f6665",
+          "member": "a27",
+          "originalName": "packages\\Help\\help3_vs_net.msi",
+          "publisherSha1": "FE3BA7FFEBF2B288F953EB20AD13E6C62C9CDA79"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a28",
+          "bytes": 253952,
+          "sha256": "e59c0dbed61f33d03308eee03e2e77aa7f0a980d30211504746926bacced37f1",
+          "member": "a28",
+          "originalName": "packages\\Bliss_Core\\Bliss_Core_net.msi",
+          "publisherSha1": "F4D33B5F46FDC4BBF491CF452157C68118D363B1"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a29",
+          "bytes": 159744,
+          "sha256": "629c847330f3b5f20987ffdb758416bd0c9338ae5f2b50247592071965ec1b54",
+          "member": "a29",
+          "originalName": "packages\\Bliss_LP\\enu\\Bliss_LP_net.msi",
+          "publisherSha1": "3E691067F66FA2D1BBD562A1E15594CDA3007277"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a31",
+          "bytes": 487424,
+          "sha256": "cc006114737adee43fbd50166ed9f56a327f2a2496a952ef1bf0b48565395104",
+          "member": "a31",
+          "originalName": "packages\\vs_minshellcore\\vs_minshellcore.msi",
+          "publisherSha1": "DC002ADA3EE456825F26F948CF8C2E558525B63D"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a32",
+          "bytes": 667648,
+          "sha256": "8cd54aae5875b5a4044a8e2c29d86416f65eeed759c28700680139d002ead811",
+          "member": "a32",
+          "originalName": "packages\\vs_minshellinterop\\vs_minshellinterop.msi",
+          "publisherSha1": "2CA05E820D327A71F707FDC82B893024502F6F2A"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a33",
+          "bytes": 135168,
+          "sha256": "afbf9f90696d15178fd42c19270800075834a13e4d5ee58a5d797e83416452f8",
+          "member": "a33",
+          "originalName": "packages\\vs_minshellres\\vs_minshellres.msi",
+          "publisherSha1": "916D3D174C89E000ED80D8F7FB9457B863622E79"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a34",
+          "bytes": 1601536,
+          "sha256": "40b5c95ce627300a4725aaa4c0c58f807b7281960c552f3f7f83fb8b4c471a35",
+          "member": "a34",
+          "originalName": "packages\\vs_isoshellcore\\vs_isoshellcore.msi",
+          "publisherSha1": "D702DEF2C1C044E9FA2FDE1DFBE7C4FB4A7A0B40"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a35",
+          "bytes": 425984,
+          "sha256": "ae191fde205dac8abbe34fe7dce2d82dbfb1626b7056f4d65d14dfcb1d7e4ef1",
+          "member": "a35",
+          "originalName": "packages\\vs_isoshellres\\vs_isoshellres.msi",
+          "publisherSha1": "0A3159DCAD4A67850C71AF3A46EFB88EE4FA0F2B"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a43",
+          "bytes": 593920,
+          "sha256": "b36f22a9ef37ab93ed30c05300d611c253d5f71397e68994a8a6f5133ffe3b0d",
+          "member": "a43",
+          "originalName": "packages\\netfx_451mtpack\\netfx_451mtpack.msi",
+          "publisherSha1": "9CE3D4D3754A053BC975D0994053B01550B85C7D"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a45",
+          "bytes": 577536,
+          "sha256": "2e8bc81d52c4316951746535aec190bfca0d70ed1025bac9235e5dba12cc2b02",
+          "member": "a45",
+          "originalName": "packages\\netfx_451mtpack\\enu\\netfx_451mtpacklp.msi",
+          "publisherSha1": "8DD127D1D4E73CC699F8FD717EEB96C356664E97"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a47",
+          "bytes": 602112,
+          "sha256": "ed8bd169d41fc11e4de0da4b8ac5a6f8b138ea456846779e465c524f3f556ea9",
+          "member": "a47",
+          "originalName": "packages\\netfx_452mtpack\\netfx_452mtpack.msi",
+          "publisherSha1": "86BFF6619D052F617E7696161B106F7AF7ECD48F"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-msi/a49",
+          "bytes": 585728,
+          "sha256": "e64636187e8b7bb68d87f8644618a874561e5a02f2acb2ebbef068ee2a0df113",
+          "member": "a49",
+          "originalName": "packages\\netfx_452mtpack\\enu\\netfx_452mtpacklp.msi",
+          "publisherSha1": "79B16CC63D5368824D7E30D011BD0BF4732A25BB"
+        }
+      ],
+      "provenance": "Selected MSI members match original Burn-manifest sizes/SHA-1 values. OpenDatabase mode0 and table-name queries only; no custom actions or installation. No firewall-named table found; this is not a proof of every custom-action behavior."
+    },
+    {
+      "id": "studio-shell-update-ux-inspection",
+      "sourceAsset": "microchip-studio-shell-kb3095681",
+      "path": "build/reference-host-preparation-20261030/shell-update-ux",
+      "files": [
+        {
+          "path": "build/reference-host-preparation-20261030/shell-update-ux/0",
+          "bytes": 45440,
+          "sha256": "590d5412276943bf6db8ae611d67c2956659c33ab328e3a4329dc838d016ada0",
+          "member": "0",
+          "originalName": "Burn manifest"
+        },
+        {
+          "path": "build/reference-host-preparation-20261030/shell-update-ux/u76",
+          "bytes": 2668,
+          "sha256": "bb6b3640f944a920e1e9e3bcd8f8556c19aa02f912ac269a08939e8454581711",
+          "member": "u76",
+          "originalName": "License.htm",
+          "reviewPath": "build\\reference-host-preparation-20261030\\licenses\\Microsoft-KB3095681-License.htm"
+        }
+      ],
+      "provenance": "Static UX cabinet extraction; original license and its readable-name copy have identical bytes. No installer executed or terms accepted."
+    },
+    {
+      "id": "studio-vc2010-license-inspection",
+      "sourceAsset": "microchip-studio-vc2010-x86",
+      "sourceMember": ".\\.\\1033\\eula.rtf",
+      "path": "build/reference-host-preparation-20261030/vc2010-license/eula.rtf",
+      "bytes": 7080,
+      "sha256": "f4ff4eace31b75176a0806e1693041d546d2599aec0c77d295bad09cac7d9fe7",
+      "provenance": "Selected original English license extracted flat with 7-Zip e; no runtime package execution or terms acceptance."
+    },
+    {
+      "id": "studio-shell-license-text",
+      "sourceAsset": "microsoft-vs2015-shell-license",
+      "path": "build/reference-host-preparation-20261030/licenses/Microsoft-VS2015-Shell-License.txt",
+      "bytes": 9374,
+      "sha256": "5c8eebf32bacf8f24be287a5cad9951c46c32ba6c21b45475bc8476a1febb6fb",
+      "adaptation": "Project text view of visible main HTML content with whitespace normalized; scripts/styles/noscript omitted. Original HTML retained as the authority; no legal interpretation or agreement acceptance."
     }
   ],
   "plannedAssets": [
