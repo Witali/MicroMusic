@@ -7,6 +7,7 @@ import json
 import math
 import os
 from pathlib import Path
+import subprocess
 import sys
 import time
 import traceback
@@ -305,6 +306,7 @@ def main():
         targets = {identifier:target_for(bases[identifier],C,inputs) for identifier in {job['baseline_id'] for job in assigned}}
         prep_cost = elapsed(started)
         binding = dict(source_commit=args.source_commit,production_sources=inventory,research_sources=sources,
+            research_commit=subprocess.check_output(['git','-C',str(HERE),'rev-parse','HEAD'],text=True).strip(),
             module_origins=check_origins(args.source_root),inputs_sha256=inputs.pins,source_root=str(args.source_root),
             baselines_path=str(args.baselines),assigned_jobs=[job['id'] for job in assigned],shard=args.shard,
             settings=dict(single=SINGLE,trajectory=TRAJECTORY),preparation_cost=prep_cost,
@@ -312,7 +314,9 @@ def main():
                 packages={name:__import__('importlib.metadata',fromlist=['version']).version(name) for name in ('numpy','numba','scipy','pystoi','soundfile')},
                 threads={name:os.environ[name] for name in ('OPENBLAS_NUM_THREADS','OMP_NUM_THREADS','NUMBA_NUM_THREADS')}))
         save(args.output/'binding-private.json',binding)
+        native_started = timed()
         with no_initial_fits(attempt,args.output), C.BatchSession('batch',prebuilt=args.original_study/'native/common.so') as common, C.BatchSession('batch',prebuilt=args.original_study/'native/v5-only.so') as only:
+            native_loading_cost = elapsed(native_started)
             warming = warmup(C,common,only,args.output)
             if args.warmup_only:
                 assigned = []
@@ -334,13 +338,17 @@ def main():
         inputs.verify()
         if any(row['status']!='complete' for row in attempt['helper_calls']):
             raise AssertionError('An actual helper call did not complete')
-        summary = dict(status='PASS',shard=args.shard,warmup_only=args.warmup_only,
-            arm_records=len(results),helper_calls=len(attempt['helper_calls']),new_initial_fits=0,
-            actual_cost=elapsed(started),preparation_cost=prep_cost,warmup_cost=warming['cost'],
-            final_guard_cost=elapsed(guard_start),counters=dict(counters),whole_counters=dict(evaluator.counts),
-            no_old_whole_metric_reuse=True)
+        guard_cost = elapsed(guard_start)
+        persist_started = timed()
         save(args.output/'results-private.json',results)
         save(args.output/'metric-cache-provenance-private.json',evaluator.provenance)
+        terminal_artifact_cost = elapsed(persist_started)
+        summary = dict(status='PASS',shard=args.shard,warmup_only=args.warmup_only,
+            arm_records=len(results),helper_calls=len(attempt['helper_calls']),new_initial_fits=0,
+            actual_cost=elapsed(started),preparation_cost=prep_cost,native_loading_cost=native_loading_cost,
+            warmup_cost=warming['cost'],terminal_artifact_cost=terminal_artifact_cost,
+            final_guard_cost=guard_cost,counters=dict(counters),whole_counters=dict(evaluator.counts),
+            no_old_whole_metric_reuse=True)
         save(args.output/'summary.json',summary)
         attempt.update(status='complete',summary=summary)
         save(args.output/'attempt-private.json',attempt)
