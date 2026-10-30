@@ -72,3 +72,10 @@ with the [codec report](../../Codecs/Speex/AVR/WB_QMF.md).
 This is exact relative to the existing compact Q7/16-tap profile. It does
 not turn that profile into full 64-tap Xiph synthesis. Real-time admission
 must use the complete player with interrupts active, not the isolated kernel.
+
+For later filter extensions, check the arithmetic **and** geometry: a block
+length must divide the ring length if the cursor is implicitly zero per call;
+mirroring also changes the maximum LDD/STD displacement. The
+[offline screen](../../Codecs/Speex/AVR/WB_QMF_BUDGET.md) records the exact
+24-tap cursor and 32-tap displacement constraints; those candidates are not
+assembled or admitted.

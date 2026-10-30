@@ -71,6 +71,10 @@ root contains the historical `build/wb-corpus` and `build/higher-corpus/wb128`
 directories. Queue margins remain small: this evidence does not admit an
 unmeasured external transport or a different filter.
 
+The separate [quality budget](WB_QMF_BUDGET.md) records an offline response
+screen and the arithmetic/history constraints for longer QMF candidates.
+No additional filter or bitrate is enabled by this exact optimization.
+
 ## Reproduce
 
 Use AVR GCC 7.3.0, Node with avr8js 0.21.1 and Python 3.12+. Run from the

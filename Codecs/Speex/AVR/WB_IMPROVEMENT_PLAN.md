@@ -90,3 +90,44 @@ and 5 -> 6 samples. Two Flash-fed 128-frame production slices also pass at
 the preserved 48 C/header files against prior evidence without rerunning C.
 Ready RAM and embedded Flash do not measure external delivery latency or a
 physical board. See `reports/wb-qmf-admission.json` and `WB_QMF.md`.
+
+## Quality budget assessed; first improvement cycle complete
+
+The [offline QMF screen](WB_QMF_BUDGET.md) compares 16/20/24/32 taps against
+the full Xiph coefficient response. It identifies a 24-tap Q7 profile as the
+next bounded quality experiment, requiring more history and a retained cursor.
+It is not implemented or admitted; the present optimization preserves the
+existing sound exactly. More work remains on real-board/external-transport
+timing and any intentional quality or bitrate extension.
+
+Lower rates are a separate extension, not an effect of speeding up QMF.
+The vendored mode map and [Xiph WB manual](https://www.speex.org/docs/manual/speex-manual/node11.html)
+define 7.75 kbit/s as NB submode 2 plus the already supported HB1. Supporting
+NB5.95 first could therefore enable a future WB7.75 profile; it still needs
+implementation, independent PCM evidence and target timing admission. The
+current AVR decoder accepts only NB8/NB11 and WB9.8/WB12.8.
+
+### Lower-rate reuse assessment
+
+These are source-inspection conclusions, not implemented support or a measured
+Flash forecast. The vendored `modes.c` defines:
+
+| Proposed pair | Lower-band additions | Raw new innovation table |
+| --- | --- | ---: |
+| NB5.95 / WB7.75 | Frame pitch, per-subframe 3-tap gain, 4-bit innovation indices; same 4x10 geometry | `exc_10_16_table`, 160 B |
+| NB3.95 / WB5.75 | Forced pitch/gain, 2x20 innovation geometry | `exc_20_32_table`, 640 B |
+| NB2.15 / WB3.95 | Noise excitation, vocoder synthesis and additional persistent state | Different algorithm, not just a table |
+
+LBR LSP codebooks, LSP/LPC conversion, IIR, excitation history, QMF, HB1 LPC
+and output queue can remain shared. The cheapest first pair uses the existing
+3-tap gain table too. Its parsing, gain scaling, codebook bounds and HB folding
+reconstruction still require new code and reference checks; the raw 160 B
+table is not the total firmware increase.
+
+Prefer a build-time optional NB2 extension with mode selection once per frame
+or vector, retaining the existing fast inner kernels. Share a table-addressed
+ten-sample operation or larger vector routine where register/call cost allows;
+do not instantiate a complete decoder per rate or generalize every sample's
+hot loop. Recheck scale bounds before reusing the current signed24 ASM kernels.
+Keep a selectable C equivalent. Compare final Flash, stack, cycles, PCM and
+active-IRQ output against the current profile before admitting any extension.
