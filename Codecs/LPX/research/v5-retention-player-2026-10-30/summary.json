@@ -1,0 +1,309 @@
+{
+  "schema": "lpx-v5-adaptive-player-union-admission-v1",
+  "status": "complete",
+  "unique_chains": 8,
+  "changed_selected_cap_views": 7,
+  "unchanged_views_skipped": 76,
+  "rows": 16,
+  "passed": 12,
+  "new_images": 6,
+  "reused_images": 6,
+  "no_fit": 4,
+  "timing_or_output_failures": 0,
+  "verified_physical_samples": 640000,
+  "workers": [
+    {
+      "schema": "lpx-v5-adaptive-player-union-worker-v1",
+      "status": "complete",
+      "shard": 0,
+      "chains": 4,
+      "rows": 8,
+      "passed": 6,
+      "newly_built_and_simulated": 0,
+      "reused_frozen_images": 6,
+      "no_fit": 2,
+      "timing_or_output_failures": 0,
+      "new_fits": 0,
+      "worker_wall_seconds": 16.97292379999999
+    },
+    {
+      "schema": "lpx-v5-adaptive-player-union-worker-v1",
+      "status": "complete",
+      "shard": 1,
+      "chains": 4,
+      "rows": 8,
+      "passed": 6,
+      "newly_built_and_simulated": 6,
+      "reused_frozen_images": 0,
+      "no_fit": 2,
+      "timing_or_output_failures": 0,
+      "new_fits": 0,
+      "worker_wall_seconds": 64.78335899999365
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "comparison-001",
+      "rollback_chain": "chain-001",
+      "candidate_chain": "chain-002",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 95,
+          "cap": 3401,
+          "role": "canonical-003"
+        },
+        {
+          "phase": "speech-default",
+          "percent": 95,
+          "cap": 3401,
+          "role": "canonical-004"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3361,
+      "candidate_stream_bytes": 3365,
+      "data_saved_bytes": -4,
+      "complete_flash_saved_bytes": -4,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-001",
+      "rollback_chain": "chain-001",
+      "candidate_chain": "chain-002",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 16,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 95,
+          "cap": 3401,
+          "role": "canonical-003"
+        },
+        {
+          "phase": "speech-default",
+          "percent": 95,
+          "cap": 3401,
+          "role": "canonical-004"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3361,
+      "candidate_stream_bytes": 3365,
+      "data_saved_bytes": -4,
+      "complete_flash_saved_bytes": -4,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-002",
+      "rollback_chain": "chain-003",
+      "candidate_chain": "chain-004",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 95,
+          "cap": 3355,
+          "role": "canonical-002"
+        },
+        {
+          "phase": "speech-default",
+          "percent": 95,
+          "cap": 3355,
+          "role": "canonical-003"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 3328,
+      "candidate_stream_bytes": 3330,
+      "data_saved_bytes": -2,
+      "complete_flash_saved_bytes": -2,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-002",
+      "rollback_chain": "chain-003",
+      "candidate_chain": "chain-004",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 18,
+      "mode": "auto-quiet",
+      "input_gain": 32,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 95,
+          "cap": 3355,
+          "role": "canonical-002"
+        },
+        {
+          "phase": "speech-default",
+          "percent": 95,
+          "cap": 3355,
+          "role": "canonical-003"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 3328,
+      "candidate_stream_bytes": 3330,
+      "data_saved_bytes": -2,
+      "complete_flash_saved_bytes": -2,
+      "program_flash_change_bytes": 0
+    },
+    {
+      "id": "comparison-003",
+      "rollback_chain": "chain-005",
+      "candidate_chain": "chain-006",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 95,
+          "cap": 1715,
+          "role": "canonical-003"
+        },
+        {
+          "phase": "speech-default",
+          "percent": 95,
+          "cap": 1715,
+          "role": "canonical-004"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": true,
+      "rollback_stream_bytes": 1696,
+      "candidate_stream_bytes": 1697,
+      "data_saved_bytes": -1,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": -1
+    },
+    {
+      "id": "comparison-003",
+      "rollback_chain": "chain-005",
+      "candidate_chain": "chain-006",
+      "profile": 4,
+      "cohort": "speech",
+      "source_ordinal": 36,
+      "mode": "auto-quiet",
+      "input_gain": 16,
+      "reference_domain": "declared-auto-target",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "speech-screen",
+          "percent": 95,
+          "cap": 1715,
+          "role": "canonical-003"
+        },
+        {
+          "phase": "speech-default",
+          "percent": 95,
+          "cap": 1715,
+          "role": "canonical-004"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": true,
+      "rollback_stream_bytes": 1696,
+      "candidate_stream_bytes": 1697,
+      "data_saved_bytes": -1,
+      "complete_flash_saved_bytes": 0,
+      "program_flash_change_bytes": -1
+    },
+    {
+      "id": "comparison-004",
+      "rollback_chain": "chain-007",
+      "candidate_chain": "chain-008",
+      "profile": 4,
+      "cohort": "nonspeech",
+      "source_ordinal": 7,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 202600,
+          "role": "canonical-002"
+        }
+      ],
+      "extra_irq_cycles": 0,
+      "both_passed": false,
+      "rollback_stream_bytes": 202600,
+      "candidate_stream_bytes": 202600,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": null,
+      "program_flash_change_bytes": null
+    },
+    {
+      "id": "comparison-004",
+      "rollback_chain": "chain-007",
+      "candidate_chain": "chain-008",
+      "profile": 4,
+      "cohort": "nonspeech",
+      "source_ordinal": 7,
+      "mode": "preserve",
+      "input_gain": 1,
+      "reference_domain": "original-level",
+      "targeted_not_independent_heldout": false,
+      "perceptual_adoption": false,
+      "selections": [
+        {
+          "phase": "nonspeech-default",
+          "percent": 100,
+          "cap": 202600,
+          "role": "canonical-002"
+        }
+      ],
+      "extra_irq_cycles": 100,
+      "both_passed": false,
+      "rollback_stream_bytes": 202600,
+      "candidate_stream_bytes": 202600,
+      "data_saved_bytes": 0,
+      "complete_flash_saved_bytes": null,
+      "program_flash_change_bytes": null
+    }
+  ],
+  "new_fits": 0,
+  "perceptual_adoption": false,
+  "scope": "Audited changed automatic whole selections versus exact same-level rollbacks; actual complete images/IRQs. No raw-ineligible admission, refitting, trimming, quality-policy or original-level gain claim."
+}
