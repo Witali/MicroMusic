@@ -137,18 +137,39 @@ function parseDisassembly(text,known){
   check(!block,'Truncated disassembly block');return {blocks,total};
 }
 
-const view=()=>({ticks:0,budget:{project:0,support:0,unresolvedNative:0,other:0},reasons:new Map(),ownership:new Map()});
+const nativeBudget=()=>({project:0,support:0,unresolvedNative:0});
+const reasonRows=reasons=>[...reasons].map(([reason,ticks])=>({reason,ticks})).sort((a,b)=>a.reason.localeCompare(b.reason));
+const view=()=>({ticks:0,budget:{...nativeBudget(),other:0},reasons:new Map(),ownership:new Map(),
+  nativeFunctions:new Map(),uncontainedNativeTicks:0});
 function record(target,result){
   target.ticks++;target.budget[result.category]++;
   if(result.reason)add(target.reasons,result.reason);
+  if(result.category!=='other'){
+    if(result.nativeIndex===undefined)target.uncontainedNativeTicks++;
+    else {
+      if(!target.nativeFunctions.has(result.nativeIndex))target.nativeFunctions.set(result.nativeIndex,
+        {index:result.nativeIndex,ticks:0,budget:nativeBudget(),reasons:new Map()});
+      const fn=target.nativeFunctions.get(result.nativeIndex);fn.ticks++;fn.budget[result.category]++;
+      if(result.reason)add(fn.reasons,result.reason);
+    }
+  }
   if(result.source){const {label:source,line}=result.source,key=source+'|'+line;
     if(!target.ownership.has(key))target.ownership.set(key,{source,line,ticks:0});target.ownership.get(key).ticks++;}
 }
 function finishView(target){
   check(Object.values(target.budget).reduce((a,b)=>a+b,0)===target.ticks,'Tick budget mismatch');
+  const nativeFunctions=[...target.nativeFunctions.values()].sort((a,b)=>a.index-b.index).map(fn=>{
+    check(Object.values(fn.budget).reduce((a,b)=>a+b,0)===fn.ticks,'Native function tick budget mismatch');
+    const unresolvedReasons=reasonRows(fn.reasons);
+    check(unresolvedReasons.reduce((n,row)=>n+row.ticks,0)===fn.budget.unresolvedNative,'Native function reason budget mismatch');
+    return {index:fn.index,ticks:fn.ticks,budget:fn.budget,unresolvedReasons};
+  });
+  check(nativeFunctions.reduce((n,fn)=>n+fn.ticks,0)+target.uncontainedNativeTicks===
+    target.ticks-target.budget.other,'Native container budget mismatch');
   return {ticks:target.ticks,budget:target.budget,
-    unresolvedReasons:[...target.reasons].map(([reason,ticks])=>({reason,ticks})).sort((a,b)=>a.reason.localeCompare(b.reason)),
-    sourceLines:[...target.ownership.values()].sort((a,b)=>a.source.localeCompare(b.source)||a.line-b.line)};
+    unresolvedReasons:reasonRows(target.reasons),
+    sourceLines:[...target.ownership.values()].sort((a,b)=>a.source.localeCompare(b.source)||a.line-b.line),
+    nativeFunctions,uncontainedNativeTicks:target.uncontainedNativeTicks};
 }
 const windowPrefix='MM_AVR_CAPTURE_';
 function requestedWindows(windows){
@@ -232,14 +253,17 @@ export function auditV8NativeProfile({log,disassembly,functions,sourceMap,window
     if(matches.length!==1)return unresolved(matches.length?'ambiguous-disassembly':'missing-disassembly');
     const block=matches[0],offset=Number(tick.pc-g.start);
     if(offset>=block.size)return unresolved('native-location-gap');
+    // A verified instruction-range container is weaker evidence than a source
+    // position: retain its numeric index even when source lookup cannot resolve.
+    const contained=result=>({...result,nativeIndex:g.fn.index});
     const position=lower(block.positions,offset,'offset');
-    if(!position)return unresolved(block.positions.length?'native-location-gap':'absent-native-positions');
-    if(position.position===0)return unresolved('function-entry-position');
-    if(!map)return unresolved('absent-source-map');
+    if(!position)return contained(unresolved(block.positions.length?'native-location-gap':'absent-native-positions'));
+    if(position.position===0)return contained(unresolved('function-entry-position'));
+    if(!map)return contained(unresolved('absent-source-map'));
     const source=lower(map.rows,g.fn.codeOffset+position.position,'column');
-    if(!source||source.column<g.fn.codeOffset)return unresolved('source-map-function-gap');
-    if(!source.mapped)return unresolved('unmapped-source-map');
-    return source.label?{category:'project',source}:{category:'support'};
+    if(!source||source.column<g.fn.codeOffset)return contained(unresolved('source-map-function-gap'));
+    if(!source.mapped)return contained(unresolved('unmapped-source-map'));
+    return contained(source.label?{category:'project',source}:{category:'support'});
   };
   const observations=ticks.map(classify),whole=view();for(const result of observations)record(whole,result);
   const finished=finishView(whole);
@@ -248,11 +272,13 @@ export function auditV8NativeProfile({log,disassembly,functions,sourceMap,window
       disassemblyBlocks:parsed.total,knownNativeDisassemblyBlocks:parsed.blocks.length,
       sourceMapSegments:map?.rows.length||0,sourceMapSources:map?.sources||0,projectSourceMapSources:map?.projectSources||0},
     budget:finished.budget,unresolvedReasons:finished.unresolvedReasons,sourceLines:finished.sourceLines,
+    nativeFunctions:finished.nativeFunctions,uncontainedNativeTicks:finished.uncontainedNativeTicks,
     limits:[
       'Disjoint raw tick leaf-PC observations only; inclusive stack frames are not counted.',
       'Whole-process ticks include construction, warmup and unrelated work; no emulator work-window duration is inferred.',
       'Predecessor native source positions and source-map segments are attribution candidates, not proven exclusive ownership or elapsed durations.',
       'Function-entry positions, unmapped spans, address-generation ties and ambiguous generations remain unresolved.',
+      'Numeric native function containers identify verified instruction ranges only; source-unresolved container ticks are not exclusive subsystem durations.',
       'Source-map lines cannot recover full C inline scopes, optimized-away code or timing between samples; no speed or real-time claim is made.',
     ],...(requested?{windowed:windowViews(requested,ticks,observations)}:{})};
 }

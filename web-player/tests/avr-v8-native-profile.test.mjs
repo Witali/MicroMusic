@@ -20,9 +20,25 @@ function disassembly({name=fn.name,index=7,base='0000000000001000',size=64,posit
 }
 const input=extra=>({log:[creation(),tick(),tick('0x1021',30),tick('0x1031',40),tick('0x9000',50)].join('\n'),
   disassembly:disassembly(),functions:[fn],sourceMap:makeMap(),...extra});
+function checkContainers(result){
+  const functions=result.nativeFunctions;
+  assert.ok(Array.isArray(functions));assert.ok(Number.isSafeInteger(result.uncontainedNativeTicks)&&result.uncontainedNativeTicks>=0);
+  assert.deepEqual(functions.map(row=>row.index),[...new Set(functions.map(row=>row.index))].sort((a,b)=>a-b));
+  for(const row of functions){
+    assert.deepEqual(Object.keys(row).sort(),['budget','index','ticks','unresolvedReasons']);
+    assert.ok(Number.isSafeInteger(row.index)&&row.index>=0);
+    assert.deepEqual(Object.keys(row.budget),['project','support','unresolvedNative']);
+    assert.equal(Object.values(row.budget).reduce((a,b)=>a+b,0),row.ticks);
+    assert.equal(row.unresolvedReasons.reduce((n,s)=>n+s.ticks,0),row.budget.unresolvedNative);
+  }
+  for(const category of ['project','support'])assert.equal(functions.reduce((n,row)=>n+row.budget[category],0),result.budget[category]);
+  assert.equal(functions.reduce((n,row)=>n+row.budget.unresolvedNative,0)+result.uncontainedNativeTicks,result.budget.unresolvedNative);
+  assert.equal(functions.reduce((n,row)=>n+row.ticks,0)+result.uncontainedNativeTicks,
+    result.budget.project+result.budget.support+result.budget.unresolvedNative);
+}
 function audit(extra){const result=auditV8NativeProfile(input(extra));assert.equal(Object.values(result.budget).reduce((a,b)=>a+b,0),result.counts.ticks);
   assert.equal(result.sourceLines.reduce((n,row)=>n+row.ticks,0),result.budget.project);
-  assert.equal(result.unresolvedReasons.reduce((n,row)=>n+row.ticks,0),result.budget.unresolvedNative);return result;}
+  assert.equal(result.unresolvedReasons.reduce((n,row)=>n+row.ticks,0),result.budget.unresolvedNative);checkContainers(result);return result;}
 const reason=(result,name)=>result.unresolvedReasons.find(row=>row.reason===name)?.ticks||0;
 
 test('two inlined source owners within one native function stay separate; leaf budget is conserved',()=>{
@@ -31,6 +47,64 @@ test('two inlined source owners within one native function stay separate; leaf b
     {source:'web-player/native/peripherals/device.c',line:10,ticks:1}]);
   assert.equal(a.exclusiveSubsystemTimeAvailable,false);assert.ok(a.limits.some(s=>s.includes('Whole-process')));
   assert.equal(a.counts.knownNativeGenerations,1);assert.equal(a.counts.knownNativeDisassemblyBlocks,1);
+  assert.deepEqual(a.nativeFunctions,[{index:7,ticks:3,budget:{project:2,support:1,unresolvedNative:0},unresolvedReasons:[]}]);
+  assert.equal(a.uncontainedNativeTicks,0);
+});
+
+test('native function containers retain actual prologue bytes but exclude allocation padding and the instruction end',()=>{
+  const log=[creation(10,'0x1000',80),...['0x1000','0x1002','0x103f','0x1040','0x1048','0x104f','0x1050'].map((pc,n)=>tick(pc,20+n))].join('\n');
+  const a=audit({log});assert.deepEqual(a.budget,{project:0,support:1,unresolvedNative:5,other:1});
+  assert.deepEqual(a.nativeFunctions,[{index:7,ticks:3,budget:{project:0,support:1,unresolvedNative:2},
+    unresolvedReasons:[{reason:'native-location-gap',ticks:2}]}]);
+  assert.equal(a.uncontainedNativeTicks,3);assert.equal(reason(a,'native-location-gap'),5);
+});
+
+test('known native containers do not require mapped source positions or source-map ownership',()=>{
+  const log=creation()+'\n'+tick();
+  for(const extra of [{disassembly:disassembly({positions:[]})},{disassembly:disassembly({positions:[[0,0]]})},
+    {sourceMap:null},{sourceMap:makeMap([[104]])},{sourceMap:makeMap([[4,0,9,0]])}]){
+    const a=audit({log,...extra});assert.equal(a.nativeFunctions.length,1);assert.equal(a.nativeFunctions[0].index,7);
+    assert.equal(a.nativeFunctions[0].budget.unresolvedNative,1);assert.deepEqual(a.nativeFunctions[0].unresolvedReasons,a.unresolvedReasons);
+    assert.equal(a.uncontainedNativeTicks,0);assert.deepEqual(a.sourceLines,[]);
+  }
+});
+
+test('ambiguous generations, creation ties and absent or ambiguous disassembly never produce a native container',()=>{
+  const base=creation()+'\n'+tick();
+  for(const extra of [{log:creation(20)+'\n'+tick()},{log:[creation(),creation(15),tick()].join('\n')},
+    {log:[creation(),creation(15,'0x1008',20,'unknown-public-function'),tick()].join('\n')},
+    {disassembly:''},{disassembly:disassembly()+'\n'+disassembly()},
+    {disassembly:disassembly({base:'0000000000002000'})}]){
+    const a=audit({log:base,...extra});assert.deepEqual(a.nativeFunctions,[]);assert.equal(a.uncontainedNativeTicks,1);
+    assert.equal(a.budget.unresolvedNative,1);
+  }
+});
+
+test('native containers use sorted verified numeric indices and retain separate generation/source budgets',()=>{
+  const second={name:'native.private.second',index:2,codeOffset:300,end:400};
+  const log=[creation(),creation(10,'0x2000',64,second.name),tick(),tick('0x2009',30),tick('0x2002',40),tick('0x9000',50)].join('\n');
+  const a=audit({log,functions:[fn,second],
+    disassembly:disassembly()+'\n'+disassembly({name:second.name,index:second.index,base:'0000000000002000'}),
+    sourceMap:makeMap([[104,0,9,0],[200,1,10,0]])});
+  assert.deepEqual(a.nativeFunctions,[{index:2,ticks:2,budget:{project:1,support:0,unresolvedNative:1},
+    unresolvedReasons:[{reason:'native-location-gap',ticks:1}]},
+    {index:7,ticks:1,budget:{project:1,support:0,unresolvedNative:0},unresolvedReasons:[]}]);
+  const text=JSON.stringify(a.nativeFunctions);
+  for(const raw of ['native.','private','0x1000','0x2000','confidential','C:/','D:/','source','name','base','codeOffset'])assert.ok(!text.includes(raw));
+});
+
+test('external callbacks and ticks outside native generations do not contribute to container counts',()=>{
+  const a=audit({log:[creation(),creation(10,'0x3000',64,'cpu.private.generated'),creation(10,'0x4000',64,'v8.private.stub'),
+    tick('0x1009',20,1),tick('0x9000',30),tick('0x1040',40),tick('0x3009',50),tick('0x4009',60)].join('\n')});
+  assert.equal(a.budget.other,5);assert.deepEqual(a.nativeFunctions,[]);assert.equal(a.uncontainedNativeTicks,0);
+});
+
+test('disjoint tier generations of one verified function aggregate under its numeric index',()=>{
+  const log=[creation(),tick(),creation(30,'0x2000'),tick('0x2021',40),tick('0x2031',50),tick('0x2000',60)].join('\n');
+  const a=audit({log,disassembly:disassembly()+'\n'+disassembly({base:'0000000000002000',compiler:'TurboFan'})});
+  assert.deepEqual(a.nativeFunctions,[{index:7,ticks:4,budget:{project:2,support:1,unresolvedNative:1},
+    unresolvedReasons:[{reason:'native-location-gap',ticks:1}]}]);
+  assert.equal(a.uncontainedNativeTicks,0);assert.equal(a.counts.knownNativeGenerations,2);
 });
 
 test('native PC and function-relative source positions use the metadata code offset before source-map lookup',()=>{
@@ -215,12 +289,16 @@ function checkWindows(result){
   assert.equal(views.reduce((n,row)=>n+row.ticks,0),result.counts.ticks);
   for(const category of Object.keys(result.budget))assert.equal(views.reduce((n,row)=>n+row.budget[category],0),result.budget[category]);
   for(const row of [...views,...w.windows.flatMap(win=>[win.certainInterior,win.boundary])]){
+    checkContainers(row);
     assert.equal(Object.values(row.budget).reduce((a,b)=>a+b,0),row.ticks);
     assert.equal(row.sourceLines.reduce((n,s)=>n+s.ticks,0),row.budget.project);
     assert.equal(row.unresolvedReasons.reduce((n,s)=>n+s.ticks,0),row.budget.unresolvedNative);
   }
   assert.equal(w.windows.reduce((n,win)=>n+win.certainInterior.ticks,0),w.certainInterior.ticks);
   assert.equal(w.windows.reduce((n,win)=>n+win.boundary.ticks,0),w.boundary.ticks);
+  assert.equal(views.reduce((n,row)=>n+row.uncontainedNativeTicks,0),result.uncontainedNativeTicks);
+  for(const fn of result.nativeFunctions)for(const category of Object.keys(fn.budget))assert.equal(
+    views.reduce((n,row)=>n+(row.nativeFunctions.find(candidate=>candidate.index===fn.index)?.budget[category]||0),0),fn.budget[category]);
 }
 
 test('absent window requests preserve the entire whole-process result and ignore unrelated or reserved timers',()=>{
@@ -243,6 +321,24 @@ test('window views conserve native candidates inside and outside, with ties kept
   assert.equal(a.windowed.certainInterior.sourceLines[0].ticks,2);assert.equal(a.windowed.outside.sourceLines[0].ticks,2);
   const text=JSON.stringify(a);for(const privateValue of ['confidential','0x1009','0x1000','C:/'])assert.ok(!text.includes(privateValue));
   assert.ok(!Object.hasOwn(a.windowed.windows[0],'start'));assert.ok(!Object.hasOwn(a.windowed.windows[0],'end'));
+});
+
+test('window views separately conserve multiple function budgets and native padding without containers',()=>{
+  const second={name:'native.private.second',index:2,codeOffset:300,end:400};
+  const log=[creation(10,'0x1000',80),creation(10,'0x2000',64,second.name),marker('start',100),
+    tick('0x1009',99),tick('0x1040',100),tick('0x2002',110),tick('0x1009',120),tick('0x1031',130),
+    tick('0x2009',194),tick('0x1048',200),tick('0x9000',210),marker('end',200)].join('\n');
+  const a=audit({log,functions:[fn,second],windows:[window(0.096)],
+    disassembly:disassembly()+'\n'+disassembly({name:second.name,index:second.index,base:'0000000000002000'}),
+    sourceMap:makeMap([[104,0,9,0],[8,1,10,0],[8,1,0,0],[184,-2,5,0]])});checkWindows(a);
+  assert.deepEqual(a.budget,{project:3,support:1,unresolvedNative:3,other:1});assert.equal(a.uncontainedNativeTicks,2);
+  const {certainInterior,boundary,outside}=a.windowed;
+  assert.deepEqual(certainInterior.budget,{project:1,support:1,unresolvedNative:1,other:0});
+  assert.deepEqual(boundary.budget,{project:1,support:0,unresolvedNative:1,other:0});
+  assert.deepEqual(outside.budget,{project:1,support:0,unresolvedNative:1,other:1});
+  assert.deepEqual([certainInterior,boundary,outside].map(row=>row.uncontainedNativeTicks),[0,1,1]);
+  assert.deepEqual(certainInterior.nativeFunctions.map(row=>row.index),[2,7]);
+  assert.equal(certainInterior.nativeFunctions[0].budget.unresolvedNative,1);
 });
 
 test('zero and tiny marker intervals allow an empty certain interior without fabricating attribution',()=>{

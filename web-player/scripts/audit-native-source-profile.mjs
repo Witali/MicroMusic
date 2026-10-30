@@ -126,8 +126,8 @@ const report={schema:'micromusic-native-source-profile-v1',
     maxUs:gaps.at(-1)??null},
   workload:{parameters:summary.parameters,ids:summary.results.map(r=>r.id),
     captureProducerSha256:summary.provenance.sourceSha256NormalizedLF[captureProducer],
-    scope:windows?'Whole-process ticks remain conserved. Native timer markers and a conservative boundary allowance separate certain-interior, boundary and outside views; source ownership remains a candidate, with no exclusive subsystem duration claim.':
-      'Whole-process V8 leaf ticks include construction, warmup, reference and capture. No exact work window or exclusive elapsed-time claim.'},
+    scope:windows?'Whole-process ticks remain conserved. Native timer markers and a conservative boundary allowance separate certain-interior, boundary and outside views; verified function containers preserve source-map gaps, while source ownership remains a candidate, with no exclusive subsystem duration claim.':
+      'Whole-process V8 leaf ticks include construction, warmup, reference and capture. Verified function containers do not imply source or subsystem ownership. No exact work window or exclusive elapsed-time claim.'},
   audit};
 if(values['test-tap']){
   const bytes=read(values['test-tap']),tap=bytes.toString();

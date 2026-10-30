@@ -89,3 +89,39 @@ in exactly one interior/boundary/outside view. Validate logged chronology,
 including backwards clocks, rather than sorting away malformed event order.
 Empty interiors stay empty. The project's verification-only 10 ns virtual-event
 tolerance does not apply to these host measurements.
+
+## Preserve known function containers across source-map gaps
+
+Missing source positions do not always mean that the surrounding compiled
+function is unknown. Keep a separate `nativeFunctions` table in every whole,
+interior, boundary and outside view. Its numeric indices refer to the complete
+function metadata validated against the captured named WASM; the diagnostic
+output never copies function names, native addresses or host paths.
+
+Assign a container only when a tick has one earlier, non-tied code generation,
+one matching disassembly block and an offset in the printed instruction range
+`[0, instruction_size)`. Do not extend that range to the allocation size:
+the referenced V8 disassembler excludes padding and non-instruction tables.
+Missing/ambiguous disassembly, creation ties, overlapping generations and
+allocation padding remain uncontained. A prologue inside the instruction range
+can have a known container while its source owner remains unresolved.
+
+Each row retains the existing project/support/unresolved source budget and
+unresolved reasons. Check both row totals and the global identity:
+
+```text
+sum(nativeFunctions.ticks) + uncontainedNativeTicks
+  = project + support + unresolvedNative
+```
+
+The `other` budget includes generated CPU/VM/unknown code outside the recognized
+native-runtime generations; it is not silently assigned a native container.
+Multiple disjoint compiled generations can share the same verified function
+index. Work-window partitions must conserve every function's category counts
+and unresolved reasons as well as the global source budget.
+
+This records where a sampled PC lies. It cannot assign inlined scheduler work
+to a peripheral, convert sparse samples into exclusive durations or prove an
+execution-speed improvement. Keep the source-map gaps and the existing host
+clock/marker assumptions explicit. See the
+[offline replay evidence](../../web-player/reports/native-function-containers-20261030.md).

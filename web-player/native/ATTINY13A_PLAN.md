@@ -24,7 +24,7 @@ remain required. This changes no site-model or host-profiling requirement and
 closes no unmeasured hardware item. See the
 [verification-only contract](EMULATION_CONFIGURATIONS.md#verification-virtual-event-tolerance).
 
-Current status, 2026-10-27: **24/31 checklist items complete, seven open**.
+Current status, 2026-10-30: **24/31 checklist items complete, seven open**.
 The new item explicitly covers the shared ADC/comparator/BOD internal reference
 identified during the official section8.3.1 audit. Its explicit physical profile
 is implemented and tested; no original open item was reclassified as complete.
@@ -32,6 +32,18 @@ Earlier21/30,22/30 and23/30 counts below are historical checkpoints.
 Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
+
+Native function-container checkpoint, 2026-10-30: offline replay preserves all
+prior 724 tick classifications and work-window boundaries while identifying
+verified native instruction ranges for all 162 source-unresolved observations
+(122 inside work). Numeric function indices retain missing-source uncertainty;
+no addresses, raw names or host paths are published. All 68 focused checks pass.
+The kernel's 192 interior native observations include 37 in `ratio`, suggesting
+inspection of its native instructions/call-site invariants before another
+isolated experiment. Previously rejected arithmetic guards remain rejected.
+This is attribution progress, not exclusive duration, speed or hardware proof;
+the 24/31 count remains unchanged. See
+[the replay evidence](../reports/native-function-containers-20261030.md).
 
 Verification tolerance checkpoint, 2026-10-27: a fixed 10,000 ps comparator now
 rejects site mode, accumulated drift, reordered/missing events and altered
