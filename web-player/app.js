@@ -5,6 +5,8 @@ const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
 const originalAudio = $('original-audio');
+const lpxAudios=['reference','compact','quality'].map(id=>$('lpx-'+id+'-audio'));
+let lpxPreviewLoad, lpxPreviewReady=false;
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
 let audio, output, scopes=[new Float32Array(512)], headroom=0;
 let signalPoint='output', signalScopes={input:scopes,output:scopes};
@@ -46,6 +48,9 @@ function deviceUI(device) {
   const mhz=tiny88?tiny88Boards[currentBoard].cpuHz/1000000:9.6;
   document.body.dataset.device=device;
   document.body.dataset.board=tiny88?currentBoard:'';
+  $('lpx-previews').hidden=!tiny88||speechCollection;
+  if(!tiny88||speechCollection)pauseLpxPreviews();
+  else if(!lpxPreviewReady&&!lpxPreviewLoad)lpxPreviewLoad=loadLpxPreviews().finally(()=>{lpxPreviewLoad=null;});
   $('device-select').value=device;
   $('device-control').hidden=speechCollection;
   $('board-control').hidden=!tiny88||speechCollection;
@@ -111,14 +116,70 @@ async function switchDevice(device,board=currentBoard) {
 }
 function transport() {
   const originalPlaying=!originalAudio.paused&&!originalAudio.ended;
+  const lpxPlaying=lpxAudios.some(media=>!media.paused&&!media.ended);
   document.body.dataset.playing = String(playing);
   document.body.dataset.originalPlaying = String(originalPlaying);
+  document.body.dataset.lpxPreviewPlaying=String(lpxPlaying);
   $('play-icon').textContent = playing ? 'Ⅱ' : '▶';
   $('play-label').textContent = playing ? 'Пауза' : completed ? 'Ещё раз' : 'Слушать';
   $('play').disabled = !runtimeReady || busy;
   $('play-original').textContent=originalPlaying||originalLoading ? 'Остановить оригинал' : 'Прослушать оригинал';
   $('play-original').setAttribute('aria-pressed',String(originalPlaying||originalLoading));
-  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : completed ? 'Завершено' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
+  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : lpxPlaying ? 'WAV-превью LPX' : busy ? 'Подключение звука…' : playing ? 'Воспроизведение' : completed ? 'Завершено' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
+}
+function pauseLpxPreviews(except) {
+  for(const media of lpxAudios)if(media!==except)media.pause();
+}
+function lpxAsset(path,extension) {
+  const base=new URL('./',import.meta.url),url=new URL(path,base);
+  if(url.origin!==base.origin||!url.pathname.startsWith(base.pathname+'audio/lpx-bread/')||!url.pathname.endsWith(extension))
+    throw new Error('Неверный адрес LPX-примера.');
+  return url.href;
+}
+async function loadLpxPreviews() {
+  const status=$('lpx-preview-status');status.hidden=false;status.textContent='Загрузка звуковых примеров…';
+  try {
+    const response=await fetch(new URL('./audio/lpx-bread/manifest.json',import.meta.url));
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    const data=await response.json(),variants=data.variants;
+    if(data.schemaVersion!==1||data.previewKind!=='native-pwm8'||data.sampleRate!==8000||!Number.isInteger(data.samples)||data.samples<=0
+      ||!Number.isFinite(data.durationSeconds)||data.durationSeconds<=0||Math.abs(data.durationSeconds-data.samples/data.sampleRate)>1/data.sampleRate
+      ||typeof data.title!=='string'||typeof data.reference?.label!=='string'||!Array.isArray(variants)||variants.length!==2)
+      throw new Error('Неверное описание LPX-примеров.');
+    const reference=lpxAsset(data.reference.audio,'.wav'),prepared=[];
+    for(const [id,profile] of [['compact',4],['quality',6]]) {
+      const variant=variants.find(item=>item.id===id);
+      if(!variant||variant.profile!==profile||typeof variant.label!=='string'||!Number.isInteger(variant.bytes)||variant.bytes<=0
+        ||!Number.isFinite(variant.bitrateBps)||Math.abs(variant.bitrateBps-variant.bytes*8*data.sampleRate/data.samples)>1e-6)
+        throw new Error('Неверная стоимость LPX-потока.');
+      prepared.push({...variant,audio:lpxAsset(variant.audio,'.wav'),stream:lpxAsset(variant.stream,'.lpx')});
+    }
+    $('lpx-preview-title').textContent=data.title;
+    $('lpx-reference-label').textContent=data.reference.label;
+    $('lpx-reference-meta').textContent=(data.sampleRate/1000).toLocaleString('ru')+' кГц · моно · '+data.durationSeconds.toLocaleString('ru')+' с';
+    $('lpx-reference-audio').src=reference;
+    for(const item of prepared) {
+      $('lpx-'+item.id+'-label').textContent=item.label;
+      const meta=$('lpx-'+item.id+'-meta');
+      meta.textContent=item.bitrateBps.toLocaleString('ru',{maximumFractionDigits:2})+' бит/с · '+item.bytes.toLocaleString('ru')+' Б';
+      meta.title=item.bitrateBps+' бит/с · '+item.bytes+' байт';
+      $('lpx-'+item.id+'-audio').src=item.audio;
+      const link=$('lpx-'+item.id+'-download');link.href=item.stream;link.download=item.id+'.lpx';
+    }
+    for(const media of lpxAudios)media.volume=+$('volume').value;
+    lpxPreviewReady=true;$('lpx-preview-cards').hidden=false;status.hidden=true;
+  } catch {
+    status.textContent='Звуковые примеры LPX временно недоступны.';
+    $('lpx-preview-cards').hidden=true;
+  }
+}
+for(const media of lpxAudios) {
+  const activate=()=>{
+    if(currentDevice!=='attiny88'||speechCollection||!lpxPreviewReady){media.pause();return;}
+    pause();stopOriginal();pauseLpxPreviews(media);transport();
+  };
+  media.addEventListener('play',activate);media.addEventListener('playing',activate);
+  for(const event of ['pause','ended'])media.addEventListener(event,transport);
 }
 function draw() {
   const now=performance.now(), wait=1000/30-(now-lastScopeDraw);
@@ -170,7 +231,7 @@ function renderCatalog() {
     const name=document.createElement('strong'); name.textContent=entry.title;
     const voices=entry.voices??4;
     const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.kind==='package'?'FLASH + EEPROM · PB0 / PB1':entry.kind==='speech'
-      ? `${entry.flashBytes} Б Flash${entry.eepromBytes ? ` + ${entry.eepromBytes} Б EEPROM` : ''} · речь 7,5 кГц`
+      ? `${entry.flashBytes} Б Flash${entry.eepromBytes ? ` + ${entry.eepromBytes} Б EEPROM` : ''} · речь ${(entry.sampleHz/1000).toLocaleString('ru')} кГц`
       : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}${entry.audioChannels===2?' · СТЕРЕО L / R':''}`;
     const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
     body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
@@ -193,7 +254,7 @@ function stopOriginal() {
 async function toggleOriginal() {
   if(selected?.kind!=='speech'||!selected.originalAudioUrl)return;
   if(originalLoading||!originalAudio.paused){stopOriginal();return;}
-  pause(); showError('');
+  pauseLpxPreviews();pause(); showError('');
   const attempt=++originalAttempt; originalLoading=true; transport();
   try { await originalAudio.play(); }
   catch(error) {
@@ -207,7 +268,7 @@ originalAudio.addEventListener('error',()=>{
   if(selected?.originalAudioUrl){stopOriginal();showError('Не удалось загрузить оригинальную запись.');}
 });
 function load(entry,{autoplay=false}={}) {
-  stopOriginal(); pause(); showError(''); busy=false; runtimeReady=false; runtime?.terminate(); connectedRuntime=null;
+  pauseLpxPreviews();stopOriginal(); pause(); showError(''); busy=false; runtimeReady=false; runtime?.terminate(); connectedRuntime=null;
   session++; hasPlayed=false; completed=false;
   const autoplayAttempt=playAttempt;
   output?.port.postMessage({type:'disconnect'});
@@ -264,14 +325,15 @@ function load(entry,{autoplay=false}={}) {
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
   if(entry.kind==='speech') {
-    const research=entry.research||(entry.codec==='hq4-t'
+    const research=entry.research||(entry.codec?.startsWith('lpx')?'../Codecs/LPX/README.md':entry.codec==='hq4-t'
       ? '../ATtiny13A/Sound/codec/timbre/README.md'
       : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json');
     $('speech-audit').href=research.endsWith('.md')
       ? new URL(research,'https://github.com/Witali/MicroMusic/blob/main/web-player/').href : research;
-    $('speech-audit').textContent=entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
+    $('speech-audit').textContent=entry.codec?.startsWith('lpx') ? 'Исследование LPX ↗' : entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
       : entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
   }
+  $('speech-audit').hidden=entry.kind!=='speech';
   const flashSource=entry.source||'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.flashHex);
   const capacity=micronucleus?6012:tiny88?8192:1024, prefix=micronucleus?'attiny88-mh-et-live-16mhz':currentDevice;
   $('rom-name').textContent=`${prefix}-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц ${entry.kind==='speech'?'отсчёты':'PWM'}`;
@@ -346,7 +408,7 @@ async function toggle() {
   if (!runtimeReady || busy) return;
   if (playing) { pause(); return; }
   if (completed) { load(selected,{autoplay:true}); return; }
-  stopOriginal();
+  pauseLpxPreviews();stopOriginal();
   const target=runtime,attempt=++playAttempt; busyAttempt=attempt; busy=true; transport(); showError('');
   try {
     await ensureAudio();
@@ -356,7 +418,7 @@ async function toggle() {
   finally { if(busyAttempt===attempt){busy=false;transport();} }
 }
 $('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
-$('volume').oninput=()=>{originalAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
+$('volume').oninput=()=>{originalAudio.volume=+$('volume').value;for(const media of lpxAudios)media.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
 $('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
 $('signal-point').onchange=()=>{
   signalPoint=$('signal-point').value==='input'?'input':'output';signalPointUI();
@@ -382,8 +444,8 @@ $('package-file').onchange=async event=>{
   }catch(error){if(attempt===importAttempt&&device===currentDevice&&request===deviceRequest)showError('Не удалось открыть пакет: '+error.message);}
   finally{event.target.value='';}
 };
-document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/INPUT|SELECT|TEXTAREA|BUTTON|A/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
-window.addEventListener('pagehide',()=>{ originalAudio.pause(); runtime?.terminate(); audio?.close(); });
+document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/^(INPUT|SELECT|TEXTAREA|BUTTON|A|AUDIO)$/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
+window.addEventListener('pagehide',()=>{ pauseLpxPreviews();originalAudio.pause(); runtime?.terminate(); audio?.close(); });
 try {
   const speech=speechCollection;
   deviceUI('attiny13a');

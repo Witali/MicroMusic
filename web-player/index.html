@@ -7,8 +7,8 @@
   <title>MicroMusic / ATtiny13A — плеер прошивок</title>
   <meta name="description" content="Музыкальные прошивки ATtiny13A и ATtiny88: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261026-signal-point">
-  <script type="module" src="./app.js?v=20261026-signal-point"></script>
+  <link rel="stylesheet" href="./styles.css?v=20261101-lpx-preview">
+  <script type="module" src="./app.js?v=20261101-lpx-preview"></script>
 </head>
 <body>
   <header class="site-header">
@@ -66,6 +66,32 @@
         <div class="source-only"><span class="eyebrow">С ЧЕГО ВСЁ НАЧАЛОСЬ</span><a href="../ATtiny13A/Music/00_original/attiny13a_initial_2016.c">C-прототип · 2016 ↗</a><p>В архиве сохранился исходник, без готового образа прошивки.</p></div>
       </aside>
     </div>
+    <section id="lpx-previews" class="panel lpx-preview-panel" aria-labelledby="lpx-preview-heading" hidden>
+      <div class="panel-heading"><span class="eyebrow">LPX / СРАВНЕНИЕ ЗВУКА</span><span class="technical-note">НАТИВНОЕ PWM8-ПРЕВЬЮ</span></div>
+      <h2 id="lpx-preview-heading">Исходник и два качества LPX</h2>
+      <p id="lpx-preview-title" class="lpx-preview-title"></p>
+      <p id="lpx-preview-note" class="lpx-preview-note">WAV-превью получены нативным декодером. Они не подтверждают работу LPX-прошивки на ATtiny88.</p>
+      <p id="lpx-preview-status" class="lpx-preview-note" role="status">Загрузка звуковых примеров…</p>
+      <div id="lpx-preview-cards" class="lpx-preview-grid" hidden>
+        <article class="lpx-preview-card">
+          <span class="eyebrow">ЭТАЛОН</span><h3 id="lpx-reference-label">Исходник</h3>
+          <p id="lpx-reference-meta" class="lpx-preview-meta"></p>
+          <audio id="lpx-reference-audio" controls preload="none" playsinline aria-labelledby="lpx-reference-label" aria-describedby="lpx-preview-note"></audio>
+        </article>
+        <article class="lpx-preview-card">
+          <span class="eyebrow">LPX / 01</span><h3 id="lpx-compact-label">Компактный</h3>
+          <p id="lpx-compact-meta" class="lpx-preview-meta"></p>
+          <audio id="lpx-compact-audio" controls preload="none" playsinline aria-labelledby="lpx-compact-label" aria-describedby="lpx-preview-note"></audio>
+          <a id="lpx-compact-download" class="lpx-stream-download" download>↓ Поток LPX</a>
+        </article>
+        <article class="lpx-preview-card">
+          <span class="eyebrow">LPX / 02</span><h3 id="lpx-quality-label">Повышенное качество</h3>
+          <p id="lpx-quality-meta" class="lpx-preview-meta"></p>
+          <audio id="lpx-quality-audio" controls preload="none" playsinline aria-labelledby="lpx-quality-label" aria-describedby="lpx-preview-note"></audio>
+          <a id="lpx-quality-download" class="lpx-stream-download" download>↓ Поток LPX</a>
+        </article>
+      </div>
+    </section>
     <section class="panel inspector" aria-label="Состояние AVR">
       <div class="panel-heading"><span class="eyebrow">03 / СОСТОЯНИЕ AVR</span><span id="cpu-status" class="technical-note">PC 0000 · 0 тактов · 0 IRQ</span></div>
       <div id="registers" class="registers"></div>

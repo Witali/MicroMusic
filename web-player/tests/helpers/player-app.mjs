@@ -18,7 +18,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
   if(firmware)location.searchParams.set('firmware',firmware);
   if(device)location.searchParams.set('device',device);
   if(board)location.searchParams.set('board',board);
-  const elements=new Map(),selectors=new Map(),workers=[],contexts=[],worklets=[],radios=[],fetches=[];
+  const elements=new Map(),selectors=new Map(),workers=[],contexts=[],worklets=[],radios=[],fetches=[],documentEvents=new Map(),windowEvents=new Map();
   class Element{
     constructor(tag='div',attributes=''){
       this.tagName=tag.toUpperCase();this.textContent='';this.dataset={};this.children=[];
@@ -64,7 +64,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
       if(value)return radios.find(radio=>radio.value===value);
       if(!selectors.has(selector))selectors.set(selector,new Element());
       return selectors.get(selector);
-    },querySelectorAll:selector=>selector==='input[name="engine"]'?radios:[],addEventListener(){}};
+    },querySelectorAll:selector=>selector==='input[name="engine"]'?radios:[],addEventListener:(type,listener)=>documentEvents.set(type,listener)};
   const workletSetup=deferred();
   class Context{
     constructor(){this.sampleRate=48000;this.audioWorklet={addModule:()=>holdWorklet?workletSetup.promise:Promise.resolve()};contexts.push(this);}
@@ -95,7 +95,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
       entry.playOnce=playOnce;entry.phraseSamples=references.find(clip=>clip.id===entry.audioReferenceId).samples;
     }
   }
-  const window={devicePixelRatio:1,AudioContext:Context,addEventListener(){}};
+  const window={devicePixelRatio:1,AudioContext:Context,addEventListener:(type,listener)=>windowEvents.set(type,listener)};
   const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,
     Worker,AudioWorkletNode:Worklet,ResizeObserver:class{observe(){}},
     MessageChannel:class{constructor(){this.port1={};this.port2={};}},
@@ -116,5 +116,6 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     const node=worklets.at(-1),connection=node.messages.findLast(message=>message.type==='connect');
     node.port.onmessage({data:{type:'position',session:connection.session,frames,clockFrames:frames,underruns:0,...extra}});
   }
-  return {get,body:document.body,original:get('original-audio'),workers,contexts,worklets,workletSetup,catalog,location,selectors,position,radios,fetches};
+  return {get,body:document.body,original:get('original-audio'),workers,contexts,worklets,workletSetup,catalog,location,selectors,position,radios,fetches,
+    keydown:event=>documentEvents.get('keydown')?.(event),pagehide:()=>windowEvents.get('pagehide')?.()};
 }
