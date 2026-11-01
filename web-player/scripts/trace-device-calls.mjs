@@ -11,12 +11,16 @@ import {ATtiny13A} from '../lib/attiny13a-runtime.js';
 import {parseHex} from '../lib/hex.js';
 import {avr,IO,flash} from '../tests/fixtures/attiny13a-system-firmware.mjs';
 import {AT13_MASK as MASK} from '../lib/attiny13a-registers.js';
+import {instrumentClockRatio,ratioSource,ratioHeader,ratioSupport,ratioExports,readClockRatioCounters} from './lib/clock-ratio-counters.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{'out-dir':{type:'string',default:'build/traces/current'},emsdk:{type:'string'},
   'physical-firmware':{type:'boolean',default:false},'eager-collector':{type:'boolean',default:false},
   'full-publication':{type:'boolean',default:false},'gpio-full-dispatch':{type:'boolean',default:false},
-  'deadline-counters':{type:'boolean',default:false}}});
+  'deadline-counters':{type:'boolean',default:false},'ratio-counters':{type:'boolean',default:false},
+  'bounded-regions':{type:'boolean',default:false},'phase-locals':{type:'boolean',default:false}}});
+assert.ok(!(values['bounded-regions']||values['phase-locals'])||values['physical-firmware'],
+  'Region/phase policies require physical firmware');
 const out=resolve(root,values['out-dir']),native=join(out,'native');mkdirSync(out,{recursive:true});
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const source=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
@@ -59,8 +63,8 @@ if(deadline)assert.equal(reasonEnums.length,1,'One original deadline-reason enum
 const reasons=deadline?reasonEnums[0][1].split(',').map(s=>s.trim()).filter(Boolean):[];
 assert.ok(reasons.length<32&&reasons.every(s=>/^DEADLINE_[A-Z_]+$/.test(s)));
 if(deadline)selected['peripherals/device.c'].push('deadline_invalidate','at_half','at_cycle','after_units');
-const probe=(name,kind='deadline-outcome')=>{
-  const id=functions.length;functions.push({id,name,source:'web-player/native/peripherals/device.c',kind});return id;
+const probe=(name,kind='deadline-outcome',source='web-player/native/peripherals/device.c')=>{
+  const id=functions.length;functions.push({id,name,source,kind});return id;
 };
 for(const [file,names] of Object.entries(selected)){
   let text=readFileSync(join(native,file),'utf8');
@@ -135,6 +139,11 @@ for(const [file,names] of Object.entries(selected)){
   }
   writeFileSync(join(native,file),text);
 }
+const ratioCounters=!!values['ratio-counters'];
+if(ratioCounters){
+  const file=join(native,'peripherals/device_clock.h');
+  writeFileSync(file,instrumentClockRatio(readFileSync(file,'utf8'),name=>probe(name,'clock-ratio-outcome',ratioSource)));
+}
 if(values['eager-collector']){
   const file=join(native,'peripherals/device.c'),text=readFileSync(file,'utf8'),
     pattern=/int device_pin_buffer_ready\(void\)\s*\{[^{}]*\}/g;
@@ -149,6 +158,7 @@ extern uint32_t mm_trace_deadline_pending;
 extern uint32_t mm_trace_scan_level;
 void mm_trace_record(uint32_t id);
 #define MM_TRACE_HIT(id) do { ++mm_trace_counts[id]; if(mm_trace_length<256)mm_trace_record(id); } while(0)
+${ratioCounters?ratioHeader:''}
 `);
 const diagSource=join(out,'trace-counters.c');
 writeFileSync(diagSource,`#include "trace-counters.h"
@@ -164,10 +174,11 @@ void mm_trace_record(uint32_t id){
   device_physical_mode()?device_time_ps():device_base_half(),device_virtual_half(),id,0};
  ++mm_trace_length;
 }
-void mm_trace_clear(void){for(unsigned n=0;n<${functions.length};n++)mm_trace_counts[n]=0;mm_trace_length=0;mm_trace_deadline_pending=0;mm_trace_scan_level=0;}
+void mm_trace_clear(void){for(unsigned n=0;n<${functions.length};n++)mm_trace_counts[n]=0;mm_trace_length=0;mm_trace_deadline_pending=0;mm_trace_scan_level=0;${ratioCounters?'mm_ratio_reset();':''}}
 uint64_t mm_trace_count(uint32_t id){return id<${functions.length}?mm_trace_counts[id]:0;}
 uintptr_t mm_trace_buffer(void){return (uintptr_t)entries;}
 uint32_t mm_trace_size(void){return mm_trace_length;}
+${ratioCounters?ratioSupport:''}
 `);
 let sdk=values.emsdk||process.env.EMSDK;
 for(let parent=root;!sdk;parent=dirname(parent)){
@@ -183,6 +194,7 @@ const args=[...manifest.flags.map(flag=>flag.replaceAll('<emsdk>',sdk)),
   '-I',resolve(root,'web-player/native'),
   ...manifest.sources.map(path=>join(native,path.replace('web-player/native/',''))),diagSource,
   '-Wl,--export=mm_trace_clear','-Wl,--export=mm_trace_count','-Wl,--export=mm_trace_buffer','-Wl,--export=mm_trace_size',
+  ...(ratioCounters?ratioExports.map(name=>'-Wl,--export='+name):[]),
   '-lc','-lclang_rt.builtins','-o',target];
 const build=spawnSync(compiler,args,{cwd:root,encoding:'utf8'});
 assert.equal(build.status,0,build.stderr||String(build.error));
@@ -216,6 +228,9 @@ if(deadline)for(const adcState of [undefined,'converting']){
     instructions:1000000,adcState,options:{oscillatorHz:20000000,resumable:true,fastIdle:false,
       fuseLow:0x72,osccalHz:calibration}});
 }
+if(values['bounded-regions']||values['phase-locals'])for(const entry of cases){
+  entry.options.boundedRegions=values['bounded-regions'];entry.options.optimizePhaseLocals=values['phase-locals'];
+}
 function make(entry,runtimeModule){
   const c=new ATtiny13A(entry.binary,entry.eeprom,{...entry.options,runtimeModule,
     optimizeIOPublication:!values['full-publication']});
@@ -241,13 +256,16 @@ const stringify=v=>JSON.stringify(v,(_,v)=>typeof v==='bigint'?v.toString():v,2)
 const report={schema:'micromusic-native-call-trace-v1',createdAt:new Date().toISOString(),
   policy:{physicalFirmware:values['physical-firmware'],eagerCollector:values['eager-collector'],fullPublication:values['full-publication'],gpioFullDispatch:values['gpio-full-dispatch'],
     deadlineCounters:deadline,
+    ...(ratioCounters?{ratioCounters:true}:{}),
+    ...(values['bounded-regions']||values['phase-locals']?{boundedRegions:values['bounded-regions'],phaseLocals:values['phase-locals']}:{}),
     description:'Optional eager collection forces the copied PCM pressure query true. GPIO full dispatch defines DEVICE_GPIO_IDLE_CACHE=0 only for the counted build; production remains the correctness reference. Counters never establish production elapsed time.'},
   git:{head:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim()},
   productionRuntimeSha256:sha(production),countedRuntimeSha256:sha(countedBytes),
   sourceSha256NormalizedLF:{...Object.fromEntries(Object.keys(manifest.inputs).map(p=>[p,sha(source(p))])),
     ...Object.fromEntries([...catalogPaths,'web-player/scripts/trace-device-calls.mjs',
       'web-player/lib/attiny13a-runtime.js','web-player/lib/avr-transpiled-runtime.js','web-player/lib/avr-transpiler.js','web-player/lib/attiny13a-registers.js',
-      'web-player/tests/fixtures/attiny13a-system-firmware.mjs'].map(p=>[p,sha(source(p))]))},
+      'web-player/tests/fixtures/attiny13a-system-firmware.mjs',
+      ...(ratioCounters?['web-player/scripts/lib/clock-ratio-counters.mjs']:[])].map(p=>[p,sha(source(p))]))},
   functions,method:'Counters and first256 chronological source-level function entries in an ignored diagnostic build. Includes entries later inlined by O3, not a WASM call count. Constructors and input submission are excluded; counters reset immediately before capture. Integer board time is ps for CLKI and oscillator half ticks for compatible firmware. No host timestamps or per-edge JS callbacks. Instrumentation changes executable code, layout and performance: its times are never used as production performance or sampling percentages. Final full public/data/Flash/EEPROM/IRQ state and raw PCM must match an uninstrumented production reference.',results:[]};
 for(const entry of cases){
   const original=make(entry,productionModule),counted=make(entry,countedModule);
@@ -306,6 +324,7 @@ for(const entry of cases){
         validInvalidations:entries('invalidate-valid:'+s).toString(),missesWithReason:entries('miss:'+s).toString()})),
       missReasonsOverlap:true,counterResetClearsPendingReasons:true};
   }
+  if(ratioCounters)row.clockRatio=readClockRatioCounters(e,counts);
   report.results.push(row);console.log(entry.id,JSON.stringify(counts.filter(r=>[
     'clki_service','pin_voltages','analog_input','analog_adc_advance','next_event_scan','mirror'].includes(r.name))));
 }

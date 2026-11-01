@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Clock-ratio operands, 2026-11-01: nine current-runtime workloads retain 30754561
+actual ratio entries, including 148435 successful wide decompositions and zero
+long-division entries. Music prefixes use only the original short path. Bounded
+operand tables retain original values and report capacity overflow explicitly.
+All 35 focused checks pass, including 6029 BigInt cases, every actual branch and
+table reset/overflow; 18 production-parity pairs and 1107 common source-entry
+comparisons agree. Four real CLI corruption controls reject. Next inspect short
+conversions/callers while preserving finite CPU-horizon admission and all faults;
+counts establish no exclusive durations or speedup. Production and 24/31 remain
+unchanged. See the [evidence](../reports/clock-ratio-operands-20261101.md).
+
 Current native sampling, 2026-11-01: fresh kernel/stereo captures on the current
 244b3d3d native artifact conserve all 17201 ticks, including 10657 interiors.
 All six runs retain exact reference PCM and recorded architecture; music has

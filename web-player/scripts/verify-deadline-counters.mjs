@@ -5,8 +5,9 @@ import {createHash} from 'node:crypto';
 import {resolve,relative,isAbsolute} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {parseArgs} from 'node:util';
+import {validateClockRatioCounters} from './lib/clock-ratio-counters.mjs';
 const root=fileURLToPath(new URL('../../',import.meta.url));
-const {values}=parseArgs({options:{input:{type:'string'},control:{type:'string'}}});
+const {values}=parseArgs({options:{input:{type:'string'},control:{type:'string'},'ratio-counters':{type:'boolean',default:false}}});
 assert.ok(values.input&&values.control,'Pass --input and --control completed trace summaries');
 const read=path=>readFileSync(resolve(root,path));
 const hash=b=>createHash('sha256').update(b).digest('hex');
@@ -32,7 +33,18 @@ function load(path,deadline){
   }
   return r;
 }
-const a=load(values.input,true),b=load(values.control,false);
+const ratio=values['ratio-counters'],a=load(values.input,true),b=load(values.control,ratio);
+if(ratio){
+  assert.equal(a.policy.ratioCounters,true);assert.ok(!b.policy.ratioCounters);
+  for(const key of ['physicalFirmware','eagerCollector','fullPublication','gpioFullDispatch','boundedRegions','phaseLocals'])
+    assert.equal(a.policy[key],b.policy[key],'Different counter control policy');
+  assert.equal(a.results.length,b.results.length,'Different counter control workload count');
+  for(const x of a.results){
+    validateClockRatioCounters(x.clockRatio);
+    for(const [name,n]of Object.entries(x.clockRatio.paths))
+      assert.equal(x.counts.find(c=>c.name==='clock_ratio:'+name)?.count,n,'Clock-ratio path differs from source entry count');
+  }
+}
 const count=(x,name)=>{const c=x.counts.find(c=>c.name===name);assert.ok(c,'Missing '+name);return BigInt(c.count);};
 for(const x of a.results){
   const c=name=>count(x,name),d=x.deadline;assert.ok(d&&d.missReasonsOverlap&&d.counterResetClearsPendingReasons);
