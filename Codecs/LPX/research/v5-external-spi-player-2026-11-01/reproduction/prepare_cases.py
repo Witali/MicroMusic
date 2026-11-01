@@ -288,8 +288,11 @@ def build_case(case,output,native,inputs):
             samples += len(value['pcm'])
     if samples!=case['samples'] or sum(used)>sum(map(len,blobs)):
         raise AssertionError('Complete reference coverage or requested-byte totals differ')
-    for name in ('external-flash.bin','expected.pcm16le','expected.pwm8'):
-        inputs.read(folder/name)
+    if (folder/'expected.pcm16le').stat().st_size!=2*samples or (folder/'expected.pwm8').stat().st_size!=samples:
+        raise AssertionError('Stored full-reference PCM/PWM lengths differ')
+    for name,digest in (('external-flash.bin',image_sha),('expected.pcm16le',pcm_hash.hexdigest()),
+            ('expected.pwm8',pwm_hash.hexdigest())):
+        inputs.read(folder/name,digest)
     return dict(**{k:v for k,v in case.items() if k not in ('blobs','segments')},
         segments=[dict(**part,external_offset=offset) for part,offset in zip(case['segments'],offsets)],
         stream_bytes=sum(map(len,blobs)),offsets=offsets,sizes=list(map(len,blobs)),
