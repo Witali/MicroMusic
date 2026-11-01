@@ -4,8 +4,11 @@ All **248 arm records, 312 corpus helper calls and 744 cap decisions are
 complete**. No initial fitting, interrupted helper, failed worker or repeated
 corpus call is recorded. The final read-only export reopens the saved source,
 input, candidate, whole-chain and cache-provenance artifacts and passes.
-Target complete-Flash and player/SPI admission is a separate pending stage;
-these numerical results do not complete that hardware gate.
+Target complete-Flash and player/SPI admission was completed separately:
+[ROM costs and interrupt-active playback](../v5-matched-search-player-2026-10-30/RESULTS.md),
+[full-length external SPI playback](../v5-external-spi-player-2026-11-01/RESULTS.md).
+The numerical export's original pending-gate receipt is retained unchanged;
+the later target receipts establish that separate evidence.
 
 Of 124 paired record/tier comparisons, **64 meet the predeclared actual total
 helper-CPU ratio <=1.25**, while 60 do not. At the common 100% data ceiling,
@@ -100,7 +103,7 @@ and zero corpus calls. The original read-only baseline-manifest construction
 had no dedicated timer; its cost is unknown, not zero. The export's additional
 read-only reopening cost is outside the worker timing regions.
 
-## Reproduction and outstanding player evidence
+## Reproduction and separate player evidence
 
 The protocol commits `b04b4517` and `7a22dce9` precede new corpus outcomes.
 Executed harness epoch is `843fe152`; production seams and source are frozen
@@ -130,8 +133,9 @@ The final manifest contains 105 distinct changed selected whole tuples across
 112 cap views: 66 single-path and 46 trajectory views. Four changed tuples are
 long, complete 60-reset NS chains. Their full original final packets and target
 lengths are preserved. The private 104-baseline/changed-chain manifests have
-been handed to the separate player/SPI task for actual complete costs,
-interrupt-active output and reuse proofs. This package makes no new full-Flash,
+been handed to the separate player/SPI task. Its completed reports above record
+actual complete costs, interrupt-active output and reuse proofs. This numerical
+package itself makes no new full-Flash,
 real-time, analog-audio or listening admission and does not change a default
 algorithm based on numerical win counts.
 
