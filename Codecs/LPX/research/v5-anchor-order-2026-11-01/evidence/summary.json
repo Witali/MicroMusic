@@ -1,0 +1,510 @@
+{
+  "status": "PASS",
+  "production_source_commit": "55ebc0d94e919fa7aeec4819e3bf83cfaf81fa6a",
+  "baseline_contexts": 104,
+  "pilot_contexts": 12,
+  "arm_records": 48,
+  "corpus_helper_calls": 80,
+  "cap_views": 144,
+  "nominal_corpus_cpu_seconds": 160,
+  "synthetic_helper_calls": 16,
+  "initial_fits": 0,
+  "new_native_builds": 0,
+  "new_metric_or_decode_calls_in_projector": 0,
+  "preflight_cost": {
+    "wall_seconds": 7.855160100007197,
+    "cpu_seconds": 7.171875
+  },
+  "baseline_preparation_cost": {
+    "wall_seconds": 0.9402685000095516,
+    "cpu_seconds": 0.765625
+  },
+  "workers": [
+    {
+      "profile": 4,
+      "actual_cost": {
+        "wall_seconds": 286.91614019998815,
+        "cpu_seconds": 251.4375
+      },
+      "synthetic_cost": {
+        "wall_seconds": 2.0423965999798384,
+        "cpu_seconds": 1.703125
+      },
+      "preparation_cost": {
+        "wall_seconds": 3.1503725000075065,
+        "cpu_seconds": 2.625
+      },
+      "whole_counters": {
+        "native_domain_comparisons": 268,
+        "unique_verified_reset_streams": 67,
+        "verified_model_samples": 3216032,
+        "target_feature_rows": 6,
+        "fresh_whole_metric_rows_started": 47,
+        "fresh_whole_metric_rows_completed": 47,
+        "whole_metric_cache_hits": 48,
+        "verified_reset_cache_hits": 32
+      },
+      "counters": {
+        "actual_helper_calls_started": 40,
+        "actual_helper_calls_completed": 40,
+        "captured_model_reset_checks": 1514,
+        "captured_model_samples": 59173761,
+        "arm_records_completed": 24
+      }
+    },
+    {
+      "profile": 6,
+      "actual_cost": {
+        "wall_seconds": 376.8885052999831,
+        "cpu_seconds": 341.359375
+      },
+      "synthetic_cost": {
+        "wall_seconds": 1.5024630000116304,
+        "cpu_seconds": 1.171875
+      },
+      "preparation_cost": {
+        "wall_seconds": 3.198849499982316,
+        "cpu_seconds": 2.625
+      },
+      "whole_counters": {
+        "native_domain_comparisons": 340,
+        "unique_verified_reset_streams": 85,
+        "verified_model_samples": 4193538,
+        "target_feature_rows": 6,
+        "fresh_whole_metric_rows_started": 48,
+        "fresh_whole_metric_rows_completed": 48,
+        "whole_metric_cache_hits": 43,
+        "verified_reset_cache_hits": 15
+      },
+      "counters": {
+        "actual_helper_calls_started": 40,
+        "actual_helper_calls_completed": 40,
+        "captured_model_reset_checks": 4319,
+        "captured_model_samples": 146749004,
+        "arm_records_completed": 24
+      }
+    }
+  ],
+  "worker_cpu_total": 592.796875,
+  "worker_wall_is_not_campaign_elapsed": true,
+  "arm_helper_cpu_total": 233.9375,
+  "arm_workflow_cpu_total": 583.265625,
+  "work": {
+    "helpers": 80,
+    "full_synthesis_evaluations": 6047,
+    "local_synthesis_evaluations": 0,
+    "local_synthesized_samples": 0,
+    "serialization_calls": 6877,
+    "allocation_evaluations": 907,
+    "repeat_spectrum_opportunities": 34,
+    "repeat_spectrum_proposals": 34,
+    "refit_calls_started": 395,
+    "refit_calls_completed": 395,
+    "refit_candidates_completed": 382,
+    "joint_candidates_completed": 797,
+    "rate_allocation_calls_started": 123,
+    "completed_rate_allocation_calls": 106,
+    "rate_allocation_points": 907,
+    "completed_parent_expansions": 61,
+    "completed_windows": 6,
+    "incomplete_windows": 80,
+    "planned_anchors": 4872,
+    "started_anchors": 86,
+    "completed_anchors": 6,
+    "started_nonzero_anchors": 44,
+    "helpers_first_nonzero_anchor": 38,
+    "helpers_without_started_anchor": 0,
+    "helpers_with_repeat_proposal": 24,
+    "helpers_with_completed_allocation": 23
+  },
+  "work_by_arm": {
+    "T-time-0": {
+      "helpers": 20,
+      "full_synthesis_evaluations": 1491,
+      "local_synthesis_evaluations": 0,
+      "local_synthesized_samples": 0,
+      "serialization_calls": 1810,
+      "allocation_evaluations": 0,
+      "repeat_spectrum_opportunities": 0,
+      "repeat_spectrum_proposals": 0,
+      "refit_calls_started": 129,
+      "refit_calls_completed": 129,
+      "refit_candidates_completed": 123,
+      "joint_candidates_completed": 258,
+      "rate_allocation_calls_started": 0,
+      "completed_rate_allocation_calls": 0,
+      "rate_allocation_points": 0,
+      "completed_parent_expansions": 22,
+      "completed_windows": 2,
+      "incomplete_windows": 20,
+      "planned_anchors": 1218,
+      "started_anchors": 22,
+      "completed_anchors": 2,
+      "started_nonzero_anchors": 2,
+      "helpers_first_nonzero_anchor": 0,
+      "helpers_without_started_anchor": 0,
+      "helpers_with_repeat_proposal": 0,
+      "helpers_with_completed_allocation": 0
+    },
+    "T-priority-0": {
+      "helpers": 20,
+      "full_synthesis_evaluations": 1683,
+      "local_synthesis_evaluations": 0,
+      "local_synthesized_samples": 0,
+      "serialization_calls": 1996,
+      "allocation_evaluations": 0,
+      "repeat_spectrum_opportunities": 0,
+      "repeat_spectrum_proposals": 0,
+      "refit_calls_started": 140,
+      "refit_calls_completed": 140,
+      "refit_candidates_completed": 136,
+      "joint_candidates_completed": 283,
+      "rate_allocation_calls_started": 0,
+      "completed_rate_allocation_calls": 0,
+      "rate_allocation_points": 0,
+      "completed_parent_expansions": 24,
+      "completed_windows": 2,
+      "incomplete_windows": 20,
+      "planned_anchors": 1218,
+      "started_anchors": 22,
+      "completed_anchors": 2,
+      "started_nonzero_anchors": 20,
+      "helpers_first_nonzero_anchor": 18,
+      "helpers_without_started_anchor": 0,
+      "helpers_with_repeat_proposal": 0,
+      "helpers_with_completed_allocation": 0
+    },
+    "G-time-0": {
+      "helpers": 20,
+      "full_synthesis_evaluations": 1451,
+      "local_synthesis_evaluations": 0,
+      "local_synthesized_samples": 0,
+      "serialization_calls": 1548,
+      "allocation_evaluations": 500,
+      "repeat_spectrum_opportunities": 7,
+      "repeat_spectrum_proposals": 7,
+      "refit_calls_started": 61,
+      "refit_calls_completed": 61,
+      "refit_candidates_completed": 59,
+      "joint_candidates_completed": 123,
+      "rate_allocation_calls_started": 59,
+      "completed_rate_allocation_calls": 51,
+      "rate_allocation_points": 500,
+      "completed_parent_expansions": 7,
+      "completed_windows": 1,
+      "incomplete_windows": 20,
+      "planned_anchors": 1218,
+      "started_anchors": 21,
+      "completed_anchors": 1,
+      "started_nonzero_anchors": 1,
+      "helpers_first_nonzero_anchor": 0,
+      "helpers_without_started_anchor": 0,
+      "helpers_with_repeat_proposal": 4,
+      "helpers_with_completed_allocation": 12
+    },
+    "G-priority-0": {
+      "helpers": 20,
+      "full_synthesis_evaluations": 1422,
+      "local_synthesis_evaluations": 0,
+      "local_synthesized_samples": 0,
+      "serialization_calls": 1523,
+      "allocation_evaluations": 407,
+      "repeat_spectrum_opportunities": 27,
+      "repeat_spectrum_proposals": 27,
+      "refit_calls_started": 65,
+      "refit_calls_completed": 65,
+      "refit_candidates_completed": 64,
+      "joint_candidates_completed": 133,
+      "rate_allocation_calls_started": 64,
+      "completed_rate_allocation_calls": 55,
+      "rate_allocation_points": 407,
+      "completed_parent_expansions": 8,
+      "completed_windows": 1,
+      "incomplete_windows": 20,
+      "planned_anchors": 1218,
+      "started_anchors": 21,
+      "completed_anchors": 1,
+      "started_nonzero_anchors": 21,
+      "helpers_first_nonzero_anchor": 20,
+      "helpers_without_started_anchor": 0,
+      "helpers_with_repeat_proposal": 20,
+      "helpers_with_completed_allocation": 11
+    }
+  },
+  "paired_reset_anchor_sets_verified": 40,
+  "whole_fresh_rows": 95,
+  "whole_cache_hits": 91,
+  "fresh_anchor_measure_body_cpu": 16.890625,
+  "changed_eligible_inventory_chains": 25,
+  "changed_eligible_inventory_contexts": 56,
+  "comparison_groups": [
+    {
+      "comparison": "old-order",
+      "left": "T-time-0",
+      "right": "T-priority-0",
+      "contexts": 12,
+      "matched_helper_contexts": 12,
+      "outcomes100": {
+        "exact-rank-tie": 7,
+        "left-lower-score": 2,
+        "right-lower-score": 3
+      },
+      "matched_outcomes100": {
+        "exact-rank-tie": 7,
+        "left-lower-score": 2,
+        "right-lower-score": 3
+      }
+    },
+    {
+      "comparison": "new-order",
+      "left": "G-time-0",
+      "right": "G-priority-0",
+      "contexts": 12,
+      "matched_helper_contexts": 11,
+      "outcomes100": {
+        "right-lower-score": 3,
+        "left-lower-score": 4,
+        "exact-rank-tie": 5
+      },
+      "matched_outcomes100": {
+        "right-lower-score": 3,
+        "left-lower-score": 4,
+        "exact-rank-tie": 4
+      }
+    },
+    {
+      "comparison": "generation-time",
+      "left": "T-time-0",
+      "right": "G-time-0",
+      "contexts": 12,
+      "matched_helper_contexts": 12,
+      "outcomes100": {
+        "exact-rank-tie": 8,
+        "right-lower-score": 3,
+        "left-lower-score": 1
+      },
+      "matched_outcomes100": {
+        "exact-rank-tie": 8,
+        "right-lower-score": 3,
+        "left-lower-score": 1
+      }
+    },
+    {
+      "comparison": "generation-priority",
+      "left": "T-priority-0",
+      "right": "G-priority-0",
+      "contexts": 12,
+      "matched_helper_contexts": 11,
+      "outcomes100": {
+        "right-lower-score": 3,
+        "exact-rank-tie": 6,
+        "left-lower-score": 3
+      },
+      "matched_outcomes100": {
+        "right-lower-score": 3,
+        "exact-rank-tie": 5,
+        "left-lower-score": 3
+      }
+    }
+  ],
+  "arm_groups": [
+    {
+      "arm": "T-time-0",
+      "contexts": 12,
+      "cap_outcomes": {
+        "100": {
+          "admitted": 12,
+          "no_fit": 0,
+          "raw_only": 0
+        },
+        "95": {
+          "admitted": 0,
+          "no_fit": 12,
+          "raw_only": 0
+        },
+        "90": {
+          "admitted": 0,
+          "no_fit": 12,
+          "raw_only": 0
+        }
+      },
+      "contexts_with_any_preserved_quality_byte_reduction": 0,
+      "changed_selected100": 3,
+      "smaller_whole_rows": 7,
+      "distinct_smaller_ordered_chains": 7,
+      "smaller_whole_row_failures": {
+        "old_pcm_pwm_floors_passed": 6,
+        "joint_objective_nonregression": 6,
+        "pcm16_sse": 5,
+        "pcm16_stoi": 3,
+        "pwm8_stoi": 2,
+        "pwm8_sse": 4,
+        "pcm_period_coverage_floor_passed": 1,
+        "pwm_period_coverage_floor_passed": 1
+      },
+      "costs": {
+        "helper_cpu": 55.859375,
+        "helper_wall_sum": 59.57918160001282,
+        "source_setup_search_cpu": 40.34375,
+        "source_finalization_cpu": 15.296875,
+        "observed_quota_exhaustions": 20,
+        "search_overshoot_cpu": 0.34375,
+        "helper_total_overshoot_cpu": 15.640625,
+        "raw_pool_model_audit_cpu": 51.828125,
+        "independent_anchor_plan_audit_cpu": 0.0,
+        "bounded_frontier_pruning_cpu": 0.0,
+        "capture_persistence_cpu": 2.453125,
+        "postsearch_whole_admission_and_persistence_cpu": 22.703125,
+        "arm_workflow_cpu": 139.25
+      }
+    },
+    {
+      "arm": "T-priority-0",
+      "contexts": 12,
+      "cap_outcomes": {
+        "100": {
+          "admitted": 12,
+          "no_fit": 0,
+          "raw_only": 0
+        },
+        "95": {
+          "admitted": 0,
+          "no_fit": 12,
+          "raw_only": 0
+        },
+        "90": {
+          "admitted": 0,
+          "no_fit": 12,
+          "raw_only": 0
+        }
+      },
+      "contexts_with_any_preserved_quality_byte_reduction": 2,
+      "changed_selected100": 3,
+      "smaller_whole_rows": 8,
+      "distinct_smaller_ordered_chains": 8,
+      "smaller_whole_row_failures": {
+        "old_pcm_pwm_floors_passed": 6,
+        "joint_objective_nonregression": 4,
+        "pcm16_sse": 5,
+        "pcm16_stoi": 4,
+        "pwm8_sse": 6,
+        "pwm8_stoi": 5
+      },
+      "costs": {
+        "helper_cpu": 55.296875,
+        "helper_wall_sum": 57.47315359997447,
+        "source_setup_search_cpu": 40.4375,
+        "source_finalization_cpu": 14.71875,
+        "observed_quota_exhaustions": 20,
+        "search_overshoot_cpu": 0.4375,
+        "helper_total_overshoot_cpu": 15.15625,
+        "raw_pool_model_audit_cpu": 53.359375,
+        "independent_anchor_plan_audit_cpu": 0.0,
+        "bounded_frontier_pruning_cpu": 0.0,
+        "capture_persistence_cpu": 2.703125,
+        "postsearch_whole_admission_and_persistence_cpu": 30.40625,
+        "arm_workflow_cpu": 147.953125
+      }
+    },
+    {
+      "arm": "G-time-0",
+      "contexts": 12,
+      "cap_outcomes": {
+        "100": {
+          "admitted": 12,
+          "no_fit": 0,
+          "raw_only": 0
+        },
+        "95": {
+          "admitted": 0,
+          "no_fit": 6,
+          "raw_only": 6
+        },
+        "90": {
+          "admitted": 0,
+          "no_fit": 10,
+          "raw_only": 2
+        }
+      },
+      "contexts_with_any_preserved_quality_byte_reduction": 1,
+      "changed_selected100": 5,
+      "smaller_whole_rows": 14,
+      "distinct_smaller_ordered_chains": 14,
+      "smaller_whole_row_failures": {
+        "old_pcm_pwm_floors_passed": 13,
+        "joint_objective_nonregression": 13,
+        "pcm16_sse": 11,
+        "pcm16_stoi": 9,
+        "pwm8_stoi": 8,
+        "pcm_period_coverage_floor_passed": 6,
+        "pwm_period_coverage_floor_passed": 5,
+        "pwm8_sse": 10
+      },
+      "costs": {
+        "helper_cpu": 58.234375,
+        "helper_wall_sum": 67.18250520000583,
+        "source_setup_search_cpu": 40.59375,
+        "source_finalization_cpu": 17.4375,
+        "observed_quota_exhaustions": 20,
+        "search_overshoot_cpu": 0.59375,
+        "helper_total_overshoot_cpu": 18.03125,
+        "raw_pool_model_audit_cpu": 46.9375,
+        "independent_anchor_plan_audit_cpu": 0.59375,
+        "bounded_frontier_pruning_cpu": 0.0,
+        "capture_persistence_cpu": 2.640625,
+        "postsearch_whole_admission_and_persistence_cpu": 32.984375,
+        "arm_workflow_cpu": 144.609375
+      }
+    },
+    {
+      "arm": "G-priority-0",
+      "contexts": 12,
+      "cap_outcomes": {
+        "100": {
+          "admitted": 12,
+          "no_fit": 0,
+          "raw_only": 0
+        },
+        "95": {
+          "admitted": 0,
+          "no_fit": 12,
+          "raw_only": 0
+        },
+        "90": {
+          "admitted": 0,
+          "no_fit": 12,
+          "raw_only": 0
+        }
+      },
+      "contexts_with_any_preserved_quality_byte_reduction": 0,
+      "changed_selected100": 4,
+      "smaller_whole_rows": 12,
+      "distinct_smaller_ordered_chains": 12,
+      "smaller_whole_row_failures": {
+        "old_pcm_pwm_floors_passed": 12,
+        "joint_objective_nonregression": 12,
+        "pcm16_sse": 12,
+        "pcm16_stoi": 8,
+        "pwm8_sse": 11,
+        "pwm8_stoi": 8,
+        "pcm_period_coverage_floor_passed": 5,
+        "pwm_period_coverage_floor_passed": 5
+      },
+      "costs": {
+        "helper_cpu": 64.546875,
+        "helper_wall_sum": 72.43689040001482,
+        "source_setup_search_cpu": 44.9375,
+        "source_finalization_cpu": 19.421875,
+        "observed_quota_exhaustions": 20,
+        "search_overshoot_cpu": 4.9375,
+        "helper_total_overshoot_cpu": 24.359375,
+        "raw_pool_model_audit_cpu": 45.90625,
+        "independent_anchor_plan_audit_cpu": 0.5,
+        "bounded_frontier_pruning_cpu": 0.0,
+        "capture_persistence_cpu": 2.359375,
+        "postsearch_whole_admission_and_persistence_cpu": 35.28125,
+        "arm_workflow_cpu": 151.453125
+      }
+    }
+  ]
+}
