@@ -30,12 +30,51 @@ recover exact full native/model PCM/PWM. These counts differ from the probe's
 
 This is a synthetic coverage result, with no natural-speech, audible, AVR timing
 or linked-Flash claim. Existing P6/default callers keep their legacy policy.
-A separately bounded P4 full-record pass over existing active extras remains
-the next implementation step; it must retain the original and every completed
-checkpoint independently of its working trajectory. It must keep inactive slots
-and unplayed stored fields intact, verify actual serialized caps and apply
-whole-record gates.
 
 The wide `refine_speech_excitation.optimize_group` and all-position
 `enhance_speech_compact.proposals` retain their different policies. They cannot
 replace this narrow phase without changing additional fields or search rules.
+
+## Full-record existing-extra pass
+
+`refine_existing_extras(reference, blob, decoder, *, max_bytes, ...)` is a
+separate P4-only API. It visits only initially active played extras:
+`amplitude != 0 and group * 40 + position < samples`. It preserves inactive and
+unplayed pulses, spectrum, parameters, mandatory pulses, geometry and the first
+20 header bytes. `force_extras` retains the original flag even after removing
+the last played extra. Only the payload-length header field changes as needed.
+Each serialized checkpoint is checked against both the requested cap and the
+original file length. Zero-amplitude position aliases denote no pulse.
+
+The forward working state advances through untouched gaps and each edited
+group using the entire live extras array; future extras are not zeroed. The
+working trajectory can become worse globally despite a local lookahead gain.
+The original and every completed full checkpoint are retained independently.
+`causal_positions=False` supplies the legacy-position control, and `True` adds
+the tested mandatory locations without widening amplitudes or enabling a
+default controller operator. P6 inputs to this new pass are rejected explicitly.
+
+Four checkpoints by default use fixed eligible-group coverage fractions. Exact
+byte deduplication may map several slots to the same candidate. Candidate
+coverage metadata records its first publication; checkpoint rows record their
+actual later coverage. Every distinct full stream is serialized, scored on the
+complete PCM and verified against the model and native PCM/PWM before
+`candidate_sink(stream, integer_full_sse)` or another quota check. An
+interruption between fixed checkpoints publishes its completed final working
+snapshot during separately charged finalization. Missing slots are explicit
+`partial_fallback` entries; they never claim completed coverage.
+
+The default trial allowance is `49 * eligible_active_groups`. The conservative
+atomic bounds are 33 trials for legacy positions and 49 for causal positions.
+An optional CPU quota is cooperative between groups; setup/publication can
+overshoot and final verification runs afterward. Reports separate those clocks
+and count actual trials, state replay and complete synthesis. Zero-error/no-active
+shortcuts preserve the original and report zero visited groups. Spatial eligible/
+visited index lists are private source-derived evidence; strip them from public
+corpus projections.
+
+The returned tuple is `(selected_stream, selected_pcm, report, raw_stream)`.
+Selection here applies only full PCM/PWM SSE/STOI floors, retaining baseline
+rollback. A corpus/controller caller must additionally apply whole-chain
+period, clipping and joint voice/noise admission. Catalogue metric roles are
+owned copies. The existing encoder defaults, bitstream and decoder are unchanged.
