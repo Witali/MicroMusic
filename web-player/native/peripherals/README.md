@@ -3,8 +3,10 @@
 These allocation-free C modules compile to WebAssembly without host imports.
 [`device.c`](device.c) connects them to the translated CPU through a shared bus,
 clock scheduler, interrupt routing and physical six-pin output buffer. Select
-**ATtiny13A** in the player to use this connected runtime. The older JS, WASM and
-AVR → WASM profiles retain the simpler duty-stream playback model.
+the **ATtiny13A verification configuration** ("Для проверок") in the player to
+use this connected runtime. The site configuration ("Для сайта") retains the
+simpler music-oriented model. See the explicit
+[model configurations](../EMULATION_CONFIGURATIONS.md).
 
 See [device.md](device.md) for the clock, bus and event-ordering contract, and
 [../AVR_TO_WASM.md](../AVR_TO_WASM.md#connected-device-runtime) for the browser/API.
