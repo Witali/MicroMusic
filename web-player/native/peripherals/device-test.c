@@ -1,4 +1,5 @@
 #include "device.h"
+#include "../attiny13a-registers.h"
 #include <string.h>
 
 #define CHECK(x) do { if (!(x)) return __LINE__; } while (0)
@@ -104,7 +105,21 @@ static int adc_trigger(void) {
  device_advance(4); CHECK(device_read(0x3a)&32); CHECK(device_read(6)&64);
  CHECK(fresh());
  device_write(3,2,255); device_write(6,0xa8,255);
- CHECK(device_read(6)&64); /* Live low INT0 request, independent of GIMSK. */
+ /* 9.3.3/14.12.4: a live low-level request is not a rising INTF0 flag. */
+ CHECK(!(device_read(AT13_IO_ADCSRA)&(AT13_MASK_ADSC|AT13_MASK_ADIF)));
+ CHECK(!(device_read(AT13_IO_GIFR)&AT13_MASK_INTF0));
+ device_write(AT13_IO_GIMSK,AT13_MASK_INT0,255);
+ CHECK(device_pending_irqs()&(1u<<1));
+ device_advance(54);
+ CHECK(!(device_read(AT13_IO_ADCSRA)&(AT13_MASK_ADSC|AT13_MASK_ADIF)));
+ /* A real edge-sense flag still starts ADC with both interrupt enables set. */
+ device_write(AT13_IO_MCUCR,AT13_MASK_ISC00|AT13_MASK_ISC01,255);
+ CHECK(device_inject_digital(device_base_half()+1,AT13_MASK_PINB1,AT13_MASK_PINB1));
+ device_advance(4);CHECK(device_read(AT13_IO_GIFR)&AT13_MASK_INTF0);
+ CHECK(device_read(AT13_IO_ADCSRA)&AT13_MASK_ADSC);
+ device_advance(54);CHECK(device_pending_irqs()&(1u<<9));
+ device_ack_irq(1);CHECK(!(device_read(AT13_IO_GIFR)&AT13_MASK_INTF0));
+ CHECK(device_next_irq()==9);
  CHECK(fresh());
  device_write(3,4,255); device_write(6,0xa8,255);
  device_write(0x32,254,255); device_write(0x33,1,255);

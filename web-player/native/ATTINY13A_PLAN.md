@@ -33,6 +33,19 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+INT0 ADC-routing correction, 2026-11-01: sections9.3.3/14.12.4 require the
+ADC auto-trigger route to follow GIFR.INTF0, independently of the live low-level
+CPU/wake request. The old bridge incorrectly OR-ed those conditions, allowing
+premature conversions with INTF0 clear. All 192 focused and 2813/2813 default
+checks pass; the same
+28 new firmware cases pass 18/28 against the previous native artifact and 28/28
+after correction. A strengthened existing test now checks that ADC is idle
+before its actual trigger. Low-level wake, manual ADSC, edge modes, W1C and
+sleep-restoration routing remain covered under internal/CLKI and both CPU
+policies. ABI/imports/memory are unchanged. The 44-scenario timing replay remains
+at maximum software error 1 ps. Physical/oracle acceptance and 24/31 are unchanged.
+See the [evidence](../reports/int0-adc-20261101.md).
+
 INT0 sleep-restoration correction, 2026-11-01: section10.2.5 requires a flag
 after Power-down for a high, masked edge-sense input whose buffer was clamped.
 An explicit pending event now survives frozen PINB history and prevents settled

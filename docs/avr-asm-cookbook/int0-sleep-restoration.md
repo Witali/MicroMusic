@@ -46,3 +46,19 @@ GIFR in the first instruction after SLEEP. The same 18 firmware tests pass
 4/18 with the previous native module and 18/18 with the correction. Exports,
 memory and the resumable ABI are unchanged; the module grows by 51 bytes.
 No official simulator, silicon timing or real-time audio result is inferred.
+
+## Route flags separately from CPU requests
+
+The same distinction matters for ADC auto-triggering. Sections14.4/14.12.4
+select interrupt flags as the ADC sources. Forward GIFR.INTF0, including its
+restoration event, rather than OR-ing it with the live low-level CPU request.
+Section9.3.3 keeps INTF0 clear in low-level sense; that request can wake the CPU
+without starting an ADC conversion. Preserve manual ADSC and normal edge-sense
+triggering with either GIMSK or SREG.I disabled.
+
+The [routing correction](../../web-player/reports/int0-adc-20261101.md) adds
+negative controls before the intended trigger, as well as successful conversions.
+An end-only ADIF/result check previously passed even though the conversion had
+already started while the firmware was configuring MCUCR. Use a distinct
+pre-trigger checkpoint to prove causality. The native module shrinks by 199 bytes;
+no elapsed-speed improvement is established.

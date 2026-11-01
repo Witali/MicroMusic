@@ -71,6 +71,10 @@ entry latency and vector0x0009; call ack when that vector is accepted.
 sources receives current interrupt-FLAG levels in bits1..6 corresponding to ADTS
 codes1..6. It is independent of source interrupt enables and SREG.I. Forward
 both assertion and clearing: a held flag cannot produce repeated triggers.
+For INT0 the board forwards GIFR.INTF0 only. Low-level sense keeps that flag
+clear (section9.3.3); its live CPU/wake request is not an ADC trigger. Edge-sense
+flags still trigger with their vector masked or SREG.I clear, and the documented
+Power-down restoration flag uses the same route. Manual ADSC remains available.
 Edges while busy are ignored. Switching ADTS from a low to a high source causes
 a trigger; switching to free running does not. Source7 is reserved/inactive.
 ACME is retained in ADCSRB for comparator integration. The comparator consumes

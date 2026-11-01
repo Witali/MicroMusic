@@ -51,6 +51,12 @@ effects and four-cycle entry. Wakeup uses enabled live requests, then the CPU
 arbitrates again after startup; an old INT0 wake request is not forced into an
 ISR after the physical level has disappeared.
 
+ADC auto-trigger routing uses the interrupt flags independently of those live
+CPU/wake requests (sections14.4/14.12.4). In particular, low-level INT0 keeps
+INTF0 clear and cannot auto-trigger ADC. Edge-sense INTF0, including Power-down
+restoration, remains a trigger with its vector masked or SREG.I clear. Manual
+ADSC is unaffected. See the [routing evidence](../../reports/int0-adc-20261101.md).
+
 `device_control(1,...)` enters sleep after the CPU charges SLEEP's one cycle;
 command3 performs WDR after its cycle. Command2 executes SPM at its instruction
 effect instant and returns any configured command cycles to charge. Page erase

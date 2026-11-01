@@ -60,6 +60,8 @@ test(`external interrupt source${source} triggers ADC even with its vector disab
   const c=make([...write(IO.ADMUX,1),...write(IO.ADCSRB,source),...write(IO.ADCSRA,0xa0),
     ...write(IO.MCUCR,3),...write(IO.PCMSK,pinMask)]);
   c.setAnalog({at:0n,pin:2,microvolts:5000000});
+  c.runUntil(40n);assert.equal(c.readIO(IO.GIFR)&flag,0);
+  assert.equal(c.readIO(IO.ADCSRA)&0x50,0,'ADC must wait for the actual selected interrupt flag');
   c.injectPins({at:41n,mask:pinMask,levels:pinMask});c.runUntil(220n);
   assert.equal(c.readIO(IO.GIFR)&flag,flag);assert.equal(c.readIO(IO.ADCSRA)&0x10,0x10);
   assert.equal(adcValue(c),1023);assert.equal(c.state().irqs,0);

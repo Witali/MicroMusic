@@ -379,8 +379,9 @@ static void timer_outputs(void) {
 }
 static uint8_t trigger_flags(void) {
  uint8_t flags=0;
- if ((board.gpio.gifr&SYSTEM_INT0) ||
-     (!(board.gpio.mcucr&3) && !(board.gpio.digital&2))) flags|=1u<<ANALOG_TRIGGER_INT0;
+ /* ADTS selects interrupt flags (14.12.4), not live CPU/wake requests.
+  * Low-level INT0 keeps INTF0 clear (9.3.3) and cannot synthesize an edge. */
+ if (board.gpio.gifr&SYSTEM_INT0) flags|=1u<<ANALOG_TRIGGER_INT0;
  if (board.timer.tifr&TIMER0_OCF0A) flags|=1u<<ANALOG_TRIGGER_COMPA;
  if (board.timer.tifr&TIMER0_TOV0) flags|=1u<<ANALOG_TRIGGER_OVERFLOW;
  if (board.timer.tifr&TIMER0_OCF0B) flags|=1u<<ANALOG_TRIGGER_COMPB;
