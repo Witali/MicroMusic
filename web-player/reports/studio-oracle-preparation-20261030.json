@@ -1,0 +1,232 @@
+{
+  "schema": "micromusic-attiny13a-studio-preparation-evidence-v1",
+  "prepared": "2026-10-30",
+  "recorded": "2026-11-01",
+  "basisCommit": "eb283d6887947e3ae49cba37897f3895b2ff25cf",
+  "officialSessionExecuted": false,
+  "debuggerApiBindingVerified": false,
+  "hardwareTested": false,
+  "planComplete": 24,
+  "planTotal": 31,
+  "sources": {
+    "web-player/native/devices/attiny13a/core-oracle.S": "a2bb096ff2ad1d759e25523551846c9db917e30ad7b872d93c527ee7146025d5",
+    "web-player/native/devices/attiny13a/core-oracle.c": "cbf90b013f0bdfcbbbc2797ec094cc4a3f0b4409f615b59bd3a116c6017dc2fa",
+    "web-player/native/devices/attiny13a/oracle-debughooks.py": "8da390fb33af4095af90598f801d7ca74db96a793046aeb993d75ee6bb9cb42e",
+    "web-player/native/attiny13a-registers.generated.inc": "aaaf7f47e67e1f3b72754c13373ea9aa6d39acf65c8669e43333ffdf51e539e4",
+    "web-player/scripts/lib/avr-core-probe-cases.mjs": "1d0c71aafc585220f4fd4b0df5268cffad75071711c40a7c02b6c93c353e9286",
+    "web-player/scripts/build-attiny13a-oracle.mjs": "f14e801201976689072e0cca960772341f6a50f2eb0f074357a4163d893af91f",
+    "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/provenance.json": "762c02589e722f5169a4f86451eacd6705f4a1632a846fd94bd2239f3b2bc1c3",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/include/avr/iotn13a.h": "72c0824173a3f720f88c104fd8fbc253690d634b842df7c090bd7883daf951be",
+    "web-player/scripts/check-attiny13a-oracle.mjs": "87380bc2c4f358b7977a1654e7dca0cbeedf47c6a8151c13f2d4d8fbd3a4e030",
+    "web-player/scripts/verify-attiny13a-oracle.mjs": "20702f2084c01dbbe5019e09bcc7e44027d89bce45ceae70150022cab9577ca6",
+    "web-player/scripts/lib/attiny13a-oracle-record.mjs": "0d544edb5e169212b9e3c0707817c83e932b8c31a952d2796e461966c0cd0323",
+    "web-player/tests/attiny13a-oracle-record.test.mjs": "8349e6ea78e1cfba909612fd89c6480f7b5fcf14deb07010b19749a5347f627e",
+    "web-player/tests/attiny13a-oracle-hooks.test.py": "711b5a8a17a1f25389becb8e7c6700f18f48b352cf7f80f727746ea520fdafff"
+  },
+  "bundles": [
+    {
+      "id": "uncalibrated",
+      "folder": "build/probes/attiny13a-studio-20261030",
+      "descriptorSha256": "a142cb8f2b801d4e64d9e87e15666f0ed1f7a7d43e6ebaa8d8137f5a576f6278",
+      "buildId": [
+        33,
+        166,
+        204,
+        45
+      ],
+      "flashBytes": 572,
+      "flashSha256": "e1fd92a33e97b1e6b8ef1205227805057cc01b19fdc398a16e7e79edfa58628e",
+      "elfSha256": "47c570de2bbaac557e5170b788e21fe4ce2482ff2824e7905418d68ce4de7d3d",
+      "debughooksSha256": "4da0952a56456f2bd1801c8f8c323d92c8440aa88c992f2ed8ec976f21a77eef",
+      "recordBytes": 60,
+      "stackBytesReserved": 4,
+      "compilerVersion": "avr-gcc.exe (GCC) 7.3.0",
+      "compilerFlags": [
+        "-mmcu=attiny13a",
+        "-Os",
+        "-std=gnu11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-gdwarf-2",
+        "-nostartfiles",
+        "-nostdlib",
+        "-DORACLE_CASE_COUNT=12",
+        "-Iweb-player/vendor/microchip/ATtiny_DFP/3.4.278/include",
+        "-I<out>",
+        "-fdebug-prefix-map=<repo>=.",
+        "-Wl,-Map=<out>/oracle.map"
+      ],
+      "dwarfVersions": [
+        2,
+        2
+      ],
+      "stopByteAddress": 556,
+      "breakpointAddressUnit": "unconfirmed",
+      "debuggerApiBindingVerified": false,
+      "executionContract": {
+        "externalProgramming": false,
+        "interrupts": "disabled throughout",
+        "watchdogAlwaysOnFuse": "unprogrammed",
+        "timer0Clock": "clkIO/1",
+        "minimumStackBytes": 4,
+        "calibration": "empty-stimulus counter delta; no oscillator measurement"
+      },
+      "vendor": {
+        "package": "Microchip.ATtiny_DFP",
+        "version": "3.4.278",
+        "sourceUrl": "https://packs.download.microchip.com/Microchip.ATtiny_DFP.3.4.278.atpack",
+        "headerSha256": "72c0824173a3f720f88c104fd8fbc253690d634b842df7c090bd7883daf951be"
+      },
+      "coverage": {
+        "totalForms": 123,
+        "preparedPrimaryForms": 12,
+        "officialObserved": 0
+      },
+      "modelValidation": {
+        "kind": "synthetic-emulator",
+        "fileSha256": "b45fb93e809583f955dab4ab25b22e6406c496fbcfb834568c8e929113a66380",
+        "passedCases": 12,
+        "steps": 385,
+        "overheadTicks": 2,
+        "sequenceCycles": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          3,
+          3,
+          4,
+          8
+        ]
+      }
+    },
+    {
+      "id": "byte-bound-synthetic",
+      "folder": "build/probes/attiny13a-studio-bound-20261030",
+      "descriptorSha256": "07d8ec69e1a3ab3d74e0149d0284134da6285fb99a8c61964cfb3bca643ed152",
+      "buildId": [
+        242,
+        91,
+        46,
+        77
+      ],
+      "flashBytes": 572,
+      "flashSha256": "3b45ecdbf833f9b0141438a82c5e86565ad67e66f5738ff372a94536f3277ef6",
+      "elfSha256": "281aec280eb23525329da080f5d9edaece7900b2334f431b80d79f18c481ba46",
+      "debughooksSha256": "67a8b22a232b0f27449fde3a7f2533179597ae8ffee7fa4084a1dfbfdfffa0b7",
+      "recordBytes": 60,
+      "stackBytesReserved": 4,
+      "compilerVersion": "avr-gcc.exe (GCC) 7.3.0",
+      "compilerFlags": [
+        "-mmcu=attiny13a",
+        "-Os",
+        "-std=gnu11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-gdwarf-2",
+        "-nostartfiles",
+        "-nostdlib",
+        "-DORACLE_CASE_COUNT=12",
+        "-Iweb-player/vendor/microchip/ATtiny_DFP/3.4.278/include",
+        "-I<out>",
+        "-fdebug-prefix-map=<repo>=.",
+        "-Wl,-Map=<out>/oracle.map"
+      ],
+      "dwarfVersions": [
+        2,
+        2
+      ],
+      "stopByteAddress": 556,
+      "breakpointAddressUnit": "bytes",
+      "debuggerApiBindingVerified": false,
+      "executionContract": {
+        "externalProgramming": false,
+        "interrupts": "disabled throughout",
+        "watchdogAlwaysOnFuse": "unprogrammed",
+        "timer0Clock": "clkIO/1",
+        "minimumStackBytes": 4,
+        "calibration": "empty-stimulus counter delta; no oscillator measurement"
+      },
+      "vendor": {
+        "package": "Microchip.ATtiny_DFP",
+        "version": "3.4.278",
+        "sourceUrl": "https://packs.download.microchip.com/Microchip.ATtiny_DFP.3.4.278.atpack",
+        "headerSha256": "72c0824173a3f720f88c104fd8fbc253690d634b842df7c090bd7883daf951be"
+      },
+      "coverage": {
+        "totalForms": 123,
+        "preparedPrimaryForms": 12,
+        "officialObserved": 0
+      },
+      "modelValidation": {
+        "kind": "synthetic-emulator",
+        "fileSha256": "2a1a9dcb180d2323d7f9c9ea1a3f2f3b63b571c4b6adec143c54edfbecd54550",
+        "passedCases": 12,
+        "steps": 385,
+        "overheadTicks": 2,
+        "sequenceCycles": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          3,
+          3,
+          4,
+          8
+        ]
+      }
+    }
+  ],
+  "tests": {
+    "decoder": {
+      "passed": 5,
+      "tapSha256": "1a1e87687b057531807e95609323f80b100c438582e69d98a848e094f45b21a7"
+    },
+    "callbackStubs": {
+      "passed": 6,
+      "logSha256": "deba66a310fc6633d3d8451f5b84c8008f6c759cbddb73525fd789df08b79f68",
+      "runtime": "Python 3, not Studio/IronPython"
+    },
+    "syntheticChecker": {
+      "schema": "micromusic-oracle-synthetic-checker-exercise-v1",
+      "actualDebuggerUsed": false,
+      "positivePassed": true,
+      "negativeInputsRejected": [
+        "host-provenance-claim",
+        "out-of-range-byte",
+        "altered-result",
+        "unconfirmed-address-unit"
+      ],
+      "payloadSha256": "5136e0056cb50144ea584ab1f46f40359e99987fc5899a6c8d5dbd50e944b63a",
+      "comparisonSha256": "d97a0ddbd4a9cf6036d5d9ddbfcd237288f0952ada4d249667e75722d285de2e",
+      "exerciseSha256": "125dff1ac8438ce7c7e5e5ba52acf1b23923a01b128c955f1a26847b97861385"
+    }
+  },
+  "production": {
+    "bytes": 124614,
+    "sha256": "b9a8fa14a971fd5f82f8175f978e9a0b1e03f31fc8612a6892d202d7f93635a1",
+    "rebuildByteEqual": true,
+    "buildInputsUnchanged": true,
+    "compilerIdentity": "d67d0e37d909695ee35f8a90059d825f68008e42ec1ac231302c7f0bf51fa46b",
+    "newRuntimeImports": 0
+  },
+  "downloadedExternalFiles": [],
+  "limitations": [
+    "No official host session or real callback binding.",
+    "Twelve stimuli do not exhaust instruction forms, operands or flags.",
+    "Whole-instruction cycle deltas do not establish I/O read phases or 10 ns event accuracy.",
+    "Host prerequisites still await installation approval.",
+    "No external programming interface."
+  ]
+}

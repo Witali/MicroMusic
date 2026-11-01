@@ -424,6 +424,21 @@ registered local extractions. Their factory/version exports and `interface=dw`
 metadata do not document a callable simulator or debugWIRE wire protocol.
 No guessed factory signature, vtable or wire command has been invoked.
 
+## Prepared instruction-control object
+
+The [ELF/DWARF2 control fixture](core-oracle.md) now builds twelve instruction
+sequences using the existing shared stimuli and original manufacturer register
+definitions. A typed 60-byte mailbox retains result, SREG and calibrated Timer0
+cycle deltas. Project-local callbacks use documented expression reads; address
+units require real-host confirmation before mailbox collection is enabled.
+
+Both prepared ELF variants pass on our own model, five decoder and six
+callback tests pass, and the production native rebuild remains byte-identical.
+The [preparation report](../../../reports/studio-oracle-preparation-20261030.json)
+pins these inputs and outputs. This is not an official simulator capture:
+the real callback API binding and all 123 official instruction observations
+remain unverified. No programming interface or private simulator ABI is used.
+
 ## debugWIRE admission remains separate
 
 The read-only DWEN audit does not justify lifting the

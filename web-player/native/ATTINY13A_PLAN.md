@@ -33,6 +33,15 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Studio-control preparation, 2026-10-30: an ELF/DWARF2 fixture prepares twelve
+instruction sequences with result/SREG and calibrated Timer0 cycle records.
+Both prepared ELF variants pass on our model; five decoder and six callback
+tests pass, and a production native rebuild is byte-identical. Host callbacks
+and official execution remain unverified, with all 123 catalog rows marked
+official-unobserved. Installation approval is still pending; no hardware item
+is closed and the 24/31 count is unchanged. See the
+[control fixture and capture procedure](devices/attiny13a/core-oracle.md).
+
 Zero-ratio experiment, 2026-10-30: a mathematically exact zero-product shortcut
 passed seven clock tests/225 new cases and 16 workload parity comparisons, but
 did not pass the speed gate. Initial music controls were inconclusive; longer
