@@ -123,3 +123,10 @@ The existing full-pass function retains its original callback, selection and
 report contracts. These state methods provide the mechanism for a separate
 prospective whole-chain admission/rollback experiment; they establish no corpus,
 audible-quality, linked-Flash or target-timing improvement by themselves.
+
+The [two-context whole-chain experiment](../../research/v5-extra-rollback-2026-11-01/evidence/RESULTS.md)
+completed four fixed stages with identical causal candidates and paid trial
+limits. One same-byte P4 point extends the full prior-plus-fresh-control frontier;
+its PCM SER gain is about 0.0053 dB and one additional analysis window preserves
+period in both PCM/PWM. This is a small numerical result. Default integration,
+linked-Flash/IRQ validation, broader corpus benefit and audibility remain open.
