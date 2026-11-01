@@ -3,11 +3,15 @@ import unittest
 import sys
 from pathlib import Path
 import tempfile
+from contextlib import redirect_stdout
+import io
+from types import SimpleNamespace
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from prepare_cases import planned_rows
 from run_player import plan_rows,long_partition
 from spi_player import ROOT,header,load,save
+import run_player as dispatcher
 
 
 class WindowsBusy(PermissionError):
@@ -71,6 +75,29 @@ class PlayerPlanContracts(unittest.TestCase):
             with self.assertRaises(PermissionError):save(target,dict(value=2))
         self.assertEqual(load(target),dict(value=1))
         self.assertEqual(load(target.with_suffix('.json.writing')),dict(value=2))
+
+    def test_bounded_gate_reopens_serialized_costs_without_rebuilding(self):
+        base=self.fresh().parent
+        expected=base/'expected.pwm8';expected.write_bytes(bytes(160))
+        cases=fixture();chains={chain['id']:chain for chain in cases['chains']}
+        for chain in chains.values():
+            chain.update(segments=[],stream_bytes=100,expected_pwm_path=str(expected))
+        handoff={name:str(base/'unused') for name in ('avr_bin','spi_observer','rom_observer','lib')}
+        handoff['wsl']=None
+        args=SimpleNamespace(action='bounded',output=base/'campaign')
+        def simulated(*args,**kwargs):
+            return dict(passed=True,report={},cost=dict(flash_bytes=100,program_flash_bytes=100,
+                static_sram_bytes=20,metadata_ranges=[(1,2)]))
+        def reopened(h,chain,row,record):
+            self.assertEqual(record['verification']['cost']['metadata_ranges'],[[1,2]])
+        with patch.object(dispatcher,'context',return_value=(handoff,b'test-handoff',cases,chains)), \
+             patch.object(dispatcher,'guard'),patch.object(dispatcher,'simulate',side_effect=simulated) as spi, \
+             patch.object(dispatcher.rom,'simulate',side_effect=simulated) as rom, \
+             patch.object(dispatcher,'reopen_record',side_effect=reopened) as proof, \
+             redirect_stdout(io.StringIO()):
+            self.assertEqual(dispatcher.worker(args),0)
+        self.assertEqual((spi.call_count,rom.call_count,proof.call_count),(8,8,16))
+        self.assertEqual(load(args.output/'workers/bounded/results-private.json')['status'],'complete')
 
 
 if __name__=='__main__':unittest.main()

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -188,6 +189,13 @@ def worker(args):
             require(result['passed'],'A fixed player image failed; do not launch alternate/repeated images')
         guard(h,raw,args,True)
         if args.action=='bounded':
+            # Reopen the saved JSON representation: native build results can
+            # contain tuple ranges, while persisted proof records use lists.
+            checkpoint=load(folder/'results-private.json')
+            require(checkpoint['status']=='running' and checkpoint['handoff_sha256']==sha(raw)
+                    and checkpoint['rows']==json.loads(json.dumps(results,allow_nan=False)),
+                    'Saved bounded results differ from the completed image results')
+            results=checkpoint['rows']
             by_id={row['id']:row for row in rows}
             for record in results:reopen_record(h,chains[record['chain_id']],by_id[record['id']],record)
             save(folder/'artifact-check-private.json',dict(status='passed',handoff_sha256=sha(raw),rows=16,
