@@ -33,6 +33,15 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Checked-overflow checkpoint, 2026-11-01: replacing the ratio overflow guard
+with Clang checked multiply/add passes 5375 BigInt cases, seven focused clock
+checks per version and all sixteen workload comparisons. One static division
+is removed, but 128 timing runs with 64 warmups establish no useful speedup.
+The candidate is rejected; production C/WASM/manifest remain byte-identical.
+Isolated build inputs and the benchmark's candidate-root mode allow repeatable
+experiments without swapping production artifacts. The 24/31 count is unchanged.
+See the [rejection evidence](../reports/clock-intrinsic-20261101.md).
+
 Inline native-PC replay, 2026-11-01: both retained workloads preserve all 10874
 ticks, 5285 interior ticks, source distributions, numeric containers and window
 bounds while adding disjoint inline-candidate views. Kernel/music interiors
