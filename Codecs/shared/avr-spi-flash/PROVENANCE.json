@@ -1,0 +1,34 @@
+{
+  "schema": "avr-spi-flash-reader-provenance-v1",
+  "target": "ATmega328P",
+  "compiler_versions": {
+    "c": "avr-gcc.exe (GCC) 7.3.0",
+    "c++": "avr-g++.exe (GCC) 7.3.0"
+  },
+  "packaged_toolchain": "AVR GCC7.3.0 / Atmel3.6.1 Arduino7 (existing project installation)",
+  "avr_libc_version": "2.0.0",
+  "installed_headers_sha256": {
+    "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+    "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "sfr_defs.h": "045310c428bf77517300487e9434ecedd4f98f7c879f6c6ae364e6012c5d77f5",
+    "common.h": "a5c449e9388f19e70eb261391673ac207dea51c9dde336b1253fa1ecf8519a89",
+    "portpins.h": "fe68db55c60eff33f91b86bcad41f7c8a181d27c36300d737ddf958125eec5b9",
+    "version.h": "9fdff81acdbb6a5af3598fdc4f23f55f2439e7ab677c26acbfcc8051ea207368"
+  },
+  "register_source": "Installed avr-libc avr/io.h selects iom328p.h using compiler MCU defines; headers reused unchanged",
+  "official_device_reference": {
+    "document": "7810D-AVR-01/15",
+    "table": "18-5",
+    "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-7810-Automotive-Microcontrollers-ATmega328P_Datasheet.pdf"
+  },
+  "clock": "SPI2X=1, SPR1=SPR0=0 => F_CPU/2; sixteen CPU cycles per byte",
+  "driver_sha256": "1b86e29ce36229ffe0a6fa8350f91777629ea809ef3f320ef5be5cfda5e972e2",
+  "bounded_checks": {
+    "c99_object": true,
+    "cpp11_object": true,
+    "callback_signature": true,
+    "address_and_length_bits": 32,
+    "new_linked_images": 0,
+    "playback_support_claim": false
+  }
+}
