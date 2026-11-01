@@ -9,6 +9,11 @@ the two terminal prior exports and the frozen native-library closure. It only
 unpacks stream fields and checks metadata/bytes; it does not fit, synthesize or
 call a search helper. Its private binding records the initial eligibility and
 common trial limit, fixed jobs, old saved secondary rows and source bridges.
+The revised preparation also requires `--historical-preflight` naming the intact
+six-call source-3f256c1d preflight v1. It binds that superseded preparation and
+its paid costs separately; the revised metadata/preflight outputs use fresh v2
+directories. Historical, revised and worker warm calls total eighteen synthetic
+helpers, additional to the twenty real corpus helpers.
 
 `run_existing.py --preflight-only` makes the six fixed synthetic helper calls.
 Then `--arm legacy` and `--arm causal`, with `--preflight` naming that completed
@@ -18,6 +23,9 @@ under this worktree's ignored `build` directory. Redirect stdout/stderr there.
 Use the repository's numerical-environment launcher, with all numerical thread
 counts set to one and the exact frozen `--source-root` named in the protocol.
 No helper is automatically restarted after a failure or a lost process handle.
+Callback streams are persisted before producer continuation, and each completed
+whole admission is persisted before the next measurement. Failure-retention
+contracts inject later failures without invoking a numerical helper.
 
 Run the pure contracts without any media or production imports:
 

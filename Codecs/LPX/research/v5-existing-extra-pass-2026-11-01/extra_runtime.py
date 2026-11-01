@@ -15,6 +15,7 @@ from pilot_runtime import (VALUE_KEYS,WholeEvaluator,bind_production,production_
 
 # Integration's exact clean execution epoch, held fixed through final export.
 SOURCE_COMMIT='de78a32376f9f9c17b64720a1a108ac85a3cf74b'
+HISTORICAL_RESEARCH_COMMIT='3f256c1d4d4e83b76fb570abe0d0ec8e2c5b4f4a'
 PREFIX='Codecs/LPX/01_ACTIVE_Q0_CODEC/'
 MEASUREMENT_TOOLS=('adaptive_speech_chain.py','speech_compact.py','speech_v4.py','lpx4.py',
     'q0_model.py','wav_lpc.py','rice_v7.py','enhance_speech_compact.py','refine_speech_compact.py',
@@ -61,3 +62,33 @@ def load_manifest(path,inputs):
     for name,digest in manifest['input_files_sha256'].items():inputs.read(name,digest)
     for name,digest in manifest['preparation_sources'].items():inputs.read(HERE.parent/name,digest)
     return manifest
+
+
+def historical_preflight(path,inputs,inventory,runtime,native_bridge,original_digest):
+    """Bind paid superseded work without treating changed old sources as current."""
+    path=Path(path)
+    summary=inputs.json(path/'summary.json');binding=inputs.json(path/'binding-private.json')
+    attempt=inputs.json(path/'attempt-private.json');synthetic=inputs.json(path/'synthetic-private.json')
+    if (summary['status']!='PASS' or not summary['preflight_only'] or summary['synthetic_helper_calls']!=6 or
+            summary['corpus_helper_calls'] or summary['arm_records'] or summary['actual_cap_views'] or
+            attempt['status']!='complete' or attempt['helper_calls'] or len(attempt['synthetic_calls'])!=6 or
+            any(r['status']!='complete' for r in attempt['synthetic_calls']) or
+            attempt['forbidden_fit_or_build_attempts'] or synthetic['status']!='PASS' or synthetic['helper_calls']!=6):
+        raise ValueError('Historical six-call synthetic preparation is not complete')
+    if (binding['source_commit']!=SOURCE_COMMIT or binding['production_sources']!=inventory or
+            binding['runtime']!=runtime or binding['native_bridge']!=native_bridge):
+        raise ValueError('Historical synthetic preparation used another production/native/runtime context')
+    baseline_path=Path(binding['baselines_path']).resolve()
+    digest=binding['input_files_sha256'].get(str(baseline_path))
+    if digest is None:raise ValueError('Historical preflight did not bind its preparation')
+    raw=inputs.read(baseline_path,digest);baseline=json.loads(raw)
+    marker=inputs.json(baseline_path.parent/'complete-private.json')
+    if (marker['status']!='complete' or marker['binding_sha256']!=sha(raw) or
+            baseline['preparation_commit']!=HISTORICAL_RESEARCH_COMMIT or
+            baseline['original_binding_sha256']!=original_digest):
+        raise ValueError('Historical original-input preparation provenance differs')
+    return dict(status='PASS',preflight_path=str(path.resolve()),preparation_path=str(baseline_path),
+        historical_research_commit=baseline['preparation_commit'],historical_research_sources=binding['research_sources'],
+        synthetic_helper_calls=6,corpus_helper_calls=0,preflight_cost=summary['total_cost'],
+        superseded_metadata_preparation_cost=baseline['preparation_cost'],
+        accounting='Shared historical paid preparation, counted once; old research sources are not current')

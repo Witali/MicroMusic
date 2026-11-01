@@ -58,6 +58,14 @@ The frozen API returns selected,pcm,report,raw. Its sink(blob,integer fullSSE)
 emits baseline and every distinct scored complete candidate in catalogue order,
 before the next quota check. Bind catalogue IDs, actual bytes, exact full-model
 SSE and returned selected/raw identities to captured bytes. No hidden fitted seed.
+The callback immediately writes each immutable catalogue stream and its metadata/
+reported full SSE into the caller-owned attempt journal before returning. A later
+helper/native/metric failure must retain these completed publications. Callback
+I/O is separately timed but remains included in the actual helper CPU/wall time;
+it is not subtracted from either arm. Reopen these same files for independent
+post-return checks; never recreate or overwrite them. Likewise save each completed
+whole admission's full value, ordered stream metadata and bytes before measuring
+the next whole candidate. Interrupted progress is evidence, not a completed arm.
 
 Require four fixed initial-active-group coverage slots per reset, with explicit
 slots 1..4 mapping to catalogue IDs. Repeated slots may honestly refer to the same
@@ -110,8 +118,13 @@ published causal P4 fixture (640 samples, one played active group), the same
 baseline as its own exact target (honest zero-error skip), and a 201-sample
 prefix of that recipe with extra 5 still at 30 and a deterministic +/-2 PCM
 perturbation target (stored active but unplayed, zero eligible/trials). Each arm
-worker pays these three warm calls as well: twelve synthetic calls total,
-separate from twenty corpus helpers. Preserve original packet geometry when
+worker pays these three warm calls as well. The original source-3f256c1d metadata
+and successful six-call preflight v1 remain immutable historical preparation.
+The pre-corpus retention I/O correction requires fresh metadata v2 and another
+six-call preflight v2. Thus the final paid synthetic total is eighteen: historical
+six, current six, and six worker warm calls, separate from twenty corpus helpers.
+Record historical preparation/preflight costs once as shared costs, not once per
+worker; do not relabel those old source hashes as current. Preserve packet geometry when
 building the 201-sample recipe. Final-source contracts cover default parity,
 full-cap repositioning, partial tails, unplayed rows, interruption retention and
 precise slot fallback. There is no P6 search arm.

@@ -63,24 +63,54 @@ def validate_fields(C,base_blob,blob,indices):
     if sum(a!=0 for p,a in after[7])>sum(a!=0 for p,a in before[7]):raise AssertionError('An extra was added')
 
 
+def retaining_sink(base,index,folder,attempt,out,event,captures):
+    """Publish exact callback bytes and caller-owned journal before returning."""
+    event['captured_streams']=[]
+    cost=dict(wall_seconds=0.,cpu_seconds=0.,callback_calls=0,included_in_actual_helper_time=True)
+    event['callback_persistence_cost']=cost
+    def sink(blob,score):
+        began=timed()
+        try:
+            if isinstance(score,bool) or not isinstance(score,Integral):
+                raise AssertionError('Sink score is not exact integer full SSE')
+            blob=bytes(blob);identifier=len(captures)
+            if any(blob==previous for previous,sse in captures):raise AssertionError('Duplicate callback publication')
+            meta=dict(**persist_stream(folder/'catalogue'/('candidate-%04d.l4hy'%identifier),blob,index,base),
+                id=identifier,reported_full_sse=int(score),
+                verification_status='Producer-verified callback; independent caller audit pending')
+            captures.append((blob,int(score)));event['captured_streams'].append(meta)
+            # The later helper/native/metric path may fail. This write is part
+            # of the callback and completes before the producer can continue.
+            save(out/'attempt-private.json',attempt)
+        finally:
+            measured=elapsed(began)
+            for key in ('wall_seconds','cpu_seconds'):cost[key]+=measured[key]
+            cost['callback_calls']+=1
+    return sink
+
+
 def local_call(base,index,base_blob,reference,C,decoder,verifier,folder,attempt,out,phase,causal,counters):
     folder.mkdir(parents=True)
     meta=base['segments'][index]
     if sha(base_blob)!=meta['stream_sha256'] or len(base_blob)!=meta['file_bytes']:
         raise AssertionError('The helper input differs from the already pinned original bytes')
     plan=base['existing_extra_plan'][index];captures=[]
-    def sink(blob,score):
-        if isinstance(score,bool) or not isinstance(score,Integral):raise AssertionError('Sink score is not exact integer full SSE')
-        captures.append((bytes(blob),int(score)))
     event=dict(phase=phase,baseline_id=base['id'],reset=index,causal_positions=causal,status='started')
     attempt['synthetic_calls' if phase=='synthetic' else 'helper_calls'].append(event)
+    sink=retaining_sink(base,index,folder,attempt,out,event,captures)
     save(out/'attempt-private.json',attempt);start=timed()
-    selected,pcm,report,raw=C.extras.refine_existing_extras(reference,base_blob,decoder,
-        max_bytes=min(base['stream_bytes'],65535),causal_positions=causal,horizon=160,
-        max_trial_evaluations=plan['max_trial_evaluations'],cpu_seconds=None,max_checkpoints=4,
-        candidate_sink=sink,speech=not base['nonspeech'])
+    try:
+        selected,pcm,report,raw=C.extras.refine_existing_extras(reference,base_blob,decoder,
+            max_bytes=min(base['stream_bytes'],65535),causal_positions=causal,horizon=160,
+            max_trial_evaluations=plan['max_trial_evaluations'],cpu_seconds=None,max_checkpoints=4,
+            candidate_sink=sink,speech=not base['nonspeech'])
+    except Exception as exc:
+        event.update(status='helper-failed',exception_type=type(exc).__name__,helper_cost=elapsed(start))
+        save(out/'attempt-private.json',attempt)
+        raise
     helper_cost=elapsed(start)
-    save(folder/'helper-return-private.json',dict(report=report,helper_cost=helper_cost,callbacks=len(captures)))
+    save(folder/'helper-return-private.json',dict(report=report,helper_cost=helper_cost,callbacks=len(captures),
+        callback_persistence_cost=event['callback_persistence_cost']))
     event.update(status='returned',helper_cost=helper_cost);save(out/'attempt-private.json',attempt)
     if not captures or captures[0][0]!=base_blob or len(set(b for b,s in captures))!=len(captures):
         raise AssertionError('The ordered distinct catalogue lost its original baseline')
@@ -92,11 +122,12 @@ def local_call(base,index,base_blob,reference,C,decoder,verifier,folder,attempt,
             ('max_file_bytes',min(base['stream_bytes'],65535)),('file_bytes',len(selected)),('raw_file_bytes',len(raw)),
             ('frozen_base_header_exact',True),('inactive_unplayed_pulses_preserved',True),('native_model_pwm_exact',True)):
         equal(report[key],value)
-    began=timed();metas=[]
-    for identifier,(blob,score) in enumerate(captures):
-        metas.append(dict(**persist_stream(folder/'catalogue'/('candidate-%04d.l4hy'%identifier),blob,index,base),
-            id=identifier,reported_full_sse=score))
-    persistence=elapsed(began);began=timed();catalogue=[];models=[]
+    began=timed();metas=event['captured_streams']
+    for meta,(blob,score) in zip(metas,captures):
+        actual=Path(meta['path']).read_bytes()
+        if actual!=blob or sha(actual)!=meta['stream_sha256'] or meta['reported_full_sse']!=score:
+            raise AssertionError('The callback-persisted catalogue bytes or score changed')
+    persistence_audit=elapsed(began);began=timed();catalogue=[];models=[]
     for identifier,((blob,claimed),row) in enumerate(zip(captures,report['candidates'])):
         validate_fields(C,base_blob,blob,plan['eligible_group_indices'])
         decoded=verifier.decode(blob,meta['samples'],4);delta=reference.astype(C.np.int64)-decoded.astype(C.np.int64)
@@ -105,6 +136,7 @@ def local_call(base,index,base_blob,reference,C,decoder,verifier,folder,attempt,
                 not 0<=row['completed_active_groups']<=len(plan['eligible_group_indices'])):
             raise AssertionError('Actual serialized catalogue order/bytes/full SSE differs')
         catalogue.append(dict(id=identifier,blob=blob,sse=actual,labels=row['labels']))
+        metas[identifier]['verification_status']='Independent caller model/common/v5 PCM/PWM and full SSE passed'
         counters['captured_full_sse_checks']+=1;counters['captured_full_sse_samples']+=len(decoded)
     model_cost=elapsed(began);began=timed();slots,slot_proof=slot_views(catalogue,report['checkpoints'])
     if [r['target_active_groups'] for r in report['checkpoints']]!=[(len(plan['eligible_group_indices'])*k+3)//4 for k in range(1,5)]:
@@ -114,7 +146,8 @@ def local_call(base,index,base_blob,reference,C,decoder,verifier,folder,attempt,
     if pcm is None or not C.np.array_equal(pcm,models[report['selected_id']]):raise AssertionError('Returned PCM differs from its serialized candidate')
     policy_cost=elapsed(began)
     details=dict(index=index,helper_cost=helper_cost,report=report,captured_streams=metas,
-        slot_provenance=slot_proof,persistence_cost=persistence,independent_catalogue_sse_and_native_audit_cost=model_cost,
+        slot_provenance=slot_proof,callback_persistence_cost=event['callback_persistence_cost'],
+        captured_stream_integrity_audit_cost=persistence_audit,independent_catalogue_sse_and_native_audit_cost=model_cost,
         catalogue_policy_audit_cost=policy_cost)
     save(folder/'local-private.json',details);event['status']='complete';save(out/'attempt-private.json',attempt)
     return dict(index=index,catalogue=catalogue,slot_blobs=slots,selected=bytes(selected),raw=bytes(raw)),details
@@ -149,9 +182,14 @@ def synthetic(C,decoder,only,out,attempt,counters,arms,context):
 
 def run_record(job,base,target,C,decoder,evaluator,inputs,out,attempt,counters,prior):
     begin=timed();folder=out/'records'/('job-%02d'%job['id']);folder.mkdir(parents=True)
+    record_event=dict(id=job['id'],status='started',completed_whole_ids=[])
+    attempt['records'].append(record_event);save(out/'attempt-private.json',attempt)
     baseline=tuple(inputs.stream(meta) for meta in base['segments'])
     anchor=evaluator.measure(baseline,base,target,not base['nonspeech'],dict(job_id=job['id'],role='baseline-before-helper'))
     for key in VALUE_KEYS:equal(anchor[key],base['stored_expected_whole_value'][key])
+    save(folder/'baseline-anchor-private.json',dict(status='complete',value=anchor,segments=base['segments']))
+    record_event['baseline_anchor_path']=str((folder/'baseline-anchor-private.json').resolve())
+    save(out/'attempt-private.json',attempt)
     locals=[];details=[]
     for index in job['reset_indices']:
         meta=base['segments'][index];at,n=meta['start'],meta['samples']
@@ -166,6 +204,12 @@ def run_record(job,base,target,C,decoder,evaluator,inputs,out,attempt,counters,p
             **value,**flags,automatic_quality_eligible=all(flags.values())))
         artifacts.append(dict(id=choice['id'],segments=[persist_stream(folder/'whole'/('chain-%02d'%choice['id'])/('reset-%02d.l4hy'%i),b,i,base)
             for i,b in enumerate(choice['blobs'])]))
+        # Preserve every completed admission, even if the next measurement or
+        # final decision fails. No later metric must run before this is durable.
+        save(folder/'whole'/('chain-%02d'%choice['id'])/'admission-private.json',
+            dict(status='complete',whole_row=values[-1],whole_chain=artifacts[-1]))
+        save(folder/'whole-progress-private.json',dict(status='in-progress',whole_rows=values,whole_chains=artifacts))
+        record_event['completed_whole_ids'].append(choice['id']);save(out/'attempt-private.json',attempt)
     decisions=[]
     for percent in (100,95,90):
         decision=C.chain.choose_budget(values,job['whole_caps'][str(percent)])
@@ -179,7 +223,7 @@ def run_record(job,base,target,C,decoder,evaluator,inputs,out,attempt,counters,p
     result=dict(**job,status='complete',baseline_bytes=base['stream_bytes'],baseline_samples=base['samples'],locals=details,
         whole_rows=values,whole_chains=artifacts,decisions=decisions,whole_audit_cost=elapsed(audit),
         helper_cpu=sum(r['helper_cost']['cpu_seconds'] for r in details),record_workflow_cost=elapsed(begin))
-    save(folder/'result-private.json',result);attempt['records'].append(dict(id=job['id'],status='complete'))
+    save(folder/'result-private.json',result);record_event['status']='complete'
     save(out/'attempt-private.json',attempt);print(json.dumps(dict(status='record-complete',id=job['id'],arm=job['arm'])),flush=True)
     return result
 
@@ -237,6 +281,8 @@ def main():
         summary=dict(status='PASS',arm=args.arm,preflight_only=args.preflight_only,arm_records=len(results),
             corpus_helper_calls=len(attempt['helper_calls']),synthetic_helper_calls=len(attempt['synthetic_calls']),actual_cap_views=sum(len(r['decisions']) for r in results),
             synthetic_cost=warm['cost'],total_cost=elapsed(begin),counters=dict(counters),whole_counters=dict(evaluator.counts),
+            historical_preflight_shared_cost_reference=manifest['historical_preflight']['preflight_path'],
+            shared_historical_synthetic_calls=6,final_paid_campaign_synthetic_calls_planned=18,
             initial_fits=0,native_builds=0,target_jobs=0,prior_measurements_not_seeded=True)
         save(args.output/'summary.json',summary);attempt.update(status='complete');save(args.output/'attempt-private.json',attempt)
         print(json.dumps(summary),flush=True);return 0

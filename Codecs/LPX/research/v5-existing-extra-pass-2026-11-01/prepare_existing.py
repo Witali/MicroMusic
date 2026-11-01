@@ -9,7 +9,7 @@ import traceback
 
 from extra_policy import ARMS,eligible_groups
 from extra_runtime import (HERE,SOURCE_COMMIT,Inputs,sha,save,source_snapshot,load_original_manifest,
-    bind_production,load_production,check_origins,bridge_native,measurement_bridge)
+    bind_production,load_production,check_origins,bridge_native,measurement_bridge,historical_preflight)
 from secondary import read_prior
 
 
@@ -30,6 +30,8 @@ def prepare(args):
     inventory=bind_production(args.source_root,SOURCE_COMMIT)
     natives,native=bridge_native(args.source_root,args.native_cases,inputs);C=load_production(args.source_root)
     runtime=current_runtime();jobs=[]
+    history=historical_preflight(args.historical_preflight,inputs,inventory,runtime,native,
+        sha(args.original_binding.read_bytes()))
     for base in bases:
         details=[]
         for index,meta in enumerate(base['segments']):
@@ -61,6 +63,7 @@ def prepare(args):
         preparation_commit=subprocess.check_output(['git','-C',str(HERE),'rev-parse','HEAD'],text=True).strip(),
         original_binding_path=str(args.original_binding),original_binding_sha256=sha(args.original_binding.read_bytes()),
         input_files_sha256=inputs.pins,baselines=bases,jobs=jobs,prior_rows=prior,secondary_bridges=bridges,
+        historical_preflight=history,
         native_bridge=native,native_libraries={k:str(v) for k,v in natives.items()},runtime=runtime,preparation_cost=cost,
         actual_helper_calls=0,initial_fits=0,model_pcm_decodes=0,native_builds=0,target_jobs=0)
     save(args.output/'binding-private.json',binding)
@@ -68,6 +71,9 @@ def prepare(args):
         eligible_groups_per_arm=sum(p['eligible_active_groups'] for b in bases for p in b['existing_extra_plan']),
         max_trials_per_arm=sum(p['max_trial_evaluations'] for b in bases for p in b['existing_extra_plan']),
         cpu_cutoff=None,prior_saved_rows=len(prior),secondary_bridge_records=len(bridges),preparation_cost=cost,
+        historical_synthetic_helper_calls=6,current_preflight_calls_planned=6,worker_warm_calls_planned=6,
+        final_paid_synthetic_calls_planned=18,historical_preflight_cost=history['preflight_cost'],
+        historical_metadata_preparation_cost=history['superseded_metadata_preparation_cost'],
         actual_helper_calls=0,model_pcm_decodes=0,initial_fits=0,native_builds=0,target_jobs=0)
     save(args.output/'summary.json',summary)
     save(args.output/'complete-private.json',dict(status='complete',binding_sha256=sha((args.output/'binding-private.json').read_bytes()),
@@ -78,10 +84,10 @@ def prepare(args):
 def main():
     import os
     parser=argparse.ArgumentParser(description=__doc__)
-    for name in ('source-root','original-binding','native-cases','rate-export','anchor-export','output'):
+    for name in ('source-root','original-binding','native-cases','rate-export','anchor-export','historical-preflight','output'):
         parser.add_argument('--'+name,required=True,type=Path)
     args=parser.parse_args()
-    for name in ('source_root','original_binding','native_cases','rate_export','anchor_export','output'):
+    for name in ('source_root','original_binding','native_cases','rate_export','anchor_export','historical_preflight','output'):
         setattr(args,name,getattr(args,name).resolve())
     if SOURCE_COMMIT is None:parser.error('Await the exact frozen source epoch')
     if args.output.exists() or not args.output.is_relative_to((HERE.parents[3]/'build').resolve()):parser.error('Use fresh private ignored build output')
