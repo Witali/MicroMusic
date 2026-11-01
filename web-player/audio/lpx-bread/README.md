@@ -26,6 +26,9 @@ sample budget at 16 MHz / 8 kHz. They are not downloadable playback firmware.
 The very-low-rate measurement uses an optional direct S15 parser; production
 v5 support remains unchanged. EEPROM is unused.
 
+The Flash HEX and EEPROM controls remain visible but disabled for these
+examples. The filename link downloads the encoded `.lpx` stream.
+
 The compact and higher-quality `.lpx` files contain the existing L4HY v5
 container. `low15.lpx` uses the separate experimental LPX-S15 container; it
 requires its own parser and is rejected by the production v5 decoder.

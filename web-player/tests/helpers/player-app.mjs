@@ -34,8 +34,8 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
       if(value&&this.name==='engine')for(const radio of radios)if(radio!==this)radio._checked=false;
     }
     setAttribute(key,value){this.attributes.set(key,String(value));}
-    getAttribute(key){return this.attributes.get(key)??null;}
-    removeAttribute(key){this.attributes.delete(key);}
+    getAttribute(key){return ['href','download'].includes(key)?this[key]??null:this.attributes.get(key)??null;}
+    removeAttribute(key){this.attributes.delete(key);if(['href','download'].includes(key))delete this[key];}
     append(...children){this.children.push(...children);}
     replaceChildren(...children){this.children=children;}
     getContext(){return {};}

@@ -15,6 +15,17 @@ const s15App=options=>playerApp({catalogs:{'manifest.json':threeVariantManifest}
 const cards=app=>app.get('catalog').children.map(item=>item.children[0]);
 const choose=async(app,device)=>{app.get('device-select').value=device;await app.get('device-select').onchange();await flush();};
 const select=(app,id)=>cards(app).find(card=>card.dataset.firmware===id).onclick();
+const nativeDownloads=app=>{
+  assert.equal(app.get('download').textContent,'↓ Flash HEX');
+  for(const id of ['download','download-eeprom']){
+    const link=app.get(id);assert.equal(link.hidden,false,id);
+    assert.equal(link.getAttribute('aria-disabled'),'true',id);
+    assert.equal(link.getAttribute('href'),null,id);assert.equal(link.getAttribute('download'),null,id);
+    assert.equal(link.getAttribute('tabindex'),'-1',id);
+  }
+  assert.match(app.get('download').title,/звуковая прошивка.*не проверена/);
+  assert.match(app.get('download-eeprom').title,/EEPROM не используется/);
+};
 
 test('speech uses the unchanged shared selector, filtering three real HQ4 entries or two LPX previews',async()=>{
   assert.match(html,/<label for="device-select">Микроконтроллер<\/label>/);
@@ -61,7 +72,8 @@ test('S15 becomes the first Tiny88 choice and labels the separate experimental d
   assert.equal(app.location.searchParams.get('firmware'),'lpx-bread-low15');
   const text=app.get('rom-details').textContent.replace(/\s/g,'');
   assert.ok(text.includes(low15Fixture.bytes+'БданныхLPX'));assert.ok(text.includes(low15Fixture.bitrateBps+'бит/с'));
-  assert.match(app.get('download').href,/\/low15\.lpx$/);assert.equal(app.get('download').download,'lpx-bread-low15.lpx');
+  assert.match(app.get('rom-name').href,/\/low15\.lpx$/);assert.equal(app.get('rom-name').download,'lpx-bread-low15.lpx');
+  nativeDownloads(app);
   assert.equal(app.get('wave').dataset.samples,'19200');assert.equal(app.get('avr-inspector').hidden,true);
   select(app,'lpx-bread-quality');
   assert.equal(app.get('preview-format-note').hidden,true);assert.equal(app.get('preview-format-note').textContent,'');
@@ -116,7 +128,7 @@ test('actual Tiny88 test-image Flash split is shown without turning test code in
     assert.ok(details.includes(values[0]+'Бпрограмма+'+values[1]+'Бзвук='+values[2]+'БFlash'));
     assert.equal(app.get('flash-measurement-note').hidden,false);
     assert.match(app.get('flash-measurement-note').textContent,/без очереди и звукового ISR/);
-    assert.equal(app.get('download').textContent,'↓ Поток LPX');assert.match(app.get('download').download,/\.lpx$/);
+    nativeDownloads(app);assert.match(app.get('rom-name').download,/\.lpx$/);
     assert.equal(app.workers.length,0);
   }
 });
@@ -140,7 +152,8 @@ test('all three direct preview IDs retain correct assets and device URLs at root
     assert.equal(app.location.searchParams.get('firmware'),'lpx-bread-'+variant.id);
     assert.equal(app.location.searchParams.get('device'),'attiny88');assert.equal(app.location.searchParams.get('board'),'mh-et-live-16mhz');
     assert.equal(app.preview.src,'https://example.test'+prefix+'web-player/'+variant.audio);
-    assert.equal(app.get('download').href,'https://example.test'+prefix+'web-player/'+variant.stream);
+    assert.equal(app.get('rom-name').href,'https://example.test'+prefix+'web-player/'+variant.stream);
+    nativeDownloads(app);
     assert.equal(app.workers.length,0);
   }
 });
@@ -169,16 +182,32 @@ test('native selection exposes exact data costs and LPX download, with no invent
     assert.doesNotMatch(text,/Flash|SRAM|EEPROM/);
     assert.match(app.get('rom-details').textContent,/не измерено/);
     assert.equal(app.get('flash-measurement-note').hidden,true);
-    assert.equal(app.get('download').textContent,'↓ Поток LPX');
-    assert.equal(app.get('download').href,'https://example.test/MicroMusic/web-player/'+variant.stream);
-    assert.equal(app.get('download').download,'lpx-bread-'+variant.id+'.lpx');
-    assert.equal(app.get('rom-name').href,app.get('download').href);
-    for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import','rom-hash','board-upload','download-eeprom'])
+    nativeDownloads(app);
+    assert.equal(app.get('rom-name').href,'https://example.test/MicroMusic/web-player/'+variant.stream);
+    assert.equal(app.get('rom-name').download,'lpx-bread-'+variant.id+'.lpx');
+    for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import','rom-hash','board-upload'])
       assert.equal(app.get(id).hidden,true,id);
     assert.equal(app.get('preview-note').hidden,false);
     assert.match(app.get('tiny88-power').textContent,/Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц/);
     assert.equal(app.get('upload-command').textContent,'');assert.equal(app.get('memory').textContent,'');
     assert.equal(app.get('cpu-status').textContent,'');assert.equal(app.get('headroom').textContent,'—');
+  }
+});
+
+test('switching from real HQ4 clears both firmware links and returning restores the exact HEX and EEPROM files',async()=>{
+  const app=await legacyApp({firmware:'hq4-otvechaesh-tiny'});
+  const original={flash:app.get('download').href,flashName:app.get('download').download,
+    eeprom:app.get('download-eeprom').href,eepromName:app.get('download-eeprom').download};
+  for(const id of ['download','download-eeprom']){
+    assert.equal(app.get(id).hidden,false);assert.equal(app.get(id).getAttribute('aria-disabled'),null);
+    assert.ok(app.get(id).getAttribute('href'));assert.match(app.get(id).download,/\.hex$/);
+  }
+  await choose(app,'attiny88');nativeDownloads(app);assert.match(app.get('rom-name').download,/\.lpx$/);
+  await choose(app,'attiny13a');select(app,'hq4-otvechaesh-tiny');
+  assert.equal(app.get('download').href,original.flash);assert.equal(app.get('download').download,original.flashName);
+  assert.equal(app.get('download-eeprom').href,original.eeprom);assert.equal(app.get('download-eeprom').download,original.eepromName);
+  for(const id of ['download','download-eeprom']){
+    assert.equal(app.get(id).getAttribute('aria-disabled'),null);assert.equal(app.get(id).getAttribute('tabindex'),null);
   }
 });
 

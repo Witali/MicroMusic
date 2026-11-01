@@ -126,7 +126,9 @@ test('app imports the UM88 package, resets playback and offers its actual HEX',a
  await app.get('package-file').onchange(eventFor(text));
  assert.equal(previous.terminated,true);assert.equal(init(app).entry.kind,'universal');
  assert.equal(init(app).entry.audioChannels,1);assert.equal(app.get('stereo-output').hidden,true);
- assert.equal(app.get('download-eeprom').hidden,true);
+ assert.equal(app.get('download-eeprom').hidden,false);
+ assert.equal(app.get('download-eeprom').getAttribute('aria-disabled'),'true');
+ assert.equal(app.get('download-eeprom').getAttribute('href'),null);
  assert.match(app.get('rom-details').textContent,/EEPROM не требуется/);
  assert.match(app.get('download').href,/^data:text\/plain/);
  assert.equal(app.get('error').hidden,true);assert.match(app.get('selected-title').textContent,/mono study/);
@@ -174,7 +176,9 @@ test('audited USB UM88 package imports only on the matching board and keeps load
  assert.equal(init(app).entry.kind,'universal');assert.equal(app.get('error').hidden,true);
  assert.match(app.get('tiny88-clock').textContent,/16 MHz.*MH-ET LIVE/);
  assert.match(app.get('fuse-high-note').textContent,/сохранить фьюзы платы/);
- assert.equal(app.get('download-eeprom').hidden,true);assert.equal(app.get('board-upload').hidden,false);
+ assert.equal(app.get('download-eeprom').hidden,false);assert.equal(app.get('board-upload').hidden,false);
+ assert.equal(app.get('download-eeprom').getAttribute('aria-disabled'),'true');
+ assert.equal(app.get('download-eeprom').getAttribute('href'),null);
  assert.match(app.get('upload-command').textContent,/micronucleus --run/);
  const isp=await playerApp({speech:false,device:'attiny88'}),previous=isp.workers.at(-1);
  await isp.get('package-file').onchange(eventFor(text));

@@ -46,7 +46,11 @@ test('a 16-MHz board link loads the actual USB firmware, clock, board pins and o
   assert.match(app.get('rom-details').textContent,/6012 Б приложения.*тембры во Flash.*62,5/);
   assert.equal(app.get('download').href,expected.source);
   assert.equal(app.get('download').download,'attiny88-mh-et-live-16mhz-children.hex');
-  assert.equal(app.get('download-eeprom').hidden,true);
+  assert.equal(app.get('download').textContent,'↓ HEX для Micronucleus');
+  assert.equal(app.get('download').getAttribute('aria-disabled'),null);
+  assert.equal(app.get('download-eeprom').hidden,false);
+  assert.equal(app.get('download-eeprom').getAttribute('aria-disabled'),'true');
+  assert.equal(app.get('download-eeprom').getAttribute('href'),null);
   assert.equal(app.get('board-upload').hidden,false);
   assert.equal(app.get('upload-command').textContent,'micronucleus --run attiny88-mh-et-live-16mhz-children.hex');
   assert.equal(new URL(app.fetches[0]).pathname.split('/').at(-1),'firmware-attiny88-16mhz.json');
@@ -71,7 +75,9 @@ test('changing frequency resets a playing transport, keeps its song and engine, 
   assert.equal(init(app).entry.cpuHz,8000000);assert.equal(init(app).entry.id,'alicia');
   assert.equal(init(app).entry.firmwareEngine,'UM88');
   assert.equal(app.get('download').download,'attiny88-alicia.hex');
-  assert.equal(app.get('download-eeprom').hidden,true);
+  assert.equal(app.get('download-eeprom').hidden,false);
+  assert.equal(app.get('download-eeprom').getAttribute('aria-disabled'),'true');
+  assert.equal(app.get('download-eeprom').getAttribute('href'),null);
   assert.match(app.get('rom-details').textContent,/EEPROM не требуется/);
   assert.equal(app.get('fuse-low').textContent,'0xEE');assert.equal(app.get('board-upload').hidden,true);
   assert.equal(app.location.searchParams.has('board'),false);

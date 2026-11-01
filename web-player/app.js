@@ -228,6 +228,15 @@ function stateUI(state) {
   $('isr').textContent=state.maxISR ? state.maxISR+' т.' : '—';
   $('lost').textContent=state.lost.toLocaleString('ru');
 }
+function downloadUI(id,source,filename,title) {
+  const link=$(id);link.hidden=false;link.title=title;
+  if(source){
+    link.href=source;link.download=filename;link.removeAttribute('aria-disabled');link.removeAttribute('tabindex');
+  }else{
+    link.removeAttribute('href');link.removeAttribute('download');
+    link.setAttribute('aria-disabled','true');link.setAttribute('tabindex','-1');
+  }
+}
 function renderCatalog() {
   const query=$('search').value.toLocaleLowerCase('ru').trim();
   const available=catalog.entries.filter(entry=>!speechCollection||(entry.device||'attiny13a')===currentDevice);
@@ -360,16 +369,15 @@ function load(entry,{autoplay=false}={}) {
   const capacity=micronucleus?6012:tiny88?8192:1024, prefix=micronucleus?'attiny88-mh-et-live-16mhz':currentDevice;
   if(nativePreview()){
     const file=entry.id+'.lpx';
-    for(const id of ['download','rom-name']){
-      $(id).href=entry.streamUrl;$(id).download=file;$(id).removeAttribute('aria-disabled');
-    }
-    $('download').textContent='↓ Поток LPX';$('rom-name').textContent=file;
+    $('rom-name').href=entry.streamUrl;$('rom-name').download=file;$('rom-name').textContent=file;
+    $('download').textContent='↓ Flash HEX';
+    downloadUI('download',null,null,'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
+    downloadUI('download-eeprom',null,null,'EEPROM не используется этим примером.');
     const measurement=entry.flashMeasurement;
     const cost=measurement
       ? `${measurement.programFlashBytes.toLocaleString('ru')} Б программа + ${measurement.encodedBytes.toLocaleString('ru')} Б звук = ${measurement.totalFlashBytes.toLocaleString('ru')} Б Flash · тестовая сборка`
       : `Программа: — (не измерено) · ${entry.streamBytes.toLocaleString('ru')} Б данных LPX`;
     $('rom-details').textContent=`${cost} · ${entry.bitrateBps.toLocaleString('ru')} бит/с · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
-    $('download-eeprom').hidden=true;$('download-eeprom').removeAttribute('href');
     $('board-upload').hidden=true;$('upload-command').textContent='';$('reset').disabled=false;
     $('original-player').hidden=true;$('wav-link').hidden=false;$('wav-link').href=entry.nativeAudioUrl;
     $('reference-wav').hidden=false;$('reference-wav').href=originalUrl;
@@ -390,14 +398,13 @@ function load(entry,{autoplay=false}={}) {
   $('wav-link').hidden=!entry.preview; if (entry.preview) $('wav-link').href=entry.preview;
   const reference=originalUrl||entry.reference;
   $('reference-wav').hidden=!reference; if(reference)$('reference-wav').href=reference;
-  $('download-eeprom').hidden=!entry.eepromHex||entry.firmwareEngine==='UM88'; $('reset').disabled=false;
+  $('reset').disabled=false;
   $('board-upload').hidden=!micronucleus;
   $('upload-command').textContent=`micronucleus --run ${prefix}-${entry.id}.hex`;
   $('download').textContent=micronucleus?'↓ HEX для Micronucleus':'↓ Flash HEX';
-  const eepromSource=entry.eepromSource||(entry.eepromHex ? 'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.eepromHex) : null);
-  for(const [id,source,suffix] of [['download',flashSource,''],['download-eeprom',eepromSource,'-eeprom']]){
-    const link=$(id);if(source){link.href=source;link.download=`${prefix}-${entry.id}${suffix}.hex`;link.removeAttribute('aria-disabled');}
-  }
+  const eepromSource=entry.firmwareEngine==='UM88'?null:entry.eepromSource||(entry.eepromHex ? 'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.eepromHex) : null);
+  downloadUI('download',flashSource,`${prefix}-${entry.id}.hex`,micronucleus?'Образ Flash для Micronucleus.':'Образ прошивки Flash HEX.');
+  downloadUI('download-eeprom',eepromSource,`${prefix}-${entry.id}-eeprom.hex`,eepromSource?'Образ EEPROM для этой прошивки.':'Этой прошивке EEPROM не требуется.');
   const bytes=parseHex(entry.flashHex,capacity); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   }
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id);
