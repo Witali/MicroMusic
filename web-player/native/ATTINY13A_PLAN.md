@@ -33,6 +33,19 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Word-arithmetic lowering, 2026-11-01: ADIW/SBIW now use one unsigned word load
+and word store for uncached GPR pairs, retaining the byte-local path inside
+cached regions. All 96 focused and 2862/2862 default checks pass, including all
+512 encodings, original
+full-domain arithmetic oracles, host edits, dead flags, IRQ/RESET and held CLKI.
+The historical generator comparison covers 48 catalog/policy modules: 20 shrink
+by 23–184 bytes, with unchanged manifests, cached-region bodies and unaffected
+functions. Eight paired music cases retain exact CPU/device, PCM and pin output
+with 15982 active IRQs. Native WASM/ABI and normal clock/IRQ calls are unchanged;
+the compiler/cache identity is regenerated. This is emitted-size/GPR-traffic
+evidence, not a measured speedup or stage5 closure. Count stays 24/31. See the
+[report](../reports/word-lowering-20261101.md).
+
 Watchdog integration audit, 2026-11-01: sections8.4/8.5.2 now have 20 additional
 actual-firmware checks, with interrupt-only and combined modes, vector service,
 WDTIF W1C, WDR, both CPU policies and internal/CLKI sources. Held high/low CLKI

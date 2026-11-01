@@ -239,7 +239,7 @@ masked to 255 when flags need the wrapped result. WASM has no AVR SREG or
 | `NOP` | no data operation | Advance PC and one CPU cycle. |
 | `LDI`, `SER` | `i32.const` (`41`), `i32.store8` (`3a`) | `SER` is `LDI Rd,255`; SREG unchanged. |
 | `MOV` | `i32.load8_u` (`2d`), `i32.store8` (`3a`) | SREG unchanged. |
-| `MOVW` | two byte loads and stores | Copy the even register pair; SREG unchanged. |
+| `MOVW` | `i32.load16_u` (`2f`), `i32.store16` (`3b`) | Copy the even register pair; SREG unchanged. Register-cached regions retain their locals. |
 | `ADD`, `LSL` | `i32.add` (`6a`) | Wrapped result and live `H,S,V,N,Z,C`; `LSL` is `ADD Rd,Rd`. |
 | `ADC`, `ROL` | two `i32.add` (`6a`) | Read C; `ROL` is `ADC Rd,Rd`. ADC Z depends only on the new result. |
 | `SUB`, `SUBI`, `NEG` | `i32.sub` (`6b`) | `NEG` subtracts from zero; live arithmetic flags. |
@@ -277,7 +277,7 @@ instruction descriptions, independently of the older interpreter subset:
 
 | Additional AVR forms | Implemented lowering |
 | --- | --- |
-| `ADIW`, `SBIW` | `i32.add/sub`, 16-bit result and word-operation flags. |
+| `ADIW`, `SBIW` | Uncached pair: `i32.load16_u`/`i32.store16` plus `i32.add/sub`, wrapped 16-bit result and S/V/N/Z/C; preserve I/T/H and two AVRe cycles. Cached regions retain byte locals. |
 | `SBC`, `SBCI`, `CPC` | `i32.sub` with carry/borrow and chained Z. |
 | `IJMP`, `ICALL` | Z-derived PC and generated function-table dispatch; ICALL pushes AVR PC. |
 | `CPSE`, `SBIC`, `SBIS` | comparison/bit test and length-aware skip; I/O timing for SBIC/SBIS. |

@@ -228,9 +228,13 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     if(name==='BLD')return writeReg(d,or(and(reg(d),constant(255^(1<<s))),shl(and(shr(flags(),6),constant(1)),s)));
     if(name==='ADIW'||name==='SBIW'){
       const subtract=name==='SBIW';
-      code.push(...set(0,or(reg(d),shl(reg(d+1),8))),...set(3,subtract?sub(X,constant(k)):add(X,constant(k))),...set(4,and(T,constant(65535))));
+      // The uncached register pair is contiguous little-endian GPR memory.
+      // Cached regions must consume and publish their current byte locals.
+      code.push(...set(0,regionRegisters?or(reg(d),shl(reg(d+1),8)):load16(constant(abi.data+d))),
+        ...set(3,subtract?sub(X,constant(k)):add(X,constant(k))),...set(4,and(T,constant(65535))));
       const n=shr(V,15),old=shr(X,15),overflow=subtract?and(old,xor(n,constant(1))):and(xor(old,constant(1)),n);
-      code.push(...updateFlags(mask,bit=>[subtract?lt(T,constant(0)):binary(0x4b,T,constant(65535)),eqz(V),n,overflow,xor(n,overflow)][bit]),...writeReg(d,V),...writeReg(d+1,shr(V,8)));
+      code.push(...updateFlags(mask,bit=>[subtract?lt(T,constant(0)):binary(0x4b,T,constant(65535)),eqz(V),n,overflow,xor(n,overflow)][bit]),
+        ...regionRegisters?bytes(writeReg(d,V),writeReg(d+1,shr(V,8))):store16(constant(abi.data+d),V));
       return code;
     }
     code.push(...set(0,name==='ASR'?signedReg(d):reg(d)));

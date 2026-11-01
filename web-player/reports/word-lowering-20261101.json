@@ -1,0 +1,716 @@
+{
+  "schema": "micromusic-word-arithmetic-lowering-v1",
+  "baselineCommit": "4a603b2f129e9c00d320a97f0f33024485e7d3e6",
+  "compilerIdentity": "6dff8aef30a8847d4abb3dad56d0d12d52889ac034c9cab42c13611121545a5d",
+  "native": {
+    "bytes": 124590,
+    "sha256": "244b3d3da85ff6cd065e6b105b18d26d8ae07e6615802d77f23a123338209c98"
+  },
+  "compilerSourceGraph": {
+    "web-player/lib/attiny13a-package.js": "a0b257c7c584c72f3c010732227fb36654e1a0d0607241b900edf729851397d2",
+    "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+    "web-player/lib/attiny13a-runtime.js": "de7ae636546875370738f3e8745ae4e3524442137aee65490aedc773e54b7488",
+    "web-player/lib/attiny13a.js": "3961d68ee0420e97c67743c9d5a1ae64f114554151dc2976d1e8e19ff3ffe1dc",
+    "web-player/lib/attiny88-registers.js": "78095666e0cfd009e9aba89cc7dfa2e015206eadff64b86712780ad626ed76b7",
+    "web-player/lib/audio-queue.js": "5e28341f34f8608c30ff96eb818f06c6c57bea4371d54dfeebb8291d75e3b0a2",
+    "web-player/lib/avr-attiny88.js": "23fb8daa5b58c3bc15c4e8380c56f6c788a0bed67b43240b751e9740186578c9",
+    "web-player/lib/avr-core.js": "d9adaa2043b837f1a1083afc56ecc7f5810a5213f6db2cc33606aa08fc9d5c3f",
+    "web-player/lib/avr-incremental-compiler.js": "19154178e888b4220c9e4576601351bb9ea8c3ce30cdab1067a12a532d13422f",
+    "web-player/lib/avr-indexeddb-cache.js": "ee6d784cf298435139540ae772a1d74e4237106b4e266697c2be06498cff8361",
+    "web-player/lib/avr-persistent-cache.js": "25689dec27cbf7cfd7f1bb503ee1339845fe7877fe6edeb4f761788f418cca50",
+    "web-player/lib/avr-phase-locals.js": "3b2d94294149c4e376a8857420d277f2248343dd0fefa7f0553e96fe5feeeab7",
+    "web-player/lib/avr-profiles.js": "cfc36f4936f1d70a22ed806d575bb1e9080597527bfa816fc85a9dd21574e470",
+    "web-player/lib/avr-reference.js": "fcbcfa037aeb1a4d822b368b5fd75a8566d2733b971bc1fff4f0fe4296b574a9",
+    "web-player/lib/avr-runtime.js": "9982516f6b88405d614b7976b8e257f7c4c8f24cac15a438549397657e97ca64",
+    "web-player/lib/avr-transpiled-runtime.js": "0ab773b4c47b52077578edb78fe23725d9f0e2153104b866ef28de2836549430",
+    "web-player/lib/avr-transpiled.js": "8b50f040f8b1632df74470649783507b09efce668b983437cdf0f68a6e2493c5",
+    "web-player/lib/avr-transpiler.js": "7c968b0530ca81f675041580b82b1155ec2bb1fc97be4589b7d01f8a7555b52f",
+    "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+    "web-player/lib/avr-wasm-regions.js": "40bb8a5e7c24171e28a5cf1dfe985bdb0fe4880554e84317dd6d6a61854ed8a6",
+    "web-player/lib/avr-wasm.js": "a6d6d487188fab94dfd3fe918ad145f4bfad58e43856fadf212854161f41e804",
+    "web-player/lib/devices/attiny13a-bandgap-profile.js": "262fb3eacbea8bb475379c8654b8d42de80b21b805535b888ee49b7bcba07568",
+    "web-player/lib/devices/attiny13a-clki-profile.js": "1745bd6dfe089dce3706be017a7e5de4bbf272ab354b70746bdef737bec521af",
+    "web-player/lib/devices/attiny13a-clock-sources.js": "581fffbf5e69138b89af1b55af8f6615872f95d4b487cfc86d65b8d17a3a3fa1",
+    "web-player/lib/devices/attiny13a-comparator-profile.js": "7e584c0d6f93d3ba3374e54992d4fa3ca30001e0efb2acad9aae24118f2a3262",
+    "web-player/lib/devices/attiny13a-profile.js": "a7d196ee092321ef675998559936d4021963209917489d1a1794214f309ae0ae",
+    "web-player/lib/devices/attiny13a-reset-profile.js": "c73e865c939463a6133fc45ffa59da7ed4490105c50272fd8b07b1aa65a50614",
+    "web-player/lib/devices/attiny88-profile.js": "2ffb2a6adb3143592416bd3e4f27a1024a9b5503730790a9ef523fc553e8122c",
+    "web-player/lib/devices/profiles.js": "80a7dc73d3be8132c4b96b19e93d0c9473fd9190f047d403d0bcc82579204c37",
+    "web-player/lib/emulation-configurations.js": "82dd13f5dad339d6666e3d443b19e8bff8e2ad68da8c82705bafd0fa0ea98869",
+    "web-player/lib/engines.js": "49713ee022b9132cf29437620d121d2e46054ea6fe4edabcf8388eff8e870320",
+    "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab",
+    "web-player/lib/package-entry.js": "ff9273715dcc8df7d1924b3294bccfad7156f09feba7d7466c7c89cf171169ad",
+    "web-player/lib/realtime.js": "0ff48bf4a2ec56b81d10bbf7a5520170758e204125537f7168155cf8c711a449",
+    "web-player/lib/renderer-device.js": "081a072d20750329e5dd1c712f7b1788961244733bfda83b1bda72eb37de1f20",
+    "web-player/lib/renderer-js.js": "74decdf64cf46f69c227ad2457b6e89a8c1407bb7a9f07b06ea1f3d83c4a461f",
+    "web-player/lib/renderer-package.js": "3b7d2d3d29818bf0b12fd0218d73ede38bdb94b1919cf2e0ba6d0b012240131b",
+    "web-player/lib/renderer-transpiled.js": "9f2a67650b8f9193c784613980bd6113e666f50435f3987ce776a65915ed3d7f",
+    "web-player/lib/renderer.js": "77df3b204411d00ec3106dae69824a91612abd6717325e1ee186d6980971bc2a",
+    "web-player/lib/universal-package.js": "482c9d24164f3a93f48f8c59013e4aa4e40bf719f5f39ccb6710c085a13784b4",
+    "web-player/scripts/generate-avr-cache-identity.mjs": "bba94dd8d010945a5e27fbcb67355488dca46db765d9ea475c04b6daf0e3a13a"
+  },
+  "node": "v22.22.3",
+  "v8": "12.4.254.21-node.56",
+  "sources": {
+    "web-player/lib/avr-transpiler.js": "7c968b0530ca81f675041580b82b1155ec2bb1fc97be4589b7d01f8a7555b52f",
+    "web-player/scripts/verify-word-lowering.mjs": "1a90a360e04efcef2184b69c94ed15b7fc7d6058f261b0cd3690dbe3578a5e65",
+    "web-player/tests/avr-word-lowering.test.mjs": "34664ce2abeb85decb7897773992928f61b9538d7555e514d3be25b7c11a2f7b",
+    "web-player/tests/avr-movw-lowering.test.mjs": "3cd2d5069f2e1fe8ac15989dfe58c0913ad627b927eed6e89e1db4c3a62d93ee",
+    "web-player/tests/helpers/wasm-code.mjs": "28831ff273f49b620c79598be34b9ffc85dc00ee76b9cc0d8f377ad4815f5c74",
+    "web-player/tests/helpers/avr-expectations.mjs": "26cc51deca29d10ff3a804b5b4d04d849c6699e9a5655a9c5013ed90124f36bf",
+    "web-player/tests/fixtures/attiny13a-system-firmware.mjs": "1d75e9a7186337b3de601f29abe5b23450e0cd955926e88257b9049c016e366e",
+    "web-player/lib/avr-phase-locals.js": "3b2d94294149c4e376a8857420d277f2248343dd0fefa7f0553e96fe5feeeab7",
+    "web-player/lib/avr-transpiled-runtime.js": "0ab773b4c47b52077578edb78fe23725d9f0e2153104b866ef28de2836549430",
+    "web-player/lib/attiny13a-runtime.js": "de7ae636546875370738f3e8745ae4e3524442137aee65490aedc773e54b7488",
+    "web-player/lib/devices/profiles.js": "80a7dc73d3be8132c4b96b19e93d0c9473fd9190f047d403d0bcc82579204c37",
+    "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+    "web-player/lib/avr-wasm-regions.js": "40bb8a5e7c24171e28a5cf1dfe985bdb0fe4880554e84317dd6d6a61854ed8a6"
+  },
+  "baselineSources": {
+    "web-player/lib/avr-transpiler.js": "1ade86251e0f13ffca6cdcf581199a01b40534192612ae61c8db4ee798db9758"
+  },
+  "catalogs": {
+    "web-player/firmware.json": "84ebe8568a2e9ca714f4c413dbbf33ffa050c3ec80a4ad0abd4ab15d96a83c80",
+    "web-player/hq4-firmware.json": "f33c5aa6d39055cf7e9cc4a79ad6730ae1020fecc5d8a818cfb1ae61fbac030e"
+  },
+  "sizes": [
+    {
+      "id": "rhythmic",
+      "mode": "legacy",
+      "before": 160102,
+      "after": 160102,
+      "saved": 0,
+      "unchangedBodies": 569,
+      "beforeSha256": "a8cf73f349e18d4bf860215d2779a49bd775ddb40523ecad9b0639d508d204c2",
+      "afterSha256": "a8cf73f349e18d4bf860215d2779a49bd775ddb40523ecad9b0639d508d204c2"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "full",
+      "before": 166564,
+      "after": 166564,
+      "saved": 0,
+      "unchangedBodies": 572,
+      "beforeSha256": "b04c50df891f782000c439272c535928df2caf7012efd3a493e1d03659e8deff",
+      "afterSha256": "b04c50df891f782000c439272c535928df2caf7012efd3a493e1d03659e8deff"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "resumable",
+      "before": 384819,
+      "after": 384819,
+      "saved": 0,
+      "unchangedBodies": 571,
+      "beforeSha256": "91ed703e52c68b2deb7c22b8d70002ea7fdc2b5731a26e3fbb27a7deee44b39c",
+      "afterSha256": "91ed703e52c68b2deb7c22b8d70002ea7fdc2b5731a26e3fbb27a7deee44b39c"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "bounded-phase-locals",
+      "before": 289585,
+      "after": 289585,
+      "saved": 0,
+      "unchangedBodies": 577,
+      "beforeSha256": "5d9ed8c057199509bf466f70d0f0bc65446a7da6b3055b3451599f26a37d0ded",
+      "afterSha256": "5d9ed8c057199509bf466f70d0f0bc65446a7da6b3055b3451599f26a37d0ded"
+    },
+    {
+      "id": "alicia",
+      "mode": "legacy",
+      "before": 171448,
+      "after": 171402,
+      "saved": 46,
+      "unchangedBodies": 584,
+      "beforeSha256": "d7ceefda7be36f08e23b593fcea776c69246d57e9918e4e89f22f8f2bea06880",
+      "afterSha256": "bca42d51dec1b3019624b08093dd46389e910a2fde7e056d905ff128efab6ff6"
+    },
+    {
+      "id": "alicia",
+      "mode": "full",
+      "before": 178701,
+      "after": 178655,
+      "saved": 46,
+      "unchangedBodies": 588,
+      "beforeSha256": "5d884897549e8348ccf5cb6c065643d926f1695e18ae82f4c171882c973c7bef",
+      "afterSha256": "2426b4cf7436c5625c2c5bfaf74ce845d13b1333fd2a0f81a3c0bc625a3c2200"
+    },
+    {
+      "id": "alicia",
+      "mode": "resumable",
+      "before": 399141,
+      "after": 399118,
+      "saved": 23,
+      "unchangedBodies": 576,
+      "beforeSha256": "90d621ee2aee656822c233c0bfc9b5cd8bacb183d8c5429ecb18e98969c9da37",
+      "afterSha256": "3f98d2d0752f81d1f1d01425a1a54a767361b7a3dc6ec157a86b848d33b95dd4"
+    },
+    {
+      "id": "alicia",
+      "mode": "bounded-phase-locals",
+      "before": 294618,
+      "after": 294595,
+      "saved": 23,
+      "unchangedBodies": 581,
+      "beforeSha256": "80fcb8b74652598c9c650731e63ca1d89810bd93610abe046a8e43cacca63fdd",
+      "afterSha256": "dd2f841c6d7dd05b1fefd6b114871cde9a37f73c2a506b8fed0d995d3bbbe1a2"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "legacy",
+      "before": 170258,
+      "after": 170258,
+      "saved": 0,
+      "unchangedBodies": 575,
+      "beforeSha256": "b5e33125baba67af4974d1e38ac996b06156ea6d7c62835425c40b866df345b7",
+      "afterSha256": "b5e33125baba67af4974d1e38ac996b06156ea6d7c62835425c40b866df345b7"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "full",
+      "before": 179352,
+      "after": 179352,
+      "saved": 0,
+      "unchangedBodies": 579,
+      "beforeSha256": "39d29c92229852a3dc83fd353763ad0d02becadb9f1dd4692aa7fa2bea9f4247",
+      "afterSha256": "39d29c92229852a3dc83fd353763ad0d02becadb9f1dd4692aa7fa2bea9f4247"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "resumable",
+      "before": 398827,
+      "after": 398827,
+      "saved": 0,
+      "unchangedBodies": 570,
+      "beforeSha256": "bb2658e4b73e58daa450471f9a220206c34522880d93bf7ff2e98851c9b9c3c6",
+      "afterSha256": "bb2658e4b73e58daa450471f9a220206c34522880d93bf7ff2e98851c9b9c3c6"
+    },
+    {
+      "id": "turkish-march",
+      "mode": "bounded-phase-locals",
+      "before": 294160,
+      "after": 294160,
+      "saved": 0,
+      "unchangedBodies": 573,
+      "beforeSha256": "7d173effc4d5bf7b52847634f21cca2a9ec45c98e5ce8e607ff3fb6bb61b9226",
+      "afterSha256": "7d173effc4d5bf7b52847634f21cca2a9ec45c98e5ce8e607ff3fb6bb61b9226"
+    },
+    {
+      "id": "children",
+      "mode": "legacy",
+      "before": 167992,
+      "after": 167808,
+      "saved": 184,
+      "unchangedBodies": 584,
+      "beforeSha256": "910c7ebfd35c49c66c92b7f834afc4769c88a2aad573a2e7f08d0c1f95841d92",
+      "afterSha256": "c8f86622c8dbe3b4828b7fd5ca3f14302e2cd19c12c5107b5f065db8bf0d9a20"
+    },
+    {
+      "id": "children",
+      "mode": "full",
+      "before": 174882,
+      "after": 174698,
+      "saved": 184,
+      "unchangedBodies": 587,
+      "beforeSha256": "e33d0a3c6147bbe8a56ce098b59f3738c16fc433974493fd16a7ce98b4079e52",
+      "afterSha256": "b4c324c6279406e81b6398a6b1a05080afe2cc1c76aeed2cb086f930cf0a45a1"
+    },
+    {
+      "id": "children",
+      "mode": "resumable",
+      "before": 398022,
+      "after": 397838,
+      "saved": 184,
+      "unchangedBodies": 583,
+      "beforeSha256": "419d4be4051a1f18b0281337d2261e023ba0e7ea8863a12d09175757ee449b0c",
+      "afterSha256": "20fe941f6499d897b7ba559190bf50c1676c1522392e7bcc4309083bf637043a"
+    },
+    {
+      "id": "children",
+      "mode": "bounded-phase-locals",
+      "before": 294128,
+      "after": 293944,
+      "saved": 184,
+      "unchangedBodies": 586,
+      "beforeSha256": "69e9bf2320957ef847326a3e71a0a730dd44d7f5283014c3d937eb6ed5e62fc6",
+      "afterSha256": "4e20f7a73c88e6843ec8b07e20746b3d91f26959fde09659571c947778792519"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "legacy",
+      "before": 155670,
+      "after": 155670,
+      "saved": 0,
+      "unchangedBodies": 579,
+      "beforeSha256": "4f9dbe2cef73952de6b3cfc8ef72e12f6911702979592cd6ab70b385a0a909b7",
+      "afterSha256": "4f9dbe2cef73952de6b3cfc8ef72e12f6911702979592cd6ab70b385a0a909b7"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "full",
+      "before": 161316,
+      "after": 161316,
+      "saved": 0,
+      "unchangedBodies": 583,
+      "beforeSha256": "5a3bf06b0a22db2684332a811208f560578226a216c1df45d404904c28a47310",
+      "afterSha256": "5a3bf06b0a22db2684332a811208f560578226a216c1df45d404904c28a47310"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "resumable",
+      "before": 367472,
+      "after": 367472,
+      "saved": 0,
+      "unchangedBodies": 575,
+      "beforeSha256": "1f078261b2b4f1b32df2c2507b52f1403e793a149febcf17910ce9e575d73681",
+      "afterSha256": "1f078261b2b4f1b32df2c2507b52f1403e793a149febcf17910ce9e575d73681"
+    },
+    {
+      "id": "greensleeves",
+      "mode": "bounded-phase-locals",
+      "before": 269557,
+      "after": 269557,
+      "saved": 0,
+      "unchangedBodies": 581,
+      "beforeSha256": "089011068c356a804b26c1230e0ee2609c9fa74ae16edae1b12c32a78201c6e7",
+      "afterSha256": "089011068c356a804b26c1230e0ee2609c9fa74ae16edae1b12c32a78201c6e7"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "legacy",
+      "before": 161990,
+      "after": 161990,
+      "saved": 0,
+      "unchangedBodies": 572,
+      "beforeSha256": "a0e448c41c3167d6fde6b8e438ecce77d516d6c672a9d4bc7a077238f476a468",
+      "afterSha256": "a0e448c41c3167d6fde6b8e438ecce77d516d6c672a9d4bc7a077238f476a468"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "full",
+      "before": 168571,
+      "after": 168571,
+      "saved": 0,
+      "unchangedBodies": 575,
+      "beforeSha256": "91d5ebf8d4996955da9ccad652325edffc149d83f634cadce7f7c105d6e04ae6",
+      "afterSha256": "91d5ebf8d4996955da9ccad652325edffc149d83f634cadce7f7c105d6e04ae6"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "resumable",
+      "before": 388592,
+      "after": 388592,
+      "saved": 0,
+      "unchangedBodies": 574,
+      "beforeSha256": "7b341651555326184c2737c3bc449d7f5a78f0757ffde0e598f91cf6bd09a83e",
+      "afterSha256": "7b341651555326184c2737c3bc449d7f5a78f0757ffde0e598f91cf6bd09a83e"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "bounded-phase-locals",
+      "before": 292599,
+      "after": 292599,
+      "saved": 0,
+      "unchangedBodies": 580,
+      "beforeSha256": "92c38cf81825a9f77910503d3901be76b9e160e33ee19ae730d286896cfeb495",
+      "afterSha256": "92c38cf81825a9f77910503d3901be76b9e160e33ee19ae730d286896cfeb495"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "legacy",
+      "before": 154890,
+      "after": 154890,
+      "saved": 0,
+      "unchangedBodies": 577,
+      "beforeSha256": "060bf063a8f87a3f94508e8d7bf34221a0514683286feacab4719f09ae753e91",
+      "afterSha256": "060bf063a8f87a3f94508e8d7bf34221a0514683286feacab4719f09ae753e91"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "full",
+      "before": 161085,
+      "after": 161085,
+      "saved": 0,
+      "unchangedBodies": 582,
+      "beforeSha256": "69589af8f0b4964bb09672304f1d485eac0b3d7e5ced46a097a4e99890ed1c67",
+      "afterSha256": "69589af8f0b4964bb09672304f1d485eac0b3d7e5ced46a097a4e99890ed1c67"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "resumable",
+      "before": 377730,
+      "after": 377730,
+      "saved": 0,
+      "unchangedBodies": 580,
+      "beforeSha256": "ae6c72d52b8afc4dfa8203b40902fb17376aea8f4a3c7f00a09a519faa5ccbe3",
+      "afterSha256": "ae6c72d52b8afc4dfa8203b40902fb17376aea8f4a3c7f00a09a519faa5ccbe3"
+    },
+    {
+      "id": "cancion-del-mariachi",
+      "mode": "bounded-phase-locals",
+      "before": 277940,
+      "after": 277940,
+      "saved": 0,
+      "unchangedBodies": 586,
+      "beforeSha256": "6922facaf31372428eecd00e6855e8e7400b3332d31735d199725ffc1ee731f1",
+      "afterSha256": "6922facaf31372428eecd00e6855e8e7400b3332d31735d199725ffc1ee731f1"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "legacy",
+      "before": 162252,
+      "after": 162252,
+      "saved": 0,
+      "unchangedBodies": 578,
+      "beforeSha256": "8bcb14678d235461893aedaaaff319e0646f78dd3cfe1bb942e72b9b13d0f1f5",
+      "afterSha256": "8bcb14678d235461893aedaaaff319e0646f78dd3cfe1bb942e72b9b13d0f1f5"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "full",
+      "before": 168630,
+      "after": 168630,
+      "saved": 0,
+      "unchangedBodies": 580,
+      "beforeSha256": "8d8a01d00ac2b768cbdbe6f84e100d2923736aecf192b8de8b45cb88ef8f14e5",
+      "afterSha256": "8d8a01d00ac2b768cbdbe6f84e100d2923736aecf192b8de8b45cb88ef8f14e5"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "resumable",
+      "before": 388420,
+      "after": 388420,
+      "saved": 0,
+      "unchangedBodies": 577,
+      "beforeSha256": "567d7cf787e48db7ef1d867183030ebf1e41814bbdd2956ed0485205b6c7166d",
+      "afterSha256": "567d7cf787e48db7ef1d867183030ebf1e41814bbdd2956ed0485205b6c7166d"
+    },
+    {
+      "id": "cancion-del-mariachi-ensemble",
+      "mode": "bounded-phase-locals",
+      "before": 285934,
+      "after": 285934,
+      "saved": 0,
+      "unchangedBodies": 580,
+      "beforeSha256": "831f9e09db25d748d9cd8f77b3c890a35225f731fbfd1bd53eb4f2b1ef00ba53",
+      "afterSha256": "831f9e09db25d748d9cd8f77b3c890a35225f731fbfd1bd53eb4f2b1ef00ba53"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "legacy",
+      "before": 173307,
+      "after": 173307,
+      "saved": 0,
+      "unchangedBodies": 589,
+      "beforeSha256": "2780b3146d27c3f7227fc659e8d02481f26fcc18f11ad40727b114064397aae0",
+      "afterSha256": "2780b3146d27c3f7227fc659e8d02481f26fcc18f11ad40727b114064397aae0"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "full",
+      "before": 180655,
+      "after": 180655,
+      "saved": 0,
+      "unchangedBodies": 594,
+      "beforeSha256": "3463d10ec43bf85e24dca56e906babbefc2a5d4df4de830901929a42c204d1f6",
+      "afterSha256": "3463d10ec43bf85e24dca56e906babbefc2a5d4df4de830901929a42c204d1f6"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "resumable",
+      "before": 406737,
+      "after": 406737,
+      "saved": 0,
+      "unchangedBodies": 591,
+      "beforeSha256": "9f18fa3834a18f7f2304ccfb01a187d710206ad2d909892ffa278af702c97a13",
+      "afterSha256": "9f18fa3834a18f7f2304ccfb01a187d710206ad2d909892ffa278af702c97a13"
+    },
+    {
+      "id": "cancion-del-mariachi-sparse",
+      "mode": "bounded-phase-locals",
+      "before": 305273,
+      "after": 305273,
+      "saved": 0,
+      "unchangedBodies": 597,
+      "beforeSha256": "326796d83563ce60c89d1a8269a9ef2eb8798d0d8c63bcc1bb0b630276063dcf",
+      "afterSha256": "326796d83563ce60c89d1a8269a9ef2eb8798d0d8c63bcc1bb0b630276063dcf"
+    },
+    {
+      "id": "hq4-chego-tiny",
+      "mode": "legacy",
+      "before": 162493,
+      "after": 162355,
+      "saved": 138,
+      "unchangedBodies": 582,
+      "beforeSha256": "63454f9c2cdb42b37acf67b111a2a67e4ff2a8708e61da487228e06c71189fa0",
+      "afterSha256": "3a9676f7d843b453402698ce1e2ea8a9001f9022b3dd5b5edb134b0c4d0c60c8"
+    },
+    {
+      "id": "hq4-chego-tiny",
+      "mode": "full",
+      "before": 170300,
+      "after": 170162,
+      "saved": 138,
+      "unchangedBodies": 584,
+      "beforeSha256": "e53b652f93ba48442c43097dce61f35559382d37b8be92661fcfbe415115e9aa",
+      "afterSha256": "2d73d08e78c5eb868fabcb4266c1c2d4ca1c411ecb8043f0c3fc7548483cef5a"
+    },
+    {
+      "id": "hq4-chego-tiny",
+      "mode": "resumable",
+      "before": 401980,
+      "after": 401842,
+      "saved": 138,
+      "unchangedBodies": 580,
+      "beforeSha256": "ae9ae19d40636e75a46c48e76d62e9752a9db015544fc8e11632cbb1e0c3e256",
+      "afterSha256": "f5068511d1d36d9c4bf88bc75bdf2540a2d6c081a5178e9a4c5bc20ccecaab69"
+    },
+    {
+      "id": "hq4-chego-tiny",
+      "mode": "bounded-phase-locals",
+      "before": 296355,
+      "after": 296217,
+      "saved": 138,
+      "unchangedBodies": 596,
+      "beforeSha256": "f4242347a6885c416413ea002a46b1c2db001007e4b3dd5075203ea16b00a148",
+      "afterSha256": "de92f17e6678dac19cabe1de92df8bc63393268f1bb03bcef1718267c77290e1"
+    },
+    {
+      "id": "hq4-otvechaesh-tiny",
+      "mode": "legacy",
+      "before": 160493,
+      "after": 160355,
+      "saved": 138,
+      "unchangedBodies": 579,
+      "beforeSha256": "615ab49743fbd090aba2ede1da2a82cb27559cc738cdafe87522e69946a176a5",
+      "afterSha256": "a3195a3a1a14f7e3cf19c72a78a56e30e85148f7c17f5e602a30a406bf5448eb"
+    },
+    {
+      "id": "hq4-otvechaesh-tiny",
+      "mode": "full",
+      "before": 168145,
+      "after": 168007,
+      "saved": 138,
+      "unchangedBodies": 580,
+      "beforeSha256": "15085af1da530b555b42de457bee7399fa300258d4ea06bd45724ab12687ffd8",
+      "afterSha256": "25300f6f04e1b0f613183ab8c176f9dfaec1a8634eecfcdb831126825d448007"
+    },
+    {
+      "id": "hq4-otvechaesh-tiny",
+      "mode": "resumable",
+      "before": 400697,
+      "after": 400559,
+      "saved": 138,
+      "unchangedBodies": 579,
+      "beforeSha256": "a3bbf7cac96d44ee5724a74812e64d646d2d117350486ccb1c22595b2868d1f1",
+      "afterSha256": "c0d2e0fd76b2918c522a3c7cfd080493b2f574be4a3894c9f51b1c6a5125e29c"
+    },
+    {
+      "id": "hq4-otvechaesh-tiny",
+      "mode": "bounded-phase-locals",
+      "before": 295310,
+      "after": 295172,
+      "saved": 138,
+      "unchangedBodies": 592,
+      "beforeSha256": "a8750b1d63b2d30fe965039fcdf6dc5a8d78a34c3a56cff91fdb79746af1e7c9",
+      "afterSha256": "9289b3fa2bf844303e67f506a25167b7887b1f0852ca29898cc7673f8053b9ac"
+    },
+    {
+      "id": "hq4-vinni",
+      "mode": "legacy",
+      "before": 166896,
+      "after": 166804,
+      "saved": 92,
+      "unchangedBodies": 583,
+      "beforeSha256": "30aa1252d7e646316fd3f0627d7a5a57f90a0f1094458eb4f89977fb9542e76a",
+      "afterSha256": "9160ec6665dd2652298997f5c3452d4835f330b48ebe975de089c97b55097a71"
+    },
+    {
+      "id": "hq4-vinni",
+      "mode": "full",
+      "before": 174079,
+      "after": 173987,
+      "saved": 92,
+      "unchangedBodies": 585,
+      "beforeSha256": "58d467c805047c87dbd3db34cb353b54a4e763a050f66da9f8a9fd98be1ae49a",
+      "afterSha256": "67c59f31ddae41eaf499a6aa51d582f440c1fec84717bad64d78b9c0eb491f71"
+    },
+    {
+      "id": "hq4-vinni",
+      "mode": "resumable",
+      "before": 396349,
+      "after": 396257,
+      "saved": 92,
+      "unchangedBodies": 582,
+      "beforeSha256": "2a05adcbaebdc0e6e9271e462c8812ce9515ca3073837438048ea2255109e223",
+      "afterSha256": "50ce513800055a44c11a8c84940dea5c2250f1e6711e764191d7fb0c56ff3728"
+    },
+    {
+      "id": "hq4-vinni",
+      "mode": "bounded-phase-locals",
+      "before": 293045,
+      "after": 292953,
+      "saved": 92,
+      "unchangedBodies": 588,
+      "beforeSha256": "ef52dafa6b152031509f3ca5ebf54b820c61c94700a26c9a93dbbe8c4fd83339",
+      "afterSha256": "d5a7ca06734448b0cda33d6a5ab32ab5c33ef789ddc0e323788ad673ec2e9f62"
+    }
+  ],
+  "audio": [
+    {
+      "id": "rhythmic",
+      "mode": "compatible",
+      "frames": 4096,
+      "rate": 48000,
+      "checkpoints": 16,
+      "irqs": 3198,
+      "pinCount": 6397,
+      "policy": {
+        "fastBlocks": true,
+        "optimizeFlags": true,
+        "boundedRegions": false,
+        "optimizePhaseLocals": false
+      },
+      "pcmSha256": "d7c3e5e2fc05c3e4f34ead7da49e541c0915efd1901b78156eb411c7d67f414f",
+      "pinsSha256": "89662980e94f1d88f67bf444c8fc9eed1c43f0ede91c523fd5eb26d565c4f69c"
+    },
+    {
+      "id": "rhythmic",
+      "mode": "physical",
+      "frames": 4096,
+      "rate": 48000,
+      "checkpoints": 16,
+      "irqs": 798,
+      "pinCount": 1597,
+      "policy": {
+        "fastBlocks": true,
+        "optimizeFlags": false,
+        "boundedRegions": true,
+        "optimizePhaseLocals": true
+      },
+      "pcmSha256": "fd0eac13d5e765450ee764558ed7b6580bb223b72677892ea596341bda0dd74e",
+      "pinsSha256": "481596e0beb417a35e99d6fa68f9538a69fe39f9c81b3be0e0e45323a8b12e26"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "compatible",
+      "frames": 4096,
+      "rate": 48000,
+      "checkpoints": 16,
+      "irqs": 3198,
+      "pinCount": 8565,
+      "policy": {
+        "fastBlocks": true,
+        "optimizeFlags": true,
+        "boundedRegions": false,
+        "optimizePhaseLocals": false
+      },
+      "pcmSha256": "e62ff3a9d808992fa34a13dce6e14cee047187aeb7d3fcf26894d6cbc77f9f71",
+      "pinsSha256": "0ca384836d803a687bc5697f71c863c6f1ceefa79ad462095e055c4131b1cdfb"
+    },
+    {
+      "id": "lumiere-stereo",
+      "mode": "physical",
+      "frames": 4096,
+      "rate": 48000,
+      "checkpoints": 16,
+      "irqs": 798,
+      "pinCount": 1877,
+      "policy": {
+        "fastBlocks": true,
+        "optimizeFlags": false,
+        "boundedRegions": true,
+        "optimizePhaseLocals": true
+      },
+      "pcmSha256": "9dc6184d625d57de8d51d5dae80b6196d7f87ce1af75f0cc62ad9382e8cd63a2",
+      "pinsSha256": "0a5d2fec9ed6a88aace170ef872d52bf688e88853afd2caef814198cdd3a71c7"
+    },
+    {
+      "id": "alicia",
+      "mode": "compatible",
+      "frames": 4096,
+      "rate": 48000,
+      "checkpoints": 16,
+      "irqs": 3197,
+      "pinCount": 6395,
+      "policy": {
+        "fastBlocks": true,
+        "optimizeFlags": true,
+        "boundedRegions": false,
+        "optimizePhaseLocals": false
+      },
+      "pcmSha256": "daeae3e5e03e0f18dd5524812440cfd89e696f5df953695f74b756fa843ed3b0",
+      "pinsSha256": "2c32199e3de2ae6833afb8ec7b9a3b5e257df33e1110c0eeaab75096c4745663"
+    },
+    {
+      "id": "alicia",
+      "mode": "physical",
+      "frames": 4096,
+      "rate": 48000,
+      "checkpoints": 16,
+      "irqs": 797,
+      "pinCount": 1595,
+      "policy": {
+        "fastBlocks": true,
+        "optimizeFlags": false,
+        "boundedRegions": true,
+        "optimizePhaseLocals": true
+      },
+      "pcmSha256": "ee6da99cac8983176f98b9cd40897fb833079dd034bfb6bd2d6d95fa7f7e396a",
+      "pinsSha256": "b6ea8f9b163787ca621ae99555d4ab8fab4e865a8579545185222e83fc445b9f"
+    },
+    {
+      "id": "hq4-chego-tiny",
+      "mode": "compatible",
+      "frames": 4096,
+      "rate": 48000,
+      "checkpoints": 16,
+      "irqs": 3198,
+      "pinCount": 6398,
+      "policy": {
+        "fastBlocks": true,
+        "optimizeFlags": true,
+        "boundedRegions": false,
+        "optimizePhaseLocals": false
+      },
+      "pcmSha256": "cc071dbf18d7c8b941bf8600bc9801aefb71c714028ec717da3120baea22771f",
+      "pinsSha256": "5392a7107c7186ca3761285b3285c391b285718a9e6e7c21a90980ac05b1b394"
+    },
+    {
+      "id": "hq4-chego-tiny",
+      "mode": "physical",
+      "frames": 4096,
+      "rate": 48000,
+      "checkpoints": 16,
+      "irqs": 798,
+      "pinCount": 1598,
+      "policy": {
+        "fastBlocks": true,
+        "optimizeFlags": false,
+        "boundedRegions": true,
+        "optimizePhaseLocals": true
+      },
+      "pcmSha256": "0df818ebd89becb2b2adb2e88be8684266af60b89fb17f4ada162e79890ee866",
+      "pinsSha256": "d6503632ff3b2d62f916b7ac3588182e7ba47fc36c4c4ffdaa2f6c431c6b2307"
+    }
+  ],
+  "executionSpeedMeasured": false,
+  "meaning": "ADIW/SBIW lower uncached register traffic to one unsigned word load and word store. One unchanged native module and current JS wrapper execute exact old/new CPU bytecode. Register-cached region bodies and all unaffected functions remain byte-identical. Software evidence only, with no speed, silicon, real-time or complete stage5 claim.",
+  "fullSuite": {
+    "tests": 2862,
+    "pass": 2862,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "tapSha256": "9eb180e1d963318ea694c3b63be657b75ec7be64ee3e974d89df246a7d663084"
+  },
+  "sharedSuite": {
+    "tests": 96,
+    "pass": 96,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "tapSha256": "e71ca0b8c1c5ef2beaf81e7e3fba74427ed13293f57fa53ae8ded9ae82491cca"
+  }
+}

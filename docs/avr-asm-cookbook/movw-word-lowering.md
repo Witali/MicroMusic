@@ -62,3 +62,31 @@ See the [retained integration report](../../web-player/reports/movw-lowering-202
 for measured emitted sizes and completed checks. The benefit concerns bytecode
 size and memory-operation count. Execution speed, hardware behavior and real-time
 audio admission are not inferred from the smaller instruction sequence.
+
+## ADIW/SBIW register-pair arithmetic
+
+The same uncached word access now applies to ADIW/SBIW on the supported
+ATtiny13A/ATtiny88 emitters. Microchip DS40002198A sections5.3/5.98 specify
+pairs starting at r24/r26/r28/r30, immediates 0..63, two AVRe cycles, updated
+S/V/N/Z/C and preserved I/T/H. Retain the existing flag equations, masks,
+16-bit wrap and phase boundaries; only pair loading/storing changes.
+
+The ordinary path uses one unsigned `i32.load16_u` and one `i32.store16`,
+replacing two byte loads, their shift/OR and two byte stores. Both bytes stay
+inside the GPR file. Odd ABI bases are valid with the ordinary alignment hint.
+Register-cached regions keep their current byte locals, so earlier local
+updates and exit publication remain intact. Individual resumable arithmetic
+still reads operands at retirement, after its two-cycle clock barrier; public
+pair edits during a pause remain visible and untouched SREG bits retain their
+current values. RESET cancels the word store, and a tied IRQ sees its result.
+
+The [arithmetic tests](../../web-player/tests/avr-word-lowering.test.mjs) cover
+all 512 encodings, every retained I/T/H pattern, carry/sign boundaries, dead
+flags, cached/uncached paths, partial execution and held/unequal CLKI.
+The existing independent oracle also checks every 16-bit value and all 64
+immediates. A [historical comparison](../../web-player/scripts/verify-word-lowering.mjs)
+checks 48 catalog/policy artifacts and eight active-IRQ music cases. Twenty
+modules shrink by 23–184 bytes; all register-cached region bodies and unaffected
+functions remain byte-identical. Native WASM/ABI are unchanged. This reduces
+bytecode size and GPR memory operations, without a measured speed claim.
+See the [evidence](../../web-player/reports/word-lowering-20261101.md).
