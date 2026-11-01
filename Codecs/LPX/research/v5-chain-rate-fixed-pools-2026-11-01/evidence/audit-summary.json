@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "saved_only": true,
+  "new_dp_model_metric_native_calls": 0,
+  "records": 60,
+  "cap_views": 180,
+  "exact_records": 60,
+  "single_reset_controls": 50,
+  "within_arm_exact_primary_wins": 5,
+  "context_frontier_extensions": 0,
+  "exact_cache_fresh_rows": 88,
+  "exact_cache_reuses": 164,
+  "dp_work_sums": {
+    "transitions": 3195,
+    "states_created": 1483,
+    "processed_resets": 100,
+    "completion_size_pruned": 492,
+    "dominated_states_removed": 323,
+    "completed_candidates": 922
+  },
+  "maximum_dp_peak_states": 202,
+  "classification_counts": {
+    "known-other-V1-arm-tuple": 1,
+    "dominated-or-equivalent-context-original": 5,
+    "rejected-whole-gates": 11
+  },
+  "source_inventory_files": 217,
+  "study_recipe_files": 12,
+  "execution_production_commit": "654ada493202f565d24cb9dcf22f16137c825329",
+  "execution_study_commit": "700147a571aacaf56b9587053e7f96385d403bc6",
+  "audit_cost": {
+    "wall_seconds": 14.438268099998822,
+    "cpu_seconds": 14.078125
+  }
+}
