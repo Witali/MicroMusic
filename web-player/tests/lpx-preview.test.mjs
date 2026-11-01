@@ -6,11 +6,11 @@ import {legacyManifest as manifest,publishedManifest,threeVariantManifest,low15F
 
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const flush=()=>new Promise(setImmediate);
-const legacyApp=options=>playerApp({catalogs:{'manifest.json':manifest},...options});
+const legacyApp=options=>playerApp({catalogs:{'manifest.json':manifest,'audio/speex-bread/manifest.json':null},...options});
 const fixture=options=>legacyApp({firmware:'lpx-bread-compact',...options});
 // Before publication, the VM uses an existing same-length WAV solely to test
 // waveform transport; this fixture does not test the experimental decoder.
-const s15App=options=>playerApp({catalogs:{'manifest.json':threeVariantManifest},
+const s15App=options=>playerApp({catalogs:{'manifest.json':threeVariantManifest,'audio/speex-bread/manifest.json':null},
   assets:{'low15.wav':readFileSync(new URL('../audio/lpx-bread/quality.wav',import.meta.url))},...options});
 const cards=app=>app.get('catalog').children.map(item=>item.children[0]);
 const choose=async(app,device)=>{app.get('device-select').value=device;await app.get('device-select').onchange();await flush();};
@@ -80,11 +80,11 @@ test('S15 becomes the first Tiny88 choice and labels the separate experimental d
   assert.equal(app.get('selected-title').textContent,'LPX · Повышенное качество');
 });
 
-test('actual published Tiny88 cards are ordered low15, compact, quality with their real costs and waveform',async()=>{
+test('actual published Tiny88 cards keep LPX low15, compact, quality first, followed by Speex',async()=>{
   const low=publishedManifest.variants.find(variant=>variant.id==='low15');
   const ids=low?['low15','compact','quality']:['compact','quality'];
   const app=await playerApp({device:'attiny88'});await flush();
-  assert.deepEqual(cards(app).map(card=>card.dataset.firmware),ids.map(id=>'lpx-bread-'+id));
+  assert.deepEqual(cards(app).map(card=>card.dataset.firmware),[...ids.map(id=>'lpx-bread-'+id),'speex-bread-compact','speex-bread-quality']);
   for(const id of ids){
     const variant=publishedManifest.variants.find(item=>item.id===id);select(app,'lpx-bread-'+id);await flush();
     const card=cards(app).find(item=>item.dataset.firmware==='lpx-bread-'+id);
@@ -312,7 +312,7 @@ test('actual WAV samples populate the shared waveform, with stale waveform resul
 
 test('invalid manifest leaves real HQ4 usable and native waveform failure does not invent CPU state',async()=>{
   const invalid=structuredClone(manifest);invalid.variants[0].bitrateBps+=100;
-  const unavailable=await playerApp({catalogs:{'manifest.json':invalid}});
+  const unavailable=await playerApp({catalogs:{'manifest.json':invalid,'audio/speex-bread/manifest.json':null}});
   assert.equal(cards(unavailable).length,3);await unavailable.get('play').onclick();
   assert.equal(unavailable.body.dataset.playing,'true');await choose(unavailable,'attiny88');
   assert.equal(unavailable.get('device-select').value,'attiny13a');assert.equal(unavailable.workers.length,1);

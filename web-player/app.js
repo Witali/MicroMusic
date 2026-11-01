@@ -1,7 +1,9 @@
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
-import { lpxPreviewEntries, previewWaveform } from './lib/native-preview.js?v=20261101-flash';
+import { lpxPreviewEntries } from './lib/native-preview.js?v=20261101-speex';
+import { previewWaveform } from './lib/native-audio.js';
+import { speexPreviewEntries } from './lib/speex-preview.js?v=20261101-speex';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -30,8 +32,8 @@ function audioControls() {
 }
 function signalPointUI() {
   if(nativePreview()){
-    $('scope-zero').textContent='0';$('scope-left-label').textContent='НАТИВНОЕ PWM8-ПРЕВЬЮ';
-    canvas.dataset.signal='preview';canvas.setAttribute('aria-label','Осциллограмма выбранного WAV-превью LPX');
+    $('scope-zero').textContent='0';$('scope-left-label').textContent='НАТИВНОЕ PWM8-ПРЕВЬЮ · '+selected.codecLabel;
+    canvas.dataset.signal='preview';canvas.setAttribute('aria-label','Осциллограмма выбранного WAV-превью '+selected.codecLabel);
     return;
   }
   const input=signalPoint==='input';
@@ -102,7 +104,7 @@ async function switchDevice(device,board=currentBoard) {
   board=boardId(board);
   if(speechCollection){
     const entries=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
-    if(!entries.length){showError('LPX-примеры временно недоступны.');$('device-select').value=currentDevice;return;}
+    if(!entries.length){showError('Звуковые примеры для выбранного чипа временно недоступны.');$('device-select').value=currentDevice;return;}
     currentDevice=device;if(device==='attiny88')currentBoard='mh-et-live-16mhz';
     $('search').value='';load(entries[0]);return;
   }
@@ -134,19 +136,21 @@ function transport() {
   $('play').disabled = !runtimeReady || busy;
   $('play-original').textContent=originalPlaying||originalLoading ? 'Остановить оригинал' : 'Прослушать оригинал';
   $('play-original').setAttribute('aria-pressed',String(originalPlaying||originalLoading));
-  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? (nativePreview()?'Нативное превью LPX':'Воспроизведение') : completed ? 'Завершено' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
+  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? (nativePreview()?'Нативное превью '+selected.codecLabel:'Воспроизведение') : completed ? 'Завершено' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
 }
 function previewUI(enabled) {
   document.body.dataset.preview=String(enabled);
   for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import','rom-hash'])$(id).hidden=enabled;
   $('preview-note').hidden=!enabled;
+  $('preview-playback-note').textContent=enabled?selected.nativeNotice:'';
   $('preview-format-note').hidden=!enabled||!selected?.formatNotice;
   $('preview-format-note').textContent=enabled&&selected?.formatNotice?selected.formatNotice+' ':'';
   $('flash-measurement-note').hidden=!enabled||!selected?.flashMeasurement;
   $('flash-measurement-note').textContent=enabled&&selected?.flashMeasurement?'Размер относится к тестовой сборке без очереди и звукового ISR. ':'';
   document.querySelector('.signal-outputs').hidden=enabled;
   if(enabled){
-    $('tiny88-power').textContent='Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц.';
+    $('tiny88-power').textContent=selected.targetNotice;
+    if(selected.boardNotice){$('board-note').textContent=selected.boardNotice;$('chip-attiny88').setAttribute('aria-label',selected.boardNotice);}
     $('cpu-status').textContent='';$('memory').textContent='';$('rom-size').textContent='';
     for(const id of ['average','isr','lost','headroom','tempo','lag'])$(id).textContent='—';
   }
@@ -171,7 +175,7 @@ previewAudio.addEventListener('pause',()=>{
 });
 previewAudio.addEventListener('error',()=>{
   if(!nativePreview())return;
-  pause();showError('Не удалось загрузить LPX-превью.');
+  pause();showError('Не удалось загрузить '+selected.codecLabel+'-превью.');
 });
 async function loadPreviewWave(entry,epoch) {
   try {
@@ -302,8 +306,8 @@ function load(entry,{autoplay=false}={}) {
   if(speechCollection){
     document.title=`MicroMusic / ${currentDevice==='attiny88'?'ATtiny88':'ATtiny13A'} — речевые кодеки`;
     document.querySelector('.intro .eyebrow').textContent=(nativePreview()?'ATtiny88':'ATtiny13A')+' / РЕЧЕВЫЕ КОДЕКИ';
-    document.querySelector('.intro h1').textContent=nativePreview()?'Речь с кодеком LPX.':'Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent=nativePreview()?'Два качества одного фрагмента. Сравните с исходной записью.':'Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
+    document.querySelector('.intro h1').textContent=nativePreview()?'Речь с кодеком '+entry.codecLabel+'.':'Речь в одном килобайте.';
+    document.querySelector('.subtitle').textContent=nativePreview()?'Сравните варианты кодирования с исходной записью.':'Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
   }
   previewAudio.removeAttribute('src');previewAudio.load();delete canvas.dataset.samples;
   if(entry.devicePackage){
@@ -362,22 +366,23 @@ function load(entry,{autoplay=false}={}) {
       : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json');
     $('speech-audit').href=research.endsWith('.md')
       ? new URL(research,'https://github.com/Witali/MicroMusic/blob/main/web-player/').href : research;
-    $('speech-audit').textContent=entry.codec?.startsWith('lpx') ? 'Исследование LPX ↗' : entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
-      : entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
+    $('speech-audit').textContent=entry.researchLabel||(entry.codec?.startsWith('lpx') ? 'Исследование LPX ↗' : entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
+      : entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗');
   }
   $('speech-audit').hidden=entry.kind!=='speech';
   const capacity=micronucleus?6012:tiny88?8192:1024, prefix=micronucleus?'attiny88-mh-et-live-16mhz':currentDevice;
   if(nativePreview()){
-    const file=entry.id+'.lpx';
+    const file=entry.id+entry.streamExtension;
     $('rom-name').href=entry.streamUrl;$('rom-name').download=file;$('rom-name').textContent=file;
     $('download').textContent='↓ Flash HEX';
-    downloadUI('download',null,null,'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
+    downloadUI('download',null,null,entry.firmwareNotice||'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
     downloadUI('download-eeprom',null,null,'EEPROM не используется этим примером.');
     const measurement=entry.flashMeasurement;
     const cost=measurement
       ? `${measurement.programFlashBytes.toLocaleString('ru')} Б программа + ${measurement.encodedBytes.toLocaleString('ru')} Б звук = ${measurement.totalFlashBytes.toLocaleString('ru')} Б Flash · тестовая сборка`
-      : `Программа: — (не измерено) · ${entry.streamBytes.toLocaleString('ru')} Б данных LPX`;
-    $('rom-details').textContent=`${cost} · ${entry.bitrateBps.toLocaleString('ru')} бит/с · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
+      : `Программа: — (не измерено) · ${entry.streamBytes.toLocaleString('ru')} Б данных ${entry.dataLabel}`;
+    const rate=entry.bitrateBps.toLocaleString('ru')+' бит/с'+(entry.nominalBitrateBps?' по файлу · '+entry.nominalBitrateBps.toLocaleString('ru')+' бит/с номинально':'');
+    $('rom-details').textContent=`${cost} · ${rate} · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
     $('board-upload').hidden=true;$('upload-command').textContent='';$('reset').disabled=false;
     $('original-player').hidden=true;$('wav-link').hidden=false;$('wav-link').href=entry.nativeAudioUrl;
     $('reference-wav').hidden=false;$('reference-wav').href=originalUrl;
@@ -470,7 +475,7 @@ async function toggle() {
       await previewAudio.play();
       if(target!==selected||attempt!==playAttempt)return;
       playing=true;hasPlayed=true;transport();
-    }catch(error){if(target===selected&&attempt===playAttempt&&error.name!=='AbortError'){pause();showError('Не удалось включить LPX-превью: '+error.message);}}
+    }catch(error){if(target===selected&&attempt===playAttempt&&error.name!=='AbortError'){pause();showError('Не удалось включить '+target.codecLabel+'-превью: '+error.message);}}
     finally{if(busyAttempt===attempt){busy=false;transport();}}
     return;
   }
@@ -537,13 +542,20 @@ try {
   const response=await fetch(speech?'./hq4-firmware.json?v=20261023-mobile-original':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
-  let previewError;
-  try{
-    const response=await fetch(new URL('./audio/lpx-bread/manifest.json?v=20261101-flash',import.meta.url));
-    if(!response.ok)throw Error('HTTP '+response.status);
-    catalog.entries.push(...lpxPreviewEntries(await response.json(),import.meta.url));
-  }catch(error){previewError=error;}
-  document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и нативные LPX-превью';
+  const previewErrors=[];
+  for(const source of [
+    {prefix:'lpx-bread-',label:'LPX',path:'audio/lpx-bread/manifest.json',read:lpxPreviewEntries},
+    {prefix:'speex-bread-',label:'Speex',path:'audio/speex-bread/manifest.json',read:speexPreviewEntries}
+  ]){
+    try{
+      const response=await fetch(new URL('./'+source.path+'?v=20261101-speex',import.meta.url));
+      if(!response.ok)throw Error('HTTP '+response.status);
+      const entries=source.read(await response.json(),import.meta.url);
+      const offset=catalog.entries.filter(entry=>entry.playback==='native-pwm8').length;
+      catalog.entries.push(...entries.map((entry,index)=>({...entry,order:String(offset+index+1).padStart(2,'0')})));
+    }catch{previewErrors.push(source);}
+  }
+  document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и нативные сравнения звука';
   if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
     try {
       const localResponse=await fetch('../build/hq4-preview/firmware.json');
@@ -565,7 +577,9 @@ try {
   const device=exact?.playback==='native-pwm8'||new URL(location.href).searchParams.get('device')==='attiny88'?'attiny88':'attiny13a';
   const available=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
   load(available.find(entry=>entry.id===id)||available[0]||catalog.entries.find(entry=>entry.id===catalog.defaultId));
-  if(previewError&&(device==='attiny88'||requested.startsWith('lpx-bread-')))showError('LPX-примеры временно недоступны.');
+  const failedSource=previewErrors.find(source=>requested.startsWith(source.prefix));
+  if(failedSource)showError('Примеры '+failedSource.label+' временно недоступны.');
+  else if(!available.length&&device==='attiny88')showError('Звуковые примеры для выбранного чипа временно недоступны.');
   }
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();
