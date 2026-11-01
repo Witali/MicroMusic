@@ -1,0 +1,1659 @@
+{
+  "schema": "micromusic-native-inline-replay-evidence-v1",
+  "date": "2026-11-01",
+  "basisCommit": "d1e00adfb27aa2bb12d055e31d59e5870ad3a35a",
+  "exclusiveSubsystemTimeAvailable": false,
+  "productionUnchanged": true,
+  "planComplete": 24,
+  "planTotal": 31,
+  "cases": [
+    {
+      "id": "kernel",
+      "baseline": "web-player/reports/native-current-kernel-20261030.json",
+      "baselineSha256NormalizedLF": "284c928dea03a47db488a600d20a7d510a9c43cec07f9eea38b1963ecabe653f",
+      "rawReplaySha256": "2e0ba936c8b5e13c76ee32ae097427de0edd1b434bbe63964dc816c9433096b3",
+      "captureInputs": {
+        "summary.json": "dac209e96a3de1fd135078a13f943e63c0293761d78b0419e3642329dd0472f5",
+        "v8.log": "d2002c52836adb6b00baf5569d8fee180af99216da6d953f1cbbd8d554a38d29",
+        "run.log": "5058c43072d930df74d92b35c245caabc97f2eb634a7ccf28a23537e1524e0e4",
+        "runtime-functions.json": "1b9cbf1f7abe6a9fce9ad54fc53d07f4bf0eb3ed2894811ab250fc17fc99460e",
+        "runtime-named.wasm": "555dab8aa3dd9a6c8c1bb8dd09d174bcbcf64496a5ef2670a70ab0d3df8c596d"
+      },
+      "legacySampleViewsIdentical": true,
+      "legacyNonMappingCountsIdentical": true,
+      "allWindowBoundsIdentical": true,
+      "mappingSegmentsBefore": 15683,
+      "mappingSegmentsAfter": 15841,
+      "native": {
+        "bytes": 124614,
+        "sha256": "b9a8fa14a971fd5f82f8175f978e9a0b1e03f31fc8612a6892d202d7f93635a1",
+        "executableSha256": "ea2cc79df379906c4b23d4b02daa69a88203cee8923784b19a3f25c4166efe33",
+        "sourceMapExecutableEqual": true,
+        "sourceMapByteOffsetsEqual": true,
+        "functionMetadataMatchesNamedWasm": true
+      },
+      "mapping": {
+        "sha256": "71b4f69acb5654eed7cbdf5f8a15049b6871984d1f2f51bb914d0bb8d8ad9bfa",
+        "sources": 41,
+        "sourceMapGeneratorSha256": "ed072ec87496fe1a397785c809546c336642e956ac57ab6c095dc2a675920063",
+        "embeddedSourceContents": false,
+        "inline": {
+          "reportSha256": "a79b52c25b67c38139b809fc2aeb94c5fa2cd1014fe03d526743c2d92935cfab",
+          "artifacts": {
+            "dwarf-verification.txt": "c23fb4a6a08030645a488e330af237636de657edef9f482f363bfde40fcbd514",
+            "preopt-dwarf.txt": "c032a5810a55d385697c17ccd76232faeaa76a880ee4aac1c4f71ca6dcc5607d",
+            "regenerated-preopt.map": "ec3b1efa84a81883946a01cb9cf94ed8df45260c32cc3665f98aa8128c688045",
+            "inline-contexts.json": "0acd5de2c6fb131235b4c5540260724a81bf432ad76dd9ec669f6afdce03fdd4",
+            "scoped.input.map": "9889038115757fdcb3c8a60fa6df35a89403dafd03c774b6ab80ea7c60c2e551",
+            "scoped.output.map": "71b4f69acb5654eed7cbdf5f8a15049b6871984d1f2f51bb914d0bb8d8ad9bfa",
+            "scoped.wasm": "071c7df89be5b1dd1037faf943ea7b757e06fa9075bef475e199c80c34565773"
+          },
+          "producerSources": {
+            "web-player/scripts/map-native-inline-scopes.py": "09180a559490d79fc2634058ddb7fbb3dba8de6b1d6d57c851fc95cf1742aadc",
+            "web-player/scripts/lib/avr_dwarf_scopes.py": "e76ba182fbb44fd01a2a24977bb961057019937853cb8071026db11e7aa93724",
+            "web-player/scripts/probe-source-map-labels.py": "3d14f87528e2e8d1efebc2c9075b8bb3732a7674a3886342758aad7c9b8e703b",
+            "web-player/tests/dwarf-inline-scopes.test.py": "badb4726d1504f528a4fb459ffa9a36e2e81dd5aa497f601ea9b76ebd2efc5cd",
+            "web-player/tests/source-map-labels.test.py": "9840330136151283bd4479813cafc5c6c25f5d9b9ea0361e320dde0eef63df35"
+          },
+          "sourceMapGeneratorSha256": "ed072ec87496fe1a397785c809546c336642e956ac57ab6c095dc2a675920063",
+          "scopeMeaning": "Pre-Binaryen DWARF4 candidates, not a post-optimization dynamic call stack",
+          "llvmDwarfVerified": true,
+          "sourceMapRegenerationEqual": true
+        }
+      },
+      "whole": {
+        "ticks": 4296,
+        "budget": {
+          "project": 1339,
+          "support": 8,
+          "ambiguous": 0,
+          "unresolved": 0,
+          "unlabelled": 1168,
+          "other": 1781
+        },
+        "observedContexts": 61,
+        "projectFunctions": [
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_phase_clock",
+            "line": 136,
+            "ticks": 121
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_phase_retire",
+            "line": 179,
+            "ticks": 3
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_ready",
+            "line": 225,
+            "ticks": 77
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_deadline",
+            "line": 53,
+            "ticks": 47
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_interrupt",
+            "line": 81,
+            "ticks": 39
+          },
+          {
+            "source": "web-player/native/devices/attiny13a/clki_board.inc",
+            "function": "clki_next_edge",
+            "line": 78,
+            "ticks": 5
+          },
+          {
+            "source": "web-player/native/devices/attiny13a/clki_input.c",
+            "function": "attiny13a_clki_hold_until",
+            "line": 78,
+            "ticks": 17
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_advance",
+            "line": 159,
+            "ticks": 6
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_bandgap_ready",
+            "line": 236,
+            "ticks": 4
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "advance_adc",
+            "line": 3,
+            "ticks": 8
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "advance_comparator",
+            "line": 18,
+            "ticks": 13
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "analog_next_event",
+            "line": 42,
+            "ticks": 59
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "analog_sources",
+            "line": 89,
+            "ticks": 41
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "connect_sources",
+            "line": 24,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/device_clock.h",
+            "function": "device_clock_ratio",
+            "line": 8,
+            "ticks": 117
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_half_until_ps",
+            "line": 1100,
+            "ticks": 87
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_to",
+            "line": 697,
+            "ticks": 22
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_to_buffered_long",
+            "line": 720,
+            "ticks": 22
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "after_units",
+            "line": 223,
+            "ticks": 32
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "at_half",
+            "line": 305,
+            "ticks": 131
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "clock_domains",
+            "line": 429,
+            "ticks": 58
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "comparator_wall",
+            "line": 602,
+            "ticks": 6
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_advance_half_until_ps",
+            "line": 1137,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_advance_half_until_ps_buffered",
+            "line": 1140,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_cpu_halves_until_ps",
+            "line": 1356,
+            "ticks": 24
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_next_cpu_event",
+            "line": 1143,
+            "ticks": 6
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "elapse",
+            "line": 685,
+            "ticks": 4
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "mirror",
+            "line": 477,
+            "ticks": 90
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "next_event",
+            "line": 673,
+            "ticks": 26
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "next_event_scan",
+            "line": 626,
+            "ticks": 20
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "power_other_sources",
+            "line": 284,
+            "ticks": 38
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "rational",
+            "line": 208,
+            "ticks": 27
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service",
+            "line": 618,
+            "ticks": 18
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_async",
+            "line": 555,
+            "ticks": 16
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_clocks",
+            "line": 522,
+            "ticks": 41
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_end",
+            "line": 589,
+            "ticks": 33
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "sources",
+            "line": 390,
+            "ticks": 8
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "supply_guard",
+            "line": 256,
+            "ticks": 20
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "timer_outputs",
+            "line": 372,
+            "ticks": 16
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "wake",
+            "line": 452,
+            "ticks": 9
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_advance",
+            "line": 213,
+            "ticks": 12
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_external_edge",
+            "line": 243,
+            "ticks": 9
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_next_event",
+            "line": 203,
+            "ticks": 2
+          }
+        ],
+        "unlabelledReasons": [
+          {
+            "reason": "absent-native-positions",
+            "ticks": 247
+          },
+          {
+            "reason": "function-entry-position",
+            "ticks": 2
+          },
+          {
+            "reason": "native-location-gap",
+            "ticks": 919
+          }
+        ]
+      },
+      "interior": {
+        "ticks": 2146,
+        "budget": {
+          "project": 939,
+          "support": 6,
+          "ambiguous": 0,
+          "unresolved": 0,
+          "unlabelled": 837,
+          "other": 364
+        },
+        "observedContexts": 60,
+        "projectFunctions": [
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_phase_clock",
+            "line": 136,
+            "ticks": 90
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_phase_retire",
+            "line": 179,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_ready",
+            "line": 225,
+            "ticks": 50
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_deadline",
+            "line": 53,
+            "ticks": 37
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_interrupt",
+            "line": 81,
+            "ticks": 29
+          },
+          {
+            "source": "web-player/native/devices/attiny13a/clki_board.inc",
+            "function": "clki_next_edge",
+            "line": 78,
+            "ticks": 4
+          },
+          {
+            "source": "web-player/native/devices/attiny13a/clki_input.c",
+            "function": "attiny13a_clki_hold_until",
+            "line": 78,
+            "ticks": 8
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_advance",
+            "line": 159,
+            "ticks": 3
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_bandgap_ready",
+            "line": 236,
+            "ticks": 3
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "advance_adc",
+            "line": 3,
+            "ticks": 5
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "advance_comparator",
+            "line": 18,
+            "ticks": 8
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "analog_next_event",
+            "line": 42,
+            "ticks": 45
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "analog_sources",
+            "line": 89,
+            "ticks": 31
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "connect_sources",
+            "line": 24,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/device_clock.h",
+            "function": "device_clock_ratio",
+            "line": 8,
+            "ticks": 82
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_half_until_ps",
+            "line": 1100,
+            "ticks": 63
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_to",
+            "line": 697,
+            "ticks": 14
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_to_buffered_long",
+            "line": 720,
+            "ticks": 15
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "after_units",
+            "line": 223,
+            "ticks": 21
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "at_half",
+            "line": 305,
+            "ticks": 86
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "clock_domains",
+            "line": 429,
+            "ticks": 42
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "comparator_wall",
+            "line": 602,
+            "ticks": 5
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_advance_half_until_ps",
+            "line": 1137,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_cpu_halves_until_ps",
+            "line": 1356,
+            "ticks": 20
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_next_cpu_event",
+            "line": 1143,
+            "ticks": 3
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "elapse",
+            "line": 685,
+            "ticks": 4
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "mirror",
+            "line": 477,
+            "ticks": 63
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "next_event",
+            "line": 673,
+            "ticks": 17
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "next_event_scan",
+            "line": 626,
+            "ticks": 13
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "power_other_sources",
+            "line": 284,
+            "ticks": 24
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "rational",
+            "line": 208,
+            "ticks": 19
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service",
+            "line": 618,
+            "ticks": 12
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_async",
+            "line": 555,
+            "ticks": 13
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_clocks",
+            "line": 522,
+            "ticks": 28
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_end",
+            "line": 589,
+            "ticks": 22
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "sources",
+            "line": 390,
+            "ticks": 5
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "supply_guard",
+            "line": 256,
+            "ticks": 15
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "timer_outputs",
+            "line": 372,
+            "ticks": 14
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "wake",
+            "line": 452,
+            "ticks": 7
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_advance",
+            "line": 213,
+            "ticks": 7
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_external_edge",
+            "line": 243,
+            "ticks": 6
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_next_event",
+            "line": 203,
+            "ticks": 2
+          }
+        ],
+        "unlabelledReasons": [
+          {
+            "reason": "absent-native-positions",
+            "ticks": 181
+          },
+          {
+            "reason": "function-entry-position",
+            "ticks": 1
+          },
+          {
+            "reason": "native-location-gap",
+            "ticks": 655
+          }
+        ]
+      },
+      "boundaryBudget": {
+        "project": 0,
+        "support": 0,
+        "ambiguous": 0,
+        "unresolved": 0,
+        "unlabelled": 0,
+        "other": 0
+      },
+      "outsideBudget": {
+        "project": 400,
+        "support": 2,
+        "ambiguous": 0,
+        "unresolved": 0,
+        "unlabelled": 331,
+        "other": 1417
+      },
+      "windows": [
+        {
+          "label": "MM_AVR_CAPTURE_0",
+          "interiorTicks": 715,
+          "inlineBudget": {
+            "project": 304,
+            "support": 4,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "unlabelled": 279,
+            "other": 128
+          }
+        },
+        {
+          "label": "MM_AVR_CAPTURE_1",
+          "interiorTicks": 718,
+          "inlineBudget": {
+            "project": 323,
+            "support": 1,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "unlabelled": 276,
+            "other": 118
+          }
+        },
+        {
+          "label": "MM_AVR_CAPTURE_2",
+          "interiorTicks": 713,
+          "inlineBudget": {
+            "project": 312,
+            "support": 1,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "unlabelled": 282,
+            "other": 118
+          }
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "baseline": "web-player/reports/native-current-music-20261030.json",
+      "baselineSha256NormalizedLF": "c0a452f7bb8b62b8d208ea8ffceddf5d3d369fb93ff1b4ba9e493af95522e33b",
+      "rawReplaySha256": "6a5d863ee82daf7da2c34dc5b07bad86d2c92843302887bad1f62d87f281bad6",
+      "captureInputs": {
+        "summary.json": "7f992811f2362c787ab0c5fa1f0cf66a9c3bf1da839315de207d77366bbca7bb",
+        "v8.log": "d4dd1944a9ced264794174f771ecc7c99f8602d9b6afddf64957afb0f683b5bc",
+        "run.log": "9a238b604e0982e397e00e63f2220cc96965dd7741ce7c710a3860d5fb049d23",
+        "runtime-functions.json": "b7ff74c9c7fdd629a7d7be2dbf58910b310665f5ee399d985e2183de14e7a8f2",
+        "runtime-named.wasm": "555dab8aa3dd9a6c8c1bb8dd09d174bcbcf64496a5ef2670a70ab0d3df8c596d"
+      },
+      "legacySampleViewsIdentical": true,
+      "legacyNonMappingCountsIdentical": true,
+      "allWindowBoundsIdentical": true,
+      "mappingSegmentsBefore": 15683,
+      "mappingSegmentsAfter": 15841,
+      "native": {
+        "bytes": 124614,
+        "sha256": "b9a8fa14a971fd5f82f8175f978e9a0b1e03f31fc8612a6892d202d7f93635a1",
+        "executableSha256": "ea2cc79df379906c4b23d4b02daa69a88203cee8923784b19a3f25c4166efe33",
+        "sourceMapExecutableEqual": true,
+        "sourceMapByteOffsetsEqual": true,
+        "functionMetadataMatchesNamedWasm": true
+      },
+      "mapping": {
+        "sha256": "71b4f69acb5654eed7cbdf5f8a15049b6871984d1f2f51bb914d0bb8d8ad9bfa",
+        "sources": 41,
+        "sourceMapGeneratorSha256": "ed072ec87496fe1a397785c809546c336642e956ac57ab6c095dc2a675920063",
+        "embeddedSourceContents": false,
+        "inline": {
+          "reportSha256": "a79b52c25b67c38139b809fc2aeb94c5fa2cd1014fe03d526743c2d92935cfab",
+          "artifacts": {
+            "dwarf-verification.txt": "c23fb4a6a08030645a488e330af237636de657edef9f482f363bfde40fcbd514",
+            "preopt-dwarf.txt": "c032a5810a55d385697c17ccd76232faeaa76a880ee4aac1c4f71ca6dcc5607d",
+            "regenerated-preopt.map": "ec3b1efa84a81883946a01cb9cf94ed8df45260c32cc3665f98aa8128c688045",
+            "inline-contexts.json": "0acd5de2c6fb131235b4c5540260724a81bf432ad76dd9ec669f6afdce03fdd4",
+            "scoped.input.map": "9889038115757fdcb3c8a60fa6df35a89403dafd03c774b6ab80ea7c60c2e551",
+            "scoped.output.map": "71b4f69acb5654eed7cbdf5f8a15049b6871984d1f2f51bb914d0bb8d8ad9bfa",
+            "scoped.wasm": "071c7df89be5b1dd1037faf943ea7b757e06fa9075bef475e199c80c34565773"
+          },
+          "producerSources": {
+            "web-player/scripts/map-native-inline-scopes.py": "09180a559490d79fc2634058ddb7fbb3dba8de6b1d6d57c851fc95cf1742aadc",
+            "web-player/scripts/lib/avr_dwarf_scopes.py": "e76ba182fbb44fd01a2a24977bb961057019937853cb8071026db11e7aa93724",
+            "web-player/scripts/probe-source-map-labels.py": "3d14f87528e2e8d1efebc2c9075b8bb3732a7674a3886342758aad7c9b8e703b",
+            "web-player/tests/dwarf-inline-scopes.test.py": "badb4726d1504f528a4fb459ffa9a36e2e81dd5aa497f601ea9b76ebd2efc5cd",
+            "web-player/tests/source-map-labels.test.py": "9840330136151283bd4479813cafc5c6c25f5d9b9ea0361e320dde0eef63df35"
+          },
+          "sourceMapGeneratorSha256": "ed072ec87496fe1a397785c809546c336642e956ac57ab6c095dc2a675920063",
+          "scopeMeaning": "Pre-Binaryen DWARF4 candidates, not a post-optimization dynamic call stack",
+          "llvmDwarfVerified": true,
+          "sourceMapRegenerationEqual": true
+        }
+      },
+      "whole": {
+        "ticks": 6578,
+        "budget": {
+          "project": 2020,
+          "support": 12,
+          "ambiguous": 0,
+          "unresolved": 0,
+          "unlabelled": 1802,
+          "other": 2744
+        },
+        "observedContexts": 99,
+        "projectFunctions": [
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_audio_sample",
+            "line": 390,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_phase_clock",
+            "line": 136,
+            "ticks": 115
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_phase_retire",
+            "line": 179,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_ready",
+            "line": 225,
+            "ticks": 65
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_write_io_masked",
+            "line": 187,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_audio_deadline64",
+            "line": 357,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_deadline",
+            "line": 53,
+            "ticks": 87
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_interrupt",
+            "line": 81,
+            "ticks": 23
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_phase_irq_resume",
+            "line": 163,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_pin_time",
+            "line": 45,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_time64",
+            "line": 44,
+            "ticks": 53
+          },
+          {
+            "source": "web-player/native/avr.c",
+            "function": "get_sp",
+            "line": 61,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/devices/attiny13a/clki_board.inc",
+            "function": "clki_advance",
+            "line": 228,
+            "ticks": 12
+          },
+          {
+            "source": "web-player/native/devices/attiny13a/clki_input.c",
+            "function": "attiny13a_clki_hold_until",
+            "line": 78,
+            "ticks": 26
+          },
+          {
+            "source": "web-player/native/peripherals/analog_adc.c",
+            "function": "analog_adc_input",
+            "line": 180,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_advance",
+            "line": 159,
+            "ticks": 13
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_bandgap_ready",
+            "line": 236,
+            "ticks": 5
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_input",
+            "line": 220,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "compare",
+            "line": 41,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "advance_adc",
+            "line": 3,
+            "ticks": 10
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "advance_comparator",
+            "line": 18,
+            "ticks": 11
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "analog_next_event",
+            "line": 42,
+            "ticks": 87
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "analog_sources",
+            "line": 89,
+            "ticks": 61
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "connect_sources",
+            "line": 24,
+            "ticks": 3
+          },
+          {
+            "source": "web-player/native/peripherals/device_clock.h",
+            "function": "device_clock_ratio",
+            "line": 8,
+            "ticks": 225
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_half_until_ps",
+            "line": 1100,
+            "ticks": 99
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_to",
+            "line": 697,
+            "ticks": 44
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_to_buffered_long",
+            "line": 720,
+            "ticks": 20
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "after_units",
+            "line": 223,
+            "ticks": 64
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "at_half",
+            "line": 305,
+            "ticks": 137
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "capture_pin_queue",
+            "line": 319,
+            "ticks": 3
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "clock_domains",
+            "line": 429,
+            "ticks": 55
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "comparator_wall",
+            "line": 602,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_advance_half_until_ps",
+            "line": 1137,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_advance_half_until_ps_buffered",
+            "line": 1140,
+            "ticks": 7
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_cpu_halves_until_ps",
+            "line": 1356,
+            "ticks": 5
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_discard_audio_trace",
+            "line": 1344,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_next_cpu_event",
+            "line": 1143,
+            "ticks": 12
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_next_sample_ps",
+            "line": 1364,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_pending_irqs",
+            "line": 393,
+            "ticks": 64
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_read",
+            "line": 981,
+            "ticks": 6
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_write",
+            "line": 1003,
+            "ticks": 18
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "elapse",
+            "line": 685,
+            "ticks": 19
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "mirror",
+            "line": 477,
+            "ticks": 92
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "next_event",
+            "line": 673,
+            "ticks": 60
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "next_event_scan",
+            "line": 626,
+            "ticks": 16
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "pin_voltages",
+            "line": 354,
+            "ticks": 5
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "power_other_sources",
+            "line": 284,
+            "ticks": 35
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "rational",
+            "line": 208,
+            "ticks": 47
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service",
+            "line": 618,
+            "ticks": 29
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_async",
+            "line": 555,
+            "ticks": 25
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_clocks",
+            "line": 522,
+            "ticks": 63
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_end",
+            "line": 589,
+            "ticks": 33
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "sources",
+            "line": 390,
+            "ticks": 11
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "supply_guard",
+            "line": 256,
+            "ticks": 25
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "timer_outputs",
+            "line": 372,
+            "ticks": 35
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "wake",
+            "line": 452,
+            "ticks": 10
+          },
+          {
+            "source": "web-player/native/peripherals/nvm.c",
+            "function": "nvm_advance",
+            "line": 30,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/nvm.c",
+            "function": "nvm_write_io",
+            "line": 79,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/system_gpio.c",
+            "function": "system_gpio_advance",
+            "line": 168,
+            "ticks": 3
+          },
+          {
+            "source": "web-player/native/peripherals/system_gpio.c",
+            "function": "system_gpio_timer_outputs",
+            "line": 109,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/system_gpio.c",
+            "function": "system_gpio_write_masked",
+            "line": 73,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "capture",
+            "line": 32,
+            "ticks": 7
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "pulse",
+            "line": 117,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_advance",
+            "line": 213,
+            "ticks": 55
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_external_edge",
+            "line": 243,
+            "ticks": 6
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_next_event",
+            "line": 203,
+            "ticks": 84
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_write",
+            "line": 260,
+            "ticks": 5
+          }
+        ],
+        "unlabelledReasons": [
+          {
+            "reason": "absent-native-positions",
+            "ticks": 446
+          },
+          {
+            "reason": "native-location-gap",
+            "ticks": 1356
+          }
+        ]
+      },
+      "interior": {
+        "ticks": 3139,
+        "budget": {
+          "project": 1386,
+          "support": 10,
+          "ambiguous": 0,
+          "unresolved": 0,
+          "unlabelled": 1276,
+          "other": 467
+        },
+        "observedContexts": 90,
+        "projectFunctions": [
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_phase_clock",
+            "line": 136,
+            "ticks": 78
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_phase_retire",
+            "line": 179,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "avr_device_ready",
+            "line": 225,
+            "ticks": 49
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_audio_deadline64",
+            "line": 357,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_deadline",
+            "line": 53,
+            "ticks": 61
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_interrupt",
+            "line": 81,
+            "ticks": 14
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_phase_irq_resume",
+            "line": 163,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_pin_time",
+            "line": 45,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/avr-device.inc",
+            "function": "full_time64",
+            "line": 44,
+            "ticks": 39
+          },
+          {
+            "source": "web-player/native/avr.c",
+            "function": "get_sp",
+            "line": 61,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/devices/attiny13a/clki_board.inc",
+            "function": "clki_advance",
+            "line": 228,
+            "ticks": 10
+          },
+          {
+            "source": "web-player/native/devices/attiny13a/clki_input.c",
+            "function": "attiny13a_clki_hold_until",
+            "line": 78,
+            "ticks": 9
+          },
+          {
+            "source": "web-player/native/peripherals/analog_adc.c",
+            "function": "analog_adc_input",
+            "line": 180,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_advance",
+            "line": 159,
+            "ticks": 8
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_bandgap_ready",
+            "line": 236,
+            "ticks": 5
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "analog_comparator_input",
+            "line": 220,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/analog_comparator.c",
+            "function": "compare",
+            "line": 41,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "advance_adc",
+            "line": 3,
+            "ticks": 6
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "advance_comparator",
+            "line": 18,
+            "ticks": 8
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "analog_next_event",
+            "line": 42,
+            "ticks": 49
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "analog_sources",
+            "line": 89,
+            "ticks": 40
+          },
+          {
+            "source": "web-player/native/peripherals/analog.c",
+            "function": "connect_sources",
+            "line": 24,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/device_clock.h",
+            "function": "device_clock_ratio",
+            "line": 8,
+            "ticks": 157
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_half_until_ps",
+            "line": 1100,
+            "ticks": 68
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_to",
+            "line": 697,
+            "ticks": 27
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "advance_to_buffered_long",
+            "line": 720,
+            "ticks": 15
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "after_units",
+            "line": 223,
+            "ticks": 45
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "at_half",
+            "line": 305,
+            "ticks": 94
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "capture_pin_queue",
+            "line": 319,
+            "ticks": 3
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "clock_domains",
+            "line": 429,
+            "ticks": 36
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_advance_half_until_ps_buffered",
+            "line": 1140,
+            "ticks": 7
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_cpu_halves_until_ps",
+            "line": 1356,
+            "ticks": 3
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_next_cpu_event",
+            "line": 1143,
+            "ticks": 8
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_next_sample_ps",
+            "line": 1364,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_pending_irqs",
+            "line": 393,
+            "ticks": 35
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_read",
+            "line": 981,
+            "ticks": 4
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "device_write",
+            "line": 1003,
+            "ticks": 15
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "elapse",
+            "line": 685,
+            "ticks": 12
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "mirror",
+            "line": 477,
+            "ticks": 59
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "next_event",
+            "line": 673,
+            "ticks": 36
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "next_event_scan",
+            "line": 626,
+            "ticks": 9
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "pin_voltages",
+            "line": 354,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "power_other_sources",
+            "line": 284,
+            "ticks": 25
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "rational",
+            "line": 208,
+            "ticks": 36
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service",
+            "line": 618,
+            "ticks": 20
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_async",
+            "line": 555,
+            "ticks": 19
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_clocks",
+            "line": 522,
+            "ticks": 53
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "service_end",
+            "line": 589,
+            "ticks": 26
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "sources",
+            "line": 390,
+            "ticks": 8
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "supply_guard",
+            "line": 256,
+            "ticks": 17
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "timer_outputs",
+            "line": 372,
+            "ticks": 26
+          },
+          {
+            "source": "web-player/native/peripherals/device.c",
+            "function": "wake",
+            "line": 452,
+            "ticks": 7
+          },
+          {
+            "source": "web-player/native/peripherals/nvm.c",
+            "function": "nvm_write_io",
+            "line": 79,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/system_gpio.c",
+            "function": "system_gpio_advance",
+            "line": 168,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/system_gpio.c",
+            "function": "system_gpio_write_masked",
+            "line": 73,
+            "ticks": 2
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "capture",
+            "line": 32,
+            "ticks": 6
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "pulse",
+            "line": 117,
+            "ticks": 1
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_advance",
+            "line": 213,
+            "ticks": 43
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_external_edge",
+            "line": 243,
+            "ticks": 5
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_next_event",
+            "line": 203,
+            "ticks": 61
+          },
+          {
+            "source": "web-player/native/peripherals/timer0.c",
+            "function": "timer0_write",
+            "line": 260,
+            "ticks": 5
+          }
+        ],
+        "unlabelledReasons": [
+          {
+            "reason": "absent-native-positions",
+            "ticks": 314
+          },
+          {
+            "reason": "native-location-gap",
+            "ticks": 962
+          }
+        ]
+      },
+      "boundaryBudget": {
+        "project": 0,
+        "support": 0,
+        "ambiguous": 0,
+        "unresolved": 0,
+        "unlabelled": 0,
+        "other": 1
+      },
+      "outsideBudget": {
+        "project": 634,
+        "support": 2,
+        "ambiguous": 0,
+        "unresolved": 0,
+        "unlabelled": 526,
+        "other": 2276
+      },
+      "windows": [
+        {
+          "label": "MM_AVR_CAPTURE_0",
+          "interiorTicks": 868,
+          "inlineBudget": {
+            "project": 415,
+            "support": 3,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "unlabelled": 330,
+            "other": 120
+          }
+        },
+        {
+          "label": "MM_AVR_CAPTURE_1",
+          "interiorTicks": 1124,
+          "inlineBudget": {
+            "project": 475,
+            "support": 3,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "unlabelled": 460,
+            "other": 186
+          }
+        },
+        {
+          "label": "MM_AVR_CAPTURE_2",
+          "interiorTicks": 1147,
+          "inlineBudget": {
+            "project": 496,
+            "support": 4,
+            "ambiguous": 0,
+            "unresolved": 0,
+            "unlabelled": 486,
+            "other": 161
+          }
+        }
+      ]
+    }
+  ],
+  "downloadedExternalFiles": [],
+  "tests": {
+    "tests": 80,
+    "pass": 80,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "tapSha256": "d1e27060fca5781aec22b0d71f1e8b676e1b8df6639fec8b8936458d2855820f"
+  },
+  "sources": {
+    "web-player/wasm/device-build.json": "9553c3c8746b5ad508d3de3f6345d382f0f464929953594f92c340a257a9784b",
+    "web-player/scripts/audit-native-source-profile.mjs": "81d1640e5350657bf7bde6fc10612fc1288a77dc55ef8d3557dbb264a7ac4204",
+    "web-player/scripts/lib/avr-v8-native-profile.mjs": "a44067b6c033ba5850d78fb81dc57b4d0f31f24fcc566391ace788ea9e713826",
+    "web-player/tests/avr-v8-native-profile.test.mjs": "eb2c86af5b03070909f2926c7f593dd618166baaaeb10003c4b414fbc67a47d1",
+    "web-player/scripts/profile-device.mjs": "f73bb0bba739a3fa4970363f6b9f61d0720e0970b36ce69bdc31b20642d80706",
+    "web-player/scripts/audit-device-profile.mjs": "9dd36de306452f25a5bb49eee9915cd7c026e8f2b1dc56deb90cfaf98fc14f30",
+    "web-player/scripts/lib/avr-inline-profile.mjs": "b23274b9d24fa6884e1c936be8e112cbcf5fe65dca215f91a65f9b0a7562b4d3",
+    "web-player/scripts/lib/avr-inline-artifacts.mjs": "9800650e07c1dad387c3775eb97162c73146bb1abf956289432265abf74f46f0",
+    "web-player/tests/avr-inline-artifacts.test.mjs": "8362c222d265f77c65c9554128513150ec92cb47fc964925a62c3c8edd54b3ad"
+  },
+  "defaultCliControl": {
+    "auditUnchanged": true,
+    "rawReportSha256": "31e4a72a8e54a8e004858cffcc81933e6ac89839634df14813763615bac38874"
+  },
+  "negativeIntegration": {
+    "result": {
+      "rejected": [
+        "missing-producer-identity",
+        "shifted-executable-offsets",
+        "shifted-named-capture-offsets"
+      ],
+      "noSuccessReportsWritten": true
+    },
+    "sha256": "f27a6ae73cc583a69d6f5a008d202fc8a1c90c9a51a2e60ed7bc5a6a77b06474"
+  },
+  "limitations": [
+    "Pre-Binaryen scope candidates, not dynamic runtime stacks or exclusive durations.",
+    "Native entry/gap samples remain unlabelled.",
+    "Other includes generated CPU/VM/setup work and is not a CPU-only duration.",
+    "Same retained workloads; no new elapsed-time or speed measurement."
+  ]
+}

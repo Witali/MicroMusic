@@ -33,6 +33,16 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Inline native-PC replay, 2026-11-01: both retained workloads preserve all 10874
+ticks, 5285 interior ticks, source distributions, numeric containers and window
+bounds while adding disjoint inline-candidate views. Kernel/music interiors
+retain 939/1386 project, 6/10 support, 837/1276 unlabelled and 364/467 other ticks.
+All 80 focused checks and three CLI rejection controls pass; the ordinary kernel
+audit is unchanged. Ratio/at_half/phase-clock scopes guide the next operand/
+native-instruction inspection. Counts do not revive the rejected zero-product
+shortcut or close exclusive timing. Production and the 24/31 count are unchanged.
+See the [replay and limits](../reports/native-inline-replay-20261101.md).
+
 Inline-context extraction, 2026-11-01: verified DWARF4 supplies 1243 inline DIEs,
 373 discontiguous live scopes and five nested inline levels. The source map is
 rebuilt by the original SDK tool and must match. Binaryen retains 1629 actual

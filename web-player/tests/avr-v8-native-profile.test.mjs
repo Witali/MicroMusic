@@ -416,3 +416,70 @@ test('logged window chronology rejects a native clock rollback rather than sorti
   for(const windows of [[window(0.100),window(0.050,1)],[window(0.050,1),window(0.100)]])
     assert.throws(()=>audit({log,windows}),/Overlapping window intervals/);
 });
+
+const inlineDictionary=()=>({schema:'micromusic-dwarf-inline-contexts-v1',frames:{
+  1:{kind:'project',source:'web-player/native/peripherals/device.c',function:'outer',line:20},
+  2:{kind:'project',source:'web-player/native/peripherals/device_clock.h',function:'device_clock_ratio',line:8},
+  3:{kind:'support'},4:{kind:'unresolved'}},contexts:[
+  {kind:'unique',chains:[[1,2]]},{kind:'unique',chains:[[3]]},{kind:'ambiguous',chains:[[1],[2]]},
+  {kind:'unresolved',chains:[]},{kind:'unique',chains:[[4]]}]});
+const inlineMap=(rows=[[104,0,9,0,0],[8,1,10,0,1],[8,1,0,0,1]])=>({...makeMap(rows),
+  names:['micromusic-inline-0','micromusic-inline-1','micromusic-inline-2','micromusic-inline-3','micromusic-inline-4']});
+function checkInline(view){
+  const s=view.inlineScopes;assert.equal(s.candidateOnly,true);
+  assert.equal(Object.values(s.budget).reduce((n,v)=>n+v,0),view.ticks??Object.values(view.budget).reduce((n,v)=>n+v,0));
+  assert.equal(s.projectFunctions.reduce((n,f)=>n+f.ticks,0),s.budget.project);
+  assert.equal(s.contexts.reduce((n,c)=>n+c.ticks,0),Object.values(s.budget).reduce((n,v)=>n+v,0)-s.budget.other-s.budget.unlabelled);
+  assert.equal(s.unlabelledReasons.reduce((n,r)=>n+r.ticks,0),s.budget.unlabelled);
+}
+test('inline candidates preserve legacy counts and count only the deepest project function',()=>{
+  const sourceMap=inlineMap(),base=audit({sourceMap}),a=audit({sourceMap,inlineContexts:inlineDictionary()});
+  for(const key of ['budget','sourceLines','unresolvedReasons','nativeFunctions','uncontainedNativeTicks','counts'])assert.deepEqual(a[key],base[key]);
+  assert.deepEqual(a.inlineScopes.budget,{project:1,support:1,ambiguous:1,unresolved:0,unlabelled:0,other:1});
+  assert.deepEqual(a.inlineScopes.projectFunctions,[{source:'web-player/native/peripherals/device_clock.h',function:'device_clock_ratio',line:8,ticks:1}]);
+  assert.equal(a.exclusiveSubsystemTimeAvailable,false);checkInline(a);
+  const text=JSON.stringify(a.inlineScopes);
+  for(const raw of ['confidential','C:/','D:/','0x1000','native.device','outer'])assert.ok(!text.includes(raw));
+});
+test('missing inline label does not inherit a previous name or manufacture a scope at an entry gap',()=>{
+  const sourceMap=inlineMap([[104,0,9,0,0],[8,1,10,0],[8,1,0,0,1]]);
+  const a=audit({sourceMap,inlineContexts:inlineDictionary()});
+  assert.deepEqual(a.inlineScopes.budget,{project:1,support:1,ambiguous:0,unresolved:0,unlabelled:1,other:1});checkInline(a);
+  const gap=audit({log:[creation(),tick('0x1002')].join('\n'),sourceMap:inlineMap(),inlineContexts:inlineDictionary()});
+  assert.equal(gap.inlineScopes.budget.unlabelled,1);assert.equal(gap.inlineScopes.contexts.length,0);checkInline(gap);
+});
+test('unresolved contexts and unresolved leaf frames never fall back to an outer project scope',()=>{
+  for(const id of [3,4]){
+    const a=audit({log:creation()+'\n'+tick(),sourceMap:inlineMap([[104,0,9,0,id]]),inlineContexts:inlineDictionary()});
+    assert.equal(a.inlineScopes.budget.unresolved,1);assert.deepEqual(a.inlineScopes.projectFunctions,[]);checkInline(a);
+  }
+});
+test('unknown, noncanonical and unused foreign inline names fail without echoing their values',()=>{
+  for(const name of ['micromusic-inline-99','micromusic-inline-01','micromusic-inline-9007199254740992','confidential-label']){
+    const map=inlineMap();map.names.push(name);
+    assert.throws(()=>audit({sourceMap:map,inlineContexts:inlineDictionary()}),e=>/inline/.test(e.message)&&!e.message.includes('confidential'));
+  }
+});
+test('inline dictionary rejects broken paths, coordinates, identifiers, frames and ambiguous ancestors',()=>{
+  const mutations=[d=>d.schema='other',d=>d.frames[2].source='C:/confidential/file.c',d=>d.frames[2].source='web-player/native/../other.c',
+    d=>d.frames[2].line=0,d=>d.frames[2].function='confidential@symbol',d=>d.frames[3].symbol='confidential',
+    d=>d.frames[2].callsite={source:'confidential',line:1},d=>d.contexts[0].chains=[[99]],
+    d=>d.contexts[0].chains=[[1,1]],d=>d.contexts[0].chains=[],d=>d.contexts[2].chains=[[1],[1,2]]];
+  for(const mutate of mutations){const dictionary=inlineDictionary();mutate(dictionary);
+    assert.throws(()=>audit({sourceMap:inlineMap(),inlineContexts:dictionary}),e=>/inline/i.test(e.message)&&!e.message.includes('confidential'));}
+});
+test('inline budgets stay disjoint in every marked interior, boundary and outside view',()=>{
+  const log=[creation(),marker('start',100),tick('0x1009',101),tick('0x1009',120),tick('0x1021',150),
+    marker('end',200),tick('0x1031',200),tick('0x9000',250)].join('\n');
+  const a=audit({log,windows:[window(0.100)],sourceMap:inlineMap(),inlineContexts:inlineDictionary()});checkWindows(a);checkInline(a);
+  const w=a.windowed;for(const v of [w.certainInterior,w.boundary,w.outside,...w.windows.flatMap(x=>[x.certainInterior,x.boundary])])checkInline(v);
+  assert.equal(w.certainInterior.inlineScopes.budget.project,1);assert.equal(w.certainInterior.inlineScopes.budget.support,1);
+  assert.equal(w.boundary.inlineScopes.budget.project,1);assert.equal(w.outside.inlineScopes.budget.ambiguous,1);
+  for(const key of Object.keys(a.inlineScopes.budget))assert.equal(a.inlineScopes.budget[key],
+    w.certainInterior.inlineScopes.budget[key]+w.boundary.inlineScopes.budget[key]+w.outside.inlineScopes.budget[key]);
+});
+test('absent source maps and ambiguous native generations retain unlabelled inline budgets',()=>{
+  const a=audit({sourceMap:null,inlineContexts:inlineDictionary()});assert.equal(a.inlineScopes.budget.unlabelled,3);checkInline(a);
+  const b=audit({log:[creation(),creation(15),tick()].join('\n'),sourceMap:inlineMap(),inlineContexts:inlineDictionary()});
+  assert.equal(b.inlineScopes.budget.unlabelled,1);assert.deepEqual(b.inlineScopes.contexts,[]);checkInline(b);
+});

@@ -1,5 +1,40 @@
 # Recover candidate C locations from V8 native samples
 
+## Native PC and inline-context join, 2026-11-01
+
+The existing [audit CLI](../../web-player/scripts/audit-native-source-profile.mjs)
+now accepts the prepared inline artifacts and retained proof. This mode reads
+the saved capture without recompiling the runtime or starting SDK tools:
+
+```powershell
+node web-player/scripts/audit-native-source-profile.mjs --input build/profiles/native-current-20261030/kernel --inline-scopes build/experiments/inline-scopes-20261101 --inline-report web-player/reports/inline-scopes-20261101.json --output build/profiles/inline-kernel-20261101.json
+```
+
+The [artifact binder](../../web-player/scripts/lib/avr-inline-artifacts.mjs)
+requires the exact producer hashes, seven private artifact digests, registered
+project source coordinates and native identity. Executable sections and start
+offsets are checked again against production. The
+[candidate aggregator](../../web-player/scripts/lib/avr-inline-profile.mjs)
+validates every context/frame/label, projects only known project fields and
+counts one deepest unique leaf. Ambiguous paths, unresolved frames and missing
+labels remain separate; an absent name never inherits the previous map name.
+Arbitrary paths/symbols or extra frame fields fail without echoing their values.
+
+The [retained replay](../../web-player/reports/native-inline-replay-20261101.md)
+conserves all 10874 original ticks and 5285 interior ticks. Legacy source lines,
+budgets/reasons, native containers and window bounds match exactly; only metadata
+segmentation and the optional `inlineScopes` view are added. Kernel/music
+interiors contain 939/1386 project candidates, 6/10 support, 837/1276 unlabelled and
+364/467 other observations. No ambiguous context was sampled in these captures;
+the ambiguity path is covered by tests. Eighty checks and three CLI rejection
+controls pass; ordinary reconstruction mode's kernel audit remains unchanged.
+
+The ratio helper leads music's labelled project observations (157), followed by
+`at_half` (94) and the phase bridge (78). This refines the next inspection target;
+it supplies no exclusive duration, speedup or hardware-coverage claim. Inspect
+call-site arithmetic/native instructions and retain unknown regions explicitly.
+The rejected zero-product guard is not revived by these counts.
+
 ## Preopt inline contexts, 2026-11-01
 
 The [inline mapper](../../web-player/scripts/map-native-inline-scopes.py) now
@@ -44,11 +79,10 @@ pass. An altered input-map integration is rejected and removes a stale success
 report; production native bytes and compiler identity are unchanged.
 
 These are Clang scopes before Binaryen, not a post-optimization dynamic call
-stack. Later optimization/JIT work can merge or relocate operations. No native
-profile samples have been joined and no exclusive durations are claimed. Next
-join the verified context dictionary/output map with retained native PC samples,
-keeping unknown origins and position-predecessor uncertainty explicit. Stage5
-and the 24/31 plan count remain open/unchanged.
+stack. Later optimization/JIT work can merge or relocate operations. The native
+sample join is implemented above; unknown origins and position-predecessor
+uncertainty remain explicit. Stage5 exclusive durations and the 24/31 plan count
+remain open/unchanged.
 
 ## Source-position labels through optimization, 2026-11-01
 

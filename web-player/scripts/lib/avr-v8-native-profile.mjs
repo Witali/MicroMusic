@@ -1,4 +1,5 @@
 // Diagnostic data only. Never interpret AVR instructions or publish raw paths/PCs.
+import {prepareInlineContexts,inlineView,recordInline,finishInline} from './avr-inline-profile.mjs';
 const fail=message=>{throw new Error(message);};
 const check=(ok,message)=>{if(!ok)fail(message);};
 const uint=(value,message)=>{check(typeof value==='string'&&/^\d+$/.test(value),message);const n=Number(value);check(Number.isSafeInteger(n),message);return n;};
@@ -19,12 +20,13 @@ function sourceLabel(source,root=''){
   }
   return parts.length?anchor+parts.join('/'):null;
 }
-function decodeMap(map){
+function decodeMap(map,inline=null){
   check(map&&map.version===3&&Array.isArray(map.sources)&&map.sources.every(s=>typeof s==='string')&&
     typeof map.mappings==='string'&&!map.mappings.includes(';'),'Invalid single-line source map');
   check(map.names===undefined||(Array.isArray(map.names)&&map.names.every(s=>typeof s==='string')),'Invalid source-map names');
   check(map.sourceRoot===undefined||typeof map.sourceRoot==='string','Invalid source-map root');
   const names=map.names||[],labels=map.sources.map(s=>sourceLabel(s,map.sourceRoot||''));
+  if(inline)for(const name of names)inline.fromName(name);
   const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
   let column=0,source=0,line=0,sourceColumn=0,name=0;const rows=[];
   for(const segment of map.mappings?map.mappings.split(','):[]){
@@ -39,8 +41,10 @@ function decodeMap(map){
     if(values.length===1){rows.push({column,mapped:false});continue;}
     source+=values[1];line+=values[2];sourceColumn+=values[3];
     check(safe(source)&&source<map.sources.length&&safe(line)&&line<Number.MAX_SAFE_INTEGER&&safe(sourceColumn),'Source-map reference out of range');
-    if(values.length===5){name+=values[4];check(safe(name)&&name<names.length,'Source-map name out of range');}
-    rows.push({column,mapped:true,label:labels[source],line:line+1});
+    let inlineContext;
+    if(values.length===5){name+=values[4];check(safe(name)&&name<names.length,'Source-map name out of range');
+      if(inline)inlineContext=inline.fromName(names[name]);}
+    rows.push({column,mapped:true,label:labels[source],line:line+1,...(inlineContext?{inlineContext}:{})});
   }
   return {rows,sources:labels.length,projectSources:labels.filter(Boolean).length};
 }
@@ -139,10 +143,11 @@ function parseDisassembly(text,known){
 
 const nativeBudget=()=>({project:0,support:0,unresolvedNative:0});
 const reasonRows=reasons=>[...reasons].map(([reason,ticks])=>({reason,ticks})).sort((a,b)=>a.reason.localeCompare(b.reason));
-const view=()=>({ticks:0,budget:{...nativeBudget(),other:0},reasons:new Map(),ownership:new Map(),
-  nativeFunctions:new Map(),uncontainedNativeTicks:0});
+const view=(inline=false)=>({ticks:0,budget:{...nativeBudget(),other:0},reasons:new Map(),ownership:new Map(),
+  nativeFunctions:new Map(),uncontainedNativeTicks:0,...(inline?{inline:inlineView()}:{})});
 function record(target,result){
   target.ticks++;target.budget[result.category]++;
+  if(target.inline)recordInline(target.inline,result);
   if(result.reason)add(target.reasons,result.reason);
   if(result.category!=='other'){
     if(result.nativeIndex===undefined)target.uncontainedNativeTicks++;
@@ -169,7 +174,8 @@ function finishView(target){
   return {ticks:target.ticks,budget:target.budget,
     unresolvedReasons:reasonRows(target.reasons),
     sourceLines:[...target.ownership.values()].sort((a,b)=>a.source.localeCompare(b.source)||a.line-b.line),
-    nativeFunctions,uncontainedNativeTicks:target.uncontainedNativeTicks};
+    nativeFunctions,uncontainedNativeTicks:target.uncontainedNativeTicks,
+    ...(target.inline?{inlineScopes:finishInline(target.inline,target.ticks)}:{})};
 }
 const windowPrefix='MM_AVR_CAPTURE_';
 function requestedWindows(windows){
@@ -184,7 +190,7 @@ function requestedWindows(windows){
   }
   return requested;
 }
-function windowViews(requested,ticks,observations){
+function windowViews(requested,ticks,observations,inline=false){
   const windows=[...requested.values()].sort((a,b)=>(a.start?.order??0)-(b.start?.order??0));
   let previous;
   for(const win of windows){
@@ -194,9 +200,9 @@ function windowViews(requested,ticks,observations){
     win.outerDurationUs=win.end.time-win.start.time;
     check(win.innerDurationUs<=win.outerDurationUs+2,'Inconsistent window clock duration');
     win.boundaryAllowanceUs=Math.ceil(Math.max(0,win.outerDurationUs-win.innerDurationUs)+2);
-    win.certainInterior=view();win.boundary=view();
+    win.certainInterior=view(inline);win.boundary=view(inline);
   }
-  const certainInterior=view(),boundary=view(),outside=view();
+  const certainInterior=view(inline),boundary=view(inline),outside=view(inline);
   for(const [n,tick]of ticks.entries()){
     const win=windows.find(w=>tick.time>=w.start.time&&tick.time<w.end.time);
     if(!win){record(outside,observations[n]);continue;}
@@ -217,10 +223,11 @@ function windowViews(requested,ticks,observations){
     ]};
 }
 
-export function auditV8NativeProfile({log,disassembly,functions,sourceMap,windows}){
+export function auditV8NativeProfile({log,disassembly,functions,sourceMap,windows,inlineContexts}){
   check(typeof log==='string'&&typeof disassembly==='string','Profile inputs must be strings');
   const requested=requestedWindows(windows);let activeWindow=null;
-  const known=metadata(functions),map=sourceMap===null||sourceMap===undefined?null:decodeMap(sourceMap);
+  const inline=inlineContexts==null?null:prepareInlineContexts(inlineContexts);
+  const known=metadata(functions),map=sourceMap===null||sourceMap===undefined?null:decodeMap(sourceMap,inline);
   const parsed=parseDisassembly(disassembly,known),generations=[],ticks=[];
   let order=0;
   for(const line of log.split(/\r?\n/)){
@@ -263,9 +270,10 @@ export function auditV8NativeProfile({log,disassembly,functions,sourceMap,window
     const source=lower(map.rows,g.fn.codeOffset+position.position,'column');
     if(!source||source.column<g.fn.codeOffset)return contained(unresolved('source-map-function-gap'));
     if(!source.mapped)return contained(unresolved('unmapped-source-map'));
-    return contained(source.label?{category:'project',source}:{category:'support'});
+    return contained({...(source.label?{category:'project',source}:{category:'support'}),
+      ...(source.inlineContext?{inlineContext:source.inlineContext}:{})});
   };
-  const observations=ticks.map(classify),whole=view();for(const result of observations)record(whole,result);
+  const observations=ticks.map(classify),whole=view(!!inline);for(const result of observations)record(whole,result);
   const finished=finishView(whole);
   return {schema:'micromusic-avr-v8-native-profile-v1',exclusiveSubsystemTimeAvailable:false,
     counts:{ticks:ticks.length,codeGenerations:generations.length,knownNativeGenerations:generations.filter(g=>g.fn).length,
@@ -273,12 +281,14 @@ export function auditV8NativeProfile({log,disassembly,functions,sourceMap,window
       sourceMapSegments:map?.rows.length||0,sourceMapSources:map?.sources||0,projectSourceMapSources:map?.projectSources||0},
     budget:finished.budget,unresolvedReasons:finished.unresolvedReasons,sourceLines:finished.sourceLines,
     nativeFunctions:finished.nativeFunctions,uncontainedNativeTicks:finished.uncontainedNativeTicks,
+    ...(inline?{inlineScopes:finished.inlineScopes}:{}),
     limits:[
       'Disjoint raw tick leaf-PC observations only; inclusive stack frames are not counted.',
       'Whole-process ticks include construction, warmup and unrelated work; no emulator work-window duration is inferred.',
       'Predecessor native source positions and source-map segments are attribution candidates, not proven exclusive ownership or elapsed durations.',
       'Function-entry positions, unmapped spans, address-generation ties and ambiguous generations remain unresolved.',
       'Numeric native function containers identify verified instruction ranges only; source-unresolved container ticks are not exclusive subsystem durations.',
-      'Source-map lines cannot recover full C inline scopes, optimized-away code or timing between samples; no speed or real-time claim is made.',
-    ],...(requested?{windowed:windowViews(requested,ticks,observations)}:{})};
+      inline?'Inline labels identify verified pre-Binaryen scope candidates; later optimization, source-position predecessors and sparse sampling prevent exclusive-duration or dynamic-stack claims.':
+        'Source-map lines cannot recover full C inline scopes, optimized-away code or timing between samples; no speed or real-time claim is made.',
+    ],...(requested?{windowed:windowViews(requested,ticks,observations,!!inline)}:{})};
 }
