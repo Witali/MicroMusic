@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Bound the rounded numerator before division](speex-bounded-divide.md): divide
+a proven small high word first, then sixteen low bits with a sixteen-bit
+remainder. Retain exact rounding, explicit C selection and real-ABI checks.
+
 [Reuse dead excitation history](speex-noise-history.md): keep already generated
 classes and scaled noise words before the delayed-input boundary, eliminating
 duplicate RNG work without allocating another buffer. Assert the lifetime and
