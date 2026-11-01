@@ -6,6 +6,7 @@ fields, an exact prefix state and their active-extra capacity.
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import dataclass
 from numbers import Integral
 import time
 
@@ -79,6 +80,19 @@ def refit_extra_group(reference, co, params, pulses, extras, steps, pre, bright,
     return best[0], best[1], loss, evaluations
 
 
+@dataclass(frozen=True,eq=False,repr=False)
+class _ExtraCheckpoint:
+    _owner: object
+    _epoch: int
+    _covered: int
+    _cursor: int
+    _extras: np.ndarray
+    _h: np.ndarray
+    _dd: int
+    _cc: int
+    _ring: np.ndarray
+
+
 class ExistingExtraPass:
     """Owned exact forward state for one fixed set of played P4 extras.
 
@@ -134,8 +148,12 @@ class ExistingExtraPass:
         self._h=self._zero_h.copy();self._ring=self._zero_ring.copy();self._dd=self._cc=0
         self.cursor=self.covered=self.trials=self.changed=0
         self.visited=[]
+        self._epoch=0
         self._counts=dict(full_synthesis_evaluations=0,serialization_calls=0,
-                          state_advances=0,prefix_synthesized_samples=0)
+            state_advances=0,prefix_synthesized_samples=0,snapshot_calls=0,
+            snapshot_wall_seconds=0.,snapshot_cpu_seconds=0.,rollback_attempts=0,
+            rollback_calls=0,rollback_state_advances=0,rollback_synthesized_samples=0,
+            rollback_wall_seconds=0.,rollback_cpu_seconds=0.)
 
     def _advance_prefix(self, start, stop):
         _,self._h,self._dd,self._cc,self._ring=advance(
@@ -194,6 +212,65 @@ class ExistingExtraPass:
             0,self.n,self._zero_h,0,0,self._zero_ring)[0]
         self._counts['full_synthesis_evaluations']+=1
         return pcm
+
+    def snapshot(self):
+        """Own the protected fields/prefix; never rewind paid group progress."""
+        wall,cpu=time.perf_counter(),time.process_time()
+        extras,h,ring=(a.copy() for a in (self._working,self._h,self._ring))
+        for array in (extras,h,ring):
+            array.flags.writeable=False
+        result=_ExtraCheckpoint(self,self._epoch,self.covered,self.cursor,
+            extras,h,self._dd,self._cc,ring)
+        self._counts['snapshot_calls']+=1
+        self._counts['snapshot_wall_seconds']+=time.perf_counter()-wall
+        self._counts['snapshot_cpu_seconds']+=time.process_time()-cpu
+        return result
+
+    def rollback(self, checkpoint):
+        """Restore protected rows and rebuild their state to the consumed cursor.
+
+        Covered/visited groups, trials and attempted changes remain paid. All
+        snapshots from the prior lineage become stale after a successful restore;
+        callers must take a fresh snapshot before the next block. Compute replay
+        before installing anything, so an arithmetic failure leaves live DSP
+        state intact. Work counts include replay as a subset of prefix advances.
+        """
+        if not isinstance(checkpoint,_ExtraCheckpoint) or checkpoint._owner is not self:
+            raise ValueError('Checkpoint belongs to another existing-extra pass')
+        if checkpoint._epoch!=self._epoch:
+            raise ValueError('Stale existing-extra checkpoint')
+        if checkpoint._covered>self.covered or checkpoint._cursor>self.cursor:
+            raise ValueError('Checkpoint is ahead of the consumed prefix')
+        wall,cpu=time.perf_counter(),time.process_time()
+        self._counts['rollback_attempts']+=1
+        try:
+            working=checkpoint._extras.copy()
+            h,ring=checkpoint._h.copy(),checkpoint._ring.copy()
+            dd,cc=checkpoint._dd,checkpoint._cc
+            samples=self.cursor-checkpoint._cursor
+            if samples:
+                _,h,dd,cc,ring=advance(self._co,self._pp,self._ii,working,self._steps,
+                    self._pre,self._bright,checkpoint._cursor,self.cursor,h,dd,cc,ring)
+            self._working[:]=working
+            self._h,self._dd,self._cc,self._ring=h,dd,cc,ring
+            self.active=int(np.count_nonzero(self._working[:,1]))
+            self._epoch+=1
+            self._counts['rollback_calls']+=1
+            if samples:
+                self._counts['rollback_state_advances']+=1
+                self._counts['rollback_synthesized_samples']+=samples
+                self._counts['state_advances']+=1
+                self._counts['prefix_synthesized_samples']+=samples
+        finally:
+            self._counts['rollback_wall_seconds']+=time.perf_counter()-wall
+            self._counts['rollback_cpu_seconds']+=time.process_time()-cpu
+
+    @property
+    def committed_changed_groups(self):
+        """Current meaningful field differences, separate from attempted edits."""
+        return int(sum(self._working[i,1]!=self._initial[i,1] or
+            bool(self._working[i,1]) and self._working[i,0]!=self._initial[i,0]
+            for i in self.eligible))
 
     def work_counts(self):
         return dict(self._counts)
@@ -319,7 +396,10 @@ def refine_existing_extras(reference, blob, decoder, *, max_bytes,
         public.append(dict(**{key:deepcopy(value) for key,value in point.items() if key not in ('stream','pcm')},
             metrics=deepcopy(metrics[point['id']]),conservative_floors_passed=bool(point['id']==0 or
                 no_regression(metrics[point['id']],metrics[0]))))
-    counters.update(walk.work_counts())
+    counts=walk.work_counts()
+    for name in ('full_synthesis_evaluations','serialization_calls',
+                 'state_advances','prefix_synthesized_samples'):
+        counters[name]=counts[name]
     report=dict(proposal='compact_existing_extra_pass',samples=n,profile=profile,
         baseline_bytes=len(original),max_file_bytes=int(max_bytes),file_bytes=selected['file_bytes'],
         raw_file_bytes=raw['file_bytes'],selected_id=selected['id'],raw_id=raw['id'],

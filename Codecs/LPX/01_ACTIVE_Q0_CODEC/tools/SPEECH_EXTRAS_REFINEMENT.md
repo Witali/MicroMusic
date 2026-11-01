@@ -86,3 +86,40 @@ changed whole tuples, 47 fail the unchanged gates and the sole admissible tuple
 is dominated by prior evidence. Both policies keep baseline rollback, and neither
 is adopted as a new default controller operator. The synthetic cancellation
 result establishes candidate coverage, not natural-speech or audible benefit.
+
+## Incremental state and protected blocks
+
+`ExistingExtraPass(reference, blob, *, max_bytes, causal_positions=False,
+horizon=160, max_trial_evaluations=None, cpu_seconds=None)` owns the same exact
+forward walk used by `refine_existing_extras`. It accepts P4 only and freezes the
+initial eligible group order. `step()` consumes the next group or returns false
+at the end or before exceeding the conservative atomic trial allowance. A CPU
+quota can raise `CpuBudgetExceeded` before a group starts. Zero-error shortcuts,
+native verification, whole quality gates and immediate candidate persistence
+remain the caller's responsibility for this incremental interface.
+
+`serialize()` returns a complete stream under the original and requested caps;
+`synthesize()` returns owned complete PCM from zero state. Neither operation
+moves the forward prefix. `snapshot()` owns read-only copies of protected extra
+rows and prefix history/filter/pitch state. `rollback(snapshot)` restores those
+rows and reconstructs their true DSP state from the saved boundary through the
+already consumed current cursor. It restores the live active count but never
+refunds trials, coverage, visited groups or cumulative attempted changes. The
+next step visits the next originally eligible group, including after a rejection.
+Replay is computed before installation; an arithmetic failure leaves live fields
+and DSP state intact. Foreign, future or stale snapshots are rejected. A successful
+rollback invalidates older snapshots; take a fresh snapshot before the next block.
+
+`changed` counts attempted changed groups, while `committed_changed_groups`
+counts current meaningful differences from the original. Read scalar progress
+and copy `visited`; consumers must not mutate session-owned state. `work_counts()`
+returns an owned dictionary of actual synthesis/serialization/prefix advances,
+snapshot/rollback calls and elapsed costs. Rollback replay calls/samples are a
+subset of total prefix work, so do not add them twice. Failed replay attempts are
+counted separately from completed rollbacks. An interleaved multi-reset caller
+must time its actual calls rather than sum overlapping lifetime CPU clocks.
+
+The existing full-pass function retains its original callback, selection and
+report contracts. These state methods provide the mechanism for a separate
+prospective whole-chain admission/rollback experiment; they establish no corpus,
+audible-quality, linked-Flash or target-timing improvement by themselves.
