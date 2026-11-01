@@ -6,6 +6,7 @@ import { previewWaveform } from './lib/native-audio.js';
 import { speexPreviewEntries } from './lib/speex-preview.js?v=20261101-speex';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
+const bitrateLabel = bps => `${bps%1000?'≈ ':''}${Math.round(bps/1000).toLocaleString('ru')} кбит/с`;
 const canvas = $('wave');
 const originalAudio = $('original-audio');
 const previewAudio=$('preview-audio'), previewWaves=new Map();
@@ -255,7 +256,7 @@ function renderCatalog() {
     const name=document.createElement('strong'); name.textContent=entry.title;
     const voices=entry.voices??4;
     const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.playback==='native-pwm8'
-      ? `${entry.flashMeasurement?.programFlashBytes.toLocaleString('ru')??'—'} Б код · ${entry.streamBytes.toLocaleString('ru')} Б данных · ${entry.bitrateBps.toLocaleString('ru')} бит/с`
+      ? `${entry.flashMeasurement?.programFlashBytes.toLocaleString('ru')??'—'} Б код · ${entry.streamBytes.toLocaleString('ru')} Б данных · ${bitrateLabel(entry.bitrateBps)}`
       : entry.kind==='package'?'FLASH + EEPROM · PB0 / PB1':entry.kind==='speech'
       ? `${entry.flashBytes} Б Flash${entry.eepromBytes ? ` + ${entry.eepromBytes} Б EEPROM` : ''} · речь ${(entry.sampleHz/1000).toLocaleString('ru')} кГц`
       : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}${entry.audioChannels===2?' · СТЕРЕО L / R':''}`;
@@ -381,8 +382,7 @@ function load(entry,{autoplay=false}={}) {
     const cost=measurement
       ? `${measurement.programFlashBytes.toLocaleString('ru')} Б программа + ${measurement.encodedBytes.toLocaleString('ru')} Б звук = ${measurement.totalFlashBytes.toLocaleString('ru')} Б Flash · тестовая сборка`
       : `Программа: — (не измерено) · ${entry.streamBytes.toLocaleString('ru')} Б данных ${entry.dataLabel}`;
-    const rate=entry.bitrateBps.toLocaleString('ru')+' бит/с'+(entry.nominalBitrateBps?' по файлу · '+entry.nominalBitrateBps.toLocaleString('ru')+' бит/с номинально':'');
-    $('rom-details').textContent=`${cost} · ${rate} · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
+    $('rom-details').textContent=`${cost} · ${bitrateLabel(entry.bitrateBps)} · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
     $('board-upload').hidden=true;$('upload-command').textContent='';$('reset').disabled=false;
     $('original-player').hidden=true;$('wav-link').hidden=false;$('wav-link').href=entry.nativeAudioUrl;
     $('reference-wav').hidden=false;$('reference-wav').href=originalUrl;

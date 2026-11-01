@@ -71,7 +71,7 @@ test('S15 becomes the first Tiny88 choice and labels the separate experimental d
   assert.equal(app.get('preview-format-note').textContent,'LPX-S15 · экспериментальный формат; нужен отдельный декодер. ');
   assert.equal(app.location.searchParams.get('firmware'),'lpx-bread-low15');
   const text=app.get('rom-details').textContent.replace(/\s/g,'');
-  assert.ok(text.includes(low15Fixture.bytes+'БданныхLPX'));assert.ok(text.includes(low15Fixture.bitrateBps+'бит/с'));
+  assert.ok(text.includes(low15Fixture.bytes+'БданныхLPX'));assert.ok(text.includes('≈1кбит/с'));
   assert.match(app.get('rom-name').href,/\/low15\.lpx$/);assert.equal(app.get('rom-name').download,'lpx-bread-low15.lpx');
   nativeDownloads(app);
   assert.equal(app.get('wave').dataset.samples,'19200');assert.equal(app.get('avr-inspector').hidden,true);
@@ -103,7 +103,8 @@ test('actual published Tiny88 cards keep LPX low15, compact, quality first, foll
       assert.ok(text.includes(variant.bytes+'БданныхLPX'));assert.equal(app.get('flash-measurement-note').hidden,true);
       assert.doesNotMatch(text,/Бпрограмма|БFlash/);
     }
-    assert.ok(text.includes(variant.bitrateBps+'бит/с'));
+    assert.ok(text.includes('≈'+({low15:1,compact:3,quality:6}[id])+'кбит/с'));
+    assert.ok(cardText.includes('≈'+({low15:1,compact:3,quality:6}[id])+'кбит/с'));
     assert.equal(app.get('machine-memory').textContent,'8');
     assert.equal(app.get('wave').dataset.samples,String(publishedManifest.samples));
   }
@@ -178,7 +179,7 @@ test('native selection exposes exact data costs and LPX download, with no invent
     select(app,'lpx-bread-'+variant.id);await flush();
     const text=app.get('rom-details').textContent.replace(/\s/g,'');
     assert.ok(text.includes(variant.bytes+'БданныхLPX'));
-    assert.ok(text.includes(variant.bitrateBps+'бит/с'));assert.ok(text.includes('19200отсчётов'));
+    assert.ok(text.includes('≈'+({compact:3,quality:6}[variant.id])+'кбит/с'));assert.ok(text.includes('19200отсчётов'));
     assert.doesNotMatch(text,/Flash|SRAM|EEPROM/);
     assert.match(app.get('rom-details').textContent,/не измерено/);
     assert.equal(app.get('flash-measurement-note').hidden,true);

@@ -61,7 +61,7 @@ test('the same Tiny88 library keeps LPX first and appends Speex as fourth/fifth 
   assert.equal(app.workers.at(-1).messages[0].entry.flashHex,app.catalog.entries[0].flashHex);
 });
 
-test('Speex direct links use actual stored and nominal rates, raw names, docs and honest hardware notices',async()=>{
+test('Speex direct links show whole approximate kbit rates, exact bytes, raw names, docs and honest hardware notices',async()=>{
   for(const prefix of ['/','/MicroMusic/'])for(const variant of speexManifest.variants){
     const app=await fixture({prefix,device:undefined,firmware:'speex-bread-'+variant.id});await flush();
     assert.equal(app.get('device-select').value,'attiny88');assert.equal(app.location.searchParams.get('firmware'),'speex-bread-'+variant.id);
@@ -73,8 +73,11 @@ test('Speex direct links use actual stored and nominal rates, raw names, docs an
     assert.equal(app.get('selected-title').textContent,'Speex NB · '+variant.label);
     const details=app.get('rom-details').textContent.replace(/\s/g,'');
     assert.ok(details.includes(variant.bytes+'БданныхSpeex'));
-    assert.ok(details.includes(variant.bitrateBps.toLocaleString('ru').replace(/\s/g,'')+'бит/спофайлу'));
-    assert.ok(details.includes(variant.nominalBitrateBps.toLocaleString('ru').replace(/\s/g,'')+'бит/сноминально'));
+    const rate=variant.id==='compact'?'≈2кбит/с':'≈8кбит/с';
+    assert.ok(details.includes(rate));
+    const card=cards(app).find(item=>item.dataset.firmware==='speex-bread-'+variant.id);
+    assert.ok(card.children[1].children[1].textContent.replace(/\s/g,'').includes(rate));
+    assert.doesNotMatch(details,/\d[.,]\d+кбит\/с|номинально/);
     assert.match(app.get('rom-details').textContent,/не измерено/);assert.equal(app.get('flash-measurement-note').hidden,true);
     assert.equal(app.get('preview-format-note').hidden,true);
     assert.match(app.get('preview-playback-note').textContent,/ATmega328P; прошивки для ATtiny88 нет/);
