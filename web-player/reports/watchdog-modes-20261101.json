@@ -1,0 +1,65 @@
+{
+  "schema": "micromusic-watchdog-modes-audit-v1",
+  "baseline": "4218953ae687a346fc98fbc33c779bd31db84e96",
+  "verified": true,
+  "node": "v22.22.3",
+  "v8": "12.4.254.21-node.56",
+  "native": {
+    "bytes": 124590,
+    "sha256": "244b3d3da85ff6cd065e6b105b18d26d8ae07e6615802d77f23a123338209c98",
+    "buildManifestSha256": "6ed902267075ac127f042ad3e353f38842a25408969a1f01bc770403ce72c675"
+  },
+  "compilerIdentity": "99503df5189bd5625e27c48d1fbf89c18015aa005ce28f3c099c462f4ea455bc",
+  "sourceSha256": {
+    "web-player/tests/attiny13a-watchdog-modes.test.mjs": "7bc52427a99117aa0c6f65b7c8a3dccb5a9e20b5340ad63979290dcaa194ed1b",
+    "web-player/tests/system-watchdog.test.mjs": "315d931c0b161f9e80561c9add497564fdee8899226f6bc355d8a9e4d6d56014",
+    "web-player/tests/device-watchdog-clock.test.mjs": "59314459825e38f40edfb19d84bfbd54deba1f3c4465cefc7d7f2ae8da21e3f5",
+    "web-player/tests/device-startup.test.mjs": "87262d50db6f7ebe350a712255d4a8f8e5b277136b8c298633639e6b7057cc7f",
+    "web-player/tests/attiny13a-device-system.test.mjs": "4034b37218728b9a7daf914f57ba31d804176196df42ed49366a87b3851b4f54",
+    "web-player/tests/attiny13a-clki-sleep.test.mjs": "9d73f5c13e5597806bc30f4c0fa2c566aabd8b140b76bcaf4dbe75c543f4b3c4",
+    "web-player/tests/attiny13a-clki-pad.test.mjs": "9adf2b351ef006e6518a78af7e854433e89d84fd6fe14b012ab4d4ec7f423766",
+    "web-player/tests/fixtures/attiny13a-system-firmware.mjs": "1d75e9a7186337b3de601f29abe5b23450e0cd955926e88257b9049c016e366e"
+  },
+  "profile": {
+    "cpuHz": 1000000,
+    "watchdogHz": 128000,
+    "startupProfile": 0,
+    "externalPhasePolicy": "digital-noninverting-zero-seed-v1",
+    "policies": [
+      "verification",
+      "optimized"
+    ],
+    "firstTimeoutPs": "16000000000",
+    "secondTimeoutPs": "32000000000",
+    "wdrInstructionPs": "16009000000",
+    "resetAfterWdrPs": "32007812500"
+  },
+  "method": "Source-only AVR firmware through the unchanged generated CPU/native board. Four mode/service programs under both clock sources and CPU policies, plus held high/low CLKI, GPIO release and restart. These are explicit digital software fixtures, not official-simulator observations, physical measurements or performance evidence.",
+  "added": {
+    "tests": 20,
+    "pass": 20,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "tapSha256": "c6b86ba7ffd704a8b69bb05d9a5dfde9cb7e5190512767bb3eff8f4bb085acb3"
+  },
+  "focused": {
+    "tests": 121,
+    "pass": 121,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "tapSha256": "1aa27999208e7776e6bc02b9d6f7b13661003bf89e3c95f8538ee5e4ce76324c"
+  },
+  "fullSuite": {
+    "tests": 2833,
+    "pass": 2833,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "tapSha256": "b88fa17f941d61ff204563908facf66bbe0d92be26993623544d4ff77f802aed"
+  }
+}

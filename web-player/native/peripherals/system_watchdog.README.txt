@@ -56,8 +56,8 @@ to its own physical-time/CPU scheduling domain. No cross-domain mapping is
 silently approximated. Backward CPU or watchdog times report an explicit error.
 
 The watchdog does not generate a JavaScript callback at a timeout or at any
-oscillator tick. Its timestamped event state is consumed by the C scheduler.
-This module is not wired into the current player until CPU integration occurs.
+oscillator tick. The full ATtiny13A C scheduler integrates it with the generated
+CPU, interrupt entry, sleep, reset fan-out and actual CLKI source phases.
 Analog oscillator drift, electrical reset pulse widths, power supply, brown-out
 thresholds and fuse-dependent reset/startup stretching are separate board tasks.
 
@@ -70,3 +70,17 @@ independent clocks, protection deadlines and bit writes, WDR, interrupt-only,
 reset-only and combined behavior, W1C/zero-clear semantics, WDTON/WDRF, reset
 history, explicit undefined/time errors, large batches and seeded batched versus
 individual oscillator pulses. No native executable or generated binary is kept.
+
+Full-board firmware verification:
+  node --test web-player/tests/attiny13a-watchdog-modes.test.mjs
+
+Twenty cases run interrupt-only, serviced combined, unserviced combined with
+WDTIF W1C, and WDR-after-timeout firmware using both CPU policies and internal
+or supplied external clocks. Four cases hold CLKI high/low across both timeouts:
+the first flag cannot execute an ISR without CPU edges; the second resets the
+ports at its independent timestamp, and execution restarts only after clock
+delivery resumes. W1C does not replace vector service, and WDR changes counter
+phase without clearing the combined-mode history. These are explicit 1 MHz CPU,
+128 kHz watchdog, zero-startup digital fixtures, not measured oscillator accuracy
+or physical reset/IRQ sub-cycle phase. See the audit report:
+  ../../reports/watchdog-modes-20261101.md

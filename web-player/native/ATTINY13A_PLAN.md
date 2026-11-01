@@ -33,6 +33,18 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Watchdog integration audit, 2026-11-01: sections8.4/8.5.2 now have 20 additional
+actual-firmware checks, with interrupt-only and combined modes, vector service,
+WDTIF W1C, WDR, both CPU policies and internal/CLKI sources. Held high/low CLKI
+cannot service the first interrupt; the second timeout resets GPIO at 32 ms and
+restart waits for actual source phases. WDR after pulse 2049 moves reset to
+pulse 4097 under the declared 128 kHz digital fixture. All 121 focused and
+2833/2833 default checks pass.
+No runtime correction was required, and native bytes/ABI/cache identity remain
+unchanged. The watchdog README now reflects its completed board integration.
+This verifies software ordering, not silicon reset phase or oscillator accuracy;
+the count remains 24/31. See the [audit](../reports/watchdog-modes-20261101.md).
+
 INT0 ADC-routing correction, 2026-11-01: sections9.3.3/14.12.4 require the
 ADC auto-trigger route to follow GIFR.INTF0, independently of the live low-level
 CPU/wake request. The old bridge incorrectly OR-ed those conditions, allowing

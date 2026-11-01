@@ -2725,3 +2725,10 @@ held clocks and bounded stable-span execution. Its first resumed-edge policy
 is explicit; the internal silicon phase remains unmeasured.
 The same note now separates ADC flag routing from low-level CPU/wake requests
 and uses pre-trigger checkpoints to expose premature conversions.
+
+## ATtiny13A: watchdog service across held CPU clocks
+
+[Independent watchdog operations](watchdog-clock-separation.md) verifies flag
+clearing, WDR, vector acknowledgment and port reset separately with actual
+firmware. A held CLKI cannot service the first interrupt or defer the independent
+second-timeout reset; it does delay CPU restart.
