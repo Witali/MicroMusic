@@ -1,0 +1,176 @@
+{
+  "schema": "lpx-current-repeat-serialized-cost-v1",
+  "status": "complete",
+  "chains": 104,
+  "reset_segment_occurrences": 242,
+  "unique_stored_streams": 242,
+  "method": {
+    "selector": 1,
+    "name": "repeat-mask1",
+    "kind": "repeat",
+    "mask": 1,
+    "k": null
+  },
+  "overall": {
+    "chains": 104,
+    "current_stored_bytes": 875393,
+    "hypothetical_v6_stored_bytes": 864379,
+    "stored_bytes_saved": 11014,
+    "saved_bytes_min_median_max": [
+      0,
+      19.0,
+      5368
+    ],
+    "positive_zero_negative": [
+      103,
+      1,
+      0
+    ],
+    "all_hypothetical_segments_within_uint16": true
+  },
+  "groups": [
+    {
+      "domain": "nonspeech",
+      "profile": 4,
+      "storage_class": "ROM-data-eligible",
+      "chains": 2,
+      "current_stored_bytes": 2752,
+      "hypothetical_v6_stored_bytes": 2625,
+      "stored_bytes_saved": 127,
+      "saved_bytes_min_median_max": [
+        12,
+        63.5,
+        115
+      ],
+      "positive_zero_negative": [
+        2,
+        0,
+        0
+      ],
+      "all_hypothetical_segments_within_uint16": true
+    },
+    {
+      "domain": "nonspeech",
+      "profile": 4,
+      "storage_class": "SPI-required-data-alone",
+      "chains": 1,
+      "current_stored_bytes": 202600,
+      "hypothetical_v6_stored_bytes": 197232,
+      "stored_bytes_saved": 5368,
+      "saved_bytes_min_median_max": [
+        5368,
+        5368,
+        5368
+      ],
+      "positive_zero_negative": [
+        1,
+        0,
+        0
+      ],
+      "all_hypothetical_segments_within_uint16": true
+    },
+    {
+      "domain": "nonspeech",
+      "profile": 6,
+      "storage_class": "ROM-data-eligible",
+      "chains": 2,
+      "current_stored_bytes": 4061,
+      "hypothetical_v6_stored_bytes": 3947,
+      "stored_bytes_saved": 114,
+      "saved_bytes_min_median_max": [
+        10,
+        57.0,
+        104
+      ],
+      "positive_zero_negative": [
+        2,
+        0,
+        0
+      ],
+      "all_hypothetical_segments_within_uint16": true
+    },
+    {
+      "domain": "nonspeech",
+      "profile": 6,
+      "storage_class": "SPI-required-data-alone",
+      "chains": 1,
+      "current_stored_bytes": 299056,
+      "hypothetical_v6_stored_bytes": 295977,
+      "stored_bytes_saved": 3079,
+      "saved_bytes_min_median_max": [
+        3079,
+        3079,
+        3079
+      ],
+      "positive_zero_negative": [
+        1,
+        0,
+        0
+      ],
+      "all_hypothetical_segments_within_uint16": true
+    },
+    {
+      "domain": "speech",
+      "profile": 4,
+      "storage_class": "ROM-data-eligible",
+      "chains": 49,
+      "current_stored_bytes": 150854,
+      "hypothetical_v6_stored_bytes": 149426,
+      "stored_bytes_saved": 1428,
+      "saved_bytes_min_median_max": [
+        3,
+        24,
+        146
+      ],
+      "positive_zero_negative": [
+        49,
+        0,
+        0
+      ],
+      "all_hypothetical_segments_within_uint16": true
+    },
+    {
+      "domain": "speech",
+      "profile": 6,
+      "storage_class": "ROM-data-eligible",
+      "chains": 49,
+      "current_stored_bytes": 216070,
+      "hypothetical_v6_stored_bytes": 215172,
+      "stored_bytes_saved": 898,
+      "saved_bytes_min_median_max": [
+        0,
+        12,
+        74
+      ],
+      "positive_zero_negative": [
+        48,
+        1,
+        0
+      ],
+      "all_hypothetical_segments_within_uint16": true
+    }
+  ],
+  "census": {
+    "stored_tuples": 81140,
+    "audible_tuples": 80982,
+    "unplayed_stored_tuples": 158,
+    "gain_zero_stored_tuples": 6465,
+    "gain_zero_lag_changes": 4865,
+    "raw_scale_codes_0_to_5": 183,
+    "raw_scale_codes_6_to_9": 1520
+  },
+  "complete_byte_roundtrip_unique_streams": 242,
+  "independent_raw_roundtrip_unique_streams": 242,
+  "canonical_v5_writer_unique_streams": 242,
+  "noncanonical_unique_streams_preserved": 0,
+  "waveform_synthesis_calls": 0,
+  "quality_metric_calls": 0,
+  "fitting_calls": 0,
+  "native_builds": 0,
+  "target_jobs": 0,
+  "simulations": 0,
+  "complete_flash_measured": false,
+  "native_pcm_pwm_verified": false,
+  "physical_board_claim": false,
+  "scope": "Complete serialized bytes only; program, linked metadata, SRAM/stack and IRQ admission remain unmeasured"
+}
