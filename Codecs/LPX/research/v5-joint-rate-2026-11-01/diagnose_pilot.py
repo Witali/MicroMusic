@@ -23,6 +23,15 @@ def change(new,old):
         result[domain+'_sse_delta']=a['error_energy']-b['error_energy']
         result[domain+'_ser_delta_db']=None if a['ser_db'] is None or b['ser_db'] is None else a['ser_db']-b['ser_db']
         result[domain+'_stoi_delta']=None if a['stoi'] is None or b['stoi'] is None else a['stoi']-b['stoi']
+    for domain in ('voice','pwm_voice'):
+        deltas={}
+        for key in ('paired_period_frames','missing_decoded_period_frames','pitch_failure_fraction',
+                'decoded_hz_median_paired','absolute_cents_median_paired','signed_cents_median_paired',
+                'near_half_pitch_frames','near_double_pitch_frames','fixed_source_period_error_mean',
+                'fixed_decoded_period_error_mean','relative_spectral_shape_rms_db_mean'):
+            a,b=new[domain][key],old[domain][key]
+            deltas[key]=None if a is None or b is None else a-b
+        result[domain+'_saved_proxy_deltas']=deltas
     return result
 
 
