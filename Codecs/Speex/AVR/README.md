@@ -18,6 +18,14 @@ Flash and leaves 412 B SRAM; the full stream passes again with zero underruns.
 These are active-
 IRQ ISA-simulator results; a physical board has not been measured.
 
+The [one-product vocoder mean](WB_MEAN_PRODUCT.md), together with exact bounded
+HB1 gain division, further reduces WB3.95 speech decoding **75.60% -> 74.17%
+CPU**. The mean replaces eight -> four hardware MULs per sample with exact
+overflow correction, saving 640 MULs/frame; NB2.15 also improves 3.53%. Fresh
+affected-mode tests cover 21254 raw frames, 10627 WB IRQ frames with 8% added
+work and 3600 actual SPI frames: exact PCM/PWM and zero underruns. Portable C
+fallbacks remain selectable; their decoder is compiled/linked only at this stage.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

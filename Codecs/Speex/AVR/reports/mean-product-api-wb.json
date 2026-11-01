@@ -1,0 +1,32 @@
+{
+  "backend": "asm",
+  "wideband": true,
+  "binarySha256": "c97dd89834e5861cf5568e6c29578dd564d0330cfa3e12fabc4b2aad44276571",
+  "inputSha256": "a7d9fe117070b9e0c3cffb5a06667de233dc7e289a768a777710952dc1b8c122",
+  "pcmSha256": "f02abd03333a94e410e77023cb4cc6f418bca92604de85fb6fafcccb7e265022",
+  "frames": 1024,
+  "rejectedCalls": 7168,
+  "mixedEnabledModes": [
+    1,
+    2,
+    8,
+    3,
+    4
+  ],
+  "paddingIgnored": true,
+  "resetExact": true,
+  "pcmExact": true,
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "flashBytes": 24850,
+  "staticSramBytes": 1308,
+  "peakStack": 223,
+  "freeSram": 517,
+  "meanArithmetic": {
+    "calls": 32960,
+    "hardwareMultiplies": 131840,
+    "hardwareMultipliesPerNb1Frame": 640,
+    "exactDuringDecoder": true,
+    "rejectedCallsDoNotExecute": true
+  }
+}

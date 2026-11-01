@@ -30,6 +30,27 @@ The matched 384-frame RU/EN/coverage screen saves 1.219% WB3.95 frame cycles,
 not a physical-board or complete active-output admission.
 [Proof, scope and reproduction](../../Codecs/Speex/AVR/WB_MEAN_PRODUCT.md).
 
+The subsequent complete affected-mode admission passes 21254 raw frames,
+10627 WB IRQ frames with 8% additional CPU work, and 3600 long SPI frames:
+exact PCM/PWM, zero underruns, minimum queues 6 / 32. Natural speech improves
+3.53% NB2.15 and 1.23% WB3.95. Two 1024-frame mixed API runs observe 160 calls
+and exactly 640 mean MULs per valid NB1 frame, with independently checked
+results; rejected calls and other modes execute none. Four disabled-mode
+images and both compile/link-only C controls remain byte-identical.
+
 This technique is original project work. Preserve existing algorithm/table
 licenses when adapting its surrounding codec; do not assume the correction
 is integral for arbitrary coefficients, input widths or Q formats.
+
+## Unmeasured follow-up: power-of-two noise scales
+
+The current five-symbol noise table computes Q14 products for `a=+/-128`
+and `+/-256`, then applies a left shift of seven and rounded shift of fourteen.
+For the caller's nonnegative `scale <=121000000`, the signed16 high component
+of Q14 fits and the shifted product cannot overflow signed32. Floor nesting
+then suggests the exact closed forms `(scale+8192)>>14`, `(-scale+8192)>>14`,
+`(scale+4096)>>13`, `(-scale+4096)>>13`, plus zero. This would eliminate the
+remaining products in this once-per-frame preparation. Negative half-way
+rounding must remain toward positive infinity; do not simply negate the
+positive result. This is an algebraic candidate only: no implementation,
+assembled check, measured saving or new real-time admission is claimed.

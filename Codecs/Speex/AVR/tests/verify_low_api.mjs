@@ -17,16 +17,31 @@ const [packet,bytes,flags,command,status,result,pcm,end]=['low_api_packet','low_
 const chunks=meta.wideband?address('low_api_chunks'):-1;
 const program=new Uint16Array(16384).fill(65535);new Uint8Array(program.buffer).set(binary);
 const cpu=new CPU(program,2048);let output=[],lastChunk=0,minSP=2303,rejected=0;
+const countMean=process.argv.includes('--count-mean'),meanEntry=countMean?address('speex_low_mean_avr'):-1;
+let meanActive=null,meanCalls=0,meanMultiplies=0;
 function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
- assert.ok(cpu.cycles<deadline,'API timeout');avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
+ assert.ok(cpu.cycles<deadline,'API timeout');const opcode=cpu.progMem[cpu.pc];
+ if(cpu.pc*2===meanEntry){
+  assert.equal(meanActive,null);const a=cpu.dataView.getInt16(24,true),b=cpu.dataView.getInt16(22,true);
+  meanActive={sp:cpu.SP,muls:0,expected:Number((26214n*BigInt(a)+6554n*BigInt(b)+16384n)>>15n)};
+ }
+ if(meanActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++meanActive.muls;
+ avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
+ if(meanActive&&opcode===0x9508&&cpu.SP===meanActive.sp+2){
+  assert.equal(cpu.dataView.getInt16(24,true),meanActive.expected,'Mean in real mixed decoder');
+  assert.equal(meanActive.muls,4);assert.equal(cpu.data[1],0);
+  ++meanCalls;meanMultiplies+=meanActive.muls;meanActive=null;
+ }
  if(meta.wideband&&cpu.data[chunks]!==lastChunk){lastChunk=cpu.data[chunks];const at=cpu.dataView.getUint16(pcm,true);output.push(Buffer.from(cpu.data.subarray(at,at+160)));}
 }}
 until(()=>cpu.data[status]===1);
 function decode(payload,width,invalidFlags=0){
+ const callsBefore=meanCalls;
  cpu.data.set(payload,packet);cpu.data[bytes]=width;cpu.data[flags]=invalidFlags;
  output=[];cpu.data[status]=1;cpu.data[command]=1;until(()=>cpu.data[status]===2);
  assert.ok(Buffer.from(cpu.data.subarray(packet,packet+32)).equals(payload),'Read-only packet');
  const code=cpu.dataView.getInt8(result);
+ if(countMean)assert.equal(meanCalls-callsBefore,code===0&&(payload[0]>>3)===1?160:0,'Mean only in valid NB1 frames');
  return {code,pcm:meta.wideband?Buffer.concat(output):Buffer.from(cpu.data.subarray(pcm,pcm+320)),callbacks:output.length};
 }
 function reject(payload,width,badFlags=0){const answer=decode(payload,width,badFlags);assert.equal(answer.code,-1);assert.equal(answer.callbacks,0);rejected++;}
@@ -45,4 +60,6 @@ const fresh=decode(Buffer.from(raw.subarray(0,32)),data.packetLengths[0]);assert
 const report={backend:'asm',wideband:meta.wideband,binarySha256:meta.binarySha256,inputSha256:data.inputSha256,pcmSha256:data.pcmSha256,
  frames:data.frames,rejectedCalls:rejected,mixedEnabledModes:[1,2,8,3,4],paddingIgnored:true,resetExact:true,pcmExact:true,
  includesInterrupts:false,physicalBoardTested:false,flashBytes:binary.length,staticSramBytes:end-256,peakStack:2303-minSP,freeSram:minSP-end+1};
+if(countMean)report.meanArithmetic={calls:meanCalls,hardwareMultiplies:meanMultiplies,
+ hardwareMultipliesPerNb1Frame:640,exactDuringDecoder:true,rejectedCallsDoNotExecute:true};
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS mixed API',JSON.stringify(report));
