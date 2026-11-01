@@ -3,6 +3,7 @@ import {runInNewContext} from 'node:vm';
 import {parseHex} from '../../lib/hex.js';
 import {RealtimeMonitor} from '../../lib/realtime.js';
 import {universalPackageEntry} from '../../lib/universal-package.js';
+import {lpxPreviewEntries,previewWaveform} from '../../lib/native-preview.js';
 
 export function deferred(){
   let resolve,reject;
@@ -12,9 +13,8 @@ export function deferred(){
 
 // Execute the actual app handlers with a small DOM/media model. This tests
 // transport ordering and cancellation; it does not claim browser audio output.
-export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware,device,board,hash='',catalogs={},fetchHook}={}){
+export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware,device,board,catalogs={},assets={},fetchHook}={}){
   const location=new URL(`https://example.test${prefix}web-player/`);
-  location.hash=hash;
   if(speech)location.searchParams.set('collection','hq4');
   if(firmware)location.searchParams.set('firmware',firmware);
   if(device)location.searchParams.set('device',device);
@@ -26,7 +26,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
       this.hidden=/\bhidden\b/.test(attributes);this.disabled=/\bdisabled\b/.test(attributes);
       this.name=attributes.match(/\bname="([^"]*)"/)?.[1]??'';
       this.checked=/\bchecked\b/.test(attributes);this.value=attributes.match(/\bvalue="([^"]*)"/)?.[1]??'';
-      this.attributes=new Map();this.listeners=new Map();this.scrolls=[];this.clientWidth=this.clientHeight=0;
+      this.attributes=new Map();this.listeners=new Map();this.clientWidth=this.clientHeight=0;
     }
     get checked(){return this._checked;}
     set checked(value){
@@ -34,12 +34,11 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
       if(value&&this.name==='engine')for(const radio of radios)if(radio!==this)radio._checked=false;
     }
     setAttribute(key,value){this.attributes.set(key,String(value));}
-    getAttribute(key){return this.attributes.get(key)??null;}
-    removeAttribute(key){this.attributes.delete(key);}
+    getAttribute(key){return ['href','download'].includes(key)?this[key]??null:this.attributes.get(key)??null;}
+    removeAttribute(key){this.attributes.delete(key);if(['href','download'].includes(key))delete this[key];}
     append(...children){this.children.push(...children);}
     replaceChildren(...children){this.children=children;}
     getContext(){return {};}
-    scrollIntoView(options){this.scrolls.push(options);}
     addEventListener(type,listener){const list=this.listeners.get(type)??[];list.push(listener);this.listeners.set(type,list);}
     emit(type){for(const listener of this.listeners.get(type)??[])listener({type,target:this});}
   }
@@ -52,6 +51,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     play(){this.plays++;this.paused=false;this.ended=false;this.emit('playing');return this.pendingPlay?.promise??Promise.resolve();}
     pause(){this.paused=true;this.emit('pause');}
     finish(){this.paused=true;this.ended=true;this.emit('ended');}
+    advance(seconds){this.currentTime=seconds;this.emit('timeupdate');}
   }
   const html=readFileSync(new URL('../../index.html',import.meta.url),'utf8');
   for(const [,tag,attributes,id] of html.matchAll(/<(\w+)\b([^>]*\bid="([^"]+)"[^>]*)>/g))
@@ -98,7 +98,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     }
   }
   const window={devicePixelRatio:1,AudioContext:Context,addEventListener:(type,listener)=>windowEvents.set(type,listener)};
-  const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,
+  const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,previewWaveform,
     Worker,AudioWorkletNode:Worklet,ResizeObserver:class{observe(){}},
     MessageChannel:class{constructor(){this.port1={};this.port2={};}},
     performance:{now:()=>Date.now()},setTimeout:()=>1,clearTimeout(){},
@@ -106,8 +106,13 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     fetch:async input=>{
       const url=new URL(input,location),name=url.pathname.split('/').at(-1),index=fetches.length;
       fetches.push(url.href);
-      const data=name===initialCatalog?catalog:catalogs[name]??JSON.parse(readFileSync(new URL('../../'+name,import.meta.url)));
-      const response={ok:true,json:async()=>structuredClone(data)};
+      let data=name===initialCatalog?catalog:catalogs[name],bytes=assets[name];
+      if(data===undefined&&bytes===undefined){
+        const relative=url.pathname.split('/web-player/')[1];
+        bytes=readFileSync(new URL('../../'+relative,import.meta.url));
+        if(name.endsWith('.json'))data=JSON.parse(bytes);
+      }
+      const response={ok:true,json:async()=>structuredClone(data),arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};
       return await fetchHook?.({url,index,response})??response;
     }};
   const source=readFileSync(new URL('../../app.js',import.meta.url),'utf8')
@@ -118,7 +123,6 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     const node=worklets.at(-1),connection=node.messages.findLast(message=>message.type==='connect');
     node.port.onmessage({data:{type:'position',session:connection.session,frames,clockFrames:frames,underruns:0,...extra}});
   }
-  return {get,body:document.body,original:get('original-audio'),workers,contexts,worklets,workletSetup,catalog,location,selectors,position,radios,fetches,
-    keydown:event=>documentEvents.get('keydown')?.(event),pagehide:()=>windowEvents.get('pagehide')?.(),
-    changeHash:hash=>{location.hash=hash;windowEvents.get('hashchange')?.();}};
+  return {get,body:document.body,original:get('original-audio'),preview:get('preview-audio'),workers,contexts,worklets,workletSetup,catalog,location,selectors,position,radios,fetches,
+    keydown:event=>documentEvents.get('keydown')?.(event),pagehide:()=>windowEvents.get('pagehide')?.()};
 }

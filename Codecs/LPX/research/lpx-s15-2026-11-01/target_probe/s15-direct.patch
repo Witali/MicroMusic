@@ -1,0 +1,124 @@
+--- baseline/Lpx4HybridCore.h
++++ s15/Lpx4HybridCore.h
+@@ -45,6 +45,16 @@
+ #endif
+ #if LPX4_COMPACT_ONLY && (!LPX4_ENABLE_SPEECH || !LPX4_ENABLE_SPEECH_COMPACT)
+ #error LPX4_COMPACT_ONLY requires speech and compact speech
++#endif
++// Experimental direct LPX-S15 parser; independent opt-in, no added state.
++#ifndef LPX4_ENABLE_S15
++#define LPX4_ENABLE_S15 0
++#endif
++#if LPX4_ENABLE_S15 != 0 && LPX4_ENABLE_S15 != 1
++#error LPX4_ENABLE_S15 must be 0 or 1
++#endif
++#if LPX4_ENABLE_S15 && !LPX4_COMPACT_ONLY
++#error LPX4_ENABLE_S15 requires LPX4_COMPACT_ONLY
+ #endif
+ #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && !LPX4_COMPACT_ONLY
+ #error The sram512 memory profile requires LPX4_COMPACT_ONLY
+--- baseline/Lpx4HybridCore.cpp
++++ s15/Lpx4HybridCore.cpp
+@@ -242,9 +242,16 @@
+  }
+  const uint8_t version=readByte(),flags=readByte();
+ #if LPX4_COMPACT_ONLY
++#if LPX4_ENABLE_S15
++ if(version==8 && flags==15)speechProfile_=6|64;
++ else{
++#endif
+  if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
+  // Compact-only needs one flags byte: bit1 selects6k, bit7 extra pulses.
+  speechProfile_=flags;
++#if LPX4_ENABLE_S15
++ }
++#endif
+ #else
+ #if LPX4_ENABLE_SPEECH_COMPACT
+  if(version==5 && ((flags&127)==4 || (flags&127)==6)){
+@@ -271,7 +278,12 @@
+ #endif
+  const uint16_t frames=read16(),blocks=read16();
+ #if LPX4_COMPACT_ONLY
+- const bool geometry=frames==320 && blocks==160;
++ const bool geometry=frames==320 && blocks==
++#if LPX4_ENABLE_S15
++ ((speechProfile_&64)?320:160);
++#else
++ 160;
++#endif
+  const uint16_t payload=read16();
+  // Subtract the header from the bounded input span; no untrusted wide sum.
+  if(sampleCount_>64000 || !sampleCount_ || (size<22 || payload!=(uint16_t)(size-22))){
+@@ -447,6 +459,10 @@
+   speechHalf_^=1;
+ #endif
+ #if LPX4_COMPACT_ONLY
++#if LPX4_ENABLE_S15
++  // readFrame toggled bit8: only the first160 half reads320 metadata.
++  if((speechProfile_&64) && !(subIndex_&8))return !error_;
++#endif
+   const uint8_t blockScale=readBits(5);
+ #else
+   mode_=6;quantLimit_=32;
+@@ -559,6 +575,13 @@
+ }
+ #endif
+ bool Lpx4HybridCore::readSubframe(){
++#if LPX4_ENABLE_S15
++ if(speechProfile_&64){
++  const uint8_t code=readBits(6);
++  pulsePos_[0]=code+((code+2)>>2);pulseAmp_[0]=readOne()?7:-8;
++  pulseIndex_=0;pulseCount_=1;return !error_;
++ }
++#endif
+ #if LPX4_ENABLE_SPEECH
+ #if !LPX4_COMPACT_ONLY
+  if(speechProfile_){
+@@ -772,7 +795,12 @@
+ bool Lpx4HybridCore::decodeCode(int8_t& q){
+ #if LPX4_COMPACT_ONLY
+  int16_t decoded=pitchPredict();
++#if LPX4_ENABLE_S15
++ const uint8_t phase=(speechProfile_&64)?(subIndex_&3):(subIndex_&1);
++ if(pulseIndex_<pulseCount_ && pulsePos_[pulseIndex_]==subPos_+phase*20){
++#else
+  if(pulseIndex_<pulseCount_ && pulsePos_[pulseIndex_]==(subPos_+((subIndex_&1)?20:0))){
++#endif
+   decoded+=pulseAmp_[pulseIndex_++];
+  }
+  if(error_)return false;
+@@ -1030,7 +1058,11 @@
+ #if !LPX4_COMPACT_ONLY
+         if(!(subIndex_&3)&&!readBlock())return false;
+ #endif
++#if LPX4_ENABLE_S15
++        if(!(subIndex_&((speechProfile_&64)?3:1))&&!readSubframe())return false;
++#else
+         if(!(subIndex_&1)&&!readSubframe())return false;
++#endif
+         interpolateLsf(
+ #if LPX4_COMPACT_ONLY
+             subIndex_&7
+@@ -1128,6 +1160,21 @@
+     --remaining_;
+ #endif
+     ++subPos_;
++#if LPX4_ENABLE_S15
++    // S15 strictly validates the entire stored last packet, including pulse
++    // fields not needed by a partial output tail. No extra output is emitted.
++    if((speechProfile_&64) && produced()==sampleCount_){
++        const uint16_t tail=(uint16_t)sampleCount_%320u;
++        uint8_t unread=tail?(uint16_t)(320u-tail)/80u:0;
++        while(unread--)readBits(7);
++#if LPX4_ROM_POINTER
++        const bool trailing=bytes_!=0;
++#else
++        const bool trailing=cursor_!=bytes_;
++#endif
++        if(error_||trailing||bitBuffer_){error_=CORRUPT_STREAM;return false;}
++    }
++#endif
+     if(subPos_==20){
+         subPos_=0;
+ #if LPX4_BATCHED_REMAINING

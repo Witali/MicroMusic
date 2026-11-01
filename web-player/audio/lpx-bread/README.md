@@ -7,20 +7,54 @@ normalization was applied; the encoder's `auto-quiet` policy selected gain 1.
 
 | Variant | Format | Complete encoded bytes | Actual bitrate |
 | --- | --- | ---: | ---: |
+| Very low rate | Experimental LPX-S15, version 8 / mode 15 | 417 | 1,390 bit/s |
 | Compact | LPX v5, profile 4 | 1,008 | 3,360 bit/s |
 | Higher quality | LPX v5, profile 6 with optional extra excitation | 1,899 | 6,330 bit/s |
 
-Both `.lpx` files contain the existing L4HY v5 container. Sizes include its
+The page also reports actual ATtiny88 Flash measurements using the explicit
+SRAM512 memory profile:
+
+| Variant | Program bytes | Encoded audio bytes | Complete test-image bytes |
+| --- | ---: | ---: | ---: |
+| Very low rate | 4,743 | 417 | 5,160 |
+| Compact | 4,412 | 1,008 | 5,420 |
+| Higher quality | 4,411 | 1,899 | 6,310 |
+
+These are unpaced decoding test images without an audio queue or output ISR.
+They reproduce every decoded PWM sample, but do not meet the 2,000-cycle
+sample budget at 16 MHz / 8 kHz. They are not downloadable playback firmware.
+The very-low-rate measurement uses an optional direct S15 parser; production
+v5 support remains unchanged. EEPROM is unused.
+
+The Flash HEX and EEPROM controls remain visible but disabled for these
+examples. The filename link downloads the encoded `.lpx` stream.
+
+[Direct S15 target measurement and reproduction](../../../Codecs/LPX/research/lpx-s15-2026-11-01/target_probe/README.md).
+
+The compact and higher-quality `.lpx` files contain the existing L4HY v5
+container. `low15.lpx` uses the separate experimental LPX-S15 container; it
+requires its own parser and is rejected by the production v5 decoder.
+Sizes include the complete
 header, markers and final padding; they are audio data sizes, not firmware
 Flash sizes. `manifest.json` supplies the exact values to the web page.
 
-The two decoded WAVs reproduce the native decoder's **8-bit PWM duties** as
+The decoded WAVs reproduce the native decoder's **8-bit PWM duties** as
 signed PCM16 values `(duty - 128) * 256`. They contain no analog output filter.
 Every sample was checked against the independent integer model and both
 native common-format and v5-only C decoders, including native PWM output.
-All three WAVs have the same rate and length, so playback preserves pitch and
-duration. These files provide an audio comparison; they do not establish
+All four WAVs have the same rate and length; no playback-speed change or
+transposition was used. These files provide an audio comparison; they do not establish
 ATtiny88 firmware fit or real-time execution.
+
+The S15 Python and independent C++ parsers produce byte-identical v5/P6
+expansions, which are checked through the existing native common/v5-only
+decoders and the independent integer model. The larger expanded reference is
+not counted as the stored S15 stream. Nine bounded candidates plus three new
+cadence-3 alternatives were compared under a complete 450-byte ceiling. The
+417-byte incumbent had less full PCM error than the 443-byte alternatives;
+no bytes were added merely to approach 1,500 bit/s.
+
+[Experimental format, encoder and tests](../../../Codecs/LPX/research/lpx-s15-2026-11-01/README.md).
 
 ## Reproduction
 

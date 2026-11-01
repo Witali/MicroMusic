@@ -46,7 +46,11 @@ test('a 16-MHz board link loads the actual USB firmware, clock, board pins and o
   assert.match(app.get('rom-details').textContent,/6012 Б приложения.*тембры во Flash.*62,5/);
   assert.equal(app.get('download').href,expected.source);
   assert.equal(app.get('download').download,'attiny88-mh-et-live-16mhz-children.hex');
-  assert.equal(app.get('download-eeprom').hidden,true);
+  assert.equal(app.get('download').textContent,'↓ HEX для Micronucleus');
+  assert.equal(app.get('download').getAttribute('aria-disabled'),null);
+  assert.equal(app.get('download-eeprom').hidden,false);
+  assert.equal(app.get('download-eeprom').getAttribute('aria-disabled'),'true');
+  assert.equal(app.get('download-eeprom').getAttribute('href'),null);
   assert.equal(app.get('board-upload').hidden,false);
   assert.equal(app.get('upload-command').textContent,'micronucleus --run attiny88-mh-et-live-16mhz-children.hex');
   assert.equal(new URL(app.fetches[0]).pathname.split('/').at(-1),'firmware-attiny88-16mhz.json');
@@ -71,7 +75,9 @@ test('changing frequency resets a playing transport, keeps its song and engine, 
   assert.equal(init(app).entry.cpuHz,8000000);assert.equal(init(app).entry.id,'alicia');
   assert.equal(init(app).entry.firmwareEngine,'UM88');
   assert.equal(app.get('download').download,'attiny88-alicia.hex');
-  assert.equal(app.get('download-eeprom').hidden,true);
+  assert.equal(app.get('download-eeprom').hidden,false);
+  assert.equal(app.get('download-eeprom').getAttribute('aria-disabled'),'true');
+  assert.equal(app.get('download-eeprom').getAttribute('href'),null);
   assert.match(app.get('rom-details').textContent,/EEPROM не требуется/);
   assert.equal(app.get('fuse-low').textContent,'0xEE');assert.equal(app.get('board-upload').hidden,true);
   assert.equal(app.location.searchParams.has('board'),false);
@@ -105,13 +111,15 @@ test('failed or mismatched board catalogs leave the working firmware and selecti
   }
 });
 
-test('unknown boards fall back to 8 MHz and speech never acquires the music board profile',async()=>{
+test('unknown music boards fall back to 8 MHz and Tiny88 speech has only the intended 16 MHz profile',async()=>{
   const unknown=await playerApp({speech:false,device:'attiny88',board:'unknown-board'});
   assert.equal(unknown.get('board-select').value,'bare-8mhz');assert.equal(init(unknown).entry.cpuHz,8000000);
   assert.equal(unknown.location.searchParams.has('board'),false);
   const speech=await playerApp({device:'attiny88',board,firmware:'hq4-vinni'});
-  assert.equal(speech.get('device-select').value,'attiny13a');assert.equal(speech.get('board-control').hidden,true);
-  assert.equal(init(speech).entry.board,undefined);assert.equal(init(speech).entry.id,'hq4-vinni');
-  assert.match(speech.get('machine-details').textContent,/9,6 МГц/);
-  assert.equal(speech.location.searchParams.has('board'),false);
+  assert.equal(speech.get('device-select').value,'attiny88');assert.equal(speech.get('board-control').hidden,false);
+  assert.equal(speech.workers.length,0);assert.equal(speech.get('board-select').value,board);
+  assert.equal(speech.get('board-isp-option').disabled,true);
+  assert.match(speech.get('tiny88-power').textContent,/Целевой профиль.*16 МГц/);
+  assert.equal(speech.location.searchParams.get('board'),board);
+  assert.equal(speech.get('board-upload').hidden,true);
 });

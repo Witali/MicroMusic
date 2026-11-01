@@ -94,6 +94,7 @@ test('tiny speech shows its paired EEPROM image and research, while Vinni uses i
   const cards=get('catalog').children.map(item=>item.children[0]);
   assert.match(cards.find(card=>card.dataset.firmware===entry.id).children[1].children[1].textContent,/\+ 64 Б EEPROM/);
   cards.find(card=>card.dataset.firmware==='hq4-vinni').onclick();
-  assert.equal(get('download-eeprom').hidden,true);assert.match(get('rom-details').textContent,/0 \/ 64 Б EEPROM/);
+  assert.equal(get('download-eeprom').hidden,false);assert.equal(get('download-eeprom').getAttribute('aria-disabled'),'true');
+  assert.equal(get('download-eeprom').getAttribute('href'),null);assert.match(get('rom-details').textContent,/0 \/ 64 Б EEPROM/);
   assert.equal(get('speech-audit').textContent,'Сверка HQ4 ↗');
 });

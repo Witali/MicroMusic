@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "title": "«И того, и другого, и можно без хлеба»",
-  "codec": "LPX v5",
+  "codec": "LPX",
   "sampleRate": 8000,
   "samples": 19200,
   "durationSeconds": 2.4,
@@ -18,7 +18,15 @@
       "audio": "audio/lpx-bread/compact.wav",
       "stream": "audio/lpx-bread/compact.lpx",
       "bytes": 1008,
-      "bitrateBps": 3360.0
+      "bitrateBps": 3360.0,
+      "flashMeasurement": {
+        "programFlashBytes": 4412,
+        "encodedBytes": 1008,
+        "totalFlashBytes": 5420,
+        "flashMeasurementKind": "unpaced-test-image",
+        "memoryProfile": "sram512",
+        "target": "attiny88"
+      }
     },
     {
       "id": "quality",
@@ -27,7 +35,34 @@
       "audio": "audio/lpx-bread/quality.wav",
       "stream": "audio/lpx-bread/quality.lpx",
       "bytes": 1899,
-      "bitrateBps": 6330.0
+      "bitrateBps": 6330.0,
+      "flashMeasurement": {
+        "programFlashBytes": 4411,
+        "encodedBytes": 1899,
+        "totalFlashBytes": 6310,
+        "flashMeasurementKind": "unpaced-test-image",
+        "memoryProfile": "sram512",
+        "target": "attiny88"
+      }
+    },
+    {
+      "id": "low15",
+      "label": "Очень низкий битрейт",
+      "profile": 15,
+      "codec": "lpx-s15",
+      "formatVersion": 8,
+      "audio": "audio/lpx-bread/low15.wav",
+      "stream": "audio/lpx-bread/low15.lpx",
+      "bytes": 417,
+      "bitrateBps": 1390,
+      "flashMeasurement": {
+        "programFlashBytes": 4743,
+        "encodedBytes": 417,
+        "totalFlashBytes": 5160,
+        "flashMeasurementKind": "unpaced-test-image",
+        "memoryProfile": "sram512",
+        "target": "attiny88"
+      }
     }
   ]
 }
