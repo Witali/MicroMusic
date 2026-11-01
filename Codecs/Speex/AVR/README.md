@@ -48,6 +48,13 @@ CPU**; matched frame-boundary publication gaps fall about 19.2%. The complete
 3600 scheduled SPI frames. Bare firmware grows 286 B; static SRAM and peak
 stack stay unchanged. Scalar/vector C fallbacks remain explicitly selectable.
 
+[Frame-invariant noise quantization](WB_NOISE_PREFOLD.md) then removes another
+**92 hardware MULs and 343 cycles/frame** without changing PCM. Cache the first
+quantizer once and skip the exact zero class; keep the original second
+quantizer and output parity. WB3.95 speech CPU falls **69.67% -> 69.56%**,
+Flash shrinks 4 B, and static SRAM/peak stack stay unchanged. Full raw, +8%/+11%
+IRQ and SPI runs retain exact PCM/PWM and zero underruns; C remains selectable.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

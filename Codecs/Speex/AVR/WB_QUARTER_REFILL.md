@@ -141,9 +141,11 @@ Clang toolchain and only links a DLL; it does not load it.
 
 ## Remaining unmeasured candidates
 
-- Hoist the five first-stage Q15 noise transforms across all four subframes.
-  The current context leaves twelve guard bytes; another ten-byte table would
-  require a new lifetime/bounds proof. Preserve the raw noise state and quantizers.
+The first-stage noise-hoist candidate is now measured in
+[invariant Q15 and zero products](WB_NOISE_PREFOLD.md), with a new lifetime
+proof for the remaining two guard bytes. The earlier measurements above remain
+specific to the quarter-refill stage.
+
 - Reuse the geometry-parametric fused reconstruction/fold kernel for WB5.75
   and WB7.75, retaining the bias independently of vector count.
 - Specialize the bounded Q6 forced-pitch product or the 128-value pitch-sqrt

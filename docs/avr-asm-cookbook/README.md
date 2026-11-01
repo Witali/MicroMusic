@@ -3049,6 +3049,8 @@ controller and an explicitly selectable C arithmetic fallback.
 both nonlinear quantizers, precompute only five possible words per subframe,
 apply parity after lookup and reuse dead interpolation scratch. Includes ABI
 argument/register constraints and the measured rejected timing gate.
+Its measured follow-up hoists the frame-constant first quantizer and skips
+the fixed zero class, retaining the rejected four-slot compression experiment.
 
 [Remove bounded power-of-two noise products](speex-power-two-noise.md): combine
 nested floors exactly, retain negative half-way rounding and extract only

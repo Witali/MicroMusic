@@ -43,9 +43,44 @@ latency; record failed timing gates too. No physical-board claim is made.
 Original project work; preserve existing Xiph algorithm/table BSD notices.
 [Bounds, complete evidence and reproduction](../../Codecs/Speex/AVR/WB_NOISE_FOLD.md).
 
-Unimplemented related ideas: delay each forty-sample vocoder block until its
-consumer needs it, using verified dead history for constants; hoist the first
-Q15 stage across subframes; specialize forced prediction via
+The forty-sample producer is now implemented separately in
+[quarter refills](speex-quarter-refills.md). Its +11% gate passes; the failure
+above remains evidence for the earlier folding stage.
+
+## Hoist a frame-constant quantizer; skip an exact zero class
+
+After quarter refills, cache `floor(29491 * raw / 32768)` once per frame.
+The next rounded scale still runs per subframe; do not merge the two gains.
+The middle noise class is exactly zero, and `(0*g+256)>>9` is zero for every
+gain. Store it directly and retain five table slots. A four-slot compression
+experiment was slower and used more stack because it reordered the table.
+
+The new eight-bit loop-counter check skips zero products inside the shared
+GNU assembler array template; default forty-word behavior is unchanged. Keep
+the explicitly selectable C implementation with the same zero-class contract.
+The raw words remain live for vocoder state. Ten cached Q15 bytes reuse dead
+history 198..207, extending the existing workspace to 208 before delayed input
+210 and next-move source 320. Recheck the remaining two guard bytes, every
+partial state/seed and readonly fold workspace rather than relying on the old
+forty-byte guard measurement.
+
+Measured against `56ffaa45`, same MCU/ABI/toolchain/options: 88960 seven-path
+cases with complete signed-word sweeps in all four variable slots, fixed zero
+slot, 32 scales, 183 gains and four subframes pass. The original general
+five-word leaves remain regression references; the new scale leaf also gets
+independent C/ASM/BigInt and arbitrary callee-register tests. Real preparation
+adds 16 MULs, four fold calls each remove 27: **92 fewer MULs/frame** overall.
+
+Complete 10627-frame WB3.95 PCM/reset checks save exactly 343 cycles/frame and
+4 B Flash, with unchanged static SRAM and peak stack. Natural speech CPU falls
+69.6696% -> 69.5624%. Separate full loaded IRQ/SPI checks cover timing; these
+are ISA-simulator measurements, not physical-board or analog measurements.
+The earlier preparation extends the maximum frame-boundary gap by 113 cycles
+(7.06 microseconds); full +8%/+11% gates keep the same queue minima and zero
+underruns. Average savings do not imply that every individual burst shrinks.
+[Full evidence, rejected compression and reproduction](../../Codecs/Speex/AVR/WB_NOISE_PREFOLD.md).
+
+Unimplemented related idea: specialize forced prediction via
 `((int32_t)x*((int16_t)coefficient<<7)+4096)>>13`, which equals
 `((int32_t)x*coefficient+32)>>6` for 0..63 coefficients.
 The latter product fits signed 22 bits (three AVR bytes), permitting a 16 x 8

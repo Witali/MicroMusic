@@ -136,9 +136,8 @@ notices remain in the source/vendor files.
 - The proposed forty-sample NB1 producer is now implemented and measured in
   [quarter refills](WB_QUARTER_REFILL.md), with exact partial states and a
   retained C fallback. The measurements above describe the earlier fold stage.
-- Hoist the five first-stage Q15 transforms across four subframes: that
-  stage depends on frame noise scale, while only the second stage uses each
-  subframe gain. Prove any extra dead-prefix workspace/lifetime and retain
-  original raw noise for vocoder state. No saving is claimed yet.
+- The frame-invariant Q15 candidate is now measured in
+  [noise prefolding](WB_NOISE_PREFOLD.md), preserving raw vocoder noise,
+  both quantizers and the shortened refill schedule.
 - Fuse WB 5.75/7.75 codebook reconstruction and folding using the existing
   geometry-parametric kernel, with its exact original quantizers.
