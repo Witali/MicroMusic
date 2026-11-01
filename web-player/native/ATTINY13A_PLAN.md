@@ -33,6 +33,16 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Source-label transport, 2026-11-01: normal Binaryen optimization retains 13935
+distinct artificial input-position IDs and verifies all 15696 emitted named
+positions against their original file/line/column. Original, uniform-label and
+unique-label variants preserve every executable section and absolute offset;
+six contract tests pass. This establishes a metadata channel, not actual
+inline scopes or exclusive durations. Next extract preopt DWARF inline ranges
+and attach verified stack IDs before joining native sample PCs. Production and
+the 24/31 count are unchanged. See the
+[transport proof](../reports/source-map-labels-20261101.json).
+
 Studio flag checkpoint, 2026-11-01: a second twelve-case suite covers chained
 Z, preserved H/C/T, comparison operands, signed overflow and NEG minimum.
 There are now 24 unique stimuli/20 prepared primary forms. Three ELF variants

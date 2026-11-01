@@ -1,0 +1,69 @@
+{
+  "schema": "micromusic-source-map-label-transport-v1",
+  "exclusiveDurationsMeasured": false,
+  "realInlineScopesAssigned": false,
+  "inputMappedPositions": 15105,
+  "inputSha256": "952ae3632d201ea6e303d9a2d7c6254c5c6dc741a91449735524e03e38499112",
+  "sourceMapSha256": "ec3b1efa84a81883946a01cb9cf94ed8df45260c32cc3665f98aa8128c688045",
+  "referenceSha256": "b9a8fa14a971fd5f82f8175f978e9a0b1e03f31fc8612a6892d202d7f93635a1",
+  "optimizerSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+  "scriptSha256": "3d14f87528e2e8d1efebc2c9075b8bb3732a7674a3886342758aad7c9b8e703b",
+  "results": [
+    {
+      "variant": "baseline",
+      "executableSectionsAndOffsetsEqual": true,
+      "mappedPositions": 14965,
+      "namedPositions": 0,
+      "distinctLabels": 0,
+      "labelSourcePositionsVerified": false,
+      "inputMapSha256": "d123f4da63389d16e88c623d61493d994a016143dee86ae158866e04bd181cdd",
+      "outputMapSha256": "f4a17445c2c6405fb16da5edcc5a2b17287393d5014f5bbf4a91b8ce2bea3312",
+      "outputWasmSha256": "071c7df89be5b1dd1037faf943ea7b757e06fa9075bef475e199c80c34565773"
+    },
+    {
+      "variant": "uniform",
+      "executableSectionsAndOffsetsEqual": true,
+      "mappedPositions": 14965,
+      "namedPositions": 14965,
+      "distinctLabels": 1,
+      "labelSourcePositionsVerified": true,
+      "inputMapSha256": "69d12ef94cf932be29324809b26261f36e15ff101b2a6273e6e58285ac43d322",
+      "outputMapSha256": "cd0131b294e4bf3cf16654eea236790edfbdd11c467727baf5527816b1e33dd5",
+      "outputWasmSha256": "071c7df89be5b1dd1037faf943ea7b757e06fa9075bef475e199c80c34565773"
+    },
+    {
+      "variant": "unique",
+      "executableSectionsAndOffsetsEqual": true,
+      "mappedPositions": 15696,
+      "namedPositions": 15696,
+      "distinctLabels": 13935,
+      "labelSourcePositionsVerified": true,
+      "inputMapSha256": "3ee3f8ca08ff90ed8971ddbcceff11be6778cc809101c2eb0044c8f88d2434fc",
+      "outputMapSha256": "0c3f1e14f907cc22da03889801f5c8c33ddb486e888b49c24a35503d2ff1dfd1",
+      "outputWasmSha256": "071c7df89be5b1dd1037faf943ea7b757e06fa9075bef475e199c80c34565773"
+    }
+  ],
+  "date": "2026-11-01",
+  "basisCommit": "384e08db57e0787a9a4fa916dd6e7151609b6447",
+  "sourceHashes": {
+    "web-player/scripts/probe-source-map-labels.py": "3d14f87528e2e8d1efebc2c9075b8bb3732a7674a3886342758aad7c9b8e703b",
+    "web-player/tests/source-map-labels.test.py": "9840330136151283bd4479813cafc5c6c25f5d9b9ea0361e320dde0eef63df35"
+  },
+  "toolchain": {
+    "emsdk": "6.0.12",
+    "wasmOptVersion": "133 (version_133-60-g93d6e9de7)"
+  },
+  "tests": {
+    "passed": 6,
+    "logSha256": "3b9be1481edca37f2b9b6673a7b06c0056656be21ef5f0bd83628bbf60e484bf"
+  },
+  "productionUnchanged": true,
+  "planComplete": 24,
+  "planTotal": 31,
+  "downloadedExternalFiles": [],
+  "standard": {
+    "url": "https://tc39.es/ecma426/",
+    "observedDraft": "2026-10-20",
+    "observedOn": "2026-11-01"
+  }
+}

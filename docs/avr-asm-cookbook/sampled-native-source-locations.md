@@ -1,5 +1,54 @@
 # Recover candidate C locations from V8 native samples
 
+## Source-position labels through optimization, 2026-11-01
+
+The [label-transport probe](../../web-player/scripts/probe-source-map-labels.py)
+tests an additional route toward recovering inline ownership. It assigns
+artificial IDs to input source positions using the `names` table and fifth
+mapping field described by [ECMA-426](https://tc39.es/ecma426/). It leaves source
+file, line and column intact. These IDs are not yet C inline-stack identities.
+
+Using the already prepared full-debug pre-optimization runtime and source map,
+run the registered SDK's optimizer with normal `-O3` and source-map input/output.
+Use its directory in `$env:EMSDK`:
+
+```powershell
+python web-player/scripts/probe-source-map-labels.py --input build/profiles/native-current-20261030/kernel-map/runtime-debug-preopt.wasm --source-map build/profiles/native-current-20261030/kernel-map/preopt.map --emsdk "$env:EMSDK" --out-dir build/experiments/source-map-labels-20261101
+python web-player/tests/source-map-labels.test.py
+```
+
+The probe checks every non-custom WASM section's bytes **and start offset**
+against production. This matters because adding a custom section before code
+can preserve instructions while invalidating sampled module offsets. Every
+emitted label must resolve back to its exact original file/line/column. Unknown
+or mismatched labels fail. The probe refuses to run with Python `-O`.
+
+The [retained result](../../web-player/reports/source-map-labels-20261101.json)
+pins the preopt/map, optimizer, output and script hashes. On Emscripten 6.0.12,
+Binaryen 133 (`version_133-60-g93d6e9de7`), all three variants preserve executable
+sections and offsets:
+
+| Variant | Mapped output positions | Named positions | Distinct labels |
+| --- | ---: | ---: | ---: |
+| Original map | 14965 | 0 | 0 |
+| One shared label | 14965 | 14965 | 1 |
+| One label per input position | 15696 | 15696 | 13935 |
+
+There are 15105 labeled input positions. Missing IDs remain absent; transformations
+can also duplicate a source position. Metadata boundaries differ even though
+the executable bytes are identical, so these counts are not instruction counts,
+CPU cost or a speedup. Six contract tests cover unmapped gaps, duplicate source
+positions, incorrect/unknown origins, malformed VLQ/maps, custom-section offset
+shifts and disabled assertions. Raw maps/binaries remain in ignored `build/`.
+
+Next extract actual inline DIE/range stacks from the preopt DWARF, attach their
+IDs through this verified channel, and reapply code/offset and origin checks
+before joining them with native sample PCs. No inline scopes or exclusive
+durations have been assigned by this probe. The production runtime, compiler
+identity and seven open hardware/performance plan items remain unchanged.
+
+## Existing native-sample reconstruction
+
 Target: the ATtiny13A full-device WASM runtime on the recorded Windows x64,
 Node 22.22.3/V8 12.4.254.21-node.56, Clang 24/Binaryen 133 SDK configuration.
 This is diagnostic tooling for the open cost-attribution task. It changes no
