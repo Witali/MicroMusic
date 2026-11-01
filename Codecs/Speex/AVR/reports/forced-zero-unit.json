@@ -1,0 +1,176 @@
+{
+  "scope": "Isolated C/ASM zero-vector primitives; C decoder not executed or timed",
+  "binarySha256": "c03ced921c329ee87e540c612a4a67b4f740ebc2072485be5d1b7644a6b14e92",
+  "cases": 37024,
+  "originalQ14AndCollapsedFormulaExact": true,
+  "cAndAsmExact": true,
+  "counts0Through20": true,
+  "all32Rows": true,
+  "callerScales": 32,
+  "uniqueScales": 49,
+  "randomCases": 4096,
+  "zeroNullPointersAndNoDataAccess": true,
+  "outputGuardsAndTail": true,
+  "exactFlashAddresses": true,
+  "outputNotRead": true,
+  "calleeSavedAndR1Returns": 42354,
+  "arbitraryNonArgumentRegisterPatterns": true,
+  "countArgumentPreserved": true,
+  "variable": [
+    {
+      "count": 0,
+      "calls": 1749,
+      "muls": 0,
+      "minCycles": 6,
+      "maxCycles": 6
+    },
+    {
+      "count": 1,
+      "calls": 1762,
+      "muls": 7048,
+      "minCycles": 91,
+      "maxCycles": 91
+    },
+    {
+      "count": 2,
+      "calls": 1745,
+      "muls": 13960,
+      "minCycles": 137,
+      "maxCycles": 137
+    },
+    {
+      "count": 3,
+      "calls": 1755,
+      "muls": 21060,
+      "minCycles": 183,
+      "maxCycles": 183
+    },
+    {
+      "count": 4,
+      "calls": 1781,
+      "muls": 28496,
+      "minCycles": 229,
+      "maxCycles": 229
+    },
+    {
+      "count": 5,
+      "calls": 1774,
+      "muls": 35480,
+      "minCycles": 275,
+      "maxCycles": 275
+    },
+    {
+      "count": 6,
+      "calls": 1745,
+      "muls": 41880,
+      "minCycles": 321,
+      "maxCycles": 321
+    },
+    {
+      "count": 7,
+      "calls": 1759,
+      "muls": 49252,
+      "minCycles": 367,
+      "maxCycles": 367
+    },
+    {
+      "count": 8,
+      "calls": 1765,
+      "muls": 56480,
+      "minCycles": 413,
+      "maxCycles": 413
+    },
+    {
+      "count": 9,
+      "calls": 1756,
+      "muls": 63216,
+      "minCycles": 459,
+      "maxCycles": 459
+    },
+    {
+      "count": 10,
+      "calls": 1770,
+      "muls": 70800,
+      "minCycles": 505,
+      "maxCycles": 505
+    },
+    {
+      "count": 11,
+      "calls": 1756,
+      "muls": 77264,
+      "minCycles": 551,
+      "maxCycles": 551
+    },
+    {
+      "count": 12,
+      "calls": 1782,
+      "muls": 85536,
+      "minCycles": 597,
+      "maxCycles": 597
+    },
+    {
+      "count": 13,
+      "calls": 1770,
+      "muls": 92040,
+      "minCycles": 643,
+      "maxCycles": 643
+    },
+    {
+      "count": 14,
+      "calls": 1751,
+      "muls": 98056,
+      "minCycles": 689,
+      "maxCycles": 689
+    },
+    {
+      "count": 15,
+      "calls": 1748,
+      "muls": 104880,
+      "minCycles": 735,
+      "maxCycles": 735
+    },
+    {
+      "count": 16,
+      "calls": 1767,
+      "muls": 113088,
+      "minCycles": 781,
+      "maxCycles": 781
+    },
+    {
+      "count": 17,
+      "calls": 1768,
+      "muls": 120224,
+      "minCycles": 827,
+      "maxCycles": 827
+    },
+    {
+      "count": 18,
+      "calls": 1766,
+      "muls": 127152,
+      "minCycles": 873,
+      "maxCycles": 873
+    },
+    {
+      "count": 19,
+      "calls": 1775,
+      "muls": 134900,
+      "minCycles": 919,
+      "maxCycles": 919
+    },
+    {
+      "count": 20,
+      "calls": 1780,
+      "muls": 142400,
+      "minCycles": 965,
+      "maxCycles": 965
+    }
+  ],
+  "fixedTen": {
+    "calls": 5330,
+    "minCycles": 501,
+    "maxCycles": 501
+  },
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "peakStack": 18
+}

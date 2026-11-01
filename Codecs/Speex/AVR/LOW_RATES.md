@@ -59,6 +59,12 @@ Do not infer reduced CPU cost merely from reduced bitrate.
 
 ## Stage 2: NB3.95 / WB5.75
 
+The later [zero-prediction fast path](WB_FORCED_ZERO.md) skips all adaptive
+work only when the coefficient is exactly zero. It retains all innovation,
+gain and quiet speech, lowers NB3.95/WB5.75 speech CPU to 30.17%/73.19%, and
+passes full PCM, loaded WB IRQ and NB/WB SPI checks. The figures below remain
+the original profile-extension baseline.
+
 `SPEEX_ENABLE_NB8=1` adds 79-bit / 10-byte NB and 115-bit / 15-byte WB
 packets. `--low-rates 3` enables both new pairs. The original forced pitch
 builds prediction before adding innovation; feeding completed output back

@@ -1,0 +1,35 @@
+{
+  "backend": "asm",
+  "wideband": true,
+  "binarySha256": "89f6170533648f461c2590e6b8f80ec1d18814332a7b17886f7aaa18d4d85ad9",
+  "inputSha256": "a7d9fe117070b9e0c3cffb5a06667de233dc7e289a768a777710952dc1b8c122",
+  "pcmSha256": "f02abd03333a94e410e77023cb4cc6f418bca92604de85fb6fafcccb7e265022",
+  "frames": 1024,
+  "rejectedCalls": 7168,
+  "mixedEnabledModes": [
+    1,
+    2,
+    8,
+    3,
+    4
+  ],
+  "paddingIgnored": true,
+  "resetExact": true,
+  "pcmExact": true,
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "flashBytes": 25688,
+  "staticSramBytes": 1308,
+  "peakStack": 204,
+  "freeSram": 536,
+  "forcedZeroArithmetic": {
+    "frames": 44,
+    "twentyWordCalls": 352,
+    "hardwareMultiplies": 28688,
+    "minMultipliesPerFrame": 652,
+    "maxMultipliesPerFrame": 652,
+    "noAdaptiveKernel": true,
+    "noExcitationHistoryOrOutputReads": true,
+    "invalidAndNonzeroCoefficientCallsDoNotExecute": true
+  }
+}

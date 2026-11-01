@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Skip an exactly zero prediction component](speex-zero-prediction.md): prove
+the finite coefficient mapping, retain innovation and quiet speech, reuse the
+existing variable-count ASM/C primitive and measure the enlarged count domain.
+
 [Reuse a fused kernel for low-rate codebook geometry](speex-lowrate-fusion.md):
 four 10-word or two 20-word rows, independent rounding bias, wide index-product
 addressing, observed SRAM/Flash accesses and measured inline dispatch.

@@ -159,8 +159,10 @@ original project work; retain the existing Xiph codebook/algorithm BSD notices.
 
 ## Remaining unmeasured candidates
 
-- NB8 coefficient 0: the entire adaptive prediction is zero. Test a zero-only
-  producer and skip forced-history ancestry, preserving exact innovation/state.
+- NB8 coefficient 0 is now implemented and measured in the subsequent
+  [zero-prediction stage](WB_FORCED_ZERO.md), with exact innovation/state.
+- A dedicated one-tap nonzero NB8 kernel may eliminate the unused outer
+  products and history loads from the reused three-tap primitive.
 - The forced-prediction identity `(x*(c<<7)+4096)>>13 == (x*c+32)>>6`, c 0..63,
   permits a smaller exact product; measure an explicit C/AVR implementation.
 - `innovation.S` groups unrelated functions in one section. Investigate linker

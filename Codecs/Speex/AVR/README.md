@@ -62,6 +62,13 @@ and inlining the small mode dispatch saves **3252/3428 cycles/frame** and
 decoder CPU improves **76.00% -> 74.98% / 76.08% -> 75.01%**. Matched full PCM,
 loaded IRQ and scheduled SPI checks preserve exact output with zero underruns.
 
+[Exactly zero forced prediction](WB_FORCED_ZERO.md) skips adaptive ancestry
+when its coefficient is zero, preserving the complete innovation and gain.
+NB3.95/WB5.75 speech CPU falls **32.00% -> 30.17% / 74.98% -> 73.19%** with
+bit-exact PCM. Flash grows 138/144 B; static SRAM stays unchanged, WB stack
+stays unchanged and NB stack grows six bytes. Full raw, loaded WB IRQ and
+scheduled NB/WB SPI runs retain exact PCM/PWM with zero underruns.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100
