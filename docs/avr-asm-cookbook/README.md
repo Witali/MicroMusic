@@ -3144,3 +3144,5 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [Clocked external SPI sources](lpx-external-spi.md): vendor-derived registers, source/arithmetic separation, corrected simavr byte timing and bounded full-player validation scope.
 
 - [LPX SRAM512 memory profile](lpx-sram512.md): reuse 96 dead pitch-ring bytes for exact LSF polynomial scratch; explicit RAM/CPU tradeoff, unchanged defaults, and separate AVR5/Tiny88 timing limits.
+
+- [AVR25 software products and exact shifts](examples/lpx-avr25/README.md): selectable C/ASM arithmetic prototypes for cores without MUL, with exact-output, ABI and active-interrupt measurements; not integrated into the LPX decoder.
