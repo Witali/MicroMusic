@@ -33,6 +33,18 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+INT0 sleep-restoration correction, 2026-11-01: section10.2.5 requires a flag
+after Power-down for a high, masked edge-sense input whose buffer was clamped.
+An explicit pending event now survives frozen PINB history and prevents settled
+GPIO skipping. It publishes once on the first actual resumed clkI/O rise, an
+explicit digital-fixture policy rather than a measured internal phase.
+All 156 focused and 2785/2785 default checks pass; the same 18 final firmware cases pass 4/18 with
+the previous native module and 18/18 with the correction. Low-level sense,
+DIDR, enabled input buffers, Idle and ADC Noise controls remain clear. ABI,
+imports and memory are unchanged; the timing replay still compares 44 scenarios
+/ 18066 events with maximum software error 1 ps. No hardware or oracle item
+closes; the count stays 24/31. See the [evidence](../reports/int0-resume-20261101.md).
+
 Shared CLKI pad correction, 2026-11-01: Tables10-2/10-4 retain DDRB3/PORTB3
 driver control. Matching strong outputs now work during held clocks; opposed
 drivers fault at the source/bus instant before ADC or derived CPU phases.

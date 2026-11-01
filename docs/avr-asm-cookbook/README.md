@@ -2716,3 +2716,10 @@ verification/default resumable execution retains individual memory bus phases.
 DDRB3/PORTB3 control, diagnoses opposed strong drivers before a consumer phase,
 and releases GPIO on RESET before a tied source edge. This improves hardware
 behavior without adding a programming/debug transport or claiming a speedup.
+
+## ATtiny13A: retain INT0 restoration across sleep
+
+[Sleep-restoration events](int0-sleep-restoration.md) separates the documented
+masked-high INTF0 outcome from frozen PINB history, then preserves it through
+held clocks and bounded stable-span execution. Its first resumed-edge policy
+is explicit; the internal silicon phase remains unmeasured.

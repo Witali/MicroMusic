@@ -38,6 +38,13 @@ returns `WAIT_INPUT` without extrapolating a period. The optional
 `datasheet-ideal-v1` validator checks ideal digital timing limits, not analog
 receiver behavior or measured silicon phase.
 
+Power-down input-clamp release also preserves the masked-high INT0 flag required
+by section10.2.5. A separate pending event publishes on the first actual resumed
+clkI/O rise, avoiding a lost event when the retained PINB history is already high.
+Held clocks preserve that event; a settled-span shortcut cannot consume it.
+The exact internal clamp/flag/ADC-trigger phase remains unmeasured. See the
+[restoration contract](../../../../docs/avr-asm-cookbook/int0-sleep-restoration.md).
+
 The RESET pulse requirement is not a published exact assertion delay. Typical
 voltage and hysteresis plots do not provide a universal receiver transfer
 function. The optional [analog receiver](reset_input.md) has separate threshold,

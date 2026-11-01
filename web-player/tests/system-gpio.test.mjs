@@ -253,3 +253,54 @@ test('seeded bounded advancement matches every clock edge across GPIO mutations'
     now=end;
   }
 });
+
+// DS40002307A 10.2.5 describes an interrupt flag on resumption when an
+// asynchronous-capable, masked edge-sense pin was clamped during deep sleep.
+for(const driven of [false,true])for(const sense of [1,2,3])
+test(`masked high INT0 restores its flag after Power-down: sense${sense}, driven${driven}`,()=>{
+  g.reset(0);if(driven){write(IO.PORT,2);write(IO.DDR,2);}else external(2,2);
+  write(IO.MCU,sense);cycles(4);write(IO.FLAG,0xff);
+  g.sleep_mode(0,1,10n);assert.equal(g.pending(),0);g.sleep_mode(1,0,20n);
+  assert.equal(g.read_io(IO.FLAG)&0x40,0,'wait for an actual resumed I/O clock');
+  fall(21);assert.equal(g.read_io(IO.FLAG)&0x40,0);rise(22);
+  assert.equal(g.read_io(IO.FLAG)&0x40,0x40);assert.equal(g.pending(),0,'INT0 stays masked');
+  write(IO.FLAG,0x40,22);fall(23);rise(24);assert.equal(g.read_io(IO.FLAG)&0x40,0,'single restoration event');
+});
+
+for(const control of ['low','disabled-buffer','enabled-int0','enabled-pcint','idle','adc-noise'])
+test(`INT0 resume control ${control} creates no clamping flag`,()=>{
+  for(const sense of [1,2,3]){
+    g.reset(0);external(2,control==='low'?0:2);write(IO.MCU,sense);
+    if(control==='disabled-buffer')write(IO.DIDR,2);
+    if(control==='enabled-int0')write(IO.ENABLE,0x40);
+    if(control==='enabled-pcint'){write(IO.MASK,2);write(IO.ENABLE,0x20);}
+    cycles(4);write(IO.FLAG,0xff);
+    g.sleep_mode(control==='idle'?1:0,control==='idle'||control==='adc-noise'?0:1,10n);
+    g.sleep_mode(1,0,20n);fall(21);rise(22);fall(23);rise(24);
+    assert.equal(g.read_io(IO.FLAG)&0x40,0);
+  }
+});
+
+test('restoration flag prevents stable-span skipping and reset clears its pending event',()=>{
+  g.reset(0);external(2,2);write(IO.MCU,3);cycles(4);write(IO.FLAG,0xff);
+  g.sleep_mode(0,1,10n);g.sleep_mode(1,0,20n);
+  assert.equal(g.settled(),0);assert.equal(g.next_event(20n),21n);
+  assert.equal(g.advance(20n,21n),0);assert.equal(g.read_io(IO.FLAG)&0x40,0);
+  assert.equal(g.advance(21n,1000000000000n),0);assert.equal(g.read_io(IO.FLAG)&0x40,0x40);
+  write(IO.FLAG,0x40);assert.equal(g.advance(1000000000000n,2000000000000n),0);assert.equal(g.read_io(IO.FLAG)&0x40,0);
+  g.sleep_mode(0,1,2000000000000n);g.sleep_mode(1,0,2000000000001n);g.reset(0);cycles(4);
+  assert.equal(g.read_io(IO.FLAG)&0x40,0);
+});
+
+test('pending restoration waits through held clocks, obeys level sense and then W1C',()=>{
+  for(const sense of [0,3]){
+    g.reset(0);external(2,2);write(IO.MCU,3);cycles(4);write(IO.FLAG,0xff);
+    g.sleep_mode(0,1,10n);g.sleep_mode(1,0,20n);
+    write(IO.FLAG,0x40,21);write(IO.MCU,sense,22);
+    assert.equal(g.read_io(IO.FLAG)&0x40,0,'no source edge during held time');
+    fall(1000000000001);assert.equal(g.read_io(IO.FLAG)&0x40,0);
+    rise(1000000000002);assert.equal(g.read_io(IO.FLAG)&0x40,sense?0x40:0);
+    write(IO.FLAG,0x40,1000000000002);fall(1000000000003);rise(1000000000004);
+    assert.equal(g.read_io(IO.FLAG)&0x40,0,'W1C clears the single published flag');
+  }
+});

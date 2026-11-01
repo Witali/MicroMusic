@@ -114,9 +114,18 @@ void system_gpio_timer_outputs(system_gpio_t *g, uint8_t enabled, uint8_t levels
 }
 
 void system_gpio_sleep(system_gpio_t *g, int io_running, int power_down, uint64_t at) {
+    uint8_t was_clamped = g->power_down && !g->io_running &&
+                          !(input_enabled(g) & INT0_PIN);
     g->io_running = !!io_running;
     g->power_down = !!power_down;
     resolve(g, at);
+    /* DS40002307A 10.2.5: releasing the deep-sleep clamp can set INTF0
+     * for a masked, high edge-sense input, including falling-edge sense.
+     * This digital fixture publishes it on the first resumed clkI/O rise;
+     * the datasheet does not specify its internal sub-cycle phase. */
+    if (was_clamped && !g->power_down && g->io_running &&
+        !(g->gimsk & SYSTEM_INT0) && (g->mcucr & 3) && (g->digital & INT0_PIN))
+        g->int0_resume_pending = 1;
 }
 
 uint8_t system_gpio_clock(system_gpio_t *g, int rising, uint64_t at) {
@@ -124,6 +133,10 @@ uint8_t system_gpio_clock(system_gpio_t *g, int rising, uint64_t at) {
     if (!g->io_running) return 0;
     uint8_t edge = 0;
     if (rising) {
+        if (g->int0_resume_pending) {
+            g->int0_resume_pending = 0;
+            if (g->mcucr & 3) g->gifr |= SYSTEM_INT0;
+        }
         /* Evaluate old register outputs, then clock their successors. */
         if (g->pcint_edge) g->gifr |= SYSTEM_PCINT;
         uint8_t pcint_signal = g->pinb & g->pcmsk;
@@ -153,7 +166,7 @@ uint8_t system_gpio_clock(system_gpio_t *g, int rising, uint64_t at) {
 int system_gpio_settled(const system_gpio_t *g) {
     uint8_t digital = g->digital;
     uint8_t t0 = !!(digital & T0_PIN);
-    return g->latch == digital && g->pinb == digital &&
+    return !g->int0_resume_pending && g->latch == digital && g->pinb == digital &&
            g->pcint_previous == (uint8_t)(digital & g->pcmsk) && !g->pcint_edge &&
            g->int0_previous == !!(digital & INT0_PIN) &&
            g->t0_sync1 == t0 && g->t0_sync2 == t0 && g->t0_previous == t0;

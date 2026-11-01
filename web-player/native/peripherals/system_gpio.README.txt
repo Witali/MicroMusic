@@ -57,6 +57,15 @@ Integration
    Power-down keeps enabled interrupt input buffers and clamps unused buffers.
    The caller owns fuse-dependent wake startup, wake-without-vector behavior
    if an INT0 low level disappears during startup, and actual SLEEP execution.
+   Section 10.2.5 also documents INTF0 on resumption for a high, masked INT0
+   clamped in Power-down, for any of the three edge senses. Track that event
+   separately from PINB history. This digital fixture publishes it on the first
+   actual resumed clkI/O rise; its internal sub-cycle phase is not specified by
+   the datasheet. A held clock cannot publish it. DIDR-disabled inputs, enabled
+   interrupt buffers, low levels, Idle and ADC Noise Reduction do not arm it.
+   Pending restoration prevents a settled-span skip. Reset discards it; once
+   published it follows ordinary GIFR W1C/acknowledgment semantics. Low-level
+   sense still keeps INTF0 clear.
 
 pins is a C-level snapshot containing resolved levels, strong-driver, pull-up,
 floating and contention masks plus the timestamp of the last pin-state change.
@@ -109,5 +118,7 @@ Set EMSDK when the repository's prepared toolchain is not installed. Tests cover
 GPIO truth tables, external levels and contention, RESET/PB5, PINB synchronization,
 PINB toggling, single-bit writes, DIDR0, timer output overrides, interrupt senses,
 masks, W1C/acknowledgement, asynchronous wake detection and T0 phase delay.
+Restoration tests also cover externally held and GPIO-driven high INT0,
+negative sleep/buffer controls, held clocks, reset and W1C before/after release.
 Seeded tests also compare bounded advance with every individual clock edge over
 2000 mixed mutations, and verify a trillion-half-cycle stable skip.

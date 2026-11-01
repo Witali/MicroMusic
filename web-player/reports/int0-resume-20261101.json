@@ -1,0 +1,190 @@
+{
+  "schema": "micromusic-int0-resume-evidence-v1",
+  "complete": true,
+  "baseline": "62103e9261af4830cb031466cbd434a73e15172e",
+  "compilerIdentity": "7dfe5b8d73a95a1a6b445cdd5642cf24b5b7a810aee3065351190eb9cb6e27e1",
+  "compilerSources": {
+    "web-player/lib/attiny13a-package.js": "a0b257c7c584c72f3c010732227fb36654e1a0d0607241b900edf729851397d2",
+    "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+    "web-player/lib/attiny13a-runtime.js": "de7ae636546875370738f3e8745ae4e3524442137aee65490aedc773e54b7488",
+    "web-player/lib/attiny13a.js": "96f4d32add6b5aa78a4cf2fad52e752e940655c6c4d20fbcf75409b51242ba85",
+    "web-player/lib/attiny88-registers.js": "78095666e0cfd009e9aba89cc7dfa2e015206eadff64b86712780ad626ed76b7",
+    "web-player/lib/audio-queue.js": "5e28341f34f8608c30ff96eb818f06c6c57bea4371d54dfeebb8291d75e3b0a2",
+    "web-player/lib/avr-attiny88.js": "23fb8daa5b58c3bc15c4e8380c56f6c788a0bed67b43240b751e9740186578c9",
+    "web-player/lib/avr-core.js": "d9adaa2043b837f1a1083afc56ecc7f5810a5213f6db2cc33606aa08fc9d5c3f",
+    "web-player/lib/avr-incremental-compiler.js": "19154178e888b4220c9e4576601351bb9ea8c3ce30cdab1067a12a532d13422f",
+    "web-player/lib/avr-indexeddb-cache.js": "ee6d784cf298435139540ae772a1d74e4237106b4e266697c2be06498cff8361",
+    "web-player/lib/avr-persistent-cache.js": "25689dec27cbf7cfd7f1bb503ee1339845fe7877fe6edeb4f761788f418cca50",
+    "web-player/lib/avr-phase-locals.js": "3b2d94294149c4e376a8857420d277f2248343dd0fefa7f0553e96fe5feeeab7",
+    "web-player/lib/avr-profiles.js": "cfc36f4936f1d70a22ed806d575bb1e9080597527bfa816fc85a9dd21574e470",
+    "web-player/lib/avr-reference.js": "fcbcfa037aeb1a4d822b368b5fd75a8566d2733b971bc1fff4f0fe4296b574a9",
+    "web-player/lib/avr-runtime.js": "9982516f6b88405d614b7976b8e257f7c4c8f24cac15a438549397657e97ca64",
+    "web-player/lib/avr-transpiled-runtime.js": "0ab773b4c47b52077578edb78fe23725d9f0e2153104b866ef28de2836549430",
+    "web-player/lib/avr-transpiled.js": "8b50f040f8b1632df74470649783507b09efce668b983437cdf0f68a6e2493c5",
+    "web-player/lib/avr-transpiler.js": "1ade86251e0f13ffca6cdcf581199a01b40534192612ae61c8db4ee798db9758",
+    "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+    "web-player/lib/avr-wasm-regions.js": "40bb8a5e7c24171e28a5cf1dfe985bdb0fe4880554e84317dd6d6a61854ed8a6",
+    "web-player/lib/avr-wasm.js": "a6d6d487188fab94dfd3fe918ad145f4bfad58e43856fadf212854161f41e804",
+    "web-player/lib/devices/attiny13a-bandgap-profile.js": "262fb3eacbea8bb475379c8654b8d42de80b21b805535b888ee49b7bcba07568",
+    "web-player/lib/devices/attiny13a-clki-profile.js": "1745bd6dfe089dce3706be017a7e5de4bbf272ab354b70746bdef737bec521af",
+    "web-player/lib/devices/attiny13a-clock-sources.js": "581fffbf5e69138b89af1b55af8f6615872f95d4b487cfc86d65b8d17a3a3fa1",
+    "web-player/lib/devices/attiny13a-comparator-profile.js": "7e584c0d6f93d3ba3374e54992d4fa3ca30001e0efb2acad9aae24118f2a3262",
+    "web-player/lib/devices/attiny13a-profile.js": "a7d196ee092321ef675998559936d4021963209917489d1a1794214f309ae0ae",
+    "web-player/lib/devices/attiny13a-reset-profile.js": "c73e865c939463a6133fc45ffa59da7ed4490105c50272fd8b07b1aa65a50614",
+    "web-player/lib/devices/attiny88-profile.js": "2ffb2a6adb3143592416bd3e4f27a1024a9b5503730790a9ef523fc553e8122c",
+    "web-player/lib/devices/profiles.js": "80a7dc73d3be8132c4b96b19e93d0c9473fd9190f047d403d0bcc82579204c37",
+    "web-player/lib/emulation-configurations.js": "82dd13f5dad339d6666e3d443b19e8bff8e2ad68da8c82705bafd0fa0ea98869",
+    "web-player/lib/engines.js": "49713ee022b9132cf29437620d121d2e46054ea6fe4edabcf8388eff8e870320",
+    "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab",
+    "web-player/lib/package-entry.js": "ff9273715dcc8df7d1924b3294bccfad7156f09feba7d7466c7c89cf171169ad",
+    "web-player/lib/realtime.js": "0ff48bf4a2ec56b81d10bbf7a5520170758e204125537f7168155cf8c711a449",
+    "web-player/lib/renderer-device.js": "081a072d20750329e5dd1c712f7b1788961244733bfda83b1bda72eb37de1f20",
+    "web-player/lib/renderer-js.js": "74decdf64cf46f69c227ad2457b6e89a8c1407bb7a9f07b06ea1f3d83c4a461f",
+    "web-player/lib/renderer-package.js": "3b7d2d3d29818bf0b12fd0218d73ede38bdb94b1919cf2e0ba6d0b012240131b",
+    "web-player/lib/renderer-transpiled.js": "9f2a67650b8f9193c784613980bd6113e666f50435f3987ce776a65915ed3d7f",
+    "web-player/lib/renderer.js": "77df3b204411d00ec3106dae69824a91612abd6717325e1ee186d6980971bc2a",
+    "web-player/lib/universal-package.js": "482c9d24164f3a93f48f8c59013e4aa4e40bf719f5f39ccb6710c085a13784b4",
+    "web-player/scripts/generate-avr-cache-identity.mjs": "bba94dd8d010945a5e27fbcb67355488dca46db765d9ea475c04b6daf0e3a13a"
+  },
+  "sourceSha256": {
+    "web-player/tests/attiny13a-int0-resume.test.mjs": "36bb2a73e5c47c6cd7b7040cf816256c07a54c19360bc78f6333d101dd354832",
+    "web-player/tests/system-gpio.test.mjs": "9a14137dffce795e73893bfae6416a8e3a78d84aae72fb4907e75623e7c72914",
+    "web-player/scripts/verify-int0-resume.mjs": "3159ff22d601669046deb2e395676acebe7fe764c8f00ddcc0dfec79bf2699b9",
+    "web-player/tests/fixtures/attiny13a-system-firmware.mjs": "1d75e9a7186337b3de601f29abe5b23450e0cd955926e88257b9049c016e366e"
+  },
+  "native": {
+    "before": {
+      "bytes": 124738,
+      "sha256": "76e9f38ea2b3d269f17cc0743d7847741f762d7ca19027f0092bbcb8a5176429"
+    },
+    "after": {
+      "bytes": 124789,
+      "sha256": "be34ee139b13b35fadc88d9a4cb6634866ef083a890ef7944d384fbc4309f023"
+    }
+  },
+  "nativeInputs": {
+    "web-player/native/avr.c": "63714c76a2841c717f73b4e9d0afc95cbe6749934ef19067077d6193e0cc1da4",
+    "web-player/native/attiny13a-registers.generated.h": "9b790283f9cc84e144c5dd138636e8646ba2b00175c2d09b8152eaefd700d8b7",
+    "web-player/native/attiny13a-registers.generated.inc": "aaaf7f47e67e1f3b72754c13373ea9aa6d39acf65c8669e43333ffdf51e539e4",
+    "web-player/native/attiny13a-registers.h": "67cc37f8c312e405f3eb136208d870cd615419471435308a6c4e1f3721fb5a48",
+    "web-player/native/avr-device.inc": "4b016a85732cbe32ede52c5d2265d04fe4b03262352fc5595545f88125da246e",
+    "web-player/native/peripherals/analog.c": "dba261a26c2d6c03ee757392b77ac553a8d20d4e0a0a99420947dc67c1e454d1",
+    "web-player/native/peripherals/analog.h": "3784b94d275c540518f2429e6b53a5a16b60e471f274c4e4f831b11a9421196d",
+    "web-player/native/peripherals/analog_adc.c": "348a30c8ecfadce3174f4033ede17b80c732ffe287a06ad84711a6fd890a0245",
+    "web-player/native/peripherals/analog_adc.h": "5adb9f195a3fa69660c3ddfa7ec8058412dded4f21e59911274c4bbe31fa5ad3",
+    "web-player/native/peripherals/analog_comparator.c": "028ad749c4f42a051fe78d736911f5bc672aabd6d5938c7401cf7876044e05b2",
+    "web-player/native/peripherals/analog_comparator.h": "489fb4f6b69ac72624cd5b5ce89069e0b83e15dd46e83f9b56a39f723d18733a",
+    "web-player/native/peripherals/device.c": "4b9cacf1709a2ec43e688011cfa75b857fcd8081267d0bb29e960de0c4ce856c",
+    "web-player/native/peripherals/device.h": "21218dd36ff50475a093ccb4e3435c31305172c108a2ed8e62f6c9fb47074913",
+    "web-player/native/peripherals/device_clock.h": "81b468b4809e8777a763b13f10893c7cc0db501710153dcd6e6b54787f155693",
+    "web-player/native/peripherals/nvm.c": "51880a51fd61c009ce7d0fa47d205d9c93aa7a0ebd5fc4e0f80064927a9bd096",
+    "web-player/native/peripherals/nvm.h": "56e2934423d6ec150d05a531ce85c052c3ac56ca3222ec16d7ca63083bce0e7d",
+    "web-player/native/peripherals/power_reset.c": "d09d0f8b3a417e7823918a76652f21dc078884f4b0945abf5c5732d18850170c",
+    "web-player/native/peripherals/power_reset.h": "0518e767fd2a4741b32425af26d93b8ad3f6b6d3cc22d406983a9f83fbe6bc02",
+    "web-player/native/peripherals/system_gpio.c": "8aa45bfbaaa505d3ad8489b18b92daf0b5a9059ca152c70acb413506ca0e3d3e",
+    "web-player/native/peripherals/system_gpio.h": "89725df569c1b443f5c3ff115dd1d9080cde6bb2c448af199ee3cc39f885a37f",
+    "web-player/native/peripherals/system_sleep.c": "ed4a0f8b3cbcd0149793e9633b4967d354e2edbcad02c5859b39caa98a61ccbd",
+    "web-player/native/peripherals/system_sleep.h": "87c01f37f7b922a0dc7f3f9661546e7b99a514cb8beba0be1b3eb61b18032ec8",
+    "web-player/native/peripherals/system_watchdog.c": "22134559c5bb1c555825de27d2c9efa8d3d5aa527dd55d9a8a735ba3964df8b7",
+    "web-player/native/peripherals/system_watchdog.h": "ec432e27956672069a5608b2df5561df04f705de73cd2a2e1579b27224ee1720",
+    "web-player/native/peripherals/timer0.c": "2d4ba55706be643e2935aaa86e2e38e852c88378f47d4312085ec09837f7cac4",
+    "web-player/native/peripherals/timer0.h": "6de13614a6a22046b95fb60179a0729efbda9b5b6e693aa27c3f20853482a90e",
+    "web-player/native/devices/attiny13a/reset_input.c": "7ac97541133ecdccec25de9721bf787742a9b375572409bed90c03adec0d7519",
+    "web-player/native/devices/attiny13a/bandgap.c": "057ad62eac08ef3b5036ca38b5acb22dc6975759ba1f4247e886b2230b76f656",
+    "web-player/native/devices/attiny13a/bandgap.h": "787d21ddefa7bcbaa2ab3b6960a673bfdfaed40407c574c0156f1e58b3f26dd0",
+    "web-player/native/devices/attiny13a/reset_input.h": "c5f0d3d02a1053defae289736bac40c247032c854e25a80e211b1d43458a979b",
+    "web-player/native/devices/attiny13a/clki_input.c": "350fe7c08153d7ec929c737569196502d3886de4984c4206350aea44e07be042",
+    "web-player/native/devices/attiny13a/clki_input.h": "0831f7fb5af1c8ad2c9da72f20347226c1129e2dd1c81deb9c0bd73b231d81d1",
+    "web-player/native/devices/attiny13a/clki_clock.c": "360c2526a3f6b1abf6a7a9b30c05695bbcce691cea962631ac97a0f4b1c06b78",
+    "web-player/native/devices/attiny13a/clki_clock.h": "8d18a98e7822f3b7d6325fc0f489ce39fd588a1bf8feae280e65dfbf120314a7",
+    "web-player/native/devices/attiny13a/clki_validation.c": "778fe9adf815e21b17b4010cb57b25f1345ca802d33b48b7e8bcb933ad550d73",
+    "web-player/native/devices/attiny13a/clki_validation.h": "c303e5b2c0b6505be5d871e19f070bf129aff5a078a6717cacd04b28e6c32bdc",
+    "web-player/native/devices/attiny13a/clki_periodic.c": "5d3c68f83ce91186ca183fe8f9ee6b6b05ab10e601891fcd1821c00bf54fb20f",
+    "web-player/native/devices/attiny13a/clki_periodic.h": "18c545932c33a601cc3ebbbb9beb63b17772f612cb36a15c0c2d4e85b829fcb4",
+    "web-player/native/devices/attiny13a/clki_board.inc": "77412f8d400149a1fa1abe440c926b56d55a1860a0c57af696e774edba5bb726",
+    "web-player/native/devices/attiny13a/avr-profile.inc": "ab3c5e2415124568aa17b4783d8117e0219f55fbb5b4b7198a99e0f94e9baa27",
+    "web-player/native/devices/attiny13a/io_registers.inc": "9f674ba5feeb9a56d361a5e2fad974a8d9a2e8ae60d1036c4e651913f860ccc2",
+    "web-player/native/devices/attiny13a/io_registers.generated.h": "eef88df9ce14067c2d98c8bee2d4555ade5585809b70ca33738f879400d47542",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/atdf/ATtiny13A.atdf": "e12ee48543baf46bc5bc5bf9c6ef2e9e57e46e39c34b3c619bdc8280276e82ed",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/atdf/ATtiny88.atdf": "b349f84f07e27ec5fb3e60e51596ebd764ad105470cb48bc3a8fb0ca3916b1f8",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/avrasm/inc/tn13Adef.inc": "31545ecfbf2e13d4bbca2ec3f86c9001ac72d1351a3b4f90495463df73cd9362",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/avrasm/inc/tn88def.inc": "c9107754133e33fbbc57cb472dad7546d94b288051730bbb272ed59c35ea9ace",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/include/avr/iotn13a.h": "72c0824173a3f720f88c104fd8fbc253690d634b842df7c090bd7883daf951be",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/include/avr/iotn88.h": "63c792cc9961aca81bfb3602e0d1d3cf01a37f35a449a6b6e2e6c8b41cc1e892",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/LICENSE.txt": "3bf0a101f2b2e44eda3b477f866bd24204c35fa1f841c865933028adf155336a",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/provenance.json": "762c02589e722f5169a4f86451eacd6705f4a1632a846fd94bd2239f3b2bc1c3",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/README.md": "1e251269733806e6d08ef578e6739985d0786400b61e491f0651e8798330a7d2",
+    "web-player/scripts/generate-attiny13a-registers.mjs": "162f9d0770fe5288eacbe2fabcebabd1ab578bb8db058ec4a7847d77f85d94e4",
+    "web-player/scripts/generate-attiny13a-io-bindings.mjs": "380a9359ee3e621653b0ac3fea52d7b2db2f016cf96363155ebb02e5706cd0bb",
+    "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+    "web-player/lib/attiny13a-registers.json": "31b2f67d2e4d3a438d5313e9a6c123f9d5599b452e62b5f9edcc8d4391dbba01",
+    "web-player/scripts/build-device-wasm.mjs": "fc1af56200f7c7012032c60d6e4f6a2e559aeec72104551eb8afd2b71bd995df"
+  },
+  "changedInputs": [
+    "web-player/native/peripherals/system_gpio.c",
+    "web-player/native/peripherals/system_gpio.h"
+  ],
+  "functionBodies": 218,
+  "changedBodies": [
+    {
+      "body": 152,
+      "beforeBytes": 1089,
+      "afterBytes": 1276
+    },
+    {
+      "body": 165,
+      "beforeBytes": 3418,
+      "afterBytes": 3427
+    },
+    {
+      "body": 183,
+      "beforeBytes": 1237,
+      "afterBytes": 1039
+    },
+    {
+      "body": 196,
+      "beforeBytes": 443,
+      "afterBytes": 496
+    }
+  ],
+  "tests": {
+    "before": {
+      "tests": 18,
+      "pass": 4,
+      "fail": 14,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "tapSha256": "ce07cca7fbbb6a77e562be26a47f9fdfe939cef2ac685dd67af81daebd017853"
+    },
+    "after": {
+      "tests": 18,
+      "pass": 18,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "tapSha256": "dbf28eb2249f1a10f97245ba56b787f71a7351ffe247d8f5b1515dc86d59cbd7"
+    }
+  },
+  "method": "Same final firmware source and host/compiler, with only the pinned native WASM changed. WDT and PCINT wake, all three masked INT0 edge senses, internal/CLKI sources, verification/optimized execution and Idle/ADC Noise controls. INTF0 is read by the first post-SLEEP firmware instruction. The first resumed clkI/O rise is an explicit digital-fixture phase choice, not an official simulator observation or measured silicon phase. No performance claim.",
+  "focused": {
+    "tests": 156,
+    "pass": 156,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "tapSha256": "beaefa5afc9afbd725efd73056ba57f7a154539c0ee961993c4c8684a7df9a31"
+  },
+  "fullSuite": {
+    "tests": 2785,
+    "pass": 2785,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "tapSha256": "28e27fb821d9eedc266893391884bd60993e1cc70b9bb025a5ea11229ba6dcea"
+  }
+}

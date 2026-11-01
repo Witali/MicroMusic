@@ -29,6 +29,7 @@ typedef struct {
     uint8_t reset_pin_enabled, power_down, io_running, clock_high;
     uint8_t digital, latch, pcint_previous, pcint_edge;
     uint8_t int0_previous, t0_sync1, t0_sync2, t0_previous;
+    uint8_t int0_resume_pending;
     system_gpio_pins_t pins;
 } system_gpio_t;
 
