@@ -128,6 +128,7 @@ The post-quantization variant is a retained experiment; accepted admission uses
 the early raw-code branch. Control/test adaptations are original project work;
 existing Xiph algorithm/table provenance and BSD notices remain intact.
 
-Further candidates are a dedicated one-tap nonzero predictor, an exact smaller
-Q6 ancestry product, and section ownership for the shared ASM vector body.
-They remain unmeasured and are not included in the results above.
+The subsequent [one-tap stage](WB_FORCED_ONE.md) implements and measures the
+nonzero predictor specialization. An exact smaller Q6 ancestry product and
+section ownership for the old shared ASM body remain unmeasured; neither is
+included in the results above.

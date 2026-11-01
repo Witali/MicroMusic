@@ -1,0 +1,41 @@
+{
+  "scope": "Three call relaxations in NB LPC conversion, WB5.75 image",
+  "images": [
+    {
+      "epoch": "before",
+      "binarySha256": "10a625dde914fcd1d635704e2fe3d755148b53b57ce232ac731c4047f1934237",
+      "calls": [
+        {
+          "target": "speex_avr_lsp_pair2",
+          "opcode": "rcall"
+        },
+        {
+          "target": "speex_avr_lsp_pair3",
+          "opcode": "rcall"
+        },
+        {
+          "target": "speex_avr_lsp_pair4",
+          "opcode": "rcall"
+        }
+      ]
+    },
+    {
+      "epoch": "after",
+      "binarySha256": "ab2d7dbc8004dcf99c591eb1df9b5776d46df34bf3265f07f5c23d2915d1e1f2",
+      "calls": [
+        {
+          "target": "speex_avr_lsp_pair2",
+          "opcode": "call"
+        },
+        {
+          "target": "speex_avr_lsp_pair3",
+          "opcode": "call"
+        },
+        {
+          "target": "speex_avr_lsp_pair4",
+          "opcode": "call"
+        }
+      ]
+    }
+  ]
+}

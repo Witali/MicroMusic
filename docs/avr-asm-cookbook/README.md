@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Specialize a sparse three-tap predictor](speex-one-tap.md): remove two
+provably zero taps, reuse the original transform macro, preserve the necessary
+pitch clamp and extend only the completed-history range that is actually read.
+
 [Skip an exactly zero prediction component](speex-zero-prediction.md): prove
 the finite coefficient mapping, retain innovation and quiet speech, reuse the
 existing variable-count ASM/C primitive and measure the enlarged count domain.

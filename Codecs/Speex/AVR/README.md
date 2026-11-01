@@ -69,6 +69,13 @@ bit-exact PCM. Flash grows 138/144 B; static SRAM stays unchanged, WB stack
 stays unchanged and NB stack grows six bytes. Full raw, loaded WB IRQ and
 scheduled NB/WB SPI runs retain exact PCM/PWM with zero underruns.
 
+[One-tap forced prediction](WB_FORCED_ONE.md) then removes the two unused
+outer taps while retaining the original innovation, pitch clamp and rounding.
+Nonzero NB3.95/WB5.75 frames use **640 fewer MULs**; speech decoder CPU falls
+**30.17% -> 28.76% / 73.19% -> 71.78%**. Flash grows 222/224 B, NB peak stack
+shrinks 13 B and WB stack stays fixed. Full PCM, loaded WB IRQ and scheduled
+SPI checks retain exact output; WB SPI minimum queue improves 23 -> 31 samples.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

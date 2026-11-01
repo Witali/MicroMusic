@@ -65,6 +65,11 @@ gain and quiet speech, lowers NB3.95/WB5.75 speech CPU to 30.17%/73.19%, and
 passes full PCM, loaded WB IRQ and NB/WB SPI checks. The figures below remain
 the original profile-extension baseline.
 
+The subsequent [one-tap stage](WB_FORCED_ONE.md) removes the unused outer
+products and history words in nonzero frames without changing quantizers.
+Speech CPU becomes 28.76% NB3.95 / 71.78% WB5.75, with full output checks and
+the same C fallback selection. The preceding zero-coefficient path is retained.
+
 `SPEEX_ENABLE_NB8=1` adds 79-bit / 10-byte NB and 115-bit / 15-byte WB
 packets. `--low-rates 3` enables both new pairs. The original forced pitch
 builds prediction before adding innovation; feeding completed output back
