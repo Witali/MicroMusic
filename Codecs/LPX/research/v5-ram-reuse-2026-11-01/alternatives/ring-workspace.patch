@@ -1,0 +1,73 @@
+--- original/Lpx4HybridCore.h
++++ ring/Lpx4HybridCore.h
+@@ -300,7 +300,6 @@
+ #else
+     int16_t prevLpc_[10],curLpc_[10];
+ #endif
+-    int32_t polyP_[12],polyQ_[12];
+ #ifdef LPX3_Q_DIAG
+     int8_t lastQ_;
+ #endif
+--- original/Lpx4HybridCore.cpp
++++ ring/Lpx4HybridCore.cpp
+@@ -887,11 +887,27 @@
+  return q ? (int16_t)((uint16_t)(q*2-1)<<((profile&2)?3:4)) : 0;
+ }
+ #endif
++#if !LPX4_COMPACT_ONLY || LPX4_PITCH_HISTORY_SIZE != 256
++#error This private dead-ring prototype requires v5-only and original256 history
++#endif
++// Byte copying preserves alignment, aliasing and live int8_t object lifetimes.
++static inline int32_t ringPolyGet(const int8_t* ring,uint8_t base,uint8_t index){
++    int32_t value;
++    memcpy(&value,ring+(uint8_t)(base+(uint8_t)(index*4)),sizeof(value));
++    return value;
++}
++static inline void ringPolyPut(int8_t* ring,uint8_t base,uint8_t index,int32_t value){
++    memcpy(ring+(uint8_t)(base+(uint8_t)(index*4)),&value,sizeof(value));
++}
+ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
+ #ifdef LPX3_COST_INSTRUMENT
+     ++lsfConverts_;
+ #endif
+-    polyP_[0]=polyQ_[0]=4096;
++    // Aligned words do not cross the physical end; the whole 96 bytes are
++    // in the 111 dead slots ahead of the unchanged 256-slot pitch cursor.
++    const uint8_t pbase=(uint8_t)((ringCursor_+3)&252);
++    const uint8_t qbase=(uint8_t)(pbase+48);
++    ringPolyPut(ringQ_,pbase,0,4096);ringPolyPut(ringQ_,qbase,0,4096);
+     for(uint8_t i=0;i<10;i++){
+ #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
+         // For segments1/2, u is 0/1/2. Factoring centered q+1 values
+@@ -906,14 +922,26 @@
+         const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(prev_[i],cur_[i],t));
+ #endif
+         // P/Q polynomials are independent; each pair retains the same degree.
+-        int32_t* p=(i&1)?polyQ_:polyP_;
++        const uint8_t base=(i&1)?qbase:pbase;
+         if(i<2){
+             // Exact (1 +/- z) first factors; no rounded multiplication.
+             const int16_t unit=(i&1)?-4096:4096;
+-            p[1]=unit+cc;p[2]=4096+((i&1)?-cc:cc);p[3]=unit;
+-        }else polyFactor(p,cc,(uint8_t)((i&254)+2));
+-    }
+-    for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
++            ringPolyPut(ringQ_,base,1,unit+cc);
++            ringPolyPut(ringQ_,base,2,4096+((i&1)?-cc:cc));
++            ringPolyPut(ringQ_,base,3,unit);
++        }else{
++            const uint8_t n=(uint8_t)((i&254)+2);
++            const int32_t trailing=ringPolyGet(ringQ_,base,n-1);
++            ringPolyPut(ringQ_,base,n+1,trailing);
++            ringPolyPut(ringQ_,base,n,ringPolyGet(ringQ_,base,n-2)+(trailing<0?-(int32_t)cc:(int32_t)cc));
++            for(uint8_t j=(uint8_t)(n-1);j>=2;--j){
++                const int32_t value=ringPolyGet(ringQ_,base,j-2)+polyMulQ12(ringPolyGet(ringQ_,base,j-1),cc)+ringPolyGet(ringQ_,base,j);
++                ringPolyPut(ringQ_,base,j,value);
++            }
++            ringPolyPut(ringQ_,base,1,cc+ringPolyGet(ringQ_,base,1));
++        }
++    }
++    for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(ringPolyGet(ringQ_,pbase,i+1)+ringPolyGet(ringQ_,qbase,i+1),1),-32767,32767);
+ }
+ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
+ #if LPX4_ROTATE_LPC_ANCHORS

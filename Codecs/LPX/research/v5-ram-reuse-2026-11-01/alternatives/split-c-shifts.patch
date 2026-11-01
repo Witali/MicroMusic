@@ -1,0 +1,75 @@
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h
+@@ -91,7 +91,7 @@
+     __asm__(LPX4_SHIFT_BODY(4) : "+r"(v) : : "cc");
+     return v;
+ #else
+-    return v>>12;
++    return (v>>16)*16+((uint16_t)v>>12);
+ #endif
+ }
+ static inline __attribute__((always_inline)) int32_t lpx4Shift14(int32_t v){
+@@ -99,7 +99,7 @@
+     __asm__(LPX4_SHIFT_BODY(6) : "+r"(v) : : "cc");
+     return v;
+ #else
+-    return v>>14;
++    return (v>>16)*4+((uint16_t)v>>14);
+ #endif
+ }
+ #undef LPX4_SHIFT_BODY
+@@ -229,7 +229,7 @@
+ #else
+     int32_t result=0;
+     for(int8_t i=9;i>=0;i--){
+-        result+=((int32_t)a[i]*h[i])>>12;
++        result+=lpx4Shift12((int32_t)a[i]*h[i]);
+         if(i<9)h[i+1]=h[i];
+     }
+     return result;
+@@ -282,7 +282,7 @@
+ #else
+     int32_t result=excitationQ4?excitation/16:excitation;
+     for(int8_t i=9;i>=0;i--){
+-        result-=((int32_t)a[i]*h[i])>>12;
++        result-=lpx4Shift12((int32_t)a[i]*h[i]);
+         if(i<9)h[i+1]=h[i];
+     }
+     return result;
+@@ -324,7 +324,7 @@
+     return result;
+ #else
+     int32_t result=excitationQ4?excitation/16:excitation;
+-    for(uint8_t i=0;i<10;i++)result-=((int32_t)a[i]*h[-1-i])>>12;
++    for(uint8_t i=0;i<10;i++)result-=lpx4Shift12((int32_t)a[i]*h[-1-i]);
+     h-=10;
+     return result;
+ #endif
+@@ -402,7 +402,7 @@
+         : "=&d"(result),"=&a"(high) : "a"(sample),"a"(gain) : "r0","r1","cc");
+     return result;
+ #else
+-    const int32_t duty=128+(((int32_t)sample*gain+8192)>>14);
++    const int32_t duty=128+lpx4Shift14((int32_t)sample*gain+8192);
+     return duty<0?0:(duty>255?255:(uint8_t)duty);
+ #endif
+ }
+@@ -429,7 +429,7 @@
+         : "=&r"(result),"=&r"(wide) : "a"(coefficient),"a"(state) : "r0","r1","cc");
+     return result;
+ #else
+-    return (int16_t)(((int32_t)coefficient*state)>>14);
++    return (int16_t)lpx4Shift14((int32_t)coefficient*state);
+ #endif
+ }
+ 
+@@ -450,6 +450,6 @@
+     );
+     return result;
+ #else
+-    return ((int32_t)x*y)>>14;
+-#endif
+-}
++    return lpx4Shift14((int32_t)x*y);
++#endif
++}

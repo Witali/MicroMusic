@@ -1,0 +1,22 @@
+--- original/Lpx4HybridCore.h
++++ union/Lpx4HybridCore.h
+@@ -284,7 +284,9 @@
+ #if LPX4_ROTATE_LPC_ANCHORS
+     uint8_t lpcAnchorOffset_;
+ #endif
+-    int16_t a_[10],hist_[LPX4_LPC_RING?20:10];
++    // a_ is dead during conversion; polyQ_ is dead between conversions.
++    union { int16_t a_[10]; int32_t polyQ_[12]; };
++    int16_t hist_[LPX4_LPC_RING?20:10];
+     int8_t ringQ_[LPX4_PITCH_HISTORY_SIZE];
+ #if LPX4_ALLOW_SPARSE
+     uint8_t pulsePos_[LPX4_MAX_PULSES];
+@@ -300,7 +302,7 @@
+ #else
+     int16_t prevLpc_[10],curLpc_[10];
+ #endif
+-    int32_t polyP_[12],polyQ_[12];
++    int32_t polyP_[12];
+ #ifdef LPX3_Q_DIAG
+     int8_t lastQ_;
+ #endif

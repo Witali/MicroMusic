@@ -1,0 +1,121 @@
+diff --git a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+index 0253c92b..21de8161 100644
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp
+@@ -699,12 +699,28 @@ bool Lpx4HybridCore::readSubframe(){
+ #if LPX4_FAST_PITCH < 0 || (LPX4_FAST_PITCH & ~7) || (LPX4_FAST_PITCH && !(LPX4_FAST_PITCH&1))
+ #error Unsupported LPX4_FAST_PITCH
+ #endif
++inline int8_t Lpx4HybridCore::readPitchHistory() const{
++#if LPX4_PITCH_HISTORY_SIZE == 256
++ return ringQ_[(uint8_t)(ringCursor_-lag_)];
++#else
++ return ringQ_[ringCursor_>=lag_ ? ringCursor_-lag_
++                              : ringCursor_+LPX4_PITCH_HISTORY_SIZE-lag_];
++#endif
++}
++inline void Lpx4HybridCore::storePitchHistory(int8_t q){
++#if LPX4_PITCH_HISTORY_SIZE == 256
++ ringQ_[ringCursor_++]=q;
++#else
++ ringQ_[ringCursor_]=q;
++ if(++ringCursor_==LPX4_PITCH_HISTORY_SIZE)ringCursor_=0;
++#endif
++}
+ int16_t Lpx4HybridCore::pitchPredict() const{
+ #if LPX4_FAST_PITCH
+ #if !LPX4_COMPACT_ONLY
+  if(!mode_)return 0;
+ #endif
+- const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
++ const int8_t x=readPitchHistory();
+ #if LPX4_FAST_PITCH&2
+  if(!x)return 0;
+ #endif
+@@ -720,7 +736,7 @@ int16_t Lpx4HybridCore::pitchPredict() const{
+ #endif
+  return v;
+ #else
+- const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
++ const int8_t x=readPitchHistory();
+  int16_t v=(int16_t)(((int8_t)gain_*x+8)>>4);
+ #if !LPX4_COMPACT_ONLY
+  if(!mode_)return 0;
+@@ -778,7 +794,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
+  if(error_)return false;
+  if(decoded < -32)decoded=-32;
+  if(decoded > 31)decoded=31;
+- q=(int8_t)decoded;ringQ_[ringCursor_++]=q;
++ q=(int8_t)decoded;storePitchHistory(q);
+  return true;
+ #else
+  int16_t decoded=0;
+@@ -825,7 +841,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
+    if(decoded < -lim || decoded >= lim){error_=CORRUPT_STREAM;return false;}
+  }else if(decoded){error_=CORRUPT_STREAM;return false;}
+  q=(int8_t)decoded;
+- ringQ_[ringCursor_++]=q;
++ storePitchHistory(q);
+  return true;
+ #endif
+ }
+@@ -1002,7 +1018,7 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
+     int8_t q=0;
+ #if LPX4_COMPACT_ONLY
+ #if LPX4_FAST_EXCITATION&2
+-    if(pulseIndex_>=pulseCount_){q=(int8_t)pitchPredict();ringQ_[ringCursor_++]=q;}
++    if(pulseIndex_>=pulseCount_){q=(int8_t)pitchPredict();storePitchHistory(q);}
+     else
+ #endif
+     if(!decodeCode(q))return false;
+@@ -1029,7 +1045,7 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
+ #endif
+         q=(int8_t)pitchPredict();simple=true;
+     }
+-    if(simple)ringQ_[ringCursor_++]=q;
++    if(simple)storePitchHistory(q);
+     else
+ #endif
+     if(!decodeCode(q))return false;
+diff --git a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+index 52502e9e..effab7df 100644
+--- a/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
++++ b/Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h
+@@ -45,6 +45,19 @@
+ #if LPX4_COMPACT_ONLY && (!LPX4_ENABLE_SPEECH || !LPX4_ENABLE_SPEECH_COMPACT)
+ #error LPX4_COMPACT_ONLY requires speech and compact speech
+ #endif
++// Experimental v5 RAM option: pitch lags are 18..145, inclusive. Reduced
++// history uses explicit wrapping; its speed must be measured per target.
++// The default retains the original byte-wrap layout.
++// Use the same setting for the core and all consumers (class layout differs).
++#ifndef LPX4_PITCH_HISTORY_SIZE
++#define LPX4_PITCH_HISTORY_SIZE 256
++#endif
++#if LPX4_PITCH_HISTORY_SIZE < 145 || LPX4_PITCH_HISTORY_SIZE > 256
++#error LPX4_PITCH_HISTORY_SIZE must be 145..256
++#endif
++#if !LPX4_COMPACT_ONLY && LPX4_PITCH_HISTORY_SIZE != 256
++#error Reduced pitch history requires LPX4_COMPACT_ONLY
++#endif
+ #if LPX4_COMPACT_ONLY
+ #define LPX4_MAX_PULSES 3
+ #else
+@@ -209,6 +222,8 @@ private:
+ #endif
+     bool readSubframe();
+     // Excitation reconstruction.
++    __attribute__((always_inline)) inline int8_t readPitchHistory() const;
++    __attribute__((always_inline)) inline void storePitchHistory(int8_t q);
+     int16_t pitchPredict() const;
+ #if !LPX4_COMPACT_ONLY
+     __attribute__((always_inline)) inline bool readUnary8(uint8_t& high);
+@@ -271,7 +286,7 @@ private:
+     uint8_t lpcAnchorOffset_;
+ #endif
+     int16_t a_[10],hist_[LPX4_LPC_RING?20:10];
+-    int8_t ringQ_[256];
++    int8_t ringQ_[LPX4_PITCH_HISTORY_SIZE];
+ #if LPX4_ALLOW_SPARSE
+     uint8_t pulsePos_[LPX4_MAX_PULSES];
+     int8_t pulseAmp_[LPX4_MAX_PULSES];
