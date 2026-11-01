@@ -102,6 +102,13 @@ Cases cover all divisors and supported WGMs, delayed OCF, missed lowered CTC TOP
 force compare, buffer timing, phase-correct MAX-to-duty transitions, clock gates,
 external edges, capture overflow, and timestamps beyond 2^32.
 
+The additional [firmware-level PWM matrix](../../reports/pwm-boundaries-20261101.md)
+runs 144 actual images through CPU/bus/GPIO under active IRQs, with both CPU
+policies, internal and asymmetric CLKI clocks. All 408 selected-pin events match
+closed-form timing and all 72 policy pairs retain exact state/data/traces.
+It covers steady preloaded zero/middle/TOP compares; it does not measure running
+buffer transfers or resolve dynamic TOP and silicon phase boundaries.
+
 There is no silicon trace oracle yet. These tests establish the documented
 digital model and event-jump equivalence; they do not establish electrical or
 oscillator fidelity. Raw external-pin phase belongs to the GPIO module.

@@ -33,6 +33,16 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+PWM firmware boundaries, 2026-11-01: 144 actual firmware cases cover WGM1/3/5/7,
+both physical outputs, normal/inverted zero/middle/TOP compares and internal/
+asymmetric CLKI clocks. All 408 selected-pin events agree with independent
+closed-form timing during 264 active IRQs. All 72 policy pairs retain exact
+recorded state, GPR/I/O/SRAM and traces; the full suite passes 3025/3025 with
+no skips. Production is unchanged. These are stable preloaded OCR fixtures,
+not measurements of dynamic TOP/buffer transfer, internal silicon phases or
+the 10 ns physical requirement. WGM5/TOP0 and the seven open items remain open;
+the count stays 24/31. See the [matrix and evidence](../reports/pwm-boundaries-20261101.md).
+
 Empty wake-delay experiment, 2026-11-01: conditional evaluation of two unused
 fixed delays preserves sixteen equal-policy workload pairs and 5259 exact
 checkpoints, including active ADC/watchdog controls. Six baseline and six
