@@ -8,9 +8,9 @@ from pathlib import Path
 import traceback
 
 from anchor_policy import ARMS,settings,validate_scope,compare_nominated
-from pilot_policy import shared as policy_shared
 from anchor_runtime import (HERE,Inputs,VALUE_KEYS,sha,save,load_manifest,load_production,
     check_origins,equal,source_snapshot,local_frontier,whole_views,distinct_whole,frontier_summary)
+from pilot_policy import shared as policy_shared
 from run_anchor import validate_report
 
 COMPARISONS=(('old-order','T-time-0','T-priority-0'),('new-order','G-time-0','G-priority-0'),

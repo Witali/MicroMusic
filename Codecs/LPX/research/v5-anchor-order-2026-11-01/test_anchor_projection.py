@@ -1,9 +1,18 @@
 """Saved-only branch and pair projection contracts."""
 import unittest
+import subprocess
+import sys
+from pathlib import Path
 from project_anchor import branch_work,outcome,rejected,COMPARISONS
 
 
 class Projection(unittest.TestCase):
+    def test_clean_interpreter_bootstrap_has_no_codec_preload(self):
+        package=Path(__file__).resolve().parent
+        code='import sys;sys.path.insert(0,sys.argv[1]);import project_anchor;assert "speech_compact" not in sys.modules'
+        result=subprocess.run([sys.executable,'-c',code,str(package)],capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,'Standalone saved-only projector bootstrap failed')
+
     def test_branch_starts_are_not_completed_work(self):
         r=dict(planned_anchors=[4,0,1],started_anchors=[4],completed_anchors=[],
             repeat_spectrum_proposals=1,completed_rate_allocation_calls=0,rate_allocation_calls_started=1,
