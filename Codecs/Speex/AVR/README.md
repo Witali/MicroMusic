@@ -26,6 +26,13 @@ affected-mode tests cover 21254 raw frames, 10627 WB IRQ frames with 8% added
 work and 3600 actual SPI frames: exact PCM/PWM and zero underruns. Portable C
 fallbacks remain selectable; their decoder is compiled/linked only at this stage.
 
+[Power-of-two noise scaling](WB_NOISE_SHIFTS.md) removes another 32 MULs per
+NB1 frame with exact floor composition. WB3.95 speech decoding falls to
+**73.97% CPU**, saving 640 cycles/frame and 86 B Flash; its fully enabled
+bare decoder uses 24604 B Flash / 1284 B static SRAM. Fresh full-corpus,
+loaded IRQ and SPI checks retain exact PCM/PWM with zero underruns. The new
+word-shift specialization retains an explicitly selectable C implementation.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

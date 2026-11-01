@@ -68,6 +68,43 @@ node Codecs/Speex/AVR/tests/verify_noise_values.mjs Codecs/Speex/AVR/build/noise
 Original project simplification. Existing Xiph algorithm/table provenance and
 BSD notices remain in source/vendor files.
 
+## Continuous-output admission
+
+The final WB3.95 player passes **10627 full-history IRQ frames** with 25600
+extra foreground cycles/frame (8% of the 20 ms budget): exact s16/PWM,
+zero underruns, minimum queue seven, 411 B free SRAM at peak. Timer intervals
+stay within 990..1010 cycles. Ready RAM input excludes transport latency.
+
+The separately timed SPI player reads **3600 frames / 36000 compressed bytes**
+from `0xff80` through actual AVR SPI/CS and the shared C W25Q128 model, with
+interrupts active and no extra foreground load. Every s16/PWM sample matches;
+zero underruns, minimum queue33, 408 B free SRAM. Its observation image uses
+25132 B Flash, 1422 B static SRAM and 218 B peak stack. The loaded IRQ image
+uses 25066 B Flash. These are ISA-simulator measurements, not board results.
+
+Both 1024-frame mixed API runs pass rejected lengths/null/header calls,
+padding and reset. Actual decoder observation counts exactly one table
+preparation per valid NB1 frame: 206 calls / **zero MULs** per API run,
+including reset replay. Other modes and rejected calls execute no table work.
+The one-product mean remains at four MULs/call, checked at every invocation.
+
+Four lower-rate-disabled minimum ASM images rebuild byte-identically to the
+mean stage, so their existing evidence is retained explicitly. AVR C controls
+compile/link: NB11 21004 B, WB3.95 30874 B, each 94 B smaller. The twenty-source
+portable C11 export compiles/links without `.S`; no C decoder is executed or
+timed. Scalar C correctness is covered by the four-path arithmetic test above.
+
+`reports/noise-shift-admission.json` binds all source and report hashes as an
+overlay of four changed files on the historical mean-stage manifest. Older
+audits stay pinned to their original source epochs.
+
+```sh
+python Codecs/Speex/AVR/tests/build_noise_shift_admission.py --avr-gcc avr-gcc --baseline-root <one-product-mean-codec-root> --spi-stream <wb395/long.spxraw>
+python Codecs/Speex/AVR/tests/run_noise_shift_admission.py --phase raw --node node --low-corpus <low-corpus> --mixed-corpus <low-mixed> --spi-corpus <spi-corpus> --spi-model <model.wasm>
+# Repeat the runner with --phase irq and --phase transport-api.
+python Codecs/Speex/AVR/tests/audit_noise_shifts.py --corpus <low-corpus>
+```
+
 ## Next unmeasured candidates
 
 - HB1 currently expands the five noise words to forty values and then folds
