@@ -1,0 +1,141 @@
+{
+  "status": "PASS",
+  "source_commit": "806d0c4931c95075d7ea1bffec1ce870d1d06631",
+  "real_arm_records": 4,
+  "real_pass_instances": 12,
+  "real_stage_events": 16,
+  "real_cap_views": 12,
+  "synthetic_arm_records": 12,
+  "synthetic_pass_instances": 16,
+  "synthetic_stage_events": 48,
+  "actual_real_whole_points": 20,
+  "rollback_changed_point_frontier": {
+    "not-admissible": 6,
+    "dominated-by-prior": 1,
+    "extends-prior-frontier": 1
+  },
+  "rollback_failed_reasons_overlapping": {
+    "old_pcm_pwm_floors_passed": 6,
+    "pcm_period_coverage_floor_passed": 2,
+    "pcm16_stoi": 5,
+    "pwm8_stoi": 4,
+    "pwm_period_coverage_floor_passed": 1
+  },
+  "decisions_versus_prior_plus_fresh_control": {
+    "100": {
+      "continue:prior-lower-joint": 2,
+      "rollback:prior-lower-joint": 1,
+      "rollback:new-lower-joint": 1
+    },
+    "95": {
+      "continue:neither-admitted": 2,
+      "rollback:neither-admitted": 2
+    },
+    "90": {
+      "continue:neither-admitted": 2,
+      "rollback:neither-admitted": 2
+    }
+  },
+  "useful_frontier_tuples": 1,
+  "costs": {
+    "continue": {
+      "visited_groups": 556,
+      "trials": 22312,
+      "cumulative_attempted_changed_groups": 259,
+      "final_committed_changed_groups": 259,
+      "rollback_calls": 0,
+      "rollback_replayed_samples_subset": 0,
+      "prefix_synthesized_samples_including_rollback": 296360,
+      "api_cpu_seconds": {
+        "durable_tuple_io": 0.234375,
+        "whole_verification_metrics_io": 25.234375,
+        "construct": 0.09375,
+        "snapshot": 0.0,
+        "step": 0.078125,
+        "serialize": 1.8125,
+        "synthesize": 0.03125
+      },
+      "record_workflow_cpu": 27.90625,
+      "worker_main_cost": {
+        "wall_seconds": 78.44589830000768,
+        "cpu_seconds": 33.953125
+      },
+      "source_preparation_cost": {
+        "wall_seconds": 31.555791499995394,
+        "cpu_seconds": 4.59375
+      },
+      "warm_cost": {
+        "wall_seconds": 6.141926899988903,
+        "cpu_seconds": 0.9375
+      },
+      "whole_counters": {
+        "native_domain_comparisons": 132,
+        "unique_verified_reset_streams": 33,
+        "verified_model_samples": 1569641,
+        "target_feature_rows": 5,
+        "fresh_whole_metric_rows_started": 15,
+        "fresh_whole_metric_rows_completed": 15,
+        "verified_reset_cache_hits": 44
+      }
+    },
+    "rollback": {
+      "visited_groups": 556,
+      "trials": 22312,
+      "cumulative_attempted_changed_groups": 258,
+      "final_committed_changed_groups": 49,
+      "rollback_calls": 18,
+      "rollback_replayed_samples_subset": 218720,
+      "prefix_synthesized_samples_including_rollback": 515080,
+      "api_cpu_seconds": {
+        "durable_tuple_io": 0.1875,
+        "whole_verification_metrics_io": 25.890625,
+        "construct": 0.0625,
+        "snapshot": 0.0,
+        "step": 0.09375,
+        "serialize": 1.6875,
+        "synthesize": 0.03125,
+        "rollback": 0.015625
+      },
+      "record_workflow_cpu": 28.53125,
+      "worker_main_cost": {
+        "wall_seconds": 78.06997009998304,
+        "cpu_seconds": 34.34375
+      },
+      "source_preparation_cost": {
+        "wall_seconds": 30.791393299994525,
+        "cpu_seconds": 4.484375
+      },
+      "warm_cost": {
+        "wall_seconds": 6.468282199988607,
+        "cpu_seconds": 0.84375
+      },
+      "whole_counters": {
+        "native_domain_comparisons": 132,
+        "unique_verified_reset_streams": 33,
+        "verified_model_samples": 1569641,
+        "target_feature_rows": 5,
+        "fresh_whole_metric_rows_started": 15,
+        "fresh_whole_metric_rows_completed": 15,
+        "verified_reset_cache_hits": 62
+      }
+    }
+  },
+  "metadata_preparation_cost": {
+    "wall_seconds": 4.136960000003455,
+    "cpu_seconds": 3.265625
+  },
+  "synthetic_preflight_cost": {
+    "wall_seconds": 24.991561899980297,
+    "cpu_seconds": 13.359375
+  },
+  "postcheck_cost": {
+    "wall_seconds": 8.555131900007837,
+    "cpu_seconds": 7.09375
+  },
+  "new_pass_instances": 0,
+  "new_model_decodes": 0,
+  "new_metrics": 0,
+  "new_synthesis": 0,
+  "new_native_builds": 0,
+  "new_target_jobs": 0
+}
