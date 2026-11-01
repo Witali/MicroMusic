@@ -119,7 +119,28 @@ Pure contracts cover exact lex/gate acceptance, common ceil goals, repeated slot
 bounded deduplication and keeping every attempted tuple. Source contracts must
 prove old-wrapper byte/field/trial parity, owned snapshots, exact rollback output
 and active count, retained progress/budget, future-prefix parity and partial tails.
-Freeze a finite synthetic preflight/warm recipe with the final API before launch.
+The fixed synthetic recipe is three complete contexts, with both real policies:
+
+1. The published 640-sample P4 causal-cancellation fixture: one initially active
+   played extra at group 5, position 30, amplitude -8; the target changes only
+   that extra to position 0. Preserve the original spectra, parameters and base
+   pulses from the deterministic causal probe.
+2. A two-reset, 1280-sample concatenation: the same first input/target plus a
+   second unchanged copy of the original 640-sample input as its exact target.
+   Keep both resets and measure the complete recording across their boundary.
+3. The 201-sample prefix recipe with extra 5 still at position 30, now unplayed,
+   and a deterministic alternating +/-2 PCM target perturbation. It has zero
+   eligible groups and trials; preserve its complete stored packet and tail.
+
+Preflight is six synthetic arm records/eight pass-instance constructions. Each
+real arm worker warms the same three contexts/four instances. Thus the new study
+has twelve synthetic arm records/sixteen synthetic instances, separate from its
+twelve real instances; count 24 preflight, 24 warm and 16 real stage events even
+when exact-byte deduplication reuses a measured point. Natural gates remain
+unchanged; no forced outcome is injected into numerical preflight. Root's direct
+state/native rollback contracts and pure injected controller rejection/retention
+contracts cover rejection wiring if these synthetic real gates accept. Any prior
+study's synthetic costs remain prior evidence, not new calls in this campaign.
 
 Time constructor, step, snapshot, serialize, synthesis and rollback calls directly.
 Separately time full audits, durable I/O, cache hits and complete worker workflow.
