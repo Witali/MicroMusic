@@ -286,3 +286,174 @@ def improve_extras(spectra,profile,extras,max_bytes,*,render,objective,serialize
         if evaluations>=max_evaluations-1:status='fit_evaluation_limit';break
     return SwapAllocationResult(added,pcm,stream,True,status,size,cost['payload_bits'],capacity,
         removed,evaluations,score,trace,len(trace),candidates,confirmations,rejected,seed_admissible,quality_admissible)
+
+
+@dataclass
+class RatePoint:
+    """Owned, fully serialized/scored allocation; not a quality admission."""
+    id: int
+    extras: np.ndarray
+    pcm: np.ndarray
+    stream: bytes
+    cost: dict
+    score: int | float
+    labels: tuple
+
+    @property
+    def file_bytes(self):
+        return self.cost['file_bytes']
+
+    def copy(self):
+        return RatePoint(self.id,self.extras.copy(),self.pcm.copy(),bytes(self.stream),
+                         dict(self.cost),self.score,tuple(self.labels))
+
+
+@dataclass
+class RateFrontierResult:
+    """Bounded endpoint selection, plus independently retained measured anchors."""
+    unchanged: RatePoint | None
+    control: RatePoint | None
+    suffix_all_off: RatePoint | None
+    points: list
+    feasible: bool
+    status: str
+    anchors_complete: bool
+    evaluations: int
+    serialization_calls: int
+    objective_evaluations: int
+    removal_evaluations: int
+    cache_hits: int
+    removal_rounds: list
+    exhaustive_rounds: int
+    partial_rounds: int
+    rate_lambda: float
+
+
+class _FrontierEvaluationLimit(Exception):
+    pass
+
+
+def allocation_frontier(spectra,profile,extras,max_bytes,*,render,objective,serialize,
+                        start=0,stop,rate_lambda=0.0,max_evaluations=64,
+                        candidate_batch=16,removal_steps=4,max_points=3,
+                        checkpoint=None,on_candidate=None):
+    """Explore exact cross-rate removals without changing fixed fields or prefix.
+
+    Anchors are returned separately from up to three feasible endpoint roles:
+    minimum D+lambda*R, minimum D and minimum actual rate, in that priority when
+    max_points is smaller than three. R includes the complete serialized file.
+    No local quality gate is imposed. Every emitted point needs independent
+    native/model checks and whole-record admission in its caller.
+
+    The fitting amplitude control is evaluated first when it differs and fits;
+    otherwise unchanged is first. A one-evaluation limit may leave the other
+    anchor unmeasured (None, anchors_complete=False). Suffix-all-off is attempted
+    next, before walking at most removal_steps single-removal neighbourhoods.
+    Each neighbourhood tests at most candidate_batch choices in stable stored-
+    tail/absolute-amplitude/index order, freshly rendered after the last step.
+    A partial neighbourhood selects only its tested minimum, never an exact one.
+
+    checkpoint() runs before each atomic serialize/render/score evaluation.
+    Its exceptions propagate. on_candidate(owned_point) runs immediately after
+    every distinct completed evaluation, including oversized points, before any
+    next checkpoint. Callback mutations cannot alter the search or return values.
+    """
+    for name,value,low,high in (('max_bytes',max_bytes,22,65535),('stop',stop,1,64000),
+                               ('start',start,0,64000),('max_evaluations',max_evaluations,1,4096),
+                               ('candidate_batch',candidate_batch,1,4096),('removal_steps',removal_steps,0,32),
+                               ('max_points',max_points,1,3)):
+        if isinstance(value,bool) or not isinstance(value,Integral) or not low<=value<=high:
+            raise ValueError('Invalid '+name)
+    if start%40 or start>stop:raise ValueError('Invalid cached-prefix boundary')
+    distortion_rate(0,0,rate_lambda)
+    if (not all(callable(cb) for cb in (render,objective,serialize))
+            or checkpoint is not None and not callable(checkpoint)
+            or on_candidate is not None and not callable(on_candidate)):
+        raise ValueError('Expected render/objective/serialize and optional callbacks')
+    layout=bit_accounting(spectra,profile,extras)
+    if (stop+319)//320!=layout['frames']:raise ValueError('Actual stop differs from stored frame geometry')
+    vectors=np.asarray(spectra,np.int64).copy();original=np.asarray(extras,np.int64).copy()
+    control,_,_,_=fit_capacity(layout['spectrum_bits'],layout['frames'],profile,original,
+                               int(max_bytes),int(start),int(stop))
+    control_cost=bit_accounting(vectors,profile,control)
+    off=original.copy();off[start//40:]=(-1,0)
+    measured={};evaluations=serializations=objectives=removals=cache_hits=0
+    rounds=[];anchors={};off_point=None;status='bounded_complete';fixed_fields=None
+
+    def evaluate(added,label,removal=False):
+        nonlocal evaluations,serializations,objectives,removals,cache_hits,fixed_fields
+        if not np.array_equal(added[:start//40],original[:start//40]):
+            raise AssertionError('Allocation changed the cached prefix')
+        # Inactive positions are not serialized and do not create distinct states.
+        canonical=added.copy();canonical[canonical[:,1]==0]=(-1,0)
+        key=canonical.tobytes()
+        if key in measured:
+            cache_hits+=1;point=measured[key]
+            if label not in point.labels:point.labels+= (label,)
+            return point
+        if evaluations>=max_evaluations:raise _FrontierEvaluationLimit
+        if checkpoint is not None:checkpoint()
+        cost=bit_accounting(vectors,profile,added)
+        stream=_serialize(added,serialize,cost);serializations+=1
+        fields=compact.unpack(stream)
+        actual=np.asarray(fields[7],np.int64)
+        if (fields[0]!=stop or fields[1]!=profile or not np.array_equal(fields[2],vectors)
+                or not np.array_equal(actual,canonical)):
+            raise AssertionError('Serialized allocation changed requested spectra/extras/geometry')
+        if fixed_fields is not None and fields[:7]!=fixed_fields:
+            raise AssertionError('Serialized allocation changed fixed parameters/base pulses/filters')
+        fixed_fields=fields[:7]
+        pcm,score=_render_score(added,render,objective,layout['frames'],stop);objectives+=1
+        point=RatePoint(evaluations,added.copy(),pcm,stream,dict(cost),score,(label,))
+        measured[key]=point;evaluations+=1;removals+=int(removal)
+        if on_candidate is not None:on_candidate(point.copy())
+        return point
+
+    first=('control','unchanged') if control_cost['file_bytes']<=max_bytes and not np.array_equal(control,original) else ('unchanged','control')
+    try:
+        for name in first:
+            anchors[name]=evaluate(original if name=='unchanged' else control,name)
+        off_point=evaluate(off,'suffix-all-off')
+    except _FrontierEvaluationLimit:
+        status='evaluation_limit'
+    current=anchors.get('unchanged',anchors.get('control'))
+    if status!='evaluation_limit':
+        for step in range(removal_steps):
+            choices=[i for i in range(start//40,len(original)) if current.extras[i,1]]
+            choices.sort(key=lambda i:(0 if i*40+int(current.extras[i,0])>=stop else 1,
+                                       abs(int(current.extras[i,1])),i))
+            if not choices:break
+            batch=[];limited=False;before_evaluations=evaluations
+            for index in choices[:candidate_batch]:
+                trial=current.extras.copy();trial[index]=(-1,0)
+                try:point=evaluate(trial,'removal-%d-%d'%(step,index),True)
+                except _FrontierEvaluationLimit:limited=True;status='evaluation_limit';break
+                batch.append((point,index))
+            exhaustive=len(batch)==len(choices)
+            selected=min(batch,key=lambda pair:(distortion_rate(pair[0].score,pair[0].file_bytes,rate_lambda),
+                                                pair[0].file_bytes,pair[1])) if batch else None
+            rounds.append(dict(step=step,neighbourhood_size=len(choices),tested_candidates=len(batch),
+                new_evaluations=evaluations-before_evaluations,exhaustive=exhaustive,
+                partial_reason='evaluation_limit' if limited else 'candidate_batch' if not exhaustive else None,
+                parent_id=current.id,selected_id=None if selected is None else selected[0].id,
+                removed_chunk=None if selected is None else int(selected[1])))
+            if selected is not None:current=selected[0]
+            if limited:break
+    feasible=[point for point in measured.values() if point.file_bytes<=max_bytes]
+    selected=[];seen=set()
+    if feasible:
+        roles=(('minimum-rd',lambda p:(distortion_rate(p.score,p.file_bytes,rate_lambda),p.file_bytes,p.id)),
+               ('minimum-distortion',lambda p:(p.score,p.file_bytes,p.id)),
+               ('minimum-rate',lambda p:(p.file_bytes,p.score,p.id)))
+        for name,key in roles:
+            point=min(feasible,key=key)
+            if point.stream in seen:
+                next(saved for saved in selected if saved.stream==point.stream).labels+=(name,)
+                continue
+            if len(selected)>=max_points:break
+            selected.append(point.copy());selected[-1].labels+=(name,);seen.add(point.stream)
+    copy=lambda point:None if point is None else point.copy()
+    return RateFrontierResult(copy(anchors.get('unchanged')),copy(anchors.get('control')),copy(off_point),
+        selected,bool(feasible),status,len(anchors)==2,evaluations,serializations,objectives,
+        removals,cache_hits,rounds,sum(r['exhaustive'] for r in rounds),
+        sum(not r['exhaustive'] for r in rounds),float(rate_lambda))
