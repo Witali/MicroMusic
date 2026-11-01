@@ -1,0 +1,28 @@
+{
+  "schema": "lpx-repeat-current-execution-recipe-v1",
+  "source_commit": "70a7afb75c6c26e9328ca3910402ac30478aa91a",
+  "code": "reproduction/scan.py",
+  "actions_observed": [
+    "run",
+    "audit",
+    "publish"
+  ],
+  "all_observed_exit_codes": [
+    0,
+    0,
+    0
+  ],
+  "serialized_study_elapsed": {
+    "wall_seconds": 33.62431389998528,
+    "cpu_seconds": 31.828125
+  },
+  "python_version_observed": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "numeric_thread_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMBA_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1"
+  },
+  "scope": "Single corpus pass plus separately labelled read-only serialized replay/export; no native/target work"
+}

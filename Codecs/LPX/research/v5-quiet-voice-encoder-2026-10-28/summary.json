@@ -1,0 +1,673 @@
+{
+  "schema": "lpx-quiet-voice-corpus-public-summary-v1",
+  "status": "independently_audited",
+  "stage": "V1 bounded first stage/control; V2 targets remaining rasp and unified search.",
+  "original_sources": 49,
+  "original_profile_groups": 98,
+  "original_reset_segments": 118,
+  "original_unique_samples": 2632296,
+  "original_unique_seconds": 329.037,
+  "actual_mode_groups": 106,
+  "actual_fresh_encoder_fits": 386,
+  "recorded_encoder_fits": 386,
+  "reused_records": 0,
+  "worker_timing": [
+    {
+      "shard": 0,
+      "wall_seconds": 923.0212877000013,
+      "executed_mode_groups": 56,
+      "fresh_encoder_fits": 216
+    },
+    {
+      "shard": 1,
+      "wall_seconds": 720.4922680000018,
+      "executed_mode_groups": 50,
+      "fresh_encoder_fits": 170
+    }
+  ],
+  "timing_scope": "Worker wall after initial source/input startup guards; includes encoding, verification, metrics and per-record guards. Concurrent durations must not be added as elapsed time. No matched search-only CPU comparison was measured.",
+  "process_cpu_time_measured": false,
+  "preserve_original_level": {
+    "mode_groups": 98,
+    "distinct_original_sources": 49,
+    "split_groups": {
+      "tuning": 40,
+      "evaluation": 40,
+      "additional": 18
+    },
+    "cohort_groups": {
+      "speech": 40,
+      "regression": 40,
+      "independent": 8,
+      "phrases": 10
+    },
+    "targeted_mode_groups": 2,
+    "original_segments": 118,
+    "profile_group_samples": 5264592,
+    "completed_fresh_encoder_fits": 354,
+    "prior_incomplete_attempts": 0,
+    "all_attempts_completed_v4_native_fit_calls": 354,
+    "whole_chain_native_domain_comparisons": 1888,
+    "original_stream_bytes_total": 367028,
+    "matching_level_control_stream_bytes_total": 367028,
+    "control_pcm_voice": {
+      "reported_chain_groups": 98,
+      "source_period_unassessed_groups": 2,
+      "observed_source_but_no_paired_output_period_groups": 2,
+      "null_paired_cents_groups": 4,
+      "reference_period_frames": 8950,
+      "paired_period_frames": 6492,
+      "within_tolerance_frames": 6381,
+      "missing_decoded_period_frames": 2458,
+      "decoded_collapsed_active_frames": 25,
+      "profile_group_window_counts": true,
+      "status_counts": {
+        "pitch_mismatch_or_missing": 93,
+        "all_observed_periods_within_tolerance": 3,
+        "unassessed_no_reference_periodicity": 2
+      },
+      "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+    },
+    "control_pwm_voice": {
+      "reported_chain_groups": 98,
+      "source_period_unassessed_groups": 2,
+      "observed_source_but_no_paired_output_period_groups": 4,
+      "null_paired_cents_groups": 6,
+      "reference_period_frames": 8950,
+      "paired_period_frames": 5774,
+      "within_tolerance_frames": 5670,
+      "missing_decoded_period_frames": 3176,
+      "decoded_collapsed_active_frames": 2063,
+      "profile_group_window_counts": true,
+      "status_counts": {
+        "pitch_mismatch_or_missing": 93,
+        "all_observed_periods_within_tolerance": 3,
+        "unassessed_no_reference_periodicity": 2
+      },
+      "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+    },
+    "budgets": {
+      "100": {
+        "groups": 98,
+        "automatic_admissions": 98,
+        "finite_pool_byte_fit_groups": 98,
+        "tradeoff_only_groups": 0,
+        "no_byte_fit_groups": 0,
+        "selected_null_groups": 0,
+        "selected_changes_from_original_level_streams": 0,
+        "selected_changes_from_matching_level_control": 0,
+        "selected_stream_bytes_total": 367028,
+        "selected_role_counts": {
+          "control": 98
+        },
+        "selected_pcm_voice": {
+          "reported_chain_groups": 98,
+          "source_period_unassessed_groups": 2,
+          "observed_source_but_no_paired_output_period_groups": 2,
+          "null_paired_cents_groups": 4,
+          "reference_period_frames": 8950,
+          "paired_period_frames": 6492,
+          "within_tolerance_frames": 6381,
+          "missing_decoded_period_frames": 2458,
+          "decoded_collapsed_active_frames": 25,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 93,
+            "all_observed_periods_within_tolerance": 3,
+            "unassessed_no_reference_periodicity": 2
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        },
+        "selected_pwm_voice": {
+          "reported_chain_groups": 98,
+          "source_period_unassessed_groups": 2,
+          "observed_source_but_no_paired_output_period_groups": 4,
+          "null_paired_cents_groups": 6,
+          "reference_period_frames": 8950,
+          "paired_period_frames": 5774,
+          "within_tolerance_frames": 5670,
+          "missing_decoded_period_frames": 3176,
+          "decoded_collapsed_active_frames": 2063,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 93,
+            "all_observed_periods_within_tolerance": 3,
+            "unassessed_no_reference_periodicity": 2
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        }
+      },
+      "95": {
+        "groups": 98,
+        "automatic_admissions": 0,
+        "finite_pool_byte_fit_groups": 22,
+        "tradeoff_only_groups": 22,
+        "no_byte_fit_groups": 76,
+        "selected_null_groups": 98,
+        "selected_changes_from_original_level_streams": 0,
+        "selected_changes_from_matching_level_control": 0,
+        "selected_stream_bytes_total": 0,
+        "selected_role_counts": {
+          "null": 98
+        },
+        "selected_pcm_voice": {
+          "reported_chain_groups": 0,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 0,
+          "paired_period_frames": 0,
+          "within_tolerance_frames": 0,
+          "missing_decoded_period_frames": 0,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {},
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        },
+        "selected_pwm_voice": {
+          "reported_chain_groups": 0,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 0,
+          "paired_period_frames": 0,
+          "within_tolerance_frames": 0,
+          "missing_decoded_period_frames": 0,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {},
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        }
+      },
+      "90": {
+        "groups": 98,
+        "automatic_admissions": 0,
+        "finite_pool_byte_fit_groups": 6,
+        "tradeoff_only_groups": 6,
+        "no_byte_fit_groups": 92,
+        "selected_null_groups": 98,
+        "selected_changes_from_original_level_streams": 0,
+        "selected_changes_from_matching_level_control": 0,
+        "selected_stream_bytes_total": 0,
+        "selected_role_counts": {
+          "null": 98
+        },
+        "selected_pcm_voice": {
+          "reported_chain_groups": 0,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 0,
+          "paired_period_frames": 0,
+          "within_tolerance_frames": 0,
+          "missing_decoded_period_frames": 0,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {},
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        },
+        "selected_pwm_voice": {
+          "reported_chain_groups": 0,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 0,
+          "paired_period_frames": 0,
+          "within_tolerance_frames": 0,
+          "missing_decoded_period_frames": 0,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {},
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        }
+      }
+    },
+    "sse_aggregation": "Not reported across target levels; per-group metrics use their own matching declared target."
+  },
+  "auto_declared_target_level": {
+    "mode_groups": 8,
+    "distinct_original_sources": 4,
+    "split_groups": {
+      "tuning": 4,
+      "evaluation": 4
+    },
+    "cohort_groups": {
+      "speech": 4,
+      "regression": 4
+    },
+    "targeted_mode_groups": 2,
+    "original_segments": 8,
+    "profile_group_samples": 384000,
+    "completed_fresh_encoder_fits": 32,
+    "prior_incomplete_attempts": 0,
+    "all_attempts_completed_v4_native_fit_calls": 32,
+    "whole_chain_native_domain_comparisons": 128,
+    "original_stream_bytes_total": 25820,
+    "matching_level_control_stream_bytes_total": 25077,
+    "control_pcm_voice": {
+      "reported_chain_groups": 8,
+      "source_period_unassessed_groups": 0,
+      "observed_source_but_no_paired_output_period_groups": 0,
+      "null_paired_cents_groups": 0,
+      "reference_period_frames": 1342,
+      "paired_period_frames": 1110,
+      "within_tolerance_frames": 1105,
+      "missing_decoded_period_frames": 232,
+      "decoded_collapsed_active_frames": 0,
+      "profile_group_window_counts": true,
+      "status_counts": {
+        "pitch_mismatch_or_missing": 8
+      },
+      "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+    },
+    "control_pwm_voice": {
+      "reported_chain_groups": 8,
+      "source_period_unassessed_groups": 0,
+      "observed_source_but_no_paired_output_period_groups": 0,
+      "null_paired_cents_groups": 0,
+      "reference_period_frames": 1342,
+      "paired_period_frames": 1079,
+      "within_tolerance_frames": 1073,
+      "missing_decoded_period_frames": 263,
+      "decoded_collapsed_active_frames": 73,
+      "profile_group_window_counts": true,
+      "status_counts": {
+        "pitch_mismatch_or_missing": 8
+      },
+      "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+    },
+    "budgets": {
+      "100": {
+        "groups": 8,
+        "automatic_admissions": 8,
+        "finite_pool_byte_fit_groups": 8,
+        "tradeoff_only_groups": 0,
+        "no_byte_fit_groups": 0,
+        "selected_null_groups": 0,
+        "selected_changes_from_original_level_streams": 8,
+        "selected_changes_from_matching_level_control": 1,
+        "selected_stream_bytes_total": 25081,
+        "selected_role_counts": {
+          "control": 7,
+          "concat-selected": 1
+        },
+        "selected_pcm_voice": {
+          "reported_chain_groups": 8,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 1342,
+          "paired_period_frames": 1113,
+          "within_tolerance_frames": 1108,
+          "missing_decoded_period_frames": 229,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 8
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        },
+        "selected_pwm_voice": {
+          "reported_chain_groups": 8,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 1342,
+          "paired_period_frames": 1081,
+          "within_tolerance_frames": 1076,
+          "missing_decoded_period_frames": 261,
+          "decoded_collapsed_active_frames": 73,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 8
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        }
+      },
+      "95": {
+        "groups": 8,
+        "automatic_admissions": 4,
+        "finite_pool_byte_fit_groups": 4,
+        "tradeoff_only_groups": 0,
+        "no_byte_fit_groups": 4,
+        "selected_null_groups": 4,
+        "selected_changes_from_original_level_streams": 4,
+        "selected_changes_from_matching_level_control": 1,
+        "selected_stream_bytes_total": 10087,
+        "selected_role_counts": {
+          "control": 3,
+          "null": 4,
+          "concat-selected": 1
+        },
+        "selected_pcm_voice": {
+          "reported_chain_groups": 4,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 671,
+          "paired_period_frames": 498,
+          "within_tolerance_frames": 493,
+          "missing_decoded_period_frames": 173,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 4
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        },
+        "selected_pwm_voice": {
+          "reported_chain_groups": 4,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 671,
+          "paired_period_frames": 479,
+          "within_tolerance_frames": 475,
+          "missing_decoded_period_frames": 192,
+          "decoded_collapsed_active_frames": 43,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 4
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        }
+      },
+      "90": {
+        "groups": 8,
+        "automatic_admissions": 0,
+        "finite_pool_byte_fit_groups": 0,
+        "tradeoff_only_groups": 0,
+        "no_byte_fit_groups": 8,
+        "selected_null_groups": 8,
+        "selected_changes_from_original_level_streams": 0,
+        "selected_changes_from_matching_level_control": 0,
+        "selected_stream_bytes_total": 0,
+        "selected_role_counts": {
+          "null": 8
+        },
+        "selected_pcm_voice": {
+          "reported_chain_groups": 0,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 0,
+          "paired_period_frames": 0,
+          "within_tolerance_frames": 0,
+          "missing_decoded_period_frames": 0,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {},
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        },
+        "selected_pwm_voice": {
+          "reported_chain_groups": 0,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 0,
+          "paired_period_frames": 0,
+          "within_tolerance_frames": 0,
+          "missing_decoded_period_frames": 0,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {},
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        }
+      }
+    },
+    "sse_aggregation": "Not reported across target levels; per-group metrics use their own matching declared target."
+  },
+  "active_policy": {
+    "mode_groups": 98,
+    "distinct_original_sources": 49,
+    "split_groups": {
+      "tuning": 40,
+      "evaluation": 40,
+      "additional": 18
+    },
+    "cohort_groups": {
+      "speech": 40,
+      "regression": 40,
+      "independent": 8,
+      "phrases": 10
+    },
+    "targeted_mode_groups": 2,
+    "original_segments": 118,
+    "profile_group_samples": 5264592,
+    "completed_fresh_encoder_fits": 362,
+    "prior_incomplete_attempts": 0,
+    "all_attempts_completed_v4_native_fit_calls": 362,
+    "whole_chain_native_domain_comparisons": 1888,
+    "original_stream_bytes_total": 367028,
+    "matching_level_control_stream_bytes_total": 366285,
+    "control_pcm_voice": {
+      "reported_chain_groups": 98,
+      "source_period_unassessed_groups": 2,
+      "observed_source_but_no_paired_output_period_groups": 0,
+      "null_paired_cents_groups": 2,
+      "reference_period_frames": 8950,
+      "paired_period_frames": 7081,
+      "within_tolerance_frames": 6967,
+      "missing_decoded_period_frames": 1869,
+      "decoded_collapsed_active_frames": 4,
+      "profile_group_window_counts": true,
+      "status_counts": {
+        "pitch_mismatch_or_missing": 93,
+        "all_observed_periods_within_tolerance": 3,
+        "unassessed_no_reference_periodicity": 2
+      },
+      "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+    },
+    "control_pwm_voice": {
+      "reported_chain_groups": 98,
+      "source_period_unassessed_groups": 2,
+      "observed_source_but_no_paired_output_period_groups": 0,
+      "null_paired_cents_groups": 2,
+      "reference_period_frames": 8950,
+      "paired_period_frames": 6736,
+      "within_tolerance_frames": 6628,
+      "missing_decoded_period_frames": 2214,
+      "decoded_collapsed_active_frames": 1297,
+      "profile_group_window_counts": true,
+      "status_counts": {
+        "pitch_mismatch_or_missing": 93,
+        "all_observed_periods_within_tolerance": 3,
+        "unassessed_no_reference_periodicity": 2
+      },
+      "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+    },
+    "budgets": {
+      "100": {
+        "groups": 98,
+        "automatic_admissions": 98,
+        "finite_pool_byte_fit_groups": 98,
+        "tradeoff_only_groups": 0,
+        "no_byte_fit_groups": 0,
+        "selected_null_groups": 0,
+        "selected_changes_from_original_level_streams": 8,
+        "selected_changes_from_matching_level_control": 1,
+        "selected_stream_bytes_total": 366289,
+        "selected_role_counts": {
+          "control": 97,
+          "concat-selected": 1
+        },
+        "selected_pcm_voice": {
+          "reported_chain_groups": 98,
+          "source_period_unassessed_groups": 2,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 2,
+          "reference_period_frames": 8950,
+          "paired_period_frames": 7084,
+          "within_tolerance_frames": 6970,
+          "missing_decoded_period_frames": 1866,
+          "decoded_collapsed_active_frames": 4,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 93,
+            "all_observed_periods_within_tolerance": 3,
+            "unassessed_no_reference_periodicity": 2
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        },
+        "selected_pwm_voice": {
+          "reported_chain_groups": 98,
+          "source_period_unassessed_groups": 2,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 2,
+          "reference_period_frames": 8950,
+          "paired_period_frames": 6738,
+          "within_tolerance_frames": 6631,
+          "missing_decoded_period_frames": 2212,
+          "decoded_collapsed_active_frames": 1297,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 93,
+            "all_observed_periods_within_tolerance": 3,
+            "unassessed_no_reference_periodicity": 2
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        }
+      },
+      "95": {
+        "groups": 98,
+        "automatic_admissions": 4,
+        "finite_pool_byte_fit_groups": 22,
+        "tradeoff_only_groups": 18,
+        "no_byte_fit_groups": 76,
+        "selected_null_groups": 94,
+        "selected_changes_from_original_level_streams": 4,
+        "selected_changes_from_matching_level_control": 1,
+        "selected_stream_bytes_total": 10087,
+        "selected_role_counts": {
+          "null": 94,
+          "control": 3,
+          "concat-selected": 1
+        },
+        "selected_pcm_voice": {
+          "reported_chain_groups": 4,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 671,
+          "paired_period_frames": 498,
+          "within_tolerance_frames": 493,
+          "missing_decoded_period_frames": 173,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 4
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        },
+        "selected_pwm_voice": {
+          "reported_chain_groups": 4,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 671,
+          "paired_period_frames": 479,
+          "within_tolerance_frames": 475,
+          "missing_decoded_period_frames": 192,
+          "decoded_collapsed_active_frames": 43,
+          "profile_group_window_counts": true,
+          "status_counts": {
+            "pitch_mismatch_or_missing": 4
+          },
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        }
+      },
+      "90": {
+        "groups": 98,
+        "automatic_admissions": 0,
+        "finite_pool_byte_fit_groups": 6,
+        "tradeoff_only_groups": 6,
+        "no_byte_fit_groups": 92,
+        "selected_null_groups": 98,
+        "selected_changes_from_original_level_streams": 0,
+        "selected_changes_from_matching_level_control": 0,
+        "selected_stream_bytes_total": 0,
+        "selected_role_counts": {
+          "null": 98
+        },
+        "selected_pcm_voice": {
+          "reported_chain_groups": 0,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 0,
+          "paired_period_frames": 0,
+          "within_tolerance_frames": 0,
+          "missing_decoded_period_frames": 0,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {},
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        },
+        "selected_pwm_voice": {
+          "reported_chain_groups": 0,
+          "source_period_unassessed_groups": 0,
+          "observed_source_but_no_paired_output_period_groups": 0,
+          "null_paired_cents_groups": 0,
+          "reference_period_frames": 0,
+          "paired_period_frames": 0,
+          "within_tolerance_frames": 0,
+          "missing_decoded_period_frames": 0,
+          "decoded_collapsed_active_frames": 0,
+          "profile_group_window_counts": true,
+          "status_counts": {},
+          "scope": "Overlapping diagnostic windows, not independent samples or validated true F0; unassessed is not success."
+        }
+      }
+    },
+    "sse_aggregation": "Not reported across target levels; per-group metrics use their own matching declared target."
+  },
+  "active_policy_composition": {
+    "preserve_groups": 90,
+    "auto_groups": 8,
+    "distinct_original_sources": 49,
+    "gain_one_auto_groups_reused_from_preserve": 90,
+    "extra_fits_for_reuse": 0
+  },
+  "interpretation": [
+    "100% preserve rollback does not prove voice preservation.",
+    "Auto metrics compare each amplified target with its fresh same-target legacy control.",
+    "Do not aggregate SSE across original and amplified levels as a quality gain.",
+    "Targeted source has two profiles; it is not independent held-out evidence.",
+    "Missing reference pitch stays unassessed; missing decoded pitch is not a success.",
+    "Finite-pool100/95/90 selection adds no cap-specific fitting or encoding-impossibility proof.",
+    "Stream-byte totals sum benchmark alternatives, not one affordable firmware image."
+  ],
+  "active_policy_scope": "Derived selection of90 existing preserve rows plus8 existing declared-target auto rows; no extra fits or independent rerun. The row-carried362 fits are part of the386 actual study fits.",
+  "independent_audit_status": "passed",
+  "independent_audit": {
+    "status": "passed",
+    "groups": 106,
+    "fits": 386,
+    "counts": {
+      "preserve_fits": 354,
+      "unique_native_model_streams": 499,
+      "native_output_domain_comparisons": 1996,
+      "unique_model_samples": 22370368,
+      "captured_stream_files": 499,
+      "unique_full_metric_voice_pairs": 511,
+      "preserve_whole_chain_entries": 294,
+      "preserve_groups": 98,
+      "auto-quiet_fits": 32,
+      "auto-quiet_whole_chain_entries": 24,
+      "auto-quiet_groups": 8
+    },
+    "unassessed_diagnostic_contexts": {
+      "preserve_stoi_unassessed_domains": 0,
+      "preserve_pcm_pitch_unassessed_chains": 6,
+      "preserve_pwm_pitch_unassessed_chains": 6,
+      "auto-quiet_stoi_unassessed_domains": 0,
+      "auto-quiet_pcm_pitch_unassessed_chains": 0,
+      "auto-quiet_pwm_pitch_unassessed_chains": 0
+    },
+    "seconds": 216.2001358999987,
+    "source_commit": "5b4800f7",
+    "corpus_auditor_source_sha256": "ff7eb92d14451c904dcaebff0c9a3a2334925c1cf68c5c805f12881d2a0bbe4c",
+    "context_auditor_source_sha256": "40c0d73fbcebb173306c5a31750c080b29e40401350e68b6e0e0d59c160e854b",
+    "scope": "Separate fresh saved-output audit; no fitter aggregation/selection helpers called. Rechecks existing signals, not extra fitting."
+  }
+}

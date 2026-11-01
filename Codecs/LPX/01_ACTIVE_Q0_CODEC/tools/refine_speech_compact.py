@@ -65,9 +65,9 @@ def errors(reference, signal, pre, bright):
     return pcm_sse,pwm_sse
 
 
-def quality(reference, pcm):
-    result={'pcm16':error_metrics(reference,pcm,True),
-            'pwm8':error_metrics(reference,pwm_pcm16(pcm),True)}
+def quality(reference, pcm, speech=True):
+    result={'pcm16':error_metrics(reference,pcm,speech),
+            'pwm8':error_metrics(reference,pwm_pcm16(pcm),speech)}
     for value in result.values():
         if value['stoi'] is not None and not np.isfinite(value['stoi']):
             value['stoi']=None
@@ -82,7 +82,7 @@ def no_regression(candidate, baseline):
     return True
 
 
-def refine(reference, blob, decoder, *, trial_limit=256, metric_limit=16):
+def refine(reference, blob, decoder, *, trial_limit=256, metric_limit=16, speech=True):
     """Return (same-size v5 stream, exact PCM16, anonymous numerical report).
 
     Multi-scale coordinate/diagonal descent proposes at most trial_limit valid
@@ -107,7 +107,7 @@ def refine(reference, blob, decoder, *, trial_limit=256, metric_limit=16):
     native=decoder.decode_one_s16(blob,n)
     if native is None or not np.array_equal(native,pcm) or not np.array_equal(pcm,compact.decode_model(blob)):
         raise AssertionError('Cached LPC/filter baseline differs from native/model')
-    before=quality(ref,pcm);reference64=ref.astype(np.int64);cache={}
+    before=quality(ref,pcm,speech);reference64=ref.astype(np.int64);cache={}
     def score(pair):
         if pair in cache:return cache[pair]
         if len(cache)>=trial_limit or not 0<=pair[0]<=16384 or not 0<=pair[1]<=11469:return None
@@ -135,7 +135,7 @@ def refine(reference, blob, decoder, *, trial_limit=256, metric_limit=16):
     short=list(dict.fromkeys(([ranked[0]] if ranked else [])+quantiles))[:metric_limit]
     selected=initial;after=before;checks=[]
     for pair in short:
-        actual=filter_signal(signal,*pair);measured=quality(ref,actual)
+        actual=filter_signal(signal,*pair);measured=quality(ref,actual,speech)
         assert int(measured['pcm16']['error_energy'])==cache[pair][0]
         assert int(measured['pwm8']['error_energy'])==cache[pair][1]
         allowed=no_regression(measured,before)

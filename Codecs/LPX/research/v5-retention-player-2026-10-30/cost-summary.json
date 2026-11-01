@@ -1,0 +1,198 @@
+{
+  "schema": "lpx-v5-retention-player-cost-projection-v1",
+  "canonical_selector_commit": "976c50c8a341d86eeac7600f51057e575ee87a0a",
+  "complete_replay_records": 118,
+  "cap_views": 354,
+  "new_selection_cap_views": 7,
+  "selected": {
+    "unique_chains": 4,
+    "rows": 8,
+    "passed": 6,
+    "new_images": 6,
+    "strict_reuses": 0,
+    "statuses": {
+      "passed": 6,
+      "no-fit-data-alone": 2
+    }
+  },
+  "rollback": {
+    "unique_chains": 4,
+    "rows": 8,
+    "passed": 6,
+    "new_images": 0,
+    "strict_reuses": 6,
+    "statuses": {
+      "passed": 6,
+      "no-fit-data-alone": 2
+    }
+  },
+  "role_overlap_chains": 0,
+  "comparison_distribution_by_irq": {
+    "0": {
+      "views": 4,
+      "both_passed": 3,
+      "not_both_admitted": 1,
+      "full_flash_smaller": 0,
+      "same_full_flash": 1,
+      "full_flash_larger": 2,
+      "full_flash_growth_bytes": [
+        0,
+        2,
+        4
+      ],
+      "program_flash_growth_bytes": [
+        -1,
+        0,
+        0
+      ]
+    },
+    "100": {
+      "views": 4,
+      "both_passed": 3,
+      "not_both_admitted": 1,
+      "full_flash_smaller": 0,
+      "same_full_flash": 1,
+      "full_flash_larger": 2,
+      "full_flash_growth_bytes": [
+        0,
+        2,
+        4
+      ],
+      "program_flash_growth_bytes": [
+        -1,
+        0,
+        0
+      ]
+    }
+  },
+  "phase_cap_view_distribution": [
+    {
+      "phase": "nonspeech-default",
+      "percent": 100,
+      "extra_irq_cycles": 0,
+      "views": 1,
+      "both_passed": 0,
+      "not_both_admitted": 1,
+      "full_flash_smaller": 0,
+      "same_full_flash": 0,
+      "full_flash_larger": 0,
+      "full_flash_growth_bytes": [],
+      "program_flash_growth_bytes": []
+    },
+    {
+      "phase": "nonspeech-default",
+      "percent": 100,
+      "extra_irq_cycles": 100,
+      "views": 1,
+      "both_passed": 0,
+      "not_both_admitted": 1,
+      "full_flash_smaller": 0,
+      "same_full_flash": 0,
+      "full_flash_larger": 0,
+      "full_flash_growth_bytes": [],
+      "program_flash_growth_bytes": []
+    },
+    {
+      "phase": "speech-default",
+      "percent": 95,
+      "extra_irq_cycles": 0,
+      "views": 3,
+      "both_passed": 3,
+      "not_both_admitted": 0,
+      "full_flash_smaller": 0,
+      "same_full_flash": 1,
+      "full_flash_larger": 2,
+      "full_flash_growth_bytes": [
+        0,
+        2,
+        4
+      ],
+      "program_flash_growth_bytes": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "phase": "speech-default",
+      "percent": 95,
+      "extra_irq_cycles": 100,
+      "views": 3,
+      "both_passed": 3,
+      "not_both_admitted": 0,
+      "full_flash_smaller": 0,
+      "same_full_flash": 1,
+      "full_flash_larger": 2,
+      "full_flash_growth_bytes": [
+        0,
+        2,
+        4
+      ],
+      "program_flash_growth_bytes": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "phase": "speech-screen",
+      "percent": 95,
+      "extra_irq_cycles": 0,
+      "views": 3,
+      "both_passed": 3,
+      "not_both_admitted": 0,
+      "full_flash_smaller": 0,
+      "same_full_flash": 1,
+      "full_flash_larger": 2,
+      "full_flash_growth_bytes": [
+        0,
+        2,
+        4
+      ],
+      "program_flash_growth_bytes": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "phase": "speech-screen",
+      "percent": 95,
+      "extra_irq_cycles": 100,
+      "views": 3,
+      "both_passed": 3,
+      "not_both_admitted": 0,
+      "full_flash_smaller": 0,
+      "same_full_flash": 1,
+      "full_flash_larger": 2,
+      "full_flash_growth_bytes": [
+        0,
+        2,
+        4
+      ],
+      "program_flash_growth_bytes": [
+        -1,
+        0,
+        0
+      ]
+    }
+  ],
+  "largest_admitted_image": {
+    "chain": "chain-002",
+    "profile": 4,
+    "samples": 64000,
+    "segments": 1,
+    "stream_bytes": 3365,
+    "extra_irq_cycles": 100,
+    "flash_bytes": 7946,
+    "program_flash_bytes": 4581
+  },
+  "minimum_static_sram_bytes": 756,
+  "maximum_static_sram_bytes": 756,
+  "minimum_observed_stack_margin_bytes": 1231,
+  "verified_physical_samples": 640000,
+  "new_fits": 0,
+  "new_builds_or_simulations_during_export": 0,
+  "perceptual_adoption": false,
+  "scope": "Actual full Flash versus exact declared-level rollback; views overlap. Data-cap selection is distinct from hardware admission. No quality metrics or subjective adoption measured here."
+}

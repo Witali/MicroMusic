@@ -1,0 +1,34 @@
+{
+  "status": "complete",
+  "refine_function_ast_unchanged": true,
+  "quality_source_unchanged": true,
+  "rows": [
+    {
+      "preset": "default",
+      "exact_frozen_output": true,
+      "file_bytes": 3547,
+      "settings": {
+        "frame_limit": 32,
+        "spectral_candidates": 2,
+        "lookahead": 640,
+        "excitation_horizon": 80,
+        "passes": 1
+      }
+    },
+    {
+      "preset": "expanded",
+      "exact_frozen_output": true,
+      "file_bytes": 3547,
+      "settings": {
+        "frame_limit": 64,
+        "spectral_candidates": 4,
+        "lookahead": 1280,
+        "excitation_horizon": 160,
+        "passes": 2
+      }
+    }
+  ],
+  "explicit_override_exact": true,
+  "refine_module_sha256": "4b5e2f7d840b731331340809185499ecdacd198ed8d10a00242a356eb86bd9f3",
+  "scope": "One tuning profile4 reference; both CLI presets exactly reproduce frozen earlier controls. Explicit flags override the selected recipe. No new audibility claim."
+}

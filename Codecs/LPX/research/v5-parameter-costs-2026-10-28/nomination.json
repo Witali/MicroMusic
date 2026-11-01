@@ -1,0 +1,920 @@
+{
+  "minimal_repeat": {
+    "method": {
+      "selector": 1,
+      "name": "repeat-mask1",
+      "kind": "repeat",
+      "mask": 1,
+      "k": null
+    },
+    "worst_source_saved_fraction": 0.008488644080585528,
+    "tuning_sources": {
+      "baseline-v2": {
+        "records": 40,
+        "original_total_bytes": 132533,
+        "proposed_total_bytes": 131397,
+        "saved_total_bytes": 1136,
+        "saved_fraction": 0.008571450129401734,
+        "saved_bytes_min_median_max": [
+          5,
+          23.0,
+          117
+        ],
+        "positive_zero_negative_records": [
+          40,
+          0,
+          0
+        ],
+        "fallback_data_only_total_upper_bound_bytes": 1136,
+        "all_segment_sizes_within_rom_api": true,
+        "field_absolute_escape_counts": {
+          "scale": 0,
+          "lag": 0,
+          "gain_code": 0
+        }
+      },
+      "expanded100": {
+        "records": 40,
+        "original_total_bytes": 132530,
+        "proposed_total_bytes": 131405,
+        "saved_total_bytes": 1125,
+        "saved_fraction": 0.008488644080585528,
+        "saved_bytes_min_median_max": [
+          5,
+          22.0,
+          117
+        ],
+        "positive_zero_negative_records": [
+          40,
+          0,
+          0
+        ],
+        "fallback_data_only_total_upper_bound_bytes": 1125,
+        "all_segment_sizes_within_rom_api": true,
+        "field_absolute_escape_counts": {
+          "scale": 0,
+          "lag": 0,
+          "gain_code": 0
+        }
+      }
+    }
+  },
+  "higher_complexity_rice": {
+    "method": {
+      "selector": 9,
+      "name": "rice-mask5-k1",
+      "kind": "rice",
+      "mask": 5,
+      "k": 1
+    },
+    "worst_source_saved_fraction": 0.018048335131627593,
+    "tuning_sources": {
+      "baseline-v2": {
+        "records": 40,
+        "original_total_bytes": 132533,
+        "proposed_total_bytes": 130141,
+        "saved_total_bytes": 2392,
+        "saved_fraction": 0.018048335131627593,
+        "saved_bytes_min_median_max": [
+          25,
+          56.5,
+          171
+        ],
+        "positive_zero_negative_records": [
+          40,
+          0,
+          0
+        ],
+        "fallback_data_only_total_upper_bound_bytes": 2392,
+        "all_segment_sizes_within_rom_api": true,
+        "field_absolute_escape_counts": {
+          "scale": 34,
+          "lag": 0,
+          "gain_code": 0
+        }
+      },
+      "expanded100": {
+        "records": 40,
+        "original_total_bytes": 132530,
+        "proposed_total_bytes": 130112,
+        "saved_total_bytes": 2418,
+        "saved_fraction": 0.018244925677205162,
+        "saved_bytes_min_median_max": [
+          25,
+          57.0,
+          171
+        ],
+        "positive_zero_negative_records": [
+          40,
+          0,
+          0
+        ],
+        "fallback_data_only_total_upper_bound_bytes": 2418,
+        "all_segment_sizes_within_rom_api": true,
+        "field_absolute_escape_counts": {
+          "scale": 35,
+          "lag": 0,
+          "gain_code": 0
+        }
+      }
+    }
+  },
+  "chosen_from_tuning_only": true,
+  "frozen_before_heldout_costs": true,
+  "rule": "tuning baseline and expanded100 only; positive aggregate savings in both, minimum repeat field count then best worst-source fractional saving; best Rice is separate higher-complexity point",
+  "tuning_candidates": [
+    {
+      "method": {
+        "selector": 1,
+        "name": "repeat-mask1",
+        "kind": "repeat",
+        "mask": 1,
+        "k": null
+      },
+      "eligible": true,
+      "worst_source_saved_fraction": 0.008488644080585528,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 131397,
+          "saved_total_bytes": 1136,
+          "saved_fraction": 0.008571450129401734,
+          "saved_bytes_min_median_max": [
+            5,
+            23.0,
+            117
+          ],
+          "positive_zero_negative_records": [
+            40,
+            0,
+            0
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1136,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 131405,
+          "saved_total_bytes": 1125,
+          "saved_fraction": 0.008488644080585528,
+          "saved_bytes_min_median_max": [
+            5,
+            22.0,
+            117
+          ],
+          "positive_zero_negative_records": [
+            40,
+            0,
+            0
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1125,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 2,
+        "name": "repeat-mask2",
+        "kind": "repeat",
+        "mask": 2,
+        "k": null
+      },
+      "eligible": false,
+      "worst_source_saved_fraction": -0.002935184486531351,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 132902,
+          "saved_total_bytes": -369,
+          "saved_fraction": -0.00278421223393419,
+          "saved_bytes_min_median_max": [
+            -39,
+            -8.0,
+            8
+          ],
+          "positive_zero_negative_records": [
+            8,
+            3,
+            29
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 35,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 132919,
+          "saved_total_bytes": -389,
+          "saved_fraction": -0.002935184486531351,
+          "saved_bytes_min_median_max": [
+            -39,
+            -8.0,
+            8
+          ],
+          "positive_zero_negative_records": [
+            8,
+            3,
+            29
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 31,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 3,
+        "name": "repeat-mask3",
+        "kind": "repeat",
+        "mask": 3,
+        "k": null
+      },
+      "eligible": true,
+      "worst_source_saved_fraction": 0.005885459895872633,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 131726,
+          "saved_total_bytes": 807,
+          "saved_fraction": 0.006089049519742253,
+          "saved_bytes_min_median_max": [
+            -7,
+            11.5,
+            119
+          ],
+          "positive_zero_negative_records": [
+            34,
+            2,
+            4
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 825,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 131750,
+          "saved_total_bytes": 780,
+          "saved_fraction": 0.005885459895872633,
+          "saved_bytes_min_median_max": [
+            -9,
+            11.0,
+            119
+          ],
+          "positive_zero_negative_records": [
+            34,
+            2,
+            4
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 800,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 4,
+        "name": "repeat-mask4",
+        "kind": "repeat",
+        "mask": 4,
+        "k": null
+      },
+      "eligible": true,
+      "worst_source_saved_fraction": 0.001924092658266053,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 132256,
+          "saved_total_bytes": 277,
+          "saved_fraction": 0.0020900454981023593,
+          "saved_bytes_min_median_max": [
+            -18,
+            0.5,
+            86
+          ],
+          "positive_zero_negative_records": [
+            20,
+            2,
+            18
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 395,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 132275,
+          "saved_total_bytes": 255,
+          "saved_fraction": 0.001924092658266053,
+          "saved_bytes_min_median_max": [
+            -19,
+            0.5,
+            86
+          ],
+          "positive_zero_negative_records": [
+            20,
+            1,
+            19
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 385,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 5,
+        "name": "repeat-mask5",
+        "kind": "repeat",
+        "mask": 5,
+        "k": null
+      },
+      "eligible": true,
+      "worst_source_saved_fraction": 0.010744737040670038,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 131076,
+          "saved_total_bytes": 1457,
+          "saved_fraction": 0.010993488414206273,
+          "saved_bytes_min_median_max": [
+            3,
+            25.5,
+            203
+          ],
+          "positive_zero_negative_records": [
+            40,
+            0,
+            0
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1457,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 131106,
+          "saved_total_bytes": 1424,
+          "saved_fraction": 0.010744737040670038,
+          "saved_bytes_min_median_max": [
+            1,
+            25.0,
+            203
+          ],
+          "positive_zero_negative_records": [
+            40,
+            0,
+            0
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1424,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 6,
+        "name": "repeat-mask6",
+        "kind": "repeat",
+        "mask": 6,
+        "k": null
+      },
+      "eligible": false,
+      "worst_source_saved_fraction": -0.0006564551422319475,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 132578,
+          "saved_total_bytes": -45,
+          "saved_fraction": -0.0003395380773090476,
+          "saved_bytes_min_median_max": [
+            -55,
+            -3.0,
+            86
+          ],
+          "positive_zero_negative_records": [
+            16,
+            1,
+            23
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 404,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 132617,
+          "saved_total_bytes": -87,
+          "saved_fraction": -0.0006564551422319475,
+          "saved_bytes_min_median_max": [
+            -54,
+            -7.0,
+            86
+          ],
+          "positive_zero_negative_records": [
+            17,
+            0,
+            23
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 395,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 7,
+        "name": "repeat-mask7",
+        "kind": "repeat",
+        "mask": 7,
+        "k": null
+      },
+      "eligible": true,
+      "worst_source_saved_fraction": 0.008156643778767072,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 131400,
+          "saved_total_bytes": 1133,
+          "saved_fraction": 0.00854881425758113,
+          "saved_bytes_min_median_max": [
+            -18,
+            15.5,
+            205
+          ],
+          "positive_zero_negative_records": [
+            31,
+            0,
+            9
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1203,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 131449,
+          "saved_total_bytes": 1081,
+          "saved_fraction": 0.008156643778767072,
+          "saved_bytes_min_median_max": [
+            -20,
+            14.0,
+            205
+          ],
+          "positive_zero_negative_records": [
+            31,
+            1,
+            8
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1158,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 8,
+        "name": "rice-mask5-k0",
+        "kind": "rice",
+        "mask": 5,
+        "k": 0
+      },
+      "eligible": true,
+      "worst_source_saved_fraction": 0.007567926478688327,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 131530,
+          "saved_total_bytes": 1003,
+          "saved_fraction": 0.007567926478688327,
+          "saved_bytes_min_median_max": [
+            -27,
+            11.0,
+            226
+          ],
+          "positive_zero_negative_records": [
+            30,
+            0,
+            10
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1121,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 385,
+            "lag": 0,
+            "gain_code": 2504
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 131505,
+          "saved_total_bytes": 1025,
+          "saved_fraction": 0.007734097940089037,
+          "saved_bytes_min_median_max": [
+            -26,
+            11.5,
+            226
+          ],
+          "positive_zero_negative_records": [
+            30,
+            1,
+            9
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1138,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 390,
+            "lag": 0,
+            "gain_code": 2457
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 9,
+        "name": "rice-mask5-k1",
+        "kind": "rice",
+        "mask": 5,
+        "k": 1
+      },
+      "eligible": true,
+      "worst_source_saved_fraction": 0.018048335131627593,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 130141,
+          "saved_total_bytes": 2392,
+          "saved_fraction": 0.018048335131627593,
+          "saved_bytes_min_median_max": [
+            25,
+            56.5,
+            171
+          ],
+          "positive_zero_negative_records": [
+            40,
+            0,
+            0
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 2392,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 34,
+            "lag": 0,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 130112,
+          "saved_total_bytes": 2418,
+          "saved_fraction": 0.018244925677205162,
+          "saved_bytes_min_median_max": [
+            25,
+            57.0,
+            171
+          ],
+          "positive_zero_negative_records": [
+            40,
+            0,
+            0
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 2418,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 35,
+            "lag": 0,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 10,
+        "name": "rice-mask5-k2",
+        "kind": "rice",
+        "mask": 5,
+        "k": 2
+      },
+      "eligible": true,
+      "worst_source_saved_fraction": 0.012223370783125713,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 130913,
+          "saved_total_bytes": 1620,
+          "saved_fraction": 0.012223370783125713,
+          "saved_bytes_min_median_max": [
+            20,
+            44.5,
+            89
+          ],
+          "positive_zero_negative_records": [
+            40,
+            0,
+            0
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1620,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 130895,
+          "saved_total_bytes": 1635,
+          "saved_fraction": 0.012336829397117634,
+          "saved_bytes_min_median_max": [
+            20,
+            44.5,
+            89
+          ],
+          "positive_zero_negative_records": [
+            40,
+            0,
+            0
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 1635,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 0,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 11,
+        "name": "rice-mask7-k0",
+        "kind": "rice",
+        "mask": 7,
+        "k": 0
+      },
+      "eligible": false,
+      "worst_source_saved_fraction": -0.03332000331992787,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 136949,
+          "saved_total_bytes": -4416,
+          "saved_fraction": -0.03332000331992787,
+          "saved_bytes_min_median_max": [
+            -275,
+            -113.0,
+            90
+          ],
+          "positive_zero_negative_records": [
+            4,
+            0,
+            36
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 318,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 385,
+            "lag": 7562,
+            "gain_code": 2504
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 136931,
+          "saved_total_bytes": -4401,
+          "saved_fraction": -0.03320757564325059,
+          "saved_bytes_min_median_max": [
+            -275,
+            -111.5,
+            89
+          ],
+          "positive_zero_negative_records": [
+            4,
+            0,
+            36
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 317,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 390,
+            "lag": 7565,
+            "gain_code": 2457
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 12,
+        "name": "rice-mask7-k1",
+        "kind": "rice",
+        "mask": 7,
+        "k": 1
+      },
+      "eligible": false,
+      "worst_source_saved_fraction": -0.016199738932945,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 134680,
+          "saved_total_bytes": -2147,
+          "saved_fraction": -0.016199738932945,
+          "saved_bytes_min_median_max": [
+            -171,
+            -62.0,
+            65
+          ],
+          "positive_zero_negative_records": [
+            5,
+            0,
+            35
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 225,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 34,
+            "lag": 6759,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 134656,
+          "saved_total_bytes": -2126,
+          "saved_fraction": -0.016041650946955407,
+          "saved_bytes_min_median_max": [
+            -170,
+            -61.5,
+            65
+          ],
+          "positive_zero_negative_records": [
+            5,
+            0,
+            35
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 225,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 35,
+            "lag": 6760,
+            "gain_code": 0
+          }
+        }
+      }
+    },
+    {
+      "method": {
+        "selector": 13,
+        "name": "rice-mask7-k2",
+        "kind": "rice",
+        "mask": 7,
+        "k": 2
+      },
+      "eligible": false,
+      "worst_source_saved_fraction": -0.016358190035689224,
+      "sources": {
+        "baseline-v2": {
+          "records": 40,
+          "original_total_bytes": 132533,
+          "proposed_total_bytes": 134701,
+          "saved_total_bytes": -2168,
+          "saved_fraction": -0.016358190035689224,
+          "saved_bytes_min_median_max": [
+            -148,
+            -59.0,
+            26
+          ],
+          "positive_zero_negative_records": [
+            3,
+            0,
+            37
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 46,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 5869,
+            "gain_code": 0
+          }
+        },
+        "expanded100": {
+          "records": 40,
+          "original_total_bytes": 132530,
+          "proposed_total_bytes": 134681,
+          "saved_total_bytes": -2151,
+          "saved_fraction": -0.01623028748207953,
+          "saved_bytes_min_median_max": [
+            -148,
+            -58.5,
+            26
+          ],
+          "positive_zero_negative_records": [
+            3,
+            0,
+            37
+          ],
+          "fallback_data_only_total_upper_bound_bytes": 47,
+          "all_segment_sizes_within_rom_api": true,
+          "field_absolute_escape_counts": {
+            "scale": 0,
+            "lag": 5864,
+            "gain_code": 0
+          }
+        }
+      }
+    }
+  ]
+}

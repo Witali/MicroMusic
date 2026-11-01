@@ -1,0 +1,94 @@
+{
+  "schema": "lpx-v5-adaptive-player-union-scope-estimate-v1",
+  "preliminary_unaudited": true,
+  "image_launch_allowed": false,
+  "producer_core_commit": "5a6cd1ab9593cac6f7e81756a639fa11d6c21276",
+  "consumer_core_commit": "5b4800f7",
+  "consumer_matches_v2_decoder_sources": true,
+  "expected_records": 118,
+  "observed_complete_records": 118,
+  "missing_records": 0,
+  "all_six_workers_complete": true,
+  "independent_audit_gate": "pending",
+  "worker_snapshot": [
+    {
+      "phase": "speech-screen",
+      "shard": 0,
+      "status": "complete",
+      "records": 50
+    },
+    {
+      "phase": "speech-screen",
+      "shard": 1,
+      "status": "complete",
+      "records": 48
+    },
+    {
+      "phase": "speech-default",
+      "shard": 0,
+      "status": "complete",
+      "records": 10
+    },
+    {
+      "phase": "speech-default",
+      "shard": 1,
+      "status": "complete",
+      "records": 4
+    },
+    {
+      "phase": "nonspeech-default",
+      "shard": 0,
+      "status": "complete",
+      "records": 2
+    },
+    {
+      "phase": "nonspeech-default",
+      "shard": 1,
+      "status": "complete",
+      "records": 4
+    }
+  ],
+  "by_phase": {
+    "speech-screen": {
+      "records": 98,
+      "observed": 294,
+      "changed": 27,
+      "unchanged": 75,
+      "no_automatic_selection": 192
+    },
+    "speech-default": {
+      "records": 14,
+      "observed": 42,
+      "changed": 11,
+      "unchanged": 7,
+      "no_automatic_selection": 24
+    },
+    "nonspeech-default": {
+      "records": 6,
+      "observed": 18,
+      "changed": 4,
+      "unchanged": 2,
+      "no_automatic_selection": 12
+    }
+  },
+  "automatic_changed_selection_views": 42,
+  "unchanged_selection_views_skipped": 84,
+  "no_automatic_selection_views": 228,
+  "distinct_union_chains": 75,
+  "distinct_candidate_chains": 41,
+  "distinct_rollback_chains": 34,
+  "distinct_comparisons": 41,
+  "logical_image_rows": 150,
+  "data_alone_no_fit_chains": 0,
+  "data_alone_no_fit_rows": 0,
+  "data_at_most_device_flash_chains": 75,
+  "maximum_build_or_strict_reuse_rows": 150,
+  "maximum_new_build_attempts": 150,
+  "potential_full_playback_samples": 6924372,
+  "maximum_chain_segments": 5,
+  "new_fits": 0,
+  "new_images": 0,
+  "new_simulations": 0,
+  "perceptual_adoption": false,
+  "scope": "Observed completed-record snapshot only. Exact ordered-byte deduplication; device no-fit uses data alone. Final complete-worker and independent-audit gates are mandatory."
+}

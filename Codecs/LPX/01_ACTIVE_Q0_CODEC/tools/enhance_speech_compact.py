@@ -10,6 +10,7 @@ from pathlib import Path
 import numpy as np
 from numba import njit
 import speech_compact as compact
+from speech_rate_allocation import bit_accounting, extra_capacity
 from q0_model import coefficient_trace, table, clamp
 from wav_lpc import pack_frames
 from standard_metrics import error_metrics
@@ -88,7 +89,7 @@ def proposals(reference,co,params,pulses,steps,pre,bright,horizon,position_candi
 
 
 def enhance(reference,blob,decoder,max_bytes,horizon=160,position_candidates=6,
-            batch_size=16,max_full_evaluations=128):
+            batch_size=16,max_full_evaluations=128,speech=True):
     if horizon not in (160,320) or not 1<=position_candidates<=12 or not 1<=batch_size<=64 or not 1<=max_full_evaluations<=512:
         raise ValueError('Unsupported bounded search settings')
     ref=np.asarray(reference)
@@ -110,9 +111,9 @@ def enhance(reference,blob,decoder,max_bytes,horizon=160,position_candidates=6,
     def render(x):return advance(co,parameters,innovations,x,steps,pre,bright,0,n,zero_h,0,0,zero_ring)[0]
     pcm=render(extras);native=decoder.decode_one_s16(base,n)
     if native is None or not np.array_equal(native,pcm):raise AssertionError('Extra snapshot baseline/native mismatch')
-    initial=error_metrics(ref,pcm,True);current=initial
-    _,marker_meta=compact.pack(*args,force_extras=True)
-    capacity=max(0,min((n+39)//40,((int(max_bytes)-22)*8-marker_meta['payload_bits'])//10))
+    initial=error_metrics(ref,pcm,speech);current=initial
+    layout=bit_accounting(spectra,profile)
+    capacity=extra_capacity(layout['spectrum_bits'],len(spectra),profile,int(max_bytes),(n+39)//40)
     evaluations=0;full_evaluations=0;accepted=0;checkpoints=[];rejected_sse=0;rejected_stoi=0
     if capacity and initial['error_energy']:
         choices,benefits,evaluations=proposals(ref.astype(np.int64),co,parameters,innovations,
@@ -130,7 +131,7 @@ def enhance(reference,blob,decoder,max_bytes,horizon=160,position_candidates=6,
                 good=int(sse(ref,trial))<current['error_energy'];reason='sse'
                 quality=None
                 if good:
-                    quality=error_metrics(ref,trial,True)
+                    quality=error_metrics(ref,trial,speech)
                     good=current['stoi'] is None or quality['stoi'] is not None and quality['stoi']>=current['stoi']-1e-12
                     reason='stoi'
                 if good:

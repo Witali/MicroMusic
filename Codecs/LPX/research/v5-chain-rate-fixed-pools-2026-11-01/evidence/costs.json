@@ -1,0 +1,28 @@
+{
+  "metadata_preparation_execute_body": {
+    "wall_seconds": 30.54726579997805,
+    "cpu_seconds": 28.828125
+  },
+  "synthetic_preflight_process": {
+    "full_child_process_cpu_seconds": 12.328125,
+    "full_child_process_wall_seconds": 13.1265231
+  },
+  "synthetic_preflight_execute_body": {
+    "wall_seconds": 12.574421699973755,
+    "cpu_seconds": 11.875
+  },
+  "real_campaign_process": {
+    "full_child_process_cpu_seconds": 103.171875,
+    "full_child_process_wall_seconds": 105.9086359
+  },
+  "real_campaign_execute_body": {
+    "wall_seconds": 104.38776720000897,
+    "cpu_seconds": 102.75
+  },
+  "dp_cpu_seconds": 0.015625,
+  "dp_wall_seconds_sum": 0.01637940004002303,
+  "prior_v1_raw_model_audit_cpu_seconds": 222.734375,
+  "process_cpu_scope": "Windows worker-process kernel+user through exit; excludes git/source-binding subprocess CPU and external launcher",
+  "execute_body_scope": "execute() entry through pre-terminal snapshot; excludes imports/CLI and final receipt writes",
+  "overlapping_clocks_must_not_be_added": true
+}

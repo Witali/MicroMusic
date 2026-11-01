@@ -1,0 +1,790 @@
+"""Bounded multi-frame joint LPC/excitation trajectories for unchanged v5 streams.
+
+Beam alternatives are allowed to get worse before a later frame improves them.
+Every path owns its integer filter/pitch state. Ranking uses full-length output,
+actual serialization and an optional bound objective; conservative PCM/PWM/STOI
+floors are a separate final selection, never a local beam-pruning condition.
+"""
+from __future__ import annotations
+
+import argparse
+from collections import OrderedDict
+from copy import deepcopy
+from dataclasses import dataclass
+import json
+from numbers import Integral
+from pathlib import Path
+import time
+
+import numpy as np
+
+import speech_compact as compact
+from enhance_speech_compact import advance, sse
+from q0_model import coefficient_trace, table
+from refine_speech_compact import no_regression, quality
+from refine_speech_lpc import adapt_excitation, coefficient_patch, fit_capacity, frame_order, spectrum_bits
+from standard_metrics import error_metrics, pwm_duties, pwm_pcm16
+from speech_rate_allocation import bit_accounting, distortion_rate, extra_capacity
+from search_cpu_budget import CpuBudget, CpuBudgetExceeded
+from wav_lpc import pack_frames
+
+
+@dataclass
+class Fields:
+    spectra: np.ndarray
+    params: np.ndarray
+    pulses: np.ndarray
+    extras: np.ndarray
+
+    def copy(self):
+        return Fields(*(x.copy() for x in (self.spectra, self.params, self.pulses, self.extras)))
+
+
+@dataclass
+class State:
+    history: np.ndarray
+    deemphasis: int
+    brightness: int
+    pitch: np.ndarray
+
+    @classmethod
+    def zero(cls):
+        return cls(np.zeros(10, np.int64), 0, 0, np.zeros(256, np.int64))
+
+    def copy(self):
+        return State(self.history.copy(), self.deemphasis, self.brightness, self.pitch.copy())
+
+
+@dataclass
+class PathState:
+    fields: Fields
+    coefficients: np.ndarray
+    pcm: np.ndarray
+    stream: bytes
+    score: float
+    state: State
+    position: int
+    moves: tuple
+
+
+@dataclass
+class OutputCandidate:
+    stream: bytes
+    pcm: np.ndarray
+    score: float
+    moves: tuple
+
+
+class SearchBudgetExhausted(Exception):
+    pass
+
+
+class Search:
+    def __init__(self, reference, n, profile, pre, bright, max_bytes, objective,
+                 max_evaluations, capacity_policy, allocation_evaluations, rate_lambda,
+                 screening='local', screening_horizon=640, budget=None, candidate_sink=None,
+                 rate_search=False):
+        self.reference = reference
+        self.n, self.profile, self.pre, self.bright = n, profile, pre, bright
+        self.max_bytes, self.objective = max_bytes, objective
+        self.max_evaluations = max_evaluations
+        self.capacity_policy, self.allocation_limit = capacity_policy, allocation_evaluations
+        self.rate_lambda = rate_lambda
+        self.rate_search = rate_search
+        self.rate_allocations = self.rate_allocation_points = self.repeat_proposals = 0
+        self.rate_calls_started = self.repeat_opportunities = 0
+        self.refits_started = self.refits_completed = self.joint_completed = 0
+        self.refit_candidates_completed = 0
+        self.screening, self.screening_horizon = screening, screening_horizon
+        self.budget = CpuBudget() if budget is None else budget
+        self.candidate_sink = candidate_sink
+        self.sent_streams = set()
+        self.local_evaluations = self.local_samples = self.serializations = 0
+        self.steps, self.cosine = table('scale_table.inc'), table('cos_table.inc')
+        self.evaluations = self.objective_evaluations = self.state_advances = 0
+        self.excitation_trials = self.allocation_evaluations = self.cache_hits = 0
+        self.spectral_trials = self.expansions = 0
+        self.cache = OrderedDict()
+        self.finalists = {}
+        self.frontier = {}
+        self.best_infeasible = None
+        self.best_sse = None
+
+    def encode(self, fields):
+        self.serializations += 1
+        return compact.pack(self.n, self.profile, fields.spectra.tolist(), fields.params.tolist(),
+                            fields.pulses.tolist(), self.pre, self.bright,
+                            extras=fields.extras.tolist())[0]
+
+    def rank(self, path):
+        return (max(0, len(path.stream)-self.max_bytes),
+                distortion_rate(path.score, len(path.stream), self.rate_lambda), len(path.stream), path.moves)
+
+    def score(self, pcm):
+        value = float(self.objective(pcm))
+        self.objective_evaluations += 1
+        if not np.isfinite(value):
+            raise ValueError('Objective must return a finite scalar')
+        return value
+
+    def render(self, parent, fields, coefficients):
+        self.budget.check()
+        if self.evaluations >= self.max_evaluations:
+            raise SearchBudgetExhausted
+        self.evaluations += 1
+        state = parent.state
+        suffix = advance(coefficients, fields.params, fields.pulses, fields.extras,
+                         self.steps, self.pre, self.bright, parent.position, self.n,
+                         state.history, state.deemphasis, state.brightness, state.pitch)[0]
+        return np.concatenate((parent.pcm[:parent.position], suffix))
+
+    def remember(self, path):
+        if len(path.stream) > self.max_bytes:
+            if self.best_infeasible is None or self.rank(path) < self.rank(self.best_infeasible):
+                self.best_infeasible = path
+            return
+        self.finalists[path.stream] = path
+        point = OutputCandidate(path.stream, path.pcm, path.score, path.moves)
+        dominated = any(len(other.stream) <= len(point.stream) and other.score <= point.score
+                        for other in self.frontier.values())
+        if not dominated:
+            self.frontier = {stream: other for stream, other in self.frontier.items()
+                             if not (len(point.stream) <= len(other.stream) and point.score <= other.score)}
+            self.frontier[point.stream] = point
+            if len(self.frontier) > 16:
+                ordered = sorted(self.frontier.values(), key=lambda p: (len(p.stream), p.score))
+                keep = [ordered[int(i)] for i in np.linspace(0, len(ordered)-1, 16, dtype=int)]
+                self.frontier = {p.stream: p for p in keep}
+        if self.best_sse is None or int(sse(self.reference, path.pcm)) < int(sse(self.reference, self.best_sse.pcm)):
+            self.best_sse = path
+        if len(self.finalists) > 8:
+            keep = sorted(self.finalists.values(), key=self.rank)[:8]
+            self.finalists = {p.stream: p for p in keep}
+        if self.candidate_sink is not None and path.stream not in self.sent_streams:
+            self.sent_streams.add(path.stream)
+            self.candidate_sink(path.stream, path.score)
+
+    def reclaim(self, parent, fields, coefficients):
+        stream = self.encode(fields)
+        if self.capacity_policy == 'none' or (len(stream) <= self.max_bytes and not self.rate_lambda):
+            return fields, stream
+        if self.capacity_policy == 'amplitude':
+            bits = sum(spectrum_bits(row, None if i == 0 else fields.spectra[i-1], self.profile)
+                       for i, row in enumerate(fields.spectra))
+            extra, _, _, _ = fit_capacity(bits, len(fields.spectra), self.profile,
+                                          fields.extras, self.max_bytes, parent.position, self.n)
+            result = fields.copy()
+            result.extras = extra
+            return (result, self.encode(result)) if not np.array_equal(extra, fields.extras) else (fields, stream)
+        policy = self.capacity_policy
+        if policy == 'marginal':
+            from speech_rate_allocation import reclaim_extras
+            policy = reclaim_extras
+        remaining = min(self.allocation_limit-self.allocation_evaluations,
+                        self.max_evaluations-self.evaluations)
+        if remaining <= 0:
+            return fields, stream
+        def render(extras):
+            candidate = fields.copy()
+            candidate.extras = np.asarray(extras, np.int64).copy()
+            self.allocation_evaluations += 1
+            return self.render(parent, candidate, coefficients)
+        def serialize(extras):
+            candidate = fields.copy()
+            candidate.extras = np.asarray(extras, np.int64).copy()
+            return self.encode(candidate)
+        allocated = policy(fields.spectra.copy(), self.profile, fields.extras.copy(),
+                           self.max_bytes, render=render, objective=self.score,
+                           start=parent.position, max_evaluations=remaining,
+                           rate_lambda=self.rate_lambda, serialize=serialize)
+        result = fields.copy()
+        result.extras = np.asarray(allocated.extras, np.int64).copy()
+        # This is necessary for the cached prefix, independently of policy claims.
+        if (result.extras.shape != fields.extras.shape or
+                not np.array_equal(result.extras[:parent.position//40], fields.extras[:parent.position//40])):
+            raise ValueError('Capacity policy changed fields before the cached prefix')
+        # Serialize once after reclamation; dimensions/ranges are checked here.
+        return result, self.encode(result)
+
+    def candidate(self, parent, fields, coefficients, move):
+        self.budget.check()
+        fields, stream = self.reclaim(parent, fields, coefficients)
+        if stream in self.cache:
+            pcm, score = self.cache.pop(stream)
+            self.cache[stream] = (pcm, score)
+            self.cache_hits += 1
+        else:
+            pcm = self.render(parent, fields, coefficients)
+            score = self.score(pcm)
+            self.cache[stream] = (pcm, score)
+            if len(self.cache) > 64:
+                self.cache.popitem(last=False)
+        end = min(self.n, parent.position+320)
+        st = parent.state
+        _, h, dd, cc, ring = advance(coefficients, fields.params, fields.pulses, fields.extras,
+                                    self.steps, self.pre, self.bright, parent.position, end,
+                                    st.history, st.deemphasis, st.brightness, st.pitch)
+        self.state_advances += 1
+        result = PathState(fields, coefficients, pcm, stream, score,
+                           State(h, dd, cc, ring), end, parent.moves+(move,))
+        self.remember(result)
+        return result
+
+    def at_position(self, path, position):
+        self.budget.check()
+        if position == path.position:
+            return path
+        st = State.zero()
+        _, h, dd, cc, ring = advance(path.coefficients, path.fields.params,
+                                    path.fields.pulses, path.fields.extras, self.steps,
+                                    self.pre, self.bright, 0, position,
+                                    st.history, 0, 0, st.pitch)
+        self.state_advances += 1
+        return PathState(path.fields, path.coefficients, path.pcm, path.stream,
+                         path.score, State(h, dd, cc, ring), position, path.moves)
+
+
+def _spectral_neighbours(fields, frame, profile):
+    for field in range(10):
+        for delta in (-1, 1):
+            vector = fields.spectra[frame].copy()
+            vector[field] += delta
+            if not 0 <= vector[field] < (32 if profile == 4 else 64):
+                continue
+            if ((field and vector[field] <= vector[field-1]) or
+                    (field < 9 and vector[field] >= vector[field+1])):
+                continue
+            result = fields.copy()
+            result.spectra[frame] = vector
+            yield result, ('lsf', frame, field, delta)
+
+
+def _excitation_neighbours(fields, start, n, profile):
+    for index in range(start//160, min(len(fields.params), (start+319)//160+1)):
+        for field, low, high, stride in ((0, 0, 31, 1), (1, 18, 145, 1), (2, 0, 14, 2)):
+            for delta in (-stride, stride):
+                value = int(fields.params[index, field])+delta
+                if low <= value <= high:
+                    result = fields.copy()
+                    result.params[index, field] = value
+                    yield result, ('pitch', index, field, delta)
+    index = start//20
+    position, amplitude = map(int, fields.pulses[index])
+    for delta in (-1, 1):
+        pos = position+delta
+        if 0 <= pos < min(20, n-start) and not (profile == 4 and pos % 5 == 2):
+            result = fields.copy()
+            result.pulses[index, 0] = pos
+            yield result, ('pulse-position', index, delta)
+    amplitudes = (-amplitude,) if profile == 4 else (amplitude-1, amplitude+1)
+    for amp in amplitudes:
+        if -8 <= amp <= 7 or profile == 4 and amp == 8:
+            result = fields.copy()
+            result.pulses[index, 1] = amp
+            yield result, ('pulse-amplitude', index, amp)
+    index = start//40
+    if fields.extras[index, 1]:
+        for delta in (-1, 1):
+            amp = int(fields.extras[index, 1])+delta
+            if -8 <= amp <= 7:
+                result = fields.copy()
+                result.extras[index] = (int(fields.extras[index, 0]) if amp else -1, amp)
+                yield result, ('extra-amplitude', index, amp)
+
+
+def _repeat_spectrum(fields, frame):
+    """Directly expose the serializer's previous-vector repeat, if distinct."""
+    if frame and not np.array_equal(fields.spectra[frame], fields.spectra[frame-1]):
+        result = fields.copy()
+        result.spectra[frame] = fields.spectra[frame-1].copy()
+        return result, ('repeat-spectrum', frame)
+    return None
+
+
+def _repeat_savings(fields, profile):
+    """Positive exact spectrum-bit savings, including changed f+1 coding."""
+    savings = {}
+    for frame in range(1, len(fields.spectra)):
+        prior, current = fields.spectra[frame-1:frame+1]
+        before = spectrum_bits(current, prior, profile)
+        after = spectrum_bits(prior, prior, profile)
+        if frame+1 < len(fields.spectra):
+            following = fields.spectra[frame+1]
+            before += spectrum_bits(following, current, profile)
+            after += spectrum_bits(following, prior, profile)
+        if before > after:
+            savings[frame] = before-after
+    return savings
+
+
+def rate_frame_order(reference, pcm, fields, profile, limit):
+    """Reserve half the anchors for exact two-spectrum coding savings.
+
+    Changing f also changes f+1's delta/repeat coding. This is a proposal
+    priority, not an acceptance score; complete branches are serialized/rendered.
+    """
+    usual = frame_order(reference, pcm, limit)
+    savings = _repeat_savings(fields, profile)
+    chosen = set(sorted(savings, key=lambda f: (-savings[f], f))[:limit//2])
+    for frame in usual:
+        if len(chosen) >= limit:
+            break
+        chosen.add(frame)
+    return sorted(chosen)
+
+
+def priority_frame_order(reference, pcm, anchors, fields, profile, rate_search):
+    """Reorder a fixed baseline-nominated set, without adding any anchors."""
+    errors = {f: int(sse(reference[f*320:min(len(reference),(f+1)*320)],
+                         pcm[f*320:min(len(pcm),(f+1)*320)])) for f in anchors}
+    error_queue = sorted(anchors, key=lambda f: (-errors[f], f))
+    if not rate_search:
+        return error_queue
+    savings = _repeat_savings(fields, profile)
+    rate_queue = sorted((f for f in anchors if f in savings), key=lambda f: (-savings[f], f))
+    # Each queue contributes its next unvisited frame. Skipping an already
+    # visited item does not consume that queue's turn.
+    ordered, seen = [], set()
+    queues = [iter(rate_queue), iter(error_queue)]
+    while len(ordered) < len(error_queue):
+        for queue in queues:
+            for frame in queue:
+                if frame not in seen:
+                    ordered.append(frame)
+                    seen.add(frame)
+                    break
+    return ordered
+
+
+def _rate_children(search, parent, base, frame):
+    """Publish completed allocation endpoints before any next quota check."""
+    from speech_rate_allocation import allocation_frontier
+    remaining = min(16, search.allocation_limit-search.allocation_evaluations,
+                    search.max_evaluations-search.evaluations)
+    if remaining <= 0:
+        return []
+    def fields_for(extras):
+        fields = base.fields.copy()
+        fields.extras = np.asarray(extras, np.int64).copy()
+        if not np.array_equal(fields.extras[:parent.position//40], parent.fields.extras[:parent.position//40]):
+            raise ValueError('Rate allocation changed the cached prefix')
+        return fields
+    def render(extras):
+        pcm = search.render(parent, fields_for(extras), base.coefficients)
+        search.allocation_evaluations += 1
+        return pcm
+    def serialize(extras):
+        return search.encode(fields_for(extras))
+    def completed(point):
+        fields = fields_for(point.extras)
+        stream = bytes(point.stream)
+        pcm = np.asarray(point.pcm).copy()
+        if stream in search.cache and not np.array_equal(search.cache[stream][0], pcm):
+            raise AssertionError('Rate allocation cached-prefix reconstruction differs')
+        search.cache[stream] = (pcm, float(point.score))
+        while len(search.cache) > 64:
+            search.cache.popitem(last=False)
+        # Prefix state is valid for this complete stream. It is advanced only
+        # for returned beam children; raw/final pools need full PCM and fields.
+        path = PathState(fields, base.coefficients, pcm, stream, float(point.score),
+            parent.state.copy(), parent.position,
+            base.moves+(('allocation', frame, len(stream), int(np.count_nonzero(fields.extras[:,1]))),))
+        search.remember(path)
+        search.rate_allocation_points += 1
+    search.rate_calls_started += 1
+    allocated = allocation_frontier(base.fields.spectra, search.profile, base.fields.extras,
+        search.max_bytes, render=render, objective=search.score, serialize=serialize,
+        start=parent.position, stop=search.n, rate_lambda=search.rate_lambda,
+        max_evaluations=remaining, candidate_batch=4, removal_steps=2, max_points=3,
+        checkpoint=search.budget.check, on_candidate=completed)
+    search.rate_allocations += 1
+    children = []
+    unique = {}
+    for point in allocated.points:
+        if len(point.stream) <= search.max_bytes:
+            unique[bytes(point.stream)] = point
+    for stream, point in unique.items():
+        search.budget.check()
+        fields = fields_for(point.extras)
+        end = min(search.n, parent.position+320)
+        st = parent.state
+        _, h, dd, cc, ring = advance(base.coefficients, fields.params, fields.pulses, fields.extras,
+            search.steps, search.pre, search.bright, parent.position, end,
+            st.history, st.deemphasis, st.brightness, st.pitch)
+        search.state_advances += 1
+        children.append(PathState(fields, base.coefficients, np.asarray(point.pcm).copy(), stream,
+            float(point.score), State(h, dd, cc, ring), end,
+            base.moves+(('allocation', frame, len(stream), int(np.count_nonzero(fields.extras[:,1]))),)))
+    return children
+
+
+def _expand(search, parent, frame, spectral_candidates, excitation_candidates, horizon):
+    search.budget.check()
+    """Joint Cartesian proposals plus refit; no local-improvement acceptance."""
+    spectral = [search.candidate(parent, parent.fields.copy(), parent.coefficients.copy(), ('keep', frame))]
+    neighbours = []
+    start = parent.position
+    reserved = []
+    repeat = _repeat_spectrum(parent.fields, frame) if search.rate_search and spectral_candidates else None
+    if repeat is not None:
+        search.repeat_opportunities += 1
+        fields, move = repeat
+        co = parent.coefficients.copy()
+        patch = coefficient_patch(fields.spectra, search.profile, frame, search.n, search.cosine)
+        co[start:start+len(patch)] = patch
+        reserved.append(search.candidate(parent, fields, co, move))
+        search.repeat_proposals += 1
+        search.spectral_trials += 1
+    for fields, move in (_spectral_neighbours(parent.fields, frame, search.profile)
+                         if spectral_candidates>len(reserved) else ()):
+        search.budget.check()
+        co = parent.coefficients.copy()
+        patch = coefficient_patch(fields.spectra, search.profile, frame, search.n, search.cosine)
+        co[start:start+len(patch)] = patch
+        if search.screening == 'full':
+            neighbours.append(search.candidate(parent, fields, co, move))
+        else:
+            stop = min(search.n, start+search.screening_horizon)
+            st = parent.state
+            local = advance(co, fields.params, fields.pulses, fields.extras, search.steps,
+                search.pre, search.bright, start, stop, st.history,
+                st.deemphasis, st.brightness, st.pitch)[0]
+            search.local_evaluations += 1
+            search.local_samples += stop-start
+            loss = int(sse(search.reference[start:stop], local))
+            # Exact spectrum/marker/padding accounting is a screening proxy;
+            # every shortlisted branch is still actually serialized and ranked
+            # on the full original-length output after any capacity reclamation.
+            size = bit_accounting(fields.spectra, search.profile, fields.extras)['file_bytes']
+            key = (distortion_rate(loss, size, search.rate_lambda), size, move)
+            neighbours.append((key, fields, co, move))
+        search.spectral_trials += 1
+    slots = spectral_candidates-len(reserved)
+    spectral.extend(reserved)
+    if search.screening == 'full':
+        spectral.extend(sorted(neighbours, key=search.rank)[:slots])
+    else:
+        for _, fields, co, move in sorted(neighbours, key=lambda item: item[0])[:slots]:
+            spectral.append(search.candidate(parent, fields, co, move))
+    excitation = []
+    for fields, move in (_excitation_neighbours(parent.fields, start, search.n, search.profile) if excitation_candidates else ()):
+        excitation.append(search.candidate(parent, fields, parent.coefficients.copy(), move))
+    excitation = sorted(excitation, key=search.rank)[:excitation_candidates]
+    children = list(spectral)+list(excitation)
+    bases = sorted(spectral, key=lambda p: p.moves[-1][0]!='repeat-spectrum') if search.rate_search else spectral
+    for base in bases:
+        for excite in excitation:
+            fields = Fields(base.fields.spectra.copy(), excite.fields.params.copy(),
+                            excite.fields.pulses.copy(), excite.fields.extras.copy())
+            children.append(search.candidate(parent, fields, base.coefficients.copy(),
+                                             ('joint', frame, base.moves[-1], excite.moves[-1])))
+            search.joint_completed += 1
+        if excitation_candidates:
+            search.budget.check()
+            st = parent.state
+            capacity = len(base.fields.extras)
+            if search.rate_search:
+                cost = bit_accounting(base.fields.spectra, search.profile, base.fields.extras)
+                capacity = extra_capacity(cost['spectrum_bits'], len(base.fields.spectra), search.profile,
+                                          search.max_bytes, len(base.fields.extras))
+            search.refits_started += 1
+            pp, ii, ee, count = adapt_excitation(search.reference, base.coefficients,
+                base.fields.params, base.fields.pulses, base.fields.extras, search.steps,
+                search.pre, search.bright, search.profile, start, min(search.n, start+480),
+                horizon, st.history, st.deemphasis, st.brightness, st.pitch,
+                capacity)
+            search.refits_completed += 1
+            search.excitation_trials += int(count)
+            fields = Fields(base.fields.spectra.copy(), pp, ii, ee)
+            refitted = search.candidate(parent, fields, base.coefficients.copy(), ('refit', frame, base.moves[-1]))
+            search.refit_candidates_completed += 1
+            children.append(refitted)
+            if search.rate_search:
+                children.extend(_rate_children(search, parent, refitted, frame))
+        elif search.rate_search:
+            children.extend(_rate_children(search, parent, base, frame))
+    search.expansions += 1
+    # Distinct serialized trajectories; deterministic ties prefer earlier moves.
+    unique = {}
+    for path in children:
+        if path.stream not in unique or search.rank(path) < search.rank(unique[path.stream]):
+            unique[path.stream] = path
+    return sorted(unique.values(), key=search.rank)
+
+
+def refine(reference, blob, decoder, max_bytes, *, frame_limit=8, window_frames=2,
+           beam_width=3, spectral_candidates=2, excitation_candidates=2,
+           excitation_horizon=80, max_evaluations=512, objective=None,
+           objective_name='sse', selection='conservative', capacity_policy='amplitude',
+           allocation_evaluations=64, rate_lambda=0.0, frontier=None,
+           screening='local', screening_horizon=640, speech=True,
+           cpu_seconds=None, candidate_sink=None, rate_search=False, anchor_order='time'):
+    """Return (selected bytes or None, PCM or None, report, raw feasible bytes or None).
+
+    Tuple layout matches the older refine API, but a cap below the seed is
+    permitted: (None, None, report, raw) means only a tradeoff candidate exists,
+    while raw=None means this finite search did not discover any feasible file.
+    selection='objective' explicitly permits a final metric tradeoff. A supplied
+    frontier list receives feasible nondominated alternatives without local metric
+    gate filtering, for subsequent whole-reset-chain assembly and evaluation.
+    speech=False uses numerical PCM/PWM errors without computing STOI; it does
+    not change the v5 container or establish perceptual quality for music.
+    Optional cpu_seconds bounds setup/search cooperatively between atomic
+    operations. Final metrics and native checks run after the quota; their CPU
+    and total overshoot are reported separately. candidate_sink(blob, score)
+    receives each distinct feasible fully scored path, including the baseline;
+    these paths still need native verification and whole-record admission.
+    rate_search=True reserves a previous-spectrum repeat proposal, refits to
+    the actual serialized capacity and tests bounded cross-rate allocations.
+    It uses full-output spectral screening so distortion and bit price have
+    matching scope. Defaults retain the original trajectory algorithm.
+    anchor_order='priority' reorders the same frozen baseline-nominated anchors
+    by block SSE, interleaving positive repeat-bit opportunities in rate mode.
+    This changes search coverage under a finite quota; it adds no anchors.
+    """
+    settings = (max_bytes, frame_limit, window_frames, beam_width, spectral_candidates,
+                excitation_candidates, excitation_horizon, max_evaluations, allocation_evaluations, screening_horizon)
+    if any(isinstance(v, bool) or not isinstance(v, Integral) for v in settings):
+        raise ValueError('Expected integer cap and bounded trajectory settings')
+    if not (22 <= max_bytes <= 65535 and 1 <= frame_limit <= 200 and 2 <= window_frames <= 4
+            and 1 <= beam_width <= 8 and 0 <= spectral_candidates <= 4
+            and 0 <= excitation_candidates <= 4 and excitation_horizon in (80, 160)
+            and 1 <= max_evaluations <= 4096 and 0 <= allocation_evaluations <= 4096
+            and screening_horizon in (320, 640, 1280)):
+        raise ValueError('Unsupported bounded trajectory settings')
+    if screening not in ('local', 'full'):
+        raise ValueError('Unknown scalar spectral screening mode')
+    if not isinstance(rate_search, bool):
+        raise ValueError('rate_search must be boolean')
+    if anchor_order not in ('time', 'priority'):
+        raise ValueError('Unknown anchor order')
+    requested_screening = screening
+    if rate_search:
+        screening = 'full'
+    if candidate_sink is not None and not callable(candidate_sink):
+        raise ValueError('Expected a callable candidate sink')
+    # Validate before numerical initialization; start the quota with that work.
+    CpuBudget.validate(cpu_seconds)
+    if not isinstance(speech, bool):
+        raise ValueError('speech must be boolean')
+    if speech:
+        measure = quality
+    else:
+        def measure(reference, pcm):
+            return {'pcm16': error_metrics(reference, pcm),
+                    'pwm8': error_metrics(reference, pwm_pcm16(pcm))}
+    if frontier is not None and not isinstance(frontier, list):
+        raise ValueError('Frontier output must be a list')
+    if selection not in ('conservative', 'objective') or not (callable(capacity_policy) or capacity_policy in ('none', 'amplitude', 'marginal')):
+        raise ValueError('Unknown selection or capacity policy')
+    if isinstance(rate_lambda, bool) or not np.isfinite(rate_lambda) or rate_lambda < 0:
+        raise ValueError('Expected finite nonnegative rate lambda')
+    ref = np.asarray(reference)
+    if ref.ndim != 1 or ref.dtype.kind not in 'iu' or np.any(ref < -32768) or np.any(ref > 32767):
+        raise ValueError('Expected mono PCM16 reference')
+    n, profile, spectra, params, pulses, pre, bright, extras = compact.unpack(blob)
+    if len(ref) != n:
+        raise ValueError('Reference/stream sample count mismatch')
+    begun, cpu_begun = time.perf_counter(), time.process_time()
+    budget = CpuBudget(cpu_seconds)
+    ref64 = ref.astype(np.int64)
+    scorer = (lambda pcm: int(sse(ref64, pcm))) if objective is None else getattr(objective, 'score', objective)
+    if not callable(scorer):
+        raise ValueError('Objective must be callable or expose score(pcm16)')
+    fields = Fields(*(np.asarray(x, np.int64) for x in (spectra, params, pulses, extras)))
+    shift = 5 if profile == 4 else 4
+    vectors = [[(int(v) << shift)+(1 << (shift-1)) for v in row] for row in fields.spectra for _ in range(2)]
+    co = coefficient_trace(pack_frames(vectors[:(n+159)//160]), n)
+    zero = State.zero()
+    pcm = advance(co, fields.params, fields.pulses, fields.extras, table('scale_table.inc'),
+                  pre, bright, 0, n, zero.history, 0, 0, zero.pitch)[0]
+    native = decoder.decode_one_s16(blob, n)
+    if native is None or not np.array_equal(pcm, native) or not np.array_equal(pcm, compact.decode_model(blob)):
+        raise AssertionError('Trajectory baseline integer/native/model mismatch')
+    before = measure(ref, pcm)
+    search = Search(ref64, n, profile, pre, bright, max_bytes, scorer, max_evaluations,
+                    capacity_policy, allocation_evaluations, float(rate_lambda), screening, screening_horizon,
+                    budget=budget, candidate_sink=candidate_sink, rate_search=rate_search)
+    original = PathState(fields, co, pcm, bytes(blob), search.score(pcm), zero, 0, ())
+    search.remember(original)
+    center = original
+    checkpoints = []
+    limit_reached = False
+    anchors = (rate_frame_order(ref64, pcm, fields, profile, frame_limit) if rate_search
+               else frame_order(ref64, pcm, frame_limit))
+    if (objective is None and before['pcm16']['error_energy'] == 0 and len(blob) <= max_bytes
+            and not rate_lambda and not rate_search):
+        anchors = []
+    if anchor_order == 'priority':
+        anchors = priority_frame_order(ref64, pcm, anchors, fields, profile, rate_search)
+    started_anchors, completed_anchors = [], []
+    window = None
+    try:
+        budget.check()
+        for anchor in anchors:
+            budget.check()
+            started_anchors.append(anchor)
+            beam = [search.at_position(center, anchor*320)]
+            window = dict(anchor=anchor, planned_frames=min(window_frames, len(spectra)-anchor),
+                          frames=0, status='running', beam_paths=1)
+            checkpoints.append(window)
+            for frame in range(anchor, min(len(spectra), anchor+window_frames)):
+                window['next_frame'] = frame
+                children = []
+                for parent in beam:
+                    children.extend(_expand(search, parent, frame, spectral_candidates,
+                                            excitation_candidates, excitation_horizon))
+                unique = {}
+                for path in children:
+                    if path.stream not in unique or search.rank(path) < search.rank(unique[path.stream]):
+                        unique[path.stream] = path
+                beam = sorted(unique.values(), key=search.rank)[:beam_width]
+                window['frames'] += 1
+                window['beam_paths'] = len(beam)
+            center = min([center, *beam], key=search.rank)
+            window.update(status='complete', file_bytes=len(center.stream), objective=center.score,
+                          moves=[list(p.moves) for p in beam])
+            completed_anchors.append(anchor)
+    except SearchBudgetExhausted:
+        limit_reached = True
+        window.update(status='evaluation_limit', interrupted_frame=window['next_frame'])
+    except CpuBudgetExceeded:
+        if window is not None and window['status'] == 'running':
+            window.update(status='cpu_limit', interrupted_frame=window.get('next_frame'))
+    budget.finish_search()
+    pool = [*search.finalists.values(), *search.frontier.values()]
+    if search.best_sse is not None:
+        pool.append(search.best_sse)
+    if len(blob) <= max_bytes:
+        pool.append(original)
+    unique = {p.stream: p for p in pool}
+    ranked = sorted(unique.values(), key=search.rank)
+    measured = [(p, measure(ref, p.pcm)) for p in ranked]
+    eligible = [(p, q) for p, q in measured if p.stream == bytes(blob) or no_regression(q, before)]
+    chosen = (measured[0] if selection == 'objective' and measured else eligible[0] if eligible else None)
+    raw = ranked[0] if ranked else None
+    for path in {p.stream: p for p in (original, *search.frontier.values(), raw, chosen[0] if chosen else None) if p is not None}.values():
+        actual = decoder.decode_one_s16(path.stream, n)
+        if (actual is None or not np.array_equal(actual, path.pcm) or
+                not np.array_equal(actual, compact.decode_model(path.stream)) or
+                not np.array_equal(decoder.decode_one(path.stream, n), pwm_duties(actual))):
+            raise AssertionError('Trajectory final native/model/PWM mismatch')
+        if path.stream[12:16] != blob[12:16]:
+            raise AssertionError('Trajectory changed frozen header filters')
+    metric_lookup = {p.stream: q for p, q in measured}
+    alternatives = []
+    for path in sorted(search.frontier.values(), key=lambda p: (len(p.stream), p.score)):
+        q = metric_lookup[path.stream]
+        floor = path.stream == bytes(blob) or no_regression(q, before)
+        alternatives.append(dict(stream=path.stream, pcm=path.pcm.copy(), objective=path.score,
+                                 file_bytes=len(path.stream), metrics=deepcopy(q),
+                                 conservative_floors_passed=bool(floor)))
+    if frontier is not None:
+        frontier.extend(alternatives)
+    selected_fields = compact.unpack(chosen[0].stream) if chosen else None
+    report = dict(proposal='compact_joint_trajectory', samples=n, profile=profile,
+        baseline_bytes=len(blob), max_file_bytes=int(max_bytes),
+        file_bytes=len(chosen[0].stream) if chosen else None,
+        fit_status='selected_feasible' if chosen else 'feasible_tradeoff_only' if raw else 'no_feasible_candidate',
+        feasible_found=raw is not None, baseline=before, selected=chosen[1] if chosen else None,
+        raw_best=measure(ref, raw.pcm) if raw else None, raw_file_bytes=len(raw.stream) if raw else None,
+        quality_kind='speech' if speech else 'non-speech-numerical',
+        raw_objective=raw.score if raw else None,
+        conservative_floors_passed=bool(chosen and (chosen[0].stream == bytes(blob) or no_regression(chosen[1], before))),
+        changed_spectral_indices=int(np.count_nonzero(np.asarray(selected_fields[2]) != fields.spectra)) if chosen else None,
+        changed_excitation_fields=sum(int(np.count_nonzero(np.asarray(selected_fields[index]) != original))
+            for index, original in ((3, fields.params), (4, fields.pulses), (7, fields.extras))) if chosen else None,
+        retained_frontier=[{k: deepcopy(v) for k, v in entry.items() if k not in ('stream', 'pcm')} for entry in alternatives],
+        retained_frontier_limit=16,
+        objective_name=str(objective_name), selection=selection,
+        capacity_policy=capacity_policy if isinstance(capacity_policy, str) else 'callback',
+        rate_lambda=float(rate_lambda), rate_unit='complete_serialized_bits',
+        full_synthesis_evaluations=search.evaluations, objective_evaluations=search.objective_evaluations,
+        spectral_trials=search.spectral_trials, excitation_trials=search.excitation_trials,
+        local_synthesis_evaluations=search.local_evaluations, local_synthesized_samples=search.local_samples,
+        serialization_calls=search.serializations, screening=screening, screening_horizon=int(screening_horizon),
+        completed_windows=sum(w['status'] == 'complete' for w in checkpoints),
+        incomplete_windows=sum(w['status'] != 'complete' for w in checkpoints),
+        allocation_evaluations=search.allocation_evaluations, state_advances=search.state_advances,
+        cache_hits=search.cache_hits, completed_parent_expansions=search.expansions,
+        final_metric_evaluations=len(measured), search_limit_reached=limit_reached,
+        best_encountered_oversize_bytes=len(search.best_infeasible.stream) if search.best_infeasible else None,
+        frame_limit=int(frame_limit), window_frames=int(window_frames), beam_width=int(beam_width),
+        spectral_candidates=int(spectral_candidates), excitation_candidates=int(excitation_candidates),
+        excitation_horizon=int(excitation_horizon), max_evaluations=int(max_evaluations),
+        allocation_evaluation_limit=int(allocation_evaluations), checkpoints=checkpoints,
+        header_filters_exact=True, native_model_pwm_exact=True,
+        cpu_budget=budget.report(), candidate_sink_streams=len(search.sent_streams),
+        seconds=time.perf_counter()-begun, cpu_seconds=time.process_time()-cpu_begun)
+    report.update(anchor_order=anchor_order, planned_anchors=list(anchors), nominated_anchors=sorted(anchors),
+        started_anchors=started_anchors, completed_anchors=completed_anchors,
+        refit_calls_started=search.refits_started, refit_calls_completed=search.refits_completed,
+        refit_candidates_completed=search.refit_candidates_completed,
+        joint_candidates_completed=search.joint_completed,
+        repeat_spectrum_opportunities=search.repeat_opportunities,
+        repeat_spectrum_proposals=search.repeat_proposals,
+        rate_allocation_calls_started=search.rate_calls_started,
+        completed_rate_allocation_calls=search.rate_allocations,
+        rate_allocation_points=search.rate_allocation_points)
+    if rate_search:
+        report.update(rate_search=True, requested_screening=requested_screening,
+            rate_allocation_limit_per_branch=16, rate_allocation_children_limit_per_branch=3)
+    return (chosen[0].stream, chosen[0].pcm, report, raw.stream) if chosen else (None, None, report, raw.stream if raw else None)
+
+
+def main():
+    import soundfile as sf
+    from batch_decoder import BatchSession
+    from output_paths import protect_outputs
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('reference', type=Path)
+    p.add_argument('input', type=Path)
+    p.add_argument('output', type=Path)
+    p.add_argument('--max-bytes', type=int, required=True)
+    p.add_argument('--frames', type=int, default=8)
+    p.add_argument('--window-frames', type=int, default=2)
+    p.add_argument('--beam-width', type=int, default=3)
+    p.add_argument('--spectral-candidates', type=int, default=2)
+    p.add_argument('--excitation-candidates', type=int, default=2)
+    p.add_argument('--evaluations', type=int, default=512)
+    p.add_argument('--selection', choices=('conservative', 'objective'), default='conservative')
+    p.add_argument('--non-speech', action='store_true', help='Numerical PCM/PWM errors without STOI')
+    p.add_argument('--capacity-policy', choices=('none', 'amplitude', 'marginal'), default='amplitude')
+    p.add_argument('--rate-lambda', type=float, default=0.0)
+    p.add_argument('--rate-search', action='store_true', help='Joint repeat-spectrum/cross-rate allocation search (full screening)')
+    p.add_argument('--anchor-order', choices=('time', 'priority'), default='time')
+    p.add_argument('--allocation-evaluations', type=int, default=64)
+    p.add_argument('--screening', choices=('local', 'full'), default='local')
+    p.add_argument('--screening-horizon', choices=(320, 640, 1280), type=int, default=640)
+    a = p.parse_args()
+    paths = [a.output/name for name in ('audio.l4hy', 'decoded.wav', 'raw.l4hy', 'report.json')]
+    protect_outputs([a.reference, a.input], paths)
+    ref, rate = sf.read(a.reference, dtype='int16')
+    if rate != 8000:
+        raise ValueError('Reference must be 8 kHz')
+    with BatchSession('batch', speech=True, speech_compact=True, compact_only=True) as decoder:
+        result, pcm, report, raw = refine(ref, a.input.read_bytes(), decoder, a.max_bytes,
+            frame_limit=a.frames, window_frames=a.window_frames, beam_width=a.beam_width,
+            spectral_candidates=a.spectral_candidates, excitation_candidates=a.excitation_candidates,
+            max_evaluations=a.evaluations, selection=a.selection,
+            capacity_policy=a.capacity_policy, rate_lambda=a.rate_lambda,
+            allocation_evaluations=a.allocation_evaluations, rate_search=a.rate_search,
+            anchor_order=a.anchor_order,
+            screening=a.screening, screening_horizon=a.screening_horizon, speech=not a.non_speech)
+    a.output.mkdir(parents=True, exist_ok=True)
+    if result is None:
+        paths[0].unlink(missing_ok=True)
+        paths[1].unlink(missing_ok=True)
+    else:
+        paths[0].write_bytes(result)
+        sf.write(paths[1], pcm, 8000, subtype='PCM_16')
+    if raw is not None:
+        paths[2].write_bytes(raw)
+    else:
+        paths[2].unlink(missing_ok=True)
+    paths[3].write_text(json.dumps(report, indent=2, allow_nan=False)+'\n', encoding='utf-8')
+    print(json.dumps({k: report[k] for k in ('fit_status', 'file_bytes', 'full_synthesis_evaluations', 'cpu_seconds')}))
+
+
+if __name__ == '__main__':
+    main()

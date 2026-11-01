@@ -1,0 +1,42 @@
+{
+  "schema": "lpx-quiet-voice-player-admission-v1",
+  "status": "complete",
+  "pairs": 1,
+  "rows": 4,
+  "linked_images": 4,
+  "passed": 4,
+  "no_fit": 0,
+  "timing_or_output_failures": 0,
+  "paired": [
+    {
+      "pair": "pair-001",
+      "extra_irq_cycles": 0,
+      "reference_domain": "auto-declared-target",
+      "old_playback_gain": 1,
+      "new_input_gain": 64,
+      "quality_adopted": false,
+      "data_saved_bytes": 98,
+      "both_passed": true,
+      "complete_flash_saved_bytes": 98,
+      "program_flash_change_bytes": 0,
+      "static_sram_change_bytes": 0
+    },
+    {
+      "pair": "pair-001",
+      "extra_irq_cycles": 100,
+      "reference_domain": "auto-declared-target",
+      "old_playback_gain": 1,
+      "new_input_gain": 64,
+      "quality_adopted": false,
+      "data_saved_bytes": 98,
+      "both_passed": true,
+      "complete_flash_saved_bytes": 98,
+      "program_flash_change_bytes": 0,
+      "static_sram_change_bytes": 0
+    }
+  ],
+  "seconds": 19.413039300008677,
+  "source_epoch_unchanged": true,
+  "quality_or_default_promoted_by_playback": false,
+  "scope": "Current-source production-player validation only. Explicit input/playback gain and declared-target distinctions remain. No original-level quality, audibility, optional-auto default, or C real-time claim."
+}

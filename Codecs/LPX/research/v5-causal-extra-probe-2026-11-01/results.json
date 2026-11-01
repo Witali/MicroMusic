@@ -1,0 +1,169 @@
+{
+  "status": "PASS",
+  "synthetic_only": true,
+  "source_commit": "654ada493202f565d24cb9dcf22f16137c825329",
+  "profiles_succeeded": [
+    4
+  ],
+  "cases_examined": {
+    "4": 31,
+    "6": 120
+  },
+  "warm_refit_calls": 6,
+  "measured_refit_calls": 2,
+  "new_initial_fits": 0,
+  "native_builds": 0,
+  "corpus_audio_or_stream_reads": 0,
+  "target_jobs": 0,
+  "default_changes": 0,
+  "setup_cost": {
+    "wall_seconds": 2.1810249999980442,
+    "cpu_seconds": 1.640625
+  },
+  "warm_cost": {
+    "wall_seconds": 6.712929700006498,
+    "cpu_seconds": 6.625
+  },
+  "measured_search_cost": {
+    "wall_seconds": 1.6230485999840312,
+    "cpu_seconds": 1.53125
+  },
+  "total_cost": {
+    "wall_seconds": 11.49285000000964,
+    "cpu_seconds": 10.0
+  },
+  "native_verification_counts": {
+    "native_output_domain_comparisons": 912,
+    "unique_serialized_streams_verified": 228,
+    "model_samples_verified": 145920,
+    "exact_synthetic_stream_cache_hits": 84
+  },
+  "scope": "Constructive synthetic coverage counterexample only; no corpus, rate, quality or audibility claim",
+  "fixtures": [
+    {
+      "profile": 4,
+      "index": 30,
+      "spectral_index": 1,
+      "scale": 8,
+      "mandatory_position": 0,
+      "original_extra_position": 30,
+      "baseline_bytes": 57,
+      "target_bytes": 57,
+      "fixed_cap": 57,
+      "error_peak_offset": 14,
+      "first_output_difference_offset": 0,
+      "old_positions": [
+        14,
+        29,
+        30,
+        31
+      ],
+      "added_mandatory_positions": [
+        0,
+        25
+      ],
+      "baseline_clipped_samples": 0,
+      "target_clipped_samples": 0,
+      "status": "counterexample",
+      "baseline_payload_bits": 275,
+      "baseline_pcm_sse": 3787164,
+      "cost": {
+        "wall_seconds": 0.022854600014397874,
+        "cpu_seconds": 0.03125
+      },
+      "spectral_codes": [
+        1,
+        2,
+        4,
+        6,
+        8,
+        10,
+        13,
+        17,
+        23,
+        29
+      ],
+      "old": {
+        "bytes": 57,
+        "payload_bits": 275,
+        "extra_count": 1,
+        "pcm_sse": 2682956,
+        "pwm_mismatch_samples": 170,
+        "clipped_samples": 0,
+        "trial_evaluations": 43,
+        "cost": {
+          "wall_seconds": 0.00018079997971653938,
+          "cpu_seconds": 0.0
+        },
+        "changed_params": [],
+        "changed_pulses": [
+          {
+            "index": 10,
+            "value": [
+              0,
+              -8
+            ]
+          },
+          {
+            "index": 11,
+            "value": [
+              3,
+              -8
+            ]
+          }
+        ],
+        "changed_extras": [
+          {
+            "index": 5,
+            "value": [
+              30,
+              4
+            ]
+          }
+        ]
+      },
+      "expanded": {
+        "bytes": 57,
+        "payload_bits": 275,
+        "extra_count": 1,
+        "pcm_sse": 0,
+        "pwm_mismatch_samples": 0,
+        "clipped_samples": 0,
+        "trial_evaluations": 57,
+        "cost": {
+          "wall_seconds": 0.00022690001060254872,
+          "cpu_seconds": 0.0
+        },
+        "changed_params": [],
+        "changed_pulses": [],
+        "changed_extras": [
+          {
+            "index": 5,
+            "value": [
+              0,
+              -8
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "rejections": {
+    "4": {
+      "skipped": 30,
+      "baseline_clipped": 30,
+      "target_clipped": 30,
+      "peak_not_later": 30,
+      "causal_in_old_positions": 6,
+      "measured_non_counterexamples": 0
+    },
+    "6": {
+      "skipped": 120,
+      "baseline_clipped": 90,
+      "target_clipped": 90,
+      "peak_not_later": 120,
+      "causal_in_old_positions": 48,
+      "measured_non_counterexamples": 0
+    }
+  }
+}

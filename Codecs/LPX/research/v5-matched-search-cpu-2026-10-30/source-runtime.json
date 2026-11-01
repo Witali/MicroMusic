@@ -1,0 +1,50 @@
+{
+  "production_commit": "df8443cc389f1298ab23a3aca9cdee15e781bbe0",
+  "frozen_production_root_repository_relative": ".worktree/lpx-v5-search-cpu",
+  "executed_harness_commit": "843fe1520a15dd7b0b8b8d4754e2169f76d7b023",
+  "executed_harness_sources_sha256": {
+    "prepare_baselines.py": "4039bc3d7b0d6260c9e690dc35bbb5591f7f7854582c11895b1aad71a2a12b7e",
+    "project_study.py": "55ce26ff88e59544307fc2805d5e255210e5a3988325d0cb7efd271d9ea7371b",
+    "PROTOCOL.md": "839fa8eb981d6719db585ae877597f72c071552f7d99d3a7a074987fac6039a9",
+    "run_study.py": "06657e296764cc9bc4f6e6741123af97447cbaa8cba9e400a28bcb910189bf54",
+    "study_policy.py": "f5d0c87308ac0adcece94da972f0f43219e7f9275b90351d780fa98fad6f4562",
+    "study_runtime.py": "dd300dbfd3ea7c51fa60881fcc82695edb2ff33aa2d1f94c64a8f1b01861d809",
+    "test_baselines.py": "9e5b12d87a081307c12f1918cdc40cef064c8b2c23a52bdcabb593f076977130",
+    "test_policy.py": "0d1bc6ea2f96a0dd230c97ce1d35118b2cbf105b53a6db8abd688304d93a5779"
+  },
+  "production_code_inventory_sha256": "cd3c3bc664469537ae4949d09c49b4d39ce35350e5185ad20abd81fe071478c0",
+  "relevant_production_sources_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/adaptive_speech_chain.py": "30001dd91eb325b32f926fcb10ea47371be5ad26e9e8e037784c74e72ac29c46",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_compact.py": "7bc8c1595d50debc5d6a08a17db5c9223989a7252fb46296e09cc1c6a6c464f6",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_lpc.py": "58195ec3a93f55f6adf6c566fdf20ba1f5d3b0de77521980830a420e0a1c287a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_trajectory.py": "081d4d2bc37c0cd22360895ce35f75b1be5311dc4258b81693f032b138a55c59",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/search_cpu_budget.py": "192e1bfa92dbc82a36c5cbb962bd3ed024e725e89dc3b3b3cae0eb9cbc8ae2e6",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_chain_history.py": "dabdd321ec5e80440e081ae3afff1fb0f54f8888c5b993dbce7c3cc0e06bc804",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_noise_objective.py": "0200887114be2fb8d86f15fd1a4680ad947848ee4e16c7c09eca2e478b129bf3",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/voice_character.py": "95a22f1f50a7ffa8eaec690c822e4c079b1558efac007ed42173ad350f61cded",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/voice_input.py": "2e8b8938470e77b1b0f36b652b707549915c5a5b8cac663689b3e19f37e915d7"
+  },
+  "runtime": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "packages": {
+      "numpy": "2.5.4",
+      "numba": "0.68.0",
+      "scipy": "1.18.1",
+      "pystoi": "0.4.1",
+      "soundfile": "0.14.0"
+    },
+    "threads": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "NUMBA_NUM_THREADS": "1"
+    }
+  },
+  "source_c_identical_to_frozen_native_producer": true,
+  "production_module_origins_exclusively_frozen_root": true,
+  "postexport_descriptive_sources_sha256": {
+    "summarize_groups.py": "654ec4983689fbf803d2edd4eeb878138af269de3fdb5f150b727f26aead818f"
+  },
+  "scope": "Code/runtime provenance only; input/native/stream/reference/PCM/binding fingerprints excluded"
+}

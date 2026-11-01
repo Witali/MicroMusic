@@ -1,0 +1,164 @@
+{
+  "status": "PASS",
+  "production_source_commit": "de78a32376f9f9c17b64720a1a108ac85a3cf74b",
+  "arm_records": 12,
+  "corpus_helper_calls": 20,
+  "actual_cap_views": 36,
+  "historical_synthetic_calls": 6,
+  "current_preflight_synthetic_calls": 6,
+  "worker_warm_calls": 6,
+  "total_paid_synthetic_calls": 18,
+  "stored_whole_rows": 61,
+  "prior_saved_admissible_rows": 92,
+  "distinct_study_context_whole_tuples": 54,
+  "distinct_changed_context_whole_tuples": 48,
+  "all_distinct_point_frontier_classifications": {
+    "dominated-by-prior": 6,
+    "not-admissible": 47,
+    "prior-frontier-rank-tie": 1
+  },
+  "changed_distinct_point_frontier_classifications": {
+    "not-admissible": 47,
+    "dominated-by-prior": 1
+  },
+  "changed_distinct_failed_gate_counts_overlapping": {
+    "old_pcm_pwm_floors_passed": 39,
+    "pwm8_stoi": 23,
+    "joint_objective_nonregression": 21,
+    "pcm16_sse": 15,
+    "pcm16_stoi": 25,
+    "pwm8_sse": 16,
+    "pcm_period_coverage_floor_passed": 12,
+    "pwm_period_coverage_floor_passed": 9
+  },
+  "changed_distinct_failed_patterns": {
+    "old_pcm_pwm_floors_passed + pwm8_stoi": 1,
+    "old_pcm_pwm_floors_passed + joint_objective_nonregression + pwm8_stoi": 3,
+    "old_pcm_pwm_floors_passed + joint_objective_nonregression + pcm16_sse + pcm16_stoi + pwm8_sse + pwm8_stoi": 3,
+    "old_pcm_pwm_floors_passed + pcm16_stoi + pwm8_stoi": 8,
+    "old_pcm_pwm_floors_passed + pcm_period_coverage_floor_passed + pwm_period_coverage_floor_passed + pcm16_stoi + pwm8_stoi": 4,
+    "old_pcm_pwm_floors_passed + pcm_period_coverage_floor_passed + pwm_period_coverage_floor_passed + pcm16_stoi": 2,
+    "pcm_period_coverage_floor_passed + pwm_period_coverage_floor_passed": 3,
+    "old_pcm_pwm_floors_passed + joint_objective_nonregression + pwm8_sse": 1,
+    "joint_objective_nonregression": 4,
+    "admitted": 1,
+    "old_pcm_pwm_floors_passed + joint_objective_nonregression + pcm16_sse + pcm16_stoi + pwm8_sse": 3,
+    "old_pcm_pwm_floors_passed + joint_objective_nonregression + pcm16_stoi": 1,
+    "old_pcm_pwm_floors_passed + joint_objective_nonregression + pcm16_stoi + pwm8_sse + pwm8_stoi": 1,
+    "old_pcm_pwm_floors_passed + joint_objective_nonregression + pcm16_sse + pwm8_sse": 5,
+    "old_pcm_pwm_floors_passed + pcm16_sse + pwm8_sse": 2,
+    "old_pcm_pwm_floors_passed + pcm_period_coverage_floor_passed + pcm16_stoi + pwm8_stoi": 2,
+    "pcm_period_coverage_floor_passed": 1,
+    "old_pcm_pwm_floors_passed + pcm16_stoi + pwm8_sse + pwm8_stoi": 1,
+    "old_pcm_pwm_floors_passed + pcm16_sse": 2
+  },
+  "decisions_versus_complete_saved_prior": {
+    "100": {
+      "prior-lower-joint": 10,
+      "equal-size-rank-tie": 2
+    },
+    "95": {
+      "neither-admitted": 12
+    },
+    "90": {
+      "neither-admitted": 12
+    }
+  },
+  "costs": {
+    "legacy": {
+      "eligible_groups": 681,
+      "visited_groups": 681,
+      "actual_trials": 18964,
+      "trial_bound": 33369,
+      "changed_active_groups": 316,
+      "helper_cpu": 10.40625,
+      "helper_wall_sum": 11.573762500018347,
+      "callback_persistence_cpu_included_in_helper": 0.296875,
+      "source_setup_search_cpu": 5.859375,
+      "source_finalization_cpu": 4.5,
+      "catalogue_sse_native_audit_cpu": 2.9375,
+      "whole_admission_and_persistence_cpu": 30.5,
+      "record_workflow_cpu": 54.34375,
+      "worker_process_body_cost": {
+        "wall_seconds": 63.9283190999995,
+        "cpu_seconds": 58.515625
+      },
+      "wrapper_entry_total_cost": {
+        "wall_seconds": 65.85786670001107,
+        "cpu_seconds": 60.234375
+      },
+      "wrapper_admission_cost": {
+        "wall_seconds": 1.4856808000185993,
+        "cpu_seconds": 1.28125
+      },
+      "wrapper_terminal_guard_cost": {
+        "wall_seconds": 0.40641209998284467,
+        "cpu_seconds": 0.40625
+      }
+    },
+    "causal": {
+      "eligible_groups": 681,
+      "visited_groups": 681,
+      "actual_trials": 27290,
+      "trial_bound": 33369,
+      "changed_active_groups": 325,
+      "helper_cpu": 10.109375,
+      "helper_wall_sum": 10.885071599972434,
+      "callback_persistence_cpu_included_in_helper": 0.171875,
+      "source_setup_search_cpu": 5.640625,
+      "source_finalization_cpu": 4.390625,
+      "catalogue_sse_native_audit_cpu": 2.875,
+      "whole_admission_and_persistence_cpu": 32.515625,
+      "record_workflow_cpu": 55.328125,
+      "worker_process_body_cost": {
+        "wall_seconds": 64.86669830000028,
+        "cpu_seconds": 60.078125
+      },
+      "wrapper_entry_total_cost": {
+        "wall_seconds": 67.15383629998541,
+        "cpu_seconds": 62.015625
+      },
+      "wrapper_admission_cost": {
+        "wall_seconds": 1.8530727000033949,
+        "cpu_seconds": 1.515625
+      },
+      "wrapper_terminal_guard_cost": {
+        "wall_seconds": 0.39526520000072196,
+        "cpu_seconds": 0.390625
+      }
+    }
+  },
+  "shared_costs": {
+    "historical_metadata": {
+      "wall_seconds": 5.114407199987909,
+      "cpu_seconds": 3.75
+    },
+    "current_metadata": {
+      "wall_seconds": 4.380053400003817,
+      "cpu_seconds": 3.59375
+    },
+    "historical_preflight": {
+      "wall_seconds": 9.934822000010172,
+      "cpu_seconds": 9.046875
+    },
+    "current_preflight": {
+      "wall_seconds": 4.932681500009494,
+      "cpu_seconds": 4.09375
+    },
+    "admission_review": {
+      "wall_seconds": 1.7148882999899797,
+      "cpu_seconds": 1.46875
+    }
+  },
+  "postcheck_cost": {
+    "wall_seconds": 9.337396499991883,
+    "cpu_seconds": 7.46875
+  },
+  "new_helper_calls": 0,
+  "new_metric_evaluations": 0,
+  "new_synthesis": 0,
+  "new_native_builds": 0,
+  "new_target_jobs": 0,
+  "metric_provenance": "Fresh producer whole values; prior values remain saved bridged evidence",
+  "wall_accounting": "Individual process walls are work costs, not summed campaign elapsed time"
+}

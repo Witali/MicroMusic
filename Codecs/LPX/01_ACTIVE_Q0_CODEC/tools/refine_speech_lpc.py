@@ -18,11 +18,21 @@ import numpy as np
 from numba import njit
 import speech_compact as compact
 from enhance_speech_compact import advance, sse
-from lpx4 import BitWriter
+from refine_speech_extras import refit_extra_group
 from q0_model import _coefficient_trace_vectors, coefficient_trace, table
 from refine_speech_compact import quality, no_regression
+from speech_rate_allocation import spectrum_bits, fit_capacity
+from search_cpu_budget import CpuBudget, CpuBudgetExceeded
 from standard_metrics import pwm_duties
 from wav_lpc import pack_frames
+
+
+SEARCH_PRESETS = {
+    'default': dict(frame_limit=32, spectral_candidates=2, lookahead=640,
+                    excitation_horizon=80, passes=1),
+    'expanded': dict(frame_limit=64, spectral_candidates=4, lookahead=1280,
+                     excitation_horizon=160, passes=2),
+}
 
 
 def coefficient_patch(spectra, profile, frame, samples, cosine=None):
@@ -45,38 +55,6 @@ def coefficient_patch(spectra, profile, frame, samples, cosine=None):
     result=_coefficient_trace_vectors(vectors,offset+count,
         table('cos_table.inc') if cosine is None else cosine)
     return result[offset:offset+count]
-
-
-def spectrum_bits(vector, previous, profile):
-    writer=BitWriter()
-    compact.put_spectrum(writer,list(map(int,vector)),
-                         None if previous is None else list(map(int,previous)),
-                         5 if profile==4 else 6)
-    return writer.total
-
-
-def fit_capacity(spectra_bits, frames, profile, extras, max_bytes, start, stop):
-    """Count exact fixed/Rice/marker costs and reclaim optional later pulses.
-
-    Removing only extras at or after start preserves the cached prefix state.
-    Unplayed padded-tail extras go first, then small local pulses, then small
-    later pulses. This bounded proposal is globally checked after synthesis.
-    """
-    base=spectra_bits+frames*(110 if profile==4 else 166)
-    capacity=max(0,min(len(extras),((max_bytes-22)*8-base-frames*8)//10))
-    added=extras.copy();active=int(np.count_nonzero(added[:,1]));removed=0
-    if active>capacity:
-        choices=[i for i in range(start//40,len(added)) if added[i,1]]
-        choices.sort(key=lambda i:(0 if i*40+int(added[i,0])>=stop else 1,
-                                   0 if i*40<start+480 else 1,abs(int(added[i,1])),i))
-        # stop is actual output length: stored, unplayed tail fields are free
-        # to remove, but still counted in the original serialized capacity.
-        for i in choices[:active-capacity]:added[i]=(-1,0);removed+=1
-        active-=removed
-    enhanced=active>0
-    bits=base+(frames*8+active*10 if enhanced else 0)
-    size=22+(bits+7)//8
-    return added,capacity,size,removed
 
 
 @njit(cache=True)
@@ -103,28 +81,11 @@ def adapt_excitation(reference,co,params,pulses,extras,steps,pre,bright,profile,
                     if trial<loss:loss=trial;best=proposal.copy()
             pp[index]=best
         # Refit existing or new optional pulses at a small set of positions.
-        index=at//40;original=ee[index].copy();best=original.copy()
-        out,_,_,_,_=advance(co,pp,ii,ee,steps,pre,bright,at,stop,h,dd,cc,qr)
-        loss=sse(target,out);evaluations+=1;valid=min(40,len(reference)-at)
-        positions=np.zeros(40,np.uint8);peak=0;peak_error=-1
-        for j in range(valid):
-            error=abs(np.int64(target[j])-np.int64(out[j]))
-            if error>peak_error:peak_error=error;peak=j
-        positions[peak]=1
-        if original[1]:
-            for delta in (-1,0,1):
-                pos=original[0]+delta
-                if 0<=pos<valid:positions[pos]=1
-        for pos in range(valid):
-            if not positions[pos]:continue
-            for amp in range(-8,8):
-                if not (amp in (-4,-2,0,2,4) or abs(amp-original[1])<=1):continue
-                if amp and not original[1] and active>=capacity:continue
-                ee[index,0]=pos if amp else -1;ee[index,1]=amp
-                trialout,_,_,_,_=advance(co,pp,ii,ee,steps,pre,bright,at,stop,h,dd,cc,qr)
-                trial=sse(target,trialout);evaluations+=1
-                if trial<loss:loss=trial;best=ee[index].copy()
-        ee[index]=best;active+=int(best[1]!=0)-int(original[1]!=0)
+        index=at//40;original_amplitude=ee[index,1]
+        pos,amp,_,count=refit_extra_group(reference,co,pp,ii,ee,steps,pre,bright,
+            at,stop,h,dd,cc,qr,active,capacity)
+        ee[index,0]=pos;ee[index,1]=amp;evaluations+=count
+        active+=int(amp!=0)-int(original_amplitude!=0)
         for half in range(2):
             begin=at+half*20
             if begin>=end:break
@@ -162,8 +123,18 @@ def frame_order(reference, pcm, limit):
 
 
 def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates=2,
-           lookahead=640,excitation_horizon=80,passes=1,refit=True):
-    """Return selected v5 bytes/PCM/report plus a raw best-encountered stream."""
+           lookahead=640,excitation_horizon=80,passes=1,refit=True,speech=True,
+           cpu_seconds=None,candidate_sink=None):
+    """Return selected bytes/PCM/report/raw, with optional cooperative CPU quota.
+
+    Sink receives (stream, measured PCM-SSE) once per distinct baseline/full-metric
+    contender after local selection bookkeeping. These serialized contenders
+    require independent validation before use. Original native/model/PWM checks
+    on baseline/result/raw remain in finalization, outside the search quota.
+    """
+    CpuBudget.validate(cpu_seconds)
+    if candidate_sink is not None and not callable(candidate_sink):
+        raise ValueError('Expected a callable candidate sink')
     values=(max_bytes,frame_limit,spectral_candidates,lookahead,excitation_horizon,passes)
     if any(isinstance(v,bool) or not isinstance(v,Integral) for v in values):
         raise ValueError('Expected integer byte cap and bounded search settings')
@@ -176,6 +147,7 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
         raise ValueError('Expected mono PCM16 reference')
     n,profile,spectra,params,pulses,pre,bright,extras=compact.unpack(blob)
     if len(ref)!=n:raise ValueError('Reference/stream sample count mismatch')
+    budget=CpuBudget(cpu_seconds)
     started=time.perf_counter();reference64=ref.astype(np.int64)
     sp=np.asarray(spectra,np.int64);pp=np.asarray(params,np.int64);ii=np.asarray(pulses,np.int64);ee=np.asarray(extras,np.int64)
     shift=5 if profile==4 else 4
@@ -186,60 +158,75 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
     native=decoder.decode_one_s16(blob,n)
     if native is None or not np.array_equal(pcm,native) or not np.array_equal(pcm,compact.decode_model(blob)):
         raise AssertionError('Joint LPC baseline native/model mismatch')
-    before=quality(ref,pcm);after=before;result=bytes(blob);raw=bytes(blob);raw_loss=before['pcm16']['error_energy']
+    before=quality(ref,pcm,speech);after=before;result=bytes(blob);raw=bytes(blob);raw_loss=before['pcm16']['error_energy']
     costs=[spectrum_bits(row,None if f==0 else sp[f-1],profile) for f,row in enumerate(sp)]
     spectral_trials=excitation_trials=full_evaluations=accepted=cap_rejections=0;checkpoints=[]
-    for pass_index in range(passes if before['pcm16']['error_energy'] else 0):
-        pass_changes=0
-        for frame in frame_order(reference64,pcm,frame_limit):
-            start=frame*320;stop=min(n,start+lookahead);patch_end=min(n,start+480)
-            old_patch=co[start:patch_end].copy()
-            _,hist,dd,cc,ring=advance(co,pp,ii,ee,steps,pre,bright,0,start,zero_h,0,0,zero_ring)
-            proposals=[]
-            for field in range(10):
-                for delta in (-1,1):
-                    vec=sp[frame].copy();vec[field]+=delta
-                    if not 0<=vec[field]<(32 if profile==4 else 64):continue
-                    if field and vec[field]<=vec[field-1] or field<9 and vec[field]>=vec[field+1]:continue
-                    trial_sp=sp.copy();trial_sp[frame]=vec
+    emitted=set()
+    def publish(candidate,score):
+        if candidate_sink is None or candidate in emitted:return
+        candidate_sink(candidate,score)
+        emitted.add(candidate)
+    publish(bytes(blob),before['pcm16']['error_energy'])
+    try:
+        budget.check()
+        for pass_index in range(passes if before['pcm16']['error_energy'] else 0):
+            pass_changes=0
+            for frame in frame_order(reference64,pcm,frame_limit):
+                budget.check()
+                start=frame*320;stop=min(n,start+lookahead);patch_end=min(n,start+480)
+                old_patch=co[start:patch_end].copy()
+                _,hist,dd,cc,ring=advance(co,pp,ii,ee,steps,pre,bright,0,start,zero_h,0,0,zero_ring)
+                proposals=[]
+                for field in range(10):
+                    for delta in (-1,1):
+                        budget.check()
+                        vec=sp[frame].copy();vec[field]+=delta
+                        if not 0<=vec[field]<(32 if profile==4 else 64):continue
+                        if field and vec[field]<=vec[field-1] or field<9 and vec[field]>=vec[field+1]:continue
+                        trial_sp=sp.copy();trial_sp[frame]=vec
+                        co[start:patch_end]=coefficient_patch(trial_sp,profile,frame,n,cosine)
+                        trial=advance(co,pp,ii,ee,steps,pre,bright,start,stop,hist,dd,cc,ring)[0]
+                        loss=int(sse(reference64[start:stop],trial));spectral_trials+=1
+                        proposals.append((loss,field,delta,trial_sp))
+                co[start:patch_end]=old_patch
+                proposals.sort(key=lambda p:(p[0],p[1],p[2]))
+                for _,field,delta,trial_sp in proposals[:spectral_candidates]:
+                    budget.check()
                     co[start:patch_end]=coefficient_patch(trial_sp,profile,frame,n,cosine)
-                    trial=advance(co,pp,ii,ee,steps,pre,bright,start,stop,hist,dd,cc,ring)[0]
-                    loss=int(sse(reference64[start:stop],trial));spectral_trials+=1
-                    proposals.append((loss,field,delta,trial_sp))
-            co[start:patch_end]=old_patch
-            proposals.sort(key=lambda p:(p[0],p[1],p[2]))
-            for _,field,delta,trial_sp in proposals[:spectral_candidates]:
-                co[start:patch_end]=coefficient_patch(trial_sp,profile,frame,n,cosine)
-                trial_costs=costs.copy()
-                for f in range(frame,min(frame+2,len(sp))):
-                    trial_costs[f]=spectrum_bits(trial_sp[f],None if f==0 else trial_sp[f-1],profile)
-                trial_ee,capacity,size,removed=fit_capacity(sum(trial_costs),len(sp),profile,ee,int(max_bytes),start,n)
-                if size>max_bytes:cap_rejections+=1;co[start:patch_end]=old_patch;continue
-                trial_pp=pp;trial_ii=ii
-                if refit:
-                    trial_pp,trial_ii,trial_ee,count=adapt_excitation(reference64,co,pp,ii,trial_ee,steps,pre,bright,
-                        profile,start,min(n,start+480),excitation_horizon,hist,dd,cc,ring,capacity)
-                    excitation_trials+=int(count)
-                suffix=advance(co,trial_pp,trial_ii,trial_ee,steps,pre,bright,start,n,hist,dd,cc,ring)[0]
-                trial=np.concatenate((pcm[:start],suffix));loss=int(sse(reference64,trial))
-                if loss>=after['pcm16']['error_energy']:co[start:patch_end]=old_patch;continue
-                candidate,metadata=compact.pack(n,profile,trial_sp.tolist(),trial_pp.tolist(),trial_ii.tolist(),pre,bright,extras=trial_ee.tolist())
-                if len(candidate)>max_bytes:raise AssertionError('Joint LPC serialized cap failed')
-                measured=quality(ref,trial);full_evaluations+=1;allowed=no_regression(measured,before)
-                checkpoints.append({'pass':pass_index,'frame':frame,'lsf_index':field,'lsf_delta':delta,
-                    'file_bytes':len(candidate),'cap_extra_pulses_removed':removed,'metrics':measured,
-                    'conservative_floors_passed':bool(allowed)})
-                if loss<raw_loss:raw=candidate;raw_loss=loss
-                if allowed:
-                    sp=trial_sp;pp=trial_pp;ii=trial_ii;ee=trial_ee;costs=trial_costs
-                    pcm=trial;after=measured;result=candidate;accepted+=1;pass_changes+=1
-                    old_patch=co[start:patch_end].copy()
+                    trial_costs=costs.copy()
+                    for f in range(frame,min(frame+2,len(sp))):
+                        trial_costs[f]=spectrum_bits(trial_sp[f],None if f==0 else trial_sp[f-1],profile)
+                    trial_ee,capacity,size,removed=fit_capacity(sum(trial_costs),len(sp),profile,ee,int(max_bytes),start,n)
+                    if size>max_bytes:cap_rejections+=1;co[start:patch_end]=old_patch;continue
+                    trial_pp=pp;trial_ii=ii
+                    if refit:
+                        trial_pp,trial_ii,trial_ee,count=adapt_excitation(reference64,co,pp,ii,trial_ee,steps,pre,bright,
+                            profile,start,min(n,start+480),excitation_horizon,hist,dd,cc,ring,capacity)
+                        excitation_trials+=int(count)
+                    suffix=advance(co,trial_pp,trial_ii,trial_ee,steps,pre,bright,start,n,hist,dd,cc,ring)[0]
+                    trial=np.concatenate((pcm[:start],suffix));loss=int(sse(reference64,trial))
+                    if loss>=after['pcm16']['error_energy']:co[start:patch_end]=old_patch;continue
+                    candidate,metadata=compact.pack(n,profile,trial_sp.tolist(),trial_pp.tolist(),trial_ii.tolist(),pre,bright,extras=trial_ee.tolist())
+                    if len(candidate)>max_bytes:raise AssertionError('Joint LPC serialized cap failed')
+                    measured=quality(ref,trial,speech);full_evaluations+=1;allowed=no_regression(measured,before)
+                    checkpoints.append({'pass':pass_index,'frame':frame,'lsf_index':field,'lsf_delta':delta,
+                        'file_bytes':len(candidate),'cap_extra_pulses_removed':removed,'metrics':measured,
+                        'conservative_floors_passed':bool(allowed)})
+                    if loss<raw_loss:raw=candidate;raw_loss=loss
+                    if allowed:
+                        sp=trial_sp;pp=trial_pp;ii=trial_ii;ee=trial_ee;costs=trial_costs
+                        pcm=trial;after=measured;result=candidate;accepted+=1;pass_changes+=1
+                        old_patch=co[start:patch_end].copy()
+                    publish(candidate,measured['pcm16']['error_energy'])
                     # The shortlisted neighbours were based on the old vector.
                     # Accept at most one change per frame, then refresh next sweep.
-                    break
+                    if allowed:break
+                    co[start:patch_end]=old_patch
                 co[start:patch_end]=old_patch
-            co[start:patch_end]=old_patch
-        if not pass_changes:break
+            if not pass_changes:break
+    except CpuBudgetExceeded:
+        pass
+    budget.finish_search()
     for candidate in set((bytes(blob),result,raw)):
         received=decoder.decode_one_s16(candidate,n)
         if received is None or not np.array_equal(received,compact.decode_model(candidate)):
@@ -250,7 +237,7 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
     if result[12:16]!=blob[12:16]:raise AssertionError('Joint LPC changed frozen header filters')
     report={'proposal':'compact_joint_lpc_excitation','samples':n,'profile':profile,
         'baseline_bytes':len(blob),'file_bytes':len(result),'max_file_bytes':int(max_bytes),
-        'baseline':before,'selected':after,'raw_best_sse':quality(ref,decoder.decode_one_s16(raw,n)),
+        'baseline':before,'selected':after,'raw_best_sse':quality(ref,decoder.decode_one_s16(raw,n),speech),
         'raw_file_bytes':len(raw),'raw_stream_sha256':hashlib.sha256(raw).hexdigest(),
         'changed_spectral_indices':int(np.count_nonzero(sp!=np.asarray(spectra,np.int64))),
         'changed_excitation_fields':int(np.count_nonzero(pp!=np.asarray(params,np.int64))+np.count_nonzero(ii!=np.asarray(pulses,np.int64))+np.count_nonzero(ee!=np.asarray(extras,np.int64))),
@@ -260,6 +247,7 @@ def refine(reference,blob,decoder,max_bytes,*,frame_limit=32,spectral_candidates
         'excitation_horizon':int(excitation_horizon),'passes':int(passes),'refit':refit,
         'header_filters_exact':True,'native_model_pwm_exact':True,'checkpoints':checkpoints,
         'seconds':time.perf_counter()-started}
+    report['cpu_budget']=budget.report()
     return result,pcm,report,raw
 
 
@@ -269,16 +257,25 @@ def main():
     from output_paths import protect_outputs
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('reference',type=Path);parser.add_argument('input',type=Path);parser.add_argument('output',type=Path)
-    parser.add_argument('--max-bytes',type=int,required=True);parser.add_argument('--frames',type=int,default=32)
-    parser.add_argument('--spectral-candidates',type=int,default=2);parser.add_argument('--lookahead',type=int,default=640,choices=(320,640,1280))
-    parser.add_argument('--excitation-horizon',type=int,default=80,choices=(80,160));parser.add_argument('--passes',type=int,default=1,choices=(1,2))
+    parser.add_argument('--max-bytes',type=int,required=True)
+    parser.add_argument('--preset',choices=tuple(SEARCH_PRESETS),default='default',
+                        help='Named host search settings; explicit options override the preset')
+    parser.add_argument('--frames',type=int,help='Override preset anchor count')
+    parser.add_argument('--spectral-candidates',type=int,help='Override preset spectral finalists')
+    parser.add_argument('--lookahead',type=int,choices=(320,640,1280),help='Override preset screening samples')
+    parser.add_argument('--excitation-horizon',type=int,choices=(80,160),help='Override preset refit samples')
+    parser.add_argument('--passes',type=int,choices=(1,2),help='Override preset pass count')
     args=parser.parse_args();paths=[args.output/'audio.l4hy',args.output/'decoded.wav',args.output/'raw.l4hy',args.output/'report.json']
+    settings=SEARCH_PRESETS[args.preset].copy()
+    for argument,option in (('frames','frame_limit'),('spectral_candidates','spectral_candidates'),
+                            ('lookahead','lookahead'),('excitation_horizon','excitation_horizon'),('passes','passes')):
+        value=getattr(args,argument)
+        if value is not None:settings[option]=value
     protect_outputs([args.reference,args.input],paths);ref,rate=sf.read(args.reference,dtype='int16')
     if rate!=8000:raise ValueError('Reference must be8kHz')
     with BatchSession('batch',speech=True,speech_compact=True,compact_only=True) as decoder:
-        result,pcm,report,raw=refine(ref,args.input.read_bytes(),decoder,args.max_bytes,
-            frame_limit=args.frames,spectral_candidates=args.spectral_candidates,lookahead=args.lookahead,
-            excitation_horizon=args.excitation_horizon,passes=args.passes)
+        result,pcm,report,raw=refine(ref,args.input.read_bytes(),decoder,args.max_bytes,**settings)
+    report['search_preset']=args.preset
     args.output.mkdir(parents=True,exist_ok=True);paths[0].write_bytes(result);paths[2].write_bytes(raw)
     sf.write(paths[1],pcm,8000,subtype='PCM_16');paths[3].write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print(json.dumps({k:report[k] for k in ('profile','file_bytes','accepted_frames','spectral_trials','seconds')}))

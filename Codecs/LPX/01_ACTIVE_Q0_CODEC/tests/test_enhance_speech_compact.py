@@ -53,7 +53,10 @@ class EnhanceCompactSpeechTests(unittest.TestCase):
         self.assertLessEqual(len(result),cap);self.assertEqual(unpack(result)[:7],args)
         self.assertGreater(report['extra_pulses'],0)
         self.assertLess(report['selected']['error_energy'],report['baseline']['error_energy'])
-        self.assertGreaterEqual(report['selected']['stoi'],report['baseline']['stoi']-1e-12)
+        # This 80ms fixture is too short for valid STOI. The shared metric
+        # correctly reports unavailable, rather than pystoi's numeric sentinel.
+        self.assertIsNone(report['baseline']['stoi'])
+        self.assertIsNone(report['selected']['stoi'])
         self.assertLessEqual(report['full_evaluations'],32)
         np.testing.assert_array_equal(pcm,decode_model(result))
 

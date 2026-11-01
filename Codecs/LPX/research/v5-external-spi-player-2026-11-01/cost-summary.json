@@ -1,0 +1,365 @@
+{
+  "schema": "lpx-external-spi-cost-summary-v1",
+  "chains": [
+    {
+      "chain_id": "long-001",
+      "kind": "long",
+      "profile": 4,
+      "samples": 3786111,
+      "reset_segments": 60,
+      "stored_stream_bytes": 202600,
+      "actual_requested_payload_bytes": 201990,
+      "valid_unread_stored_suffix_bytes": 610,
+      "external_capacity_bytes": 16777216,
+      "metadata_flash_bytes": 360,
+      "flash_bytes_by_backend_irq": [
+        {
+          "assembly": true,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 5308,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 5316,
+          "static_sram_bytes": 764
+        }
+      ]
+    },
+    {
+      "chain_id": "long-002",
+      "kind": "long",
+      "profile": 4,
+      "samples": 3786111,
+      "reset_segments": 60,
+      "stored_stream_bytes": 202600,
+      "actual_requested_payload_bytes": 201991,
+      "valid_unread_stored_suffix_bytes": 609,
+      "external_capacity_bytes": 16777216,
+      "metadata_flash_bytes": 360,
+      "flash_bytes_by_backend_irq": [
+        {
+          "assembly": true,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 5308,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 5316,
+          "static_sram_bytes": 764
+        }
+      ]
+    },
+    {
+      "chain_id": "long-003",
+      "kind": "long",
+      "profile": 4,
+      "samples": 3786111,
+      "reset_segments": 60,
+      "stored_stream_bytes": 202600,
+      "actual_requested_payload_bytes": 201991,
+      "valid_unread_stored_suffix_bytes": 609,
+      "external_capacity_bytes": 16777216,
+      "metadata_flash_bytes": 360,
+      "flash_bytes_by_backend_irq": [
+        {
+          "assembly": true,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 5308,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 5316,
+          "static_sram_bytes": 764
+        }
+      ]
+    },
+    {
+      "chain_id": "long-004",
+      "kind": "long",
+      "profile": 6,
+      "samples": 3786111,
+      "reset_segments": 60,
+      "stored_stream_bytes": 299058,
+      "actual_requested_payload_bytes": 298131,
+      "valid_unread_stored_suffix_bytes": 927,
+      "external_capacity_bytes": 16777216,
+      "metadata_flash_bytes": 360,
+      "flash_bytes_by_backend_irq": [
+        {
+          "assembly": true,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 5308,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 5316,
+          "static_sram_bytes": 764
+        }
+      ]
+    },
+    {
+      "chain_id": "long-005",
+      "kind": "long",
+      "profile": 6,
+      "samples": 3786111,
+      "reset_segments": 60,
+      "stored_stream_bytes": 299058,
+      "actual_requested_payload_bytes": 298131,
+      "valid_unread_stored_suffix_bytes": 927,
+      "external_capacity_bytes": 16777216,
+      "metadata_flash_bytes": 360,
+      "flash_bytes_by_backend_irq": [
+        {
+          "assembly": true,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 5308,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 5316,
+          "static_sram_bytes": 764
+        }
+      ]
+    },
+    {
+      "chain_id": "long-006",
+      "kind": "long",
+      "profile": 6,
+      "samples": 3786111,
+      "reset_segments": 60,
+      "stored_stream_bytes": 299056,
+      "actual_requested_payload_bytes": 298128,
+      "valid_unread_stored_suffix_bytes": 928,
+      "external_capacity_bytes": 16777216,
+      "metadata_flash_bytes": 360,
+      "flash_bytes_by_backend_irq": [
+        {
+          "assembly": true,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 5308,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 5316,
+          "static_sram_bytes": 764
+        }
+      ]
+    },
+    {
+      "chain_id": "short-p4",
+      "kind": "short",
+      "profile": 4,
+      "samples": 160,
+      "reset_segments": 1,
+      "stored_stream_bytes": 39,
+      "actual_requested_payload_bytes": 32,
+      "valid_unread_stored_suffix_bytes": 7,
+      "external_capacity_bytes": 16777216,
+      "metadata_flash_bytes": 6,
+      "flash_bytes_by_backend_irq": [
+        {
+          "assembly": false,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 5128,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": false,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 5136,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 4954,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 4962,
+          "static_sram_bytes": 764
+        }
+      ]
+    },
+    {
+      "chain_id": "short-p6",
+      "kind": "short",
+      "profile": 6,
+      "samples": 160,
+      "reset_segments": 1,
+      "stored_stream_bytes": 47,
+      "actual_requested_payload_bytes": 37,
+      "valid_unread_stored_suffix_bytes": 10,
+      "external_capacity_bytes": 16777216,
+      "metadata_flash_bytes": 6,
+      "flash_bytes_by_backend_irq": [
+        {
+          "assembly": false,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 5128,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": false,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 5136,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 0,
+          "flash_bytes": 4954,
+          "static_sram_bytes": 764
+        },
+        {
+          "assembly": true,
+          "extra_irq_cycles": 100,
+          "flash_bytes": 4962,
+          "static_sram_bytes": 764
+        }
+      ]
+    }
+  ],
+  "matched_short_program_costs": [
+    {
+      "profile": 4,
+      "assembly": false,
+      "extra_irq_cycles": 0,
+      "spi_full_program_flash_bytes": 5128,
+      "rom_program_excluding_stream_bytes": 4745,
+      "full_program_flash_growth_bytes": 383,
+      "spi_full_flash_bytes": 5128,
+      "rom_full_flash_bytes": 4784,
+      "spi_sram_bytes": 764,
+      "rom_sram_bytes": 756,
+      "both_outputs_exact": true
+    },
+    {
+      "profile": 4,
+      "assembly": false,
+      "extra_irq_cycles": 100,
+      "spi_full_program_flash_bytes": 5136,
+      "rom_program_excluding_stream_bytes": 4753,
+      "full_program_flash_growth_bytes": 383,
+      "spi_full_flash_bytes": 5136,
+      "rom_full_flash_bytes": 4792,
+      "spi_sram_bytes": 764,
+      "rom_sram_bytes": 756,
+      "both_outputs_exact": true
+    },
+    {
+      "profile": 4,
+      "assembly": true,
+      "extra_irq_cycles": 0,
+      "spi_full_program_flash_bytes": 4954,
+      "rom_program_excluding_stream_bytes": 4573,
+      "full_program_flash_growth_bytes": 381,
+      "spi_full_flash_bytes": 4954,
+      "rom_full_flash_bytes": 4612,
+      "spi_sram_bytes": 764,
+      "rom_sram_bytes": 756,
+      "both_outputs_exact": true
+    },
+    {
+      "profile": 4,
+      "assembly": true,
+      "extra_irq_cycles": 100,
+      "spi_full_program_flash_bytes": 4962,
+      "rom_program_excluding_stream_bytes": 4581,
+      "full_program_flash_growth_bytes": 381,
+      "spi_full_flash_bytes": 4962,
+      "rom_full_flash_bytes": 4620,
+      "spi_sram_bytes": 764,
+      "rom_sram_bytes": 756,
+      "both_outputs_exact": true
+    },
+    {
+      "profile": 6,
+      "assembly": false,
+      "extra_irq_cycles": 0,
+      "spi_full_program_flash_bytes": 5128,
+      "rom_program_excluding_stream_bytes": 4745,
+      "full_program_flash_growth_bytes": 383,
+      "spi_full_flash_bytes": 5128,
+      "rom_full_flash_bytes": 4792,
+      "spi_sram_bytes": 764,
+      "rom_sram_bytes": 756,
+      "both_outputs_exact": true
+    },
+    {
+      "profile": 6,
+      "assembly": false,
+      "extra_irq_cycles": 100,
+      "spi_full_program_flash_bytes": 5136,
+      "rom_program_excluding_stream_bytes": 4753,
+      "full_program_flash_growth_bytes": 383,
+      "spi_full_flash_bytes": 5136,
+      "rom_full_flash_bytes": 4800,
+      "spi_sram_bytes": 764,
+      "rom_sram_bytes": 756,
+      "both_outputs_exact": true
+    },
+    {
+      "profile": 6,
+      "assembly": true,
+      "extra_irq_cycles": 0,
+      "spi_full_program_flash_bytes": 4954,
+      "rom_program_excluding_stream_bytes": 4573,
+      "full_program_flash_growth_bytes": 381,
+      "spi_full_flash_bytes": 4954,
+      "rom_full_flash_bytes": 4620,
+      "spi_sram_bytes": 764,
+      "rom_sram_bytes": 756,
+      "both_outputs_exact": true
+    },
+    {
+      "profile": 6,
+      "assembly": true,
+      "extra_irq_cycles": 100,
+      "spi_full_program_flash_bytes": 4962,
+      "rom_program_excluding_stream_bytes": 4581,
+      "full_program_flash_growth_bytes": 381,
+      "spi_full_flash_bytes": 4962,
+      "rom_full_flash_bytes": 4628,
+      "spi_sram_bytes": 764,
+      "rom_sram_bytes": 756,
+      "both_outputs_exact": true
+    }
+  ],
+  "long_rows": 12,
+  "minimum_long_program_flash_bytes": 5308,
+  "maximum_long_program_flash_bytes": 5316,
+  "long_static_sram_bytes": [
+    764
+  ],
+  "minimum_long_stack_margin_bytes": 1223,
+  "minimum_long_wall_seconds": 230.44281279999996,
+  "maximum_long_wall_seconds": 352.359965199983,
+  "source_and_data_separate": true,
+  "long_rom_embedding": "device-no-fit-data-alone; linked program size unavailable",
+  "physical_samples": {
+    "long": 45433332,
+    "bounded_spi": 1280,
+    "matched_short_rom": 1280
+  },
+  "maximum_dispatch_lateness_cycles": 2,
+  "maximum_spi_software_gap_cycles": 80372,
+  "completions_during_audio_irq": 4849,
+  "new_searches": 0,
+  "physical_board_claim": false,
+  "c_8khz_sustainability_claim": false
+}

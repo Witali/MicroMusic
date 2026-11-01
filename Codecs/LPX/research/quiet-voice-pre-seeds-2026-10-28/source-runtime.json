@@ -1,0 +1,134 @@
+{
+  "schema": "lpx-quiet-voice-pre-seed-source-runtime-v1",
+  "binding_scope": "Post-run exact source identity and read-only saved-output audit; not pre-run or runtime-mutation attestation of original fitting",
+  "frozen_source_files": {
+    "speech_v4.py": {
+      "sha256": "d7c17a39dbaad71df99ff1d46916bd263080cc6727f94b79e98aa86381f562cc",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "speech_compact.py": {
+      "sha256": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "wav_lpc.py": {
+      "sha256": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "q0_model.py": {
+      "sha256": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "standard_metrics.py": {
+      "sha256": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "voice_character.py": {
+      "sha256": "95a22f1f50a7ffa8eaec690c822e4c079b1558efac007ed42173ad350f61cded",
+      "exact_file_matches_commit": "065716f5"
+    },
+    "speech_voice_objective.py": {
+      "sha256": "cfea78e86345f2d0989bde6725895cb660a90f10323d63171703160ca119d8bd",
+      "exact_file_matches_commit": "61f96e62"
+    },
+    "batch_decoder.py": {
+      "sha256": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "benchmark_speech_flash.py": {
+      "sha256": "ab1dc4cdf84825c86c5340773fa32094cabee0cd55c9d12716298f4b9c236e70",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "refine_speech_compact.py": {
+      "sha256": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "lpx4.py": {
+      "sha256": "d732e76ed807089d02bea837f07e77f1a64cc94ce63a6be2fab286548b94acc0",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "enhance_speech_compact.py": {
+      "sha256": "3307b9ad09a7740264c6e4cab1787719148b1191b837f17605e5e5a764785e99",
+      "exact_file_matches_commit": "9ad3685c"
+    },
+    "output_paths.py": {
+      "sha256": "17d34b7471e9af6ad14c5261db3242194fc66f703af5173253644f0f2e2fe571",
+      "exact_file_matches_commit": "9ad3685c"
+    }
+  },
+  "decoder_source_commit": "5c7e0592",
+  "decoder_sources": {
+    "cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+    "Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+    "Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+    "native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "retained_original_runner_hashes": {
+    "probe_seed.py": {
+      "sha256": "a3d2e24cb4e4184d2a1b3231cc1aa4717cbeaaff0b938da7fbc960e630384cac",
+      "binding_time": "post-run; exact retained source only; no pre-run attestation"
+    },
+    "probe_pre.py": {
+      "sha256": "2fbf04b078d4cb6d870fa829bbc71413d85c5fda4264dccc539bfc0e2536aa31",
+      "binding_time": "post-run; exact retained source only; no pre-run attestation"
+    },
+    "reseed_target.py": {
+      "sha256": "a67694679ecdf42e45d9d225eefb112834538c0872d2fe230908f55c6cec6b9c",
+      "binding_time": "post-run; exact retained source only; no pre-run attestation"
+    },
+    "probe_pitched_only.py": {
+      "sha256": "508c528abcf7543a84415660f21aaf7e23cd2c01c4de9b670010452fa7393665",
+      "binding_time": "post-run; exact retained source only; no pre-run attestation"
+    },
+    "tuning_pre.py": {
+      "sha256": "bfee6ccbe945a54dc68ee2e319b435bbcac5c55570b9127bb02e9f5788dc3291",
+      "binding_time": "post-run; exact retained source only; no pre-run attestation"
+    }
+  },
+  "unavailable_original_source": [
+    "First H160 incumbent reseed controls and original-incumbentH320/W8 runner versions were edited in place; exact bytes/hashes unavailable. Source invocation is reconstructed and labeled.",
+    "Profile6 pre-grid was an in-memory wrapper of retainedprobe_pre.py; transformation reconstructed from tool record."
+  ],
+  "post_run_audit_environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "packages": {
+      "numpy": "2.5.4",
+      "numba": "0.68.0",
+      "scipy": "1.18.1",
+      "soundfile": "0.14.0"
+    }
+  },
+  "new_fits_for_export": 0,
+  "new_avr_images_for_export": 0,
+  "published_reseed_projection_source": {
+    "commit": "41f57496",
+    "sha256": "eb4cdf6362f20399280417b9dceaf06e25840a6890071b95c4aa682513fe76e5",
+    "scope": "The final component is used for explicit invocation reconstruction; exact initial uncommitted reseed source is not available. No projection fit was executed for this export."
+  },
+  "public_projection_sources_sha256": {
+    "common.py": "c96c19b2e285d5f3b37a1fd57b459bbecaf0f350162aa14074d47d99ff02ecb4",
+    "pre_controls.py": "33f7093af81dbcd4c775898fb661d429b25f1eae0f1b738e130a39214ca4ab1a",
+    "reseed_controls.py": "9a74f7d1f375ca8f76b8a42aa530c5a18e22a89ddc10e7a4cb5c27ee77f6376a",
+    "residual_seeds.py": "79036d86a1d686794b706902cb65c70e5aa6789a6e6cfcf19d6b49f20b250109"
+  },
+  "projection_differences": [
+    "Local tool/library/cache/PATH and private manifest/reference locations replaced by explicit CLI arguments and the caller environment.",
+    "Shared source/output/native guards added; original fitting arithmetic and preset selection described separately.",
+    "Public projections have not run any fitting during this export; only syntax and help are validated.",
+    "Old diagnostic results are measured again read-only using one frozen065/61f analysis epoch; unavailable earlier runner hashes are never invented."
+  ],
+  "projection_checks": {
+    "python_ast_files": 4,
+    "cli_help_entrypoints": 3,
+    "fit_invocations_for_export": 0
+  },
+  "read_only_audit_program": {
+    "sha256": "e44528a2f7da2aa73ea32f4be560da5fb61c08bec0b4d99582b78bf6d8384ada",
+    "retained_private_source": true,
+    "binding_time": "Post-run copy of the exact executed export/audit program; no fitting code is called."
+  }
+}

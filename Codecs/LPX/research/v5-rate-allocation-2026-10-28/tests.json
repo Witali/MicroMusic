@@ -1,0 +1,15 @@
+{
+  "schema": "lpx-v5-allocation-tests-v1",
+  "allocation_groups": 8,
+  "allocation_failures": 0,
+  "histogram_groups": 3,
+  "histogram_failures": 0,
+  "existing_regression_groups": 14,
+  "existing_regression_passed": 13,
+  "preexisting_error_groups": 1,
+  "preexisting_error": "80ms fixture assumes numeric STOI; see short-stoi-test.json. Observed before allocator edits. No quality floor was changed.",
+  "source_sha256": {
+    "test_speech_rate_allocation.py": "7e0cc9b3ad04a69555bc1195c841916c7fbbb2ecc82362b1d1d1ab3ca6c3f4d2",
+    "test_speech_parameter_histograms.py": "85c7194397d97949a4b8311648c67e0f53531706194105c61438f26ff3d47078"
+  }
+}

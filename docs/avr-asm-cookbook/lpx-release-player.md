@@ -51,3 +51,37 @@ against original diagnostic controls is 410–498 B. This total is measured,
 not the sum of marginal range endpoints. The ten-image 128 / 96 cost screen
 adds 6 B Flash everywhere while saving only RAM, so it is rejected before
 expensive timing admission under the project's Flash priority.
+
+## Measure encoder savings after final linking
+
+New encoded parameters can change decoder workload even when MCU source is
+identical. Compile and play the complete original and candidate reset chains;
+count every header, array, pointer table, padding and linked program once.
+Verify actual audio symbol ranges against binary bytes before subtracting
+them from full `.text + .data`. A smaller serialized stream alone is not a
+measured application saving.
+
+The 2026-10-28 encoder study supplies two useful measured examples. Under
+ATmega328P/AVR5, AVR-GCC 7.3.0, `-Os -flto -mcall-prologues -mrelax`, explicit
+ASM, LPC segments 2, unroll 1 / tuning 0 and FIFO 256 / prefill 192:
+
+- One raw perceptual alternative saves one stored byte but no linked Flash:
+  program/layout accounting absorbs that byte. The 44-image matrix checks
+  complete 64,000-sample playback at normal and extra 100-cycle IRQ load.
+- A held-out profile 4 candidate shrinks 1,800 to 1,701 stored bytes. Actual full
+  Flash changes 6,374 to 6,274 B normally and 6,382 to 6,282 B under the extra IRQ
+  load: 100 B saved, rather than the 99-byte payload-only prediction. Static
+  SRAM stays 756 B. All four complete 32,000-sample PWM/EOF/tick runs pass with
+  zero underruns; the candidate also preserves the original quality floors.
+
+These differences include linked layout; they do not show new arithmetic
+instruction savings. The C fallback remains explicitly selectable and MCU
+bytes are unchanged. Timing admission here applies to the stated ASM profile
+in simulation, not C real-time or physical-board/analog behavior. Encoder
+rate prices may use serialized bits for proposals, but the final resource
+frontier must use actual complete application measurements.
+
+[Perceptual pair evidence](../../Codecs/LPX/research/v5-encoder-candidate-admission-2026-10-28/README.md)
+and [held-out smaller-and-better pair](../../Codecs/LPX/research/v5-pareto95-player-admission-2026-10-28/README.md)
+retain the original project method, source/toolchain provenance and exact
+anonymous scope; private audio and media fingerprints stay in ignored build.

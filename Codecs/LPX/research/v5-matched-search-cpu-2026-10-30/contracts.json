@@ -1,0 +1,57 @@
+{
+  "pure_driver_contracts": {
+    "status": "PASS",
+    "tests": 9,
+    "source_files": [
+      "test_baselines.py",
+      "test_policy.py"
+    ]
+  },
+  "synthetic_api_native_preflight": {
+    "status": "PASS",
+    "corpus_helper_calls": 0,
+    "warmup_helper_calls": 4,
+    "fixture_samples": 5120,
+    "serialized_sse_checks": 60,
+    "whole_smoke_counters": {
+      "native_domain_comparisons": 8,
+      "unique_verified_reset_streams": 2,
+      "verified_model_samples": 10240,
+      "target_feature_rows": 2,
+      "fresh_whole_metric_rows_started": 2,
+      "fresh_whole_metric_rows_completed": 2,
+      "whole_metric_cache_hits": 10
+    },
+    "actual_cost": {
+      "wall_seconds": 17.295161400019424,
+      "cpu_seconds": 15.328125
+    },
+    "preparation_cost": {
+      "wall_seconds": 8.187991200014949,
+      "cpu_seconds": 6.515625
+    },
+    "warmup_cost": {
+      "wall_seconds": 7.638301300001331,
+      "cpu_seconds": 7.421875
+    }
+  },
+  "stored_source_and_artifact_export": {
+    "status": "PASS",
+    "observed_exit_code": 0,
+    "arm_records": 248,
+    "helper_returns": 312,
+    "cap_decisions": 744
+  },
+  "independent_inline_semantic_review": {
+    "status": "PASS",
+    "saved_source_bound_receipt_created": false,
+    "cap_choices_rederived": 744,
+    "stored_whole_rows": 761,
+    "fixed_helper_reports": 312,
+    "cumulative_arm_records": 40,
+    "baseline_contexts": 104,
+    "new_fits": 0,
+    "new_decodes": 0,
+    "new_simulations": 0
+  }
+}

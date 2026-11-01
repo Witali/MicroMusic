@@ -1,0 +1,2194 @@
+{
+  "schema": "lpx-v5-perceptual-objective-pilot-v1",
+  "status": "complete",
+  "source_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "cfeb718d9b0f2434fe36be2b86f1cb21dfc1d8a7a50fd8f36c71d7c1147effb8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "b3c5fa09a77cb0a3694ed46c5804970996e57e88cb53ac1615f6d1efac643e41",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/abs_closed_loop.py": "4dc8a5da4e813b27210e7b3e2b67d75c00eb39a7c572b10c9a4c578daca1530e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/audit_lowrate.py": "11cc01789f637e3f7d76d663b6a11daf4a1d1e430d6ae09473fb4109be0c7bdd",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/audit_speed_round_quality.py": "dd46a96fd8555409591e697e884f34352b56f314a46b1ef2ceec9dd821f574e1",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/auto_legacy_lpc.py": "ee6764e86140a2153e40ca1df30cbacfb2922ab0c15f862df1536b5412438a9d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/auto_pcm16.py": "3ac31390e90446c7070e5bbcdb9a33602d42c73faa3ad1e3d89b97586bb9da5e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/auto_search_lambda.py": "b561afe9eb38ebfe9518a0db0bca9ea1d9e64778f27d98286aae51878b7a0ca6",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/avr_timing_gate.py": "2cc594b7de7b50684a1d21b0c62c56d6dcb9cdbbe4622444b106ae6fd3cac2fa",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/batch_decoder.py": "e0696a076cff3e9f302eb7fff35312d8ea735060095703a4487e7a634ecaa178",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/beam_excitation_pcm16.py": "a1928bb71f01c05e0fb6534b90b4906145c33aec380463fba84351137db2dee1",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_8kbps.py": "6c2bffbf29d374eee52e1ba7ae9231806f79d3914eca4f1d79f57be568793a9b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_avr_profile.py": "ef5e11a76c91f0dd67f49c04cedc81ecb5cc37f7205b5a8b47e69b8a046e367e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_batch_quality.py": "88fa168bb9921340df5b9f7b344bf7f4cfbe2c1de3e811637c02ccc379cd4c9b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_compact.py": "78047fbbc01558d97c7961d21c8184f0240527665e2852cbefa7b06779d89b53",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_encoder_search_speed.py": "7f8400910fc3b5c3b879fc335d88a763bba326e99abd8d47639f07e0a3f281aa",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_encoder_speed.py": "a25c900bbbc9b698364e76c62978efc109bf4e4643c1ed4ee5d4b470ff86bdf5",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_fast_encoder.py": "826f17bb85b67c2d002687601d5c85d6fc3ffa8d85e5b8315860adde8a5282a1",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_global_rate.py": "4832ba86e976b77f6b415aef62a7d2e27e245c8f0187b0b365200242b0a70066",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_lossless.py": "9a1b26091338af60a177714099115ea1c6bde11aa75eecab0a82768027e7b294",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_lowrate.py": "ee65bfed8ad8bc0e63dedc319cf3df345cd49ec5f904125ad97ad0b3858198a0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_multiseed.py": "0e4f59c43c8be9c20dbd38135eeca5aca2fcf1492945183633b59e0647b0588a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_profile_development.py": "2e758fa316d7b121adcd9858aaf298913fe71e68f6ea58a19a48f0bce27d06aa",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_q0_encoder.py": "9e16469252847ef590e91838c3a463879a260fa107caae0354a9e9ee8b8f0d76",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_speech.py": "3d35f3293bda5d8b02c03dc156de182333b257d94a4532273e992acfe4304dd9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_speech_compact.py": "799d90dd276d06700f74c741efe4a3c7f71ff8874079bfcb90d9076728c864d2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_speech_flash.py": "ab1dc4cdf84825c86c5340773fa32094cabee0cd55c9d12716298f4b9c236e70",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_speed_round.py": "5331bb091d88f4208cf3e74447c33f592c57a14cf1f436c0a9c9ac7e0e045b0a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_standards.py": "01f160bbff3275feb0cb750681e6b747b7dc008f1871e5d336001af61fc2cd51",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/benchmark_unified.py": "2bfe48e05f0cc344520de91b40f27bc9471dee5aa2c9861990d63fdc12759a7e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/budget_search.py": "e474a024f828ba546e0a3de6dc3f206ecff61cfba57d4ac0def4852b4602d8ba",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_observer.py": "857d9cd987968742b549224d2271b01a8318adcc05b30d1a8773498f181fa44a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py": "1fba71295fbe982ae57a10678a32bfc490a7f1e5a32a5e47c994275c653ce97c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/compact_format.py": "118ed178c5910d4590faaef7f1119a4fab2a9c66ebe263f9bdc82d8a0ac7ad4f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/compare_codecs.py": "c83924e768aefb43b1d771f76a39e4f10c1defd25c667b3ae301d3214c29fbb7",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/diagnose_standard_alignment.py": "b20edacc74d8cf76b0b766b5b9bb4bf6c6f7d63223084de0e45dd300a5601865",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/encode_lowrate.py": "580b1cfd2dcffd019336a4f481a26212e72077eb049fe508950fbe8e1f1ec621",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/enhance_speech_compact.py": "3307b9ad09a7740264c6e4cab1787719148b1191b837f17605e5e5a764785e99",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/fast_lpx4.py": "2f794c219e8d585da06a8762c6b428c6fa1379eec359e04ee36b4788b1bd5938",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/gain_search.py": "2bea71223cb3c9958403a402828442b7552a6a943ed71e84c09e6c1c92be4db8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/gen_voice_header.py": "5803c445c1049e8fe4cddc18a1cc539bb6ad6d7f4ea98b5e08a27c2b9c1e7ecc",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/global_rate_pcm16.py": "b6597aa626c48add4e909fc83f648ff73c55c5583e341afa68f414ff88132735",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/joint_rate.py": "1e384f919e2efe552da48b6000811387c6dc9a681cd7bbb7c97d281bdfaa39b2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/l3av_parse.py": "41d61c89ed0bce196eaa44cfd3dbe98bad93ce0d29a2c0cb82f39974fa0d2ab0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/level_policy.py": "59d16e07b74390b334383efdd648c6e5f69364e833f4d31c56fa76dbd71df04b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lossless_repack.py": "e267771f096c22ea31f05fa11289753be44f904f263231209b2bfbb5a971ad51",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/lpx4.py": "d732e76ed807089d02bea837f07e77f1a64cc94ce63a6be2fab286548b94acc0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/make_synthetic.py": "0f36cc2327cd5112261e5f6387aa09d67054e3313ea211df9886c14af0ec1e09",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/measure_speech_firmware.py": "d37ad0e4c258ab52bbb186b0eb9b6d841405b30c1c7530930f33c680dec700c1",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/optimize_lambda_regions.py": "da46711572622d9dbff347db3bce8def54d70f566ae31fce3691bd3c66c1e21a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/optimize_old_lpc.py": "5611fe1df88298d320142800065ad63a5a3df8f324ef9fb3529564b12137b873",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/optimize_q0.py": "cfc2d55683c3f0a7214db2922f12b87e143568c12cc9c5adf98fc81d4f17ee42",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/output_paths.py": "17d34b7471e9af6ad14c5261db3242194fc66f703af5173253644f0f2e2fe571",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/perceptual_rate.py": "af7ed7996dd9cfe6aff8c6e96f1e48d69b0282fad8dd4b0a7c5344775447659b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/plot_lowrate.py": "6b1332941dcbf0f10cf38ec22ea7a5643894231065114ae169c4c8271255e097",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/plot_multiseed.py": "bfaa2388223293e875d9e755a11e9b451e050c474f5bb065cb745745113db3ce",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/plot_standards.py": "c256b8f268fc0c90b8343e05190cec3836ad48db59153e4be2789020c6716843",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/prepare_speech_corpus.py": "ec6ca0be2f7c2a2cbcbbb2b3dd73445051025e4cbcab71b1fe9c98f757df0432",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/profile_avr.py": "37809f1fefcf2dd50293e378264b52083aee71f5c2df4a2d3de354a1f989478b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rate_distortion.py": "c3baec11d562e5f0c68ac9ab5a8fce062788dfce0197f54c0b106a9d51c120d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_bitrate_profile.py": "14397f89575a3d9d343ddfe6cec3f0c1d5c4e9c4358dc64de392d7a3d59e5955",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_excitation_pcm16.py": "4f2c7b45b4ffdecbac135331bc59f75cec3778a89f43984fa64a7fc64b1128ec",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_fixedrate.py": "8b5eae4cc230b18570b06e20098c3d6811cce7c74fd7e399b6434153fa2177ac",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_lsf_pcm16.py": "02b20220c76809fe85dde4c84ebd543c75b26c018a93176c0d9fd427323163ea",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech8.py": "8f835b1a6b5ded621fdee332cbd2ef69b40a2e997ce7af4b0bd93d4fdc9dfed9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_compact.py": "1128f7cfe2b19bc16a306dd954f44db6a963d7f870153ed3f973e5309d4a00c4",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_excitation.py": "bd532c8ca4bfb40ef238fdf026b9776e2a5151351ab953aa02174a0d2fcbf6ac",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_lpc.py": "76fa10b8372d3626c4257d294bc98063d4509eba5bf48dd7d31734fc1fd2f804",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_perceptual.py": "6feefbaaf3aebddb51ee8052b7ad681c59b235efe93cbd31809ec4b783031c3b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_trajectory.py": "ccd6de9f0062cf4b955d2e974593249bb7fb009eede23dd3825d1827116a825d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_v4.py": "ad3b4465a2ab608cac51cacbaed7c7d31c9a8fd01ea97f980f8a9f7968f0a1ce",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v3.py": "8e43bef9cedcb6b22df3b3728686b43986c2337a49243c5c746b08ac8a532bef",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v4_reference.py": "5cc2b9f0f0f6b5cfebbf4e1afe65326eb017b3564ab40163b3c25cbdc418013c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/rice_v7.py": "a263dd86f37e0fd467b3c46b42f7ff25e6259ba5f647b6a6d2451ff56f76739b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/select_avr_candidates.py": "53fd8c982e9f67dc8db8711265e369636907e3b963db03f2565064d9359cacf8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/select_speech_budget.py": "6a1b97fa80f11a125a3bb21ca590cf4b000f9f36a0a4f140dd4aeb5f835a6a07",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_objective.py": "868624cf7b1c866bcb09a3ff93d627ee339d1a2f84fa704ac571f961d7d13903",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_rate_allocation.py": "3cfb0eb1ea1b969450f6fee699a629b23ab9ff6804844ea87d5d705f4ced5df3",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "d7c17a39dbaad71df99ff1d46916bd263080cc6727f94b79e98aa86381f562cc",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_headroom.py": "e7e208290fc6849f14c4f40ac185d9883a02eab5e44007a9e4a820ac2a2ae943",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/stress_lowrate.py": "c15e11d9e8abf3f398b6a6b2bf65c627b0d7f4af1e4f88f4050a16e1610b6f23",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_lowrate.py": "895fb28b80674da014f6f521580e72675a84e75cfdca53c2ff5d9f584fdf2ebb",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_multiseed.py": "9b4b7329305fdfd425747c78805171e3259fff5213d90db462c9fa3a6fdc5710",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_profile_development.py": "97cf69bf493391a994e3929bdb831a1d57c0092106446dffaa7a799b8d412c54",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_speech.py": "11dda36a84ba4ce2498604abcdf6fe7b44e6ddc988333e54996688deab74c8b5",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/summarize_standards.py": "89b921b67803541810a3ec182b7fc32d559c896a30fe02145ea94bbb25e63e32",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_header_fixedrate.py": "9463a777036db496283fc2d934d9c6569d63204b32e91252b6860ea11a77142c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_pcm16.py": "ae6c2b0aba038254b5555cd4cdf054d7a9e549f72485f483a880807b3d5d0c9a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/tune_shared_pwm_gain.py": "faa76de29e4698732ae99f4693e096e379c89515e00230755da19f0ecbe246c8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_lowrate_avr.py": "5ca48d3af0c745bca84c61bf14054d80be68cc17a0a660bf904888ecff0a4880",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_profile_development.py": "79e4642ca0b772ab5a00c582a4730b8a335d51f8ffe39dc4d7a28fdf5065eb4e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_profile_smallcode.py": "3176778823bfa9d98d5568355df4b03752151a2e6827ec2f9165739107e81c7e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_speech_avr.py": "f026546a3855668436624b8b2c61599081766d5407a71da37bcd3191567c9c20",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_standards_avr.py": "a8369672b461507eb4aa4dc44dd6eb782dab7c5e80e9c00e16c57b57076b3375",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/validate_v5_runtime.py": "d38220823f4333772bc8a9dbc7329e01167c437b9e99f8b0930e6678647ad541",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/verify_decoder_configs.py": "f59d352c2d36cd6096cbd87fe96065022275de119ae0f39f27b3ab45f69bd43c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_to_lpx4.py": "26295e84688bb6801875504229341a998c261f72df46e84989daee3a58cc257d"
+  },
+  "runner_sha256": "0bde2f607988d1b64284d8630dd2a01da116fccd593c795dd16ddc6339c6aeb5",
+  "settings": {
+    "frame_limit": 2,
+    "window_frames": 2,
+    "beam_width": 2,
+    "spectral_candidates": 2,
+    "excitation_candidates": 1,
+    "excitation_horizon": 80,
+    "max_evaluations": 128
+  },
+  "split": "tuning",
+  "case_count": 3,
+  "profile_controls": 6,
+  "fits": 12,
+  "warmup_seconds": 0.26125450000108685,
+  "elapsed_seconds": 125.7830127000052,
+  "records": [
+    {
+      "id": "speech-profile-001",
+      "profile": 4,
+      "samples": 64000,
+      "mode": "sse",
+      "cpu_seconds": 14.765625,
+      "wall_seconds": 14.810144299990498,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 2724,
+      "candidates": {
+        "seed": {
+          "bytes": 3547,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45184014310.0,
+              "ser_db": 9.806546990918894,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.2381945577993,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7575680300770123
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45709233254.0,
+              "ser_db": 9.756355753595901,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.1075491283639,
+              "max_abs_error_pcm16": 6662,
+              "max_abs_error_percent_fs": 20.330810546875,
+              "max_error_signed_pcm16": -6662,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7499636419806402
+            }
+          },
+          "weighted_objective": 18518927246.01217,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 3547,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45184014310.0,
+              "ser_db": 9.806546990918894,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.2381945577993,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7575680300770123
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45709233254.0,
+              "ser_db": 9.756355753595901,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.1075491283639,
+              "max_abs_error_pcm16": 6662,
+              "max_abs_error_percent_fs": 20.330810546875,
+              "max_error_signed_pcm16": -6662,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7499636419806402
+            }
+          },
+          "weighted_objective": 18518927246.01217,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 3547,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45179355594.0,
+              "ser_db": 9.806994795080136,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.1948768924087,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7575357001976105
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45705649254.0,
+              "ser_db": 9.756696291456091,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.0744166011358,
+              "max_abs_error_pcm16": 6662,
+              "max_abs_error_percent_fs": 20.330810546875,
+              "max_error_signed_pcm16": -6662,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7498602900012004
+            }
+          },
+          "weighted_objective": 18517311663.024498,
+          "weighted_objective_reduction_percent": 0.00872395558451581,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.3796091161740844,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_sse_pcm16",
+        "mode": "sse",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.3796091161740844,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 10,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-001",
+      "profile": 4,
+      "samples": 64000,
+      "mode": "perceptual",
+      "cpu_seconds": 12.078125,
+      "wall_seconds": 12.157618199998979,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 2724,
+      "candidates": {
+        "seed": {
+          "bytes": 3547,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45184014310.0,
+              "ser_db": 9.806546990918894,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.2381945577993,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7575680300770123
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45709233254.0,
+              "ser_db": 9.756355753595901,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.1075491283639,
+              "max_abs_error_pcm16": 6662,
+              "max_abs_error_percent_fs": 20.330810546875,
+              "max_error_signed_pcm16": -6662,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7499636419806402
+            }
+          },
+          "weighted_objective": 18518927246.01217,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 3547,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45184014310.0,
+              "ser_db": 9.806546990918894,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.2381945577993,
+              "max_abs_error_pcm16": 6836,
+              "max_abs_error_percent_fs": 20.86181640625,
+              "max_error_signed_pcm16": -6836,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7575680300770123
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45709233254.0,
+              "ser_db": 9.756355753595901,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.1075491283639,
+              "max_abs_error_pcm16": 6662,
+              "max_abs_error_percent_fs": 20.330810546875,
+              "max_error_signed_pcm16": -6662,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7499636419806402
+            }
+          },
+          "weighted_objective": 18518927246.01217,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 3547,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45208302962.0,
+              "ser_db": 9.804213069605957,
+              "ser_status": "finite",
+              "rmse_pcm16": 840.4639990988609,
+              "max_abs_error_pcm16": 7114,
+              "max_abs_error_percent_fs": 21.710205078125,
+              "max_error_signed_pcm16": -7114,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.757652820071662
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 45708427366.0,
+              "ser_db": 9.756432323639165,
+              "ser_status": "finite",
+              "rmse_pcm16": 845.1000991561591,
+              "max_abs_error_pcm16": 6918,
+              "max_abs_error_percent_fs": 21.112060546875,
+              "max_error_signed_pcm16": -6918,
+              "max_error_sample": 61019,
+              "max_error_seconds": 7.627375,
+              "stoi": 0.7499683465604017
+            }
+          },
+          "weighted_objective": 18504228638.87815,
+          "weighted_objective_reduction_percent": 0.07937072670979424,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.3796091161740844,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.3796091161740844,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 11,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-002",
+      "profile": 6,
+      "samples": 64000,
+      "mode": "sse",
+      "cpu_seconds": 5.25,
+      "wall_seconds": 5.2757304000115255,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 5763,
+      "candidates": {
+        "seed": {
+          "bytes": 5181,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25280506238.0,
+              "ser_db": 12.328537452974581,
+              "ser_status": "finite",
+              "rmse_pcm16": 628.4965473005799,
+              "max_abs_error_pcm16": 5673,
+              "max_abs_error_percent_fs": 17.3126220703125,
+              "max_error_signed_pcm16": -5673,
+              "max_error_sample": 15,
+              "max_error_seconds": 0.001875,
+              "stoi": 0.7851294938269741
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25732374118.0,
+              "ser_db": 12.251596547732738,
+              "ser_status": "finite",
+              "rmse_pcm16": 634.0885944359432,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7737233018166338
+            }
+          },
+          "weighted_objective": 12614617441.883453,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 5181,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25280506238.0,
+              "ser_db": 12.328537452974581,
+              "ser_status": "finite",
+              "rmse_pcm16": 628.4965473005799,
+              "max_abs_error_pcm16": 5673,
+              "max_abs_error_percent_fs": 17.3126220703125,
+              "max_error_signed_pcm16": -5673,
+              "max_error_sample": 15,
+              "max_error_seconds": 0.001875,
+              "stoi": 0.7851294938269741
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25732374118.0,
+              "ser_db": 12.251596547732738,
+              "ser_status": "finite",
+              "rmse_pcm16": 634.0885944359432,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7737233018166338
+            }
+          },
+          "weighted_objective": 12614617441.883453,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 5181,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25254211310.0,
+              "ser_db": 12.333057016441902,
+              "ser_status": "finite",
+              "rmse_pcm16": 628.1696042620575,
+              "max_abs_error_pcm16": 5542,
+              "max_abs_error_percent_fs": 16.912841796875,
+              "max_error_signed_pcm16": -5542,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7851138750632207
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25702984294.0,
+              "ser_db": 12.256559608230601,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.7263838548541,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7733995725831951
+            }
+          },
+          "weighted_objective": 12606292864.389523,
+          "weighted_objective_reduction_percent": 0.06599151763644683,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.368853170589945,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_sse_pcm16",
+        "mode": "sse",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.368853170589945,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 9,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-002",
+      "profile": 6,
+      "samples": 64000,
+      "mode": "perceptual",
+      "cpu_seconds": 5.484375,
+      "wall_seconds": 5.511104300006991,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 5763,
+      "candidates": {
+        "seed": {
+          "bytes": 5181,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25280506238.0,
+              "ser_db": 12.328537452974581,
+              "ser_status": "finite",
+              "rmse_pcm16": 628.4965473005799,
+              "max_abs_error_pcm16": 5673,
+              "max_abs_error_percent_fs": 17.3126220703125,
+              "max_error_signed_pcm16": -5673,
+              "max_error_sample": 15,
+              "max_error_seconds": 0.001875,
+              "stoi": 0.7851294938269741
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25732374118.0,
+              "ser_db": 12.251596547732738,
+              "ser_status": "finite",
+              "rmse_pcm16": 634.0885944359432,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7737233018166338
+            }
+          },
+          "weighted_objective": 12614617441.883453,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 5181,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25280506238.0,
+              "ser_db": 12.328537452974581,
+              "ser_status": "finite",
+              "rmse_pcm16": 628.4965473005799,
+              "max_abs_error_pcm16": 5673,
+              "max_abs_error_percent_fs": 17.3126220703125,
+              "max_error_signed_pcm16": -5673,
+              "max_error_sample": 15,
+              "max_error_seconds": 0.001875,
+              "stoi": 0.7851294938269741
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25732374118.0,
+              "ser_db": 12.251596547732738,
+              "ser_status": "finite",
+              "rmse_pcm16": 634.0885944359432,
+              "max_abs_error_pcm16": 5602,
+              "max_abs_error_percent_fs": 17.095947265625,
+              "max_error_signed_pcm16": -5602,
+              "max_error_sample": 26246,
+              "max_error_seconds": 3.28075,
+              "stoi": 0.7737233018166338
+            }
+          },
+          "weighted_objective": 12614617441.883453,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 5181,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25280943478.0,
+              "ser_db": 12.328462340049482,
+              "ser_status": "finite",
+              "rmse_pcm16": 628.5019823705809,
+              "max_abs_error_pcm16": 5689,
+              "max_abs_error_percent_fs": 17.3614501953125,
+              "max_error_signed_pcm16": -5689,
+              "max_error_sample": 61018,
+              "max_error_seconds": 7.62725,
+              "stoi": 0.7849952909681315
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 432154969702.0,
+              "error_energy": 25703492198.0,
+              "ser_db": 12.256473790287183,
+              "ser_status": "finite",
+              "rmse_pcm16": 633.7326452012315,
+              "max_abs_error_pcm16": 5669,
+              "max_abs_error_percent_fs": 17.3004150390625,
+              "max_error_signed_pcm16": -5669,
+              "max_error_sample": 61018,
+              "max_error_seconds": 7.62725,
+              "stoi": 0.7733693148228404
+            }
+          },
+          "weighted_objective": 12595082587.65055,
+          "weighted_objective_reduction_percent": 0.1548588716455426,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.368853170589945,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.368853170589945,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 9,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-003",
+      "profile": 4,
+      "samples": 64000,
+      "mode": "sse",
+      "cpu_seconds": 11.09375,
+      "wall_seconds": 11.100639199998113,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 2571,
+      "candidates": {
+        "seed": {
+          "bytes": 3539,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51119287287.0,
+              "ser_db": 10.440946134795624,
+              "ser_status": "finite",
+              "rmse_pcm16": 893.7219164031814,
+              "max_abs_error_pcm16": 6320,
+              "max_abs_error_percent_fs": 19.287109375,
+              "max_error_signed_pcm16": -6320,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.766446543537389
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51764506247.0,
+              "ser_db": 10.386473277993407,
+              "ser_status": "finite",
+              "rmse_pcm16": 899.3444335233165,
+              "max_abs_error_pcm16": 6398,
+              "max_abs_error_percent_fs": 19.525146484375,
+              "max_error_signed_pcm16": -6398,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7562575275960881
+            }
+          },
+          "weighted_objective": 23685033797.812347,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 3539,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51098017371.0,
+              "ser_db": 10.442753540559957,
+              "ser_status": "finite",
+              "rmse_pcm16": 893.535965376814,
+              "max_abs_error_pcm16": 6320,
+              "max_abs_error_percent_fs": 19.287109375,
+              "max_error_signed_pcm16": -6320,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7664642508181597
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51718071431.0,
+              "ser_db": 10.390370820200607,
+              "ser_status": "finite",
+              "rmse_pcm16": 898.9409692017463,
+              "max_abs_error_pcm16": 6398,
+              "max_abs_error_percent_fs": 19.525146484375,
+              "max_error_signed_pcm16": -6398,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7562650419519578
+            }
+          },
+          "weighted_objective": 23680328255.533745,
+          "weighted_objective_reduction_percent": 0.019867154587033878,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 3539,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51098017371.0,
+              "ser_db": 10.442753540559957,
+              "ser_status": "finite",
+              "rmse_pcm16": 893.535965376814,
+              "max_abs_error_pcm16": 6320,
+              "max_abs_error_percent_fs": 19.287109375,
+              "max_error_signed_pcm16": -6320,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7664642508181597
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51718071431.0,
+              "ser_db": 10.390370820200607,
+              "ser_status": "finite",
+              "rmse_pcm16": 898.9409692017463,
+              "max_abs_error_pcm16": 6398,
+              "max_abs_error_percent_fs": 19.525146484375,
+              "max_error_signed_pcm16": -6398,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7562650419519578
+            }
+          },
+          "weighted_objective": 23680328255.533745,
+          "weighted_objective_reduction_percent": 0.019867154587033878,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.4276872610630102,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_sse_pcm16",
+        "mode": "sse",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.4276872610630102,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 9,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-003",
+      "profile": 4,
+      "samples": 64000,
+      "mode": "perceptual",
+      "cpu_seconds": 14.65625,
+      "wall_seconds": 15.071162799999001,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 2571,
+      "candidates": {
+        "seed": {
+          "bytes": 3539,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51119287287.0,
+              "ser_db": 10.440946134795624,
+              "ser_status": "finite",
+              "rmse_pcm16": 893.7219164031814,
+              "max_abs_error_pcm16": 6320,
+              "max_abs_error_percent_fs": 19.287109375,
+              "max_error_signed_pcm16": -6320,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.766446543537389
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51764506247.0,
+              "ser_db": 10.386473277993407,
+              "ser_status": "finite",
+              "rmse_pcm16": 899.3444335233165,
+              "max_abs_error_pcm16": 6398,
+              "max_abs_error_percent_fs": 19.525146484375,
+              "max_error_signed_pcm16": -6398,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7562575275960881
+            }
+          },
+          "weighted_objective": 23685033797.812347,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 3539,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51097419543.0,
+              "ser_db": 10.442804351713441,
+              "ser_status": "finite",
+              "rmse_pcm16": 893.5307383405312,
+              "max_abs_error_pcm16": 6320,
+              "max_abs_error_percent_fs": 19.287109375,
+              "max_error_signed_pcm16": -6320,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7664769049474225
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51717545095.0,
+              "ser_db": 10.390415018674615,
+              "ser_status": "finite",
+              "rmse_pcm16": 898.93639491867,
+              "max_abs_error_pcm16": 6398,
+              "max_abs_error_percent_fs": 19.525146484375,
+              "max_error_signed_pcm16": -6398,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7562769259545561
+            }
+          },
+          "weighted_objective": 23675837384.702065,
+          "weighted_objective_reduction_percent": 0.03882795012575544,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 3539,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51135488075.0,
+              "ser_db": 10.439569981385704,
+              "ser_status": "finite",
+              "rmse_pcm16": 893.8635249141084,
+              "max_abs_error_pcm16": 6320,
+              "max_abs_error_percent_fs": 19.287109375,
+              "max_error_signed_pcm16": -6320,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7663084633799264
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 51762226311.0,
+              "ser_db": 10.386664564552845,
+              "ser_status": "finite",
+              "rmse_pcm16": 899.3246277676237,
+              "max_abs_error_pcm16": 6398,
+              "max_abs_error_percent_fs": 19.525146484375,
+              "max_error_signed_pcm16": -6398,
+              "max_error_sample": 4158,
+              "max_error_seconds": 0.51975,
+              "stoi": 0.7560410299325658
+            }
+          },
+          "weighted_objective": 23674504134.54473,
+          "weighted_objective_reduction_percent": 0.04445703289893062,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.4276872610630102,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.4276872610630102,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 9,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-004",
+      "profile": 6,
+      "samples": 64000,
+      "mode": "sse",
+      "cpu_seconds": 7.5625,
+      "wall_seconds": 7.591286800001399,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 5688,
+      "candidates": {
+        "seed": {
+          "bytes": 5183,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 30944191807.0,
+              "ser_db": 12.621002592938053,
+              "ser_status": "finite",
+              "rmse_pcm16": 695.3437976888663,
+              "max_abs_error_pcm16": 7433,
+              "max_abs_error_percent_fs": 22.6837158203125,
+              "max_error_signed_pcm16": -7433,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.8071763011290067
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 31511765127.0,
+              "ser_db": 12.542066728729413,
+              "ser_status": "finite",
+              "rmse_pcm16": 701.6917628912107,
+              "max_abs_error_pcm16": 7523,
+              "max_abs_error_percent_fs": 22.9583740234375,
+              "max_error_signed_pcm16": -7523,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.7910065836439109
+            }
+          },
+          "weighted_objective": 16728497128.831045,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 5183,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 30942699847.0,
+              "ser_db": 12.621211991076503,
+              "ser_status": "finite",
+              "rmse_pcm16": 695.3270346458385,
+              "max_abs_error_pcm16": 7433,
+              "max_abs_error_percent_fs": 22.6837158203125,
+              "max_error_signed_pcm16": -7433,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.8071879897311774
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 31511485063.0,
+              "ser_db": 12.542105327262307,
+              "ser_status": "finite",
+              "rmse_pcm16": 701.6886447060227,
+              "max_abs_error_pcm16": 7523,
+              "max_abs_error_percent_fs": 22.9583740234375,
+              "max_error_signed_pcm16": -7523,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.7910146469819708
+            }
+          },
+          "weighted_objective": 16728272056.473377,
+          "weighted_objective_reduction_percent": 0.0013454427850545987,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 5183,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 30942699847.0,
+              "ser_db": 12.621211991076503,
+              "ser_status": "finite",
+              "rmse_pcm16": 695.3270346458385,
+              "max_abs_error_pcm16": 7433,
+              "max_abs_error_percent_fs": 22.6837158203125,
+              "max_error_signed_pcm16": -7433,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.8071879897311774
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 31511485063.0,
+              "ser_db": 12.542105327262307,
+              "ser_status": "finite",
+              "rmse_pcm16": 701.6886447060227,
+              "max_abs_error_pcm16": 7523,
+              "max_abs_error_percent_fs": 22.9583740234375,
+              "max_error_signed_pcm16": -7523,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.7910146469819708
+            }
+          },
+          "weighted_objective": 16728272056.473377,
+          "weighted_objective_reduction_percent": 0.0013454427850545987,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.42835325554978504,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_sse_pcm16",
+        "mode": "sse",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.42835325554978504,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 9,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-004",
+      "profile": 6,
+      "samples": 64000,
+      "mode": "perceptual",
+      "cpu_seconds": 7.703125,
+      "wall_seconds": 7.740150099998573,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 5688,
+      "candidates": {
+        "seed": {
+          "bytes": 5183,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 30944191807.0,
+              "ser_db": 12.621002592938053,
+              "ser_status": "finite",
+              "rmse_pcm16": 695.3437976888663,
+              "max_abs_error_pcm16": 7433,
+              "max_abs_error_percent_fs": 22.6837158203125,
+              "max_error_signed_pcm16": -7433,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.8071763011290067
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 31511765127.0,
+              "ser_db": 12.542066728729413,
+              "ser_status": "finite",
+              "rmse_pcm16": 701.6917628912107,
+              "max_abs_error_pcm16": 7523,
+              "max_abs_error_percent_fs": 22.9583740234375,
+              "max_error_signed_pcm16": -7523,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.7910065836439109
+            }
+          },
+          "weighted_objective": 16728497128.831045,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 5183,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 30942624499.0,
+              "ser_db": 12.621222566514533,
+              "ser_status": "finite",
+              "rmse_pcm16": 695.3261880562784,
+              "max_abs_error_pcm16": 7433,
+              "max_abs_error_percent_fs": 22.6837158203125,
+              "max_error_signed_pcm16": -7433,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.8071903489813262
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 31510668423.0,
+              "ser_db": 12.54221787887348,
+              "ser_status": "finite",
+              "rmse_pcm16": 701.6795522953302,
+              "max_abs_error_pcm16": 7523,
+              "max_abs_error_percent_fs": 22.9583740234375,
+              "max_error_signed_pcm16": -7523,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.791024013432247
+            }
+          },
+          "weighted_objective": 16727916006.498846,
+          "weighted_objective_reduction_percent": 0.0034738466206719215,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 5183,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 30943485227.0,
+              "ser_db": 12.621101760917767,
+              "ser_status": "finite",
+              "rmse_pcm16": 695.3358588997659,
+              "max_abs_error_pcm16": 7433,
+              "max_abs_error_percent_fs": 22.6837158203125,
+              "max_error_signed_pcm16": -7433,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.8071670061742223
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 565821445255.0,
+              "error_energy": 31514004615.0,
+              "ser_db": 12.54175809393286,
+              "ser_status": "finite",
+              "rmse_pcm16": 701.7166964732811,
+              "max_abs_error_pcm16": 7523,
+              "max_abs_error_percent_fs": 22.9583740234375,
+              "max_error_signed_pcm16": -7523,
+              "max_error_sample": 4157,
+              "max_error_seconds": 0.519625,
+              "stoi": 0.7909969267473342
+            }
+          },
+          "weighted_objective": 16727606303.794346,
+          "weighted_objective_reduction_percent": 0.005325194665359303,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.42835325554978504,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.42835325554978504,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 9,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-005",
+      "profile": 4,
+      "samples": 64000,
+      "mode": "sse",
+      "cpu_seconds": 14.15625,
+      "wall_seconds": 14.222970800008625,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 2577,
+      "candidates": {
+        "seed": {
+          "bytes": 3621,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12245140325.0,
+              "ser_db": 10.907842357403698,
+              "ser_status": "finite",
+              "rmse_pcm16": 437.4132114810034,
+              "max_abs_error_pcm16": 4296,
+              "max_abs_error_percent_fs": 13.1103515625,
+              "max_error_signed_pcm16": -4296,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7678905650744136
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12645987965.0,
+              "ser_db": 10.767952379258363,
+              "ser_status": "finite",
+              "rmse_pcm16": 444.5149738232954,
+              "max_abs_error_pcm16": 4280,
+              "max_abs_error_percent_fs": 13.0615234375,
+              "max_error_signed_pcm16": -4280,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7331156123028469
+            }
+          },
+          "weighted_objective": 4238157831.878448,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 3621,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12240682517.0,
+              "ser_db": 10.90942368178856,
+              "ser_status": "finite",
+              "rmse_pcm16": 437.33358472466415,
+              "max_abs_error_pcm16": 4296,
+              "max_abs_error_percent_fs": 13.1103515625,
+              "max_error_signed_pcm16": -4296,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7678996743512835
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12643787389.0,
+              "ser_db": 10.76870817720662,
+              "ser_status": "finite",
+              "rmse_pcm16": 444.47629627813114,
+              "max_abs_error_pcm16": 4280,
+              "max_abs_error_percent_fs": 13.0615234375,
+              "max_error_signed_pcm16": -4280,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7331505372007525
+            }
+          },
+          "weighted_objective": 4238241892.8640943,
+          "weighted_objective_reduction_percent": -0.001983432165125151,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 3621,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12240212909.0,
+              "ser_db": 10.909590300010265,
+              "ser_status": "finite",
+              "rmse_pcm16": 437.32519559605186,
+              "max_abs_error_pcm16": 4296,
+              "max_abs_error_percent_fs": 13.1103515625,
+              "max_error_signed_pcm16": -4296,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7678899297354688
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12643698301.0,
+              "ser_db": 10.768738777660358,
+              "ser_status": "finite",
+              "rmse_pcm16": 444.4747303875947,
+              "max_abs_error_pcm16": 4280,
+              "max_abs_error_percent_fs": 13.0615234375,
+              "max_error_signed_pcm16": -4280,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7332139512744407
+            }
+          },
+          "weighted_objective": 4238051226.0953994,
+          "weighted_objective_reduction_percent": 0.0025153802023786275,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.3566301789181575,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_sse_pcm16",
+        "mode": "sse",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.3566301789181575,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 10,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-005",
+      "profile": 4,
+      "samples": 64000,
+      "mode": "perceptual",
+      "cpu_seconds": 14.78125,
+      "wall_seconds": 14.857527599990135,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 2577,
+      "candidates": {
+        "seed": {
+          "bytes": 3621,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12245140325.0,
+              "ser_db": 10.907842357403698,
+              "ser_status": "finite",
+              "rmse_pcm16": 437.4132114810034,
+              "max_abs_error_pcm16": 4296,
+              "max_abs_error_percent_fs": 13.1103515625,
+              "max_error_signed_pcm16": -4296,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7678905650744136
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12645987965.0,
+              "ser_db": 10.767952379258363,
+              "ser_status": "finite",
+              "rmse_pcm16": 444.5149738232954,
+              "max_abs_error_pcm16": 4280,
+              "max_abs_error_percent_fs": 13.0615234375,
+              "max_error_signed_pcm16": -4280,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7331156123028469
+            }
+          },
+          "weighted_objective": 4238157831.878448,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 3621,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12242715205.0,
+              "ser_db": 10.908702552152974,
+              "ser_status": "finite",
+              "rmse_pcm16": 437.3698950295105,
+              "max_abs_error_pcm16": 4296,
+              "max_abs_error_percent_fs": 13.1103515625,
+              "max_error_signed_pcm16": -4296,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7679167519039984
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12642528381.0,
+              "ser_db": 10.769140648455098,
+              "ser_status": "finite",
+              "rmse_pcm16": 444.45416631315874,
+              "max_abs_error_pcm16": 4280,
+              "max_abs_error_percent_fs": 13.0615234375,
+              "max_error_signed_pcm16": -4280,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.733187082276015
+            }
+          },
+          "weighted_objective": 4237705918.046382,
+          "weighted_objective_reduction_percent": 0.010662977878427916,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 3620,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12247352817.0,
+              "ser_db": 10.907057730813094,
+              "ser_status": "finite",
+              "rmse_pcm16": 437.452726320942,
+              "max_abs_error_pcm16": 4296,
+              "max_abs_error_percent_fs": 13.1103515625,
+              "max_error_signed_pcm16": -4296,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7679132589879032
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 12649235581.0,
+              "ser_db": 10.766837210844589,
+              "ser_status": "finite",
+              "rmse_pcm16": 444.5720481014579,
+              "max_abs_error_pcm16": 4280,
+              "max_abs_error_percent_fs": 13.0615234375,
+              "max_error_signed_pcm16": -4280,
+              "max_error_sample": 62254,
+              "max_error_seconds": 7.78175,
+              "stoi": 0.7331259655553883
+            }
+          },
+          "weighted_objective": 4237613212.6071424,
+          "weighted_objective_reduction_percent": 0.012850377284419665,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.3566301789181575,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.3566301789181575,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 9,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-006",
+      "profile": 6,
+      "samples": 64000,
+      "mode": "sse",
+      "cpu_seconds": 5.640625,
+      "wall_seconds": 5.634706099997857,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 6237,
+      "candidates": {
+        "seed": {
+          "bytes": 5235,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7088474597.0,
+              "ser_db": 13.281952147760753,
+              "ser_status": "finite",
+              "rmse_pcm16": 332.8023671462164,
+              "max_abs_error_pcm16": 3992,
+              "max_abs_error_percent_fs": 12.1826171875,
+              "max_error_signed_pcm16": -3992,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.798246586507754
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7413973117.0,
+              "ser_db": 13.08696995143082,
+              "ser_status": "finite",
+              "rmse_pcm16": 340.35765005817774,
+              "max_abs_error_pcm16": 4078,
+              "max_abs_error_percent_fs": 12.445068359375,
+              "max_error_signed_pcm16": -4078,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.7571733005716789
+            }
+          },
+          "weighted_objective": 3045080325.326433,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 5235,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7088474597.0,
+              "ser_db": 13.281952147760753,
+              "ser_status": "finite",
+              "rmse_pcm16": 332.8023671462164,
+              "max_abs_error_pcm16": 3992,
+              "max_abs_error_percent_fs": 12.1826171875,
+              "max_error_signed_pcm16": -3992,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.798246586507754
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7413973117.0,
+              "ser_db": 13.08696995143082,
+              "ser_status": "finite",
+              "rmse_pcm16": 340.35765005817774,
+              "max_abs_error_pcm16": 4078,
+              "max_abs_error_percent_fs": 12.445068359375,
+              "max_error_signed_pcm16": -4078,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.7571733005716789
+            }
+          },
+          "weighted_objective": 3045080325.326433,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 5235,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7086903161.0,
+              "ser_db": 13.282915037071941,
+              "ser_status": "finite",
+              "rmse_pcm16": 332.76547580935284,
+              "max_abs_error_pcm16": 3968,
+              "max_abs_error_percent_fs": 12.109375,
+              "max_error_signed_pcm16": -3968,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.7981532920587335
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7403956349.0,
+              "ser_db": 13.09284152443502,
+              "ser_status": "finite",
+              "rmse_pcm16": 340.1276494981333,
+              "max_abs_error_pcm16": 4078,
+              "max_abs_error_percent_fs": 12.445068359375,
+              "max_error_signed_pcm16": -4078,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.7572035160517564
+            }
+          },
+          "weighted_objective": 3042465914.906203,
+          "weighted_objective_reduction_percent": 0.08585686224714362,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.36278633633525526,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_sse_pcm16",
+        "mode": "sse",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.36278633633525526,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 8,
+      "search_limit_reached": true
+    },
+    {
+      "id": "speech-profile-006",
+      "profile": 6,
+      "samples": 64000,
+      "mode": "perceptual",
+      "cpu_seconds": 5.59375,
+      "wall_seconds": 5.69669719999365,
+      "full_synthesis_evaluations": 128,
+      "excitation_trials": 6237,
+      "candidates": {
+        "seed": {
+          "bytes": 5235,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7088474597.0,
+              "ser_db": 13.281952147760753,
+              "ser_status": "finite",
+              "rmse_pcm16": 332.8023671462164,
+              "max_abs_error_pcm16": 3992,
+              "max_abs_error_percent_fs": 12.1826171875,
+              "max_error_signed_pcm16": -3992,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.798246586507754
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7413973117.0,
+              "ser_db": 13.08696995143082,
+              "ser_status": "finite",
+              "rmse_pcm16": 340.35765005817774,
+              "max_abs_error_pcm16": 4078,
+              "max_abs_error_percent_fs": 12.445068359375,
+              "max_error_signed_pcm16": -4078,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.7571733005716789
+            }
+          },
+          "weighted_objective": 3045080325.326433,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "selected": {
+          "bytes": 5235,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7088474597.0,
+              "ser_db": 13.281952147760753,
+              "ser_status": "finite",
+              "rmse_pcm16": 332.8023671462164,
+              "max_abs_error_pcm16": 3992,
+              "max_abs_error_percent_fs": 12.1826171875,
+              "max_error_signed_pcm16": -3992,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.798246586507754
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7413973117.0,
+              "ser_db": 13.08696995143082,
+              "ser_status": "finite",
+              "rmse_pcm16": 340.35765005817774,
+              "max_abs_error_pcm16": 4078,
+              "max_abs_error_percent_fs": 12.445068359375,
+              "max_error_signed_pcm16": -4078,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.7571733005716789
+            }
+          },
+          "weighted_objective": 3045080325.326433,
+          "weighted_objective_reduction_percent": 0.0,
+          "conservative_floors_passed": true,
+          "native_common_v5_model_pcm_pwm_exact": true
+        },
+        "raw": {
+          "bytes": 5235,
+          "metrics": {
+            "pcm16": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7092092369.0,
+              "ser_db": 13.279736187772357,
+              "ser_status": "finite",
+              "rmse_pcm16": 332.8872831239202,
+              "max_abs_error_pcm16": 3968,
+              "max_abs_error_percent_fs": 12.109375,
+              "max_error_signed_pcm16": -3968,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.79810429604133
+            },
+            "pwm8": {
+              "samples": 64000,
+              "reference_energy": 150920418941.0,
+              "error_energy": 7411997821.0,
+              "ser_db": 13.088127191198238,
+              "ser_status": "finite",
+              "rmse_pcm16": 340.312306496731,
+              "max_abs_error_pcm16": 4078,
+              "max_abs_error_percent_fs": 12.445068359375,
+              "max_error_signed_pcm16": -4078,
+              "max_error_sample": 56356,
+              "max_error_seconds": 7.0445,
+              "stoi": 0.7570254297383887
+            }
+          },
+          "weighted_objective": 3041721357.0895233,
+          "weighted_objective_reduction_percent": 0.11030803387919773,
+          "conservative_floors_passed": false,
+          "native_common_v5_model_pcm_pwm_exact": true
+        }
+      },
+      "comparison_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.36278633633525526,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "search_objective": {
+        "name": "v5_perceptual_pcm16",
+        "mode": "perceptual",
+        "samples": 64000,
+        "gamma1": 0.9,
+        "requested_gamma2": 0.6,
+        "effective_gamma2": 0.36278633633525526,
+        "denominator_l1_bound": 0.95,
+        "domain": "original-level clipped PCM16",
+        "weighting_coefficients": "frozen seed v5 interpolated Q12 LPC",
+        "seed_segment_samples": [
+          64000
+        ],
+        "decoder_lpc_state": "actual independent reset at each seed segment",
+        "weighting_state": "zero once per complete stream; continuous across frames",
+        "automatic_acceptance": "unchanged external PCM/PWM no_regression gate"
+      },
+      "objective_evaluations": 129,
+      "final_metric_evaluations": 9,
+      "search_limit_reached": true
+    }
+  ],
+  "scope": "Bounded tuning-only full-recording paired search at identical complete-stream byte caps. Metrics do not establish audibility. No new Flash or IRQ measurement.",
+  "aggregate": {
+    "sse": {
+      "fits": 6,
+      "cpu_seconds_total": 58.46875,
+      "wall_seconds_total": 58.63547760000802,
+      "raw_four_floors_passed": 2,
+      "full_synthesis_evaluations_total": 768,
+      "excitation_trials_total": 25560,
+      "selected": {
+        "weighted_error_energy_reduction_percent": 0.006148083673309842,
+        "stream_bytes_delta_total": 0,
+        "pcm16": {
+          "error_energy_reduction_percent": 0.015838140511512295,
+          "mean_ser_gain_db": 0.0005996880479409347,
+          "min_ser_gain_db": 0.0,
+          "max_ser_gain_db": 0.0018074057643335806,
+          "mean_stoi_gain": 6.417526635234723e-06,
+          "min_stoi_gain": 0.0,
+          "max_stoi_gain": 1.7707280770773437e-05
+        },
+        "pwm8": {
+          "error_energy_reduction_percent": 0.027987218544489403,
+          "mean_ser_gain_db": 0.0007819897813918786,
+          "min_ser_gain_db": 0.0,
+          "max_ser_gain_db": 0.0038975422072002885,
+          "mean_stoi_gain": 8.417098639190712e-06,
+          "min_stoi_gain": 0.0,
+          "max_stoi_gain": 3.492489790557496e-05
+        }
+      },
+      "raw": {
+        "weighted_error_energy_reduction_percent": 0.02231602346793826,
+        "stream_bytes_delta_total": 0,
+        "pcm16": {
+          "error_energy_reduction_percent": 0.0350365450439642,
+          "mean_ser_gain_db": 0.0016158339081835393,
+          "min_ser_gain_db": 0.00020939813845011201,
+          "max_ser_gain_db": 0.004519563467320964,
+          "mean_stoi_gain": -1.874709136316192e-05,
+          "min_stoi_gain": -9.329444902050898e-05,
+          "max_stoi_gain": 1.7707280770773437e-05
+        },
+        "pwm8": {
+          "error_energy_reduction_percent": 0.05263546917076731,
+          "mean_ser_gain_db": 0.0026496184173903834,
+          "min_ser_gain_db": 3.8598532894340565e-05,
+          "max_ser_gain_db": 0.005871573004199604,
+          "mean_stoi_gain": -4.715817787962854e-05,
+          "min_stoi_gain": -0.00032372923343870763,
+          "max_stoi_gain": 9.833897159372551e-05
+        }
+      }
+    },
+    "perceptual": {
+      "fits": 6,
+      "cpu_seconds_total": 60.296875,
+      "wall_seconds_total": 61.03426019998733,
+      "raw_four_floors_passed": 0,
+      "full_synthesis_evaluations_total": 768,
+      "excitation_trials_total": 25560,
+      "selected": {
+        "weighted_error_energy_reduction_percent": 0.012976542633296046,
+        "stream_bytes_delta_total": 0,
+        "pcm16": {
+          "error_energy_reduction_percent": 0.015047090105376533,
+          "mean_ser_gain_db": 0.0004897308739287473,
+          "min_ser_gain_db": 0.0,
+          "max_ser_gain_db": 0.0018582169178174013,
+          "mean_stoi_gain": 1.1766015322989265e-05,
+          "min_stoi_gain": 0.0,
+          "max_stoi_gain": 3.0361410033541425e-05
+        },
+        "pwm8": {
+          "error_energy_reduction_percent": 0.029475956477490878,
+          "mean_ser_gain_db": 0.0008801933370016594,
+          "min_ser_gain_db": 0.0,
+          "max_ser_gain_db": 0.003941740681208117,
+          "mean_stoi_gain": 1.8049686662043502e-05,
+          "min_stoi_gain": 0.0,
+          "max_stoi_gain": 7.146997316809234e-05
+        }
+      },
+      "raw": {
+        "weighted_error_energy_reduction_percent": 0.06286609149235954,
+        "stream_bytes_delta_total": -1,
+        "pcm16": {
+          "error_energy_reduction_percent": -0.026795025821691663,
+          "mean_ser_gain_db": -0.0011144343745404701,
+          "min_ser_gain_db": -0.0023339213129371927,
+          "max_ser_gain_db": 9.916797971420976e-05,
+          "mean_stoi_gain": -5.2730754895702336e-05,
+          "min_stoi_gain": -0.0001422904664239999,
+          "max_stoi_gain": 8.478999464966996e-05
+        },
+        "pwm8": {
+          "error_energy_reduction_percent": 0.016281203628562793,
+          "mean_ser_gain_db": 0.0008130892857061885,
+          "min_ser_gain_db": -0.0011151684137740148,
+          "max_ser_gain_db": 0.00487724255444455,
+          "mean_stoi_gain": -0.00011882575914660502,
+          "min_stoi_gain": -0.00035398699379340925,
+          "max_stoi_gain": 1.0353252541395186e-05
+        }
+      }
+    }
+  },
+  "component_commits": [
+    "6a79aba2",
+    "4de86c91",
+    "5ef082b4"
+  ],
+  "trajectory_source_commits": [
+    "3ad6eb65",
+    "35467f85",
+    "fb15b1a5"
+  ],
+  "decoder_source_commit": "5c7e0592",
+  "source_unchanged_before_after": true,
+  "decoder_matches_frozen_commit": true,
+  "raw_listening_candidates_separate": true,
+  "default_selection_policy_changed": false,
+  "physical_listening_conducted": false,
+  "full_firmware_flash_measured": false,
+  "irq_admission_measured": false,
+  "runtime": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "packages": {
+      "numpy": "2.5.4",
+      "numba": "0.68.0",
+      "scipy": "1.18.1",
+      "pystoi": "0.4.1",
+      "soundfile": "0.14.0"
+    },
+    "native_compiler_version": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+    "native_compiler_sha256": "5ee66476c2d6e2cc5c57b8b373360708d1b01c28d9d90b8c207922b20cc20a13",
+    "threads": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "NUMBA_NUM_THREADS": "1"
+    }
+  }
+}
