@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
-import {resolve,dirname} from 'node:path';
+import {resolve,dirname,relative,isAbsolute,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {cpus,platform,release} from 'node:os';
 import {parseArgs} from 'node:util';
@@ -16,6 +16,7 @@ import {controlLabels,controlSchedule,controlRatios,statistics} from './lib/runt
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{'baseline-ref':{type:'string',default:'4f09550'},
+  'candidate-root':{type:'string'},
   'change-set':{type:'string',default:'long-internal-span'},
   'validate-only':{type:'boolean'},
   trials:{type:'string',default:'8'},warmups:{type:'string',default:'4'},
@@ -29,15 +30,21 @@ const trials=integer(values.trials,8,32),schedule=controlSchedule(trials),warmup
 const sha=v=>createHash('sha256').update(v).digest('hex');
 const stringify=v=>JSON.stringify(v,(_,n)=>typeof n==='bigint'?n.toString():n,2)+'\n';
 const text=path=>readFileSync(resolve(root,path),'utf8').replaceAll('\r\n','\n');
+const candidateRoot=values['candidate-root']?resolve(root,values['candidate-root']):root;
+if(values['candidate-root']){
+  const local=relative(resolve(root,'build'),candidateRoot);
+  assert.ok(local&&!isAbsolute(local)&&local!=='..'&&!local.startsWith('..'+sep),'Candidate sources must stay in build/');
+}
+const candidateText=path=>readFileSync(resolve(candidateRoot,path),'utf8').replaceAll('\r\n','\n');
 const git=args=>execFileSync('git',args,{cwd:root,maxBuffer:4*1024*1024});
 const baseline=values['baseline-ref'],binaryPath='web-player/wasm/attiny13a.wasm',manifestPath='web-player/wasm/device-build.json';
 const old={binary:git(['show',baseline+':'+binaryPath]),manifest:JSON.parse(git(['show',baseline+':'+manifestPath]))},
-  current={binary:readFileSync(resolve(root,binaryPath)),manifest:JSON.parse(text(manifestPath))};
+  current={binary:readFileSync(resolve(candidateRoot,binaryPath)),manifest:JSON.parse(candidateText(manifestPath))};
 for(const [kind,version] of Object.entries({old,current})){
   assert.equal(sha(version.binary),version.manifest.artifacts['attiny13a.wasm']);
   assert.equal(version.binary.length,version.manifest.bytes);
   for(const [path,expected] of Object.entries(version.manifest.inputs))
-    assert.equal(sha(kind==='old'?git(['show',baseline+':'+path]).toString().replaceAll('\r\n','\n'):text(path)),expected,kind+'/'+path);
+    assert.equal(sha(kind==='old'?git(['show',baseline+':'+path]).toString().replaceAll('\r\n','\n'):candidateText(path)),expected,kind+'/'+path);
   version.module=new WebAssembly.Module(version.binary);assert.deepEqual(WebAssembly.Module.imports(version.module),[]);
   assert.equal(new WebAssembly.Instance(version.module).exports.memory.buffer.byteLength,131072);
 }
@@ -50,7 +57,7 @@ for(const key of ['exports','flags','compilerVersion','sources']){
 }
 if(scopeChange)for(const name of scopeExports){assert.ok(current.manifest.exports.includes(name));assert.ok(!old.manifest.exports.includes(name));}
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','clock-power2','clock-zero','ns-remainder','watchdog-period','watchdog-lazy','adc-idle','io-publication-scope','deadline-dispatch','gpio-idle','timer-deadline-budget'].includes(changeSet));
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','clock-power2','clock-zero','clock-intrinsic','ns-remainder','watchdog-period','watchdog-lazy','adc-idle','io-publication-scope','deadline-dispatch','gpio-idle','timer-deadline-budget'].includes(changeSet));
 assert.deepEqual(changedInputs,scopeChange?
   ['web-player/native/avr-device.inc','web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:changeSet==='long-internal-span'?
   ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:
@@ -143,7 +150,8 @@ const report={schema:'micromusic-runtime-identical-controls-v1',createdAt:new Da
   mode:values['validate-only']?'validation':'timing',
   git:{head:git(['rev-parse','HEAD']).toString().trim(),baseline:git(['rev-parse',baseline]).toString().trim(),status:git(['status','--short']).toString().trim()},
   host:{node:process.version,v8:process.versions.v8,flags:process.execArgv,platform:platform(),release:release(),cpu:cpus()[0]?.model},
-  parameters:{trials,warmups,frames,kernelFrames,instructions,rate,block,schedule,changeSet},
+  parameters:{trials,warmups,frames,kernelFrames,instructions,rate,block,schedule,changeSet,
+    ...(values['candidate-root']?{candidateRoot:relative(root,candidateRoot).replaceAll('\\','/')}:{})},
   provenance:{changedInputs,runtimes:Object.fromEntries(variants.map(v=>[v.id,{sha256:sha(v.binary),bytes:v.binary.length,inputs:v.manifest.inputs}])),
     sourceSha256:Object.fromEntries(support.map(path=>[path,sha(text(path))])),
     ...(scopeChange?{baselineHostSha256:Object.fromEntries(hostSources.map(path=>[path,sha(git(['show',baseline+':'+path]).toString().replaceAll('\r\n','\n'))]))}:{})},
