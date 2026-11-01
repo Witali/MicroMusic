@@ -30,3 +30,11 @@ See [bounds, workload and reproduction](../../Codecs/Speex/AVR/WB_GAIN_DIV.md).
 
 Original project technique; no external implementation copied. Preserve the
 existing upstream table/algorithm licenses when reusing the surrounding codec.
+
+The complete five-profile stage subsequently passes 106014 matched raw
+frames, 53007 full-history IRQ frames and 5800 long SPI frames, all exact
+PCM/PWM with zero underruns. Natural-speech frame time falls 0.67..0.70%
+for eight additional Flash bytes, with unchanged bare SRAM/peak stack.
+IRQ gates retain 8% extra work for WB3.95/9.8/12.8 and 3% for WB5.75/7.75;
+SPI separately includes transport at zero extra load. C decoder images are
+compiled/linked only; the scalar C fallback is exhaustively checked above.
