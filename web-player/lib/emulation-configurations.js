@@ -12,7 +12,7 @@ export function emulationConfiguration(id=DEFAULT_EMULATION_CONFIGURATION){
 export function executionOptions(id){
   emulationConfiguration(id);
   return id==='verification'
-    ? {fastIdle:false,fastBlocks:false,optimizeFlags:false,maxBlockInstructions:2,boundedRegions:false,optimizePhaseLocals:false}
+    ? {fastIdle:false,fastBlocks:false,optimizeFlags:false,maxBlockInstructions:2,boundedRegions:false,optimizePhaseLocals:false,sramBlocks:false}
     : {fastIdle:true,fastBlocks:true};
 }
 // Catalog playback has a nominal oscillator, not a measured silicon curve.

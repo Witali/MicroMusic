@@ -23,9 +23,9 @@ const {values}=parseArgs({options:{level:{type:'string',multiple:true},case:{typ
 const integer=(s,min,max)=>{const n=Number(s);assert.ok(Number.isInteger(n)&&n>=min&&n<=max);return n;};
 const trials=integer(values.trials,8,32),schedule=controlSchedule(trials),warmups=integer(values.warmups,1,8),
   frames=integer(values.frames,1024,48000),instructions=integer(values.instructions,1000,10000000),rate=48000,block=1024;
-const phaseLocals=values.transform==='phase-locals',bounded=values.transform==='bounded-regions',compilerTransform=phaseLocals||bounded;
+const phaseLocals=values.transform==='phase-locals',bounded=values.transform==='bounded-regions',sram=values.transform==='sram-blocks',compilerTransform=phaseLocals||bounded||sram;
 assert.ok(compilerTransform||values.transform==='binaryen');
-const allowed=phaseLocals?['live-locals']:bounded?['bounded-regions']:['O2','O3','Os','Oz'];
+const allowed=phaseLocals?['live-locals']:bounded?['bounded-regions']:sram?['sram-blocks']:['O2','O3','Os','Oz'];
 const levels=values.level??(compilerTransform?allowed:['O3','Oz']);assert.equal(new Set(levels).size,levels.length);
 assert.ok(levels.length&&levels.every(level=>allowed.includes(level)));
 const sha=b=>createHash('sha256').update(b).digest('hex');
@@ -83,7 +83,7 @@ function construct(item,generated){
   // The phase-local experiment uses the normal production translation cache:
   // identical labels must share a CPU Module, as well as the native Module.
   const c=new ATtiny13A(item.binary,item.eeprom,{...item.options,optimizePhaseLocals:generated.manifest.optimizePhaseLocals??false,
-    boundedRegions:generated.manifest.boundedRegions??false,runtimeModule,...compilerTransform?{}:{precompiled:generated}});
+    boundedRegions:generated.manifest.boundedRegions??false,sramBlocks:generated.manifest.sramBlocks??false,runtimeModule,...compilerTransform?{}:{precompiled:generated}});
   assert.equal(sha(c.transpiledBytes),sha(generated.bytes));
   if(compilerTransform){
     item.cpuModules??=new Map();const key=sha(generated.bytes);
@@ -134,11 +134,12 @@ for(const item of selected){
   for(const level of levels){
     let optimized;
     if(compilerTransform){
-      const setting=phaseLocals?{optimizePhaseLocals:true}:{boundedRegions:true};
+      const setting=phaseLocals?{optimizePhaseLocals:true}:sram?{sramBlocks:true}:{boundedRegions:true};
       const start=performance.now(),generated=item.options.resumable?transpileAVR(item.binary,raw.manifest.abi,{...item.options,...setting}):raw;
       optimized={...generated,optimization:{tool:'generation-time '+values.transform,flags:item.options.resumable?[Object.keys(setting)[0]+'=true']:[],
         inputSha256:sha(raw.bytes),outputSha256:sha(generated.bytes),inputBytes:raw.bytes.length,outputBytes:generated.bytes.length,elapsedMs:performance.now()-start,
-        phaseLocals:generated.manifest.stats.phaseLocals??null,...bounded?{regions:generated.manifest.stats.boundedRegions??null}:{}}};
+        phaseLocals:generated.manifest.stats.phaseLocals??null,...bounded?{regions:generated.manifest.stats.boundedRegions??null}:{},
+        ...sram?{sramSpans:generated.manifest.blocks.filter(b=>b.sram).map(b=>({start:b.start,instructions:b.instructions,cycles:b.cycles}))}:{}}};
     }else optimized=optimizeAVRWasm(raw,{level,wasmOpt:values['wasm-opt']});
     const compiled={};
     for(const [name,generated]of [['raw',raw],['optimized',optimized]]){const t=performance.now();new WebAssembly.Module(generated.bytes);compiled[name]=performance.now()-t;}

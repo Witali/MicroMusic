@@ -31,6 +31,7 @@ export class ATtiny13A extends TranslatedCore {
       runtimeModule:await WebAssembly.compile(decoded.runtime),
       ...(!verification?{precompiled:{bytes:decoded.translated,manifest:decoded.manifest}}:{}),
       optimizeFlags:decoded.manifest.optimizeFlags,maxBlockInstructions:decoded.manifest.maxBlockInstructions,
+      sramBlocks:decoded.manifest.sramBlocks??false,
       ...(verification?executionOptions('verification'):{}),
       validateRuntimeABI:abi=>assertPackageRuntimeABI(decoded,abi),
     });

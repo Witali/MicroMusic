@@ -132,15 +132,18 @@ const batchable=i=>pure.has(i.name)||guardedMemory.has(i.name);
 const instructionCycles=i=>i.name==='LPM'?3:['ADIW','SBIW','LD','ST'].includes(i.name)?2:1;
 const popcount=n=>{let count=0;for(;n;n&=n-1)count++;return count;};
 
-export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false,boundedRegions=false,_linkage=false,_previousEmission}={}) {
+export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructions=32,device=DEFAULT_DEVICE,resumable=false,optimizePhaseLocals=false,boundedRegions=false,sramBlocks=false,_linkage=false,_previousEmission}={}) {
   if(typeof boundedRegions!=='boolean'||boundedRegions&&!resumable)throw Error('Bounded regions require resumable execution');
   if(typeof optimizePhaseLocals!=='boolean'||optimizePhaseLocals&&!resumable)throw Error('Phase-local optimization requires resumable execution');
+  if(typeof sramBlocks!=='boolean'||sramBlocks&&!resumable)throw Error('SRAM blocks require resumable execution');
   const {get,set,condition,conditionValue}=optimizePhaseLocals?annotatePhaseLocals(phaseEmit):phaseEmit;
   const profile=deviceProfile(device),{flashBytes,flashWords,pcMask,ioStart,ioEnd,ramStart,ramEnd,sreg,stackPointer}=profile;
   if(![8,16].includes(profile.dataAddressBits)||profile.programCounterBytes!==2)throw Error('Unsupported AVR emitter memory geometry');
-  // Resumable blocks initially cover register-only operations. Memory accesses
-  // retain their individual bus phases until block-wide alias guards exist.
-  const full=!!abi.device,canBatch=i=>resumable?pure.has(i.name):batchable(i)&&(!full||i.name!=='LPM');
+  // Memory-only spans cannot change any pointer through a load destination.
+  // Auto-updated source/destination aliases remain on the faulting instruction path.
+  const sramInstruction=i=>['LD','ST'].includes(i.name)&&!(i.name==='LD'&&i.d>=26)&&
+    !(i.k<2&&(i.d===i.s||i.d===i.s+1));
+  const full=!!abi.device,canBatch=i=>resumable?pure.has(i.name)||sramBlocks&&sramInstruction(i):batchable(i)&&(!full||i.name!=='LPM');
   if(_linkage&&(!full||!profile.flashPageBytes))throw Error('Incremental compilation requires the full ATtiny13A runtime');
   if(full&&device!==DEFAULT_DEVICE)throw Error('Full-device runtime supports only ATtiny13A');
   if(resumable&&(!full||!abi.phase||abi.phase.bytes!==80))throw Error('Resumable CPU requires its full-device phase ABI');
@@ -364,7 +367,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   }
   const body=(code,locals)=>{const content=bytes(vector(locals),optimizePhaseLocals?stripLocalEffects(code):code,0x0b);
     const encoded=bytes(uleb(content.length),content);return _linkage?Uint8Array.from(encoded):encoded;};
-  const emissionIdentity=_linkage?JSON.stringify([abi,device,optimizeFlags,maxBlockInstructions,resumable,optimizePhaseLocals,boundedRegions]):null;
+  const emissionIdentity=_linkage?JSON.stringify([abi,device,optimizeFlags,maxBlockInstructions,resumable,optimizePhaseLocals,boundedRegions,sramBlocks]):null;
   const oldEmission=_linkage&&_previousEmission?.identity===emissionIdentity?_previousEmission:null;
   const emission=_linkage?{identity:emissionIdentity,instructions:[],blocks:new Map(),regions:new Map(),
     emittedInstructions:0,emittedBlocks:0,emittedRegions:0}:null;
@@ -404,7 +407,9 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   for(let p=0;p<flashWords;){
     if(!canBatch(decoded[p])){p++;continue;}
     const sequence=[decoded[p++]];
-    while(p<flashWords&&canBatch(decoded[p])&&!leaders.has(p)&&sequence.length<maxBlockInstructions)sequence.push(decoded[p++]);
+    const sram=resumable&&sramBlocks&&sramInstruction(sequence[0]);
+    while(p<flashWords&&canBatch(decoded[p])&&!leaders.has(p)&&sequence.length<maxBlockInstructions&&
+      (!resumable||!sramBlocks||sram===sramInstruction(decoded[p])))sequence.push(decoded[p++]);
     if(sequence.length<2)continue;
     let live=255,removed=0,computed=0;
     const masks=new Array(sequence.length);
@@ -417,7 +422,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       if(i.name==='CPC'&&!needed)read=0;
       live=(live&~written)|read;
     }
-    blocks.push({start:sequence[0].pc,end:p&pcMask,instructions:sequence.length,cycles:sequence.reduce((n,i)=>n+instructionCycles(i),0),masks,removed,computed,sequence});
+    blocks.push({start:sequence[0].pc,end:p&pcMask,instructions:sequence.length,cycles:sequence.reduce((n,i)=>n+instructionCycles(i),0),masks,removed,computed,sequence,...sram?{sram:true}:{}});
   }
   const blockBodies=[];
   // Function local remapping is performed while emitting block ALU below.
@@ -440,7 +445,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   }
   // Rebuild block functions with remapped i32 locals (arguments precede them).
   blocks.forEach((block,index)=>{
-    const touchesFlags=block.sequence.some(i=>!flagNeutralPure.has(i.name));
+    const touchesFlags=!block.sram&&block.sequence.some(i=>!flagNeutralPure.has(i.name));
     const key=emission?JSON.stringify([block.start,block.end,block.masks,block.sequence.map(i=>[i.pc,i.word,i.k])]):null;
     if(oldEmission?.blocks.has(key)){blockBodies[index]=oldEmission.blocks.get(key);emission.blocks.set(key,blockBodies[index]);return;}
     const elapsed=binary(0xa0,stateF('cyc'),float(block.cycles));
@@ -451,6 +456,20 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     const blocked=or(or(state('irqDelay'),pending),or(lt(get(1),constant(block.instructions)),
       or(binary(0x66,elapsed,stateF('overflowAt')),resumable?constant(0):binary(0x64,elapsed,get(0)))));
     const code=bytes(condition(blocked,bytes(constant(0),0x0f)));
+    if(block.sram){
+      // Prove every effective address belongs to SRAM before clocking anything.
+      // Unmasked bounds deliberately reject wrapping spans. Pointer writes still
+      // use the device's original width and instruction order below.
+      const spans=new Map();
+      for(const {s,k} of block.sequence){
+        if(!spans.has(s))spans.set(s,{delta:0,min:Infinity,max:-Infinity});
+        const span=spans.get(s),offset=span.delta+(k<0?-1:k>=2?k-2:0);
+        span.min=Math.min(span.min,offset);span.max=Math.max(span.max,offset);
+        span.delta+=k<0?-1:k===1?1:0;
+      }
+      for(const [s,{min,max}] of spans)code.push(...set(2,pointer(s)),
+        ...condition(or(lt(get(2),constant(ramStart-min)),ge(get(2),constant(ramEnd-max+1))),bytes(constant(0),0x0f)));
+    }
     if(resumable){
       // cpuDeadline rounds UP to a whole half phase. A strict comparison of
       // integer-cycle spans cannot cross the physical observation deadline.
@@ -472,7 +491,12 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     let elapsedCycles=0;
     block.sequence.forEach((i,n)=>{
       let effects;
-      if(guardedMemory.has(i.name)){
+      if(block.sram){
+        const {name,d,s,k}=i;
+        effects=bytes(set(6,and(add(pointer(s),constant(k<0?-1:k>=2?k-2:0)),constant(pointerMask))),
+          k<0?writePointer(s,Z):[],name==='LD'?writeReg(d,load8(dataAt(Z))):store8(dataAt(Z),reg(d)),
+          k===1?writePointer(s,and(add(Z,constant(1)),constant(pointerMask))):[]);
+      }else if(guardedMemory.has(i.name)){
         const bailout=n?bytes(store8(flagsAddress,flags()),put('pc',constant(i.pc)),put('errorPC',constant(block.sequence[n-1].pc)),call(CLOCK,float(elapsedCycles)),constant(n),0x0f):bytes(constant(0),0x0f);
         const {name,d,s,k}=i;
         if(name==='LPM'){
@@ -633,6 +657,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     ...(optimizePhaseLocals?{phaseLocals:phaseLocalStats}:{}),...(boundedRegions?{boundedRegions:{regions:regions.length,words:regionByPc.size}}:{})};
   const manifest={schema:'micromusic-avr-transpiled-v1',device:profile.name,abi,optimizeFlags,maxBlockInstructions,stats,
     ...(resumable?{executionMode:'resumable-v1'}:{}),...(optimizePhaseLocals?{optimizePhaseLocals:true}:{}),
+    ...(sramBlocks?{sramBlocks:true}:{}),
     ...(boundedRegions?{boundedRegions:true,regions:regions.map((region,n)=>({pcs:region.nodes.map(i=>i.pc),maxCost:region.maxCost,
       registers:regionBodies[n].registers,written:regionBodies[n].written})),regionFallbacks:baseRegionWrappers}:{}),
     blocks:blocks.map(({sequence,...block})=>block),mapping};

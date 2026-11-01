@@ -1,0 +1,579 @@
+{
+  "schema": "micromusic-sram-block-evidence-v1",
+  "complete": true,
+  "baseline": "3a73d96b",
+  "compilerIdentity": "e10d5be48f67c1c4775e177d6eb194090ca2a89c4ebda24ad8a27328cb50b889",
+  "compilerSourceGraph": {
+    "web-player/lib/attiny13a-package.js": "a0b257c7c584c72f3c010732227fb36654e1a0d0607241b900edf729851397d2",
+    "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+    "web-player/lib/attiny13a-runtime.js": "de7ae636546875370738f3e8745ae4e3524442137aee65490aedc773e54b7488",
+    "web-player/lib/attiny13a.js": "e30d204f78c2c3d0bae4eb874380eb70bcb14b557da4036c80d44f26d4b0882c",
+    "web-player/lib/attiny88-registers.js": "78095666e0cfd009e9aba89cc7dfa2e015206eadff64b86712780ad626ed76b7",
+    "web-player/lib/audio-queue.js": "5e28341f34f8608c30ff96eb818f06c6c57bea4371d54dfeebb8291d75e3b0a2",
+    "web-player/lib/avr-attiny88.js": "23fb8daa5b58c3bc15c4e8380c56f6c788a0bed67b43240b751e9740186578c9",
+    "web-player/lib/avr-core.js": "d9adaa2043b837f1a1083afc56ecc7f5810a5213f6db2cc33606aa08fc9d5c3f",
+    "web-player/lib/avr-incremental-compiler.js": "19154178e888b4220c9e4576601351bb9ea8c3ce30cdab1067a12a532d13422f",
+    "web-player/lib/avr-indexeddb-cache.js": "ee6d784cf298435139540ae772a1d74e4237106b4e266697c2be06498cff8361",
+    "web-player/lib/avr-persistent-cache.js": "25689dec27cbf7cfd7f1bb503ee1339845fe7877fe6edeb4f761788f418cca50",
+    "web-player/lib/avr-phase-locals.js": "3b2d94294149c4e376a8857420d277f2248343dd0fefa7f0553e96fe5feeeab7",
+    "web-player/lib/avr-profiles.js": "cfc36f4936f1d70a22ed806d575bb1e9080597527bfa816fc85a9dd21574e470",
+    "web-player/lib/avr-reference.js": "fcbcfa037aeb1a4d822b368b5fd75a8566d2733b971bc1fff4f0fe4296b574a9",
+    "web-player/lib/avr-runtime.js": "9982516f6b88405d614b7976b8e257f7c4c8f24cac15a438549397657e97ca64",
+    "web-player/lib/avr-transpiled-runtime.js": "0ab773b4c47b52077578edb78fe23725d9f0e2153104b866ef28de2836549430",
+    "web-player/lib/avr-transpiled.js": "8b50f040f8b1632df74470649783507b09efce668b983437cdf0f68a6e2493c5",
+    "web-player/lib/avr-transpiler.js": "1ade86251e0f13ffca6cdcf581199a01b40534192612ae61c8db4ee798db9758",
+    "web-player/lib/avr-wasm-phases.js": "dfe3f6f59808da0ba2b27e20bdf835b7e0229acb91ecd8eff8eeefaccf3b03e1",
+    "web-player/lib/avr-wasm-regions.js": "40bb8a5e7c24171e28a5cf1dfe985bdb0fe4880554e84317dd6d6a61854ed8a6",
+    "web-player/lib/avr-wasm.js": "a6d6d487188fab94dfd3fe918ad145f4bfad58e43856fadf212854161f41e804",
+    "web-player/lib/devices/attiny13a-bandgap-profile.js": "262fb3eacbea8bb475379c8654b8d42de80b21b805535b888ee49b7bcba07568",
+    "web-player/lib/devices/attiny13a-clki-profile.js": "1745bd6dfe089dce3706be017a7e5de4bbf272ab354b70746bdef737bec521af",
+    "web-player/lib/devices/attiny13a-clock-sources.js": "581fffbf5e69138b89af1b55af8f6615872f95d4b487cfc86d65b8d17a3a3fa1",
+    "web-player/lib/devices/attiny13a-comparator-profile.js": "7e584c0d6f93d3ba3374e54992d4fa3ca30001e0efb2acad9aae24118f2a3262",
+    "web-player/lib/devices/attiny13a-profile.js": "a7d196ee092321ef675998559936d4021963209917489d1a1794214f309ae0ae",
+    "web-player/lib/devices/attiny13a-reset-profile.js": "c73e865c939463a6133fc45ffa59da7ed4490105c50272fd8b07b1aa65a50614",
+    "web-player/lib/devices/attiny88-profile.js": "2ffb2a6adb3143592416bd3e4f27a1024a9b5503730790a9ef523fc553e8122c",
+    "web-player/lib/devices/profiles.js": "80a7dc73d3be8132c4b96b19e93d0c9473fd9190f047d403d0bcc82579204c37",
+    "web-player/lib/emulation-configurations.js": "82dd13f5dad339d6666e3d443b19e8bff8e2ad68da8c82705bafd0fa0ea98869",
+    "web-player/lib/engines.js": "49713ee022b9132cf29437620d121d2e46054ea6fe4edabcf8388eff8e870320",
+    "web-player/lib/hex.js": "73026ff8e78caab294b86bd32b3588cf92f77e59203531aa3bf3bc7979dd09ab",
+    "web-player/lib/package-entry.js": "ff9273715dcc8df7d1924b3294bccfad7156f09feba7d7466c7c89cf171169ad",
+    "web-player/lib/realtime.js": "0ff48bf4a2ec56b81d10bbf7a5520170758e204125537f7168155cf8c711a449",
+    "web-player/lib/renderer-device.js": "081a072d20750329e5dd1c712f7b1788961244733bfda83b1bda72eb37de1f20",
+    "web-player/lib/renderer-js.js": "74decdf64cf46f69c227ad2457b6e89a8c1407bb7a9f07b06ea1f3d83c4a461f",
+    "web-player/lib/renderer-package.js": "3b7d2d3d29818bf0b12fd0218d73ede38bdb94b1919cf2e0ba6d0b012240131b",
+    "web-player/lib/renderer-transpiled.js": "9f2a67650b8f9193c784613980bd6113e666f50435f3987ce776a65915ed3d7f",
+    "web-player/lib/renderer.js": "77df3b204411d00ec3106dae69824a91612abd6717325e1ee186d6980971bc2a",
+    "web-player/lib/universal-package.js": "482c9d24164f3a93f48f8c59013e4aa4e40bf719f5f39ccb6710c085a13784b4",
+    "web-player/scripts/generate-avr-cache-identity.mjs": "bba94dd8d010945a5e27fbcb67355488dca46db765d9ea475c04b6daf0e3a13a"
+  },
+  "sourceSha256": {
+    "web-player/tests/attiny13a-sram-blocks.test.mjs": "7a6ca2dd82adbfb4472f2a9a1f63e10802659c10e1cc34715d0f8baf7e0e3491",
+    "web-player/scripts/benchmark-generated-wasm.mjs": "af564f74492890fa8ef61058c78c1f61aa28ef9774ca49c411be0719741bee9e",
+    "web-player/scripts/verify-sram-blocks.mjs": "10275f79c8f9cdfd9ee5a4c23c3cfc44f508cb3b2d4ea89a69a3ca40c81b914d",
+    "web-player/scripts/trace-sram-instructions.mjs": "b36f5ee4202191bb82548b80d272dab254c55ad4d2e04e8c4a8b9c9985becc8d"
+  },
+  "native": {
+    "bytes": 124675,
+    "sha256": "0e00866562e59ab8a40bb7295889386f7132b9a3d7e2c63ba02a804f387135a3"
+  },
+  "checks": {
+    "focused": {
+      "path": "build/sram-blocks-integration-final-20261101.tap",
+      "sha256": "07c3f1aa5374460cb1c2946502fa655e8e5bb42d3ff0a8e3cc48a88aa0818fbc",
+      "tests": 93,
+      "pass": 93,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "full": {
+      "path": "build/sram-blocks-full-20261101.tap",
+      "sha256": "20bf5fb1f01667e2cc164d9715ae07a1fd791f784bea70a268c61fa5403464e9",
+      "tests": 2706,
+      "pass": 2706,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  "artifacts": {
+    "sram-blocks-timing-a-20261101.json": {
+      "bytes": 76598,
+      "sha256": "edc62ad09b5f2821c5db85080bcb7d421e01ca5a4304d457ae04531d6c0649dd"
+    },
+    "sram-blocks-timing-b-20261101.json": {
+      "bytes": 76669,
+      "sha256": "784a7c4fc57381805c83446099b2788d0791d57c79305089434cbed04a6bb079"
+    },
+    "sram-blocks-validation-final-20261101.json": {
+      "bytes": 30792,
+      "sha256": "73d7a7b97cccdb0d792452af7dae1d59d3e48a6f8373d8688bf9208915f7590b"
+    },
+    "sram-blocks-verification-20261101.json": {
+      "bytes": 23413,
+      "sha256": "b9274954db0e720dcafa8ce4b6f65f6d5d5a1967c84ab0655622580bd0e3ae03"
+    },
+    "sram-instruction-trace-20261101.json": {
+      "bytes": 19510,
+      "sha256": "19e3dc23590186e7be67f55cbe7f59d08d5ebe4a41bf3dd6ee1ef4b0846fcc0a"
+    }
+  },
+  "defaultModules": 48,
+  "retainedPinCases": 6,
+  "retainedPinCheckpoints": 12384,
+  "retainedPinEvents": 4936786,
+  "traceCheckpoints": 588,
+  "timing": [
+    {
+      "series": "a",
+      "id": "rhythmic-physical",
+      "ratios": {
+        "pairs": [
+          {
+            "trial": 0,
+            "oldIdentity": 0.8290255380489043,
+            "newIdentity": 0.9991356978657389,
+            "crossVersion": 1.0948923531665509
+          },
+          {
+            "trial": 1,
+            "oldIdentity": 0.9267045609811685,
+            "newIdentity": 1.0709736242500851,
+            "crossVersion": 1.3097792716504197
+          },
+          {
+            "trial": 2,
+            "oldIdentity": 0.966454686317776,
+            "newIdentity": 0.9601686450004593,
+            "crossVersion": 1.113107954515818
+          },
+          {
+            "trial": 3,
+            "oldIdentity": 0.8931576401201047,
+            "newIdentity": 0.9449590065246638,
+            "crossVersion": 1.3053248660040153
+          },
+          {
+            "trial": 4,
+            "oldIdentity": 1.2552677400582566,
+            "newIdentity": 1.149243316861644,
+            "crossVersion": 1.2177181825776608
+          },
+          {
+            "trial": 5,
+            "oldIdentity": 1.2105589322141792,
+            "newIdentity": 1.042600191137776,
+            "crossVersion": 1.0160922910893622
+          },
+          {
+            "trial": 6,
+            "oldIdentity": 0.8701872786892749,
+            "newIdentity": 0.9092976664945289,
+            "crossVersion": 1.0240456407463752
+          },
+          {
+            "trial": 7,
+            "oldIdentity": 1.105409604114438,
+            "newIdentity": 0.9464278963246848,
+            "crossVersion": 1.3525606216331107
+          }
+        ],
+        "oldIdentity": {
+          "median": 0.9465796236494722,
+          "min": 0.8290255380489043,
+          "max": 1.2552677400582566
+        },
+        "newIdentity": {
+          "median": 0.979652171433099,
+          "min": 0.9092976664945289,
+          "max": 1.149243316861644
+        },
+        "crossVersion": {
+          "median": 1.1654130685467394,
+          "min": 1.0160922910893622,
+          "max": 1.3525606216331107
+        }
+      },
+      "fasterPairs": 8,
+      "inputBytes": 384819,
+      "outputBytes": 386499,
+      "codeGrowth": 1347,
+      "timedRuns": 32,
+      "warmups": 16,
+      "checkpoints": 564
+    },
+    {
+      "series": "a",
+      "id": "lumiere-stereo-physical",
+      "ratios": {
+        "pairs": [
+          {
+            "trial": 0,
+            "oldIdentity": 0.9674489371183385,
+            "newIdentity": 0.9095890076740374,
+            "crossVersion": 1.1386296452745197
+          },
+          {
+            "trial": 1,
+            "oldIdentity": 0.7969361651347325,
+            "newIdentity": 1.0329672395286003,
+            "crossVersion": 1.2435757585398661
+          },
+          {
+            "trial": 2,
+            "oldIdentity": 0.9151412819718326,
+            "newIdentity": 0.8574917512400263,
+            "crossVersion": 1.1625622796609525
+          },
+          {
+            "trial": 3,
+            "oldIdentity": 1.0615692603379208,
+            "newIdentity": 0.994193513060597,
+            "crossVersion": 1.126630080618705
+          },
+          {
+            "trial": 4,
+            "oldIdentity": 1.0452405554367121,
+            "newIdentity": 0.8640905423259686,
+            "crossVersion": 1.0747250744374834
+          },
+          {
+            "trial": 5,
+            "oldIdentity": 1.1923162143556534,
+            "newIdentity": 0.9492175881320287,
+            "crossVersion": 1.1283751279184229
+          },
+          {
+            "trial": 6,
+            "oldIdentity": 0.9683194513032203,
+            "newIdentity": 1.0408713661047293,
+            "crossVersion": 1.1030291183427532
+          },
+          {
+            "trial": 7,
+            "oldIdentity": 0.973838092014399,
+            "newIdentity": 1.0713769300075426,
+            "crossVersion": 1.3595151214527896
+          }
+        ],
+        "oldIdentity": {
+          "median": 0.9710787716588096,
+          "min": 0.7969361651347325,
+          "max": 1.1923162143556534
+        },
+        "newIdentity": {
+          "median": 0.9717055505963128,
+          "min": 0.8574917512400263,
+          "max": 1.0713769300075426
+        },
+        "crossVersion": {
+          "median": 1.1335023865964713,
+          "min": 1.0747250744374834,
+          "max": 1.3595151214527896
+        }
+      },
+      "fasterPairs": 8,
+      "inputBytes": 388592,
+      "outputBytes": 390833,
+      "codeGrowth": 1802,
+      "timedRuns": 32,
+      "warmups": 16,
+      "checkpoints": 564
+    },
+    {
+      "series": "a",
+      "id": "hq4-chego-auto-physical",
+      "ratios": {
+        "pairs": [
+          {
+            "trial": 0,
+            "oldIdentity": 1.0333561282775878,
+            "newIdentity": 0.7671190472550447,
+            "crossVersion": 1.1993627990881695
+          },
+          {
+            "trial": 1,
+            "oldIdentity": 1.104931722178827,
+            "newIdentity": 0.8903492727430676,
+            "crossVersion": 1.0412097553277844
+          },
+          {
+            "trial": 2,
+            "oldIdentity": 1.0038950812179663,
+            "newIdentity": 1.0042836201040708,
+            "crossVersion": 0.6703251251878785
+          },
+          {
+            "trial": 3,
+            "oldIdentity": 0.982949500778566,
+            "newIdentity": 1.4004209252273194,
+            "crossVersion": 0.8350402336572305
+          },
+          {
+            "trial": 4,
+            "oldIdentity": 1.0082868341210487,
+            "newIdentity": 1.0311870643305565,
+            "crossVersion": 0.9715184294097363
+          },
+          {
+            "trial": 5,
+            "oldIdentity": 1.0183129034532585,
+            "newIdentity": 0.9338638477557589,
+            "crossVersion": 0.9734293304453535
+          },
+          {
+            "trial": 6,
+            "oldIdentity": 1.0369781419292592,
+            "newIdentity": 0.9849411878998523,
+            "crossVersion": 1.0349080301577187
+          },
+          {
+            "trial": 7,
+            "oldIdentity": 1.0566505446585366,
+            "newIdentity": 1.0752562548319868,
+            "crossVersion": 0.9776097001636346
+          }
+        ],
+        "oldIdentity": {
+          "median": 1.0258345158654232,
+          "min": 0.982949500778566,
+          "max": 1.104931722178827
+        },
+        "newIdentity": {
+          "median": 0.9946124040019615,
+          "min": 0.7671190472550447,
+          "max": 1.4004209252273194
+        },
+        "crossVersion": {
+          "median": 0.975519515304494,
+          "min": 0.6703251251878785,
+          "max": 1.1993627990881695
+        }
+      },
+      "fasterPairs": 3,
+      "inputBytes": 401980,
+      "outputBytes": 403571,
+      "codeGrowth": 1257,
+      "timedRuns": 32,
+      "warmups": 16,
+      "checkpoints": 564
+    },
+    {
+      "series": "b",
+      "id": "rhythmic-physical",
+      "ratios": {
+        "pairs": [
+          {
+            "trial": 0,
+            "oldIdentity": 0.9944174001125904,
+            "newIdentity": 1.0133766518580047,
+            "crossVersion": 1.1424621233945196
+          },
+          {
+            "trial": 1,
+            "oldIdentity": 0.7515648249911064,
+            "newIdentity": 1.2534244908638799,
+            "crossVersion": 1.294520352375994
+          },
+          {
+            "trial": 2,
+            "oldIdentity": 1.009609057646889,
+            "newIdentity": 1.1832609604923645,
+            "crossVersion": 1.0595934129604343
+          },
+          {
+            "trial": 3,
+            "oldIdentity": 1.0006158043717441,
+            "newIdentity": 1.352110334252681,
+            "crossVersion": 0.9588318549242285
+          },
+          {
+            "trial": 4,
+            "oldIdentity": 1.0357156702906656,
+            "newIdentity": 1.024653226394301,
+            "crossVersion": 1.1563397359618697
+          },
+          {
+            "trial": 5,
+            "oldIdentity": 0.9448365056328061,
+            "newIdentity": 1.0348518750035405,
+            "crossVersion": 1.1627352267916073
+          },
+          {
+            "trial": 6,
+            "oldIdentity": 1.0032374400447082,
+            "newIdentity": 0.9780071620499382,
+            "crossVersion": 1.1098451170348749
+          },
+          {
+            "trial": 7,
+            "oldIdentity": 1.0208874292719874,
+            "newIdentity": 0.7036678682633383,
+            "crossVersion": 0.9978608018681043
+          }
+        ],
+        "oldIdentity": {
+          "median": 1.0019266222082261,
+          "min": 0.7515648249911064,
+          "max": 1.0357156702906656
+        },
+        "newIdentity": {
+          "median": 1.0297525506989207,
+          "min": 0.7036678682633383,
+          "max": 1.352110334252681
+        },
+        "crossVersion": {
+          "median": 1.1261536202146973,
+          "min": 0.9588318549242285,
+          "max": 1.294520352375994
+        }
+      },
+      "fasterPairs": 6,
+      "inputBytes": 384819,
+      "outputBytes": 386499,
+      "codeGrowth": 1347,
+      "timedRuns": 32,
+      "warmups": 16,
+      "checkpoints": 564
+    },
+    {
+      "series": "b",
+      "id": "lumiere-stereo-physical",
+      "ratios": {
+        "pairs": [
+          {
+            "trial": 0,
+            "oldIdentity": 0.9642276816125882,
+            "newIdentity": 1.0112413553135322,
+            "crossVersion": 1.2274295220427927
+          },
+          {
+            "trial": 1,
+            "oldIdentity": 0.9889839025237943,
+            "newIdentity": 0.995061267119438,
+            "crossVersion": 1.2282222863229686
+          },
+          {
+            "trial": 2,
+            "oldIdentity": 1.1208590410747106,
+            "newIdentity": 0.9616466066500665,
+            "crossVersion": 1.260908227158532
+          },
+          {
+            "trial": 3,
+            "oldIdentity": 1.0439193244581564,
+            "newIdentity": 0.9881013943053163,
+            "crossVersion": 1.230489118415209
+          },
+          {
+            "trial": 4,
+            "oldIdentity": 1.4566325289454367,
+            "newIdentity": 1.0270854333824952,
+            "crossVersion": 1.4403104308899934
+          },
+          {
+            "trial": 5,
+            "oldIdentity": 1.0072837699368715,
+            "newIdentity": 0.6705805442705578,
+            "crossVersion": 1.0012609617160175
+          },
+          {
+            "trial": 6,
+            "oldIdentity": 1.0365475463074199,
+            "newIdentity": 0.9375863183144665,
+            "crossVersion": 1.1393182809672493
+          },
+          {
+            "trial": 7,
+            "oldIdentity": 0.9504210360949079,
+            "newIdentity": 0.9328776459630954,
+            "crossVersion": 1.2410572117024157
+          }
+        ],
+        "oldIdentity": {
+          "median": 1.0219156581221456,
+          "min": 0.9504210360949079,
+          "max": 1.4566325289454367
+        },
+        "newIdentity": {
+          "median": 0.9748740004776915,
+          "min": 0.6705805442705578,
+          "max": 1.0270854333824952
+        },
+        "crossVersion": {
+          "median": 1.2293557023690886,
+          "min": 1.0012609617160175,
+          "max": 1.4403104308899934
+        }
+      },
+      "fasterPairs": 8,
+      "inputBytes": 388592,
+      "outputBytes": 390833,
+      "codeGrowth": 1802,
+      "timedRuns": 32,
+      "warmups": 16,
+      "checkpoints": 564
+    },
+    {
+      "series": "b",
+      "id": "hq4-chego-auto-physical",
+      "ratios": {
+        "pairs": [
+          {
+            "trial": 0,
+            "oldIdentity": 1.1150223124770995,
+            "newIdentity": 0.9606687768025115,
+            "crossVersion": 1.0152911441344323
+          },
+          {
+            "trial": 1,
+            "oldIdentity": 0.5933808640026763,
+            "newIdentity": 1.1911654991460578,
+            "crossVersion": 1.2553337625057073
+          },
+          {
+            "trial": 2,
+            "oldIdentity": 1.4051517206568132,
+            "newIdentity": 0.985888147953107,
+            "crossVersion": 1.4358825141708178
+          },
+          {
+            "trial": 3,
+            "oldIdentity": 0.9495392898959901,
+            "newIdentity": 0.9782147336974503,
+            "crossVersion": 0.9737750307793056
+          },
+          {
+            "trial": 4,
+            "oldIdentity": 1.023405657157173,
+            "newIdentity": 1.1412179686828716,
+            "crossVersion": 0.9362262188430364
+          },
+          {
+            "trial": 5,
+            "oldIdentity": 1.0763667150932716,
+            "newIdentity": 1.0587818342742839,
+            "crossVersion": 0.9669478970348193
+          },
+          {
+            "trial": 6,
+            "oldIdentity": 0.9423057302005217,
+            "newIdentity": 1.0443441468677757,
+            "crossVersion": 1.0071040059093093
+          },
+          {
+            "trial": 7,
+            "oldIdentity": 1.0764065052690452,
+            "newIdentity": 1.330146406713967,
+            "crossVersion": 1.0738029511481226
+          }
+        ],
+        "oldIdentity": {
+          "median": 1.0498861861252222,
+          "min": 0.5933808640026763,
+          "max": 1.4051517206568132
+        },
+        "newIdentity": {
+          "median": 1.0515629905710298,
+          "min": 0.9606687768025115,
+          "max": 1.330146406713967
+        },
+        "crossVersion": {
+          "median": 1.0111975750218707,
+          "min": 0.9362262188430364,
+          "max": 1.4358825141708178
+        }
+      },
+      "fasterPairs": 5,
+      "inputBytes": 401980,
+      "outputBytes": 403571,
+      "codeGrowth": 1257,
+      "timedRuns": 32,
+      "warmups": 16,
+      "checkpoints": 564
+    }
+  ],
+  "policy": "Opt-in sramBlocks:true only. Off by default and in verification. No native artifact changes, no hardware, exclusive-time, general HQ4 speed or browser underrun closure."
+}

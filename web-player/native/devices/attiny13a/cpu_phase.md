@@ -139,7 +139,7 @@ Register-only blocks use the same80-byte context and existing native imports.
 Their entire original cycle span must lie strictly before the next device/input
 event and the host's physical observation deadline. Active continuations,
 pending enabled IRQs, SEI/RETI delay and insufficient instruction budget reject
-a block. Memory/I/O instructions retain their individual bus phases. CLKI
+a block. By default, memory/I/O instructions retain their individual bus phases. CLKI
 continues to expose a zero block budget, retaining every source phase and input
 horizon. No clock edge or peripheral event is omitted by CPU batching.
 
@@ -167,6 +167,16 @@ ordinary native retirement call for the last instruction and IRQ arbitration.
 The context's execPc identifies the final instruction. A clock reset/fault
 cancels effects; an unexpected WAIT fails closed. The existing instruction path
 handles every rejected block and every suspended instruction.
+
+Optional `sramBlocks:true` adds separate LD/ST-only spans. Whole-span pointer
+offset bounds prove every address lies in SRAM before any clock or memory
+effect; pointer destinations, undefined update aliases, wrapping addresses,
+I/O and other instruction kinds remain outside those spans. The same strict
+guards protect original-cycle timing, IRQs, reset and observation boundaries.
+Ordered SRAM/register effects commit after the clock call, with no SREG copy.
+Both translation caches and packaged SPM recompilation retain the policy;
+verification forces it off. Native ABI/imports and CLKI admission are unchanged.
+See the [proof and measured scope](../../../../docs/avr-asm-cookbook/resumable-sram-blocks.md).
 
 `runUntilPs` establishes a bounded physical deadline, rebasing its exact uint64
 wall timestamp for the f64 runner offset. `step`/`run` explicitly select an

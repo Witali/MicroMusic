@@ -2701,3 +2701,10 @@ correctness technique; physical calibration and performance remain unmeasured.
 while omitting a working flag copy only when the complete region neither reads
 nor writes SREG. It records the ABI, phase/event constraints, emitted size and
 active-IRQ validation without assuming a general execution-speed gain.
+
+## ATtiny13A: preflight indirect SRAM blocks
+
+[Resumable SRAM spans](resumable-sram-blocks.md) records the whole-span alias
+proof, original-cycle/IRQ/continuation constraints and optional compiler policy.
+Two measured music workloads improve; HQ4 has no demonstrated benefit, and
+verification/default resumable execution retains individual memory bus phases.

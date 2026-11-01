@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Indirect SRAM checkpoint, 2026-11-01: optional `sramBlocks:true` combines only
+preflighted LD/ST chains, with all addresses proven in manufacturer-derived
+SRAM bounds before clocking. Alias/wrap/event/continuation failures retain
+individual instructions; CLKI and verification keep their original bus phases.
+All 2706 default tests pass, including 33 new cases and actual SPM/cache/package
+coverage. Two serial series observe Rhythmic/Lumiere improvements, but HQ4 has
+no demonstrated benefit and identity controls remain noisy. The option stays
+off by default; native artifacts are unchanged. This advances helper-traffic
+work without closing it or changing 24/31. See the
+[evidence and limits](../reports/sram-blocks-20261101.md).
+
 NVM/IRQ integration audit, 2026-11-01: source-only firmware confirms EE_RDY
 is suppressed during Flash erase and returns as a level at NVM completion.
 Timer0's higher priority and the main instruction after RETI are preserved.

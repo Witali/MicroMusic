@@ -5,13 +5,13 @@ const encoder=new TextEncoder(),defaultStore=createIndexedDBTranslationStore();
 const nativeModules=new Map();
 const MAX_RECORD_BYTES=16*1024*1024;
 const hardwareKeys=Object.keys(DEFAULT_CONFIGURATION);
-const executionDefaults={fastIdle:true,fastBlocks:false,optimizeFlags:true,maxBlockInstructions:32,optimizePhaseLocals:false,boundedRegions:false,incrementalCompilation:false};
+const executionDefaults={fastIdle:true,fastBlocks:false,optimizeFlags:true,maxBlockInstructions:32,optimizePhaseLocals:false,boundedRegions:false,sramBlocks:false,incrementalCompilation:false};
 const supported=new Set([...hardwareKeys,...Object.keys(executionDefaults),'target','cpuHz','cacheTranslation']);
 const canonical=value=>value===null||typeof value!=='object'?JSON.stringify(value):Array.isArray(value)
   ?'['+value.map(canonical).join(',')+']':'{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+canonical(value[k])).join(',')+'}';
 const sha=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),n=>n.toString(16).padStart(2,'0')).join('');
 const policy=manifest=>({optimizeFlags:manifest.optimizeFlags,maxBlockInstructions:manifest.maxBlockInstructions,
-  optimizePhaseLocals:manifest.optimizePhaseLocals??false,boundedRegions:manifest.boundedRegions??false});
+  optimizePhaseLocals:manifest.optimizePhaseLocals??false,boundedRegions:manifest.boundedRegions??false,sramBlocks:manifest.sramBlocks??false});
 
 // Full ATtiny13A only. Persist bytecode, checked using the package validator,
 // never a live Instance, Memory, CPU state or changed SPM image.

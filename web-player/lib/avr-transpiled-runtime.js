@@ -16,7 +16,7 @@ function compileTranslation(binary,abi,options,previous) {
   const padded=new Uint8Array(profile.flashBytes).fill(255);padded.set(binary);
   // Exact image keys avoid hash collisions. Configuration does not enter the
   // lowering: live clocks/fuses are supplied by this runtime instance's bus.
-  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,options.boundedRegions??false,!!options.incrementalCompilation,Array.from(padded)]);
+  const key=JSON.stringify([profile.name,abiKey(abi),!!options.resumable,options.optimizeFlags??true,options.maxBlockInstructions??32,options.optimizePhaseLocals??false,options.boundedRegions??false,options.sramBlocks??false,!!options.incrementalCompilation,Array.from(padded)]);
   if(options.cacheTranslation!==false&&cache.has(key)) {
     const cached=cache.get(key);cache.delete(key);cache.set(key,cached);
     return {...cached,cacheHit:true};
@@ -43,6 +43,8 @@ export class AVRCore extends PeripheralRuntime {
       throw Error('Bounded regions require resumable execution');
     if(options.optimizePhaseLocals!==undefined&&(typeof options.optimizePhaseLocals!=='boolean'||options.optimizePhaseLocals&&!options.resumable))
       throw Error('Phase-local optimization requires resumable execution');
+    if(options.sramBlocks!==undefined&&(typeof options.sramBlocks!=='boolean'||options.sramBlocks&&!options.resumable))
+      throw Error('SRAM blocks require resumable execution');
     const profile=deviceProfile(options.device??(options.target?resolveAVRProfile(options.target).name:DEFAULT_DEVICE));
     const target=profile.target??'attiny13a';
     if(options.target&&resolveAVRProfile(options.target).id!==target)throw Error('Conflicting AVR target and device');

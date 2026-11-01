@@ -255,6 +255,8 @@ function validateManifest(manifest,flash,version=PACKAGE_VERSION){
   if(manifest.schema!=='micromusic-avr-transpiled-v1'||manifest.device!=='ATtiny13A')fail('unsupported translated manifest/device');
   const resumable=manifest.executionMode==='resumable-v1';
   if(Object.hasOwn(manifest,'executionMode')&&(!resumable||version<5))fail('unsupported translated execution mode');
+  if(Object.hasOwn(manifest,'sramBlocks')&&(typeof manifest.sramBlocks!=='boolean'||manifest.sramBlocks&&!resumable))
+    fail('SRAM blocks require resumable execution');
   validateABI(manifest.abi,resumable);
   if(typeof manifest.optimizeFlags!=='boolean')fail('invalid flag optimization setting');
   integer(manifest.maxBlockInstructions,2,64,'block size');
