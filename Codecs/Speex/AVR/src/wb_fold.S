@@ -2,7 +2,7 @@
  * alternating sign. Exact rounded HB1 excitation without a 32-bit buffer. */
 #include "wb_fold_kernel.inc"
 #include "zero_shape_kernel.inc"
-.macro WB_FOLD_ARRAY name,count,parity
+.macro WB_FOLD_ARRAY name,count,parity,q15=1,skip_zero=0
 .section .text.\name,"ax",@progbits
 .global \name
 .type \name,@function
@@ -16,10 +16,21 @@
     clr r2
     ldi r16,\count
 .Lfold_\@:
+.if \skip_zero
+    /* Only the NB1 table entry uses this specialization: class2=0. */
+    cpi r16,3
+    brne .Lcalculate_\@
+    st X+,r2
+    st X+,r2
+    rjmp .Lnext_\@
+.Lcalculate_\@:
+.endif
     ld r20,X+
     ld r21,X
     sbiw r26,1
+.if \q15
     WB_FOLD_Q15 r8,r9,r10,r11
+.endif
 .if \parity
     WB_FOLD_SCALE r8,r9,r10,r11,r4,r5,r6,r7,r16
 .else
@@ -28,6 +39,7 @@
 .endif
     st X+,r9
     st X+,r10
+.Lnext_\@:
     dec r16
     breq .Ldone_\@
     rjmp .Lfold_\@
@@ -43,6 +55,8 @@
 WB_FOLD_ARRAY speex_wb_fold40_avr,40,1
 #if SPEEX_ENABLE_NB1
 WB_FOLD_ARRAY speex_wb_fold5_avr,5,0
+/* Frame-invariant Q15 has already been cached, same second quantizer. */
+WB_FOLD_ARRAY speex_wb_noise_scale5_avr,5,0,0,1
 #endif
 
 /* Fuse four ten-sample vectors with folding. ABI: out r24, indices r22,

@@ -30,6 +30,11 @@ let foldActive=null,foldCalls=0,foldMultiplies=0;
 const countVocoder=process.argv.includes('--count-vocoder');
 const vocoderEntry=countVocoder?address('speex_nb1_synthesize40_avr'):-1;
 let vocoderActive=null,vocoderCalls=0,vocoderMultiplies=0;
+const countPrepare=process.argv.includes('--count-noise-prepare');
+const prepareNames=[...symbols.keys()].filter(n=>n==='speex_nb1_excitation_prepare'||n.startsWith('speex_nb1_excitation_prepare.'));
+if(countPrepare)assert.equal(prepareNames.length,1,'NB1 frame preparation entry');
+const prepareEntry=countPrepare?address(prepareNames[0]):-1;
+let prepareActive=null,prepareCalls=0,prepareMultiplies=0;const prepareCounts=[];
 function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  assert.ok(cpu.cycles<deadline,'API timeout');const opcode=cpu.progMem[cpu.pc];
  if(cpu.pc*2===meanEntry){
@@ -43,6 +48,8 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  if(foldActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++foldActive.muls;
  if(cpu.pc*2===vocoderEntry){assert.equal(vocoderActive,null);vocoderActive={sp:cpu.SP,muls:0};}
  if(vocoderActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++vocoderActive.muls;
+ if(cpu.pc*2===prepareEntry){assert.equal(prepareActive,null);prepareActive={sp:cpu.SP,muls:0};}
+ if(prepareActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++prepareActive.muls;
  avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
  if(meanActive&&opcode===0x9508&&cpu.SP===meanActive.sp+2){
   assert.equal(cpu.dataView.getInt16(24,true),meanActive.expected,'Mean in real mixed decoder');
@@ -54,18 +61,21 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
   ++valuesCalls;valuesMultiplies+=valuesActive.muls;valuesActive=null;
  }
  if(foldActive&&opcode===0x9508&&cpu.SP===foldActive.sp+2){
-  assert.equal(foldActive.muls,56,'Five exact transforms plus subframe address');assert.equal(cpu.data[1],0);
+  assert.equal(foldActive.muls,29,'Four second-stage transforms plus subframe address');assert.equal(cpu.data[1],0);
   ++foldCalls;foldMultiplies+=foldActive.muls;foldActive=null;
  }
  if(vocoderActive&&opcode===0x9508&&cpu.SP===vocoderActive.sp+2){
   assert.equal(vocoderActive.muls,160,'Forty exact single-product mean updates');assert.equal(cpu.data[1],0);
   ++vocoderCalls;vocoderMultiplies+=vocoderActive.muls;vocoderActive=null;
  }
+ if(prepareActive&&opcode===0x9508&&cpu.SP===prepareActive.sp+2){
+  assert.equal(cpu.data[1],0);++prepareCalls;prepareMultiplies+=prepareActive.muls;prepareCounts.push(prepareActive.muls);prepareActive=null;
+ }
  if(meta.wideband&&cpu.data[chunks]!==lastChunk){lastChunk=cpu.data[chunks];const at=cpu.dataView.getUint16(pcm,true);output.push(Buffer.from(cpu.data.subarray(at,at+160)));}
 }}
 until(()=>cpu.data[status]===1);
 function decode(payload,width,invalidFlags=0){
- const callsBefore=meanCalls,valuesBefore=valuesCalls,foldBefore=foldCalls,vocoderBefore=vocoderCalls;
+ const callsBefore=meanCalls,valuesBefore=valuesCalls,foldBefore=foldCalls,vocoderBefore=vocoderCalls,prepareBefore=prepareCalls;
  cpu.data.set(payload,packet);cpu.data[bytes]=width;cpu.data[flags]=invalidFlags;
  output=[];cpu.data[status]=1;cpu.data[command]=1;until(()=>cpu.data[status]===2);
  assert.ok(Buffer.from(cpu.data.subarray(packet,packet+32)).equals(payload),'Read-only packet');
@@ -74,6 +84,7 @@ function decode(payload,width,invalidFlags=0){
  if(countValues)assert.equal(valuesCalls-valuesBefore,code===0&&(payload[0]>>3)===1?1:0,'Noise table once per valid NB1 frame');
  if(countFold)assert.equal(foldCalls-foldBefore,code===0&&(payload[0]>>3)===1?4:0,'Fold table four times per valid NB1 frame');
  if(countVocoder)assert.equal(vocoderCalls-vocoderBefore,code===0&&(payload[0]>>3)===1?4:0,'Four vocoder quarters only in valid NB1 frames');
+ if(countPrepare)assert.equal(prepareCalls-prepareBefore,code===0&&(payload[0]>>3)===1?1:0,'Prepare only valid NB1 frames');
  return {code,pcm:meta.wideband?Buffer.concat(output):Buffer.from(cpu.data.subarray(pcm,pcm+320)),callbacks:output.length};
 }
 function reject(payload,width,badFlags=0){const answer=decode(payload,width,badFlags);assert.equal(answer.code,-1);assert.equal(answer.callbacks,0);rejected++;}
@@ -97,7 +108,9 @@ if(countMean)report.meanArithmetic={calls:meanCalls,hardwareMultiplies:meanMulti
 if(countValues)report.noiseTableArithmetic={calls:valuesCalls,hardwareMultiplies:valuesMultiplies,
  callsPerNb1Frame:1,valuesPerCall:5,rejectedCallsDoNotExecute:true};
 if(countFold)report.noiseFoldArithmetic={calls:foldCalls,hardwareMultiplies:foldMultiplies,
- transformedValuesPerNb1Frame:20,foldMulsPerNb1Frame:220,controllerMulsPerNb1Frame:224,rejectedCallsDoNotExecute:true};
+ transformedValuesPerNb1Frame:16,foldMulsPerNb1Frame:112,controllerMulsPerNb1Frame:116,rejectedCallsDoNotExecute:true};
 if(countVocoder)report.vocoderArithmetic={calls:vocoderCalls,hardwareMultiplies:vocoderMultiplies,
  callsPerNb1Frame:4,hardwareMultipliesPerNb1Frame:640,rejectedCallsDoNotExecute:true};
+if(countPrepare)report.framePreparationArithmetic={calls:prepareCalls,hardwareMultiplies:prepareMultiplies,
+ perCall:prepareCounts,rejectedCallsDoNotExecute:true};
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS mixed API',JSON.stringify(report));

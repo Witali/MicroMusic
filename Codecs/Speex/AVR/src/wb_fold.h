@@ -7,13 +7,15 @@ void speex_wb_excitation8_40_c(int16_t *,const uint8_t *,int32_t,int32_t);
  * Scale 0..121000000; g signed32. Output must not overlap the indices. */
 void speex_wb_excitation40_c(int16_t *,const uint8_t *,int32_t,int32_t);
 #if SPEEX_ENABLE_NB1
-/* Readonly 170-byte NB1 cache, sub 0..3; output40/scratch5/cache disjoint.
- * Fold each of the five words with both original quantizations, then lookup
- * and negate the rounded result only for odd output positions. */
+/* Readonly 208-byte NB1 workspace, sub 0..3; output40/scratch5/cache disjoint.
+ * Q15 noise words are prepared once per frame, class2 is exactly zero. Apply
+ * the second quantizer to the other words, then lookup/negate odd positions. */
 void speex_wb_fold5_c(int16_t *,int32_t);
+void speex_wb_noise_scale5_c(int16_t *,int32_t);
 void speex_wb_noise_fold40_c(int16_t *,const int16_t *,uint8_t,int32_t,int16_t *);
 #if SPEEX_NB3_USE_AVR_ASM
 void speex_wb_fold5_avr(int16_t *,int32_t);
+void speex_wb_noise_scale5_avr(int16_t *,int32_t);
 void speex_wb_noise_fold40_avr(int16_t *,const int16_t *,uint8_t,int32_t,int16_t *);
 #define speex_wb_noise_fold40 speex_wb_noise_fold40_avr
 #else

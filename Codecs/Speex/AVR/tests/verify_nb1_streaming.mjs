@@ -28,7 +28,8 @@ const s16=p=>cpu.dataView.getInt16(p,true),word=n=>Number(BigInt.asIntN(16,BigIn
 function cacheIntact(){
  assert.ok(memory(base,row.gen*40).equals(row.classes.subarray(0,row.gen*40)),'Generated class prefix');
  assert.ok(memory(base+160,10).equals(row.rawNoise),'Five raw noise words');
- assert.ok(memory(workEnd,live-workEnd).every(v=>v===0xa5),'Twelve-byte dead-prefix guard');
+ assert.ok(memory(base+198,10).equals(row.prefold),'Frame-invariant Q15 words');
+ assert.ok(memory(workEnd,live-workEnd).every(v=>v===0xa5),'Dead-prefix guard');
  assert.ok(memory(live,frameBegin-live).equals(row.delayed),'Delayed history preserved');
  const state=row.states[Math.max(0,row.gen-1)],expectedContext=Buffer.from(row.context);
  expectedContext.writeInt16LE(row.gen?state.noise:row.initialNoise,24);
@@ -54,7 +55,7 @@ function until(done){const limit=cpu.cycles+3000000;while(!done()){
    const table=Array.from({length:5},(_,i)=>word(BigInt.asUintN(32,((29491n*BigInt(row.rawNoise.readInt16LE(2*i)))>>15n)*gain+256n)>>9n));
    const output=Buffer.alloc(80),rawTable=Buffer.alloc(10);table.forEach((v,i)=>rawTable.writeInt16LE(v,2*i));
    for(let i=0;i<40;i++)output.writeInt16LE(word((i&1)?-table[row.classes[40*sub+i]]:table[row.classes[40*sub+i]]),2*i);
-   foldPending={sp:cpu.SP,out,scratch,output,rawTable,workspace:memory(base,198),
+   foldPending={sp:cpu.SP,out,scratch,output,rawTable,workspace:memory(base,208),
     before:memory(out-2,2),after:memory(out+80,2),scratchBefore:memory(scratch-2,2),scratchAfter:memory(scratch+10,2)};
    ++row.fold;
   }
@@ -73,7 +74,7 @@ function until(done){const limit=cpu.cycles+3000000;while(!done()){
   if(foldPending&&cpu.SP===foldPending.sp+2){
    const p=foldPending;assert.ok(memory(p.out,80).equals(p.output),'Exact fold');
    assert.ok(memory(p.scratch,10).equals(p.rawTable),'Five folded scratch values');
-   assert.ok(memory(base,198).equals(p.workspace),'Fold does not write workspace');
+   assert.ok(memory(base,208).equals(p.workspace),'Fold does not write workspace');
    assert.ok(memory(p.out-2,2).equals(p.before)&&memory(p.out+80,2).equals(p.after),'Fold output bounds');
    assert.ok(memory(p.scratch-2,2).equals(p.scratchBefore)&&memory(p.scratch+10,2).equals(p.scratchAfter),'Fold scratch bounds');
    cacheIntact();foldPending=null;++foldedBlocks;
@@ -85,7 +86,7 @@ until(()=>cpu.data[status]===1);const pointer=n=>cpu.dataView.getUint16(at(n),tr
 base=pointer('cache_begin');live=pointer('cache_live_begin');frameBegin=pointer('cache_frame_begin');
 workEnd=pointer('cache_work_end');ctx=pointer('cache_context');seedAt=pointer('cache_seed');
 pulseAt=pointer('cache_voc_pulse');meanAt=pointer('cache_voc_mean');prevAt=pointer('cache_voc_previous');phaseAt=pointer('cache_voc_phase');
-assert.deepEqual([live-base,frameBegin-base,pointer('cache_move_begin')-base,ctx-base,workEnd-base],[210,290,320,170,198]);
+assert.deepEqual([live-base,frameBegin-base,pointer('cache_move_begin')-base,ctx-base,workEnd-base],[210,290,320,170,208]);
 const gains=readFileSync(join(root,'vendor/speex-1.2.1/libspeex/nb_celp.c'),'utf8')
  .match(/ol_gain_table\[32\]=\{([^}]+)\}/)[1].split(',').map(Number);
 function field(payload,bit,n){let value=0;for(let i=0;i<n;i++)value=value*2+((payload[(bit+i)>>3]>>(7-((bit+i)&7)))&1);return value;}
@@ -104,11 +105,12 @@ function prepared(payload){
  const coefficient=(2185*(field(payload,30,4)<<6)+16384)>>15,g=Math.max(0,Math.min(64,(24576*(coefficient-13)+8192)>>14));
  const amplitude=word(sqrt(2*pitch)*word((g*((scale+8192)>>14)+32)>>6));
  const q15=(a,b)=>word((BigInt(a)*BigInt(b))>>15n),table=[];
- result.rawNoise=Buffer.alloc(10);result.context=Buffer.alloc(28);result.classes=Buffer.alloc(160);
+ result.rawNoise=Buffer.alloc(10);result.prefold=Buffer.alloc(10);result.context=Buffer.alloc(28);result.classes=Buffer.alloc(160);
  result.excitation=Buffer.alloc(320);result.states=[];
  for(let n=-2;n<=2;n++){
   const a=BigInt(n*128),b=BigInt(scale),product=a*(b>>14n)+((a*(b&16383n))>>14n);
   const v=word((BigInt.asIntN(32,product<<7n)+8192n)>>14n);table.push(v);result.rawNoise.writeInt16LE(v,2*(n+2));
+  result.prefold.writeInt16LE(word((29491n*BigInt(v))>>15n),2*(n+2));
  }
  const current=table.map(v=>q15(32767-435*g,v)),previous=table.map(v=>q15(77*g,v));
  const pulseNow=q15(22938,amplitude),pulsePrevious=q15(9830,amplitude);
@@ -139,10 +141,10 @@ for(let f=0;f<source.frames;f++){
  assert.equal(cpu.dataView.getUint32(seedAt,true),seed);if(row.mode===1){cacheIntact();++cacheFrames;}row=null;
 }
 cpu.data[status]=0;cpu.data[command]=2;until(()=>cpu.data[status]===1);
-assert.equal(cpu.dataView.getUint32(seedAt,true),1000);assert.ok(memory(base,198).every(v=>v===0));
+assert.equal(cpu.dataView.getUint32(seedAt,true),1000);assert.ok(memory(base,208).every(v=>v===0));
 const report={binarySha256:metadata.binarySha256,inputSha256:source.inputSha256,pcmSha256:source.pcmSha256,frames:source.frames,
- cacheFrames,generatedBlocks,foldedBlocks,valuesCalls,indicesCalls,cacheBytes:170,contextBytes:28,reusedWorkspaceBytes:198,
- guardBytes:12,firstDelayedInputByte:210,nextHistorySourceByte:320,independentOriginalVocoder:true,allPartialStatesExact:true,
+ cacheFrames,generatedBlocks,foldedBlocks,valuesCalls,indicesCalls,cacheBytes:170,contextBytes:28,prefoldBytes:10,reusedWorkspaceBytes:208,
+ guardBytes:2,firstDelayedInputByte:210,nextHistorySourceByte:320,independentOriginalVocoder:true,allPartialStatesExact:true,
  classesAndSeedPerQuarterExact:true,readOnlyFoldWorkspace:true,outputAndScratchBounds:true,pcmExact:true,resetClearsWorkspace:true,
  includesInterrupts:false,physicalBoardTested:false,flashBytes:binary.length,staticSramBytes:end-256,peakStack:2303-minSP,freeSram:minSP-end+1};
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report));

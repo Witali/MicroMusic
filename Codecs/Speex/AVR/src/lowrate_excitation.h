@@ -145,6 +145,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *
     int16_t *noise=st->excBuf+SPEEX_NB1_VALUES_WORD;
     int16_t *context=st->excBuf+SPEEX_NB1_CONTEXT_WORD;
     int16_t *current=context+SPEEX_NB1_CURRENT,*previous=context+SPEEX_NB1_PREVIOUS;
+    int16_t *prefold=st->excBuf+SPEEX_NB1_PREFOLD_WORD;
 #else
     int16_t noise[5];
     int16_t current[5],previous[5];
@@ -153,6 +154,10 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *
     for(uint8_t i=0;i<5;i++) {
         current[i]=speex_low_q15(noise_gain,noise[i]);
         previous[i]=speex_low_q15(previous_gain,noise[i]);
+#if SPEEX_ENABLE_WB1
+        /* HB1's first quantizer is frame-invariant; class2 is exactly zero. */
+        prefold[i]=i==2?0:speex_low_q15(29491,noise[i]);
+#endif
     }
     int16_t prior_noise=speex_low_q15(previous_gain,st->voc_previous);
 #if SPEEX_ENABLE_WB1
