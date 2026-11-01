@@ -3040,6 +3040,11 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Reuse dead excitation history](speex-noise-history.md): keep already generated
+classes and scaled noise words before the delayed-input boundary, eliminating
+duplicate RNG work without allocating another buffer. Assert the lifetime and
+verify mixed modes, canaries and continuous output.
+
 [Reuse constant LCG products](speex-lcg-products.md): seven hardware byte
 products replace ten while retaining the full 32-bit random sequence; combine
 the derived contribution with accumulator initialization and hoist factors.

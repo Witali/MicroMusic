@@ -124,7 +124,22 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *
     int16_t noise_gain=32767-435*g,previous_gain=77*g;
     int16_t pulse_now=speex_low_q15(22938,amplitude);
     int16_t pulse_previous=speex_low_q15(9830,amplitude);
-    int16_t noise[5],current[5],previous[5];
+#if SPEEX_ENABLE_WB1
+    /* Synthesis starts at history word OFFSET-40 (105 in this profile).
+     * Cache 160 byte classes and five word values before that live suffix.
+     * Next frame's history move reads from word 160, beyond the cache too.
+     * NB1 vocoder construction itself never reads adaptive pitch history. */
+    _Static_assert(NB_FRAME_SIZE==160 && NB_SUBFRAME_SIZE==40,
+                   "Noise cache uses the fixed NB frame/subframe geometry");
+    _Static_assert(2*(NB_DEC_EXC_OFFSET-NB_SUBFRAME_SIZE)>=160+5*2,
+                   "Noise cache must precede the delayed synthesis history");
+    _Static_assert(2*NB_FRAME_SIZE>=160+5*2,
+                   "Noise cache must precede the next history move source");
+    int16_t *noise=st->excBuf+80;
+#else
+    int16_t noise[5];
+#endif
+    int16_t current[5],previous[5];
     speex_low_noise_values5(noise,scale);
     for(uint8_t i=0;i<5;i++) {
         current[i]=speex_low_q15(noise_gain,noise[i]);
@@ -135,7 +150,11 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *
     uint8_t offset=st->voc_offset,last=2;
     for(uint8_t sub=0;sub<4;sub++) {
         int16_t *exc=frame+40*sub;uint8_t phase=offset;
+#if SPEEX_ENABLE_WB1
+        uint8_t *symbols=(uint8_t *)st->excBuf+40*sub;
+#else
         uint8_t *symbols=(uint8_t *)exc+40;
+#endif
         speex_low_noise_indices40(symbols,&st->seed);
         for(uint8_t i=0;i<40;i++) {
             uint8_t is_pulse=i==phase;last=symbols[i];

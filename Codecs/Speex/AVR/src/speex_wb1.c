@@ -21,9 +21,6 @@ typedef struct {
     int32_t mem[12];
     int16_t low[40],pcm[80];
     uint8_t qmf[64],gain[4],first,sub,error,repeat_lsp;
-#if SPEEX_ENABLE_NB1
-    uint32_t noise_seed;
-#endif
 #if SPEEX_ENABLE_LOW_RATES
     uint8_t low_mode;
 #elif SPEEX_ENABLE_NB4
@@ -102,9 +99,6 @@ int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn outp
     }
 #endif
     wb.output=output;wb.context=context;wb.sub=0;wb.error=0;
-#if SPEEX_ENABLE_NB1
-    wb.noise_seed=speex_wb_noise_seed();
-#endif
     int result=speex_wb_decode_low(packet);
     memcpy(wb.old_lsp,wb.lsp,sizeof(wb.lsp));wb.first=0;
     return wb.error?-2:result;
@@ -158,7 +152,7 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
     speex_wb_iir40(wb.exc,wb.den,wb.pcm+40,wb.mem);
 #if SPEEX_ENABLE_NB1
     if(wb.low_mode==1) {
-        speex_low_noise40(wb.exc,&wb.noise_seed,scale);
+        speex_low_noise_cached40(wb.exc,speex_wb_noise_cache(),wb.sub);
         speex_wb_fold40(wb.exc,g);
     } else
 #endif

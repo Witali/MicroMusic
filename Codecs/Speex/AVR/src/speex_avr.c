@@ -60,7 +60,7 @@ size_t speex_avr_scratch_peak(void) { return scratch_peak; }
 
 #if SPEEX_ENABLE_WB1
 #if SPEEX_ENABLE_NB1
-uint32_t speex_wb_noise_seed(void){return decoder.seed;}
+const int16_t *speex_wb_noise_cache(void){return decoder.excBuf;}
 #endif
 int speex_wb_decode_low(const uint8_t *packet)
 {
