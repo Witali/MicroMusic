@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "title": "«И того, и другого, и можно без хлеба»",
+  "codec": "LPX v5",
+  "sampleRate": 8000,
+  "samples": 19200,
+  "durationSeconds": 2.4,
+  "previewKind": "native-pwm8",
+  "reference": {
+    "audio": "audio/lpx-bread/original.wav",
+    "label": "Исходник · 8 кГц, моно"
+  },
+  "variants": [
+    {
+      "id": "compact",
+      "label": "Компактный",
+      "profile": 4,
+      "audio": "audio/lpx-bread/compact.wav",
+      "stream": "audio/lpx-bread/compact.lpx",
+      "bytes": 1008,
+      "bitrateBps": 3360.0
+    },
+    {
+      "id": "quality",
+      "label": "Повышенное качество",
+      "profile": 6,
+      "audio": "audio/lpx-bread/quality.wav",
+      "stream": "audio/lpx-bread/quality.lpx",
+      "bytes": 1899,
+      "bitrateBps": 6330.0
+    }
+  ]
+}
