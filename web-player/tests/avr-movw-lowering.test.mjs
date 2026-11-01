@@ -6,6 +6,7 @@ import {AVRCore as GeneratedCore} from '../lib/avr-transpiled.js';
 import {AT13_MASK as MASK} from '../lib/attiny13a-registers.js';
 import {transpileAVR} from '../lib/avr-transpiler.js';
 import {avr,IO,flash,sequential} from './fixtures/attiny13a-system-firmware.mjs';
+import {bodyList,addressBytes,occurrences} from './helpers/wasm-code.mjs';
 
 const pairs=Array.from({length:256},(_,n)=>({d:(n>>4)*2,s:(n&15)*2}));
 const movw=(d,s)=>[0x0100|((d>>1)<<4)|(s>>1)];
@@ -23,16 +24,6 @@ function initialize(c,seed){
   c.sreg=seed&255;
 }
 function copy(data,d,s){data[d]=data[s];data[d+1]=data[s+1];}
-function bodyList(bytes){
-  let p=8;const u32=()=>{let n=0;for(let shift=0;shift<35;shift+=7){const b=bytes[p++];n+=(b&127)*2**shift;if(!(b&128))return n;}throw Error('Invalid test WASM');};
-  while(p<bytes.length){const id=bytes[p++],size=u32(),end=p+size;
-    if(id===10){const count=u32();return Array.from({length:count},()=>{const n=u32(),body=Buffer.from(bytes.subarray(p,p+n));p+=n;return body;});}p=end;}
-  throw Error('Missing code section');
-}
-function addressBytes(value){const out=[0x41];let more;
-  do{const b=value&127;value>>=7;more=!((value===0&&!(b&64))||(value===-1&&(b&64)));out.push(b|(more?128:0));}while(more);return out;
-}
-const occurrences=(body,needle)=>{let n=0;for(let p=0;(p=body.indexOf(needle,p))>=0;p+=needle.length)n++;return n;};
 const wordCopy=(base,d,s)=>Buffer.from([...addressBytes(base+d),...addressBytes(base+s),0x2f,1,0,0x3b,1,0]);
 
 for(const [name,make]of modes)test(`${name}: MOVW copies every register pair, preserves all other data and costs one cycle`,()=>{
