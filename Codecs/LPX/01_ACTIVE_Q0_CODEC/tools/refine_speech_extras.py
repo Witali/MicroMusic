@@ -79,6 +79,126 @@ def refit_extra_group(reference, co, params, pulses, extras, steps, pre, bright,
     return best[0], best[1], loss, evaluations
 
 
+class ExistingExtraPass:
+    """Owned exact forward state for one fixed set of played P4 extras.
+
+    Each step consumes the next initially eligible group once. Serialization
+    and complete synthesis observe the current fields without moving the prefix.
+    Native verification, full quality gates and publication belong to callers.
+    """
+
+    def __init__(self, reference, blob, *, max_bytes, causal_positions=False,
+                 horizon=160, max_trial_evaluations=None, cpu_seconds=None):
+        for value,name,low,high in ((max_bytes,'byte cap',22,65535),
+                                   (horizon,'horizon',80,320)):
+            if isinstance(value,bool) or not isinstance(value,Integral) or not low<=value<=high:
+                raise ValueError('Unsupported '+name)
+        if horizon not in (80,160,320):
+            raise ValueError('Unsupported horizon')
+        if (max_trial_evaluations is not None and
+                (isinstance(max_trial_evaluations,bool) or not isinstance(max_trial_evaluations,Integral)
+                 or not 0<=max_trial_evaluations<=10000000)):
+            raise ValueError('Expected a nonnegative bounded trial limit or None')
+        if not isinstance(causal_positions,bool):
+            raise ValueError('Expected boolean causal_positions setting')
+        CpuBudget.validate(cpu_seconds)
+        ref=np.asarray(reference)
+        if (ref.ndim!=1 or ref.dtype.kind not in 'iu' or
+                np.any(ref < -32768) or np.any(ref > 32767)):
+            raise ValueError('Expected mono PCM16 reference')
+        self.original=bytes(blob)
+        self._fields=compact.unpack(self.original)
+        n,profile,spectra,params,pulses,self._pre,self._bright,extras=self._fields
+        if profile!=4:
+            raise ValueError('Existing-extra pass currently supports profile 4 only')
+        if len(ref)!=n or len(self.original)>max_bytes:
+            raise ValueError('Reference geometry or original complete byte cap differs')
+        self.begun,self.cpu_begun=time.perf_counter(),time.process_time()
+        self.budget=CpuBudget(cpu_seconds)
+        self.n,self.profile=n,profile
+        self.max_bytes,self.horizon=int(max_bytes),int(horizon)
+        self.causal_positions=causal_positions
+        self._reference=ref.astype(np.int64)
+        self._pp,self._ii,self._initial=(np.asarray(x,np.int64) for x in (params,pulses,extras))
+        self._working=self._initial.copy()
+        self.eligible=tuple(i for i,(pos,amp) in enumerate(extras) if amp and i*40+pos<n)
+        self._eligible_set=set(self.eligible)
+        self.initial_active=int(np.count_nonzero(self._initial[:,1]))
+        self.active=self.initial_active
+        self.trial_limit=49*len(self.eligible) if max_trial_evaluations is None else int(max_trial_evaluations)
+        self.atomic_bound=49 if causal_positions else 33
+        vectors=[[(v<<5)+16 for v in row] for row in spectra for _ in range(2)]
+        self._co=coefficient_trace(pack_frames(vectors[:(n+159)//160]),n)
+        self._steps=table('scale_table.inc')
+        self._zero_h=np.zeros(10,np.int64);self._zero_ring=np.zeros(256,np.int64)
+        self._h=self._zero_h.copy();self._ring=self._zero_ring.copy();self._dd=self._cc=0
+        self.cursor=self.covered=self.trials=self.changed=0
+        self.visited=[]
+        self._counts=dict(full_synthesis_evaluations=0,serialization_calls=0,
+                          state_advances=0,prefix_synthesized_samples=0)
+
+    def _advance_prefix(self, start, stop):
+        _,self._h,self._dd,self._cc,self._ring=advance(
+            self._co,self._pp,self._ii,self._working,self._steps,self._pre,self._bright,
+            start,stop,self._h,self._dd,self._cc,self._ring)
+        self._counts['state_advances']+=1
+        self._counts['prefix_synthesized_samples']+=stop-start
+
+    def step(self):
+        """Consume one group; False means exhausted groups or atomic trial cap."""
+        if self.covered==len(self.eligible):
+            return False
+        self.budget.check()
+        if self.trials+self.atomic_bound>self.trial_limit:
+            return False
+        index=self.eligible[self.covered]
+        at=index*40;end=min(self.n,at+40)
+        if self.cursor<at:
+            self._advance_prefix(self.cursor,at)
+        old=self._working[index].copy()
+        pos,amp,_,count=refit_extra_group(
+            self._reference,self._co,self._pp,self._ii,self._working,self._steps,self._pre,self._bright,
+            at,min(self.n,at+self.horizon),self._h,self._dd,self._cc,self._ring,
+            self.active,self.initial_active,self.causal_positions)
+        if int(count)>self.atomic_bound or self.trials+int(count)>self.trial_limit:
+            raise AssertionError('Existing-extra atomic trial bound failed')
+        self._working[index]=(pos,amp)
+        self.active+=int(amp!=0)-int(old[1]!=0)
+        if self.active>self.initial_active:
+            raise AssertionError('Existing-extra active count increased')
+        self.trials+=int(count);self.changed+=int(pos!=old[0] or amp!=old[1]);self.covered+=1
+        self._advance_prefix(at,end)
+        self.cursor=end
+        self.visited.append(index)
+        return True
+
+    def serialize(self):
+        """Return a complete bounded stream, preserving inactive/unplayed data."""
+        if np.array_equal(self._working,self._initial):
+            return self.original
+        stream=compact.pack(self.n,self.profile,self._fields[2],self._pp,self._ii,self._pre,self._bright,
+            extras=self._working.tolist(),force_extras=bool(self.original[5]&128))[0]
+        self._counts['serialization_calls']+=1
+        restored=compact.unpack(stream)
+        if (stream[:20]!=self.original[:20] or restored[:7]!=self._fields[:7]
+                or len(stream)>self.max_bytes or len(stream)>len(self.original)):
+            raise AssertionError('Existing-extra frozen base/header/cap contract failed')
+        for index,((pos,amp),(old_pos,old_amp)) in enumerate(zip(restored[7],self._fields[7])):
+            if index not in self._eligible_set and (amp!=old_amp or amp and pos!=old_pos):
+                raise AssertionError('Existing-extra pass changed an inactive or unplayed pulse')
+        return stream
+
+    def synthesize(self):
+        """Return owned full PCM with no effect on the forward prefix state."""
+        pcm=advance(self._co,self._pp,self._ii,self._working,self._steps,self._pre,self._bright,
+            0,self.n,self._zero_h,0,0,self._zero_ring)[0]
+        self._counts['full_synthesis_evaluations']+=1
+        return pcm
+
+    def work_counts(self):
+        return dict(self._counts)
+
+
 def refine_existing_extras(reference, blob, decoder, *, max_bytes,
                            causal_positions=False, horizon=160,
                            max_trial_evaluations=None, cpu_seconds=None,
@@ -92,50 +212,23 @@ def refine_existing_extras(reference, blob, decoder, *, max_bytes,
     before another quota check. Local PCM/PWM/STOI selection here still needs
     the caller's whole-chain period, clipping and joint voice/noise admission.
     """
-    for value,name,low,high in ((max_bytes,'byte cap',22,65535),
-                               (horizon,'horizon',80,320),
-                               (max_checkpoints,'checkpoint count',1,16)):
-        if isinstance(value,bool) or not isinstance(value,Integral) or not low<=value<=high:
-            raise ValueError('Unsupported '+name)
-    if horizon not in (80,160,320):
-        raise ValueError('Unsupported horizon')
-    max_bytes,horizon,max_checkpoints=map(int,(max_bytes,horizon,max_checkpoints))
-    if (max_trial_evaluations is not None and
-            (isinstance(max_trial_evaluations,bool) or not isinstance(max_trial_evaluations,Integral)
-             or not 0<=max_trial_evaluations<=10000000)):
-        raise ValueError('Expected a nonnegative bounded trial limit or None')
-    if not isinstance(causal_positions,bool) or not isinstance(speech,bool):
-        raise ValueError('Expected boolean causal_positions and speech settings')
+    if (isinstance(max_checkpoints,bool) or not isinstance(max_checkpoints,Integral)
+            or not 1<=max_checkpoints<=16):
+        raise ValueError('Unsupported checkpoint count')
+    max_checkpoints=int(max_checkpoints)
+    if not isinstance(speech,bool):
+        raise ValueError('Expected boolean speech setting')
     if decoder is None or candidate_sink is not None and not callable(candidate_sink):
         raise ValueError('Expected a native decoder and optional callable candidate sink')
-    CpuBudget.validate(cpu_seconds)
+    walk=ExistingExtraPass(reference,blob,max_bytes=max_bytes,causal_positions=causal_positions,
+        horizon=horizon,max_trial_evaluations=max_trial_evaluations,cpu_seconds=cpu_seconds)
     ref=np.asarray(reference)
-    if (ref.ndim!=1 or ref.dtype.kind not in 'iu' or
-            np.any(ref < -32768) or np.any(ref > 32767)):
-        raise ValueError('Expected mono PCM16 reference')
-    original=bytes(blob)
-    fields=compact.unpack(original)
-    n,profile,spectra,params,pulses,pre,bright,extras=fields
-    if profile!=4:
-        raise ValueError('Existing-extra pass currently supports profile 4 only')
-    if len(ref)!=n or len(original)>max_bytes:
-        raise ValueError('Reference geometry or original complete byte cap differs')
-
-    begun,cpu_begun=time.perf_counter(),time.process_time()
-    budget=CpuBudget(cpu_seconds)
+    original,n,profile=walk.original,walk.n,walk.profile
+    max_bytes,horizon=walk.max_bytes,walk.horizon
+    begun,cpu_begun,budget=walk.begun,walk.cpu_begun,walk.budget
     reference64=ref.astype(np.int64)
-    pp,ii,initial=(np.asarray(x,np.int64) for x in (params,pulses,extras))
-    working=initial.copy()
-    eligible=[i for i,(pos,amp) in enumerate(extras) if amp and i*40+pos<n]
-    initial_active=int(np.count_nonzero(initial[:,1]))
-    active=initial_active
-    trial_limit=49*len(eligible) if max_trial_evaluations is None else int(max_trial_evaluations)
-    atomic_bound=49 if causal_positions else 33
-    vectors=[[(v<<5)+16 for v in row] for row in spectra for _ in range(2)]
-    co=coefficient_trace(pack_frames(vectors[:(n+159)//160]),n)
-    steps=table('scale_table.inc')
-    zero_h=np.zeros(10,np.int64);zero_ring=np.zeros(256,np.int64)
-    baseline_pcm=advance(co,pp,ii,initial,steps,pre,bright,0,n,zero_h,0,0,zero_ring)[0]
+    eligible=walk.eligible
+    baseline_pcm=walk.synthesize()
     counters=dict(full_synthesis_evaluations=1,independent_model_checks=0,
                   native_output_domain_comparisons=0,serialization_calls=0,
                   state_advances=0,prefix_synthesized_samples=0)
@@ -169,31 +262,18 @@ def refine_existing_extras(reference, blob, decoder, *, max_bytes,
 
     remember(original,baseline_pcm,'baseline',0,0)
     baseline_sse=catalogue[0]['full_sse']
-    eligible_set=set(eligible)
-
     def publish(label,covered,stop_sample):
-        if np.array_equal(working,initial):
+        stream=walk.serialize()
+        if stream==original:
             return remember(original,baseline_pcm,label,covered,stop_sample)
-        stream=compact.pack(n,profile,spectra,pp,ii,pre,bright,extras=working.tolist(),
-                            force_extras=bool(original[5]&128))[0]
-        counters['serialization_calls']+=1
-        restored=compact.unpack(stream)
-        if (stream[:20]!=original[:20] or restored[:7]!=fields[:7]
-                or len(stream)>max_bytes or len(stream)>len(original)):
-            raise AssertionError('Existing-extra frozen base/header/cap contract failed')
-        for index,((pos,amp),(old_pos,old_amp)) in enumerate(zip(restored[7],extras)):
-            if index not in eligible_set and (amp!=old_amp or amp and pos!=old_pos):
-                raise AssertionError('Existing-extra pass changed an inactive or unplayed pulse')
         if stream in by_stream:
             return remember(stream,catalogue[by_stream[stream]]['pcm'],label,covered,stop_sample)
-        pcm=advance(co,pp,ii,working,steps,pre,bright,0,n,zero_h,0,0,zero_ring)[0]
-        counters['full_synthesis_evaluations']+=1
+        pcm=walk.synthesize()
         return remember(stream,pcm,label,covered,stop_sample)
 
     goals=[(len(eligible)*slot+max_checkpoints-1)//max_checkpoints
            for slot in range(1,max_checkpoints+1)]
-    checkpoints={};visited=[];covered=trials=changed=0
-    cursor=0;h=zero_h.copy();ring=zero_ring.copy();dd=cc=0
+    checkpoints={};covered=0
     last_identifier=last_published_coverage=0
     stopped_by='complete'
     if not eligible:
@@ -203,35 +283,15 @@ def refine_existing_extras(reference, blob, decoder, *, max_bytes,
     else:
         for index in eligible:
             try:
-                budget.check()
+                stepped=walk.step()
             except CpuBudgetExceeded:
                 stopped_by='cpu_limit';break
-            if trials+atomic_bound>trial_limit:
+            if not stepped:
                 stopped_by='trial_limit';break
-            at=index*40;end=min(n,at+40)
-            if cursor<at:
-                _,h,dd,cc,ring=advance(co,pp,ii,working,steps,pre,bright,
-                                      cursor,at,h,dd,cc,ring)
-                counters['state_advances']+=1
-                counters['prefix_synthesized_samples']+=at-cursor
-            old=working[index].copy()
-            pos,amp,_,count=refit_extra_group(reference64,co,pp,ii,working,steps,pre,bright,
-                at,min(n,at+horizon),h,dd,cc,ring,active,initial_active,causal_positions)
-            if int(count)>atomic_bound or trials+int(count)>trial_limit:
-                raise AssertionError('Existing-extra atomic trial bound failed')
-            working[index]=(pos,amp)
-            active+=int(amp!=0)-int(old[1]!=0)
-            if active>initial_active:
-                raise AssertionError('Existing-extra active count increased')
-            trials+=int(count);changed+=int(pos!=old[0] or amp!=old[1]);covered+=1
-            _,h,dd,cc,ring=advance(co,pp,ii,working,steps,pre,bright,at,end,h,dd,cc,ring)
-            counters['state_advances']+=1
-            counters['prefix_synthesized_samples']+=end-at
-            cursor=end
-            visited.append(index)
+            covered=walk.covered
             due=[slot for slot,goal in enumerate(goals,1) if goal==covered]
             if due:
-                last_identifier=publish('checkpoint-'+str(due[0]),covered,cursor)
+                last_identifier=publish('checkpoint-'+str(due[0]),covered,walk.cursor)
                 last_published_coverage=covered
                 for slot in due:
                     if 'checkpoint-'+str(slot) not in catalogue[last_identifier]['labels']:
@@ -240,7 +300,7 @@ def refine_existing_extras(reference, blob, decoder, *, max_bytes,
                         completed_active_groups=covered,candidate_id=last_identifier,status='complete')
     budget.finish_search()
     if covered>last_published_coverage:
-        last_identifier=publish('interrupted-final',covered,cursor)
+        last_identifier=publish('interrupted-final',covered,walk.cursor)
     for slot,goal in enumerate(goals,1):
         if slot not in checkpoints:
             checkpoints[slot]=dict(slot=slot,target_active_groups=goal,
@@ -259,18 +319,19 @@ def refine_existing_extras(reference, blob, decoder, *, max_bytes,
         public.append(dict(**{key:deepcopy(value) for key,value in point.items() if key not in ('stream','pcm')},
             metrics=deepcopy(metrics[point['id']]),conservative_floors_passed=bool(point['id']==0 or
                 no_regression(metrics[point['id']],metrics[0]))))
+    counters.update(walk.work_counts())
     report=dict(proposal='compact_existing_extra_pass',samples=n,profile=profile,
         baseline_bytes=len(original),max_file_bytes=int(max_bytes),file_bytes=selected['file_bytes'],
         raw_file_bytes=raw['file_bytes'],selected_id=selected['id'],raw_id=raw['id'],
         baseline=deepcopy(metrics[0]),selected=deepcopy(metrics[selected['id']]),
         raw_best=deepcopy(metrics[raw['id']]),
         causal_positions=causal_positions,horizon=int(horizon),max_checkpoints=int(max_checkpoints),
-        max_trial_evaluations=trial_limit,atomic_trial_bound=atomic_bound,trial_evaluations=trials,
-        initial_active_extras=initial_active,eligible_active_groups=len(eligible),
-        preserved_unplayed_extras=initial_active-len(eligible),completed_active_groups=covered,
-        eligible_group_indices=list(eligible),visited_group_indices=list(visited),
-        all_eligible_groups_visited=visited==eligible,changed_active_groups=changed,
-        working_active_extras=active,stopped_by=stopped_by,
+        max_trial_evaluations=walk.trial_limit,atomic_trial_bound=walk.atomic_bound,trial_evaluations=walk.trials,
+        initial_active_extras=walk.initial_active,eligible_active_groups=len(eligible),
+        preserved_unplayed_extras=walk.initial_active-len(eligible),completed_active_groups=covered,
+        eligible_group_indices=list(eligible),visited_group_indices=list(walk.visited),
+        all_eligible_groups_visited=tuple(walk.visited)==eligible,changed_active_groups=walk.changed,
+        working_active_extras=walk.active,stopped_by=stopped_by,
         checkpoints=[checkpoints[slot] for slot in sorted(checkpoints)],candidates=public,
         candidate_sink_streams=len(catalogue) if candidate_sink is not None else 0,
         frozen_base_header_exact=True,inactive_unplayed_pulses_preserved=True,
