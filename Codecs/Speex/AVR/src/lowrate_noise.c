@@ -6,16 +6,21 @@
 #include "arch.h"
 #include "math_approx.h"
 #include "lowrate_rng.h"
+#include "avr_shift.h"
 SPEEX_NB3_NOINLINE void speex_low_noise_values5(int16_t *values,int32_t scale)
 {
-    /* std=1 has exactly five possible innovations. Scale each once per
-     * block, not once per sample. Signed high-word thresholds reproduce
-     * PSHR32(r-(r>>3),14) over all 65536 high words, including negatives. */
+    /* NB1's positive table scale <=121000000. For noise +/-1, +/-2,
+     * Q14(noise*128,scale) is floor(noise*scale/128). Its shifted product
+     * fits signed32; nested floor/rounding therefore reduces to the four
+     * expressions below. Keep negative half-way rounding toward +infinity.
+     * These are words, so shifted sign-extension bytes are unobservable.
+     * The shift helpers retain explicit C fallbacks on every architecture. */
+    const int32_t negative=-scale;
+    values[0]=speex_avr_asr13_word(negative+4096);
+    values[1]=speex_avr_asr14_word(negative+8192);
     values[2]=0;
-    for(int8_t noise=-2;noise<=2;noise++)if(noise) {
-        int32_t product=MULT16_32_Q14((int16_t)(noise*128),scale);
-        values[noise+2]=(int16_t)PSHR32(SHL32(product,7),14);
-    }
+    values[3]=speex_avr_asr14_word(scale+8192);
+    values[4]=speex_avr_asr13_word(scale+4096);
 }
 SPEEX_NB3_STAGE void speex_low_noise_indices40(uint8_t *out,uint32_t *seed)
 {

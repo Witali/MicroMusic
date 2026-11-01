@@ -44,6 +44,10 @@ is integral for arbitrary coefficients, input widths or Q formats.
 
 ## Unmeasured follow-up: power-of-two noise scales
 
+This candidate is now implemented and measured separately in
+[bounded power-of-two noise products](speex-power-two-noise.md).
+The original proposal below records the reasoning before admission.
+
 The current five-symbol noise table computes Q14 products for `a=+/-128`
 and `+/-256`, then applies a left shift of seven and rounded shift of fourteen.
 For the caller's nonnegative `scale <=121000000`, the signed16 high component

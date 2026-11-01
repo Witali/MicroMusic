@@ -52,6 +52,7 @@ static inline __attribute__((always_inline)) int16_t name(int32_t value) \
         : "+r"(value) : : "cc"); \
     return (int16_t)value; \
 }
+SPEEX_AVR_ASR_WORD(speex_avr_asr13_word,3)
 SPEEX_AVR_ASR_WORD(speex_avr_asr14_word,2)
 SPEEX_AVR_ASR_WORD(speex_avr_asr15_word,1)
 #undef SPEEX_AVR_ASR_WORD
@@ -59,6 +60,7 @@ SPEEX_AVR_ASR_WORD(speex_avr_asr15_word,1)
 static inline int32_t speex_avr_asr13(int32_t value){return value>>13;}
 static inline int32_t speex_avr_asr14(int32_t value){return value>>14;}
 static inline int32_t speex_avr_asr15(int32_t value){return value>>15;}
+static inline int16_t speex_avr_asr13_word(int32_t value){return (int16_t)(value>>13);}
 static inline int16_t speex_avr_asr14_word(int32_t value){return (int16_t)(value>>14);}
 static inline int16_t speex_avr_asr15_word(int32_t value){return (int16_t)(value>>15);}
 #endif

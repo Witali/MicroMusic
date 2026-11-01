@@ -1,0 +1,50 @@
+{
+  "scope": "Isolated old/new ASM and explicit C scalar paths; C decoder not executed or timed",
+  "binarySha256": "3896d84bec6d3b7017ef058d5097428f3b56410277588fb801899eba9b58db21",
+  "baselineNoiseSourceSha256": "e98442e7aebd64672648dd20580fb943d08958c1bd1f106c40110f763482d6f0",
+  "cases": 228595,
+  "fourPathsExact": true,
+  "calleeSavedAndR1Returns": 457190,
+  "arbitraryRegisterPatterns": true,
+  "outputGuards": true,
+  "readonlyScale": true,
+  "scaleMin": 0,
+  "scaleMax": 121000000,
+  "callerTableScales": 32,
+  "callerScaleMax": 115088100,
+  "fullResidueSweeps": 7,
+  "residuePeriod": 16384,
+  "boundaryResidues": [
+    0,
+    4095,
+    4096,
+    4097,
+    8191,
+    8192,
+    8193,
+    12287,
+    12288,
+    12289,
+    16383
+  ],
+  "asm": {
+    "before": {
+      "minCycles": 729,
+      "maxCycles": 729,
+      "cycles": 166645755,
+      "muls": 7315040,
+      "calls": 228595,
+      "meanCycles": 729
+    },
+    "after": {
+      "minCycles": 98,
+      "maxCycles": 98,
+      "cycles": 22402310,
+      "muls": 0,
+      "calls": 228595,
+      "meanCycles": 98
+    }
+  },
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

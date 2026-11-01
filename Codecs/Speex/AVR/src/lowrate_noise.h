@@ -4,6 +4,7 @@
 #include "speex_platform.h"
 #if SPEEX_ENABLE_NB1
 void speex_low_noise_cached40(int16_t *,const int16_t *,uint8_t);
+/* NB1's positive gain table: 0 <= scale <=121000000; output has five words. */
 void speex_low_noise_values5(int16_t *,int32_t);
 void speex_low_noise_indices40(uint8_t *,uint32_t *);
 #endif

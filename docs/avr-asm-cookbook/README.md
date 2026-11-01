@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Remove bounded power-of-two noise products](speex-power-two-noise.md): combine
+nested floors exactly, retain negative half-way rounding and extract only
+the observable word with selectable C/ASM shifts.
+
 [Combine complementary fixed-point products](speex-complementary-mean.md):
 replace two products with one, retaining the missing difference bit through
 an exact overflow correction and checking both feedback and output samples.
