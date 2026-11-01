@@ -105,17 +105,33 @@ test('actual published Tiny88 cards are ordered low15, compact, quality with the
 
 test('actual Tiny88 test-image Flash split is shown without turning test code into firmware playback',async()=>{
   const app=await playerApp({device:'attiny88'});
-  const expected={compact:[4412,1008,5420],quality:[4411,1899,6310]};
+  const expected={low15:[4743,417,5160],compact:[4412,1008,5420],quality:[4411,1899,6310]};
   for(const [id,values] of Object.entries(expected)){
     const measurement=publishedManifest.variants.find(variant=>variant.id===id).flashMeasurement;
     assert.deepEqual([measurement.programFlashBytes,measurement.encodedBytes,measurement.totalFlashBytes],values);
     select(app,'lpx-bread-'+id);assert.equal(app.get('board-upload').hidden,true);assert.equal(app.get('avr-inspector').hidden,true);
+    const card=cards(app).find(item=>item.dataset.firmware==='lpx-bread-'+id);
+    const cardText=card.children[1].children[1].textContent.replace(/\s/g,''),details=app.get('rom-details').textContent.replace(/\s/g,'');
+    assert.ok(cardText.includes(values[0]+'Бкод'));assert.ok(cardText.includes(values[1]+'Бданных'));
+    assert.ok(details.includes(values[0]+'Бпрограмма+'+values[1]+'Бзвук='+values[2]+'БFlash'));
+    assert.equal(app.get('flash-measurement-note').hidden,false);
+    assert.match(app.get('flash-measurement-note').textContent,/без очереди и звукового ISR/);
     assert.equal(app.get('download').textContent,'↓ Поток LPX');assert.match(app.get('download').download,/\.lpx$/);
     assert.equal(app.workers.length,0);
   }
-  select(app,'lpx-bread-low15');assert.match(app.get('rom-details').textContent,/не измерено/);
-  assert.equal(app.get('flash-measurement-note').hidden,true);
-  assert.doesNotMatch(app.get('rom-details').textContent,/4412|4411|5420|6310/);
+});
+
+test('an explicit legacy manifest without measurements keeps every program size unknown, including S15',async()=>{
+  const data=structuredClone(publishedManifest);for(const variant of data.variants)delete variant.flashMeasurement;
+  const app=await playerApp({device:'attiny88',catalogs:{'manifest.json':data}});
+  for(const id of ['quality','compact','low15']){
+    select(app,'lpx-bread-'+id);
+    const card=cards(app).find(item=>item.dataset.firmware==='lpx-bread-'+id);
+    assert.match(card.children[1].children[1].textContent,/— Б код/);
+    assert.match(app.get('rom-details').textContent,/не измерено/);
+    assert.equal(app.get('flash-measurement-note').hidden,true);
+    assert.doesNotMatch(app.get('rom-details').textContent,/4743|4412|4411|5160|5420|6310/);
+  }
 });
 
 test('all three direct preview IDs retain correct assets and device URLs at root and Pages paths',async()=>{

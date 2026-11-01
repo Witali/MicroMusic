@@ -11,6 +11,21 @@ normalization was applied; the encoder's `auto-quiet` policy selected gain 1.
 | Compact | LPX v5, profile 4 | 1,008 | 3,360 bit/s |
 | Higher quality | LPX v5, profile 6 with optional extra excitation | 1,899 | 6,330 bit/s |
 
+The page also reports actual ATtiny88 Flash measurements using the explicit
+SRAM512 memory profile:
+
+| Variant | Program bytes | Encoded audio bytes | Complete test-image bytes |
+| --- | ---: | ---: | ---: |
+| Very low rate | 4,743 | 417 | 5,160 |
+| Compact | 4,412 | 1,008 | 5,420 |
+| Higher quality | 4,411 | 1,899 | 6,310 |
+
+These are unpaced decoding test images without an audio queue or output ISR.
+They reproduce every decoded PWM sample, but do not meet the 2,000-cycle
+sample budget at 16 MHz / 8 kHz. They are not downloadable playback firmware.
+The very-low-rate measurement uses an optional direct S15 parser; production
+v5 support remains unchanged. EEPROM is unused.
+
 The compact and higher-quality `.lpx` files contain the existing L4HY v5
 container. `low15.lpx` uses the separate experimental LPX-S15 container; it
 requires its own parser and is rejected by the production v5 decoder.
