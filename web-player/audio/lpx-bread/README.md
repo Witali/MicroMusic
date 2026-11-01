@@ -29,6 +29,8 @@ v5 support remains unchanged. EEPROM is unused.
 The Flash HEX and EEPROM controls remain visible but disabled for these
 examples. The filename link downloads the encoded `.lpx` stream.
 
+[Direct S15 target measurement and reproduction](../../../Codecs/LPX/research/lpx-s15-2026-11-01/target_probe/README.md).
+
 The compact and higher-quality `.lpx` files contain the existing L4HY v5
 container. `low15.lpx` uses the separate experimental LPX-S15 container; it
 requires its own parser and is rejected by the production v5 decoder.

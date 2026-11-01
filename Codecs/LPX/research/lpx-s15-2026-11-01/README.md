@@ -95,3 +95,8 @@ here does not imply equal intelligibility or preserved fine voice detail.
 round-trip, tail, malformed-data, production-rejection and native/model
 PCM/PWM contracts. All audio, libraries, input identities, hashes, search
 rows and proof receipts remain ignored build artifacts. No MIDI is used.
+
+[Optional direct S15 target parser](target_probe/README.md) preserves the
+separate test-image patch atop the SRAM512 profile, the measured Flash/RAM
+and timing, and reproduction scripts. It remains outside production and does
+not establish real-time ATtiny88 playback.
