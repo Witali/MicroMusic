@@ -1,0 +1,22 @@
+{
+  "schema": "lpx-simavr-spi-timing-provenance-v1",
+  "upstream_version": "simavr v1.6",
+  "source_url": "https://raw.githubusercontent.com/buserror/simavr/v1.6/simavr/sim/avr_spi.c",
+  "source_sha256": "88c5c301a0fd07e7a3e071ddc996882b430a9b8c1cf675cc616c298a10e0d77a",
+  "license": "GPL-3.0-or-later",
+  "license_url": "https://raw.githubusercontent.com/buserror/simavr/v1.6/COPYING",
+  "license_sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+  "core_sources": {
+    "sim_avr.c": "9273611d34a5d8868f7e2e2afb86106df348a7efa2993f8b9fbc2aca4cf00677",
+    "sim_interrupts.c": "6083b0c4da900d3569df56f33bef35883810d9c9f94c78338e360e189f52fc54",
+    "sim_core.c": "e0bf6c68648d8e49e41adb0d03008f0009b79941615b3e9cfe7efbbbdf4c5912"
+  },
+  "change": "Replace the fixed 100 us scheduling call with eight actual SPR/SPI2X SCK periods, add host start trace and explicit existing-SPDR-handler installation",
+  "installation": "Private observer executable only; IO list, IRQs, input/read handlers and installed shared library remain intact",
+  "instruction_dispatch_bound_cycles": 4,
+  "bound_scope": "ATmega328P AVR5 no-sleep raw run, timers before interrupt service, RET/RETI four cycles",
+  "retained_core_limitation": "Interrupt service and _avr_push_addr do not add interrupt-entry cycles in pinned simavr1.6; +100 stress is margin evidence, not a repair",
+  "clock_unit": {"divisor_settings": 8, "completed_protocol_bytes": 48, "fast_byte_cycles": 16},
+  "bridge_unit": {"completed_protocol_bytes": 13, "vendor_metadata_fields": 37, "explicit_seeks": 2},
+  "physical_electrical_timing_claim": false
+}
