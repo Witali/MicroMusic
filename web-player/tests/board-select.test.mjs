@@ -105,13 +105,15 @@ test('failed or mismatched board catalogs leave the working firmware and selecti
   }
 });
 
-test('unknown boards fall back to 8 MHz and speech never acquires the music board profile',async()=>{
+test('unknown music boards fall back to 8 MHz and Tiny88 speech has only the intended 16 MHz profile',async()=>{
   const unknown=await playerApp({speech:false,device:'attiny88',board:'unknown-board'});
   assert.equal(unknown.get('board-select').value,'bare-8mhz');assert.equal(init(unknown).entry.cpuHz,8000000);
   assert.equal(unknown.location.searchParams.has('board'),false);
   const speech=await playerApp({device:'attiny88',board,firmware:'hq4-vinni'});
-  assert.equal(speech.get('device-select').value,'attiny13a');assert.equal(speech.get('board-control').hidden,true);
-  assert.equal(init(speech).entry.board,undefined);assert.equal(init(speech).entry.id,'hq4-vinni');
-  assert.match(speech.get('machine-details').textContent,/9,6 МГц/);
-  assert.equal(speech.location.searchParams.has('board'),false);
+  assert.equal(speech.get('device-select').value,'attiny88');assert.equal(speech.get('board-control').hidden,false);
+  assert.equal(speech.workers.length,0);assert.equal(speech.get('board-select').value,board);
+  assert.equal(speech.get('board-isp-option').disabled,true);
+  assert.match(speech.get('tiny88-power').textContent,/Целевой профиль.*16 МГц/);
+  assert.equal(speech.location.searchParams.get('board'),board);
+  assert.equal(speech.get('board-upload').hidden,true);
 });

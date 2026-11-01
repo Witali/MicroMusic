@@ -113,18 +113,20 @@ test('switching back restores the ATtiny13A firmware, downloads and the user eng
   assert.equal(init(app).engine,'js');assert.equal(engine(app,'js').checked,true);
 });
 
-test('unknown devices use ATtiny13A and speech remains on ATtiny13A even with a Tiny88 URL',async()=>{
+test('unknown devices use ATtiny13A and a speech Tiny88 URL selects native LPX without music firmware',async()=>{
   const unknown=await playerApp({speech:false,device:'atmega88a'});
   assert.equal(unknown.get('device-select').value,'attiny13a');
   assert.equal(init(unknown).engine,'wasm');
   assert.equal(new URL(unknown.fetches[0]).pathname.split('/').at(-1),'firmware.json');
   const speech=await playerApp({device:'attiny88',firmware:'hq4-vinni'});
-  assert.equal(init(speech).entry.id,'hq4-vinni');assert.equal(init(speech).engine,'wasm');
-  assert.equal(speech.get('device-select').value,'attiny13a');
-  assert.equal(speech.get('device-control').hidden,true);
+  assert.equal(speech.workers.length,0);assert.match(speech.preview.src,/compact\.wav$/);
+  assert.equal(speech.get('device-select').value,'attiny88');
+  assert.equal(speech.get('device-control').hidden,false);
   assert.equal(engine(speech,'wasm').disabled,false);
   assert.equal(new URL(speech.fetches[0]).pathname.split('/').at(-1),'hq4-firmware.json');
-  assert.notEqual(speech.location.searchParams.get('device'),'attiny88');
+  assert.equal(speech.location.searchParams.get('device'),'attiny88');
+  assert.equal(speech.location.searchParams.get('firmware'),'lpx-bread-compact');
+  assert.ok(speech.fetches.every(url=>!url.includes('firmware-attiny88')));
 });
 
 test('the engine selected on either chip is retained when switching to the other chip',async()=>{
