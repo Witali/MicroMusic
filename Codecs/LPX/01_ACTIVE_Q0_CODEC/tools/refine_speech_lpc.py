@@ -18,6 +18,7 @@ import numpy as np
 from numba import njit
 import speech_compact as compact
 from enhance_speech_compact import advance, sse
+from refine_speech_extras import refit_extra_group
 from q0_model import _coefficient_trace_vectors, coefficient_trace, table
 from refine_speech_compact import quality, no_regression
 from speech_rate_allocation import spectrum_bits, fit_capacity
@@ -80,28 +81,11 @@ def adapt_excitation(reference,co,params,pulses,extras,steps,pre,bright,profile,
                     if trial<loss:loss=trial;best=proposal.copy()
             pp[index]=best
         # Refit existing or new optional pulses at a small set of positions.
-        index=at//40;original=ee[index].copy();best=original.copy()
-        out,_,_,_,_=advance(co,pp,ii,ee,steps,pre,bright,at,stop,h,dd,cc,qr)
-        loss=sse(target,out);evaluations+=1;valid=min(40,len(reference)-at)
-        positions=np.zeros(40,np.uint8);peak=0;peak_error=-1
-        for j in range(valid):
-            error=abs(np.int64(target[j])-np.int64(out[j]))
-            if error>peak_error:peak_error=error;peak=j
-        positions[peak]=1
-        if original[1]:
-            for delta in (-1,0,1):
-                pos=original[0]+delta
-                if 0<=pos<valid:positions[pos]=1
-        for pos in range(valid):
-            if not positions[pos]:continue
-            for amp in range(-8,8):
-                if not (amp in (-4,-2,0,2,4) or abs(amp-original[1])<=1):continue
-                if amp and not original[1] and active>=capacity:continue
-                ee[index,0]=pos if amp else -1;ee[index,1]=amp
-                trialout,_,_,_,_=advance(co,pp,ii,ee,steps,pre,bright,at,stop,h,dd,cc,qr)
-                trial=sse(target,trialout);evaluations+=1
-                if trial<loss:loss=trial;best=ee[index].copy()
-        ee[index]=best;active+=int(best[1]!=0)-int(original[1]!=0)
+        index=at//40;original_amplitude=ee[index,1]
+        pos,amp,_,count=refit_extra_group(reference,co,pp,ii,ee,steps,pre,bright,
+            at,stop,h,dd,cc,qr,active,capacity)
+        ee[index,0]=pos;ee[index,1]=amp;evaluations+=count
+        active+=int(amp!=0)-int(original_amplitude!=0)
         for half in range(2):
             begin=at+half*20
             if begin>=end:break
