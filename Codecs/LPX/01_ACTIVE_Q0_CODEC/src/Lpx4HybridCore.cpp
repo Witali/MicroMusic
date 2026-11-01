@@ -840,6 +840,32 @@ static inline int32_t polyMulQ12(int32_t v,int16_t c){
     // Preserve the original separate floors of the two split products.
     return ((hi*c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
 }
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
+// The next 111 ring slots are dead: the largest v5 pitch lag is 145, and
+// every future code is stored before it can be read. Align within those slots
+// so each memcpy stays inside the physical ring even when the workspace wraps.
+// memcpy retains byte-storage object lifetimes, alignment and aliasing rules.
+static inline int32_t ringPolyGet(const int8_t* ring,uint8_t base,uint8_t index){
+    int32_t value;
+    memcpy(&value,ring+(uint8_t)(base+(uint8_t)(index*4)),sizeof(value));
+    return value;
+}
+static inline void ringPolyPut(int8_t* ring,uint8_t base,uint8_t index,int32_t value){
+    memcpy(ring+(uint8_t)(base+(uint8_t)(index*4)),&value,sizeof(value));
+}
+static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n){
+    // Same descending recurrence and separately rounded products as polyFactor.
+    const int32_t trailing=ringPolyGet(ring,base,n-1);
+    ringPolyPut(ring,base,n+1,trailing);
+    ringPolyPut(ring,base,n,ringPolyGet(ring,base,n-2)+(trailing<0?-(int32_t)c:(int32_t)c));
+    for(uint8_t j=(uint8_t)(n-1);j>=2;--j){
+        const int32_t value=ringPolyGet(ring,base,j-2)+polyMulQ12(ringPolyGet(ring,base,j-1),c)+ringPolyGet(ring,base,j);
+        ringPolyPut(ring,base,j,value);
+    }
+    ringPolyPut(ring,base,1,c+ringPolyGet(ring,base,1));
+}
+static_assert(sizeof(int32_t)==4,"The sram512 workspace uses four-byte words");
+#else
 // LSF->LPC polynomial. Independent Q12 multiplication (no floats/trig in AVR).
 void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
     // Multiply by 1+c*z^-1+z^-2 IN PLACE, descending to preserve original
@@ -854,6 +880,7 @@ void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
     // p[0] is initialized to 4096 and never changed by any factor.
     p[1]=c+p[1];
 }
+#endif
 // LPC spectrum conversion and anchor interpolation.
 #ifndef LPX3_LPC_SEGMENTS
 #define LPX3_LPC_SEGMENTS 2
@@ -875,7 +902,14 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
 #ifdef LPX3_COST_INSTRUMENT
     ++lsfConverts_;
 #endif
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
+    // Lead-in <=3 plus 96 workspace bytes fits in the 111 dead future slots.
+    const uint8_t pbase=(uint8_t)((ringCursor_+3)&252);
+    const uint8_t qbase=(uint8_t)(pbase+48);
+    ringPolyPut(ringQ_,pbase,0,4096);ringPolyPut(ringQ_,qbase,0,4096);
+#else
     polyP_[0]=polyQ_[0]=4096;
+#endif
     for(uint8_t i=0;i<10;i++){
 #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
         // For segments1/2, u is 0/1/2. Factoring centered q+1 values
@@ -890,14 +924,28 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
         const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(prev_[i],cur_[i],t));
 #endif
         // P/Q polynomials are independent; each pair retains the same degree.
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
+        const uint8_t base=(i&1)?qbase:pbase;
+        if(i<2){
+            const int16_t unit=(i&1)?-4096:4096;
+            ringPolyPut(ringQ_,base,1,unit+cc);
+            ringPolyPut(ringQ_,base,2,4096+((i&1)?-cc:cc));
+            ringPolyPut(ringQ_,base,3,unit);
+        }else ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2));
+#else
         int32_t* p=(i&1)?polyQ_:polyP_;
         if(i<2){
             // Exact (1 +/- z) first factors; no rounded multiplication.
             const int16_t unit=(i&1)?-4096:4096;
             p[1]=unit+cc;p[2]=4096+((i&1)?-cc:cc);p[3]=unit;
         }else polyFactor(p,cc,(uint8_t)((i&254)+2));
+#endif
     }
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
+    for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(ringPolyGet(ringQ_,pbase,i+1)+ringPolyGet(ringQ_,qbase,i+1),1),-32767,32767);
+#else
     for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
+#endif
 }
 void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #if LPX4_ROTATE_LPC_ANCHORS
