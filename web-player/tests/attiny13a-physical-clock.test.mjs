@@ -1,12 +1,31 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {ATtiny13A} from '../lib/attiny13a.js';
-import {avr,sequential} from './fixtures/attiny13a-system-firmware.mjs';
+import {ATtiny13A,getRuntimeBytes} from '../lib/attiny13a.js';
+import {createPackage} from '../lib/attiny13a-package.js';
+import {avr,IO,sequential} from './fixtures/attiny13a-system-firmware.mjs';
 
 const osccalHz=Array(128).fill(0);osccalHz[50]=9600000;osccalHz[51]=9696000;
 const options={factoryOsccal96:50,osccalHz};
 const image=sequential([avr.rjmp(0,0)]);
 const core=extra=>new ATtiny13A(image,null,{...options,...extra});
+
+for(const [name,fuseLow,hz]of [['external',0x70,9000001],['128kHz',0x73,128000]])
+test(`${name}: generated OUT/IN and package reload accept an unknown inactive CAL`,async()=>{
+  const binary=sequential([avr.ldi(16,0xe3),avr.out(IO.OSCCAL,16),avr.in(17,IO.OSCCAL)]);
+  const configuration={...options,oscillatorHz:hz,fuseLow,resumable:true};
+  const actual=new ATtiny13A(binary,null,{...configuration,fastIdle:false});
+  const pkg=await createPackage({flash:binary,configuration,runtime:getRuntimeBytes(),
+    translated:actual.transpiledBytes,manifest:actual.transpilation});
+  const restored=await ATtiny13A.fromPackage(pkg);
+  for(const c of [actual,restored]){
+    c.writeIO(IO.TCCR0B,1);assert.equal(c.run(3),3);
+    assert.equal(c.r[16],0xe3);assert.equal(c.r[17],99);assert.equal(c.readIO(IO.OSCCAL),99);
+    assert.equal(c.state().oscillatorHz,hz);assert.equal(c.cyc,3);assert.equal(c.pc,3);
+    assert.equal(c.state().timePs,(3n*1000000000000n+BigInt(hz)-1n)/BigInt(hz));
+    assert.equal(c.readIO(IO.TCNT0),3);assert.equal(c.state().deviceFault,0);
+  }
+  assert.deepEqual(actual.data,restored.data);assert.deepEqual(actual.state(),restored.state());
+});
 function pwm(extra){
   const c=core(extra);c.writeIO(0x17,3);c.writeIO(0x36,191);c.writeIO(0x29,63);
   c.writeIO(0x2f,0xa3);c.writeIO(0x33,1);return c;

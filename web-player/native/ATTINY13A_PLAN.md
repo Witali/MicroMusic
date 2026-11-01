@@ -33,6 +33,16 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Inactive-RC CAL correction, 2026-11-01: physical external/128kHz sources no
+longer reject OSCCAL writes merely because the unused RC curve lacks that CAL.
+All 256 write bytes retain the seven-bit register, CPU rate and fractional
+phase; active calibrated sources still reject unknown frequencies. Separate
+EEPROM/Flash timing admission remains required, and explicit fixed-ns NVM
+operations keep their deadlines. Generated OUT/IN and package execution are
+covered; all 51 focused and 2669/2669 default checks pass. This adds no measured
+curve, phase or hardware closure; 24/31 remains.
+See the [CAL contract](peripherals/device-osccal.md).
+
 Low-power source correction, 2026-11-01: the official figure6-1 connects the
 watchdog oscillator to the CKSEL11 clock-multiplexer input. Physical profiles
 could previously assign it contradictory CPU-source and WDT rates. Native

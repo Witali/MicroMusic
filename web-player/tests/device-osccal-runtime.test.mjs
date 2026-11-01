@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {compileAnalog} from './analog-test-build.mjs';
+import {AT13_IO as IO} from '../lib/attiny13a-registers.js';
 const create=compileAnalog('device-osccal-runtime',[
   'device','timer0','system_gpio','system_watchdog','system_sleep','nvm',
   'analog_adc','analog_comparator','analog',
@@ -118,6 +119,52 @@ test('external and128kHz clock sources do not acquire the calibrated RC clock',(
     assert.equal(c.frequency(),frequency);c.cycles(10);assert.equal(c.now(),10n*PS/BigInt(frequency));
     assert.equal(c.read_io(0x31),1);assert.equal(c.fault(),0);
   }
+});
+
+for(const [name,fuseLow,frequency]of [['external',0x70,9000001],['128kHz',0x73,128000]]){
+  test(`${name}: all OSCCAL bytes are writable without an inactive RC frequency entry`,()=>{
+    const c=board({fuseLow,frequency,points:[[0,9600000]]});c.write_io(IO.TCCR0B,1);
+    for(let value=0;value<256;value++){
+      const next=c.half_deadline(1n);c.write_io(IO.OSCCAL,value);
+      assert.equal(c.fault(),0);assert.equal(c.read_io(IO.OSCCAL),value&127);
+      assert.equal(c.frequency(),frequency);assert.equal(c.half_deadline(1n),next);
+      c.halves(1);
+    }
+    assert.equal(c.now(),ceil(128n*PS,BigInt(frequency)));assert.equal(c.read_io(IO.TCNT0),128);
+    c.reset(2);assert.equal(c.read_io(IO.OSCCAL),0);assert.equal(c.frequency(),frequency);
+    assert.equal(c.fault(),0);
+  });
+
+  test(`${name}: unknown inactive CAL does not bypass the programming-clock profile`,()=>{
+    for(const flash of [false,true]){
+      const c=board({fuseLow,frequency,points:[[0,9600000]]});c.write_io(IO.OSCCAL,99);
+      assert.equal(c.fault(),0);
+      if(flash){c.write_io(IO.SPMCSR,3);c.spm(0);}
+      else{c.write_io(IO.EEARL,0);c.write_io(IO.EEDR,0x5a);c.write_io(IO.EECR,4);c.write_io(IO.EECR,2);}
+      assert.equal(c.fault(),15);assert.equal(c.detail(),1);
+      assert.equal(c.eeprom_byte(0),0);assert.equal(c.flash_byte(0),0);assert.equal(c.generation(),0n);
+    }
+  });
+
+  test(`${name}: explicit fixed-ns NVM timing survives unknown inactive CAL writes`,()=>{
+    for(const flash of [false,true]){
+      const c=board({fuseLow,frequency,points:[[0,9600000]],nvmProfile:1,reference:9600000});
+      c.write_io(IO.OSCCAL,99);assert.equal(c.fault(),0);
+      if(flash){c.write_io(IO.SPMCSR,3);c.spm(0);}
+      else{c.write_io(IO.EEARL,0);c.write_io(IO.EEDR,0x5a);c.write_io(IO.EECR,4);c.write_io(IO.EECR,2);}
+      const at=c.now(),duration=flash?4500000000n:3400000000n;idle(c);
+      c.wait_until(at+duration/2n);c.write_io(IO.OSCCAL,127);assert.equal(c.fault(),0);
+      c.wait_until(at+duration-1n);assert.equal(flash?c.generation():BigInt(c.eeprom_byte(0)),0n);
+      c.wait_until(at+duration);assert.equal(flash?c.generation():BigInt(c.eeprom_byte(0)),flash?1n:0x5an);
+      assert.equal(c.frequency(),frequency);assert.equal(c.fault(),0);
+    }
+  });
+}
+
+for(const fuseLow of [0x71,0x72])test(`active calibrated source ${fuseLow}: unknown CAL still preserves the old register/rate`,()=>{
+  const c=board({fuseLow,points:[[0,1000000]]});c.write_io(IO.OSCCAL,99);
+  assert.equal(c.fault(),14);assert.equal(c.detail(),99);assert.equal(c.read_io(IO.OSCCAL),0);
+  assert.equal(c.frequency(),1000000);
 });
 test('Timer0 and ADC retain their instruction-clock state while physical periods change',()=>{
   const c=board();c.analog(0n,2,2500000);c.write_io(0x07,1);c.write_io(0x06,0xc0);

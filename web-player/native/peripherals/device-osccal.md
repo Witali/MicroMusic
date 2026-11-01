@@ -20,17 +20,27 @@ The factory OSCCAL96 entry must exist. With CKSEL01/10 it must equal configured
 `oscillatorHz`, so initialization cannot silently override two conflicting
 inputs. Missing factory entry, conflicting initial frequency and an incomplete
 NVM profile produce config fault1 with detail9,10 and11 respectively. Writing
-a missing CAL produces `DEVICE_FAULT_OSCCAL`14/detailCAL and preserves the old
-register/frequency. Without any table, CAL changes retain legacy fault12/io0x31.
+a missing CAL while CKSEL01/10 uses the calibrated RC source produces
+`DEVICE_FAULT_OSCCAL`14/detailCAL and preserves the old register/frequency.
+Without a physical profile, CAL changes retain legacy fault12/io0x31.
 
-Every reset reloads factory OSCCAL96 and its frequency, preserving physical time
-while resetting the prescaler phase as before. Both4.8/9.6MHz selections use the
+Every reset reloads factory OSCCAL96, preserving physical time while resetting
+the prescaler phase as before. For an active RC source its factory frequency is
+restored too. Both4.8/9.6MHz selections use the
 table for the selected RC oscillator's actual frequency; the caller supplies
 the appropriate measurements for that selection. Section17.3 still requires
 the9.6MHz factory **byte** on reset even when4.8MHz is selected. CKSEL00 external
-and CKSEL11 independent128kHz sources keep their configured main frequency when
-OSCCAL changes. Their CAL still requires an explicit RC table entry; this does
-not convert either source into a calibrated RC source.
+and CKSEL11 watchdog-source clocks keep their configured main frequency when
+OSCCAL changes. In physical mode these writes accept any CAL value without
+requiring an unused RC frequency entry. The register still masks reserved bit7;
+the CPU-source rate and fractional phase stay unchanged. No missing RC point is
+invented. The existing CLKI path has the same inactive-RC behavior.
+
+EEPROM/Flash programming still passes the separate programming-clock gate.
+Without an explicit NVM timing profile it fails before programming. The selected
+fixed-ns profile retains its declared durations across inactive CAL writes; it
+is a fixture contract, not evidence that an unmeasured CAL is electrically safe
+for programming. The reset-time factory CAL entry requirement is unchanged.
 
 In physical CKSEL11 mode the selected main source is the watchdog oscillator,
 so configured `oscillatorHz` and `watchdogHz` must agree. A mismatch produces
@@ -38,7 +48,8 @@ config fault1/detail18 at init; runtime/package validation also rejects it.
 The legacy independent-clock fixture is retained. See the
 [source contract](../devices/attiny13a/clock_sources.md) and its phase limits.
 
-The digital transition is explicit: a write changes the rate immediately at its
+When the calibrated RC source is active, the digital transition is explicit:
+a write changes the rate immediately at its
 bus-effect timestamp, preserving fractional oscillator/divider phase and all
 nominal CPU-half-clock state. The remaining fraction of the current period runs
 at the new rate. CLKPR, Timer0 prescaler/count, GPIO synchronizer stages, ADC

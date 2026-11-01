@@ -185,7 +185,11 @@ A non-null `osccalHz` table selects a physical picosecond clock domain. Its
 factory CAL entry must be supplied and, for the internal calibrated RC source,
 equal `oscillatorHz`. Other selected clock sources keep their configured
 frequency when CAL is written. An unlisted CAL write fails explicitly for the
-internal calibrated RC source.
+active internal calibrated RC source. With external or CKSEL11 clocks the
+current runtime accepts every seven-bit CAL value without an inactive RC
+frequency entry. NVM programming still requires its explicit timing profile.
+Packages embedding older runtimes preserve those runtimes' CAL behavior;
+this change updates the distributed runtime without changing the package format.
 The table is supplied by the caller; no universal CAL/frequency curve is implied.
 Physical CKSEL11 selects the watchdog oscillator itself: `oscillatorHz` must
 equal `watchdogHz`. Creation and decoding of all physical-capable package

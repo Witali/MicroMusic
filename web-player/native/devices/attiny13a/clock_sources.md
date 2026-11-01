@@ -26,10 +26,11 @@ For example, a nominal divided low-power fixture uses:
 }
 ```
 
-The existing explicit RC calibration-table contract remains in force. This
-change does not infer that curve, alter OSCCAL handling, automatically choose
-which contradictory frequency was intended, or change the legacy independent-
-clock digital fixture. Previously accepted physical CKSEL11 packages with
+The factory RC calibration point remains an explicit profile input. Inactive
+OSCCAL writes now accept all CAL values without requiring a frequency for the
+unused RC source; see the [CAL and NVM contract](../../peripherals/device-osccal.md).
+No RC curve is inferred. The model does not automatically choose which
+contradictory source frequency was intended. Previously accepted physical CKSEL11 packages with
 different rates must be corrected to one consistent rate.
 
 The correction validates source identity/frequency. It does **not** determine

@@ -1066,12 +1066,14 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
  else if (io==OSCCAL) {
   uint8_t cal=merged&127;
   if (cal!=(previous&127)) {
-   if(board.clki_enabled)board.data[32+OSCCAL]=cal; /* The inactive RC curve cannot change CLKI. */
+   unsigned source=board.config[DEVICE_CFG_FUSE_LOW]&3;
+   /* Only an active calibrated RC source needs this CAL's frequency.
+    * External/128kHz clocks remain unchanged; NVM has its own timing gate. */
+   if(board.physical&&(source==0||source==3))board.data[32+OSCCAL]=cal;
    else if (!board.physical) fail(DEVICE_FAULT_UNIMPLEMENTED_IO,OSCCAL);
    else if (!board.calibration[cal]) fail(DEVICE_FAULT_OSCCAL,cal);
    else {
-    unsigned source=board.config[DEVICE_CFG_FUSE_LOW]&3;
-    if (source==1 || source==2) board.oscillator_hz=board.calibration[cal];
+    board.oscillator_hz=board.calibration[cal];
     board.data[32+OSCCAL]=cal;
    }
   } else board.data[32+OSCCAL]=cal;
