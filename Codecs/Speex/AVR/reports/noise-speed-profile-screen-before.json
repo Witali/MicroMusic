@@ -1,0 +1,249 @@
+{
+  "scope": "Instruction cycles in frame-command intervals; mailbox included, startup/reset/ISR excluded.",
+  "binarySha256": "639f5e726dbdcc70417b59bbaf53dbf3a34c948d4fee3081ec4b60dd9bf18e28",
+  "frames": 384,
+  "streams": 3,
+  "totalCycles": 103308241,
+  "functions": [
+    {
+      "name": "speex_avr_iir40",
+      "cycles": 21272640,
+      "cyclesPerFrame": 55397.5,
+      "percent": 20.591426002500615
+    },
+    {
+      "name": "speex_wb_qmf40_avr",
+      "cycles": 19167940,
+      "cyclesPerFrame": 49916.510416666664,
+      "percent": 18.554124835016793
+    },
+    {
+      "name": "speex_wb_iir40_avr",
+      "cycles": 17631732,
+      "cyclesPerFrame": 45915.96875,
+      "percent": 17.067110841622014
+    },
+    {
+      "name": "speex_nb1_excitation_frame",
+      "cycles": 8191423,
+      "cyclesPerFrame": 21331.830729166668,
+      "percent": 7.929108966244039
+    },
+    {
+      "name": "speex_wb_fold40_avr",
+      "cycles": 5104515,
+      "cyclesPerFrame": 13293.0078125,
+      "percent": 4.941053056938604
+    },
+    {
+      "name": "speex_avr_lsp_pair4",
+      "cycles": 4148516,
+      "cyclesPerFrame": 10803.427083333334,
+      "percent": 4.0156680240059455
+    },
+    {
+      "name": "speex_low_noise_indices40",
+      "cycles": 4026756,
+      "cyclesPerFrame": 10486.34375,
+      "percent": 3.8978071458984576
+    },
+    {
+      "name": "speex_avr_lsp_angle",
+      "cycles": 3346538,
+      "cyclesPerFrame": 8714.942708333334,
+      "percent": 3.239371774803522
+    },
+    {
+      "name": "__mulsi3",
+      "cycles": 3317760,
+      "cyclesPerFrame": 8640,
+      "percent": 3.2115153330313695
+    },
+    {
+      "name": "__umulhisi3",
+      "cycles": 2728704,
+      "cyclesPerFrame": 7106,
+      "percent": 2.6413226801528835
+    },
+    {
+      "name": "__muluhisi3",
+      "cycles": 2218752,
+      "cyclesPerFrame": 5778,
+      "percent": 2.1477008789647285
+    },
+    {
+      "name": "speex_wb_low_ready",
+      "cycles": 2137974,
+      "cyclesPerFrame": 5567.640625,
+      "percent": 2.0695096337958168
+    },
+    {
+      "name": "speex_low_noise40",
+      "cycles": 1588224,
+      "cyclesPerFrame": 4136,
+      "percent": 1.5373642844233502
+    },
+    {
+      "name": "nb_decode.constprop.2",
+      "cycles": 1397130,
+      "cyclesPerFrame": 3638.359375,
+      "percent": 1.352389689802191
+    },
+    {
+      "name": "__udivmodsi4_loop",
+      "cycles": 1026333,
+      "cyclesPerFrame": 2672.7421875,
+      "percent": 0.9934667264347284
+    },
+    {
+      "name": "wb_interpolate",
+      "cycles": 877027,
+      "cyclesPerFrame": 2283.9244791666665,
+      "percent": 0.8489419542047957
+    },
+    {
+      "name": "speex_low_noise_values5",
+      "cycles": 752640,
+      "cyclesPerFrame": 1960,
+      "percent": 0.7285382005487829
+    },
+    {
+      "name": "__udivmodsi4_ep",
+      "cycles": 743424,
+      "cyclesPerFrame": 1936,
+      "percent": 0.7196173246236958
+    },
+    {
+      "name": "speex_avr_lsp_finish10",
+      "cycles": 602274,
+      "cyclesPerFrame": 1568.421875,
+      "percent": 0.582987372711147
+    },
+    {
+      "name": "speex_avr_lsp_mul_q14",
+      "cycles": 499200,
+      "cyclesPerFrame": 1300,
+      "percent": 0.48321411260888664
+    },
+    {
+      "name": "speex_avr_lsp_first",
+      "cycles": 387816,
+      "cyclesPerFrame": 1009.9375,
+      "percent": 0.37539696373302883
+    },
+    {
+      "name": "speex_packet_field.constprop.4",
+      "cycles": 312192,
+      "cyclesPerFrame": 813,
+      "percent": 0.3021946719623268
+    },
+    {
+      "name": "main",
+      "cycles": 300495,
+      "cyclesPerFrame": 782.5390625,
+      "percent": 0.2908722451290212
+    },
+    {
+      "name": "__epilogue_restores__",
+      "cycles": 287676,
+      "cyclesPerFrame": 749.15625,
+      "percent": 0.27846374811473174
+    },
+    {
+      "name": "speex_nb3_interpolate_lpc",
+      "cycles": 286272,
+      "cyclesPerFrame": 745.5,
+      "percent": 0.2771047084230192
+    },
+    {
+      "name": "speex_avr_nb3_advance10",
+      "cycles": 269871,
+      "cyclesPerFrame": 702.7890625,
+      "percent": 0.26122891783628377
+    },
+    {
+      "name": "__prologue_saves__",
+      "cycles": 245697,
+      "cyclesPerFrame": 639.8359375,
+      "percent": 0.2378290421187212
+    },
+    {
+      "name": "speex_avr_lsp_pair2",
+      "cycles": 132210,
+      "cyclesPerFrame": 344.296875,
+      "percent": 0.12797623763625982
+    },
+    {
+      "name": "speex_avr_lsp_pair3",
+      "cycles": 132210,
+      "cyclesPerFrame": 344.296875,
+      "percent": 0.12797623763625982
+    },
+    {
+      "name": "speex_avr_mul16_32_q14",
+      "cycles": 46080,
+      "cyclesPerFrame": 120,
+      "percent": 0.04460437962543569
+    },
+    {
+      "name": "__divmodsi4",
+      "cycles": 39936,
+      "cyclesPerFrame": 104,
+      "percent": 0.03865712900871093
+    },
+    {
+      "name": "__udivmodsi4",
+      "cycles": 21504,
+      "cyclesPerFrame": 56,
+      "percent": 0.020815377158536656
+    },
+    {
+      "name": "output",
+      "cycles": 19968,
+      "cyclesPerFrame": 52,
+      "percent": 0.019328564504355467
+    },
+    {
+      "name": "lsp_first",
+      "cycles": 17628,
+      "cyclesPerFrame": 45.90625,
+      "percent": 0.01706349835150131
+    },
+    {
+      "name": "__divmodsi4_exit",
+      "cycles": 12288,
+      "cyclesPerFrame": 32,
+      "percent": 0.011894501233449517
+    },
+    {
+      "name": "iir_mem16.constprop.5",
+      "cycles": 4608,
+      "cyclesPerFrame": 12,
+      "percent": 0.004460437962543569
+    },
+    {
+      "name": "lsp_finish10",
+      "cycles": 4473,
+      "cyclesPerFrame": 11.6484375,
+      "percent": 0.004329761069109675
+    },
+    {
+      "name": "__usmulhisi3_tail",
+      "cycles": 4359,
+      "cyclesPerFrame": 11.3515625,
+      "percent": 0.004219411692432166
+    },
+    {
+      "name": "__usmulhisi3",
+      "cycles": 2304,
+      "cyclesPerFrame": 6,
+      "percent": 0.0022302189812717847
+    },
+    {
+      "name": "__mulshisi3",
+      "cycles": 1152,
+      "cyclesPerFrame": 3,
+      "percent": 0.0011151094906358924
+    }
+  ]
+}

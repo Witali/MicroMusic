@@ -1,5 +1,11 @@
 # Optional low-rate profiles
 
+This document records the profile-extension admission baseline. The subsequent
+[exact noise speed change](WB_NOISE_SPEED.md) keeps PCM unchanged and lowers
+natural-speech CPU to 33.43% for NB2.15 and 80.12% for WB3.95. Its full-corpus
+IRQ test raises the verified WB3.95 extra-work reserve from 3% to 6%; retained
+historical figures below remain tied to their original source/binary hashes.
+
 Implementation and admission are complete. Target remains
 ATmega328P, 16 MHz, 2 KB SRAM; explicit AVR ASM is the playback target.
 Portable C fallback selection and the existing compact Q7/16-tap QMF remain.

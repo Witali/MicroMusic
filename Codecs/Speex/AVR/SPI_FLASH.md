@@ -1,5 +1,11 @@
 # SPI Flash input for Speex playback
 
+The original integration measurements below are preserved at their source
+baseline. The later [exact RNG optimization](WB_NOISE_SPEED.md) retests the
+complete WB3.95 SPI file with unchanged PWM and zero underruns: minimum queue
+17 -> 25, Flash 25260 -> 25316 B, free SRAM 396 -> 397 B. The current source
+overlay is checked by `tests/audit_noise_speed.py`.
+
 The standalone [SPI player](examples/spi_flash_player.c) reads uniform raw
 Speex packets from external W25Q128 storage into the existing packet buffer,
 then calls the unchanged NB or compact-WB decoder API. Arithmetic backend

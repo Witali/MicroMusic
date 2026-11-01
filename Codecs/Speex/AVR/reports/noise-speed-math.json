@@ -1,0 +1,25 @@
+{
+  "scope": "Exact integer identities/ranges, not runtime or perceptual admission",
+  "signed16Classifications": 65536,
+  "noiseClassCounts": [
+    4681,
+    18724,
+    18725,
+    18724,
+    4682
+  ],
+  "seedTransitions": 100000,
+  "exactScaleValues": 32,
+  "maxAbsoluteRoundedNoise": 14049,
+  "historyOffsetCases": 18432,
+  "aliasExpansionByteOrders": [
+    "little",
+    "big"
+  ],
+  "pcmPrecisionChanged": false,
+  "sourceSha256": {
+    "src/lowrate_noise.c": "c28152c4ee955141f8b298b5b146960940a34b201cf70f8ff295664ad8d91440",
+    "src/lowrate_excitation.h": "9242a5ed204a962f600ff9a966d619a0647701f10c281f038c7c23f3f342dec3",
+    "tests/prove_low_noise.py": "cb50cbb6334f765c81b3598ada4f53290f462075259f71957e634f84b673f763"
+  }
+}

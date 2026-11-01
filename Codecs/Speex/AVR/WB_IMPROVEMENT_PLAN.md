@@ -1,6 +1,7 @@
 # Wideband improvement plan
 
-Target: ATmega328P, 16 MHz, 2 KB SRAM; compact WB9.8/WB12.8, mono 16 kHz.
+Target: ATmega328P, 16 MHz, 2 KB SRAM; compact WB3.95/5.75/7.75/9.8/12.8,
+mono 16 kHz.
 The explicitly enabled AVR ASM backend is the performance target. Retain
 the portable, explicitly selectable C fallback and existing backend selection.
 
@@ -12,7 +13,9 @@ the portable, explicitly selectable C fallback and existing backend selection.
 - Measure cycles, Flash, static SRAM and peak stack with the same pinned
   compiler/options and input bytes before/after. Reject unexplained regressions.
 - Recheck continuous output with production timers/interrupts and queue code,
-  including 8% additional foreground work. Ready RAM packets do not establish
+  including the established 8% additional work for WB9.8/WB12.8. Lower rates
+  must preserve their separately measured admission and test a larger reserve;
+  WB3.95 previously admitted 3%. Ready RAM packets do not establish
   storage/serial latency or physical-board timing.
 - Do not rerun the excluded Speex C performance suite. When C sources and
   dependencies remain unchanged, bind their previous reference evidence by
@@ -21,6 +24,13 @@ the portable, explicitly selectable C fallback and existing backend selection.
   firmware under ignored build paths; retain compact reproducible evidence.
 
 ## Ordered work
+
+The original QMF cycle below is complete. Lower rates and external SPI input
+have since been implemented/admitted in [LOW_RATES.md](LOW_RATES.md) and
+[SPI_FLASH.md](SPI_FLASH.md). Current speed work uses measured hot paths;
+[WB_NOISE_SPEED.md](WB_NOISE_SPEED.md) records exact seven-product noise
+arithmetic and the next opportunity to remove duplicate noise generation.
+The broader speed objective remains open while useful candidates exist.
 
 1. **Current baseline and profiling.** Correct the WB profiler to accumulate
    instruction cycles only inside measured frame intervals, across all streams.
@@ -105,7 +115,8 @@ The vendored mode map and [Xiph WB manual](https://www.speex.org/docs/manual/spe
 define 7.75 kbit/s as NB submode 2 plus the already supported HB1. Supporting
 NB5.95 first could therefore enable a future WB7.75 profile; it still needs
 implementation, independent PCM evidence and target timing admission. The
-current AVR decoder accepts only NB8/NB11 and WB9.8/WB12.8.
+AVR decoder at that original assessment accepted only NB8/NB11 and WB9.8/WB12.8;
+the later lower-rate implementation is documented above.
 
 ### Lower-rate reuse assessment
 

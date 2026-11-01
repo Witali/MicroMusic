@@ -9,8 +9,12 @@ PWM underruns. WB3.95 occupies 4.0 kbit/s in byte-aligned raw storage and uses
 
 The separate [SPI Flash player](SPI_FLASH.md) reuses the common LPX/Speex
 ATmega328P reader for files larger than internal Flash. Six continuous SPI/PWM
-runs cover 14600 frames / 4480000 samples without underruns. WB3.95 uses
-25260 B Flash and leaves 396 B SRAM in the production image. These are active-
+runs cover 14600 frames / 4480000 samples without underruns. The latest
+[exact RNG optimization](WB_NOISE_SPEED.md) reduces WB3.95 speech decoding
+83.65% -> 80.12% CPU without changing PCM, with ten -> seven hardware MULs
+per random-state transition. Its new production SPI image uses 25316 B Flash
+and leaves 397 B SRAM; the full stream passes again with zero underruns.
+These are active-
 IRQ ISA-simulator results; a physical board has not been measured.
 
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
