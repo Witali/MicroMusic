@@ -1,0 +1,194 @@
+{
+  "status": "PASS",
+  "arm_records": 248,
+  "helper_calls": 312,
+  "pair_contexts": 124,
+  "cap_views": 744,
+  "nominal_search_cpu_seconds": 984,
+  "new_initial_fits": 0,
+  "no_old_whole_metric_reuse": true,
+  "source_commit": "df8443cc389f1298ab23a3aca9cdee15e781bbe0",
+  "matched_total_helper_cpu_pairs": 64,
+  "unmatched_total_helper_cpu_pairs": 60,
+  "standalone_actual_cost_sums": {
+    "standalone_total_helper_cpu": 1023.671875,
+    "total_helper_wall": 1089.4398354003206,
+    "independent_raw_pool_model_sse_audit_cpu": 684.125,
+    "bounded_frontier_pruning_cpu": 0.046875,
+    "capture_persistence_cpu": 36.828125,
+    "required_whole_admission_cpu": 626.390625,
+    "actual_arm_workflow_cpu": 2377.890625,
+    "setup_plus_search_cpu": 893.8125,
+    "helper_finalization_cpu": 127.734375,
+    "search_overshoot_cpu": 7.1875,
+    "total_helper_overshoot_cpu": 132.890625,
+    "observed_quota_exhaustions": 281,
+    "completed_without_observed_quota_exhaustion": 31
+  },
+  "outcomes": {
+    "unmatched/100": {
+      "equal-score": 16,
+      "single-lower-score": 29,
+      "trajectory-lower-score": 14,
+      "trajectory-smaller-tied-score": 1
+    },
+    "unmatched/95": {
+      "neither-admitted": 60
+    },
+    "unmatched/90": {
+      "neither-admitted": 60
+    },
+    "matched/100": {
+      "trajectory-lower-score": 16,
+      "single-lower-score": 35,
+      "equal-score": 13
+    },
+    "matched/95": {
+      "neither-admitted": 64
+    },
+    "matched/90": {
+      "neither-admitted": 64
+    }
+  },
+  "distinct_changed_selected_whole_chains": 105,
+  "workers": [
+    {
+      "status": "PASS",
+      "shard": 0,
+      "warmup_only": false,
+      "arm_records": 128,
+      "helper_calls": 172,
+      "new_initial_fits": 0,
+      "actual_cost": {
+        "wall_seconds": 1343.3842237000063,
+        "cpu_seconds": 1269.171875
+      },
+      "preparation_cost": {
+        "wall_seconds": 7.414985099982005,
+        "cpu_seconds": 5.953125
+      },
+      "native_loading_cost": {
+        "wall_seconds": 0.004352499992819503,
+        "cpu_seconds": 0.0
+      },
+      "warmup_cost": {
+        "wall_seconds": 1.27745560000767,
+        "cpu_seconds": 1.0625
+      },
+      "terminal_artifact_cost": {
+        "wall_seconds": 0.3523257999913767,
+        "cpu_seconds": 0.359375
+      },
+      "final_guard_cost": {
+        "wall_seconds": 1.1490597999945749,
+        "cpu_seconds": 1.140625
+      },
+      "counters": {
+        "actual_helper_calls_started": 172,
+        "actual_helper_calls_completed": 172,
+        "captured_model_reset_checks": 15473,
+        "captured_model_samples": 569146794,
+        "arm_records_completed": 128
+      },
+      "whole_counters": {
+        "native_domain_comparisons": 1468,
+        "unique_verified_reset_streams": 367,
+        "verified_model_samples": 15718768,
+        "target_feature_rows": 26,
+        "fresh_whole_metric_rows_started": 295,
+        "fresh_whole_metric_rows_completed": 295,
+        "whole_metric_cache_hits": 120,
+        "verified_reset_cache_hits": 26
+      },
+      "no_old_whole_metric_reuse": true
+    },
+    {
+      "status": "PASS",
+      "shard": 1,
+      "warmup_only": false,
+      "arm_records": 120,
+      "helper_calls": 140,
+      "new_initial_fits": 0,
+      "actual_cost": {
+        "wall_seconds": 1203.9763371999725,
+        "cpu_seconds": 1128.953125
+      },
+      "preparation_cost": {
+        "wall_seconds": 7.762365099973977,
+        "cpu_seconds": 6.640625
+      },
+      "native_loading_cost": {
+        "wall_seconds": 0.002500599977793172,
+        "cpu_seconds": 0.0
+      },
+      "warmup_cost": {
+        "wall_seconds": 1.0363462000095751,
+        "cpu_seconds": 1.015625
+      },
+      "terminal_artifact_cost": {
+        "wall_seconds": 0.26335620001191273,
+        "cpu_seconds": 0.265625
+      },
+      "final_guard_cost": {
+        "wall_seconds": 1.1308274999901187,
+        "cpu_seconds": 1.125
+      },
+      "counters": {
+        "actual_helper_calls_started": 140,
+        "actual_helper_calls_completed": 140,
+        "captured_model_reset_checks": 9893,
+        "captured_model_samples": 337978934,
+        "arm_records_completed": 120
+      },
+      "whole_counters": {
+        "native_domain_comparisons": 1588,
+        "unique_verified_reset_streams": 397,
+        "verified_model_samples": 19615069,
+        "target_feature_rows": 26,
+        "fresh_whole_metric_rows_started": 254,
+        "fresh_whole_metric_rows_completed": 254,
+        "whole_metric_cache_hits": 92,
+        "verified_reset_cache_hits": 482
+      },
+      "no_old_whole_metric_reuse": true
+    }
+  ],
+  "synthetic_preflight": {
+    "status": "PASS",
+    "shard": 0,
+    "warmup_only": true,
+    "arm_records": 0,
+    "helper_calls": 0,
+    "new_initial_fits": 0,
+    "actual_cost": {
+      "wall_seconds": 17.295161400019424,
+      "cpu_seconds": 15.328125
+    },
+    "preparation_cost": {
+      "wall_seconds": 8.187991200014949,
+      "cpu_seconds": 6.515625
+    },
+    "native_loading_cost": {
+      "wall_seconds": 0.0038530000019818544,
+      "cpu_seconds": 0.0
+    },
+    "warmup_cost": {
+      "wall_seconds": 7.638301300001331,
+      "cpu_seconds": 7.421875
+    },
+    "terminal_artifact_cost": {
+      "wall_seconds": 0.003875700000207871,
+      "cpu_seconds": 0.0
+    },
+    "final_guard_cost": {
+      "wall_seconds": 1.3117012000002433,
+      "cpu_seconds": 1.3125
+    },
+    "counters": {},
+    "whole_counters": {},
+    "no_old_whole_metric_reuse": true
+  },
+  "cache_cost_attribution": "Actual creating-event cost; per-arm whole workflow time depends on shared-cache order",
+  "end_to_end_same_cpu_claim": false,
+  "scope": "Same-corpus numerical comparison; no audible or new complete-player admission"
+}

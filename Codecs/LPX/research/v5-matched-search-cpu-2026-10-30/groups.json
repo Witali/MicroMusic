@@ -1,0 +1,320 @@
+[
+  {
+    "domain": "nonspeech",
+    "profile": 4,
+    "tier_label": "2",
+    "matched_total_helper_cpu": false,
+    "pairs": 2,
+    "outcomes": {
+      "100": {
+        "trajectory-lower-score": 1,
+        "single-lower-score": 1
+      },
+      "95": {
+        "neither-admitted": 2
+      },
+      "90": {
+        "neither-admitted": 2
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 1.375,
+      "trajectory": 4.125
+    },
+    "cumulative_tier_includes_prior2": false
+  },
+  {
+    "domain": "nonspeech",
+    "profile": 4,
+    "tier_label": "2",
+    "matched_total_helper_cpu": true,
+    "pairs": 1,
+    "outcomes": {
+      "100": {
+        "trajectory-lower-score": 1
+      },
+      "95": {
+        "neither-admitted": 1
+      },
+      "90": {
+        "neither-admitted": 1
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 4.15625,
+      "trajectory": 4.21875
+    },
+    "cumulative_tier_includes_prior2": false
+  },
+  {
+    "domain": "nonspeech",
+    "profile": 4,
+    "tier_label": "cumulative-2+8",
+    "matched_total_helper_cpu": false,
+    "pairs": 3,
+    "outcomes": {
+      "100": {
+        "trajectory-lower-score": 2,
+        "single-lower-score": 1
+      },
+      "95": {
+        "neither-admitted": 3
+      },
+      "90": {
+        "neither-admitted": 3
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 13.078125,
+      "trajectory": 40.6875
+    },
+    "cumulative_tier_includes_prior2": true
+  },
+  {
+    "domain": "nonspeech",
+    "profile": 6,
+    "tier_label": "2",
+    "matched_total_helper_cpu": false,
+    "pairs": 3,
+    "outcomes": {
+      "100": {
+        "single-lower-score": 1,
+        "equal-score": 1,
+        "trajectory-lower-score": 1
+      },
+      "95": {
+        "neither-admitted": 3
+      },
+      "90": {
+        "neither-admitted": 3
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 4.953125,
+      "trajectory": 8.328125
+    },
+    "cumulative_tier_includes_prior2": false
+  },
+  {
+    "domain": "nonspeech",
+    "profile": 6,
+    "tier_label": "cumulative-2+8",
+    "matched_total_helper_cpu": false,
+    "pairs": 3,
+    "outcomes": {
+      "100": {
+        "single-lower-score": 1,
+        "equal-score": 1,
+        "trajectory-lower-score": 1
+      },
+      "95": {
+        "neither-admitted": 3
+      },
+      "90": {
+        "neither-admitted": 3
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 9.90625,
+      "trajectory": 40.765625
+    },
+    "cumulative_tier_includes_prior2": true
+  },
+  {
+    "domain": "speech",
+    "profile": 4,
+    "tier_label": "2",
+    "matched_total_helper_cpu": false,
+    "pairs": 20,
+    "outcomes": {
+      "100": {
+        "equal-score": 4,
+        "single-lower-score": 11,
+        "trajectory-lower-score": 5
+      },
+      "95": {
+        "neither-admitted": 20
+      },
+      "90": {
+        "neither-admitted": 20
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 55.421875,
+      "trajectory": 76.078125
+    },
+    "cumulative_tier_includes_prior2": false
+  },
+  {
+    "domain": "speech",
+    "profile": 4,
+    "tier_label": "2",
+    "matched_total_helper_cpu": true,
+    "pairs": 29,
+    "outcomes": {
+      "100": {
+        "trajectory-lower-score": 5,
+        "single-lower-score": 19,
+        "equal-score": 5
+      },
+      "95": {
+        "neither-admitted": 29
+      },
+      "90": {
+        "neither-admitted": 29
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 71.859375,
+      "trajectory": 84.390625
+    },
+    "cumulative_tier_includes_prior2": false
+  },
+  {
+    "domain": "speech",
+    "profile": 4,
+    "tier_label": "cumulative-2+8",
+    "matched_total_helper_cpu": false,
+    "pairs": 3,
+    "outcomes": {
+      "100": {
+        "single-lower-score": 2,
+        "trajectory-lower-score": 1
+      },
+      "95": {
+        "neither-admitted": 3
+      },
+      "90": {
+        "neither-admitted": 3
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 14.203125,
+      "trajectory": 32.171875
+    },
+    "cumulative_tier_includes_prior2": true
+  },
+  {
+    "domain": "speech",
+    "profile": 4,
+    "tier_label": "cumulative-2+8",
+    "matched_total_helper_cpu": true,
+    "pairs": 4,
+    "outcomes": {
+      "100": {
+        "trajectory-lower-score": 3,
+        "single-lower-score": 1
+      },
+      "95": {
+        "neither-admitted": 4
+      },
+      "90": {
+        "neither-admitted": 4
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 83.515625,
+      "trajectory": 96.0
+    },
+    "cumulative_tier_includes_prior2": true
+  },
+  {
+    "domain": "speech",
+    "profile": 6,
+    "tier_label": "2",
+    "matched_total_helper_cpu": false,
+    "pairs": 22,
+    "outcomes": {
+      "100": {
+        "single-lower-score": 10,
+        "equal-score": 9,
+        "trajectory-lower-score": 2,
+        "trajectory-smaller-tied-score": 1
+      },
+      "95": {
+        "neither-admitted": 22
+      },
+      "90": {
+        "neither-admitted": 22
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 61.75,
+      "trajectory": 84.796875
+    },
+    "cumulative_tier_includes_prior2": false
+  },
+  {
+    "domain": "speech",
+    "profile": 6,
+    "tier_label": "2",
+    "matched_total_helper_cpu": true,
+    "pairs": 27,
+    "outcomes": {
+      "100": {
+        "trajectory-lower-score": 7,
+        "single-lower-score": 15,
+        "equal-score": 5
+      },
+      "95": {
+        "neither-admitted": 27
+      },
+      "90": {
+        "neither-admitted": 27
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 64.21875,
+      "trajectory": 76.234375
+    },
+    "cumulative_tier_includes_prior2": false
+  },
+  {
+    "domain": "speech",
+    "profile": 6,
+    "tier_label": "cumulative-2+8",
+    "matched_total_helper_cpu": false,
+    "pairs": 4,
+    "outcomes": {
+      "100": {
+        "single-lower-score": 2,
+        "equal-score": 1,
+        "trajectory-lower-score": 1
+      },
+      "95": {
+        "neither-admitted": 4
+      },
+      "90": {
+        "neither-admitted": 4
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 24.640625,
+      "trajectory": 44.390625
+    },
+    "cumulative_tier_includes_prior2": true
+  },
+  {
+    "domain": "speech",
+    "profile": 6,
+    "tier_label": "cumulative-2+8",
+    "matched_total_helper_cpu": true,
+    "pairs": 3,
+    "outcomes": {
+      "100": {
+        "equal-score": 3
+      },
+      "95": {
+        "neither-admitted": 3
+      },
+      "90": {
+        "neither-admitted": 3
+      }
+    },
+    "summed_comparator_cpu": {
+      "single_path": 69.609375,
+      "trajectory": 85.296875
+    },
+    "cumulative_tier_includes_prior2": true
+  }
+]

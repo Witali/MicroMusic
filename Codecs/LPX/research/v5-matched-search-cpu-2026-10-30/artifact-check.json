@@ -1,0 +1,43 @@
+{
+  "status": "PASS",
+  "arm_records": 248,
+  "helper_returns": 312,
+  "cap_views": 744,
+  "baseline_contexts": 104,
+  "pair_contexts": 124,
+  "matched_total_helper_cpu_pairs": 64,
+  "unmatched_total_helper_cpu_pairs": 60,
+  "reopened_export_inputs": 33129,
+  "source_and_input_guards_passed": true,
+  "original_c_source_exact_for_native_reuse": true,
+  "no_old_whole_metric_reuse": true,
+  "failed_or_interrupted_helpers": 0,
+  "repeated_corpus_helpers": 0,
+  "new_initial_fits": 0,
+  "worker_receipts": [
+    {
+      "shard": 0,
+      "status": "complete",
+      "arm_records": 128,
+      "helper_calls": 172,
+      "observed_process_exit_code": null,
+      "exit_code_note": "Historical tool handle expired; complete guarded receipts and PASS logs retained"
+    },
+    {
+      "shard": 1,
+      "status": "complete",
+      "arm_records": 120,
+      "helper_calls": 140,
+      "observed_process_exit_code": null,
+      "exit_code_note": "Historical tool handle expired; complete guarded receipts and PASS logs retained"
+    }
+  ],
+  "final_readonly_projector_exit_code": 0,
+  "changed_selected_distinct_tuples": 105,
+  "changed_selected_cap_views": 112,
+  "long_changed_tuples": 4,
+  "target_complete_flash_and_player_admission": "pending-separate-task",
+  "initial_baseline_manifest_preparation_timing_known": false,
+  "perceptual_adoption": false,
+  "end_to_end_same_cpu_claim": false
+}
