@@ -3144,3 +3144,4 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [Clocked external SPI sources](lpx-external-spi.md): vendor-derived registers, source/arithmetic separation, corrected simavr byte timing and bounded full-player validation scope.
 
 - [Exact bounded LPX pitch history](lpx-pitch-history.md): rejected 111-byte RAM tradeoff, memory-lifetime alternatives, unchanged production decoder and measured AVR25 C throughput limits.
+- [LPX SRAM512 memory profile](lpx-sram512.md): reuse 96 dead pitch-ring bytes for exact LSF polynomial scratch; explicit RAM/CPU tradeoff, unchanged defaults, and separate AVR5/Tiny88 timing limits.

@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include "Lpx4MemoryProfiles.h"
 // Opt-in sequential input source. Independent of C/ASM arithmetic and table
 // storage. Use the same setting for the core and all callers (layout differs).
 #ifndef LPX4_ENABLE_INPUT_CALLBACK
@@ -44,6 +45,9 @@
 #endif
 #if LPX4_COMPACT_ONLY && (!LPX4_ENABLE_SPEECH || !LPX4_ENABLE_SPEECH_COMPACT)
 #error LPX4_COMPACT_ONLY requires speech and compact speech
+#endif
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && !LPX4_COMPACT_ONLY
+#error The sram512 memory profile requires LPX4_COMPACT_ONLY
 #endif
 #if LPX4_COMPACT_ONLY
 #define LPX4_MAX_PULSES 3
@@ -220,7 +224,9 @@ private:
     // LPC spectrum conversion and interpolation.
     void interpolateLsf(uint8_t sub);
     void convertLsfAt(uint8_t t,int16_t* out);
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_STANDARD
     void polyFactor(int32_t* p,int16_t c,uint8_t n);
+#endif
     static int16_t clamp(int32_t n,int16_t low,int16_t high);
     // Keep per-sample state within AVR's short displacement range. Arrays
     // are addressed through pointers; frame-only polynomial workspace follows.
@@ -286,7 +292,9 @@ private:
 #else
     int16_t prevLpc_[10],curLpc_[10];
 #endif
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_STANDARD
     int32_t polyP_[12],polyQ_[12];
+#endif
 #ifdef LPX3_Q_DIAG
     int8_t lastQ_;
 #endif
