@@ -33,6 +33,16 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+NVM/IRQ integration audit, 2026-11-01: source-only firmware confirms EE_RDY
+is suppressed during Flash erase and returns as a level at NVM completion.
+Timer0's higher priority and the main instruction after RETI are preserved.
+With CLKI held high or low, wall-time completion still occurs; CPU cycles,
+retirements, stack and ISR body effects wait for source phases. Four paired
+scenarios (eight executions) match architectural state and exact pin timestamps
+between verification and optimized policies; all 56 focused checks pass.
+Production is unchanged. This is software evidence, not silicon/phase closure;
+the 24/31 count remains. See the [audit](../reports/nvm-ready-irq-20261101.md).
+
 Inactive-RC CAL correction, 2026-11-01: physical external/128kHz sources no
 longer reject OSCCAL writes merely because the unused RC curve lacks that CAL.
 All 256 write bytes retain the seven-bit register, CPU rate and fractional

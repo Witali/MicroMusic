@@ -3,7 +3,8 @@
 The independent C module owns EECR/EEDR/EEARL/SPMCSR and binds the CPU's
 existing 1024-byte Flash and 64-byte EEPROM arrays. It allocates no memory,
 calls no JavaScript, and advances programming and protection windows in O(1).
-It is an integration module; adding these files does not wire it into avr.c.
+`device.c` integrates it with the scheduler and full AVR CPU bridge; standalone
+module checks and generated-firmware integration checks cover separate layers.
 
 Official references checked:
 
@@ -41,10 +42,20 @@ Official references checked:
    dirty pages and retranslate the CPU module. Dirty bits identify 32-byte
    pages (bit 31 is bytes 992..1023). Generation changes at completion even
    if content is identical. It cannot be acknowledged by clearing dirty bits.
-6. Route `nvm_ready_irq` into the interrupt arbiter as a level. Accepting the
+6. Route `nvm_ready_irq` into the interrupt arbiter as a level. Section5.6.4
+   describes readiness of nonvolatile memory, so both EEPROM and Flash must be
+   idle. Accepting the
    IRQ does not acknowledge or clear it. `nvm_reset` clears temporary page
    data and controls but allows an active program operation to complete,
    assuming adequate supply voltage. Its pending payload is separately held.
+
+The [NVM/IRQ/clock integration check](../../reports/nvm-ready-irq-20261101.md)
+executes actual SEI/SPM firmware against the native board. It covers suppressed
+EE_RDY during Flash erase, source-level reassertion at completion, Timer0's
+higher vector priority, the main instruction following RETI, and high/low CLKI
+holds through completion. Verification and optimized CPU policies preserve the
+same architectural state and pin timestamps. These are software fixtures with
+explicit timing, not physical measurements or a simulator-oracle observation.
 
 The module exposes EEPROM atomic/erase/write modes, EEPROM/Flash interlock,
 page erase/load/write/clear, timed command expiry and fuse/lock LPM. Starting
