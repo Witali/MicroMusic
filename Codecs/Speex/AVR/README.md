@@ -83,6 +83,12 @@ CMake/static-library package for other microcontrollers. The C player now
 also passes all 31 streams with timers/ISR and 10% extra CPU work: zero
 underruns and 700 B free SRAM at peak. Both NB3 backends retain exact upstream s16 PCM.
 
+The [bounded HB1 divider](WB_GAIN_DIV.md) stage is independently admitted on
+all five WB profiles: 106014 matched raw frames, 53007 full-history IRQ
+frames and 5800 SPI frames, with exact PCM/PWM and zero underruns. It saves
+about 1648 cycles/frame for eight Flash bytes. Its per-mode load gates and
+source epoch are recorded separately from later NB1-only optimizations.
+
 ## Narrowband profile
 
 - Narrowband submode 3, mono 8 kHz, CBR 8 kbit/s; optional 1/8/2/4 at
