@@ -56,6 +56,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb2_excitation_frame(int16_t *frame,
 }
 #endif
 #if SPEEX_ENABLE_NB8
+#include "forced_pitch.h"
 extern const int8_t exc_20_32_table[640];
 /* Forced coefficient 0 has no adaptive contribution, including short-lag
  * ancestors. Reuse the exact zero primitive on complete twenty-word rows. */
@@ -99,7 +100,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
     uint8_t coefficient=(2185L*(int16_t)(coded_coefficient<<6)+16384)>>15;
     if(coefficient>63)coefficient=63;
     uint8_t pitch=17+speex_packet_field(packet,23,7);
-    int8_t gain[3]={0,(int8_t)coefficient,0};int16_t edge[12];
+    int16_t edge[10];
     for(uint8_t sub=0;sub<4;sub++) {
         int16_t *exc=frame+40*sub;uint8_t j=0;
         speex_low_unpack(packet,sub,indices);
@@ -108,18 +109,17 @@ static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
             uint8_t left=20;
             while(left) {
                 uint8_t count=left>10?10:left;const int16_t *in;
-                if(j<pitch-1) {
-                    if(count>pitch-1-j)count=pitch-1-j;
-                    in=exc+(int)j-pitch-1;
+                if(j<pitch) {
+                    if(count>pitch-j)count=pitch-j;
+                    in=exc+(int)j-pitch;
                 } else {
-                    edge[0]=0;edge[count+1]=0;
-                    for(uint8_t k=0;k<count;k++)edge[k+1]=speex_forced_source(exc,j+k,pitch,coefficient);
+                    for(uint8_t k=0;k<count;k++)edge[k]=speex_forced_source(exc,j+k,pitch,coefficient);
                     in=edge;
                 }
 #if SPEEX_NB3_USE_AVR_ASM
-                speex_avr_long_innovation_n(exc+j,in,shape,scale,gain,count);
+                speex_avr_forced_innovation_n(exc+j,in,shape,scale,coefficient,count);
 #else
-                speex_nb3_long_innovation10_c(exc+j,in,shape,scale,gain,count);
+                speex_forced_innovation_n_c(exc+j,in,shape,scale,coefficient,count);
 #endif
                 shape+=count;j+=count;left-=count;
             }

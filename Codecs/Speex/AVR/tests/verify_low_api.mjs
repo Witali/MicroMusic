@@ -47,7 +47,11 @@ const zeroNames=[...symbols.keys()].filter(n=>n==='speex_nb8_zero_frame'||n.star
 if(countForcedZero)assert.equal(zeroNames.length,1,'NB8 zero-frame producer');
 const zeroFrameEntry=countForcedZero?address(zeroNames[0]):-1;
 const zeroVectorEntry=countForcedZero?address('speex_avr_zero_innovation_n'):-1;
-const adaptiveEntry=countForcedZero?address('speex_avr_long_innovation_n'):-1;
+const countForcedOne=process.argv.includes('--count-forced-one');
+const oneEntry=countForcedOne?address('speex_avr_forced_innovation_n'):-1;
+const adaptiveEntry=countForcedZero||countForcedOne?address('speex_avr_long_innovation_n'):-1;
+let oneActive=null,oneCalls=0,oneSamples=0,oneMuls=0,oneFrames=0,adaptiveCalls=0,expectedCoefficient=0;
+const oneCounts=Array(11).fill(0);
 let zeroActive=null,zeroFrameCalls=0,zeroVectorCalls=0,zeroFrameMuls=0,zeroMinMuls=Infinity,zeroMaxMuls=0;
 const previousRead=cpu.readData.bind(cpu);
 cpu.readData=a=>{if(zeroActive)zeroActive.reads.add(a);return previousRead(a);};
@@ -71,13 +75,24 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  if(cpu.pc*2===zeroFrameEntry){assert.equal(zeroActive,null);zeroActive={sp:cpu.SP,blocks:[],reads:new Set(),muls:0};}
  if(zeroActive){
   assert.notEqual(cpu.pc*2,adaptiveEntry,'No adaptive kernel in a zero-coefficient frame');
+  assert.notEqual(cpu.pc*2,oneEntry,'No one-tap adaptive kernel in a zero-coefficient frame');
   if((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300)++zeroActive.muls;
  }
  if(cpu.pc*2===zeroVectorEntry&&cpu.data[16]===20){
   assert.ok(zeroActive,'Twenty-word zero rows belong to the zero-frame producer');
   zeroActive.blocks.push(cpu.dataView.getUint16(24,true));++zeroVectorCalls;
  }
+ if(cpu.pc*2===adaptiveEntry)++adaptiveCalls;
+ if(cpu.pc*2===oneEntry){
+  assert.equal(oneActive,null);assert.equal(cpu.data[14],expectedCoefficient);
+  const n=cpu.data[12];assert.ok(n>=1&&n<=10);oneActive={sp:cpu.SP,n,muls:0};
+ }
+ if(oneActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++oneActive.muls;
  avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
+ if(oneActive&&opcode===0x9508&&cpu.SP===oneActive.sp+2){
+  assert.equal(oneActive.muls,6*oneActive.n);assert.equal(cpu.data[1],0);
+  ++oneCalls;++oneCounts[oneActive.n];oneSamples+=oneActive.n;oneMuls+=oneActive.muls;oneActive=null;
+ }
  if(meanActive&&opcode===0x9508&&cpu.SP===meanActive.sp+2){
   assert.equal(cpu.dataView.getInt16(24,true),meanActive.expected,'Mean in real mixed decoder');
   assert.equal(meanActive.muls,4);assert.equal(cpu.data[1],0);
@@ -116,6 +131,8 @@ function decode(payload,width,invalidFlags=0){
  const callsBefore=meanCalls,valuesBefore=valuesCalls,foldBefore=foldCalls,vocoderBefore=vocoderCalls,prepareBefore=prepareCalls;
  const lowBefore={2:lowStats[2].calls,8:lowStats[8].calls};
  const zeroBefore=zeroFrameCalls,vectorsBefore=zeroVectorCalls;
+ const oneBefore=oneSamples,oneMulsBefore=oneMuls,adaptiveBefore=adaptiveCalls;
+ expectedCoefficient=Math.min(63,(2185*((((payload[3]&3)<<2)|(payload[4]>>6))<<6)+16384)>>15);
  cpu.data.set(payload,packet);cpu.data[bytes]=width;cpu.data[flags]=invalidFlags;
  output=[];cpu.data[status]=1;cpu.data[command]=1;until(()=>cpu.data[status]===2);
  assert.ok(Buffer.from(cpu.data.subarray(packet,packet+32)).equals(payload),'Read-only packet');
@@ -131,6 +148,13 @@ function decode(payload,width,invalidFlags=0){
   const eligible=code===0&&(payload[0]>>3)===8&&(((payload[3]&3)<<2)|(payload[4]>>6))===0;
   assert.equal(zeroFrameCalls-zeroBefore,eligible?1:0,'Fast path only for valid coefficient0 NB8/WB5.75');
   assert.equal(zeroVectorCalls-vectorsBefore,eligible?8:0,'Eight twenty-sample zero-adaptive rows');
+ }
+ if(countForcedOne){
+  const eligible=code===0&&(payload[0]>>3)===8&&expectedCoefficient!==0;
+  assert.equal(oneSamples-oneBefore,eligible?160:0,'One-tap samples only for valid nonzero-coefficient NB8');
+  assert.equal(oneMuls-oneMulsBefore,eligible?960:0,'Six MULs per one-tap sample');
+  if((payload[0]>>3)===8)assert.equal(adaptiveCalls,adaptiveBefore,'No three-tap kernel for NB8');
+  if(eligible)++oneFrames;
  }
  return {code,pcm:meta.wideband?Buffer.concat(output):Buffer.from(cpu.data.subarray(pcm,pcm+320)),callbacks:output.length};
 }
@@ -165,4 +189,6 @@ if(countLowFusion)report.lowFusionArithmetic={byMode:lowStats,rejectedCallsAndOt
 if(countForcedZero)report.forcedZeroArithmetic={frames:zeroFrameCalls,twentyWordCalls:zeroVectorCalls,hardwareMultiplies:zeroFrameMuls,
  minMultipliesPerFrame:zeroMinMuls,maxMultipliesPerFrame:zeroMaxMuls,noAdaptiveKernel:true,noExcitationHistoryOrOutputReads:true,
  invalidAndNonzeroCoefficientCallsDoNotExecute:true};
+if(countForcedOne)report.forcedOneArithmetic={frames:oneFrames,calls:oneCalls,samples:oneSamples,hardwareMultiplies:oneMuls,
+ callsByCount:oneCounts,sixMulsPerSample:true,noThreeTapKernelForNb8:true,invalidOtherModeAndZeroCoefficientCallsDoNotExecute:true};
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS mixed API',JSON.stringify(report));

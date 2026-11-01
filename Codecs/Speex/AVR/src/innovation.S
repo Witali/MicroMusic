@@ -18,6 +18,64 @@
  * GCC ISRs preserve SREG.T. All callee-saved registers and r1 restored;
  * scale registers remain read-only and interrupts remain enabled. */
 #include "innovation_core.inc"
+#if defined(SPEEX_ENABLE_NB8) && SPEEX_ENABLE_NB8
+/* NB8 has only the centre tap. Share the exact transform source, not the
+ * three products or rolling history window. out/history/shape/scale/c/count:
+ * r25:r24/r23:r22/r21:r20/r19:r16/r14/r12. Count 0..10, c 0..63.
+ * Preserve GNU callee-saved registers and r1; interrupts stay enabled. */
+.section .text.speex_avr_forced_innovation_n,"ax",@progbits
+.global speex_avr_forced_innovation_n
+.type speex_avr_forced_innovation_n,@function
+speex_avr_forced_innovation_n:
+    tst r12
+    brne .Lforced_nonempty
+    ret
+.Lforced_nonempty:
+    push r2
+    push r3
+    push r4
+    push r5
+    push r8
+    push r10
+    push r13
+    push r14
+    push r15
+    push r28
+    push r29
+    movw r28,r24
+    movw r26,r22
+    movw r30,r20
+    mov r10,r14
+    mov r3,r12
+    clr r2
+    ldi r20,32
+    mov r8,r20
+.Lforced_sample:
+    ld r4,X+
+    ld r5,X+
+    long_product r4,r5,r10
+    mov r13,r23
+    movw r14,r24
+    speex_nb3_innovation_transform
+    dec r3
+    breq .Lforced_done
+    rjmp .Lforced_sample
+.Lforced_done:
+    clr r1
+    pop r29
+    pop r28
+    pop r15
+    pop r14
+    pop r13
+    pop r10
+    pop r8
+    pop r5
+    pop r4
+    pop r3
+    pop r2
+    ret
+.size speex_avr_forced_innovation_n,.-speex_avr_forced_innovation_n
+#endif
 .text
 .global speex_avr_innovation10
 .type speex_avr_innovation10, @function
