@@ -101,6 +101,38 @@ perceptual, and its separate evaluation count is reported.
 
 ## CLI and verification
 
+The optional `rate_search=True` mode adds a direct previous-spectrum repeat
+proposal before scalar screening can discard it. One spectral finalist slot
+is reserved for that proposal. Anchor selection also considers its exact
+coding-bit change across both the current and following spectrum. Every
+accepted size/rank still uses the complete serialized file, including extras
+markers and padding.
+
+This mode uses full-output spectral screening, even if `screening="local"`
+was requested, so full-output distortion and the per-bit price share a scope.
+The report preserves `requested_screening` and records the actual `screening`.
+Excitation refit receives the capacity of the actual spectrum at the complete
+cap, making released spectral bits available to new pulses. Each spectral
+refit can then produce up to three cross-rate allocation children through
+[the shared allocator](SPEECH_RATE_FRONTIER.md). Its render calls consume the
+existing global `allocation_evaluations` and full-synthesis limits; one branch
+uses at most 16 allocation renders. Completed points are retained before a
+subsequent CPU/evaluation interruption, with their spectral/refit provenance.
+
+This is an explicit experiment; `rate_search=False` retains the prior search.
+New raw/frontier alternatives require fresh whole-record PCM/PWM, STOI where
+available, clipping, pitch-coverage and voice/noise admission. Local SSE/STOI
+selection alone does not establish pitch safety or audible benefit. No
+decoder, v5 syntax, native arithmetic backend or firmware source is changed.
+Actual complete firmware costs must still be measured for admitted streams.
+
+```text
+python tools/refine_speech_trajectory.py reference.wav input.l4hy output --max-bytes 1200 --rate-search --rate-lambda 1000 --allocation-evaluations 256
+```
+
+The price in that example is illustrative, not a recommended universal value.
+Corpus protocols must fix prices and search settings before looking at outcomes.
+
 ```text
 python tools/refine_speech_trajectory.py reference.wav input.l4hy output --max-bytes 1200 --beam-width 3 --window-frames 2 --evaluations 512
 ```
