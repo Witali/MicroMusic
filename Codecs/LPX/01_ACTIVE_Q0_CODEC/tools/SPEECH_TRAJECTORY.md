@@ -133,6 +133,36 @@ python tools/refine_speech_trajectory.py reference.wav input.l4hy output --max-b
 The price in that example is illustrative, not a recommended universal value.
 Corpus protocols must fix prices and search settings before looking at outcomes.
 
+`anchor_order="priority"` (CLI `--anchor-order priority`) is a separate opt-in
+experiment. The default `time` retains ascending visitation. Both nominate exactly
+the same baseline-nominated set; nomination is frozen once before searching.
+Priority uses descending baseline 320-sample block PCM SSE with frame-index
+ties. In rate-search mode, a second queue ranks positive exact adjacent-spectrum
+repeat-bit savings. Each alternating turn takes the next unvisited rate frame,
+then the next unvisited error frame. Duplicate entries are skipped without
+consuming the queue's turn; for rate `[3,1]` and error `[3,2,1,0]` the result is
+`[3,2,1,0]`. Remaining error frames follow after the rate queue is exhausted.
+These are proposal priorities; whole serialized output still determines rank
+and admission. Planning and prefix-state replay remain paid inside the same
+cooperative CPU quota. Planning is one atomic setup operation, followed by the
+existing guarded quota check. A backward visit rebuilds state from reset.
+
+Reports add `anchor_order`, ordered `planned_anchors`, sorted `nominated_anchors`,
+`started_anchors` and `completed_anchors` in both modes. An anchor starts after
+the outer quota check and before prefix replay, so an interrupted replay may
+start an anchor without creating a window checkpoint. Completion requires the
+entire window. `refit_calls_started/completed` count actual `adapt_excitation`
+invocations/returns; `excitation_trials` still counts its internal work.
+`refit_candidates_completed` and `joint_candidates_completed` count fully
+remembered candidate returns, including cache hits, not unique streams or
+renders. `repeat_spectrum_opportunities` counts eligible distinct-spectrum
+attempts per parent; `repeat_spectrum_proposals` counts completed candidates.
+`rate_allocation_calls_started` excludes calls with no evaluation room, while
+`completed_rate_allocation_calls` requires allocator return. Published
+`rate_allocation_points` survive an interrupted call. These additive counters
+also appear as zero in modes that do not use their corresponding operation.
+Default temporal bytes and prior numerical report values remain unchanged.
+
 ```text
 python tools/refine_speech_trajectory.py reference.wav input.l4hy output --max-bytes 1200 --beam-width 3 --window-frames 2 --evaluations 512
 ```
