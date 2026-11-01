@@ -48,6 +48,7 @@ int backwards(void){service_clocks(board.half+1);return device_fault();}
 void exhausted_half(void){board.half=UINT64_MAX;deadline_invalidate(DEADLINE_ELAPSE);}
 int write(int io,int value){return device_write(io,value,255);}
 int read(int io){return device_read(io);}
+int pin_uv(unsigned pin){return board.analog.comparator.pin_uv[pin];}
 int pins(int mask,int value){return board.physical?device_inject_digital_ps(board.base,mask,value):device_inject_digital(board.base,mask,value);}
 int queued(uint64_t after,int mask,int value){return board.physical?device_inject_digital_ps(board.base+after,mask,value):device_inject_digital(board.base+after,mask,value);}
 int vcc(uint64_t after,int uv){return device_inject_vcc_ps(board.base+after,uv);}
@@ -71,6 +72,17 @@ uintptr_t flash_view(void){return (uintptr_t)flash;}
 uintptr_t eeprom_view(void){return (uintptr_t)eeprom;}
 `,{fixedMemoryPages:2}));
 const make=(mode,supply=0)=>builds.map(create=>{const c=create();assert.equal(c.initialize(mode,supply),1);return c;});
+for(const kind of ['bus','source'])test(`CLKI ${kind} conflict cannot publish an uncertain ADC pad voltage with either GPIO policy`,()=>{
+  const cs=make(2);
+  for(const c of cs){
+    c.write(IO.PORTB,MASK.PORTB3);c.write(IO.DDRB,MASK.DDB3);assert.equal(c.fault(),0);
+    const before=c.pin_uv(3);assert.ok(before>0);assert.equal(c.half(),0n);
+    if(kind==='bus')c.write(IO.PORTB,0);else assert.equal(c.halves(1),0);
+    assert.equal(c.fault(),18);assert.equal(c.detail(),1);assert.equal(c.pin_uv(3),before,'uncertain preferred GPIO level must not reach analog_input');
+    assert.equal(c.half(),0n);assert.equal(c.now(),kind==='bus'?0n:500000n);
+  }
+  same(cs);
+});
 function same(cs){
   for(const c of cs)assert.equal(c.coherent(),1,'a certificate must imply the full GPIO predicate');
   const a=cs.map(c=>({board:new Uint8Array(c.memory.buffer,c.canonical(),c.size()).slice(),

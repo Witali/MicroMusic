@@ -1,0 +1,50 @@
+{
+  "schema": "micromusic-clki-pad-test-index-v1",
+  "complete": true,
+  "checks": {
+    "focused": {
+      "path": "build/clki-pad-focused-final-20261101.tap",
+      "sha256": "89b29486b683e0018cee84e49c96f4ba34e32b6a83e9bb3a4199004df37a610b",
+      "tests": 137,
+      "pass": 137,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "full": {
+      "path": "build/clki-pad-full-final-20261101.tap",
+      "sha256": "a3a6a0f6710e315f19f805724a458c06bed11ed47672a3872c1bf7cfb7d749fd",
+      "tests": 2753,
+      "pass": 2753,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  },
+  "compilerIdentity": "b14122d2209c63be57cc8c369c58ab3189f3625a2ee957f607210f8027b2360b",
+  "artifacts": {
+    "web-player/reports/clki-pad-20261101.json": {
+      "bytes": 14210,
+      "sha256": "46a978b44ceb056eb431ac772e5040c0f240519471c0cb0b7c7b2e5aebf507a7"
+    },
+    "web-player/reports/clki-pad-timing-20261101.json": {
+      "bytes": 29981,
+      "sha256": "de3a6d055811e1787fe1748f8884f7e25849922c1f51663924c60a47c7b5c29b"
+    }
+  },
+  "rebuild": {
+    "path": "build/clki-pad-rebuild-final-20261101/attiny13a.wasm",
+    "bytes": 124738,
+    "sha256": "76e9f38ea2b3d269f17cc0743d7847741f762d7ca19027f0092bbcb8a5176429",
+    "byteIdentical": true
+  },
+  "sourceSha256": {
+    "web-player/tests/attiny13a-clki-pad.test.mjs": "9adf2b351ef006e6518a78af7e854433e89d84fd6fe14b012ab4d4ec7f423766",
+    "web-player/tests/device-gpio-idle.test.mjs": "ee85484a2419012ba0e1a524eb787d0001f78f56f1056848dbb4c603dcf2d12a",
+    "web-player/scripts/verify-clki-pad.mjs": "d345db680d2cc89c876e2563f061785c3dbd11da2caa688bc4f927b4e1f15738",
+    "web-player/tests/fixtures/attiny13a-system-firmware.mjs": "1d75e9a7186337b3de601f29abe5b23450e0cd955926e88257b9049c016e366e"
+  },
+  "note": "New pad contract passes 28/28 against corrected native, 2/28 against the pinned historical artifact. Full and focused suites pass without skips. Same-level ideal drivers are defined; opposed-driver voltage, silicon phase and debugWIRE startup remain unverified. No performance claim."
+}

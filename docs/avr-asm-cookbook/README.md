@@ -2709,3 +2709,10 @@ active-IRQ validation without assuming a general execution-speed gain.
 proof, original-cycle/IRQ/continuation constraints and optional compiler policy.
 Two measured music workloads improve; HQ4 has no demonstrated benefit, and
 verification/default resumable execution retains individual memory bus phases.
+
+## ATtiny13A: resolve CLKI pad drive before clock delivery
+
+[Shared clock-pad resolution](clki-pad-before-clock.md) preserves documented
+DDRB3/PORTB3 control, diagnoses opposed strong drivers before a consumer phase,
+and releases GPIO on RESET before a tied source edge. This improves hardware
+behavior without adding a programming/debug transport or claiming a speedup.

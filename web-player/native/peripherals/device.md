@@ -368,7 +368,11 @@ participates in the device minimum and cache invalidation. Prequalified digital
 PB5 reset remains an independent source. The receiver survives CPU reset and
 holds the aggregate until qualified release; SUT starts after the final source
 releases. With a supply observer, assertion resets peripherals before CPU
-acknowledgement. Fault17 surfaces the receiver's sticky diagnostic bits.
+acknowledgement. CLKI also preapplies recognized external/analog/WDT peripheral
+reset before resolving a tied source edge, even without a supply observer;
+this releases GPIO drivers and prevents a false clock-pad conflict. The CPU
+acknowledges the already-applied reset once. Fault17 surfaces the receiver's
+sticky diagnostic bits.
 
 `device_reset_input_enabled`, `device_reset_input_asserted` and
 `device_reset_input_deadline_ps` expose receiver diagnostics. It does not add an

@@ -69,9 +69,11 @@ the divider without fabricating an output transition. See
 [the divider contract](clki_clock.md) for the precise rules.
 
 The source drives the same PB3 pad observed by GPIO, ADC3 and pin capture.
-Separate digital/analog PB3 injection is rejected; driving DDB3 as output
-reports an explicit CLKI fault. The fixture does not infer an undocumented DDR
-override from the alternate-function name. Clock reception does not depend on
+Separate digital/analog PB3 injection is rejected. Table10-4 gives PB3 no data
+direction or port-value override: DDRB3/PORTB3 still control its output driver.
+A matching strong output is admitted. An opposed strong driver reports an
+explicit CLKI fault before the uncertain pad clocks any consumer; no analog
+voltage is inferred. Clock reception does not depend on
 the synchronized PINB value or its DIDR read clamp.
 
 Optional `datasheet-ideal-v1` validation assumes zero-slew logical transitions.

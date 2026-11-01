@@ -974,7 +974,7 @@ void device_reset(uint8_t sources_mask) {
  deadline_invalidate(DEADLINE_RESET);
  if(!board.initialized) return;
  board.reset_requested=0;
- if(board.power_enabled&&board.reset_preapplied) {board.reset_preapplied=0;mirror();return;}
+ if(board.reset_preapplied) {board.reset_preapplied=0;mirror();return;}
  reset_state(sources_mask);
  if(board.power_enabled&&!board.reset_held) reset_startup(sources_mask);
 }
@@ -1042,8 +1042,13 @@ uint32_t device_write(uint8_t io, uint8_t value, uint8_t mask) {
   clock_domains();
  } else if (system_gpio_write_masked(&board.gpio,io,value,mask,board.half)) {
   board.gpio_settled=0;
-  if(board.clki_enabled&&(board.gpio.ddrb&8))fail(DEVICE_FAULT_CLKI,1);
-  capture_pins(); pin_voltages();
+  /* Table10-4 leaves PB3's direction under DDRB. A same-level strong
+   * output is defined; opposed drivers leave the clock-pad voltage unknown. */
+  capture_pins();
+  if(board.clki_enabled&&(board.gpio.pins.contention&AT13_MASK_PINB3)){
+   fail(DEVICE_FAULT_CLKI,1);mirror();return 0;
+  }
+  pin_voltages();
  } else if (nvm_owns_io(io)) {
   int program=io==NVM_EECR && (value&mask&NVM_EEPE) &&
    (board.nvm.eecr&NVM_EEMPE) && !board.nvm.eeprom_busy && !board.nvm.flash_busy;

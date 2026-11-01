@@ -136,9 +136,16 @@ between transitions; this is a conservative fixture, not analog threshold
 reconstruction. No universal receiver delay or analog oscillator settling curve
 is invented. `none` leaves the explicitly described digital waveform unqualified.
 
-CLKI owns the PB3 pad; separate GPIO/analog source injections on PB3 are rejected.
-An attempted DDRB3 output faults explicitly because contention/alternate mux
-behavior has not been measured. See `clki_validation.md` for signal assumptions,
+CLKI owns the external PB3 source; separate GPIO/analog source injections on
+PB3 are rejected. Tables10-2/10-4 leave DDRB3/PORTB3 in control of the output
+driver. A matching output level is supported, including held clocks. A strong
+output opposing the source faults at that exact bus/source instant, before
+ADC pad voltages, source/startup counters or derived clock phases are delivered.
+The captured contention snapshot is diagnostic, not an inferred analog voltage.
+Recognized external/analog/WDT reset preapplies peripheral reset before a tied
+CLKI edge, releasing the output driver; the CPU bridge acknowledges it once.
+See the [pad contract and evidence](../../../reports/clki-pad-20261101.md),
+`clki_validation.md` for signal assumptions,
 `interfaces.md` for unresolved physical/debug boundaries, and `cpu_phase.md` for
 the stable continuation ABI. Package v5 preserves and validates these selections.
 

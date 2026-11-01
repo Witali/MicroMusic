@@ -25,8 +25,10 @@ queued transitions rather than a configured average frequency. WDT, supply
 events and NVM wall latency continue while CLKI is held high or low. CPU/IRQ
 effects wait for their remaining delivered phases. Startup combines source CK
 with an independent watchdog timeout. PB3 is the same pad observed by GPIO,
-ADC3 and pin capture; separate PB3 injection and output contention are rejected
-in this fixture rather than inventing a DDRB3 override.
+ADC3 and pin capture. Separate PB3 source injection is rejected. Tables10-2/10-4
+leave the output driver under DDRB3/PORTB3: matching strong outputs are supported,
+while opposed drivers fault before the uncertain pad supplies a derived phase.
+See the [pad contract](../../../reports/clki-pad-20261101.md).
 
 Arbitrary batches and finite exact periodic descriptors feed a bounded native
 edge queue. Periodic descriptors refill it lazily in C, with no per-edge JS

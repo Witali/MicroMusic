@@ -33,6 +33,20 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Shared CLKI pad correction, 2026-11-01: Tables10-2/10-4 retain DDRB3/PORTB3
+driver control. Matching strong outputs now work during held clocks; opposed
+drivers fault at the source/bus instant before ADC or derived CPU phases.
+CLKI reset preapplication releases GPIO before tied external/analog/WDT reset
+edges and is acknowledged once. All 137 focused and 2753/2753 default checks pass,
+including 28 new
+pad/CPU/Timer0/ADC3/package scenarios and two paired GPIO-policy checks proving
+that an uncertain bus/source voltage is not published to analog consumers.
+The same source passes only 2/28 against
+the previous native runtime. ABI/imports/memory are unchanged. The extended
+44-scenario timing replay still has maximum software error 1 ps. DebugWIRE's
+complete startup/sleep contract and physical qualification remain open; the
+count stays 24/31. See the [evidence](../reports/clki-pad-20261101.md).
+
 Fractional CLKPR correction, 2026-11-01: committing a new internal divider now
 retains the source numerator progress after the rounded edge. The historical
 model lost it on every write, drifting 14.223 ns after 64000 switches at 9 MHz.

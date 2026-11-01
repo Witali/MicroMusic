@@ -158,6 +158,11 @@ static void clki_service(uint64_t previous_half) {
  board.clki_edge=0;
  comparator_wall(previous_half);
  clki_reset_inputs();service_async();wake();
+ /* Ports reset without waiting for CLKI. Release their output drivers before
+  * a tied source edge is resolved; the CPU bridge acknowledges this once. */
+ if(board.reset_requested&&!board.reset_preapplied){
+  reset_state(board.reset_requested);board.reset_preapplied=1;
+ }
  int held=board.reset_held||reset_starting()||board.reset_requested;
  if(board.clki_validation_enabled){
   if(board.vcc_uv<board.clki_min_edge_vcc)board.clki_min_edge_vcc=board.vcc_uv;
@@ -172,7 +177,11 @@ static void clki_service(uint64_t previous_half) {
   if(attiny13a_clki_consume(&board.clki_input,NULL)!=1){fail(DEVICE_FAULT_CLKI,3);return;}
   clki_refill();
   /* PB3 is the same physical pad seen by GPIO, ADC3 and pin capture. */
-  gpio_external();capture_pins();pin_voltages();
+  gpio_external();capture_pins();
+  /* Preserve the diagnostic pad snapshot, then stop before ADC voltages,
+   * source/startup counters or a derived clock consume an uncertain edge. */
+  if(board.gpio.pins.contention&AT13_MASK_PINB3){fail(DEVICE_FAULT_CLKI,1);return;}
+  pin_voltages();
   if(board.clki_validation_enabled){
    /* Qualify completed spans against their worst observed supply tier. This
     * is conservative for a changing VCC, not analog threshold reconstruction. */
