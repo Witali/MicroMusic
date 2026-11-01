@@ -7,8 +7,8 @@
   <title>MicroMusic / ATtiny13A — плеер прошивок</title>
   <meta name="description" content="Музыкальные прошивки ATtiny13A и ATtiny88: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261101-lpx-preview">
-  <script type="module" src="./app.js?v=20261101-lpx-preview"></script>
+  <link rel="stylesheet" href="./styles.css?v=20261101-lpx-speech">
+  <script type="module" src="./app.js?v=20261101-lpx-speech"></script>
 </head>
 <body>
   <header class="site-header">
@@ -21,6 +21,7 @@
       <div><p class="eyebrow">ATtiny13A / МУЗЫКА ИЗ МАШИННОГО КОДА</p><h1>Слушайте прошивку<span>.</span></h1><p class="subtitle">Моно и стерео. Несколько голосов. Один крошечный чип.</p></div>
       <div class="machine-spec"><strong><b id="machine-memory">1</b> <span>КБ FLASH</span></strong><span id="machine-details">64 Б SRAM · 64 Б EEPROM · 9,6 МГц</span></div>
     </div>
+    <a id="lpx-preview-jump" class="lpx-preview-jump" href="#lpx-previews" hidden>LPX: исходник и два качества ↓</a>
     <div id="device-control" class="device-control"><label for="device-select">Микроконтроллер</label><select id="device-select"><option value="attiny13a">ATtiny13A</option><option value="attiny88">ATtiny88</option></select><span>Та же мелодия · прошивка для выбранного чипа</span></div>
     <div id="board-control" class="device-control board-control" hidden><label for="board-select">Плата и частота</label><select id="board-select"><option id="board-isp-option" value="bare-8mhz">ATtiny88 · 8 МГц · ISP</option><option value="mh-et-live-16mhz">MH-ET LIVE Tiny88 · 16 МГц · Micronucleus</option></select><span id="board-note">Внутренний RC · загрузка Flash и EEPROM через ISP</span></div>
     <div id="error" role="alert" class="error" hidden></div>
@@ -67,10 +68,10 @@
       </aside>
     </div>
     <section id="lpx-previews" class="panel lpx-preview-panel" aria-labelledby="lpx-preview-heading" hidden>
-      <div class="panel-heading"><span class="eyebrow">LPX / СРАВНЕНИЕ ЗВУКА</span><span class="technical-note">НАТИВНОЕ PWM8-ПРЕВЬЮ</span></div>
+      <div class="panel-heading"><span class="eyebrow">LPX / СРАВНЕНИЕ РЕЧИ</span><span class="technical-note">НАТИВНОЕ PWM8-ПРЕВЬЮ</span></div>
       <h2 id="lpx-preview-heading">Исходник и два качества LPX</h2>
       <p id="lpx-preview-title" class="lpx-preview-title"></p>
-      <p id="lpx-preview-note" class="lpx-preview-note">WAV-превью получены нативным декодером. Они не подтверждают работу LPX-прошивки на ATtiny88.</p>
+      <p id="lpx-preview-note" class="lpx-preview-note">Планируемый перенос: MH-ET LIVE Tiny88 · 16 МГц. Сейчас доступны точные PWM8-превью нативного декодера; работа LPX-прошивки на ATtiny88 ещё не подтверждена.</p>
       <p id="lpx-preview-status" class="lpx-preview-note" role="status">Загрузка звуковых примеров…</p>
       <div id="lpx-preview-cards" class="lpx-preview-grid" hidden>
         <article class="lpx-preview-card">

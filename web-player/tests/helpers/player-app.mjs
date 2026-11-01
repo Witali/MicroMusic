@@ -12,8 +12,9 @@ export function deferred(){
 
 // Execute the actual app handlers with a small DOM/media model. This tests
 // transport ordering and cancellation; it does not claim browser audio output.
-export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware,device,board,catalogs={},fetchHook}={}){
+export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware,device,board,hash='',catalogs={},fetchHook}={}){
   const location=new URL(`https://example.test${prefix}web-player/`);
+  location.hash=hash;
   if(speech)location.searchParams.set('collection','hq4');
   if(firmware)location.searchParams.set('firmware',firmware);
   if(device)location.searchParams.set('device',device);
@@ -25,7 +26,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
       this.hidden=/\bhidden\b/.test(attributes);this.disabled=/\bdisabled\b/.test(attributes);
       this.name=attributes.match(/\bname="([^"]*)"/)?.[1]??'';
       this.checked=/\bchecked\b/.test(attributes);this.value=attributes.match(/\bvalue="([^"]*)"/)?.[1]??'';
-      this.attributes=new Map();this.listeners=new Map();this.clientWidth=this.clientHeight=0;
+      this.attributes=new Map();this.listeners=new Map();this.scrolls=[];this.clientWidth=this.clientHeight=0;
     }
     get checked(){return this._checked;}
     set checked(value){
@@ -38,6 +39,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     append(...children){this.children.push(...children);}
     replaceChildren(...children){this.children=children;}
     getContext(){return {};}
+    scrollIntoView(options){this.scrolls.push(options);}
     addEventListener(type,listener){const list=this.listeners.get(type)??[];list.push(listener);this.listeners.set(type,list);}
     emit(type){for(const listener of this.listeners.get(type)??[])listener({type,target:this});}
   }
@@ -117,5 +119,6 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     node.port.onmessage({data:{type:'position',session:connection.session,frames,clockFrames:frames,underruns:0,...extra}});
   }
   return {get,body:document.body,original:get('original-audio'),workers,contexts,worklets,workletSetup,catalog,location,selectors,position,radios,fetches,
-    keydown:event=>documentEvents.get('keydown')?.(event),pagehide:()=>windowEvents.get('pagehide')?.()};
+    keydown:event=>documentEvents.get('keydown')?.(event),pagehide:()=>windowEvents.get('pagehide')?.(),
+    changeHash:hash=>{location.hash=hash;windowEvents.get('hashchange')?.();}};
 }

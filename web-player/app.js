@@ -6,7 +6,7 @@ const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart
 const canvas = $('wave');
 const originalAudio = $('original-audio');
 const lpxAudios=['reference','compact','quality'].map(id=>$('lpx-'+id+'-audio'));
-let lpxPreviewLoad, lpxPreviewReady=false;
+let lpxPreviewReady=false, lpxAnchorScrolled=false;
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
 let audio, output, scopes=[new Float32Array(512)], headroom=0;
 let signalPoint='output', signalScopes={input:scopes,output:scopes};
@@ -48,9 +48,9 @@ function deviceUI(device) {
   const mhz=tiny88?tiny88Boards[currentBoard].cpuHz/1000000:9.6;
   document.body.dataset.device=device;
   document.body.dataset.board=tiny88?currentBoard:'';
-  $('lpx-previews').hidden=!tiny88||speechCollection;
-  if(!tiny88||speechCollection)pauseLpxPreviews();
-  else if(!lpxPreviewReady&&!lpxPreviewLoad)lpxPreviewLoad=loadLpxPreviews().finally(()=>{lpxPreviewLoad=null;});
+  $('lpx-previews').hidden=!speechCollection;
+  $('lpx-preview-jump').hidden=!speechCollection;
+  if(!speechCollection)pauseLpxPreviews();
   $('device-select').value=device;
   $('device-control').hidden=speechCollection;
   $('board-control').hidden=!tiny88||speechCollection;
@@ -92,6 +92,7 @@ function deviceUI(device) {
   }
 }
 async function switchDevice(device,board=currentBoard) {
+  if(speechCollection)return;
   const request=++deviceRequest;
   device=device==='attiny88'&&!speechCollection?'attiny88':'attiny13a';
   board=boardId(board);
@@ -130,6 +131,11 @@ function transport() {
 function pauseLpxPreviews(except) {
   for(const media of lpxAudios)if(media!==except)media.pause();
 }
+function scrollToLpxPreviews() {
+  if(location.hash!=='#lpx-previews'){lpxAnchorScrolled=false;return;}
+  if(!speechCollection||!lpxPreviewReady||lpxAnchorScrolled)return;
+  $('lpx-previews').scrollIntoView({block:'start'});lpxAnchorScrolled=true;
+}
 function lpxAsset(path,extension) {
   const base=new URL('./',import.meta.url),url=new URL(path,base);
   if(url.origin!==base.origin||!url.pathname.startsWith(base.pathname+'audio/lpx-bread/')||!url.pathname.endsWith(extension))
@@ -167,7 +173,7 @@ async function loadLpxPreviews() {
       const link=$('lpx-'+item.id+'-download');link.href=item.stream;link.download=item.id+'.lpx';
     }
     for(const media of lpxAudios)media.volume=+$('volume').value;
-    lpxPreviewReady=true;$('lpx-preview-cards').hidden=false;status.hidden=true;
+    lpxPreviewReady=true;$('lpx-preview-cards').hidden=false;status.hidden=true;scrollToLpxPreviews();
   } catch {
     status.textContent='Звуковые примеры LPX временно недоступны.';
     $('lpx-preview-cards').hidden=true;
@@ -175,7 +181,7 @@ async function loadLpxPreviews() {
 }
 for(const media of lpxAudios) {
   const activate=()=>{
-    if(currentDevice!=='attiny88'||speechCollection||!lpxPreviewReady){media.pause();return;}
+    if(!speechCollection||!lpxPreviewReady){media.pause();return;}
     pause();stopOriginal();pauseLpxPreviews(media);transport();
   };
   media.addEventListener('play',activate);media.addEventListener('playing',activate);
@@ -446,6 +452,7 @@ $('package-file').onchange=async event=>{
 };
 document.addEventListener('keydown',event=>{ if (event.code==='Space' && !event.repeat && !/^(INPUT|SELECT|TEXTAREA|BUTTON|A|AUDIO)$/.test(event.target.tagName)) { event.preventDefault(); toggle(); } });
 window.addEventListener('pagehide',()=>{ pauseLpxPreviews();originalAudio.pause(); runtime?.terminate(); audio?.close(); });
+window.addEventListener('hashchange',scrollToLpxPreviews);
 try {
   const speech=speechCollection;
   deviceUI('attiny13a');
@@ -491,4 +498,5 @@ try {
   load(catalog.entries.find(e=>e.id===id)||catalog.entries.find(e=>e.id===catalog.defaultId));
   }
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
+if(speechCollection)loadLpxPreviews();
 draw();
