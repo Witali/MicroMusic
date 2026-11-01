@@ -68,3 +68,44 @@ catalogs, restricts changed functions to CLR-containing instructions/blocks/
 regions and exercises 4096 frames at 48 kHz for each of three firmwares in both
 policies. Source/catalog hashes, module sizes and output hashes are retained
 without machine-specific paths or raw profiling data.
+
+## Self-comparison and subtraction, 2026-11-01
+
+The same constant-result path now handles `CP Rd,Rd` and `SUB Rd,Rd` for the
+same targets/ABI. [DS40002198A sections 5.45 and 5.119](https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf)
+give subtraction without incoming carry and one AVRe cycle. Equal operands
+produce zero, with no borrow or signed overflow. The instructions differ from
+CLR in the flags they write:
+
+| Instruction | GPR effect | Z | H/S/V/N/C | I/T |
+| --- | --- | --- | --- | --- |
+| `EOR Rd,Rd` / CLR | Write zero | 1 | S/V/N=0; H/C preserved | Preserved |
+| `CP Rd,Rd` | Preserve Rd | 1 | All zero | Preserved |
+| `SUB Rd,Rd` | Write zero | 1 | All zero | Preserved |
+
+Use the original per-instruction live write mask: `0x1e` for CLR, `0x3f` for
+CP/SUB before liveness elimination. The existing constant SREG expression
+works for both. CP emits no GPR load/store; SUB emits a zero store through the
+same register-local/shared-memory abstraction. Do not apply this identity to
+SBC/CPC, which consume carry and chained Z. Distinct decoded operands keep
+their original subtraction path. No clock, PC, flag-retirement or IRQ boundary
+is removed, even when CP's complete flag result is dead. Region-entry loads
+remain conservative; this does not claim elimination of every cached load.
+
+Against `81dc6d8f`, the 48 catalog/policy modules have four reductions (Alicia,
+130–131 bytes), with 44 byte-identical modules. All unaffected function bodies
+and manifests remain equal. Six compatible/physical audio comparisons with
+active IRQs preserve complete state, PCM and retained pin events. The
+[report](../../web-player/reports/self-subtract-lowering-20261101.md) records
+focused/full checks and the unchanged native runtime. Speed is unmeasured.
+
+```text
+node --test web-player/tests/avr-self-subtract-lowering.test.mjs
+node web-player/scripts/verify-clr-lowering.mjs --family self-subtract --baseline 81dc6d8f --output build/self-subtract-lowering-replay.json
+```
+
+The verifier's explicit family selects the affected-instruction predicate and
+evidence label; the existing artifact/manifest/parity audit is shared with CLR.
+Each historical experiment requires its recorded compiler checkpoint. Running
+the older CLR-only command against later compiler changes correctly rejects
+unrelated changed functions; use the original experiment commit for that replay.

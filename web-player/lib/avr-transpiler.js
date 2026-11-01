@@ -210,9 +210,10 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
     if(['CP','CPI','CPC'].includes(name)&&!mask)return code;
     if(name==='NOP')return code;
     if(name==='LDI')return writeReg(d,constant(k));
-    // DS40002198A 5.39: CLR is EOR Rd,Rd. Its result and written flags are
-    // constant; preserve the caller's live flag mask and the existing phase.
-    if(name==='EOR'&&d===s)return bytes(writeReg(d,constant(0)),
+    // DS40002198A 5.39/5.45/5.119: CLR and self-subtraction have constant
+    // results/flags; CP leaves Rd untouched. Their write masks differ (H/C),
+    // so retain the caller's live mask and the existing retirement phase.
+    if(d===s&&['EOR','SUB','CP'].includes(name))return bytes(name==='CP'?[]:writeReg(d,constant(0)),
       mask?set(5,or(and(flags(),constant(255^mask)),constant(mask&2))):[]);
     if(name==='MOV')return writeReg(d,reg(s));
     // MOVW pairs are even and therefore either identical or disjoint. WASM's

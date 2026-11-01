@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Self-subtraction checkpoint, 2026-11-01: equal-operand CP/SUB reuse constant
+live flags, with CP preserving its GPR and SUB writing zero. Original cycle,
+retirement, reset and IRQ boundaries stay intact. All 34 focused checks pass,
+including exhaustive byte/SREG pairs and held/unequal CLKI; the default full
+suite passes 2651/2651 without skips. Four of 48 catalog
+modules shrink by 130–131 bytes; 44 are byte-identical. Six matched audio cases
+preserve complete state, PCM and pins with active IRQs. Native artifacts remain
+unchanged; elapsed speed and complete register-traffic reduction are unproven.
+This advances stage 5 without closing a hardware item; the 24/31 count remains.
+See the [evidence](../reports/self-subtract-lowering-20261101.md).
+
 Checked-overflow checkpoint, 2026-11-01: replacing the ratio overflow guard
 with Clang checked multiply/add passes 5375 BigInt cases, seven focused clock
 checks per version and all sixteen workload comparisons. One static division

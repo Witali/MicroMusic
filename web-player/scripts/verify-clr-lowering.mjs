@@ -1,4 +1,4 @@
-// Historical/current CPU emission comparison with one unchanged native device.
+// Audit constant-result alias families with one unchanged native device.
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
@@ -16,7 +16,11 @@ import {AVR_CACHE_COMPILER_ID,AVR_CACHE_SOURCES} from '../lib/avr-cache-identity
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const {values}=parseArgs({options:{baseline:{type:'string',default:'d8bf2c99'},
   output:{type:'string',default:'build/clr-lowering-evidence.json'},
-  'full-tap':{type:'string'},'shared-tap':{type:'string'}}});
+  family:{type:'string',default:'clr'},
+  'full-tap':{type:'string'},'shared-tap':{type:'string'},'focused-tap':{type:'string'}}});
+assert.ok(['clr','self-subtract'].includes(values.family),'Unknown constant-result family');
+const selfSubtract=values.family==='self-subtract';
+const affected=i=>i.d===i.s&&(selfSubtract?['CP','SUB'].includes(i.name):i.name==='EOR');
 const read=p=>readFileSync(resolve(root,p));
 const normalized=p=>read(p).toString('utf8').replaceAll('\r\n','\n');
 const hash=b=>createHash('sha256').update(b).digest('hex');
@@ -65,16 +69,15 @@ for(const entry of catalog){
     assert.ok(WebAssembly.validate(a.bytes)&&WebAssembly.validate(b.bytes));
     assert.deepEqual(a.manifest,b.manifest,'Unchanged manifest '+entry.id+' '+mode);
     const oldBodies=bodies(a.bytes),newBodies=bodies(b.bytes),m=a.manifest;
-    const isClr=i=>i.name==='EOR'&&i.d===i.s;
     assert.equal(oldBodies.length,newBodies.length);
     let unchangedBodies=0;
     for(let n=0;n<oldBodies.length;n++){
       const instructionCount=m.mapping.length,regionStart=instructionCount+m.blocks.length;
-      const affected=n<instructionCount?isClr(m.mapping[n]):n<regionStart?
+      const changedByFamily=n<instructionCount?affected(m.mapping[n]):n<regionStart?
         Array.from({length:m.blocks[n-instructionCount].instructions},(_,j)=>
-          m.mapping[(m.blocks[n-instructionCount].start+j)%instructionCount]).some(isClr):
-        n<regionStart+(m.regions?.length||0)?m.regions[n-regionStart].pcs.some(pc=>isClr(m.mapping[pc])):false;
-      if(!affected){assert.deepEqual(oldBodies[n],newBodies[n],'Unchanged function '+n);unchangedBodies++;}
+          m.mapping[(m.blocks[n-instructionCount].start+j)%instructionCount]).some(affected):
+        n<regionStart+(m.regions?.length||0)?m.regions[n-regionStart].pcs.some(pc=>affected(m.mapping[pc])):false;
+      if(!changedByFamily){assert.deepEqual(oldBodies[n],newBodies[n],'Unchanged function '+n);unchangedBodies++;}
     }
     assert.ok(b.bytes.length<=a.bytes.length,entry.id+' '+mode+' grew');
     sizes.push({id:entry.id,mode,before:a.bytes.length,after:b.bytes.length,saved:a.bytes.length-b.bytes.length,
@@ -112,20 +115,21 @@ for(const id of ['rhythmic','lumiere-stereo','alicia'])for(const mode of ['compa
       boundedRegions:options.boundedRegions??false,optimizePhaseLocals:options.optimizePhaseLocals??false},
     pcmSha256:pcm.digest('hex'),pinsSha256:pins.digest('hex')});
 }
-const report={schema:'micromusic-clr-lowering-v1',baselineCommit:baseline,
+const report={schema:selfSubtract?'micromusic-self-subtract-lowering-v1':'micromusic-clr-lowering-v1',baselineCommit:baseline,
   compilerIdentity:AVR_CACHE_COMPILER_ID,native:{bytes:native.length,sha256:hash(native)},
   compilerSourceGraph:AVR_CACHE_SOURCES,
   node:process.version,v8:process.versions.v8,
   sources:Object.fromEntries([compilerPath,'web-player/scripts/verify-clr-lowering.mjs',
-    'web-player/tests/avr-clr-lowering.test.mjs','web-player/lib/avr-phase-locals.js',
+    selfSubtract?'web-player/tests/avr-self-subtract-lowering.test.mjs':'web-player/tests/avr-clr-lowering.test.mjs','web-player/lib/avr-phase-locals.js',
     'web-player/lib/avr-transpiled-runtime.js','web-player/lib/attiny13a-runtime.js',
     ...dependencies].map(p=>[p,hash(normalized(p))])),
   baselineSources:{[compilerPath]:hash(historical(compilerPath))},
   catalogs:Object.fromEntries(catalogPaths.map(p=>[p,hash(normalized(p))])),
   textHashNormalization:'UTF-8 with CRLF normalized to LF',sizes,audio,
   executionSpeedMeasured:false,
-  meaning:'CLR alias lowering replaces source loads/XOR with a constant zero and only the live constant SREG bits. One unchanged native module and current JS wrapper execute exact old/new CPU bytecode. Register-cached regions use the same local publication path with a constant result. Software evidence only, with no speed, silicon, real-time or complete stage5 claim.'};
-for(const [name,option]of [['fullSuite','full-tap'],['sharedSuite','shared-tap']])if(values[option]){
+  meaning:(selfSubtract?'Self CP/SUB use constant live SREG bits; only SUB writes a zero result.':'CLR replaces source loads/XOR with constant zero and live SREG bits.')+
+    ' One unchanged native module and current JS wrapper execute exact old/new CPU bytecode. Register-cached regions retain local publication. Software evidence only, with no speed, silicon, real-time or complete stage5 claim.'};
+for(const [name,option]of [['fullSuite','full-tap'],['sharedSuite','shared-tap'],['focusedSuite','focused-tap']])if(values[option]){
   const bytes=read(values[option]),tap=bytes.toString();
   const counts=Object.fromEntries(['tests','pass','fail','cancelled','skipped','todo'].map(key=>{
     const match=tap.match(new RegExp('^# '+key+' (\\d+)$','m'));assert.ok(match,'Incomplete TAP '+key);
