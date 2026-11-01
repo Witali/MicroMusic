@@ -6,6 +6,8 @@ import {deferred,playerApp} from './helpers/player-app.mjs';
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
 const tiny13=JSON.parse(readFileSync(new URL('../firmware.json',import.meta.url)));
 const tiny88=JSON.parse(readFileSync(new URL('../firmware-attiny88.json',import.meta.url)));
+const previews=JSON.parse(readFileSync(new URL('../audio/lpx-bread/manifest.json',import.meta.url)));
+const defaultPreview=previews.variants.find(variant=>variant.id==='low15')||previews.variants.find(variant=>variant.id==='compact');
 const init=app=>app.workers.at(-1).messages.find(message=>message.type==='init');
 const engine=(app,value)=>app.radios.find(radio=>radio.value===value);
 async function chooseDevice(app,value){
@@ -119,13 +121,13 @@ test('unknown devices use ATtiny13A and a speech Tiny88 URL selects native LPX w
   assert.equal(init(unknown).engine,'wasm');
   assert.equal(new URL(unknown.fetches[0]).pathname.split('/').at(-1),'firmware.json');
   const speech=await playerApp({device:'attiny88',firmware:'hq4-vinni'});
-  assert.equal(speech.workers.length,0);assert.match(speech.preview.src,/compact\.wav$/);
+  assert.equal(speech.workers.length,0);assert.ok(speech.preview.src.endsWith('/'+defaultPreview.audio));
   assert.equal(speech.get('device-select').value,'attiny88');
   assert.equal(speech.get('device-control').hidden,false);
   assert.equal(engine(speech,'wasm').disabled,false);
   assert.equal(new URL(speech.fetches[0]).pathname.split('/').at(-1),'hq4-firmware.json');
   assert.equal(speech.location.searchParams.get('device'),'attiny88');
-  assert.equal(speech.location.searchParams.get('firmware'),'lpx-bread-compact');
+  assert.equal(speech.location.searchParams.get('firmware'),'lpx-bread-'+defaultPreview.id);
   assert.ok(speech.fetches.every(url=>!url.includes('firmware-attiny88')));
 });
 

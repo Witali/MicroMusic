@@ -1,9 +1,19 @@
 // Native previews are catalog audio entries, never AVR firmware images.
+function readFlashMeasurement(value,encodedBytes) {
+  if(value===undefined)return undefined;
+  if(!value||value.target!=='attiny88'||value.memoryProfile!=='sram512'||value.flashMeasurementKind!=='unpaced-test-image'
+    ||!['programFlashBytes','encodedBytes','totalFlashBytes'].every(key=>Number.isSafeInteger(value[key])&&value[key]>0)
+    ||value.encodedBytes!==encodedBytes||value.programFlashBytes+value.encodedBytes!==value.totalFlashBytes)
+    throw Error('Неверное измерение Flash для LPX-примера.');
+  const {programFlashBytes,totalFlashBytes,flashMeasurementKind,memoryProfile,target}=value;
+  return {programFlashBytes,encodedBytes,totalFlashBytes,flashMeasurementKind,memoryProfile,target};
+}
 export function lpxPreviewEntries(data,baseURL) {
   if(data.schemaVersion!==1||data.previewKind!=='native-pwm8'||data.sampleRate!==8000
     ||!Number.isInteger(data.samples)||data.samples<=0||!Number.isFinite(data.durationSeconds)||data.durationSeconds<=0
     ||Math.abs(data.durationSeconds-data.samples/data.sampleRate)>1/data.sampleRate
-    ||typeof data.title!=='string'||!Array.isArray(data.variants)||data.variants.length!==2)
+    ||typeof data.title!=='string'||!['LPX v5','LPX'].includes(data.codec)
+    ||!Array.isArray(data.variants)||![2,3].includes(data.variants.length))
     throw Error('Неверное описание LPX-примеров.');
   const base=new URL('./',baseURL);
   const asset=(path,extension)=>{
@@ -14,16 +24,27 @@ export function lpxPreviewEntries(data,baseURL) {
     return url.href;
   };
   const reference=asset(data.reference?.audio,'.wav');
-  return [['compact',4],['quality',6]].map(([id,profile],index)=>{
-    const variant=data.variants.find(item=>item.id===id);
-    if(!variant||variant.profile!==profile||typeof variant.label!=='string'
+  const definitions={low15:{profile:15,codec:'lpx-s15',version:8},compact:{profile:4,codec:'lpx-v5',version:5},quality:{profile:6,codec:'lpx-v5',version:5}};
+  const variants=new Map();
+  for(const variant of data.variants){
+    if(!variant||!Object.hasOwn(definitions,variant.id)||variants.has(variant.id))throw Error('Неизвестный или повторный LPX-пример.');
+    variants.set(variant.id,variant);
+  }
+  if(!variants.has('compact')||!variants.has('quality'))throw Error('Неполный набор LPX-примеров.');
+  return ['low15','compact','quality'].filter(id=>variants.has(id)).map((id,index)=>{
+    const variant=variants.get(id),definition=definitions[id],experimental=id==='low15';
+    const codec=variant.codec===undefined?(experimental?null:'lpx-v5'):variant.codec;
+    const formatVersion=variant.formatVersion===undefined?(experimental?null:5):variant.formatVersion;
+    if(variant.profile!==definition.profile||codec!==definition.codec||formatVersion!==definition.version||typeof variant.label!=='string'
       ||!Number.isInteger(variant.bytes)||variant.bytes<=0||!Number.isFinite(variant.bitrateBps)
       ||Math.abs(variant.bitrateBps-variant.bytes*8*data.sampleRate/data.samples)>1e-6)
       throw Error('Неверная стоимость LPX-потока.');
-    return {id:'lpx-bread-'+id,order:String(index+1).padStart(2,'0'),title:'LPX · '+variant.label,
-      description:data.title,kind:'speech',codec:'lpx-v5',playback:'native-pwm8',device:'attiny88',
-      intendedBoard:'mh-et-live-16mhz',profile,sampleHz:data.sampleRate,phraseSamples:data.samples,
+    return {id:'lpx-bread-'+id,order:String(index+1).padStart(2,'0'),title:(experimental?'LPX-S15':'LPX')+' · '+variant.label,
+      description:data.title,kind:'speech',codec,formatVersion,playback:'native-pwm8',device:'attiny88',
+      formatNotice:experimental?'LPX-S15 · экспериментальный формат; нужен отдельный декодер.':'',
+      intendedBoard:'mh-et-live-16mhz',profile:definition.profile,sampleHz:data.sampleRate,phraseSamples:data.samples,
       playOnce:true,audioChannels:1,streamBytes:variant.bytes,bitrateBps:variant.bitrateBps,
+      flashMeasurement:readFlashMeasurement(variant.flashMeasurement,variant.bytes),
       nativeAudioUrl:asset(variant.audio,'.wav'),streamUrl:asset(variant.stream,'.lpx'),originalAudioUrl:reference};
   });
 }

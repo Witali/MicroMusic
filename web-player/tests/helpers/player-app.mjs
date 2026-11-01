@@ -13,7 +13,7 @@ export function deferred(){
 
 // Execute the actual app handlers with a small DOM/media model. This tests
 // transport ordering and cancellation; it does not claim browser audio output.
-export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware,device,board,catalogs={},fetchHook}={}){
+export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,playOnce,prefix='/MicroMusic/',firmware,device,board,catalogs={},assets={},fetchHook}={}){
   const location=new URL(`https://example.test${prefix}web-player/`);
   if(speech)location.searchParams.set('collection','hq4');
   if(firmware)location.searchParams.set('firmware',firmware);
@@ -106,8 +106,8 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     fetch:async input=>{
       const url=new URL(input,location),name=url.pathname.split('/').at(-1),index=fetches.length;
       fetches.push(url.href);
-      let data=name===initialCatalog?catalog:catalogs[name],bytes;
-      if(data===undefined){
+      let data=name===initialCatalog?catalog:catalogs[name],bytes=assets[name];
+      if(data===undefined&&bytes===undefined){
         const relative=url.pathname.split('/web-player/')[1];
         bytes=readFileSync(new URL('../../'+relative,import.meta.url));
         if(name.endsWith('.json'))data=JSON.parse(bytes);

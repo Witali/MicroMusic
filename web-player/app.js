@@ -1,7 +1,7 @@
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
-import { lpxPreviewEntries, previewWaveform } from './lib/native-preview.js';
+import { lpxPreviewEntries, previewWaveform } from './lib/native-preview.js?v=20261101-flash';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -140,6 +140,10 @@ function previewUI(enabled) {
   document.body.dataset.preview=String(enabled);
   for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import','rom-hash'])$(id).hidden=enabled;
   $('preview-note').hidden=!enabled;
+  $('preview-format-note').hidden=!enabled||!selected?.formatNotice;
+  $('preview-format-note').textContent=enabled&&selected?.formatNotice?selected.formatNotice+' ':'';
+  $('flash-measurement-note').hidden=!enabled||!selected?.flashMeasurement;
+  $('flash-measurement-note').textContent=enabled&&selected?.flashMeasurement?'Размер относится к тестовой сборке без очереди и звукового ISR. ':'';
   document.querySelector('.signal-outputs').hidden=enabled;
   if(enabled){
     $('tiny88-power').textContent='Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц.';
@@ -238,7 +242,7 @@ function renderCatalog() {
     const name=document.createElement('strong'); name.textContent=entry.title;
     const voices=entry.voices??4;
     const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.playback==='native-pwm8'
-      ? `ПРЕВЬЮ · ${entry.streamBytes} Б LPX · ${entry.bitrateBps.toLocaleString('ru')} бит/с`
+      ? `${entry.flashMeasurement?.programFlashBytes.toLocaleString('ru')??'—'} Б код · ${entry.streamBytes.toLocaleString('ru')} Б данных · ${entry.bitrateBps.toLocaleString('ru')} бит/с`
       : entry.kind==='package'?'FLASH + EEPROM · PB0 / PB1':entry.kind==='speech'
       ? `${entry.flashBytes} Б Flash${entry.eepromBytes ? ` + ${entry.eepromBytes} Б EEPROM` : ''} · речь ${(entry.sampleHz/1000).toLocaleString('ru')} кГц`
       : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}${entry.audioChannels===2?' · СТЕРЕО L / R':''}`;
@@ -360,7 +364,11 @@ function load(entry,{autoplay=false}={}) {
       $(id).href=entry.streamUrl;$(id).download=file;$(id).removeAttribute('aria-disabled');
     }
     $('download').textContent='↓ Поток LPX';$('rom-name').textContent=file;
-    $('rom-details').textContent=`${entry.streamBytes.toLocaleString('ru')} Б данных LPX · ${entry.bitrateBps.toLocaleString('ru')} бит/с · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
+    const measurement=entry.flashMeasurement;
+    const cost=measurement
+      ? `${measurement.programFlashBytes.toLocaleString('ru')} Б программа + ${measurement.encodedBytes.toLocaleString('ru')} Б звук = ${measurement.totalFlashBytes.toLocaleString('ru')} Б Flash · тестовая сборка`
+      : `Программа: — (не измерено) · ${entry.streamBytes.toLocaleString('ru')} Б данных LPX`;
+    $('rom-details').textContent=`${cost} · ${entry.bitrateBps.toLocaleString('ru')} бит/с · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
     $('download-eeprom').hidden=true;$('download-eeprom').removeAttribute('href');
     $('board-upload').hidden=true;$('upload-command').textContent='';$('reset').disabled=false;
     $('original-player').hidden=true;$('wav-link').hidden=false;$('wav-link').href=entry.nativeAudioUrl;
@@ -524,7 +532,7 @@ try {
   catalog=await response.json();
   let previewError;
   try{
-    const response=await fetch(new URL('./audio/lpx-bread/manifest.json',import.meta.url));
+    const response=await fetch(new URL('./audio/lpx-bread/manifest.json?v=20261101-flash',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...lpxPreviewEntries(await response.json(),import.meta.url));
   }catch(error){previewError=error;}
