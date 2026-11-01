@@ -1,0 +1,54 @@
+{
+  "target": "ATmega328P / 16 MHz / 2048 B SRAM",
+  "backend": "explicit AVR ASM",
+  "physicalBoardTested": false,
+  "compiler": "AVR GCC 7.3.0",
+  "modelCompiler": "Clang 24.0.0git 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0 / wasm32 freestanding O2",
+  "originalModelCommits": [
+    "c8e7bada",
+    "e71a46aa"
+  ],
+  "originalReaderCommit": "318b56e23a33790e104095bfc02f506053807eae",
+  "sourceSha256": {
+    "Codecs/Speex/AVR/examples/spi_flash_player.c": "928ec61488b738298091259032a05663bfb8864af5f4e651b172479161372df4",
+    "Codecs/Speex/AVR/tools/build_spi_player.py": "9c3c21a4aadb905c2ecb135c1d0c9d1aae10d114d24bdaac778c9090b152833f",
+    "Codecs/Speex/AVR/tests/build_spi_matrix.py": "e799cf8be1709efe774cd2f770b77f70c3a00fcbf55c9abbe2d82afe21361f4e",
+    "Codecs/Speex/AVR/tests/prepare_spi_streams.py": "9e3b7b17d0222db317ec78d26b0eae883d9704fefa1ae853b8344615dc188236",
+    "Codecs/Speex/AVR/tests/spi_model.mjs": "c61bcd6c78cb6d49761903da95527768f5028b4f9934b32d3c8b8bb8ad238750",
+    "Codecs/Speex/AVR/tests/spi_model_wasm.c": "e3d5a1dba1dc1bcc0a9de185f79c20ef1bb910be5d85c3575a9a39dc6882f9a7",
+    "Codecs/Speex/AVR/tests/verify_spi_model.mjs": "9ec02bb9098d1578fa8f80a9e29896e95afdf52a30ba1e0e0fe9c7eb42f3874c",
+    "Codecs/Speex/AVR/tests/verify_spi_player.mjs": "05ff41ad55c5e894b54e3e4a9473af0d65f83d808713dab2b31fdeeae1e3537b",
+    "Codecs/Speex/AVR/tests/audit_spi_input.py": "c1afd0c4ed130796183e4157db2e9be445192170756d282ab855ed384e6ab060",
+    "Codecs/Speex/AVR/tests/avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f",
+    "Codecs/shared/avr-spi-flash/AvrSpiFlashReader.h": "1b86e29ce36229ffe0a6fa8350f91777629ea809ef3f320ef5be5cfda5e972e2",
+    "Codecs/shared/avr-spi-flash/README.md": "2e11fab29c3243dd54341c813090a0ea8c34f675d05b1db221546cab63cf9137",
+    "Codecs/shared/avr-spi-flash/PROVENANCE.json": "ad75e6943694b725848388908232f0f548daccf6d8012f0b2bfbbd6f0e2dec98",
+    "Codecs/shared/avr-spi-flash/test_compile.py": "269ff6c7f81a9f8fe537a5fbcd744255d8bb0ceeeb77c087bf07a9054d3bb197",
+    "tools/spi-flash-model/w25q128_readonly.c": "4b7c826ab5d1e259cf2172f20263ee27f58e47a6a776aa10a3d34e49423be360",
+    "tools/spi-flash-model/w25q128_readonly.h": "2dcd48dc7df7cdf0081f13c3a7e6966c5baf21d79cfa03076bb466e2461ca6c3",
+    "tools/spi-flash-model/README.md": "f43830996c5d1fa3d4ea8407511d328d8665134c3f5180be7853a419a36ae789",
+    "tools/spi-flash-model/run_tests.py": "149e3f45d76bc10dced83214a6a40233b901a7d949a5313e37470b28b7545abb",
+    "tools/spi-flash-model/test_w25q128_readonly.cpp": "9f22640613550345c1add235abbf5b89508d8de61e89b1a1428df08383854852",
+    "third_party/qemu-m25p80/PROVENANCE.json": "2fa0cf474376a2aa331ad50b5e95bc0d37ad722cb51905be66a41b0a3312bba3"
+  },
+  "reportSha256": {
+    "spi-input-nb11.json": "aac0a89dd8f2a434a4d95a21ce2325659955e270173f2ecdc52e0c8b9ed156fe",
+    "spi-input-wb395.json": "fe3742cda2e6c6bd9f885fe7ad4990f299e28e9850afd2645b9f8e4402a2703b",
+    "spi-input-wb575.json": "9259e141b141774d6ad6f84ebee40fa1e0a12777c2039f0e18cc2e53ad761c6d",
+    "spi-input-wb775.json": "ddc6f17cc24b68d2ffd2f2244f134a827b9d204613b2881f1ce997f5454abdf7",
+    "spi-input-wb128.json": "c5fe2d1b6127cace0f9dcadba47075578eac05474595dba0a7bb402c3567595f",
+    "spi-input-wb395-production.json": "97a2d9fda2551777ca9cd9997a27af4bc5c285728cb1e0d167d8f41907507e87",
+    "spi-input-model.json": "d3437dce2b45022531e680487dd85e634ff22725137b259c1495ec2bdcf66a87",
+    "spi-input-corpus.json": "aaabe7bd311c75f015561c5dd307a92c3825a5112a4b90fb54bbde121f253f27",
+    "spi-input-c-compile.json": "77dac9b9853ca68f90fcc9b66da4f203654a2aa45fbe192332dbd726443f9faa"
+  },
+  "lowRateAdmissionSha256": "7ba204ad33c135ddc0e7a4c47dc83fdea8c48ac54a0fd92148a273344734d2b7",
+  "modelWasmSha256": "2b1827f46fd047bc7364c00bd86b9f9f1aa160bd1e6d92444a0c88817a27014d",
+  "limits": [
+    "No physical-board, electrical or analog-output test.",
+    "Actual SPI transfer timing and active PWM IRQ are modeled; no extra foreground stress is added to these SPI runs.",
+    "WB uses the existing compact Q7/16-tap oracle, not full Xiph synthesis.",
+    "The C fallback is compiled/linked only; no C decoder execution or performance test.",
+    "One fixed-width raw stream per demo; no Ogg, DTX/PLC or programming/erase support."
+  ]
+}

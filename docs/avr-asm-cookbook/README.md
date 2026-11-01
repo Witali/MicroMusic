@@ -3040,6 +3040,11 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Stream compressed packets from SPI Flash](speex-spi-streaming.md): keep a
+bounded sequential transaction, reuse the existing packet buffer, and verify
+SPI completion timing together with active PCM interrupts. Input framing and
+memory access remain independent of the arithmetic backend.
+
 [Five-symbol noise and narrow observable state](speex-five-symbol-noise.md):
 precompute a finite domain, preserve the RNG and feedback precision, reuse
 the output buffer for forward expansion, and retain only observable state.

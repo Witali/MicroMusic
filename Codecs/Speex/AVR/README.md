@@ -5,7 +5,13 @@ Optional [lower-rate profiles](LOW_RATES.md) now add **NB 2.15/3.95/5.95** and
 enabled separately. The final ASM admission covers 105575 exact decoder frames,
 63762 continuous WB IRQ frames and 1024 internal-Flash player frames, with zero
 PWM underruns. WB3.95 occupies 4.0 kbit/s in byte-aligned raw storage and uses
-83.65% decoder CPU on natural speech; external SPI timing is a separate test.
+83.65% decoder CPU on natural speech.
+
+The separate [SPI Flash player](SPI_FLASH.md) reuses the common LPX/Speex
+ATmega328P reader for files larger than internal Flash. Six continuous SPI/PWM
+runs cover 14600 frames / 4480000 samples without underruns. WB3.95 uses
+25260 B Flash and leaves 396 B SRAM in the production image. These are active-
+IRQ ISA-simulator results; a physical board has not been measured.
 
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
