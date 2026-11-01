@@ -1,5 +1,55 @@
 # Recover candidate C locations from V8 native samples
 
+## Preopt inline contexts, 2026-11-01
+
+The [inline mapper](../../web-player/scripts/map-native-inline-scopes.py) now
+extracts Clang's actual pre-Binaryen scopes and transports their context IDs.
+The [range parser](../../web-player/scripts/lib/avr_dwarf_scopes.py) reads the
+pinned LLVM DWARF4 dump, resolves abstract origins/specifications and retains
+the parent chain. It handles both contiguous and discontiguous ranges, with
+half-open ends, dead functions and explicit ambiguity between incomparable
+paths. A deeper sibling does not win over a different overlapping path.
+See [DWARF4 sections 2.17 and 3.3.8](https://dwarfstd.org/doc/DWARF4.pdf) and the
+[WebAssembly code-address conventions](https://github.com/WebAssembly/tool-conventions/blob/main/Dwarf.md#code-addresses).
+
+The original SDK tools remain in use: `llvm-dwarfdump --verify` succeeds, and
+`wasm-sourcemap.py` rebuilds the supplied line map from the same binary before
+any labels are attached. Its JSON must match the input map. The adapter adds
+full parent/range contexts beyond the pinned SDK's low/high name extractor.
+Code addresses are relative to the code-section payload; live root ranges must
+fit one actual WASM body and inline ranges must fit their parent scopes.
+
+```powershell
+python web-player/scripts/map-native-inline-scopes.py --input build/profiles/native-current-20261030/kernel-map/runtime-debug-preopt.wasm --source-map build/profiles/native-current-20261030/kernel-map/preopt.map --emsdk "$env:EMSDK" --out-dir build/experiments/inline-scopes-20261101
+python web-player/tests/dwarf-inline-scopes.test.py
+python web-player/tests/source-map-labels.test.py
+```
+
+The default Emscripten configuration comes from the source map's directory;
+`--em-config` selects another prepared configuration. All output stays in
+ignored `build/`. The private raw dump is separate from `inline-contexts.json`:
+project frames expose only registered native files, bounded line numbers and
+C identifiers. External paths/symbols are projected to `support`; invalid
+project coordinates remain unresolved. Range boundaries add source-map points
+only within the current function body; source data is not carried across a
+function gap. Every surviving label must retain an allowed input position.
+
+The [retained evidence](../../web-player/reports/inline-scopes-20261101.json)
+records 419 preopt bodies, 1243 inline DIEs and 373 discontiguous live scopes.
+There are 1657 live frames (1633 project, 24 support), 1651 input contexts and
+1629 surviving contexts. All 15123 mapped output positions have verified labels;
+maximum preopt inline depth is five. All non-custom sections and their start
+offsets still match production. Eight scope contracts and six label contracts
+pass. An altered input-map integration is rejected and removes a stale success
+report; production native bytes and compiler identity are unchanged.
+
+These are Clang scopes before Binaryen, not a post-optimization dynamic call
+stack. Later optimization/JIT work can merge or relocate operations. No native
+profile samples have been joined and no exclusive durations are claimed. Next
+join the verified context dictionary/output map with retained native PC samples,
+keeping unknown origins and position-predecessor uncertainty explicit. Stage5
+and the 24/31 plan count remain open/unchanged.
+
 ## Source-position labels through optimization, 2026-11-01
 
 The [label-transport probe](../../web-player/scripts/probe-source-map-labels.py)
@@ -41,11 +91,10 @@ CPU cost or a speedup. Six contract tests cover unmapped gaps, duplicate source
 positions, incorrect/unknown origins, malformed VLQ/maps, custom-section offset
 shifts and disabled assertions. Raw maps/binaries remain in ignored `build/`.
 
-Next extract actual inline DIE/range stacks from the preopt DWARF, attach their
-IDs through this verified channel, and reapply code/offset and origin checks
-before joining them with native sample PCs. No inline scopes or exclusive
-durations have been assigned by this probe. The production runtime, compiler
-identity and seven open hardware/performance plan items remain unchanged.
+This first transport probe assigned no real inline stacks. The extraction step
+is implemented above; joining native sample PCs and measuring exclusive costs
+remain open. The production runtime, compiler identity and seven open
+hardware/performance plan items remain unchanged.
 
 ## Existing native-sample reconstruction
 

@@ -1,0 +1,89 @@
+{
+  "schema": "micromusic-native-inline-transport-v1",
+  "inlineScopesExtracted": true,
+  "scopeMeaning": "Pre-Binaryen DWARF4 candidates, not a post-optimization dynamic call stack",
+  "exclusiveDurationsMeasured": false,
+  "profileSamplesJoined": false,
+  "sourceMapRegenerationEqual": true,
+  "llvmDwarfVerified": true,
+  "nativeInputsVerified": 57,
+  "codeBodies": 419,
+  "executableSectionsAndOffsetsEqual": true,
+  "scopeDIEs": {
+    "inlineDIEs": 1243,
+    "liveScopes": 1657,
+    "deadScopes": 23,
+    "emptyScopes": 411,
+    "discontiguousScopes": 373
+  },
+  "input": {
+    "originalMappedPositions": 15105,
+    "expandedMappedPositions": 15602,
+    "carriedBoundaryPositions": 497
+  },
+  "frames": {
+    "project": 1633,
+    "support": 24
+  },
+  "contexts": {
+    "unique": 1651
+  },
+  "maximumInlineDepth": 5,
+  "output": {
+    "mappedPositions": 15123,
+    "namedPositions": 15123,
+    "distinctContexts": 1629,
+    "contextKinds": {
+      "unique": 1629
+    }
+  },
+  "nativeSha256": "b9a8fa14a971fd5f82f8175f978e9a0b1e03f31fc8612a6892d202d7f93635a1",
+  "inputSha256": "952ae3632d201ea6e303d9a2d7c6254c5c6dc741a91449735524e03e38499112",
+  "inputMapSha256": "ec3b1efa84a81883946a01cb9cf94ed8df45260c32cc3665f98aa8128c688045",
+  "dwarfToolSha256": "d8e39d2ad242166ca00ffac22bb6f901fecbc2a3c1744a95a942b4230802b467",
+  "optimizerSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+  "sourceMapGeneratorSha256": "ed072ec87496fe1a397785c809546c336642e956ac57ab6c095dc2a675920063",
+  "emConfigSha256": "21bf2083984fb64173e6e69e3b9cc9d76c373a185665c31df0a050ccb4362dec",
+  "artifacts": {
+    "dwarf-verification.txt": "c23fb4a6a08030645a488e330af237636de657edef9f482f363bfde40fcbd514",
+    "preopt-dwarf.txt": "c032a5810a55d385697c17ccd76232faeaa76a880ee4aac1c4f71ca6dcc5607d",
+    "regenerated-preopt.map": "ec3b1efa84a81883946a01cb9cf94ed8df45260c32cc3665f98aa8128c688045",
+    "inline-contexts.json": "0acd5de2c6fb131235b4c5540260724a81bf432ad76dd9ec669f6afdce03fdd4",
+    "scoped.input.map": "9889038115757fdcb3c8a60fa6df35a89403dafd03c774b6ab80ea7c60c2e551",
+    "scoped.output.map": "71b4f69acb5654eed7cbdf5f8a15049b6871984d1f2f51bb914d0bb8d8ad9bfa",
+    "scoped.wasm": "071c7df89be5b1dd1037faf943ea7b757e06fa9075bef475e199c80c34565773"
+  },
+  "sourceHashes": {
+    "web-player/scripts/map-native-inline-scopes.py": "09180a559490d79fc2634058ddb7fbb3dba8de6b1d6d57c851fc95cf1742aadc",
+    "web-player/scripts/lib/avr_dwarf_scopes.py": "e76ba182fbb44fd01a2a24977bb961057019937853cb8071026db11e7aa93724",
+    "web-player/scripts/probe-source-map-labels.py": "3d14f87528e2e8d1efebc2c9075b8bb3732a7674a3886342758aad7c9b8e703b",
+    "web-player/tests/dwarf-inline-scopes.test.py": "badb4726d1504f528a4fb459ffa9a36e2e81dd5aa497f601ea9b76ebd2efc5cd",
+    "web-player/tests/source-map-labels.test.py": "9840330136151283bd4479813cafc5c6c25f5d9b9ea0361e320dde0eef63df35"
+  },
+  "date": "2026-11-01",
+  "basisCommit": "7700d1653d6c4bdf9d45b46e5c8a88754be6dc42",
+  "tests": {
+    "scopeContracts": {
+      "passed": 8,
+      "logSha256": "b8bd88d3c6aeec16810a381fa32b41d615655d14847290ea407c6bcd42aa8d4b"
+    },
+    "labelContracts": {
+      "passed": 6,
+      "logSha256": "3b9be1481edca37f2b9b6673a7b06c0056656be21ef5f0bd83628bbf60e484bf"
+    }
+  },
+  "productionUnchanged": true,
+  "planComplete": 24,
+  "planTotal": 31,
+  "downloadedExternalFiles": [],
+  "references": [
+    "https://dwarfstd.org/doc/DWARF4.pdf",
+    "https://github.com/WebAssembly/tool-conventions/blob/main/Dwarf.md",
+    "https://tc39.es/ecma426/"
+  ],
+  "negativeIntegration": {
+    "alteredInputMapRejected": true,
+    "staleSuccessReportRemoved": true,
+    "alteredMapSha256": "c88eb372df99fb9b4e72d1aac65d34cdecb93ba55050b2ee44dce11e4967b885"
+  }
+}

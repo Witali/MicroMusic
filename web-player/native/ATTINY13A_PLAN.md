@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Inline-context extraction, 2026-11-01: verified DWARF4 supplies 1243 inline DIEs,
+373 discontiguous live scopes and five nested inline levels. The source map is
+rebuilt by the original SDK tool and must match. Binaryen retains 1629 actual
+preopt contexts; all 15123 mapped output positions preserve an allowed input
+origin, with executable sections and absolute offsets identical to production.
+Eight scope/six label contracts pass. External source details are projected
+away; incomparable scope paths remain ambiguous. Next join this dictionary/map
+with native PC samples without converting provenance into exclusive durations.
+Production and the 24/31 count are unchanged. See the
+[inline-context evidence](../reports/inline-scopes-20261101.json).
+
 Source-label transport, 2026-11-01: normal Binaryen optimization retains 13935
 distinct artificial input-position IDs and verifies all 15696 emitted named
 positions against their original file/line/column. Original, uniform-label and
