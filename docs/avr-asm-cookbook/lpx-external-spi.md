@@ -6,6 +6,11 @@ toolchain, normal AVR ABI and vendor `avr/io.h` definitions. The
 memory access from codec arithmetic and retains the explicitly selectable C
 backend. No handwritten arithmetic assembly is introduced.
 
+Measured builds use `-mmcu=atmega328p -Os -std=gnu++11 -flto -mcall-prologues
+-mrelax -fno-exceptions -fno-rtti`, compact-only speech, dot unroll 1 and function
+tuning 0. Queue 256 / prefill 192 and explicit callback/backend defines are
+fixed by the source-bound player recipe.
+
 Use Mode 0, MSB first, hardware SPI at F_CPU/2: 8 MHz for a 16 MHz CPU. Offsets
 and reader bounds are 32 bit; encoded audio resides in the external image, with
 only segment metadata and code charged to program Flash. The foreground owns
@@ -37,12 +42,24 @@ separately records instruction dispatch lateness and foreground/IRQ software
 gaps. This unit establishes modeled byte duration, not physical electrical
 setup/hold behavior or sustainable codec playback.
 
-The [finite player protocol](../../Codecs/LPX/research/v5-external-spi-player-2026-11-01/PROTOCOL.md)
-reserves bounded C/ASM output parity and full long ASM playback with active
-normal/+100 IRQ loads. Those player measurements are pending at this stage.
-C support remains explicit output parity; no sustainable C 8 kHz claim follows.
-Charge actual complete linked images and metadata, SRAM, stack and underruns;
-unrepresentable long ROM images have no invented linked program-size baseline.
+The [completed finite player campaign](../../Codecs/LPX/research/v5-external-spi-player-2026-11-01/RESULTS.md)
+passed all 28 case/configuration rows. Six full 60-reset chains at both normal
+and +100 IRQ loads verified 45,433,332 physical PWM samples without underruns.
+Long ASM images use 5,308 / 5,316 B complete Flash, including 360 B metadata,
+and 764 B static SRAM; minimum long stack margin was 1,223 B. Exact matched short
+controls measure +381 B program Flash for ASM, +383 B for C and +8 B SRAM.
+C support remains bounded output parity; no sustainable C 8 kHz claim follows.
+Long observations separate 16-cycle SPI duration from at most two dispatch
+cycles and up to 80,372 cycles of software gaps; 4,849 byte completions occurred
+inside audio IRQs. These measurements retain the simulator limitations above.
+Unrepresentable long ROM images have no invented linked program-size baseline.
+
+Untested next step, outside this campaign: these images concatenate full stored
+segments. One 32-bit base plus uint16 sizes would use 4+2N metadata bytes rather
+than 6N: 124 instead of 360 B for 60 resets, saving 236 raw metadata bytes before
+code and linked-layout costs. A 32-bit running address must advance by the full
+stored span, including unread packet tails. Measure actual linked Flash, SRAM
+and IRQ-active timing before adoption; no implementation or new run is included.
 
 References: [Microchip datasheet 7810D-AVR-01/15, table 18-5](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-7810-Automotive-Microcontrollers-ATmega328P_Datasheet.pdf),
 [upstream simavr1.6 SPI source](https://github.com/buserror/simavr/blob/v1.6/simavr/sim/avr_spi.c).
