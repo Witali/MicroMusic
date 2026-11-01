@@ -1,5 +1,33 @@
 # Recover candidate C locations from V8 native samples
 
+## Inspect predecessor lookup distances, 2026-11-01
+
+The native audit CLI accepts optional `--lookup-distances`. It leaves ordinary
+output and all legacy budgets unchanged when absent. With it, each whole,
+interior, boundary, outside and individual-window view adds `lookupDistances`.
+The new budget partitions every tick into both positions exact, only native
+predecessor, only WASM predecessor, both predecessors, unresolved source or
+other work. Resolved counts equal the existing project-plus-support budget;
+unresolved/other counts retain their original meanings. Inline scope budgets
+remain independent and unchanged.
+
+`maxDistanceBytes` records the largest two lookup gaps over resolved source
+candidates: sampled native PC minus the preceding V8 source-position offset,
+and its resulting module WASM position minus the preceding mapped segment.
+These are different address spaces. The values expose reliance on predecessor
+lookups; they are not execution distances, time weights, confidence levels or
+sampling-error bounds. Even two exact positions do not establish exclusive
+ownership after compiler/JIT optimization. Unknown positions supply no distance.
+No raw address, function name or host path is added to the output.
+
+The existing [ECMA-426 mappings](https://tc39.es/ecma426/#sec-mappings-structure)
+and verified native-position pipeline remain in use. Markers still use the
+documented [Node inspector console](https://nodejs.org/docs/v22.22.3/api/inspector.html#inspectorconsole),
+with the existing independent host-boundary allowance. This adds offline
+diagnostics and does not instrument the production emulator or close exclusive
+CPU/peripheral timing. See the
+[current capture report](../../web-player/reports/native-current-profile-20261101.md).
+
 ## Native PC and inline-context join, 2026-11-01
 
 The existing [audit CLI](../../web-player/scripts/audit-native-source-profile.mjs)

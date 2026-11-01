@@ -1,0 +1,61 @@
+{
+  "schema": "micromusic-native-inline-transport-v1",
+  "inlineScopesExtracted": true,
+  "scopeMeaning": "Pre-Binaryen DWARF4 candidates, not a post-optimization dynamic call stack",
+  "exclusiveDurationsMeasured": false,
+  "profileSamplesJoined": false,
+  "sourceMapRegenerationEqual": true,
+  "llvmDwarfVerified": true,
+  "nativeInputsVerified": 57,
+  "codeBodies": 420,
+  "executableSectionsAndOffsetsEqual": true,
+  "scopeDIEs": {
+    "inlineDIEs": 1247,
+    "liveScopes": 1662,
+    "deadScopes": 23,
+    "emptyScopes": 410,
+    "discontiguousScopes": 370
+  },
+  "input": {
+    "originalMappedPositions": 15115,
+    "expandedMappedPositions": 15608,
+    "carriedBoundaryPositions": 493
+  },
+  "frames": {
+    "project": 1638,
+    "support": 24
+  },
+  "contexts": {
+    "unique": 1656
+  },
+  "maximumInlineDepth": 5,
+  "output": {
+    "mappedPositions": 15104,
+    "namedPositions": 15104,
+    "distinctContexts": 1634,
+    "contextKinds": {
+      "unique": 1634
+    }
+  },
+  "nativeSha256": "244b3d3da85ff6cd065e6b105b18d26d8ae07e6615802d77f23a123338209c98",
+  "inputSha256": "17415238602a31bdea3c305694750fddf8ea6ba8523b8d62db74ffc91d6b7f06",
+  "inputMapSha256": "a17b3be1d5da7f6b34375e64dccc52ee399304ee5f236c49313e32ff0672f217",
+  "dwarfToolSha256": "d8e39d2ad242166ca00ffac22bb6f901fecbc2a3c1744a95a942b4230802b467",
+  "optimizerSha256": "ece3a130458778d485ede67297ac139bb6b66a008bb84292b7f0e10f4af2cd95",
+  "sourceMapGeneratorSha256": "ed072ec87496fe1a397785c809546c336642e956ac57ab6c095dc2a675920063",
+  "emConfigSha256": "21bf2083984fb64173e6e69e3b9cc9d76c373a185665c31df0a050ccb4362dec",
+  "artifacts": {
+    "dwarf-verification.txt": "d1c30b1e96e97270ae48eb488584cfebe210c42231aba292ca09d8df3eb492c1",
+    "preopt-dwarf.txt": "76a41213c0f2148df8fe8aa51f2956f07259b02b980149d73b4cc8e659ca207f",
+    "regenerated-preopt.map": "a17b3be1d5da7f6b34375e64dccc52ee399304ee5f236c49313e32ff0672f217",
+    "inline-contexts.json": "061e0a42b6a3032f8f811c030e8c5b758b5520c2f14ab89b9cec5e9188ddeba3",
+    "scoped.input.map": "24712f7dea8cb80162a4bba6e4b77a5b5fbce5ad4a35be82681098fd48141da6",
+    "scoped.output.map": "d76d107e4cb5578edb0550b9a1b369ada5a4149108afaf075064a365ee2d5b9c",
+    "scoped.wasm": "3c7789c50a0ecd05e73665e10fbf423d590c53441080de82f8a11b63ce822592"
+  },
+  "sourceHashes": {
+    "web-player/scripts/map-native-inline-scopes.py": "09180a559490d79fc2634058ddb7fbb3dba8de6b1d6d57c851fc95cf1742aadc",
+    "web-player/scripts/lib/avr_dwarf_scopes.py": "e76ba182fbb44fd01a2a24977bb961057019937853cb8071026db11e7aa93724",
+    "web-player/scripts/probe-source-map-labels.py": "3d14f87528e2e8d1efebc2c9075b8bb3732a7674a3886342758aad7c9b8e703b"
+  }
+}

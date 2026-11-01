@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Current native sampling, 2026-11-01: fresh kernel/stereo captures on the current
+244b3d3d native artifact conserve all 17201 ticks, including 10657 interiors.
+All six runs retain exact reference PCM and recorded architecture; music has
+204798 IRQs per run. Opt-in lookup-gap diagnostics distinguish exact positions,
+native/WASM predecessors and unknown sources without changing legacy budgets.
+All 85 focused Node and 14 Python checks pass, with two real CLI rejection
+controls and exact legacy replay. Clock-ratio/at_half/phase scopes remain
+investigation candidates. Byte gaps and sparse host samples are not exclusive
+CPU/peripheral/pin durations; production, hardware coverage and 24/31 are
+unchanged. See the [current evidence](../reports/native-current-profile-20261101.md).
+
 Word-arithmetic lowering, 2026-11-01: ADIW/SBIW now use one unsigned word load
 and word store for uncached GPR pairs, retaining the byte-local path inside
 cached regions. All 96 focused and 2862/2862 default checks pass, including all

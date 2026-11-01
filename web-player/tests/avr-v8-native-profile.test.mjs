@@ -483,3 +483,56 @@ test('absent source maps and ambiguous native generations retain unlabelled inli
   const b=audit({log:[creation(),creation(15),tick()].join('\n'),sourceMap:inlineMap(),inlineContexts:inlineDictionary()});
   assert.equal(b.inlineScopes.budget.unlabelled,1);assert.deepEqual(b.inlineScopes.contexts,[]);checkInline(b);
 });
+
+test('lookup distances are opt-in and preserve every legacy field',()=>{
+  const a=audit(),b=audit({lookupDistances:true});assert.equal(Object.hasOwn(a,'lookupDistances'),false);
+  const {lookupDistances,...legacy}=b;assert.deepEqual(legacy,a);
+  assert.deepEqual(lookupDistances.budget,{bothExact:0,nativePredecessor:3,wasmPredecessor:0,bothPredecessors:0,unresolved:0,other:1});
+  assert.deepEqual(lookupDistances.maxDistanceBytes,{native:1,wasm:0});assert.equal(lookupDistances.candidateOnly,true);
+  assert.equal(b.exclusiveSubsystemTimeAvailable,false);assert.match(lookupDistances.meaning,/not time/);
+});
+
+test('native and WASM predecessors stay distinct from exact positions',()=>{
+  const sourceMap=makeMap([[104,0,9,0]]),positions=[[8,4],[16,7],[24,9],[40,20]];
+  const log=[creation(),tick('0x1008',20),tick('0x1009',21),tick('0x1010',22),tick('0x1019',23),
+    tick('0x1029',24),tick('0x1002',25),tick('0x9000',26)].join('\n');
+  const a=audit({log,sourceMap,disassembly:disassembly({positions}),lookupDistances:true});
+  assert.deepEqual(a.lookupDistances.budget,{bothExact:1,nativePredecessor:1,wasmPredecessor:1,bothPredecessors:2,unresolved:1,other:1});
+  assert.deepEqual(a.lookupDistances.maxDistanceBytes,{native:1,wasm:16});
+  assert.equal(a.sourceLines.reduce((n,x)=>n+x.ticks,0),5);
+  for(const raw of ['0x1000','0x1008','confidential','C:/','D:/','native.device.service'])assert.ok(!JSON.stringify(a.lookupDistances).includes(raw));
+});
+
+test('unmapped/entry/generation gaps never manufacture resolved lookup distances',()=>{
+  for(const extra of [{sourceMap:null},{sourceMap:makeMap([[104]])},{disassembly:disassembly({positions:[[0,0]]})},
+    {log:[creation(),creation(15),tick()].join('\n')}]){
+    const a=audit({log:creation()+'\n'+tick(),...extra,lookupDistances:true});
+    assert.deepEqual(a.lookupDistances.budget,{bothExact:0,nativePredecessor:0,wasmPredecessor:0,bothPredecessors:0,unresolved:1,other:0});
+    assert.deepEqual(a.lookupDistances.maxDistanceBytes,{native:0,wasm:0});
+  }
+});
+
+test('lookup-distance budgets partition every marked window without changing inline views',()=>{
+  const log=[creation(),tick('0x1008',50),marker('start',100),tick('0x1008',100),tick('0x1009',110),
+    tick('0x1021',120),tick('0x1002',130),tick('0x9000',140),marker('end',200),tick('0x1031',210)].join('\n');
+  const input={log,windows:[window(0.100)],sourceMap:inlineMap(),inlineContexts:inlineDictionary()};
+  const base=audit(input),a=audit({...input,lookupDistances:true});checkWindows(a);checkInline(a);
+  const views=[a,a.windowed.certainInterior,a.windowed.boundary,a.windowed.outside,
+    ...a.windowed.windows.flatMap(w=>[w.certainInterior,w.boundary])];
+  for(const view of views){
+    assert.equal(Object.values(view.lookupDistances.budget).reduce((n,x)=>n+x,0),view.ticks??a.counts.ticks);
+    const b=view.lookupDistances.budget;
+    assert.equal(b.bothExact+b.nativePredecessor+b.wasmPredecessor+b.bothPredecessors,view.budget.project+view.budget.support);
+    assert.equal(b.unresolved,view.budget.unresolvedNative);assert.equal(b.other,view.budget.other);
+  }
+  for(const key of Object.keys(a.lookupDistances.budget))assert.equal(a.lookupDistances.budget[key],
+    a.windowed.certainInterior.lookupDistances.budget[key]+a.windowed.boundary.lookupDistances.budget[key]+a.windowed.outside.lookupDistances.budget[key]);
+  const strip=value=>{if(Array.isArray(value))return value.map(strip);if(!value||typeof value!=='object')return value;
+    return Object.fromEntries(Object.entries(value).filter(([k])=>k!=='lookupDistances').map(([k,v])=>[k,strip(v)]));};
+  assert.deepEqual(strip(a),base);
+});
+
+test('lookup diagnostics require a boolean without echoing invalid values',()=>{
+  for(const value of [null,0,1,'private-option',{},[]])assert.throws(()=>audit({lookupDistances:value}),
+    e=>/option/.test(e.message)&&!e.message.includes('private-option'));
+});

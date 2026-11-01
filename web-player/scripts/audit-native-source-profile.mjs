@@ -14,6 +14,7 @@ const {values}=parseArgs({options:{input:{type:'string'},emsdk:{type:'string'},p
   'out-dir':{type:'string',default:'build/profiles/native-source-map'},
   'test-tap':{type:'string'},
   'inline-scopes':{type:'string'},'inline-report':{type:'string'},
+  'lookup-distances':{type:'boolean'},
   output:{type:'string',default:'build/profiles/native-source-audit.json'}}});
 assert.ok(values.input,'Pass --input with a completed V8 log/disassembly capture');
 const input=resolve(root,values.input),out=resolve(root,values['out-dir']);
@@ -109,7 +110,8 @@ if(values['inline-scopes']){
 assert.ok(executable(mappedBytes).equals(executable(native)),'Source-map build changes executable sections');
 assert.deepEqual(sections(mappedBytes).filter(s=>s.id),originalSections,'Source map uses another byte-offset layout');
 const audit=auditV8NativeProfile({log,
-  disassembly:text(join(input,'run.log')),functions,sourceMap,...(windows?{windows}:{}),...(inlineContexts?{inlineContexts}:{})});
+  disassembly:text(join(input,'run.log')),functions,sourceMap,...(windows?{windows}:{}),...(inlineContexts?{inlineContexts}:{}),
+  lookupDistances:values['lookup-distances']??false});
 const tickTimes=log.split('\n').filter(line=>line.startsWith('tick,')).map(line=>Number(line.split(',')[2])).sort((a,b)=>a-b);
 const gaps=tickTimes.slice(1).map((time,n)=>time-tickTimes[n]).sort((a,b)=>a-b);
 for(const row of audit.sourceLines){
