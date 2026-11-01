@@ -124,6 +124,9 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
  cursor_(0),
 #endif
  sampleCount_(0),remaining_(0),sampleRate_(0),preQ14_(0),brightQ14_(0) {
+#if LPX4_ENABLE_INPUT_CALLBACK
+ inputReader_=0;inputContext_=0;
+#endif
 #ifdef __AVR__
  static_assert(offsetof(Lpx4HybridCore,staticSpectrum_)<64,"Hot state exceeds AVR short displacement");
  static_assert(offsetof(Lpx4HybridCore,error_)<64,"Error flag must retain short displacement");
@@ -180,6 +183,20 @@ uint8_t Lpx4HybridCore::readByte(){
  ++romByteCalls_;
 #endif
  if(error_)return 0;
+#if LPX4_ENABLE_INPUT_CALLBACK
+ if(inputReader_){
+#if LPX4_ROM_POINTER
+  if(!bytes_){error_=END_OF_ROM;return 0;}
+  --bytes_;
+#else
+  if(cursor_>=bytes_){error_=END_OF_ROM;return 0;}
+  ++cursor_;
+#endif
+  const int16_t value=inputReader_(inputContext_);
+  if(value<0 || value>255){error_=END_OF_ROM;return 0;}
+  return (uint8_t)value;
+ }
+#endif
 #if LPX4_ROM_POINTER
  if(!bytes_){error_=END_OF_ROM;return 0;}
  --bytes_;
@@ -195,14 +212,31 @@ uint16_t Lpx4HybridCore::read16(){
 uint32_t Lpx4HybridCore::read32(){
  const uint32_t low=read16();return low|((uint32_t)read16()<<16);
 }
+#if LPX4_ENABLE_INPUT_CALLBACK
+bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
+ inputReader_=0;inputContext_=0;data_=input;
+ return beginSource(size);
+}
+bool Lpx4HybridCore::beginStream(ReadByte reader,void* context,uint16_t size){
+ inputReader_=reader;inputContext_=context;data_=0;
+ return beginSource(size);
+}
+bool Lpx4HybridCore::beginSource(uint16_t size){
+ bytes_=size;
+#else
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  data_=input;bytes_=size;
+#endif
 #if !LPX4_ROM_POINTER
  cursor_=0;
 #endif
  remaining_=sampleCount_;
  resetState();
+#if LPX4_ENABLE_INPUT_CALLBACK
+ if((!data_&&!inputReader_)||size<20){error_=BAD_HEADER;return false;}
+#else
  if(!input||size<20){error_=BAD_HEADER;return false;}
+#endif
  if(readByte()!='L'||readByte()!='4'||readByte()!='H'||readByte()!='Y'){
   error_=BAD_HEADER;return false;
  }

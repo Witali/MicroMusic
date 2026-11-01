@@ -1,5 +1,13 @@
 #pragma once
 #include <stdint.h>
+// Opt-in sequential input source. Independent of C/ASM arithmetic and table
+// storage. Use the same setting for the core and all callers (layout differs).
+#ifndef LPX4_ENABLE_INPUT_CALLBACK
+#define LPX4_ENABLE_INPUT_CALLBACK 0
+#endif
+#if LPX4_ENABLE_INPUT_CALLBACK != 0 && LPX4_ENABLE_INPUT_CALLBACK != 1
+#error LPX4_ENABLE_INPUT_CALLBACK must be 0 or 1
+#endif
 #ifndef LPX4_ALLOW_SPARSE
 #define LPX4_ALLOW_SPARSE 1
 #endif
@@ -126,12 +134,18 @@
 #endif
 
 // v6/v7: small on-device profile: 10-bit LSF, 80-sample Rice blocks.
-// ROM-backed stream only (no callbacks, no LSF8 or legacy Huffman).
+// ROM input by default; an explicit callback build also accepts sequential IO.
 class Lpx4HybridCore {
 public:
     enum Error : uint8_t { NONE=0, BAD_HEADER, UNSUPPORTED, CORRUPT_STREAM, END_OF_ROM };
     Lpx4HybridCore();
     bool begin(const uint8_t* bytesInProgmem, uint16_t size);
+#if LPX4_ENABLE_INPUT_CALLBACK
+    // Return 0..255, or -1 on input failure/EOF. The source must already be
+    // positioned at this segment; size bounds all reads, including the header.
+    typedef int16_t (*ReadByte)(void* context);
+    bool beginStream(ReadByte reader, void* context, uint16_t size);
+#endif
     LPX4_TUNE_SAMPLE bool next(uint8_t& pcm);  // legacy 8-bit PWM sample
 #if !defined(__AVR__) || defined(LPX4_ENABLE_PCM16)
     bool nextQ14(int16_t& out); // signed Q14 postfilter (no PWM)
@@ -175,6 +189,9 @@ public:
 private:
     // Stream lifetime and container/entropy readers.
     void resetState();
+#if LPX4_ENABLE_INPUT_CALLBACK
+    bool beginSource(uint16_t size);
+#endif
     LPX4_TUNE_READERS uint8_t readByte();
     uint16_t read16();
     uint32_t read32();
@@ -275,6 +292,12 @@ private:
 #endif
 #ifdef LPX3_COST_INSTRUMENT
     uint32_t lsfConverts_,bitCalls_,romByteCalls_;
+#endif
+#if LPX4_ENABLE_INPUT_CALLBACK
+    // Cold input state stays after the arithmetic workspace: hot AVR offsets
+    // and arithmetic backend selection are unchanged.
+    ReadByte inputReader_;
+    void* inputContext_;
 #endif
 };
 
