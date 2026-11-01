@@ -37,8 +37,16 @@ word-shift specialization retains an explicitly selectable C implementation.
 exact transformations/frame in WB3.95. Natural-speech decoding improves
 4.53%, **73.97% -> 70.62% CPU**, for 272 B Flash and one peak stack byte.
 Full raw/+8%-load IRQ/SPI runs retain exact PCM/PWM and zero underruns.
-The +11% stress gate fails and is explicitly unadmitted; shorter refill bursts
-remain future work. Both original quantizers and the C fallback are preserved.
+At that stage the +11% stress gate fails and is explicitly unadmitted. Both
+original quantizers and the C fallback are preserved.
+
+[Exact quarter-frame excitation](WB_QUARTER_REFILL.md) now shortens WB3.95's
+refill burst: 160 samples generated before output become four blocks of forty,
+with unchanged PCM and feedback. Speech decoding improves **70.62% -> 69.67%
+CPU**; matched frame-boundary publication gaps fall about 19.2%. The complete
+10627-frame +11%-load IRQ gate now passes with zero underruns, as do +8% and
+3600 scheduled SPI frames. Bare firmware grows 286 B; static SRAM and peak
+stack stay unchanged. Scalar/vector C fallbacks remain explicitly selectable.
 
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.

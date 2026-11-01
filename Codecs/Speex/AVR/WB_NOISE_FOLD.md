@@ -133,14 +133,9 @@ notices remain in the source/vendor files.
 
 ## Unmeasured next candidates
 
-- Generate NB1 excitation forty samples at a time instead of constructing
-  all 160 before the first callback. The current forty-byte dead gap after
-  the 170 cache bytes could hold 28 bytes of frame-constant vocoder context,
-  ending at 198 before live input 210. Preserve the complete generated class
-  sequence, raw noise words, mean/pulse/seed order, final state and delayed
-  input; validate each class prefix when visible. Measure both average cost
-  and worst refill delay before claiming the 11% gate. No larger ring is
-  assumed. This has not been implemented or validated.
+- The proposed forty-sample NB1 producer is now implemented and measured in
+  [quarter refills](WB_QUARTER_REFILL.md), with exact partial states and a
+  retained C fallback. The measurements above describe the earlier fold stage.
 - Hoist the five first-stage Q15 transforms across four subframes: that
   stage depends on frame noise scale, while only the second stage uses each
   subframe gain. Prove any extra dead-prefix workspace/lifetime and retain

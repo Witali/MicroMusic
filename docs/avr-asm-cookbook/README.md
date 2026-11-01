@@ -3040,6 +3040,11 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Shorten a refill burst while retaining exact synthesis](speex-quarter-refills.md):
+use the proven forty-sample delay, dead-history context and a shared exact mean
+macro. Measure actual ring publication gaps; retain the rejected slower C
+controller and an explicitly selectable C arithmetic fallback.
+
 [Fold a finite alphabet before expansion](speex-finite-alphabet-fold.md): keep
 both nonlinear quantizers, precompute only five possible words per subframe,
 apply parity after lookup and reuse dead interpolation scratch. Includes ABI
