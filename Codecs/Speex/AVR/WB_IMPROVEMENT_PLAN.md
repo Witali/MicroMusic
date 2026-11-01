@@ -30,6 +30,10 @@ have since been implemented/admitted in [LOW_RATES.md](LOW_RATES.md) and
 [SPI_FLASH.md](SPI_FLASH.md). Current speed work uses measured hot paths;
 [WB_NOISE_SPEED.md](WB_NOISE_SPEED.md) records exact seven-product noise
 arithmetic and the next opportunity to remove duplicate noise generation.
+That opportunity is now complete in [WB_NOISE_REUSE.md](WB_NOISE_REUSE.md):
+WB3.95 speech is 75.60% CPU, with exact output and a complete +8% IRQ run.
+The remaining candidates include the weighted vocoder mean and bounded HB1
+gain division; their proof obligations and numeric domains are recorded there.
 The broader speed objective remains open while useful candidates exist.
 
 1. **Current baseline and profiling.** Correct the WB profiler to accumulate

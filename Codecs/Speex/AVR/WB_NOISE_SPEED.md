@@ -110,7 +110,8 @@ images; it does not repeat the excluded C decoder runtime suite.
 
 ## Next opportunity: eliminate repeated noise generation
 
-Inspection identifies a possible larger reduction, not implemented here.
+This opportunity was subsequently implemented and admitted in
+[WB_NOISE_REUSE.md](WB_NOISE_REUSE.md). The original inspection was:
 WB3.95 currently regenerates 160 noise symbols after the low band already
 generated them. With a frame excitation offset of 145 words and a 40-sample
 IIR delay, low-band synthesis first reads old history at word 105, byte 210.

@@ -64,8 +64,62 @@ bytes, the delayed old history, cache immutability, output guards, the seed and
 reset clearing all pass. Caller addresses and geometry come from compiled
 headers/offsetof, rather than guessed structure offsets.
 
-Complete corpus, active-IRQ/SPI and portable-export admission follow separately.
-The independent C decoder runtime suite remains excluded.
+## Complete admission
+
+The new WB3.95 image passes all **10627 sequential frames** and 18 reset checks,
+including 6467 natural Russian/English frames, 4096 coverage frames and 64
+padding frames. The NB-only image is byte-identical to the preceding admitted
+NB2.15 image, so its 10627-frame evidence is retained without an unnecessary
+decoder rerun. Both mixed-mode API families pass 1024 frames and the existing
+bad-length/null/header/padding checks with exact PCM and reset replay.
+
+On the same 16 natural recordings, speech mean decreases 256395.662 ->
+241931.037 cycles/frame: **5.64% faster than the seven-MUL stage**. Decoder CPU
+falls **80.12% -> 75.60%**. Relative to the implementation before both changes,
+the improvement is **9.62%**, from 83.65% CPU. Across all 10627 WB frames,
+mean is 242991.238 and maximum 245212 cycles, excluding interrupts/output.
+
+| Continuous output | Frames | Extra work/frame | Min queue | Free SRAM | Underruns |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| WB3.95, ready RAM | 10627 | 0 | 30 | 411 B | 0 |
+| WB3.95, ready RAM | 10627 | 25600 cycles (8%) | 2 | 411 B | 0 |
+| WB3.95, actual SPI | 3600 | 0 | 29 | 412 B | 0 |
+| WB12.8, actual SPI | 2200 | 0 | 30 | 386 B | 0 |
+
+The two ready-RAM runs retain production timers/IRQ/queue code and compare all
+s16/PWM samples with unbroken decoder history. The preceding +8% screen had
+failed; this stage now passes the complete corpus at that load. The minimum
+queue of two is the observed simulator result, not a physical-board margin.
+
+Separate SPI runs read 36000 and 70400 compressed bytes from address `0xff80`,
+crossing 64 KiB boundaries. The WB3.95 production image compares the entire
+PWM stream; the higher-rate observation image compares every s16 block too.
+Both invoke the shared C W25Q128 model on actual scheduled AVR SPI completions,
+with interrupts active. No extra foreground load is added to the SPI tests.
+WB3.95 SPI Flash shrinks 25316 -> 25232 B; static SRAM 1422 -> 1418 B and
+peak stack 229 -> 218 B leave 412 B free. No physical/analog test is claimed.
+
+Four lower-rate-disabled minimal ASM images remain byte-identical. AVR C
+fallback images compile/link (NB11 21098 B, WB3.95 30710 B); the exported C11
+package compiles/links without `.S` dependencies. The C decoder is not executed
+or timed. No public library interface changes.
+
+`reports/noise-cache-*.json` binds source, firmware, corpus, pipeline and output
+evidence. The current audit overlays six changed source files on the historical
+seven-MUL admission; older audits stay pinned to their source baseline. Five
+final decoder/IRQ/SPI images rebuild byte-identically.
+
+```sh
+python Codecs/Speex/AVR/tests/build_noise_cache.py --avr-gcc avr-gcc
+node Codecs/Speex/AVR/tests/verify_noise_cache.mjs Codecs/Speex/AVR/build/noise-cache-unit <mixed-WB-corpus>
+python Codecs/Speex/AVR/tests/audit_noise_cache.py --corpus <lower-corpus>
+python Codecs/Speex/AVR/tests/audit_noise_cache.py --corpus <lower-corpus> --avr-gcc avr-gcc --spi-stream <long-WB3.95-file> --higher-stream <long-WB12.8-file>
+```
+
+`build_noise_admission.py` prepares the main test images using the existing
+corpus/IRQ/API/SPI verifiers; its input is the prepared `spi-corpus` directory
+layout documented in the previous stage. Higher-rate SPI is built by
+`build_spi_player.py --wideband --enable-nb4 --capture-pcm` with the same flags.
 
 ## Next speed candidates
 

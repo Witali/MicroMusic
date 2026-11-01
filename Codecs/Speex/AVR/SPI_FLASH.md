@@ -6,6 +6,12 @@ complete WB3.95 SPI file with unchanged PWM and zero underruns: minimum queue
 17 -> 25, Flash 25260 -> 25316 B, free SRAM 396 -> 397 B. The current source
 overlay is checked by `tests/audit_noise_speed.py`.
 
+The subsequent [shared-noise stage](WB_NOISE_REUSE.md) uses 25232 B Flash,
+1418 B static SRAM and 218 B peak stack for WB3.95, leaving 412 B. Its complete
+SPI run retains exact PWM and zero underruns with a minimum queue of 29;
+WB12.8 also passes 2200 frames with exact s16/PWM. The latest source overlay
+is `tests/audit_noise_cache.py`; the older measurements remain historical.
+
 The standalone [SPI player](examples/spi_flash_player.c) reads uniform raw
 Speex packets from external W25Q128 storage into the existing packet buffer,
 then calls the unchanged NB or compact-WB decoder API. Arithmetic backend

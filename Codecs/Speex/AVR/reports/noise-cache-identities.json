@@ -1,0 +1,52 @@
+{
+  "nbOnly": {
+    "byteIdentical": true,
+    "binarySha256": "76c7c4c37bf12dac8af9439df89311628fb8bb5eb82ebd8a13e6923e40cd7e5c",
+    "retainedFrames": 10627,
+    "freshDecoderRun": false,
+    "baselineReport": "noise-speed-nb215.json"
+  },
+  "minimalAsm": [
+    {
+      "profile": "nb8",
+      "sha256": "9cdd5acdb407a9ad468aee706389f43957ab39213694cfcefab089fed97e04fb",
+      "flashBytes": 10598,
+      "byteIdentical": true
+    },
+    {
+      "profile": "nb11",
+      "sha256": "53e6a63233b4383f0eeff690d76b18ebc0756639087bf65dd2469d9d479ecbb2",
+      "flashBytes": 12940,
+      "byteIdentical": true
+    },
+    {
+      "profile": "wb98",
+      "sha256": "87785b0a725b7268f7e971d5c25d7c45edc62370b5ec6baf5c30b1f64e2a6115",
+      "flashBytes": 17008,
+      "byteIdentical": true
+    },
+    {
+      "profile": "wb128",
+      "sha256": "788364b5ba431b27b94166616d8e061f40b8982570894ce067850a3892c7d4e8",
+      "flashBytes": 19806,
+      "byteIdentical": true
+    }
+  ],
+  "cImages": [
+    {
+      "profile": "nb11",
+      "backend": "c",
+      "binarySha256": "c71d32391ef15c2bfd74a5a39ec2561474851b6b9da31020fd7be023eb1d2752",
+      "flashBytes": 21098,
+      "compiledLinkedOnly": true
+    },
+    {
+      "profile": "wb395",
+      "backend": "c",
+      "binarySha256": "786b4d15c58ddc9ebe6f89e92b6cb3c5a6e9c887532a930e920b25dd345ce8dc",
+      "flashBytes": 30710,
+      "compiledLinkedOnly": true
+    }
+  ],
+  "cDecoderExecuted": false
+}

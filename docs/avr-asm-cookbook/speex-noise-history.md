@@ -30,3 +30,9 @@ The [full evidence and constraints](../../Codecs/Speex/AVR/WB_NOISE_REUSE.md)
 identify the exact workload, admission stage and implementation. This layout
 is specific to the restricted 160/40 profile; do not assume it holds for PLC,
 another synthesis delay or a decoder retaining additional history.
+
+Final admission passes 10627 exact WB frames, 21254 continuous active-IRQ frames
+at normal/+8% work, and 5800 SPI frames across WB3.95/WB12.8, with zero underruns.
+WB3.95 speech CPU is 75.60%, down from 80.12% before this reuse. The current
+SPI example leaves 412 B SRAM. Simulator measurements do not establish board
+timing; the observed +8% queue minimum is only two samples.

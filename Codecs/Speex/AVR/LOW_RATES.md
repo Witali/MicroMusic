@@ -6,6 +6,11 @@ natural-speech CPU to 33.43% for NB2.15 and 80.12% for WB3.95. Its full-corpus
 IRQ test raises the verified WB3.95 extra-work reserve from 3% to 6%; retained
 historical figures below remain tied to their original source/binary hashes.
 
+The next [shared-noise stage](WB_NOISE_REUSE.md) lowers WB3.95 speech CPU again,
+to 75.60%, while reducing Flash, static SRAM and peak stack. Its complete
+active-IRQ run passes +8% foreground work with zero underruns; transport is
+separately verified through actual timed SPI without extra work.
+
 Implementation and admission are complete. Target remains
 ATmega328P, 16 MHz, 2 KB SRAM; explicit AVR ASM is the playback target.
 Portable C fallback selection and the existing compact Q7/16-tap QMF remain.
