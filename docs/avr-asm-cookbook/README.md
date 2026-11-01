@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Combine complementary fixed-point products](speex-complementary-mean.md):
+replace two products with one, retaining the missing difference bit through
+an exact overflow correction and checking both feedback and output samples.
+
 [Bound the rounded numerator before division](speex-bounded-divide.md): divide
 a proven small high word first, then sixteen low bits with a sixteen-bit
 remainder. Retain exact rounding, explicit C selection and real-ABI checks.

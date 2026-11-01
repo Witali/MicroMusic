@@ -8,6 +8,7 @@
 #include "short_pitch.h"
 #if SPEEX_ENABLE_NB1
 #include "lowrate_noise.h"
+#include "lowrate_mean.h"
 #include "math_approx.h"
 #endif
 extern const int8_t exc_10_16_table[160];
@@ -162,8 +163,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *
             int16_t value=(int16_t)(
                 (is_pulse?pulse_now:0)+prior_pulse+current[last]-prior_noise);
             prior_pulse=is_pulse?pulse_previous:0;prior_noise=previous[last];
-            int32_t mean=MULT16_16(26214,mean_state)+MULT16_16(6554,value)+16384;
-            mean_state=speex_avr_asr15_word(mean);
+            mean_state=speex_low_mean(mean_state,value);
             exc[i]=(int16_t)(value-mean_state);
         }
         offset=phase-40;
