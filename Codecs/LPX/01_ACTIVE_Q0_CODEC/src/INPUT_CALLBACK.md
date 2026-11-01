@@ -35,6 +35,9 @@ validate storage checksums or authenticate the container.
 `begin(progmem, size)` remains available in callback builds and clears any
 previous reader. `beginStream` similarly clears the old ROM source and
 resets decoding state. Separate decoder instances retain separate sources.
+Copying a decoder copies its borrowed reader/context pointers; it does not
+clone or rewind the external source. Use independently positioned contexts
+when decoding separate trajectories or interleaving copied instances.
 The callback executes on the caller's thread, including during `beginStream`
 while the header is parsed. An interrupt-driven audio player should decode
 in its producer loop and publish samples to its existing queue.
