@@ -11,13 +11,25 @@ The isolated host bridge uses the audited QEMU-derived read subset and a
 source-pinned simavr1.6 timing correction; installed libraries and old observers
 are unchanged. Its eight-divisor and GPIO/seek unit gates passed.
 
-Preparation has materialized all eight exact cases and native ROM/callback
-PCM/PWM references. The 28-row target-image phase has not started yet. All stored
-tails are retained, while callback-requested byte counts are independently
-recorded. Native references and helper work do not establish AVR timing support.
+All 28 target configurations passed, including six complete long chains at both
+IRQ loads: 45,433,332 long physical PWM samples and zero underruns. Long linked
+Flash is 5,308 / 5,316 B, including 360 B of segment metadata; static SRAM is
+764 B. Matched short controls measure a program cost of +381 B for ASM and
++383 B for C. See [results and limitations](RESULTS.md), [costs](cost-summary.json)
+and the [strict artifact check](artifact-check.json).
+
+All stored tails are retained; independently measured callback requests may
+stop before those tails. Native references and bounded C parity do not establish
+sustainable AVR C playback. No physical-board timing claim follows.
 
 `reproduction/run_player.py` binds immutable case/toolchain/observer/source
 receipts, runs the 16 bounded rows first, permits four isolated long modulo-4
 shards only after those pass, and performs a read-only exact artifact aggregate.
-No fitting, new quality selection, physical-board claim, sustainable C 8 kHz
-claim or subjective adoption is part of this validation.
+The original bounded worker completed its 16 physical checks before a JSON
+tuple/list postprocessing failure. A separately bound read-only admission
+reopened those saved proofs; no image was repeated. The final aggregate/export
+reopened all 28 proofs. [Source receipts](reproduction/sources.json) distinguish
+the executed source, admission, and later fresh-reproduction repair.
+
+No fitting, new quality selection or subjective adoption is part of this
+validation.
