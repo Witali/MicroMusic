@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build compact Speex WB 9.8 kbit/s, its C backend and independent oracle."""
+"""Build optional compact Speex WB profiles, C exports and independent oracle."""
 import argparse
 import hashlib
 import json
@@ -34,9 +34,9 @@ def flags(source,backend,enable_nb4=True,low_rates=0):
         *['-DSPEEX_ENABLE_NB'+str(mode)+'=1' for bit,mode in [(1,2),(2,8),(4,1)] if low_rates&bit],
         '-I'+str(source/'include'),'-I'+str(source/'libspeex'),'-I'+str(build.ROOT/'src')]
 
-def host(compiler,enable_nb4=True):
+def host(compiler,enable_nb4=True,low_rates=0):
     source=prepare();out=build.ROOT/'build/wb-native';out.mkdir(exist_ok=True)
-    build.run([compiler,*flags(source,'c',enable_nb4),'-O2','-Wno-pointer-to-int-cast',
+    build.run([compiler,*flags(source,'c',enable_nb4,low_rates),'-O2','-Wno-pointer-to-int-cast',
         '-D_CRT_SECURE_NO_WARNINGS',*sources(source),build.ROOT/'tests/wb_decode.c',
         '-o',out/('decode.exe' if sys.platform=='win32' else 'decode')])
 
@@ -66,10 +66,13 @@ def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packe
     main=build.ROOT/('tests/wb_kernels.c' if kernels else 'tests/wb_decode.c')
     if stream:
         data=stream.read_bytes()
-        mode=data[0]>>3 if data else -1;detected={3:25,4:32}.get(mode,0)
+        mode=data[0]>>3 if data else -1
+        nb_bits=build.MODE_BITS.get(mode,0);detected=(nb_bits+36+7)//8 if nb_bits else 0
         if not detected or (packet_bytes is not None and detected!=packet_bytes) or len(data)%detected or len(data)//detected>65535 or any(
-            data[i]>>3!=mode or ((data[i+20]>>4)!=9 if mode==3 else (data[i+27]&15)!=9) for i in range(0,len(data),detected)):
-            raise ValueError('Expected uniform 25-byte NB3+HB1 or 32-byte NB4+HB1 packets')
+            data[i]>>3!=mode or ((int.from_bytes(data[i:i+detected],'big')>>(detected*8-nb_bits-4))&15)!=9
+            for i in range(0,len(data),detected)):
+            raise ValueError('Expected uniform supported NB+HB1 packets')
+        if mode in build.LOW_FEATURE and not (low_rates&build.LOW_FEATURE[mode]):raise ValueError('The lower-rate feature is not enabled')
         width=detected
         (out/'sample.h').write_text('#define SPEEX_SAMPLE_PACKET_BYTES '+str(width)+'\n#define SPEEX_SAMPLE_FRAMES '+str(len(data)//width)+
             '\nstatic const uint8_t sample_data[] PROGMEM={'+','.join(map(str,data))+'};\n')
@@ -95,18 +98,20 @@ def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packe
     build.run([prefix+'size'+extension,'-C','--mcu=atmega328p',executable])
     return out
 
-def export_c(destination,enable_nb4=False):
-    build.export_c(destination,enable_nb4);source=prepare();private=destination/'src'
+def export_c(destination,enable_nb4=False,low_rates=0):
+    build.export_c(destination,enable_nb4,low_rates);source=prepare();private=destination/'src'
     shutil.copyfile(source/'libspeex/high_lsp_tables.c',private/'high_lsp_tables.c')
     for name in C_SOURCES:shutil.copyfile(build.ROOT/'src'/name,private/name)
     shutil.copyfile(build.ROOT/'src/speex_wb1.h',destination/'include/speex_wb1.h')
     path=destination/'sources.json';manifest=json.loads(path.read_text())
-    manifest['sources']+=['src/high_lsp_tables.c']+['src/'+s for s in C_SOURCES]
+    additions=['src/high_lsp_tables.c']+['src/'+s for s in C_SOURCES if 'src/'+s not in manifest['sources']]
+    manifest['sources']+=additions
     manifest['definitions']+=['SPEEX_ENABLE_WB1=1'];manifest['profiles']=['NB3']+(['NB4'] if enable_nb4 else [])+['WB1-Q7-16'];manifest['widebandBitrates']=[9800,12800] if enable_nb4 else [9800]
+    manifest['profiles']+=['NB'+str(mode) for mode,bit in build.LOW_FEATURE.items() if low_rates&bit]
+    manifest['widebandBitrates']+=[rate for bit,rate in [(1,7750),(2,5750),(4,3950)] if low_rates&bit]
     path.write_text(json.dumps(manifest,indent=2)+'\n')
     path=destination/'CMakeLists.txt';path.write_text(path.read_text()+
-        '\ntarget_sources(speex_nb3 PRIVATE src/high_lsp_tables.c '+
-        ' '.join('src/'+s for s in C_SOURCES)+')\n'+
+        '\ntarget_sources(speex_nb3 PRIVATE '+' '.join(additions)+')\n'+
         'target_compile_definitions(speex_nb3 PRIVATE SPEEX_ENABLE_WB1=1)\n')
     hashes={p.relative_to(destination).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
         for p in sorted(destination.rglob('*')) if p.is_file() and p.name!='SHA256.json'}
@@ -128,9 +133,9 @@ def main():
     if args.kernels and (not args.avr_gcc or args.backend!='asm' or args.stream):
         parser.error('--kernels requires --avr-gcc --backend asm and no stream')
     if args.cc:
-        host(args.cc)
+        host(args.cc,True if args.enable_nb4 is None else args.enable_nb4,args.low_rates)
         if args.reference:oracle(args.cc)
     if args.avr_gcc:avr(args.avr_gcc,args.backend,args.stream,args.frame_load_cycles,args.out,args.kernels,args.packet_bytes,args.enable_nb4,args.low_rates)
-    if args.export_c:export_c(args.export_c.resolve(),bool(args.enable_nb4))
+    if args.export_c:export_c(args.export_c.resolve(),bool(args.enable_nb4),args.low_rates)
     if not(args.cc or args.avr_gcc or args.export_c):parser.error('Select --cc, --avr-gcc or --export-c')
 if __name__=='__main__':main()

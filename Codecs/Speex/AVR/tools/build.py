@@ -12,6 +12,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import apply_profile
 
 ROOT = Path(__file__).resolve().parents[1]
+MODE_BITS={1:43,2:119,3:160,4:220,8:79}
+LOW_FEATURE={1:4,2:1,8:2}
 VENDOR = ROOT / 'vendor/speex-1.2.1'
 SOURCES = '''bits cb_search exc_10_16_table exc_10_32_table exc_20_32_table
 exc_5_256_table exc_5_64_table exc_8_128_table filters gain_table gain_table_lbr
@@ -52,7 +54,7 @@ def prepare(variant):
     return output, source
 
 
-def host(compiler, variant, enable_nb4=False):
+def host(compiler, variant, enable_nb4=False,low_rates=0):
     output, source = prepare(variant)
     definitions = DEFINES.copy()
     if variant != 'reference':
@@ -62,6 +64,7 @@ def host(compiler, variant, enable_nb4=False):
     if variant == 'profile':
         definitions.append('SPEEX_AVR_PROFILE')
         definitions.append('SPEEX_ENABLE_NB4='+str(int(enable_nb4)))
+        definitions+=['SPEEX_ENABLE_NB'+str(mode)+'=1' for mode,bit in LOW_FEATURE.items() if low_rates&bit]
     sources = SOURCES if variant != 'profile' else PROFILE_SOURCES
     executable = output / ('decode.exe' if os.name == 'nt' else 'decode')
     # Upstream ALIGN casts pointers to long only to examine low alignment bits;
@@ -105,7 +108,7 @@ def verify_primitives(compiler):
 ASM_SOURCES = ['lpc_dot.S', 'pitch_add.S', 'innovation.S', 'q14.S', 'lsp_advance.S', 'lsp_finish.S', 'lsp_stage.S', 'lsp_pair.S', 'lsp_angle.S', 'lsp_first.S']
 
 
-def export_c(destination, enable_nb4=False):
+def export_c(destination, enable_nb4=False,low_rates=0):
     """Export a self-contained C library, without a test main or AVR player."""
     destination = destination.resolve()
     # Never merge generated files into user source directories or an older
@@ -134,6 +137,8 @@ def export_c(destination, enable_nb4=False):
     definitions = DEFINES + ['SPEEX_AVR_COMPACT_LSP', 'SPEEX_AVR_TIGHT_EXC',
         'SPEEX_AVR_PROFILE', 'SPEEX_NB3_ENABLE_ASM=0', 'SPEEX_NB3_CHECK_SCRATCH=0']
     if enable_nb4:definitions.append('SPEEX_ENABLE_NB4=1')
+    selected=['SPEEX_ENABLE_NB'+str(mode)+'=1' for mode,bit in LOW_FEATURE.items() if low_rates&bit]
+    definitions+=selected
     (destination / 'sources.json').write_text(json.dumps({'backend': 'c',
         'cStandard': 'c11', 'sources': sources, 'includeDirectories': ['include', 'src'],
         'definitions': definitions,
@@ -142,6 +147,8 @@ def export_c(destination, enable_nb4=False):
     shutil.copyfile(ROOT / 'tools/portable-CMakeLists.txt', destination / 'CMakeLists.txt')
     if enable_nb4:
         with (destination/'CMakeLists.txt').open('a',encoding='utf-8') as f:f.write('\ntarget_compile_definitions(speex_nb3 PUBLIC SPEEX_ENABLE_NB4=1)\n')
+    if selected:
+        with (destination/'CMakeLists.txt').open('a',encoding='utf-8') as f:f.write('\ntarget_compile_definitions(speex_nb3 PUBLIC '+' '.join(selected)+')\n')
     shutil.copyfile(VENDOR / 'COPYING', destination / 'COPYING')
     shutil.copyfile(ROOT / 'PORTING.md', destination / 'PORTING.md')
     manifest = {p.relative_to(destination).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -150,7 +157,7 @@ def export_c(destination, enable_nb4=False):
     return destination
 
 
-def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_bytes=None, enable_nb4=None,low_rates=0):
+def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_bytes=None, enable_nb4=None,low_rates=0,destination=None):
     if backend not in ('asm', 'c'):
         raise ValueError('Unknown arithmetic backend: ' + backend)
     if packet_bytes not in (None,6,10,15,20,28):
@@ -159,6 +166,8 @@ def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_byt
     if not 0 <= frame_load_cycles <= 320000 or (frame_load_cycles and packet_file is None):
         raise ValueError('Frame load requires a player stream and 0..320000 cycles')
     output, source = prepare('profile')
+    if destination is not None:
+        output=destination.resolve();output.mkdir(parents=True,exist_ok=True)
     definitions = DEFINES + ['SPEEX_AVR_COMPACT_LSP', 'SPEEX_AVR_TIGHT_EXC',
                              'SPEEX_AVR_PROFILE', 'SPEEX_AVR_FAST_MUL',
                              'SPEEX_NB3_ENABLE_ASM=' + str(int(backend == 'asm'))]
@@ -167,11 +176,12 @@ def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_byt
     if packet_file is not None:
         data = packet_file.read_bytes()
         mode=data[0]>>3 if data else -1
-        detected={3:20,4:28}.get(mode,0)
+        detected=(MODE_BITS.get(mode,0)+7)//8
         if not detected or (packet_bytes is not None and detected!=packet_bytes) or len(data)%detected or len(data)>32760 or any(data[i]>>3!=mode for i in range(0,len(data),detected)):
-            raise ValueError('Expected uniform raw NB3/20-byte or NB4/28-byte packets fitting AVR Flash')
+            raise ValueError('Expected uniform raw supported NB packets fitting AVR Flash')
+        if mode in LOW_FEATURE and not (low_rates&LOW_FEATURE[mode]):raise ValueError('The lower-rate feature is not enabled')
         width=detected
-        output = ROOT / 'build/player'
+        output = destination.resolve() if destination is not None else ROOT / 'build/player'
         output.mkdir(parents=True, exist_ok=True)
         rows = [','.join(str(v) for v in data[i:i+width]) for i in range(0, len(data), width)]
         (output / 'sample.h').write_text('#define SPEEX_SAMPLE_PACKET_BYTES '+str(width)+'\n#define SPEEX_SAMPLE_FRAMES ' + str(len(data)//width) +
@@ -224,9 +234,10 @@ if __name__ == '__main__':
                         help='AVR arithmetic backend (default c); asm explicitly enables AVR assembly')
     parser.add_argument('--export-c', type=Path,
                         help='Export a self-contained portable C/CMake library to a new directory')
-    parser.add_argument('--player', type=Path, help='Embed a uniform NB3/NB4 raw stream and build the PWM player (requires --avr-gcc)')
+    parser.add_argument('--player', type=Path, help='Embed a uniform supported NB raw stream and build the PWM player (requires --avr-gcc)')
     parser.add_argument('--packet-bytes',type=int,choices=[6,10,15,20,28],help='Bare AVR mailbox width; player width is inferred')
     parser.add_argument('--low-rates',type=int,choices=range(8),default=0,help='Feature mask: NB2=1, NB8=2, NB1=4')
+    parser.add_argument('--out',type=Path,help='AVR build directory')
     parser.add_argument('--enable-nb4',action='store_true',default=None,help='Enable NB 11 kbit/s (automatic for 28-byte AVR input)')
     parser.add_argument('--frame-load-cycles', type=int, default=0,
                         help='Inject this many extra CPU cycles per player frame to verify headroom (test only)')
@@ -234,7 +245,7 @@ if __name__ == '__main__':
     if args.export_c:
         if args.avr_gcc or args.player or args.frame_load_cycles or args.backend == 'asm':
             parser.error('--export-c creates a C library and cannot build AVR firmware')
-        print(export_c(args.export_c,bool(args.enable_nb4)))
+        print(export_c(args.export_c,bool(args.enable_nb4),args.low_rates))
         sys.exit(0)
     if args.player and not args.avr_gcc:
         parser.error('--player requires --avr-gcc')
@@ -242,5 +253,5 @@ if __name__ == '__main__':
         parser.error('--frame-load-cycles requires --player and --avr-gcc')
     if args.backend == 'asm' and not args.avr_gcc:
         parser.error('The asm backend requires --avr-gcc')
-    print(avr(args.avr_gcc, args.player, args.frame_load_cycles, args.backend or 'c',args.packet_bytes,args.enable_nb4,args.low_rates)
-          if args.avr_gcc else host(args.cc, args.variant,bool(args.enable_nb4)))
+    print(avr(args.avr_gcc, args.player, args.frame_load_cycles, args.backend or 'c',args.packet_bytes,args.enable_nb4,args.low_rates,args.out)
+          if args.avr_gcc else host(args.cc, args.variant,bool(args.enable_nb4),args.low_rates))

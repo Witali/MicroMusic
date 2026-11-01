@@ -4,7 +4,10 @@
 #include <stdint.h>
 /* Compact wideband: NB3+HB1, 196 bits/20 ms (9.8 kbit/s), or
  * NB4+HB1, 256 bits/20 ms (12.8 kbit/s, requires SPEEX_ENABLE_NB4=1).
- * Low-band mode may change per frame when both are enabled.
+ * Optional NB2+HB1: 155 bits / 20 bytes, 7.75 kbit/s (SPEEX_ENABLE_NB2=1).
+ * Optional NB8+HB1: 115 bits / 15 bytes, 5.75 kbit/s (SPEEX_ENABLE_NB8=1).
+ * Optional NB1+HB1: 79 bits / 10 bytes, 3.95 kbit/s (SPEEX_ENABLE_NB1=1).
+ * Low-band mode may change per frame among enabled modes.
  * Raw packets only; extract them from Ogg before calling this API.
  * The final normalized Q7 16-tap QMF approximates Xiph's 64-tap synthesis.
  * This profile does not produce bit-identical full-QMF Xiph PCM.
@@ -18,6 +21,9 @@
  * SPEEX_NB3_ARCH + SPEEX_NB3_ENABLE_ASM settings as the low-band decoder. */
 #define SPEEX_WB1_PACKET_BYTES 25 /* legacy NB3+HB1 */
 #define SPEEX_WB1_NB4_PACKET_BYTES 32
+#define SPEEX_WB1_NB2_PACKET_BYTES 20
+#define SPEEX_WB1_NB8_PACKET_BYTES 15
+#define SPEEX_WB1_NB1_PACKET_BYTES 10
 #define SPEEX_WB1_MAX_PACKET_BYTES 32
 #define SPEEX_WB1_SAMPLE_RATE 16000
 #define SPEEX_WB1_FRAME_SAMPLES 320
