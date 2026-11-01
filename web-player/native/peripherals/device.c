@@ -894,6 +894,11 @@ int device_init(uint8_t *data, uint8_t *flash, uint8_t *eeprom) {
   if ((source==1 || source==2) && factory!=board.config[DEVICE_CFG_OSCILLATOR_HZ]) {
    fail(DEVICE_FAULT_CONFIG,10); return 0;
   }
+  /* Figure6-1/6.2.3 select the watchdog oscillator itself for CKSEL11.
+   * A physical instance cannot assign two frequencies to that one source. */
+  if (source==3 && board.config[DEVICE_CFG_OSCILLATOR_HZ]!=board.config[DEVICE_CFG_WATCHDOG_HZ]) {
+   fail(DEVICE_FAULT_CONFIG,18); return 0;
+  }
   if (board.config[DEVICE_CFG_NVM_CLOCK_PROFILE] &&
       !board.config[DEVICE_CFG_NVM_CALIBRATION_REFERENCE_HZ]) {
    fail(DEVICE_FAULT_CONFIG,11); return 0;

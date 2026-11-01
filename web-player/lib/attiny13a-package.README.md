@@ -187,6 +187,12 @@ equal `oscillatorHz`. Other selected clock sources keep their configured
 frequency when CAL is written. An unlisted CAL write fails explicitly for the
 internal calibrated RC source.
 The table is supplied by the caller; no universal CAL/frequency curve is implied.
+Physical CKSEL11 selects the watchdog oscillator itself: `oscillatorHz` must
+equal `watchdogHz`. Creation and decoding of all physical-capable package
+versions reject contradictory rates, including packages with older runtimes.
+Correct such profiles to one consistent source rate; legacy digital fixtures
+keep their independent clock parameters. See the
+[source and phase contract](../native/devices/attiny13a/clock_sources.md).
 `nvmClockProfile:1` requires a nonzero calibration reference and explicitly keeps
 the selected programming durations fixed in nanoseconds. With profile0,
 programming in the variable-clock model requires a timing profile first. This

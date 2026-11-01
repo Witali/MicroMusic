@@ -5,6 +5,7 @@ import {normalizeComparatorTimingProfile,validateComparatorTimingOptions} from '
 import {normalizeBandgapProfile,validateBandgapOptions} from './devices/attiny13a-bandgap-profile.js';
 import {AT13_FUSE_MASK as FUSE,AT13_IO as IO,AT13_MASK as MASK} from './attiny13a-registers.js';
 import {executionOptions} from './emulation-configurations.js';
+import {validateLowPowerClockOptions} from './devices/attiny13a-clock-sources.js';
 const configuration={oscillatorHz:1,watchdogHz:2,vccMicrovolts:3,bandgapMicrovolts:4,
   fuseLow:5,fuseHigh:6,lock:7,adcFirstSample:8,comparatorPropagationHalf:9,
   bandgapStartupHalf:10,comparatorInitial:11,wakeStartupHalf:12,spmCommandCycles:13,flashMaximum:14,bodRecoveryNs:15,factoryOsccal96:16,fuseStartupProfile:17,
@@ -54,6 +55,7 @@ export class ATtiny13A extends TranslatedCore {
     if(clkiProfile&&(options.resumable!==true||((options.fuseLow??0x7a)&3)!==0))
       throw Error('clkiProfile requires resumable:true and CKSEL00');
     if(clkiProfile&&((options.wakeStartupHalf??0)%2))throw Error('clkiProfile requires whole source CK wake startup');
+    validateLowPowerClockOptions(options);
     const comparatorTimingProfile=normalizeComparatorTimingProfile(options.comparatorTimingProfile??null);
     validateComparatorTimingOptions(comparatorTimingProfile,{...options,clkiProfile});
     const bandgapProfile=normalizeBandgapProfile(options.bandgapProfile??null);

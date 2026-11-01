@@ -1,10 +1,11 @@
 # External interfaces: implementation inventory
 
-Audit date: 2026-10-23. This inventory describes the current software boundary;
+Updated 2026-11-01. This inventory describes the current software boundary;
 loading a firmware package does not implement a programming or debug transport.
 
 | Interface | Current boundary | Work required for physical support |
 | --- | --- | --- |
+| Internal 128 kHz source | Physical CKSEL11 uses one configured frequency for CPU source and watchdog; native/runtime/package admission rejects contradictory rates | Exact internal phase/analog startup still requires a reference; see the [source contract](clock_sources.md) |
 | CLKI on PB3 | Timestamped physical source edges clock the board through CKDIV8/CLKPR; bounded CPU/IRQ continuations preserve progress through holds, startup and sleep | The named digital phase policy is implemented; pad timing, analog clock reception and silicon phase measurements remain open |
 | External RESET | Optional analog PB5 receiver feeds the reset aggregator; digital injection stays prequalified | Supply and receiver parameters are explicit profiles; silicon calibration/measurement remains open |
 | ISP | Excluded by the user's scope decision | No programmer or command transport is planned |

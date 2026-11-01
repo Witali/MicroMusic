@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Low-power source correction, 2026-11-01: the official figure6-1 connects the
+watchdog oscillator to the CKSEL11 clock-multiplexer input. Physical profiles
+could previously assign it contradictory CPU-source and WDT rates. Native
+init now rejects that mismatch before caller-memory effects; a shared device
+validator protects runtime construction and physical-capable package versions.
+All 51 focused checks and the final 2659/2659 default suite pass, including
+independent-clock controls, CKDIV8 and actual resumable/package execution.
+This corrects source-frequency admission,
+not the unresolved internal phase or silicon accuracy; the 24/31 count remains.
+See the [source contract](devices/attiny13a/clock_sources.md).
+
 Self-subtraction checkpoint, 2026-11-01: equal-operand CP/SUB reuse constant
 live flags, with CP preserving its GPR and SUB writing zero. Original cycle,
 retirement, reset and IRQ boundaries stay intact. All 34 focused checks pass,

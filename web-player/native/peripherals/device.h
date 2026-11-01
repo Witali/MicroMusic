@@ -50,6 +50,9 @@ typedef device_pin_event_t device_pin_event_ps_t;
  * BOD recovery60000ns (datasheet approximate digital profile, configurable),
  * factory OSCCAL96=0 (explicit fixture byte, not a universal chip value),
  * fuse startup profile0 (zero-delay digital fixture; set1 for fuse timing).
+ * Physical CKSEL11 selects the watchdog oscillator; oscillatorHz and watchdogHz
+ * must agree (config fault/detail18 otherwise). Legacy clock fixtures retain
+ * their explicitly independent rates. This does not calibrate oscillator phase.
  * DWEN must be unprogrammed for every clock/reset profile. Until debugWIRE
  * startup, PB5 mux and sleep-clock behavior are implemented, init rejects
  * programmed DWEN with DEVICE_FAULT_CONFIG/detail14, regardless of lock bits

@@ -5,6 +5,7 @@ import {normalizeClkiProfile} from './devices/attiny13a-clki-profile.js';
 import {normalizeComparatorTimingProfile,validateComparatorTimingOptions} from './devices/attiny13a-comparator-profile.js';
 import {normalizeBandgapProfile,validateBandgapOptions} from './devices/attiny13a-bandgap-profile.js';
 import {AT13_FUSE_MASK as FUSE} from './attiny13a-registers.js';
+import {validateLowPowerClockOptions} from './devices/attiny13a-clock-sources.js';
 export const PACKAGE_FORMAT='micromusic-attiny13a-package';
 export const PACKAGE_VERSION=7;
 export const PACKAGE_ABI='micromusic-attiny13a-device-v1';
@@ -129,6 +130,7 @@ function normalizeConfiguration(input={},complete=false,version=PACKAGE_VERSION)
     const factory=configuration.osccalHz[configuration.factoryOsccal96];
     if(!factory||([1,2].includes(configuration.fuseLow&3)&&factory!==configuration.oscillatorHz))fail('configuration OSCCAL factory frequency/clock source mismatch');
   }
+  try{validateLowPowerClockOptions(configuration);}catch(error){fail(error.message);}
   return configuration;
 }
 function image(input,length,label,optional=false){

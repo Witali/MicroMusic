@@ -32,6 +32,12 @@ and CKSEL11 independent128kHz sources keep their configured main frequency when
 OSCCAL changes. Their CAL still requires an explicit RC table entry; this does
 not convert either source into a calibrated RC source.
 
+In physical CKSEL11 mode the selected main source is the watchdog oscillator,
+so configured `oscillatorHz` and `watchdogHz` must agree. A mismatch produces
+config fault1/detail18 at init; runtime/package validation also rejects it.
+The legacy independent-clock fixture is retained. See the
+[source contract](../devices/attiny13a/clock_sources.md) and its phase limits.
+
 The digital transition is explicit: a write changes the rate immediately at its
 bus-effect timestamp, preserving fractional oscillator/divider phase and all
 nominal CPU-half-clock state. The remaining fraction of the current period runs

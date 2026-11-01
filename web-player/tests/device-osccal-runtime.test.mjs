@@ -113,8 +113,9 @@ test('clock changes preserve fractional phase and CLKPR state across unrelated i
 });
 test('external and128kHz clock sources do not acquire the calibrated RC clock',()=>{
   for(const fuseLow of [0x70,0x73]){
-    const c=board({fuseLow,points:[[0,9600000],[1,10000000]]});c.write_io(0x31,1);
-    assert.equal(c.frequency(),1000000);c.cycles(10);assert.equal(c.now(),10000000n);
+    const frequency=fuseLow===0x73?128000:1000000;
+    const c=board({fuseLow,frequency,points:[[0,9600000],[1,10000000]]});c.write_io(0x31,1);
+    assert.equal(c.frequency(),frequency);c.cycles(10);assert.equal(c.now(),10n*PS/BigInt(frequency));
     assert.equal(c.read_io(0x31),1);assert.equal(c.fault(),0);
   }
 });

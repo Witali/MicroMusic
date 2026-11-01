@@ -138,6 +138,23 @@ test('the DWEN admission boundary also covers historical package versions',async
   }
 });
 
+test('physical CKSEL11 package creation rejects independent CPU/watchdog source rates',async()=>{
+  const configuration={fuseLow:0x73,oscillatorHz:96000,watchdogHz:128000,osccalHz:Array(128).fill(9600000)};
+  await assert.rejects(createPackage({...input,configuration}),/CKSEL11.*watchdogHz/);
+});
+
+test('shared low-power clock validation protects all physical-capable package versions',async()=>{
+  const introduced={osccalHz:2,nvmClockProfile:2,nvmCalibrationReferenceHz:2,
+    powerResetProfile:3,resetInputProfile:4,resumable:5,clkiProfile:5,comparatorTimingProfile:6,bandgapProfile:7};
+  for(let version=2;version<=PACKAGE_VERSION;version++){
+    const pkg=copy(original);pkg.version=version;
+    for(const [key,since]of Object.entries(introduced))if(version<since)delete pkg.configuration[key];
+    Object.assign(pkg.configuration,{fuseLow:0x73,oscillatorHz:128000,watchdogHz:128000,osccalHz:Array(128).fill(9600000)});
+    await decodePackage(seal(pkg));pkg.configuration.watchdogHz=96000;
+    await assert.rejects(decodePackage(seal(pkg)),/CKSEL11.*watchdogHz/);
+  }
+});
+
 const phaseAbi=runtimeABI(new WebAssembly.Instance(await WebAssembly.compile(runtime)).exports,{resumable:true});
 const phased=transpileAVR(flash,phaseAbi,{resumable:true});
 const phaseConfiguration={resumable:true,osccalHz:Array.from({length:128},(_,n)=>n===0?9600000:0)};
