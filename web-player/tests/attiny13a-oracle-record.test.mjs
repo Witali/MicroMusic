@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {coreProbeCases} from '../scripts/lib/avr-core-probe-cases.mjs';
 import {decodeAttiny13aOracle as decode} from '../scripts/lib/attiny13a-oracle-record.mjs';
+import {oracleSuite} from '../scripts/lib/attiny13a-oracle-cases.mjs';
 const descriptor=()=>({schema:'micromusic-attiny13a-studio-control-v1',device:'ATtiny13A',
   buildId:[1,2,3,4],recordBytes:60,cases:coreProbeCases.map(c=>({...c}))});
 function record(before=0,overhead=2){
@@ -25,10 +26,20 @@ test('oracle decoder rejects incomplete, wrong-sized and stale-build records',()
 });
 test('oracle decoder rejects changed descriptor targets and expectations',()=>{
   for(const mutate of [d=>d.device='ATtiny88',d=>d.schema='other',d=>d.recordBytes=59,
-    d=>d.cases[0].sreg^=1,d=>d.cases.pop()]){const d=descriptor();mutate(d);assert.throws(()=>decode(record(),d));}
+    d=>d.cases[0].sreg^=1,d=>d.cases[0].flags^=1,d=>d.cases[0].asm='nop',d=>d.cases.pop()]){const d=descriptor();mutate(d);assert.throws(()=>decode(record(),d));}
 });
 test('oracle decoder rejects invalid empty controls and refuses to certify a source',()=>{
   const b=record();b[8]=1;assert.throws(()=>decode(b,descriptor()),/control/);
   assert.throws(()=>decode(record(),descriptor(),{captureKind:'official-simulator'}),/source/);
   const r=decode(record(),descriptor(),{captureKind:'synthetic-emulator'});assert.equal(r.hostVerified,false);
+});
+
+test('oracle suites reject cross-suite records, unknown suites and changed flag stimuli',()=>{
+  const cases=oracleSuite('flags').cases,d={...descriptor(),suite:'flags',cases:cases.map(c=>({...c}))},b=record();
+  cases.forEach((c,n)=>b.set([c.result,c.sreg,254,(254+2+c.cycles)&255],12+4*n));
+  assert.equal(decode(b,d).passed,true);assert.equal(decode(b,d).suite,'flags');
+  assert.throws(()=>decode(b,{...d,suite:'unknown'}),/suite/);
+  assert.throws(()=>decode(b,{...d,suite:'core'}),/catalog/);
+  assert.throws(()=>decode(record(),{...descriptor(),suite:'flags'}),/catalog/);
+  d.cases[0].flags^=2;assert.throws(()=>decode(b,d),/catalog/);
 });

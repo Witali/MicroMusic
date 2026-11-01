@@ -1,0 +1,350 @@
+{
+  "schema": "micromusic-attiny13a-oracle-flags-evidence-v1",
+  "date": "2026-11-01",
+  "basisCommit": "e8086f2982ad69b6da50448667ca2cd3440946b7",
+  "officialSessionExecuted": false,
+  "debuggerApiBindingVerified": false,
+  "hardwareTested": false,
+  "planComplete": 24,
+  "planTotal": 31,
+  "scope": {
+    "uniqueStimuli": 24,
+    "preparedPrimaryForms": 20,
+    "catalogRows": 123,
+    "officialObserved": 0,
+    "modelCaseExecutions": 72
+  },
+  "sources": {
+    "web-player/native/devices/attiny13a/core-oracle.S": "a2bb096ff2ad1d759e25523551846c9db917e30ad7b872d93c527ee7146025d5",
+    "web-player/native/devices/attiny13a/core-oracle.c": "cbf90b013f0bdfcbbbc2797ec094cc4a3f0b4409f615b59bd3a116c6017dc2fa",
+    "web-player/native/devices/attiny13a/oracle-debughooks.py": "8da390fb33af4095af90598f801d7ca74db96a793046aeb993d75ee6bb9cb42e",
+    "web-player/native/attiny13a-registers.generated.inc": "aaaf7f47e67e1f3b72754c13373ea9aa6d39acf65c8669e43333ffdf51e539e4",
+    "web-player/scripts/lib/avr-core-probe-cases.mjs": "1d0c71aafc585220f4fd4b0df5268cffad75071711c40a7c02b6c93c353e9286",
+    "web-player/scripts/lib/attiny13a-oracle-cases.mjs": "33387b52832b8c12bc003b58c700a64be2a153c4f4ef7c57e08b4b8db74ddf63",
+    "web-player/scripts/build-attiny13a-oracle.mjs": "3763aa09c35174e70fcd1e4306955c389805cb591cca09c914863d92de902a2c",
+    "web-player/lib/attiny13a-registers.js": "2d4f35723abcaf81015d6cf167b1e9a88e77b032846ba18be8e8efe7685f38e4",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/provenance.json": "762c02589e722f5169a4f86451eacd6705f4a1632a846fd94bd2239f3b2bc1c3",
+    "web-player/vendor/microchip/ATtiny_DFP/3.4.278/include/avr/iotn13a.h": "72c0824173a3f720f88c104fd8fbc253690d634b842df7c090bd7883daf951be",
+    "web-player/scripts/lib/attiny13a-oracle-record.mjs": "38012453374cad9bfa576d11227d0d96149f4959c9cab0e480c7be52b968e9cf",
+    "web-player/scripts/check-attiny13a-oracle.mjs": "87380bc2c4f358b7977a1654e7dca0cbeedf47c6a8151c13f2d4d8fbd3a4e030",
+    "web-player/scripts/verify-attiny13a-oracle.mjs": "6dd9269b9a08691a6dc9611140681a71e7f77fd1608738a4375710dff3430de5",
+    "web-player/tests/attiny13a-oracle-record.test.mjs": "fefb87596b126cda27b7d9a338ca0f85bb86e183b8b709c8854619ad03480006",
+    "web-player/tests/attiny13a-oracle-hooks.test.py": "711b5a8a17a1f25389becb8e7c6700f18f48b352cf7f80f727746ea520fdafff",
+    "web-player/scripts/audit-avr-sreg.py": "ef6cd500adfc31b5b442e08a0336c99528c99c8c8472fa02627c56ab36c05e4c",
+    "web-player/reports/attiny13a-instructions.json": "548e7d6bf5b12e1ec3bc96c913ef59d59a5355028cfe8aea0b8f19f310a6d94f"
+  },
+  "bundles": [
+    {
+      "suite": "core",
+      "breakpointAddressUnit": "unconfirmed",
+      "buildId": [
+        146,
+        226,
+        30,
+        202
+      ],
+      "flashBytes": 572,
+      "recordBytes": 60,
+      "dwarfVersions": [
+        2,
+        2
+      ],
+      "flashSha256": "a74d1e01c30cd21d167948ea6aac26420472854d90aad24d40eedcbc6e3f3abf",
+      "elfSha256": "7003b2819cc0a85398be9f761fd9fe960cf2a1712d9de1d0b7a8cd8c4916e670",
+      "debughooksSha256": "c99d4f880f7da4034e3ab1c623758e8113047ae94616da131e7234eff40b86e0",
+      "compilerVersion": "avr-gcc.exe (GCC) 7.3.0",
+      "folder": "build/probes/attiny13a-studio-20261101/core",
+      "stackBytesReserved": 4,
+      "descriptorSha256": "28ea007f2e92679c2138d1dc85e8a52d0783294193ad14749c97cfa8b7a5701f",
+      "recordAndSequenceCycleParity": true,
+      "policies": [
+        {
+          "name": "verification",
+          "compilerPolicy": {
+            "optimizeFlags": false,
+            "maxBlockInstructions": 2,
+            "optimizePhaseLocals": false
+          },
+          "resultSha256": "68a3553d783b27d74d8af13ffc94a9c203f6d5b453a0838e7119fb650afe5862",
+          "passedCases": 12,
+          "steps": 385,
+          "overheadTicks": 2
+        },
+        {
+          "name": "optimized",
+          "compilerPolicy": {
+            "optimizeFlags": true,
+            "maxBlockInstructions": 32,
+            "optimizePhaseLocals": true
+          },
+          "resultSha256": "4fed6956a1a1583c66f1cdfa9cd82b7b07303ffe5c69bb62e7c1cb25f171d6d0",
+          "passedCases": 12,
+          "steps": 385,
+          "overheadTicks": 2
+        }
+      ]
+    },
+    {
+      "suite": "core",
+      "breakpointAddressUnit": "bytes",
+      "buildId": [
+        28,
+        173,
+        204,
+        77
+      ],
+      "flashBytes": 572,
+      "recordBytes": 60,
+      "dwarfVersions": [
+        2,
+        2
+      ],
+      "flashSha256": "fec070a3323a04e3528528c032c2bb427073b644bd4530b8d4a5ba8f886f60a5",
+      "elfSha256": "ec0e2dcf52cc33abbfec392b3b46d1ea71e8ccfb7106884e085326853ec69ed9",
+      "debughooksSha256": "b53c89743a58278ccf2fa66c900afe81f9440c8b8cd5d37188f23190d116cd8d",
+      "compilerVersion": "avr-gcc.exe (GCC) 7.3.0",
+      "folder": "build/probes/attiny13a-studio-20261101/core-bound",
+      "stackBytesReserved": 4,
+      "descriptorSha256": "8e1b8fb446cb2193f7239a93bb5a13463a83ab62ff3ad573c3f96094c7fe6ebd",
+      "recordAndSequenceCycleParity": true,
+      "policies": [
+        {
+          "name": "verification",
+          "compilerPolicy": {
+            "optimizeFlags": false,
+            "maxBlockInstructions": 2,
+            "optimizePhaseLocals": false
+          },
+          "resultSha256": "c3cb550a1b0306e68d75c6358eae075e3b1ce65ff4399a621edbc5230ca28093",
+          "passedCases": 12,
+          "steps": 385,
+          "overheadTicks": 2
+        },
+        {
+          "name": "optimized",
+          "compilerPolicy": {
+            "optimizeFlags": true,
+            "maxBlockInstructions": 32,
+            "optimizePhaseLocals": true
+          },
+          "resultSha256": "9f99941af86f18a061d42e147d159d4f878392b6d563707a26bd12ad5306f3f0",
+          "passedCases": 12,
+          "steps": 385,
+          "overheadTicks": 2
+        }
+      ]
+    },
+    {
+      "suite": "flags",
+      "breakpointAddressUnit": "bytes",
+      "buildId": [
+        18,
+        161,
+        141,
+        239
+      ],
+      "flashBytes": 556,
+      "recordBytes": 60,
+      "dwarfVersions": [
+        2,
+        2
+      ],
+      "flashSha256": "793e674f1097a7028fcbbe9ec1f145af965e85b057c419c9b67ee776c4227379",
+      "elfSha256": "94ddf66cc5ac5479c1504969844b4affb96fdb1122cfa70d6992c9ba8e67497c",
+      "debughooksSha256": "9dbf9a4874b1d0fb052648adda71a875eca8d1a08b687161decdeda0ef1f1a26",
+      "compilerVersion": "avr-gcc.exe (GCC) 7.3.0",
+      "folder": "build/probes/attiny13a-studio-20261101/flags-bound",
+      "stackBytesReserved": 4,
+      "descriptorSha256": "26eae2d8a77eb1845d43a750f2a8355634c8e37f4f3d2134c254837c78d328e0",
+      "recordAndSequenceCycleParity": true,
+      "policies": [
+        {
+          "name": "verification",
+          "compilerPolicy": {
+            "optimizeFlags": false,
+            "maxBlockInstructions": 2,
+            "optimizePhaseLocals": false
+          },
+          "resultSha256": "264493465e829568d86005196ed663152184583b5275e82cbb3b0f8bd01864d3",
+          "passedCases": 12,
+          "steps": 378,
+          "overheadTicks": 2
+        },
+        {
+          "name": "optimized",
+          "compilerPolicy": {
+            "optimizeFlags": true,
+            "maxBlockInstructions": 32,
+            "optimizePhaseLocals": true
+          },
+          "resultSha256": "d85162cf3bcbe5199f9a048532f3dd6f916e04e68c5d4b88e04eeef60a268dd8",
+          "passedCases": 12,
+          "steps": 378,
+          "overheadTicks": 2
+        }
+      ]
+    }
+  ],
+  "flagsManualReview": {
+    "source": "https://ww1.microchip.com/downloads/en/DeviceDoc/AVR-Instruction-Set-Manual-DS40002198A.pdf",
+    "sha256": "d8e75ad7cc92de2b86c718495ed9392096e0192a08269a4dba8da16075be1e00",
+    "maskAuditSha256": "8417655e7d9a7712ed0862955ef0c2271bf26f9dabb519adf4eb1f59f5877fdb",
+    "matchedCatalogRows": 123,
+    "vectors": [
+      {
+        "id": "adc-new-zero",
+        "form": "ADC",
+        "manualSection": "5.1",
+        "flags": 64,
+        "sreg": 66,
+        "result": 0,
+        "pdfPage": 23,
+        "writeMask": 63
+      },
+      {
+        "id": "sbc-zero-set",
+        "form": "SBC",
+        "manualSection": "5.93",
+        "flags": 66,
+        "sreg": 66,
+        "result": 0,
+        "pdfPage": 114,
+        "writeMask": 63
+      },
+      {
+        "id": "sbc-zero-clear",
+        "form": "SBC",
+        "manualSection": "5.93",
+        "flags": 64,
+        "sreg": 64,
+        "result": 0,
+        "pdfPage": 114,
+        "writeMask": 63
+      },
+      {
+        "id": "cpc-zero-clear",
+        "form": "CPC",
+        "manualSection": "5.46",
+        "flags": 64,
+        "sreg": 64,
+        "result": 42,
+        "pdfPage": 65,
+        "writeMask": 63
+      },
+      {
+        "id": "cp-overflow",
+        "form": "CP",
+        "manualSection": "5.45",
+        "flags": 64,
+        "sreg": 120,
+        "result": 128,
+        "pdfPage": 64,
+        "writeMask": 63
+      },
+      {
+        "id": "cpi-borrow",
+        "form": "CPI",
+        "manualSection": "5.47",
+        "flags": 64,
+        "sreg": 117,
+        "result": 128,
+        "pdfPage": 66,
+        "writeMask": 63
+      },
+      {
+        "id": "and-preserved-hct",
+        "form": "AND",
+        "manualSection": "5.4",
+        "flags": 125,
+        "sreg": 99,
+        "result": 0,
+        "pdfPage": 26,
+        "writeMask": 30
+      },
+      {
+        "id": "or-preserved-hct",
+        "form": "OR",
+        "manualSection": "5.82",
+        "flags": 123,
+        "sreg": 117,
+        "result": 129,
+        "pdfPage": 103,
+        "writeMask": 30
+      },
+      {
+        "id": "clr-preserved-hct",
+        "form": "EOR",
+        "manualSection": "5.54",
+        "flags": 125,
+        "sreg": 99,
+        "result": 0,
+        "pdfPage": 73,
+        "writeMask": 30
+      },
+      {
+        "id": "inc-preserved-hct",
+        "form": "INC",
+        "manualSection": "5.61",
+        "flags": 97,
+        "sreg": 109,
+        "result": 128,
+        "pdfPage": 81,
+        "writeMask": 30
+      },
+      {
+        "id": "dec-preserved-hct",
+        "form": "DEC",
+        "manualSection": "5.49",
+        "flags": 97,
+        "sreg": 121,
+        "result": 127,
+        "pdfPage": 68,
+        "writeMask": 30
+      },
+      {
+        "id": "neg-minimum",
+        "form": "NEG",
+        "manualSection": "5.80",
+        "flags": 98,
+        "sreg": 77,
+        "result": 128,
+        "pdfPage": 101,
+        "writeMask": 63
+      }
+    ]
+  },
+  "tests": {
+    "decoder": {
+      "passed": 6,
+      "tapSha256": "97c9c66e9faa1478ab99675622c88a6c45d36af2a0a787d908d1bf0183bb5a10"
+    },
+    "callbackStubs": {
+      "passed": 6,
+      "logSha256": "e1936176d1302be627fcf3d0dd34188030a90fc8a0c0347d68716eb5320ece0e",
+      "realStudioUsed": false
+    },
+    "syntheticChecker": {
+      "positivePassed": true,
+      "resultSha256": "682c14cc79c52ea3a35d74472d9ef0c9516947698cea4573b91c0eeeb5381d65",
+      "negativeInputsRejected": [
+        "wrong-suite",
+        "unknown-suite",
+        "changed-input-flags"
+      ],
+      "legacyCoreDescriptorAccepted": true,
+      "legacyResultSha256": "14e14f8669dfc3e5c1ea37601dd394e47731c316e04b6d5ea57edb165211bb7d"
+    }
+  },
+  "production": {
+    "nativeSha256": "b9a8fa14a971fd5f82f8175f978e9a0b1e03f31fc8612a6892d202d7f93635a1",
+    "compilerIdentity": "d67d0e37d909695ee35f8a90059d825f68008e42ec1ac231302c7f0bf51fa46b",
+    "changed": false
+  },
+  "downloadedExternalFiles": [],
+  "limits": [
+    "Prepared vectors and model executions are not official captures.",
+    "No I-bit/interrupt or exhaustive operand coverage.",
+    "No internal bus phase or silicon timing measurement.",
+    "Host installation approval remains pending."
+  ]
+}

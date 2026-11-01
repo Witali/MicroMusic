@@ -24,7 +24,7 @@ remain required. This changes no site-model or host-profiling requirement and
 closes no unmeasured hardware item. See the
 [verification-only contract](EMULATION_CONFIGURATIONS.md#verification-virtual-event-tolerance).
 
-Current status, 2026-10-30: **24/31 checklist items complete, seven open**.
+Current status, 2026-11-01: **24/31 checklist items complete, seven open**.
 The new item explicitly covers the shared ADC/comparator/BOD internal reference
 identified during the official section8.3.1 audit. Its explicit physical profile
 is implemented and tested; no original open item was reclassified as complete.
@@ -32,6 +32,16 @@ Earlier21/30,22/30 and23/30 counts below are historical checkpoints.
 Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
+
+Studio flag checkpoint, 2026-11-01: a second twelve-case suite covers chained
+Z, preserved H/C/T, comparison operands, signed overflow and NEG minimum.
+There are now 24 unique stimuli/20 prepared primary forms. Three ELF variants
+pass verification and optimized compiler policies with identical raw records
+and sequence-cycle totals (72 case executions); six decoder and six callback
+tests pass. The official PDF re-audit matches all 123 flag masks. These are
+prepared controls/model checks, not official observations; the 24/31 count and
+pending host-installation approval remain unchanged. See the
+[flag evidence](../reports/studio-oracle-flags-20261101.json).
 
 Studio-control preparation, 2026-10-30: an ELF/DWARF2 fixture prepares twelve
 instruction sequences with result/SREG and calibrated Timer0 cycle records.

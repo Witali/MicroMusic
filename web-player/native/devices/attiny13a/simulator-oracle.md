@@ -426,16 +426,18 @@ No guessed factory signature, vtable or wire command has been invoked.
 
 ## Prepared instruction-control object
 
-The [ELF/DWARF2 control fixture](core-oracle.md) now builds twelve instruction
-sequences using the existing shared stimuli and original manufacturer register
+The [ELF/DWARF2 control fixture](core-oracle.md) now builds two suites of twelve
+instruction sequences using shared core/flag stimuli and original manufacturer register
 definitions. A typed 60-byte mailbox retains result, SREG and calibrated Timer0
 cycle deltas. Project-local callbacks use documented expression reads; address
 units require real-host confirmation before mailbox collection is enabled.
 
-Both prepared ELF variants pass on our own model, five decoder and six
-callback tests pass, and the production native rebuild remains byte-identical.
-The [preparation report](../../../reports/studio-oracle-preparation-20261030.json)
-pins these inputs and outputs. This is not an official simulator capture:
+The [initial preparation report](../../../reports/studio-oracle-preparation-20261030.json)
+pins the original build and byte-identical production native rebuild. The
+[flag checkpoint](../../../reports/studio-oracle-flags-20261101.json) adds
+20 prepared primary forms across 24 unique stimuli, parity under verification
+and optimized compiler policies and six decoder/six callback tests.
+This is not an official simulator capture:
 the real callback API binding and all 123 official instruction observations
 remain unverified. No programming interface or private simulator ABI is used.
 

@@ -10,7 +10,9 @@ import {nominalVerificationDeviceOptions} from '../lib/emulation-configurations.
 import {AT13_MEMORY as MEMORY} from '../lib/attiny13a-registers.js';
 import {decodeAttiny13aOracle} from './lib/attiny13a-oracle-record.mjs';
 const root=fileURLToPath(new URL('../../',import.meta.url));
-const {values}=parseArgs({options:{bundle:{type:'string',default:'build/probes/attiny13a-studio'},output:{type:'string'}}});
+const {values}=parseArgs({options:{bundle:{type:'string',default:'build/probes/attiny13a-studio'},output:{type:'string'},
+  policy:{type:'string',default:'verification'}}});
+assert.ok(['verification','optimized'].includes(values.policy));
 const folder=resolve(root,values.bundle),read=name=>readFileSync(resolve(folder,name));
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const d=JSON.parse(read('descriptor.json')),binary=new Uint8Array(read('oracle.bin'));
@@ -18,7 +20,10 @@ assert.equal(hash(binary),d.flashSha256);assert.equal(hash(read('oracle.elf')),d
 assert.equal(hash(read('debughooks.py')),d.debughooksSha256);
 for(const [path,expected]of Object.entries(d.sources))
   assert.equal(hash(Buffer.from(readFileSync(resolve(root,path),'utf8').replaceAll('\r\n','\n'))),expected,path);
-const c=new ATtiny13A(binary,null,{...nominalVerificationDeviceOptions(9600000),fuseLow:0x72,fuseStartupProfile:0});
+const optimized=values.policy==='optimized';
+const c=new ATtiny13A(binary,null,{...nominalVerificationDeviceOptions(9600000),fuseLow:0x72,fuseStartupProfile:0,
+  ...(optimized?{optimizeFlags:true,maxBlockInstructions:32,optimizePhaseLocals:true}:{})});
+assert.equal(c.transpilation.optimizeFlags,optimized);assert.equal(!!c.transpilation.optimizePhaseLocals,optimized);
 const start=new Map(d.caseSpans.map((x,n)=>[x.targetByteAddress/2,n]));
 const after=new Map(d.caseSpans.map((x,n)=>[x.afterByteAddress/2,n]));
 const entered=new Map(),cycles=[];let steps=0;
@@ -33,10 +38,12 @@ assert.equal(cycles.length,d.cases.length);assert.equal(c.sp,MEMORY.RAMEND);
 const record=c.data.slice(d.recordAddress,d.recordAddress+d.recordBytes);
 const decoded=decodeAttiny13aOracle(record,d,{captureKind:'synthetic-emulator'});assert.equal(decoded.passed,true);
 const result={schema:'micromusic-attiny13a-oracle-preparation-v1',officialSessionExecuted:false,
+  executionPolicy:values.policy,compilerPolicy:{optimizeFlags:c.transpilation.optimizeFlags,
+    maxBlockInstructions:c.transpilation.maxBlockInstructions,optimizePhaseLocals:!!c.transpilation.optimizePhaseLocals},
   descriptorSha256:hash(read('descriptor.json')),flashSha256:d.flashSha256,elfSha256:d.elfSha256,
   nativeSha256:hash(readFileSync(resolve(root,'web-player/wasm/attiny13a.wasm'))),
   steps,record:Array.from(record),measuredModelSequenceCycles:cycles,decoded};
-const out=values.output?resolve(root,values.output):resolve(folder,'synthetic-validation.json');
+const out=values.output?resolve(root,values.output):resolve(folder,optimized?'synthetic-optimized-validation.json':'synthetic-validation.json');
 writeFileSync(out,JSON.stringify(result,null,2)+'\n');
-console.log(JSON.stringify({cases:decoded.cases.length,passed:decoded.passed,overheadTicks:decoded.overheadTicks,
+console.log(JSON.stringify({suite:decoded.suite,policy:values.policy,cases:decoded.cases.length,passed:decoded.passed,overheadTicks:decoded.overheadTicks,
   steps,officialSessionExecuted:false,hostVerified:false}));
