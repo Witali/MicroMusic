@@ -70,5 +70,35 @@ class ExtraGroupTests(unittest.TestCase):
             self.assertGreater(count,1)
             np.testing.assert_array_equal(ee,before)
 
+    def test_explicit_causal_positions_find_same_byte_optional_only_cancellation(self):
+        spectra=[[1,2,4,6,8,10,13,17,23,29] for _ in range(2)]
+        params=[(8,40,0)]*4
+        pulses=[(5,8 if not i%2 else -8) for i in range(32)];pulses[10]=(0,8)
+        extras=[(-1,0)]*16;extras[5]=(30,-8)
+        blob=compact.pack(640,4,spectra,params,pulses,0,0,extras=extras)[0]
+        extras[5]=(0,-8)
+        target=compact.pack(640,4,spectra,params,pulses,0,0,extras=extras)[0]
+        reference=compact.decode_model(target).astype(np.int64)
+        n,profile,spectra,pp,ii,ee,pre,bright,co,h,dd,cc,ring=inputs(blob,200)
+        baseline=ee.copy();results={}
+        for causal in (False,True):
+            pos,amp,loss,count=refit_extra_group(reference,co,pp,ii,ee,table('scale_table.inc'),
+                pre,bright,200,360,h,dd,cc,ring,1,1,causal_positions=causal)
+            np.testing.assert_array_equal(ee,baseline)
+            chosen=ee.copy();chosen[5]=(pos,amp)
+            result=compact.pack(n,profile,spectra,pp,ii,pre,bright,extras=chosen.tolist())[0]
+            pcm=compact.decode_model(result)
+            self.assertEqual(len(result),57)
+            self.assertFalse(np.any((pcm==-32768)|(pcm==32767)))
+            self.assertEqual(compact.unpack(result)[:7],compact.unpack(blob)[:7])
+            for decoder in (self.decoder,self.other):
+                np.testing.assert_array_equal(decoder.decode_one_s16(result,n),pcm)
+                np.testing.assert_array_equal(decoder.decode_one(result,n),pwm_duties(pcm))
+            results[causal]=(result,loss,count,int(sse(reference,pcm)))
+        self.assertNotEqual(results[False][0],target)
+        self.assertGreater(results[False][3],0)
+        self.assertEqual(results[False][2],29)
+        self.assertEqual(results[True],(target,0,43,0))
+
 
 if __name__=='__main__':unittest.main()

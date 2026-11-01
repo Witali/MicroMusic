@@ -13,12 +13,15 @@ from enhance_speech_compact import advance, sse
 
 @njit(cache=True)
 def refit_extra_group(reference, co, params, pulses, extras, steps, pre, bright,
-                      at, stop, hist, dd, cc, ring, active_count, capacity):
+                      at, stop, hist, dd, cc, ring, active_count, capacity,
+                      causal_positions=False):
     """Return position, amplitude, local SSE and trials for one 40-sample group.
 
     Preserve the cheap refitter's candidate order, strict-improvement ties and
     amplitude rule. The caller-owned extras array is temporary trial storage;
     its original row is restored before normal return. No other field changes.
+    Explicit causal_positions also tests the two actual mandatory locations;
+    it does not widen the legacy amplitude set or change the default policy.
     """
     index = at//40
     original = extras[index].copy()
@@ -39,6 +42,11 @@ def refit_extra_group(reference, co, params, pulses, extras, steps, pre, bright,
     if original[1]:
         for delta in (-1, 0, 1):
             pos = original[0]+delta
+            if 0 <= pos < valid:
+                positions[pos] = 1
+    if causal_positions:
+        for half in range(2):
+            pos = half*20+pulses[at//20+half, 0]
             if 0 <= pos < valid:
                 positions[pos] = 1
     for pos in range(valid):
