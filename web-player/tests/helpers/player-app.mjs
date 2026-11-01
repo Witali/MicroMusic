@@ -4,7 +4,6 @@ import {parseHex} from '../../lib/hex.js';
 import {RealtimeMonitor} from '../../lib/realtime.js';
 import {universalPackageEntry} from '../../lib/universal-package.js';
 import {lpxPreviewEntries,previewWaveform} from '../../lib/native-preview.js';
-import {speexPreviewEntries} from '../../lib/speex-preview.js';
 
 export function deferred(){
   let resolve,reject;
@@ -99,7 +98,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     }
   }
   const window={devicePixelRatio:1,AudioContext:Context,addEventListener:(type,listener)=>windowEvents.set(type,listener)};
-  const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,speexPreviewEntries,previewWaveform,
+  const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,previewWaveform,
     Worker,AudioWorkletNode:Worklet,ResizeObserver:class{observe(){}},
     MessageChannel:class{constructor(){this.port1={};this.port2={};}},
     performance:{now:()=>Date.now()},setTimeout:()=>1,clearTimeout(){},
@@ -107,12 +106,9 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     fetch:async input=>{
       const url=new URL(input,location),name=url.pathname.split('/').at(-1),index=fetches.length;
       fetches.push(url.href);
-      const relative=url.pathname.split('/web-player/')[1];
-      // Preserve the old LPX manifest fixture alias without conflating codecs.
-      let data=name===initialCatalog?catalog:catalogs[relative];
-      if(data===undefined&&(name!=='manifest.json'||relative==='audio/lpx-bread/manifest.json'))data=catalogs[name];
-      let bytes=assets[relative]??assets[name];
+      let data=name===initialCatalog?catalog:catalogs[name],bytes=assets[name];
       if(data===undefined&&bytes===undefined){
+        const relative=url.pathname.split('/web-player/')[1];
         bytes=readFileSync(new URL('../../'+relative,import.meta.url));
         if(name.endsWith('.json'))data=JSON.parse(bytes);
       }

@@ -1,6 +1,4 @@
 // Native previews are catalog audio entries, never AVR firmware images.
-import {validateNativeAudio,nativeAudioMetadata,previewAsset} from './native-audio.js';
-export {previewWaveform} from './native-audio.js';
 function readFlashMeasurement(value,encodedBytes) {
   if(value===undefined)return undefined;
   if(!value||value.target!=='attiny88'||value.memoryProfile!=='sram512'||value.flashMeasurementKind!=='unpaced-test-image'
@@ -11,11 +9,20 @@ function readFlashMeasurement(value,encodedBytes) {
   return {programFlashBytes,encodedBytes,totalFlashBytes,flashMeasurementKind,memoryProfile,target};
 }
 export function lpxPreviewEntries(data,baseURL) {
-  validateNativeAudio(data);
-  if(!['LPX v5','LPX'].includes(data.codec)
+  if(data.schemaVersion!==1||data.previewKind!=='native-pwm8'||data.sampleRate!==8000
+    ||!Number.isInteger(data.samples)||data.samples<=0||!Number.isFinite(data.durationSeconds)||data.durationSeconds<=0
+    ||Math.abs(data.durationSeconds-data.samples/data.sampleRate)>1/data.sampleRate
+    ||typeof data.title!=='string'||!['LPX v5','LPX'].includes(data.codec)
     ||!Array.isArray(data.variants)||![2,3].includes(data.variants.length))
     throw Error('Неверное описание LPX-примеров.');
-  const asset=(path,extension)=>previewAsset(path,extension,baseURL,'audio/lpx-bread/');
+  const base=new URL('./',baseURL);
+  const asset=(path,extension)=>{
+    if(typeof path!=='string')throw Error('Неверный адрес LPX-примера.');
+    const url=new URL(path,base);
+    if(url.origin!==base.origin||!url.pathname.startsWith(base.pathname+'audio/lpx-bread/')||!url.pathname.endsWith(extension))
+      throw Error('Неверный адрес LPX-примера.');
+    return url.href;
+  };
   const reference=asset(data.reference?.audio,'.wav');
   const definitions={low15:{profile:15,codec:'lpx-s15',version:8},compact:{profile:4,codec:'lpx-v5',version:5},quality:{profile:6,codec:'lpx-v5',version:5}};
   const variants=new Map();
@@ -32,13 +39,34 @@ export function lpxPreviewEntries(data,baseURL) {
       ||!Number.isInteger(variant.bytes)||variant.bytes<=0||!Number.isFinite(variant.bitrateBps)
       ||Math.abs(variant.bitrateBps-variant.bytes*8*data.sampleRate/data.samples)>1e-6)
       throw Error('Неверная стоимость LPX-потока.');
-    return {...nativeAudioMetadata(data),id:'lpx-bread-'+id,order:String(index+1).padStart(2,'0'),title:(experimental?'LPX-S15':'LPX')+' · '+variant.label,
-      codec,formatVersion,device:'attiny88',codecLabel:experimental?'LPX-S15':'LPX',dataLabel:'LPX',streamExtension:'.lpx',
-      nativeNotice:'ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Целевая плата — MH-ET LIVE Tiny88, 16 МГц. Работа LPX-прошивки на этой плате ещё не подтверждена.',
-      targetNotice:'Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц.',
+    return {id:'lpx-bread-'+id,order:String(index+1).padStart(2,'0'),title:(experimental?'LPX-S15':'LPX')+' · '+variant.label,
+      description:data.title,kind:'speech',codec,formatVersion,playback:'native-pwm8',device:'attiny88',
       formatNotice:experimental?'LPX-S15 · экспериментальный формат; нужен отдельный декодер.':'',
-      intendedBoard:'mh-et-live-16mhz',profile:definition.profile,streamBytes:variant.bytes,bitrateBps:variant.bitrateBps,
+      intendedBoard:'mh-et-live-16mhz',profile:definition.profile,sampleHz:data.sampleRate,phraseSamples:data.samples,
+      playOnce:true,audioChannels:1,streamBytes:variant.bytes,bitrateBps:variant.bitrateBps,
       flashMeasurement:readFlashMeasurement(variant.flashMeasurement,variant.bytes),
       nativeAudioUrl:asset(variant.audio,'.wav'),streamUrl:asset(variant.stream,'.lpx'),originalAudioUrl:reference};
   });
+}
+
+// Read the actual mono PCM16 WAV for display; audio playback uses the same URL.
+export function previewWaveform(buffer,{sampleHz,phraseSamples}) {
+  const view=new DataView(buffer),tag=offset=>String.fromCharCode(...new Uint8Array(buffer,offset,4));
+  if(view.byteLength<12||tag(0)!=='RIFF'||tag(8)!=='WAVE'||view.getUint32(4,true)+8!==view.byteLength)
+    throw Error('Неверный WAV-пример.');
+  let format,payload;
+  for(let offset=12;offset+8<=view.byteLength;){
+    const name=tag(offset),bytes=view.getUint32(offset+4,true),start=offset+8;
+    if(start+bytes>view.byteLength)throw Error('Неполный WAV-пример.');
+    if(name==='fmt '){
+      if(bytes<16)throw Error('Неверный формат WAV.');
+      format={encoding:view.getUint16(start,true),channels:view.getUint16(start+2,true),
+        rate:view.getUint32(start+4,true),align:view.getUint16(start+12,true),bits:view.getUint16(start+14,true)};
+    }
+    if(name==='data')payload={start,bytes};
+    offset=start+bytes+(bytes&1);
+  }
+  if(!format||format.encoding!==1||format.channels!==1||format.rate!==sampleHz||format.bits!==16||format.align!==2
+    ||!payload||payload.bytes!==phraseSamples*2)throw Error('WAV не соответствует LPX-примеру.');
+  return Float32Array.from({length:phraseSamples},(_,index)=>view.getInt16(payload.start+index*2,true)/32768);
 }
