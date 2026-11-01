@@ -78,6 +78,11 @@ def selected(row,decision):
     return None if decision['selected_id'] is None else row['whole_rows'][decision['selected_id']]
 
 
+def audit_job_settings(row,manifest):
+    expected=manifest['jobs'][row['id']]
+    for key,value in expected.items():equal(row[key],value)
+
+
 def public_row(row):
     base=row['whole_rows'][0]
     output={k:row[k] for k in ('id','baseline_id','source_ordinal','nonspeech','profile','mode','arm',
@@ -182,8 +187,7 @@ def project(args):
             folder=shard/'arms'/('job-%03d'%row['id']);base=bases[row['baseline_id']]
             if row!=inputs.json(folder/'result-private.json') or row['profile']!=summary['profile']:
                 raise ValueError('An individual arm or profile binding differs')
-            expected=manifest['pilot_jobs'][row['id']]
-            for key,value in expected.items():equal(row[key],value)
+            audit_job_settings(row,manifest)
             blobs=[];all_parts=[]
             if len(row['whole_chains'])!=len(row['whole_rows']):raise ValueError('A whole stream or metric row was lost')
             for chain,value in zip(row['whole_chains'],row['whole_rows']):
