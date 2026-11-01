@@ -1,5 +1,12 @@
 # Speex for AVR
 
+Optional [lower-rate profiles](LOW_RATES.md) now add **NB 2.15/3.95/5.95** and
+**compact WB 3.95/5.75/7.75 kbit/s**, alongside the existing modes. Each can be
+enabled separately. The final ASM admission covers 105575 exact decoder frames,
+63762 continuous WB IRQ frames and 1024 internal-Flash player frames, with zero
+PWM underruns. WB3.95 occupies 4.0 kbit/s in byte-aligned raw storage and uses
+83.65% decoder CPU on natural speech; external SPI timing is a separate test.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100
@@ -52,14 +59,16 @@ underruns and 700 B free SRAM at peak. Both NB3 backends retain exact upstream s
 
 ## Narrowband profile
 
-- Narrowband submode 3, mono 8 kHz, CBR 8 kbit/s; optional mode 4 at 11 kbit/s.
-- A 20-byte NB3 or 28-byte NB4 packet produces 160 signed16 samples (20 ms).
+- Narrowband submode 3, mono 8 kHz, CBR 8 kbit/s; optional 1/8/2/4 at
+  2.15/3.95/5.95/11 kbit/s.
+- NB1/NB8/NB2/NB3/NB4 packets use 6/10/15/20/28 bytes and produce 160 signed16
+  samples (20 ms).
 - Enhancement and highpass are disabled; all four coefficient steps are
   retained. Identical NB3 LSP indices reuse exact interpolation/LPC results;
   filter synthesis and coefficient ageing always execute. Decoded s16 PCM
   matches unmodified upstream.
 - Input consists of raw packets, as in `reference/R4/data/*.spxraw`. Ogg/Speex
-  containers, other NB submodes, DTX, stereo, encoder and packet loss concealment
+  containers, unlisted NB submodes, DTX, stereo, encoder and packet loss concealment
   are outside this profile. The API rejects wrong lengths and mode headers
   before changing state.
 

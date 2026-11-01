@@ -9,6 +9,14 @@ The library has no timer, PWM, GPIO, operating-system or heap dependency.
 It keeps one static, non-reentrant decoder; reset it before each stream.
 The AVR PWM demo in `src/player.c` is a separate hardware integration.
 
+Optional `SPEEX_ENABLE_NB1`, `SPEEX_ENABLE_NB8`, `SPEEX_ENABLE_NB2` (default 0)
+also accept NB2.15/3.95/5.95 and compact WB3.95/5.75/7.75. The public decoder
+interfaces stay unchanged; packet-size constants are in `speex_nb.h` and
+`speex_wb1.h`. Export either library with `--low-rates 7 --enable-nb4` for all
+supported modes, or select any feature-mask subset. The CMake export includes
+the optional tables and portable noise generator without ASM dependencies.
+See [LOW_RATES.md](LOW_RATES.md) for the profile and admission scope.
+
 ## Backend selection and C fallbacks
 
 `SPEEX_NB3_ARCH` identifies the architecture. It defaults from the compiler's

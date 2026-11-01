@@ -12,11 +12,12 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--avr-gcc',required=True)
     p.add_argument('--packet-bytes',type=int,choices=[10,15,20,25,32],default=32);p.add_argument('--frame-load-cycles',type=int,default=25600)
     p.add_argument('--low-rates',type=int,choices=range(8),default=0)
+    p.add_argument('--enable-nb4',action='store_true',help='Also admit legacy WB12.8 packets')
     p.add_argument('--out',type=Path);args=p.parse_args()
     if not 0<=args.frame_load_cycles<=320000:p.error('Frame load must be 0..320000')
     source=build_wb.prepare();out=(args.out or build.ROOT/('build/angle-wb-stream-'+str(args.packet_bytes))).resolve();out.mkdir(parents=True,exist_ok=True)
     (out/'sample.h').write_text('#define SPEEX_SAMPLE_PACKET_BYTES '+str(args.packet_bytes)+'\n#define SPEEX_SAMPLE_FRAMES 1\nstatic const uint8_t sample_data[1] PROGMEM={0};\n',encoding='utf-8')
-    exe=out/'wb.elf';build.run([args.avr_gcc,*build_wb.flags(source,'asm',args.packet_bytes==32,args.low_rates),'-Os','-flto','-mmcu=atmega328p','-mcall-prologues','-mrelax',
+    exe=out/'wb.elf';build.run([args.avr_gcc,*build_wb.flags(source,'asm',args.packet_bytes==32 or args.enable_nb4,args.low_rates),'-Os','-flto','-mmcu=atmega328p','-mcall-prologues','-mrelax',
         '-ffunction-sections','-fdata-sections','-I'+str(out),'-DSPEEX_AVR_FRAME_LOAD_CYCLES='+str(args.frame_load_cycles),
         *build_wb.sources(source),*[build.ROOT/'src'/s for s in build.ASM_SOURCES+build_wb.ASM_SOURCES],build.ROOT/'tests/avr_wb_stream.c','-Wl,--gc-sections','-o',exe])
     prefix=str(Path(args.avr_gcc).with_name('avr-'));ext='.exe' if args.avr_gcc.endswith('.exe') else ''

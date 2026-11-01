@@ -1,5 +1,10 @@
 # Compact wideband on ATmega328P
 
+Optional NB1/NB8/NB2 low bands also support **WB3.95/5.75/7.75 kbit/s** through
+the same HB1/QMF engine. Flags, packet widths, exact PCM and active-IRQ timing
+are documented in [LOW_RATES.md](LOW_RATES.md). The measurements below describe
+the original NB3/NB4 combinations unless stated otherwise.
+
 `WB1-Q7-16` decodes mono **16 kHz / 9.8 or 12.8 kbit/s** Speex on ATmega328P at
 16 MHz. A frame contains NB submode 3 or 4 and HB submode 1: 196 meaningful
 bits stored in 25 bytes, or 256 bits stored in 32 bytes, respectively. Both
@@ -16,7 +21,7 @@ multiplications per tap. This retains high-band data, but reduces rejection
 around the band boundary and changes PCM relative to the full Xiph filter.
 The ordinary NB3 profile remains bit-identical to Xiph.
 
-Only these NB3+HB1 and NB4+HB1 packet combinations are supported. Other WB bitrates,
+The enabled NB1/NB8/NB2/NB3/NB4 + HB1 combinations are supported. Unlisted WB rates,
 DTX, enhancement, highpass, packet loss concealment, stereo and UWB/32 kHz
 remain outside this AVR profile. Ogg headers/framing must be removed before
 decoding; four padding bits at the end of a 25-byte packet are ignored.
