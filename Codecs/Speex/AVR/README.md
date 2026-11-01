@@ -55,6 +55,13 @@ quantizer and output parity. WB3.95 speech CPU falls **69.67% -> 69.56%**,
 Flash shrinks 4 B, and static SRAM/peak stack stay unchanged. Full raw, +8%/+11%
 IRQ and SPI runs retain exact PCM/PWM and zero underruns; C remains selectable.
 
+[Fused low-rate high-band excitation](WB_LOW_FUSION.md) now reuses the same
+template for WB5.75/WB7.75 codebooks. Keeping intermediate values in registers
+and inlining the small mode dispatch saves **3252/3428 cycles/frame** and
+**20 B peak stack**, with 236 B added Flash and unchanged static SRAM. Speech
+decoder CPU improves **76.00% -> 74.98% / 76.08% -> 75.01%**. Matched full PCM,
+loaded IRQ and scheduled SPI checks preserve exact output with zero underruns.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

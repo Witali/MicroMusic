@@ -1,0 +1,40 @@
+{
+  "backend": "asm",
+  "wideband": true,
+  "binarySha256": "98dc1f60fdee7de2d2be5ee6f87b78588651e95f24d2bf5df4f9bf01cba7f7a7",
+  "inputSha256": "a7d9fe117070b9e0c3cffb5a06667de233dc7e289a768a777710952dc1b8c122",
+  "pcmSha256": "f02abd03333a94e410e77023cb4cc6f418bca92604de85fb6fafcccb7e265022",
+  "frames": 1024,
+  "rejectedCalls": 7168,
+  "mixedEnabledModes": [
+    1,
+    2,
+    8,
+    3,
+    4
+  ],
+  "paddingIgnored": true,
+  "resetExact": true,
+  "pcmExact": true,
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "flashBytes": 25554,
+  "staticSramBytes": 1308,
+  "peakStack": 204,
+  "freeSram": 536,
+  "lowFusionArithmetic": {
+    "byMode": {
+      "2": {
+        "calls": 820,
+        "muls": 495280
+      },
+      "8": {
+        "calls": 820,
+        "muls": 493640
+      }
+    },
+    "rejectedCallsAndOtherModesDoNotExecute": true,
+    "fourCallsPerMatchingWbFrame": true,
+    "nbApiDoesNotExecute": true
+  }
+}

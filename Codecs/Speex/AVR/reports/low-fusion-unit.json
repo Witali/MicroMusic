@@ -1,0 +1,103 @@
+{
+  "scope": "Isolated vector C/ASM arithmetic only; C decoder not executed or timed",
+  "binarySha256": "261b06ad8ac6d7759d19ff732c1cb9327daeafe67ea9c65ac77226e08ef53905",
+  "cases": 52256,
+  "fourPathsExact": true,
+  "independentBigInt": true,
+  "pinnedCodebooksExact": true,
+  "allRowsAtEveryVectorSlot": true,
+  "callerScales": 32,
+  "scales": 49,
+  "gainEdges": 15,
+  "structuredGains": 183,
+  "randomCasesPerMode": 4096,
+  "calleeSavedAndR1Returns": 156768,
+  "arbitraryNonArgumentRegisterPatterns": true,
+  "argumentRegistersPreserved": true,
+  "readOnlyIndicesAndBounds": true,
+  "exactFlashAddresses": true,
+  "intermediateLoadsAndStoresObserved": true,
+  "outputGuards": true,
+  "asm": {
+    "2": {
+      "before": {
+        "calls": 18784,
+        "muls": 11420672,
+        "mulMin": 608,
+        "mulMax": 608,
+        "minCycles": 5720,
+        "maxCycles": 5746,
+        "cycles": 107707854,
+        "outputReads": 1502720,
+        "outputWrites": 3005440,
+        "meanCycles": 5734.021188245315
+      },
+      "after": {
+        "calls": 18784,
+        "muls": 11345536,
+        "mulMin": 604,
+        "mulMax": 604,
+        "minCycles": 4901,
+        "maxCycles": 4927,
+        "cycles": 92323758,
+        "outputReads": 0,
+        "outputWrites": 1502720,
+        "meanCycles": 4915.021188245315
+      },
+      "leaf": {
+        "calls": 18784,
+        "muls": 11345536,
+        "mulMin": 604,
+        "mulMax": 604,
+        "minCycles": 4870,
+        "maxCycles": 4896,
+        "cycles": 91741454,
+        "outputReads": 0,
+        "outputWrites": 1502720,
+        "meanCycles": 4884.021188245315
+      }
+    },
+    "8": {
+      "before": {
+        "calls": 33472,
+        "muls": 20217088,
+        "mulMin": 604,
+        "mulMax": 604,
+        "minCycles": 5651,
+        "maxCycles": 5679,
+        "cycles": 189631917,
+        "outputReads": 2677760,
+        "outputWrites": 5355520,
+        "meanCycles": 5665.389489722754
+      },
+      "after": {
+        "calls": 33472,
+        "muls": 20150144,
+        "mulMin": 602,
+        "mulMax": 602,
+        "minCycles": 4875,
+        "maxCycles": 4903,
+        "cycles": 163657645,
+        "outputReads": 0,
+        "outputWrites": 2677760,
+        "meanCycles": 4889.389489722754
+      },
+      "leaf": {
+        "calls": 33472,
+        "muls": 20150144,
+        "mulMin": 602,
+        "mulMax": 602,
+        "minCycles": 4845,
+        "maxCycles": 4873,
+        "cycles": 162653485,
+        "outputReads": 0,
+        "outputWrites": 2677760,
+        "meanCycles": 4859.389489722754
+      }
+    }
+  },
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "peakStack": 44,
+  "freeSram": 1903
+}

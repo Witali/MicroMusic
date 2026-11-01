@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Reuse a fused kernel for low-rate codebook geometry](speex-lowrate-fusion.md):
+four 10-word or two 20-word rows, independent rounding bias, wide index-product
+addressing, observed SRAM/Flash accesses and measured inline dispatch.
+
 [Shorten a refill burst while retaining exact synthesis](speex-quarter-refills.md):
 use the proven forty-sample delay, dead-history context and a shared exact mean
 macro. Measure actual ring publication gaps; retain the rejected slower C

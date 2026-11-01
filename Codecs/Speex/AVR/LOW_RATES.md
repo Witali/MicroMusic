@@ -29,6 +29,9 @@ reused with `exc_10_16_table` (160 B), and the 32 no-subframe-correction
 energies are generated from upstream constants. NB3 and NB2 share one
 short-pitch controller with the codebook selected outside its sample loop.
 HB1 reuses the existing excitation buffer and fold kernel, not a new frame.
+The later [fused WB5.75/WB7.75 producer](WB_LOW_FUSION.md) removes intermediate
+loads/stores, preserves both quantizers and saves 20 B peak stack. Measurements
+below retain their original stage context; the linked note has current results.
 The no-correction maximum scale is 115088100, within the existing 121000000
 primitive domain; the same pitch gain codebook keeps existing signed24 bounds.
 

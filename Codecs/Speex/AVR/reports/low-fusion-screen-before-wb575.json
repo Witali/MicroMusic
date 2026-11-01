@@ -1,0 +1,49 @@
+{
+  "backend": "asm",
+  "binarySha256": "985e634e2f48d7aa123a7fcc57acb5278e84fb3045f37656ad1ffe12d3a570b4",
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "flashBytes": 25158,
+  "staticSramBytes": 1289,
+  "frames": 384,
+  "maxCycles": 254029,
+  "minSP": 2084,
+  "streams": [
+    {
+      "name": "coverage4096.spxraw",
+      "frames": 128,
+      "minCycles": 229662,
+      "maxCycles": 253182,
+      "meanCycles": 244481,
+      "peakStack": 219,
+      "freeSram": 540,
+      "reset": true,
+      "pcmExact": true
+    },
+    {
+      "name": "en_letter_a.spxraw",
+      "frames": 128,
+      "minCycles": 211475,
+      "maxCycles": 254029,
+      "meanCycles": 242376,
+      "peakStack": 219,
+      "freeSram": 540,
+      "reset": true,
+      "pcmExact": true
+    },
+    {
+      "name": "ru_slutskaya_a.spxraw",
+      "frames": 128,
+      "minCycles": 219751,
+      "maxCycles": 252331,
+      "meanCycles": 244491,
+      "peakStack": 219,
+      "freeSram": 540,
+      "reset": true,
+      "pcmExact": true
+    }
+  ],
+  "meanCycles": 243782.765625,
+  "peakStack": 219,
+  "freeSram": 540
+}

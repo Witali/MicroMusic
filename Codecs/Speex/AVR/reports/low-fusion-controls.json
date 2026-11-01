@@ -1,0 +1,105 @@
+{
+  "images": [
+    {
+      "profile": "nb215",
+      "binarySha256": "2f8886c1ed35c81d38db62145e3aa97fc67fac3f5c47496cce68f05d6a134868",
+      "flashBytes": 17128,
+      "byteIdentical": true
+    },
+    {
+      "profile": "nb8",
+      "binarySha256": "9cdd5acdb407a9ad468aee706389f43957ab39213694cfcefab089fed97e04fb",
+      "flashBytes": 10598,
+      "byteIdentical": true
+    },
+    {
+      "profile": "nb11",
+      "binarySha256": "53e6a63233b4383f0eeff690d76b18ebc0756639087bf65dd2469d9d479ecbb2",
+      "flashBytes": 12940,
+      "byteIdentical": true
+    },
+    {
+      "profile": "wb98",
+      "binarySha256": "eab5e28d38e322f367712dbeb7941363decc47affd5f2bf5ae9e393612becd85",
+      "flashBytes": 17014,
+      "byteIdentical": true
+    },
+    {
+      "profile": "wb128",
+      "binarySha256": "13ed262828b36d1a875338b048aa8afa35f7ce0333ca8089558b7cd1a8e9e2b3",
+      "flashBytes": 19814,
+      "byteIdentical": true
+    }
+  ],
+  "production": [
+    {
+      "profile": "wb575",
+      "oldFoldAndControllerAbsent": true,
+      "newLeavesPresent": true,
+      "inlineDispatcherAbsent": true
+    },
+    {
+      "profile": "wb775",
+      "oldFoldAndControllerAbsent": true,
+      "newLeavesPresent": true,
+      "inlineDispatcherAbsent": true
+    }
+  ],
+  "features": [
+    {
+      "profile": "wb575",
+      "backend": "asm",
+      "lowRates": 2,
+      "binarySha256": "2f7c7101074275136fba6cadf82bb8e19c54156bbe98c744cf4b9a2dc7894868",
+      "flashBytes": 19274,
+      "unusedKernelAbsent": true,
+      "selectedKernelPresent": true,
+      "compiledLinkedOnly": false
+    },
+    {
+      "profile": "wb575",
+      "backend": "c",
+      "lowRates": 2,
+      "binarySha256": "54f98e50df29a3f081371b6e097cb64d8ff95f1159555ddbc26b1ec39e6b0f55",
+      "flashBytes": 22354,
+      "unusedKernelAbsent": true,
+      "selectedKernelPresent": false,
+      "compiledLinkedOnly": true
+    },
+    {
+      "profile": "wb775",
+      "backend": "asm",
+      "lowRates": 1,
+      "binarySha256": "5e09a6af2395b26276870779550d82663e14546b892db9e9eb92e95ad7f27e9d",
+      "flashBytes": 18430,
+      "unusedKernelAbsent": true,
+      "selectedKernelPresent": true,
+      "compiledLinkedOnly": false
+    },
+    {
+      "profile": "wb775",
+      "backend": "c",
+      "lowRates": 1,
+      "binarySha256": "ec69f9088857eb077b607db9097d4fbde4aff1c9e2e966f3d2dadddb36a4ce01",
+      "flashBytes": 21936,
+      "unusedKernelAbsent": true,
+      "selectedKernelPresent": false,
+      "compiledLinkedOnly": true
+    }
+  ],
+  "cImages": [
+    {
+      "profile": "wb575",
+      "binarySha256": "901e32e7ca8329ca418244c116e373999a2e5b07b25821966a673278b180454a",
+      "flashBytes": 31256,
+      "compiledLinkedOnly": true
+    },
+    {
+      "profile": "wb775",
+      "binarySha256": "8a8ea5e88e6ebc8f42dd3d9b731d9782e49299ea816f71969b476ebaadfb92eb",
+      "flashBytes": 31256,
+      "compiledLinkedOnly": true
+    }
+  ],
+  "cDecoderExecuted": false
+}
