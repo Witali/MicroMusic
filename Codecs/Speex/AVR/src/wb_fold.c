@@ -8,9 +8,9 @@ extern const int8_t exc_10_32_table[320];
 #if SPEEX_ENABLE_NB2 || SPEEX_ENABLE_NB8
 extern const int8_t exc_10_16_table[160];
 extern const int8_t exc_20_32_table[640];
-/* Same ten-sample primitive and folding as NB3, different Flash codebook.
- * The existing forty-word excitation buffer is the intermediate; no copy. */
-SPEEX_NB3_STAGE void speex_wb_excitation_low40(int16_t *exc,const uint8_t *indices,int32_t scale,int32_t g,uint8_t mode)
+/* Explicit C reference keeps separate reconstruction and folding, including
+ * the original intermediate word and both quantizers on every target. */
+SPEEX_NB3_STAGE void speex_wb_excitation_low40_c(int16_t *exc,const uint8_t *indices,int32_t scale,int32_t g,uint8_t mode)
 {
     const int8_t *table;uint8_t vectors,width;
 #if SPEEX_ENABLE_NB2
@@ -24,14 +24,10 @@ SPEEX_NB3_STAGE void speex_wb_excitation_low40(int16_t *exc,const uint8_t *indic
     for(uint8_t v=0;v<vectors;v++) {
         const int8_t *shape=table+width*(unsigned)indices[v];
         for(uint8_t at=0;at<width;at+=10) {
-#if SPEEX_NB3_USE_AVR_ASM
-            speex_avr_zero_innovation10(exc+width*v+at,shape+at,scale);
-#else
             speex_nb3_zero_innovation_n_c(exc+width*v+at,shape+at,scale,10);
-#endif
         }
     }
-    speex_wb_fold40(exc,g);
+    speex_wb_fold40_c(exc,g);
 }
 #endif
 /* g is the original HB1 exp gain divided by the filter ratio.

@@ -68,3 +68,12 @@ WB_EXCITATION speex_wb_excitation40_avr,4,10,exc_10_32_table
 
 /* Five eight-sample NB4 vectors, 5 indices 0..127; same scale/g domain. */
 WB_EXCITATION speex_wb_excitation8_40_avr,5,8,exc_8_128_table
+
+/* Low-rate codebooks share the exact same arithmetic and even-row parity.
+ * Bias remains4 even for mode8's two vectors; see template geometry guard. */
+#if SPEEX_ENABLE_NB2
+WB_EXCITATION speex_wb_excitation_nb2_40_avr,4,10,exc_10_16_table
+#endif
+#if SPEEX_ENABLE_NB8
+WB_EXCITATION speex_wb_excitation_nb8_40_avr,2,20,exc_20_32_table
+#endif

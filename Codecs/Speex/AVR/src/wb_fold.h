@@ -23,7 +23,35 @@ void speex_wb_noise_fold40_avr(int16_t *,const int16_t *,uint8_t,int32_t,int16_t
 #endif
 #endif
 #if SPEEX_ENABLE_NB2 || SPEEX_ENABLE_NB8
-void speex_wb_excitation_low40(int16_t *,const uint8_t *,int32_t,int32_t,uint8_t);
+/* Enabled mode2: four 10-word rows/index 0..15; mode8: two 20-word rows/index 0..31.
+ * Output40 and readonly indices do not overlap. Scale 0..121000000, g signed32.
+ * Explicit C retains separate reconstruction/folding and remains callable. */
+void speex_wb_excitation_low40_c(int16_t *,const uint8_t *,int32_t,int32_t,uint8_t);
+#if SPEEX_NB3_USE_AVR_ASM
+#if SPEEX_ENABLE_NB2
+void speex_wb_excitation_nb2_40_avr(int16_t *,const uint8_t *,int32_t,int32_t);
+#endif
+#if SPEEX_ENABLE_NB8
+void speex_wb_excitation_nb8_40_avr(int16_t *,const uint8_t *,int32_t,int32_t);
+#endif
+/* The sole production caller already knows the mode; expose this small
+ * dispatch so it can share the caller's branch and omit a five-argument call. */
+static SPEEX_NB3_ALWAYS_INLINE void speex_wb_excitation_low40_avr(int16_t *exc,
+    const uint8_t *indices,int32_t scale,int32_t g,uint8_t mode)
+{
+#if SPEEX_ENABLE_NB2 && SPEEX_ENABLE_NB8
+    if(mode==2)speex_wb_excitation_nb2_40_avr(exc,indices,scale,g);
+    else speex_wb_excitation_nb8_40_avr(exc,indices,scale,g);
+#elif SPEEX_ENABLE_NB2
+    (void)mode;speex_wb_excitation_nb2_40_avr(exc,indices,scale,g);
+#else
+    (void)mode;speex_wb_excitation_nb8_40_avr(exc,indices,scale,g);
+#endif
+}
+#define speex_wb_excitation_low40 speex_wb_excitation_low40_avr
+#else
+#define speex_wb_excitation_low40 speex_wb_excitation_low40_c
+#endif
 #endif
 #if SPEEX_NB3_USE_AVR_ASM
 void speex_wb_fold40_avr(int16_t *,int32_t);
