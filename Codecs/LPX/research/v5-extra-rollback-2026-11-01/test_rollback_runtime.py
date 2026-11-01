@@ -6,10 +6,24 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from rollback_runtime import Inputs,SOURCE_COMMIT,function_span,sha,verify_preflight
+from rollback_runtime import HERE,Inputs,SOURCE_COMMIT,function_span,sha,source_snapshot,verify_preflight
 
 
 class Runtime(unittest.TestCase):
+    def test_every_imported_local_research_dependency_is_in_the_frozen_snapshot(self):
+        import rollback_coordinator,run_rollback
+        snapshot=source_snapshot();root=HERE.parent.resolve();found=[]
+        for module in list(sys.modules.values()):
+            name=getattr(module,'__file__',None)
+            if name:
+                path=Path(name).resolve()
+                if path.suffix=='.py' and path.is_relative_to(root):
+                    key=path.relative_to(root).as_posix();found.append(key)
+                    self.assertIn(key,snapshot);self.assertEqual(snapshot[key],sha(path.read_bytes()))
+        self.assertTrue(any(p.endswith('/run_pilot.py') for p in found))
+        self.assertTrue(any(p.endswith('/run_existing.py') for p in found))
+        self.assertTrue(any(p.endswith('/prepare_existing.py') for p in found))
+
     def test_operator_ast_ignores_comments_but_never_a_changed_trial_expression(self):
         with tempfile.TemporaryDirectory() as temporary:
             path=Path(temporary)/'operator.py'
@@ -18,7 +32,7 @@ class Runtime(unittest.TestCase):
             path.write_text('@njit(cache=True)\ndef refit_extra_group(a):\n    # explanation\n    return a+1\n')
             commented=function_span(path,'refit_extra_group')
             self.assertEqual(original['ast_sha256'],commented['ast_sha256'])
-            self.assertNotEqual(original['source_sha256'],commented['source_sha256'])
+            self.assertNotEqual(original['source_span_lf_sha256'],commented['source_span_lf_sha256'])
             path.write_text('def refit_extra_group(a):\n    return a+2\n')
             self.assertNotEqual(original['ast_sha256'],function_span(path,'refit_extra_group')['ast_sha256'])
 

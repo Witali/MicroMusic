@@ -24,8 +24,8 @@ PRIOR_ARMS={'joint-rate-v1':('T-local-0','T-full-0','G-full-0','G-full-.1','G-fu
 
 def source_snapshot():
     paths=[p for p in HERE.iterdir() if p.suffix in ('.py','.md')]
-    paths += [V1/name for name in ('baselines.py','pilot_policy.py','pilot_runtime.py')]
-    paths += [PREVIOUS/name for name in ('extra_policy.py','extra_runtime.py','secondary.py')]
+    paths += [V1/name for name in ('baselines.py','pilot_policy.py','pilot_runtime.py','run_pilot.py')]
+    paths += [PREVIOUS/name for name in ('extra_policy.py','extra_runtime.py','secondary.py','run_existing.py','prepare_existing.py')]
     shared=HERE.parent/'v5-matched-search-cpu-2026-10-30'
     paths += [shared/name for name in ('study_policy.py','study_runtime.py')]
     return {p.relative_to(HERE.parent).as_posix():sha(p.read_bytes()) for p in paths}
@@ -54,12 +54,12 @@ def function_span(path,name):
     if len(found)!=1:raise ValueError('Expected exactly one top-level optional-pulse operator')
     node=found[0];first=min([node.lineno]+[d.lineno for d in node.decorator_list])
     span='\n'.join(text.splitlines()[first-1:node.end_lineno])+'\n'
-    return dict(source_sha256=sha(span.encode()),ast_sha256=sha(ast.dump(node,include_attributes=False).encode()))
+    return dict(source_span_lf_sha256=sha(span.encode()),ast_sha256=sha(ast.dump(node,include_attributes=False).encode()))
 
 
 def operator_bridge(current_root,old_binding,inputs):
     name=PREFIX+'tools/refine_speech_extras.py';old_path=Path(old_binding['source_root'])/name
-    inputs.read(old_path,old_binding['production_sources'][name]);inputs.read(current_root/name)
+    old_raw=inputs.read(old_path,old_binding['production_sources'][name]);new_raw=inputs.read(current_root/name)
     old=function_span(old_path,'refit_extra_group');new=function_span(current_root/name,'refit_extra_group')
     if old['ast_sha256']!=new['ast_sha256']:raise ValueError('The cheap causal group operator AST changed')
     dependencies=('enhance_speech_compact.py','q0_model.py','wav_lpc.py','speech_compact.py',
@@ -71,7 +71,10 @@ def operator_bridge(current_root,old_binding,inputs):
         closure[relative]=digest
     return dict(status='PASS',old_wrapper_state_epoch=old_binding['source_commit'],new_wrapper_state_epoch=SOURCE_COMMIT,
         function='refit_extra_group',old_function=old,new_function=new,exact_ast=True,
-        exact_function_source=old['source_sha256']==new['source_sha256'],unchanged_arithmetic_packing_dependencies=closure,
+        exact_lf_normalized_function_source=old['source_span_lf_sha256']==new['source_span_lf_sha256'],
+        old_module_raw_sha256=sha(old_raw),new_module_raw_sha256=sha(new_raw),
+        source_span_normalization='LF-normalized function span; raw full-module bytes pinned separately',
+        unchanged_arithmetic_packing_dependencies=closure,
         scope='Function/dependency bridge; fresh control slot-byte consistency is checked separately')
 
 
@@ -179,5 +182,6 @@ def verify_preflight(path,manifest_path,inputs,expected):
     if Path(proof['baselines_path']).resolve()!=manifest_path:raise ValueError('Preflight prepared manifest path differs')
     digest=sha(inputs.read(manifest_path))
     if proof['input_files_sha256'].get(str(manifest_path))!=digest:raise ValueError('Preflight prepared manifest digest differs')
+    for name,recorded_digest in proof['input_files_sha256'].items():inputs.read(name,recorded_digest)
     return dict(status='PASS',preflight_path=str(path),prepared_manifest_path=str(manifest_path),prepared_manifest_sha256=digest,
         exact_closed_research_production_native_runtime=True,synthetic_arm_records=6,synthetic_pass_instances=8)
