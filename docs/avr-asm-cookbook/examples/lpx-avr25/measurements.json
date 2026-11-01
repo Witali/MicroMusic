@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "status": "prototype_validated_not_integrated",
+  "cpu": "ATtiny88 AVR25",
+  "cpu_hz": 16000000,
+  "compiler": "AVR-GCC7.3.0",
+  "arithmetic_asm_flag": "LPX25_ENABLE_ASM=1",
+  "c_fallback_default": true,
+  "product_cases_per_run": 272,
+  "shift_values_per_run": 150,
+  "backend_irq_runs": 4,
+  "exact_results": 2288,
+  "irq_off_entry_through_ret_cycles": {
+    "signed16x16_C": {
+      "min": 33,
+      "max": 481,
+      "mean": 312.75
+    },
+    "signed16x16_ASM": {
+      "min": 112,
+      "max": 130,
+      "mean": 119.75
+    },
+    "shift12_C": 88,
+    "shift12_ASM": 21,
+    "shift14_C": 102,
+    "shift14_ASM": 27
+  },
+  "caller_rcall_excluded": true,
+  "full_benchmark_flash_bytes": {
+    "C": 2118,
+    "ASM": 2354,
+    "identical_vector_tables": 1688
+  },
+  "static_ram_bytes": 14,
+  "active_irq_counts": {
+    "C": 689,
+    "ASM": 343
+  },
+  "lost_irqs": 0,
+  "callee_saved_checks_per_run": 572,
+  "source_sha256": {
+    "avr25_math.h": "8e2c4d0b172bc1e29533b0e29fc4288babcddf82596c0084f7426222a5929dd8",
+    "math.cpp": "9e2bf1d1db4dddd403f1590b1e2c9b133cc1e86a468653535a77736962bc1a69",
+    "math.S": "bd002f8da709814b3aaed09dff1b05d764680754d97902f944e36fd5cc83584b",
+    "probe.cpp": "584aca957648bde2aa4eb2a9f63645492b8a6cc1f74c93512bf241224a8c1e05",
+    "vectors.h": "724beb9e187684882cc3ca8ddb2086507002259119003841ba61da2c7c3e85ea"
+  },
+  "full_decoder_speed_or_flash_admission": false,
+  "manufacturer_header": "Installed AVR-GCC toolchain Atmel avr/iotn88.h; repository DFP not consumed"
+}
