@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Reuse constant LCG products](speex-lcg-products.md): seven hardware byte
+products replace ten while retaining the full 32-bit random sequence; combine
+the derived contribution with accumulator initialization and hoist factors.
+
 [Stream compressed packets from SPI Flash](speex-spi-streaming.md): keep a
 bounded sequential transaction, reuse the existing packet buffer, and verify
 SPI completion timing together with active PCM interrupts. Input framing and

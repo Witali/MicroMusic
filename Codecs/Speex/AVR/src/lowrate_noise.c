@@ -5,6 +5,7 @@
 #if SPEEX_ENABLE_NB1
 #include "arch.h"
 #include "math_approx.h"
+#include "lowrate_rng.h"
 SPEEX_NB3_NOINLINE void speex_low_noise_values5(int16_t *values,int32_t scale)
 {
     /* std=1 has exactly five possible innovations. Scale each once per
@@ -20,7 +21,7 @@ SPEEX_NB3_STAGE void speex_low_noise_indices40(uint8_t *out,uint32_t *seed)
 {
     uint32_t next=*seed;
     for(uint8_t i=0;i<40;i++) {
-        next=1664525UL*next+1013904223UL;
+        next=speex_low_rng_next(next);
         int16_t high=(int16_t)(next>>16);
         uint8_t index=high< -9363?(high< -28087?0:1):high<9362?2:high<28086?3:4;
         out[i]=index;
