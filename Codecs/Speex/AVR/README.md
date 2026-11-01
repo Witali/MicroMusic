@@ -33,6 +33,13 @@ bare decoder uses 24604 B Flash / 1284 B static SRAM. Fresh full-corpus,
 loaded IRQ and SPI checks retain exact PCM/PWM with zero underruns. The new
 word-shift specialization retains an explicitly selectable C implementation.
 
+[Finite-alphabet noise folding](WB_NOISE_FOLD.md) further replaces 160 -> 20
+exact transformations/frame in WB3.95. Natural-speech decoding improves
+4.53%, **73.97% -> 70.62% CPU**, for 272 B Flash and one peak stack byte.
+Full raw/+8%-load IRQ/SPI runs retain exact PCM/PWM and zero underruns.
+The +11% stress gate fails and is explicitly unadmitted; shorter refill bursts
+remain future work. Both original quantizers and the C fallback are preserved.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

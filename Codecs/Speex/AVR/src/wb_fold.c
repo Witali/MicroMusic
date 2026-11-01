@@ -42,6 +42,32 @@ static SPEEX_NB3_ALWAYS_INLINE int16_t fold_sample(int16_t v,int32_t g,unsigned 
     uint16_t r=(uint16_t)(((uint32_t)t*(uint32_t)g+256)>>9);
     return (int16_t)(odd?(uint16_t)(0u-r):r);
 }
+#if SPEEX_ENABLE_NB1
+void speex_wb_fold5_c(int16_t *table,int32_t g)
+{
+    for(uint8_t i=0;i<5;i++)table[i]=fold_sample(table[i],g,0);
+}
+typedef void (*Fold5)(int16_t *,int32_t);
+static SPEEX_NB3_ALWAYS_INLINE void noise_fold40(int16_t *out,const int16_t *cache,
+    uint8_t sub,int32_t g,int16_t *scratch,Fold5 fold)
+{
+    for(uint8_t i=0;i<5;i++)scratch[i]=cache[80+i];
+    fold(scratch,g);
+    const uint8_t *classes=(const uint8_t *)cache+40*sub;
+    for(uint8_t i=0;i<40;i++) {
+        const uint16_t value=(uint16_t)scratch[classes[i]];
+        out[i]=(int16_t)((i&1)?(uint16_t)(0u-value):value);
+    }
+}
+SPEEX_NB3_STAGE_O2 void speex_wb_noise_fold40_c(int16_t *out,const int16_t *cache,
+    uint8_t sub,int32_t g,int16_t *scratch)
+{noise_fold40(out,cache,sub,g,scratch,speex_wb_fold5_c);}
+#if SPEEX_NB3_USE_AVR_ASM
+SPEEX_NB3_STAGE_O2 void speex_wb_noise_fold40_avr(int16_t *out,const int16_t *cache,
+    uint8_t sub,int32_t g,int16_t *scratch)
+{noise_fold40(out,cache,sub,g,scratch,speex_wb_fold5_avr);}
+#endif
+#endif
 SPEEX_NB3_HOT void speex_wb_fold40_c(int16_t *exc,int32_t g)
 {
     for(unsigned i=0;i<40;i++)exc[i]=fold_sample(exc[i],g,i&1);

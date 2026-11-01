@@ -2,10 +2,11 @@
  * alternating sign. Exact rounded HB1 excitation without a 32-bit buffer. */
 #include "wb_fold_kernel.inc"
 #include "zero_shape_kernel.inc"
-.section .text.speex_wb_fold40_avr,"ax",@progbits
-.global speex_wb_fold40_avr
-.type speex_wb_fold40_avr,@function
-speex_wb_fold40_avr:
+.macro WB_FOLD_ARRAY name,count,parity
+.section .text.\name,"ax",@progbits
+.global \name
+.type \name,@function
+\name:
     .irp reg,2,4,5,6,7,8,9,10,11,16
     push r\reg
     .endr
@@ -13,25 +14,36 @@ speex_wb_fold40_avr:
     movw r4,r20
     movw r6,r22
     clr r2
-    ldi r16,40
-.Lfold:
+    ldi r16,\count
+.Lfold_\@:
     ld r20,X+
     ld r21,X
     sbiw r26,1
     WB_FOLD_Q15 r8,r9,r10,r11
+.if \parity
     WB_FOLD_SCALE r8,r9,r10,r11,r4,r5,r6,r7,r16
+.else
+    /* r2 stays zero: table entries have no output-position parity yet. */
+    WB_FOLD_SCALE r8,r9,r10,r11,r4,r5,r6,r7,r2
+.endif
     st X+,r9
     st X+,r10
     dec r16
-    breq .Ldone
-    rjmp .Lfold
-.Ldone:
+    breq .Ldone_\@
+    rjmp .Lfold_\@
+.Ldone_\@:
     clr r1
     .irp reg,16,11,10,9,8,7,6,5,4,2
     pop r\reg
     .endr
     ret
-.size speex_wb_fold40_avr,.-speex_wb_fold40_avr
+.size \name,.-\name
+.endm
+
+WB_FOLD_ARRAY speex_wb_fold40_avr,40,1
+#if SPEEX_ENABLE_NB1
+WB_FOLD_ARRAY speex_wb_fold5_avr,5,0
+#endif
 
 /* Fuse four ten-sample vectors with folding. ABI: out r24, indices r22,
  * scale r21:r18, g r17:r14. Indices 0..31, 0<=scale<=121000000;

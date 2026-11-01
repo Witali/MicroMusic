@@ -20,7 +20,8 @@ function entry(prefix){const names=[...symbols.keys()].filter(name=>name===prefi
 const [packet,bytes,command,status,result,chunks,pcm,end]=['cache_packet','cache_bytes','cache_command','cache_status',
  'cache_result','cache_chunks','cache_pcm','__bss_end'].map(address);
 const voc=entry('speex_nb1_excitation_frame'),values=entry('speex_low_noise_values5');
-const indices=entry('speex_low_noise_indices40'),expand=entry('speex_low_noise_cached40');
+const folded=[...symbols.keys()].some(n=>n==='speex_wb_noise_fold40_avr'||n.startsWith('speex_wb_noise_fold40_avr.'));
+const indices=entry('speex_low_noise_indices40'),expand=entry(folded?'speex_wb_noise_fold40_avr':'speex_low_noise_cached40');
 assert.ok(!symbols.has('speex_low_noise40')&&!symbols.has('speex_wb_noise_seed'));
 const program=new Uint16Array(16384).fill(65535);new Uint8Array(program.buffer).set(binary);
 const cpu=new CPU(program,2048);let base,live,frameBegin,moveBegin,seedAddress;
@@ -47,12 +48,31 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
    const sub=cpu.data[20],out=cpu.dataView.getUint16(24,true);
    assert.equal(sub,current.expand);assert.equal(cpu.dataView.getUint16(22,true),base);
    pending={sp:cpu.SP,out,sub,before:memory(out-2,2),after:memory(out+80,2)};
+   if(folded){
+    const gain=BigInt(cpu.dataView.getInt32(16,true)),scratch=cpu.dataView.getUint16(14,true);
+    const table=Array.from({length:5},(_,i)=>{
+     const raw=BigInt(current.cache.readInt16LE(160+2*i)),t=(29491n*raw)>>15n;
+     return Number(BigInt.asIntN(16,BigInt.asUintN(32,t*gain+256n)>>9n));
+    });
+    pending.folded=Buffer.alloc(80);pending.table=Buffer.alloc(10);
+    table.forEach((v,i)=>pending.table.writeInt16LE(v,2*i));
+    for(let i=0;i<40;i++){
+     const v=BigInt(table[current.cache[40*sub+i]]);
+     pending.folded.writeInt16LE(Number(BigInt.asIntN(16,(i&1)?-v:v)),2*i);
+    }
+    assert.ok(scratch>=cpu.SP+2&&scratch+10<=2304,'Caller scratch in SRAM');
+    Object.assign(pending,{scratch,scratchBefore:memory(scratch-2,2),scratchAfter:memory(scratch+10,2)});
+   }
    ++current.expand;++totalExpand;
   }
  }
  avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
  if(pending&&opcode===0x9508&&cpu.SP===pending.sp+2){
-  assert.ok(memory(pending.out,80).equals(current.noise.subarray(80*pending.sub,80*(pending.sub+1))),'Exact cached expansion');
+  assert.ok(memory(pending.out,80).equals(folded?pending.folded:current.noise.subarray(80*pending.sub,80*(pending.sub+1))),'Exact cached expansion/fold');
+  if(folded){
+   assert.ok(memory(pending.scratch,10).equals(pending.table),'Five folded scratch words');
+   assert.ok(memory(pending.scratch-2,2).equals(pending.scratchBefore)&&memory(pending.scratch+10,2).equals(pending.scratchAfter),'Caller scratch bounds');
+  }
   assert.ok(memory(pending.out-2,2).equals(pending.before)&&memory(pending.out+80,2).equals(pending.after),'Output guards');
   cacheIntact();pending=null;++checkedBlocks;
  }
@@ -100,8 +120,10 @@ for(let f=0;f<source.frames;f++){
 cpu.data[status]=0;cpu.data[command]=2;until(()=>cpu.data[status]===1);
 assert.equal(cpu.dataView.getUint32(seedAddress,true),1000);assert.ok(memory(base,170).every(value=>value===0));
 const report={binarySha256:metadata.binarySha256,inputSha256:source.inputSha256,pcmSha256:source.pcmSha256,
- frames:source.frames,cacheFrames:checkedFrames,expandedBlocks:checkedBlocks,calls:{vocoder:totalVoc,values5:totalValues,indices40:totalIndices,cached40:totalExpand},
+ frames:source.frames,cacheFrames:checkedFrames,expandedBlocks:checkedBlocks,
+ calls:{vocoder:totalVoc,values5:totalValues,indices40:totalIndices,...(folded?{noiseFold40:totalExpand}:{cached40:totalExpand})},
  cacheBytes:170,firstDelayedInputByte:210,nextHistorySourceByte:320,guardBytes:40,cacheAndDelayedHistoryPreserved:true,
  seedAdvancesOnce:true,pcmExact:true,mixedModes:[1,2,8,3,4],resetClearsCache:true,includesInterrupts:false,physicalBoardTested:false,
  flashBytes:binary.length,staticSramBytes:end-256,peakStack:2303-minSP,freeSram:minSP-end+1};
+if(folded)Object.assign(report,{foldedLookup:true,independentFoldFormula:true,callerScratchWords:5,callerScratchBoundsVerified:checkedBlocks});
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS cache pipeline',JSON.stringify(report));

@@ -1,0 +1,22 @@
+{
+  "admitted": false,
+  "passed": false,
+  "firmware": {
+    "backend": "asm",
+    "packetBytes": 10,
+    "frameLoadCycles": 35200,
+    "lowRates": 7,
+    "binarySha256": "d32078694657479f90f1a541e357b39a15246d22d6f77ed8541fac1e990d2377",
+    "source": "tests/avr_wb_stream.c includes the production player; host supplies ready RAM packets",
+    "productionPlayerSha256": "985ad632ab3b4afaaf20cbf6312e8c90eaf5a1ccd4c4c93df39b023c13af8338"
+  },
+  "failedStream": "coverage4096.spxraw",
+  "decoderFramesComparedBeforeFailure": 4096,
+  "underruns": 8083,
+  "fullCorpusCompleted": false,
+  "pwmComparisonReached": false,
+  "includesInterrupts": true,
+  "physicalBoardTested": false,
+  "reason": "Zero-underrun assertion failed after first stream; 11% is not an admitted gate.",
+  "localLogSha256": "d801f695b2c41e8872f9fd4b25d06aae60b2cb64291812bc8f49e98b7dd6d32a"
+}

@@ -1,0 +1,52 @@
+{
+  "scope": "Vector/scalar arithmetic and table lookup; C decoder not executed or timed",
+  "binarySha256": "db8d8bc02f5fef5939d9e002b09c644f7bb9c1a98fb2242693c4e48937770d3c",
+  "cases": 88960,
+  "fivePathsExact": true,
+  "fullSigned16SweepAtEveryTableSlot": true,
+  "callerScales": 32,
+  "structuredGains": 183,
+  "allFourSubframes": true,
+  "independentBigInt": true,
+  "arbitraryNonArgumentRegisterPatterns": true,
+  "argumentRegistersPreserved": true,
+  "allLeafCalleeSavedRegisterPatterns": true,
+  "calleeSavedAndR1Returns": 266880,
+  "readonlyCache": true,
+  "outputAndScratchGuards": true,
+  "actualMulsPerSubframeBefore": 441,
+  "actualMulsPerSubframeAfter": 56,
+  "foldMulsPerSubframeBefore": 440,
+  "foldMulsPerSubframeAfter": 55,
+  "addressMulsPerSubframe": 1,
+  "asm": {
+    "before": {
+      "calls": 88960,
+      "muls": 39231360,
+      "minCycles": 4230,
+      "maxCycles": 4240,
+      "cycles": 376651902,
+      "meanCycles": 4233.946740107914
+    },
+    "after": {
+      "calls": 88960,
+      "muls": 4981760,
+      "minCycles": 1506,
+      "maxCycles": 1507,
+      "cycles": 134006528,
+      "meanCycles": 1506.368345323741
+    },
+    "leaf": {
+      "calls": 88960,
+      "muls": 4892800,
+      "minCycles": 451,
+      "maxCycles": 452,
+      "cycles": 40153728,
+      "meanCycles": 451.368345323741
+    }
+  },
+  "peakStack": 29,
+  "freeSram": 1740,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

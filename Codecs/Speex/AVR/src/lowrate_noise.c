@@ -33,13 +33,4 @@ SPEEX_NB3_STAGE void speex_low_noise_indices40(uint8_t *out,uint32_t *seed)
     }
     *seed=next;
 }
-SPEEX_NB3_STAGE void speex_low_noise_cached40(int16_t *out,const int16_t *cache,uint8_t sub)
-{
-    /* The low band has already computed all 160 classes and their five
-     * scaled values in dead history bytes 0..169. The callback reads one
-     * class block; the cache is read-only for the whole synthesis phase. */
-    const uint8_t *indices=(const uint8_t *)cache+40*sub;
-    const int16_t *values=cache+80;
-    for(uint8_t i=0;i<40;i++)out[i]=values[indices[i]];
-}
 #endif

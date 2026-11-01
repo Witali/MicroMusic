@@ -3040,6 +3040,11 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Fold a finite alphabet before expansion](speex-finite-alphabet-fold.md): keep
+both nonlinear quantizers, precompute only five possible words per subframe,
+apply parity after lookup and reuse dead interpolation scratch. Includes ABI
+argument/register constraints and the measured rejected timing gate.
+
 [Remove bounded power-of-two noise products](speex-power-two-noise.md): combine
 nested floors exactly, retain negative half-way rounding and extract only
 the observable word with selectable C/ASM shifts.

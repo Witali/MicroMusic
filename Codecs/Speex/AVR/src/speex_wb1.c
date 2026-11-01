@@ -153,8 +153,9 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
     speex_wb_iir40(wb.exc,wb.den,wb.pcm+40,wb.mem);
 #if SPEEX_ENABLE_NB1
     if(wb.low_mode==1) {
-        speex_low_noise_cached40(wb.exc,speex_wb_noise_cache(),wb.sub);
-        speex_wb_fold40(wb.exc,g);
+        /* interp is dead after LSP conversion; retain ak until den copy. */
+        _Static_assert(sizeof(interp)>=5*sizeof(int16_t),"Five-word fold scratch");
+        speex_wb_noise_fold40(wb.exc,speex_wb_noise_cache(),wb.sub,g,interp);
     } else
 #endif
 #if SPEEX_ENABLE_NB2 || SPEEX_ENABLE_NB8

@@ -24,6 +24,9 @@ const valuesNames=[...symbols.keys()].filter(n=>n==='speex_low_noise_values5'||n
 if(countValues)assert.equal(valuesNames.length,1,'Noise preparation entry');
 const valuesEntry=countValues?address(valuesNames[0]):-1;
 let valuesActive=null,valuesCalls=0,valuesMultiplies=0;
+const countFold=process.argv.includes('--count-noise-fold');
+const foldEntry=countFold?address('speex_wb_noise_fold40_avr'):-1;
+let foldActive=null,foldCalls=0,foldMultiplies=0;
 function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  assert.ok(cpu.cycles<deadline,'API timeout');const opcode=cpu.progMem[cpu.pc];
  if(cpu.pc*2===meanEntry){
@@ -33,6 +36,8 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  if(meanActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++meanActive.muls;
  if(cpu.pc*2===valuesEntry){assert.equal(valuesActive,null);valuesActive={sp:cpu.SP,muls:0};}
  if(valuesActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++valuesActive.muls;
+ if(cpu.pc*2===foldEntry){assert.equal(foldActive,null);foldActive={sp:cpu.SP,muls:0};}
+ if(foldActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++foldActive.muls;
  avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
  if(meanActive&&opcode===0x9508&&cpu.SP===meanActive.sp+2){
   assert.equal(cpu.dataView.getInt16(24,true),meanActive.expected,'Mean in real mixed decoder');
@@ -43,17 +48,22 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
   assert.equal(valuesActive.muls,0,'No products in noise values');assert.equal(cpu.data[1],0);
   ++valuesCalls;valuesMultiplies+=valuesActive.muls;valuesActive=null;
  }
+ if(foldActive&&opcode===0x9508&&cpu.SP===foldActive.sp+2){
+  assert.equal(foldActive.muls,56,'Five exact transforms plus subframe address');assert.equal(cpu.data[1],0);
+  ++foldCalls;foldMultiplies+=foldActive.muls;foldActive=null;
+ }
  if(meta.wideband&&cpu.data[chunks]!==lastChunk){lastChunk=cpu.data[chunks];const at=cpu.dataView.getUint16(pcm,true);output.push(Buffer.from(cpu.data.subarray(at,at+160)));}
 }}
 until(()=>cpu.data[status]===1);
 function decode(payload,width,invalidFlags=0){
- const callsBefore=meanCalls,valuesBefore=valuesCalls;
+ const callsBefore=meanCalls,valuesBefore=valuesCalls,foldBefore=foldCalls;
  cpu.data.set(payload,packet);cpu.data[bytes]=width;cpu.data[flags]=invalidFlags;
  output=[];cpu.data[status]=1;cpu.data[command]=1;until(()=>cpu.data[status]===2);
  assert.ok(Buffer.from(cpu.data.subarray(packet,packet+32)).equals(payload),'Read-only packet');
  const code=cpu.dataView.getInt8(result);
  if(countMean)assert.equal(meanCalls-callsBefore,code===0&&(payload[0]>>3)===1?160:0,'Mean only in valid NB1 frames');
  if(countValues)assert.equal(valuesCalls-valuesBefore,code===0&&(payload[0]>>3)===1?1:0,'Noise table once per valid NB1 frame');
+ if(countFold)assert.equal(foldCalls-foldBefore,code===0&&(payload[0]>>3)===1?4:0,'Fold table four times per valid NB1 frame');
  return {code,pcm:meta.wideband?Buffer.concat(output):Buffer.from(cpu.data.subarray(pcm,pcm+320)),callbacks:output.length};
 }
 function reject(payload,width,badFlags=0){const answer=decode(payload,width,badFlags);assert.equal(answer.code,-1);assert.equal(answer.callbacks,0);rejected++;}
@@ -76,4 +86,6 @@ if(countMean)report.meanArithmetic={calls:meanCalls,hardwareMultiplies:meanMulti
  hardwareMultipliesPerNb1Frame:640,exactDuringDecoder:true,rejectedCallsDoNotExecute:true};
 if(countValues)report.noiseTableArithmetic={calls:valuesCalls,hardwareMultiplies:valuesMultiplies,
  callsPerNb1Frame:1,valuesPerCall:5,rejectedCallsDoNotExecute:true};
+if(countFold)report.noiseFoldArithmetic={calls:foldCalls,hardwareMultiplies:foldMultiplies,
+ transformedValuesPerNb1Frame:20,foldMulsPerNb1Frame:220,controllerMulsPerNb1Frame:224,rejectedCallsDoNotExecute:true};
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS mixed API',JSON.stringify(report));

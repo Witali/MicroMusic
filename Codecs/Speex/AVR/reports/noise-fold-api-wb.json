@@ -1,0 +1,47 @@
+{
+  "backend": "asm",
+  "wideband": true,
+  "binarySha256": "03d9401767edf4b69cb34792fa267b07737be9f558a2214d920c705d38fc120a",
+  "inputSha256": "a7d9fe117070b9e0c3cffb5a06667de233dc7e289a768a777710952dc1b8c122",
+  "pcmSha256": "f02abd03333a94e410e77023cb4cc6f418bca92604de85fb6fafcccb7e265022",
+  "frames": 1024,
+  "rejectedCalls": 7168,
+  "mixedEnabledModes": [
+    1,
+    2,
+    8,
+    3,
+    4
+  ],
+  "paddingIgnored": true,
+  "resetExact": true,
+  "pcmExact": true,
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "flashBytes": 25036,
+  "staticSramBytes": 1308,
+  "peakStack": 223,
+  "freeSram": 517,
+  "meanArithmetic": {
+    "calls": 32960,
+    "hardwareMultiplies": 131840,
+    "hardwareMultipliesPerNb1Frame": 640,
+    "exactDuringDecoder": true,
+    "rejectedCallsDoNotExecute": true
+  },
+  "noiseTableArithmetic": {
+    "calls": 206,
+    "hardwareMultiplies": 0,
+    "callsPerNb1Frame": 1,
+    "valuesPerCall": 5,
+    "rejectedCallsDoNotExecute": true
+  },
+  "noiseFoldArithmetic": {
+    "calls": 824,
+    "hardwareMultiplies": 46144,
+    "transformedValuesPerNb1Frame": 20,
+    "foldMulsPerNb1Frame": 220,
+    "controllerMulsPerNb1Frame": 224,
+    "rejectedCallsDoNotExecute": true
+  }
+}
