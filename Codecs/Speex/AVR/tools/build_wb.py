@@ -11,8 +11,8 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import build
 
-C_SOURCES=['speex_wb1.c','wb_qmf.c','wb_iir.c','wb_fold.c','lowrate_noise.c']
-ASM_SOURCES=['wb_iir.S','wb_qmf.S','wb_fold.S','wb_gain_div.S']
+C_SOURCES=['speex_wb1.c','wb_qmf.c','wb_iir.c','wb_fold.c','lowrate_noise.c','nb1_vocoder.c']
+ASM_SOURCES=['wb_iir.S','wb_qmf.S','wb_fold.S','wb_gain_div.S','nb1_vocoder.S']
 DEFINES=build.DEFINES+['SPEEX_AVR_COMPACT_LSP','SPEEX_AVR_TIGHT_EXC',
     'SPEEX_AVR_PROFILE','SPEEX_AVR_FAST_MUL','SPEEX_ENABLE_WB1=1']
 

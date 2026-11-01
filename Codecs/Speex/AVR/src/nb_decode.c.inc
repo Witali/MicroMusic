@@ -106,7 +106,12 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
    else
 #endif
 #if SPEEX_ENABLE_NB1
-   if(packet_mode==1)speex_nb1_excitation_frame(st,frame_exc,packet,AVR_READ_I32(nb_low_gain_table+qe));
+   if(packet_mode==1)
+#if SPEEX_ENABLE_WB1
+      speex_nb1_excitation_prepare(st,packet,AVR_READ_I32(nb_low_gain_table+qe));
+#else
+      speex_nb1_excitation_frame(st,frame_exc,packet,AVR_READ_I32(nb_low_gain_table+qe));
+#endif
    else
 #endif
    {
@@ -149,6 +154,9 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
    for (sub=0;sub<NB_NB_SUBFRAMES;sub++)
    {
       spx_word16_t *sp;
+#if SPEEX_ENABLE_NB1 && SPEEX_ENABLE_WB1
+      if(packet_mode==1)speex_nb1_excitation_subframe(st,frame_exc+NB_SUBFRAME_SIZE*sub,(uint8_t)sub);
+#endif
 #if SPEEX_ENABLE_WB1
       sp=out?out+NB_SUBFRAME_SIZE*sub:speex_wb_low_buffer();
 #else
@@ -169,7 +177,7 @@ SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packe
          lsp_to_lpc(interp_qlsp,ak,NB_ORDER,stack);
 #endif
       }
-      /* Excitation is complete and remains read-only during synthesis.
+      /* This delayed input is complete and read-only during synthesis.
        * Filter from its delayed history directly, retaining the original
        * 40-sample delay without copying a whole frame into the PCM output. */
       iir_mem16(frame_exc-NB_SUBFRAME_SIZE+NB_SUBFRAME_SIZE*sub,

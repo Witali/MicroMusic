@@ -25,7 +25,7 @@ for(const name of readdirSync(streams).filter(n=>n.endsWith('.spxraw')).sort()){
  assert.ok(Number.isInteger(frames)&&frames>0);assert.equal(expected.length,frames*640);
  const program=new Uint16Array(16384).fill(65535);new Uint8Array(program.buffer).set(binary);const cpu=new CPU(program,2048);
  new AVRTimer(cpu,timer1Config);new AVRTimer(cpu,timer2Config);
- let minSP=2303,oldChunks=0,parts=[],minQueue=127,loadActive=false,loadCycles=0;const samples=[],times=[],loads=[];
+ let minSP=2303,oldChunks=0,parts=[],minQueue=127,loadActive=false,loadCycles=0;const samples=[],times=[],loads=[],refills=[];
  function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
   assert.ok(cpu.cycles<deadline,'WB stream timeout '+name+' PC='+cpu.pc*2);assert.equal(cpu.data[error],0,'Decode status');
   const pc=cpu.pc*2,before=cpu.cycles,previouslyEnabled=cpu.interruptsEnabled;
@@ -39,6 +39,13 @@ for(const name of readdirSync(streams).filter(n=>n.endsWith('.spxraw')).sort()){
  }}
  until(()=>cpu.data[status]===1);
  const packet=cpu.dataView.getUint16(packetAddress,true),pwm=cpu.dataView.getUint16(pwmAddress,true);assert.ok(packet>=256&&packet+width<=end);
+ const oldHeadHook=cpu.writeHooks[head];cpu.writeHooks[head]=(value,old,at,mask)=>{
+  if(value!==old){
+   assert.equal((value-old)&127,80,'Publish exactly one complete PCM quarter');
+   refills.push({cycle:cpu.cycles,before:(old-cpu.data[tail])&127,after:(value-cpu.data[tail])&127});
+  }
+  return oldHeadHook?.(value,old,at,mask)??false;
+ };
  const previous=cpu.writeHooks[pwm];cpu.writeHooks[pwm]=(value,old,at,mask)=>{
   if(cpu.data[started]){samples.push(value);times.push(cpu.cycles);if(!cpu.data[finished])minQueue=Math.min(minQueue,(cpu.data[head]-cpu.data[tail])&127);}
   return previous?.(value,old,at,mask)??false;
@@ -56,9 +63,14 @@ for(const name of readdirSync(streams).filter(n=>n.endsWith('.spxraw')).sort()){
  const minimum=intervals.reduce((a,b)=>Math.min(a,b),Infinity),maximum=intervals.reduce((a,b)=>Math.max(a,b),0);
  assert.ok(minimum>=990&&maximum<=1010,'16-kHz output interval');assert.equal(loads.length,metadata.frameLoadCycles?frames:0);
  for(const cycles of loads)assert.equal(cycles,metadata.frameLoadCycles,'Foreground load excluding ISR cycles');
+ assert.equal(refills.length,frames*4);
+ const refillGaps=refills.slice(1).map((r,i)=>({cycles:r.cycle-refills[i].cycle,boundary:(i+1)%4===0}));
+ const maximumGap=boundary=>refillGaps.filter(r=>r.boundary===boundary).reduce((a,r)=>Math.max(a,r.cycles),0);
  const row={stream:name,frames,inputSha256:createHash('sha256').update(raw).digest('hex'),pcmSha256:createHash('sha256').update(expected).digest('hex'),
   fullHistoryWithoutChunkReset:true,s16AndPwmExact:true,underruns:0,minQueuedSamplesBeforeOutput:minQueue,freeSramAtPeak:minSP-end+1,peakStackBytes:2303-minSP,
-  timerIntervalMinCycles:minimum,timerIntervalMaxCycles:maximum,measuredLoads:loads.length};reports.push(row);console.log('PASS full history',name,frames,'frames, min queue',minQueue,'free',row.freeSramAtPeak);
+  timerIntervalMinCycles:minimum,timerIntervalMaxCycles:maximum,measuredLoads:loads.length,
+  refillPublications:refills.length,maxIntraFrameRefillGapCycles:maximumGap(false),maxFrameBoundaryRefillGapCycles:maximumGap(true),
+  minQueueImmediatelyBeforeRefill:Math.min(...refills.slice(1).map(r=>r.before))};reports.push(row);console.log('PASS full history',name,frames,'frames, min queue',minQueue,'free',row.freeSramAtPeak);
 }
 const result={binarySha256:metadata.binarySha256,packetBytes:width,flashBytes:binary.length,staticSramBytes:end-256,includesInterrupts:true,
  simulator:'avr8js 0.21.1 + tests/avr_tick.mjs',physicalBoardTested:false,extraCpuCyclesPerFrame:metadata.frameLoadCycles,
