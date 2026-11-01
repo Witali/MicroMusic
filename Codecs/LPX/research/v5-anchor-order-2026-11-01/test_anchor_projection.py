@@ -2,11 +2,22 @@
 import unittest
 import subprocess
 import sys
+import os
+import json
 from pathlib import Path
-from project_anchor import branch_work,outcome,rejected,COMPARISONS
+from project_anchor import branch_work,outcome,rejected,COMPARISONS,audit_job_settings
 
 
 class Projection(unittest.TestCase):
+    @unittest.skipUnless(os.environ.get('ANCHOR_STUDY'),'Private terminal study is opt-in')
+    def test_all_terminal_jobs_match_the_separate_manifest_schema(self):
+        root=Path(os.environ['ANCHOR_STUDY'])
+        manifest=json.loads((root/'baselines-v1/binding-private.json').read_text())
+        rows=[]
+        for profile in (4,6):rows.extend(json.loads((root/('pilot-v1-p%d'%profile)/'results-private.json').read_text()))
+        self.assertEqual(len(rows),48)
+        for row in rows:audit_job_settings(row,manifest)
+
     def test_clean_interpreter_bootstrap_has_no_codec_preload(self):
         package=Path(__file__).resolve().parent
         code='import sys;sys.path.insert(0,sys.argv[1]);import project_anchor;assert "speech_compact" not in sys.modules'
