@@ -27,6 +27,8 @@ if(backend==='c')for(const name of ['speex_wb_iir40_avr','speex_wb_fold40_avr','
 const report={backend,binarySha256:metadata.binarySha256,includesInterrupts:false,physicalBoardTested:false,flashBytes:binary.length,staticSramBytes:end-256,frames:0,maxCycles:0,minSP:2303,streams:[]};
 let totalCycles=0,collectingProfile=false;
 const profiling=process.argv.includes('--profile'),hits=new Map();
+const forcedTiming=process.argv.includes('--forced-zero-timing'),forcedRows=[];
+if(forcedTiming)assert.equal(backend,'asm','Do not execute/time the C decoder');
 for(const name of readdirSync(streams).filter(s=>s.endsWith('.spxraw')).sort()){
  const raw=readFileSync(join(streams,name));assert.equal(raw.length%packetBytes,0);
  const expected=readFileSync(join(oracle,name.replace('.spxraw','.pcm')));assert.equal(expected.length,raw.length/packetBytes*640);
@@ -58,9 +60,15 @@ for(const name of readdirSync(streams).filter(s=>s.endsWith('.spxraw')).sort()){
  const row={name,frames,minCycles:Math.min(...cycles),maxCycles:Math.max(...cycles),meanCycles:Math.round(cycles.reduce((a,b)=>a+b,0)/frames),peakStack:2303-minSP,freeSram:minSP-end+1,reset:true,pcmExact:true};
  report.streams.push(row);report.frames+=frames;report.maxCycles=Math.max(report.maxCycles,row.maxCycles);report.minSP=Math.min(report.minSP,minSP);totalCycles+=cycles.reduce((a,b)=>a+b,0);
  console.log(JSON.stringify(row));
+ if(forcedTiming){
+  const zero=cycles.map((_,i)=>{const p=i*packetBytes;assert.equal(raw[p]>>3,8);return (((raw[p+3]&3)<<2)|(raw[p+4]>>6))===0;});
+  forcedRows.push({stream:name,inputSha256:createHash('sha256').update(raw).digest('hex'),pcmSha256:createHash('sha256').update(expected).digest('hex'),coefficientZero:zero,cycles});
+ }
 }
 report.meanCycles=totalCycles/report.frames;report.peakStack=2303-report.minSP;report.freeSram=report.minSP-end+1;
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));
+if(forcedTiming)writeFileSync(join(dir,'forced-zero-timing.json'),JSON.stringify({binarySha256:metadata.binarySha256,packetBytes,
+ includesInterrupts:false,frames:report.frames,streams:forcedRows})+'\n');
 if(profiling){
  const functions=[...symbols].filter(([,at])=>at<binary.length).sort((a,b)=>a[1]-b[1]);
  const totals=new Map();

@@ -57,6 +57,24 @@ static SPEEX_NB3_STAGE_O2 void speex_nb2_excitation_frame(int16_t *frame,
 #endif
 #if SPEEX_ENABLE_NB8
 extern const int8_t exc_20_32_table[640];
+/* Forced coefficient 0 has no adaptive contribution, including short-lag
+ * ancestors. Reuse the exact zero primitive on complete twenty-word rows. */
+static SPEEX_NB3_STAGE_O2 void speex_nb8_zero_frame(int16_t *frame,
+    const uint8_t *packet,int32_t scale,uint8_t indices[4])
+{
+    for(uint8_t sub=0;sub<4;sub++) {
+        speex_low_unpack(packet,sub,indices);
+        for(uint8_t v=0;v<2;v++) {
+            const int8_t *shape=exc_20_32_table+20*(unsigned)indices[v];
+#if SPEEX_NB3_USE_AVR_ASM
+            speex_avr_zero_innovation_n(frame,shape,scale,20);
+#else
+            speex_nb3_zero_innovation_n_c(frame,shape,scale,20);
+#endif
+            frame+=20;
+        }
+    }
+}
 /* Forced pitch predicts the complete subframe before innovation is added.
  * For short lags, recompute its at-most-two rounded prediction ancestors
  * from completed history, rather than feeding final innovation back into
@@ -74,9 +92,13 @@ static SPEEX_NB3_ALWAYS_INLINE int16_t speex_forced_source(const int16_t *exc,
 static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
     const uint8_t *packet,int32_t scale,uint8_t indices[4])
 {
-    uint8_t pitch=17+speex_packet_field(packet,23,7);
-    uint8_t coefficient=(2185L*(int16_t)(speex_packet_field(packet,30,4)<<6)+16384)>>15;
+    const uint8_t coded_coefficient=speex_packet_field(packet,30,4);
+    /* Sixteen codes produce 0..64 (clamped to63); only code0 produces0.
+     * Test it before computing a coefficient or reading the unused pitch. */
+    if(!coded_coefficient){speex_nb8_zero_frame(frame,packet,scale,indices);return;}
+    uint8_t coefficient=(2185L*(int16_t)(coded_coefficient<<6)+16384)>>15;
     if(coefficient>63)coefficient=63;
+    uint8_t pitch=17+speex_packet_field(packet,23,7);
     int8_t gain[3]={0,(int8_t)coefficient,0};int16_t edge[12];
     for(uint8_t sub=0;sub<4;sub++) {
         int16_t *exc=frame+40*sub;uint8_t j=0;

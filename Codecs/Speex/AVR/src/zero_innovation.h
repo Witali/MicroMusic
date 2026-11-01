@@ -12,7 +12,7 @@ static SPEEX_NB3_ALWAYS_INLINE void speex_nb3_zero_innovation_n_c(int16_t *out,
 }
 #if SPEEX_NB3_USE_AVR_ASM
 extern void speex_avr_zero_innovation10(int16_t *,const int8_t *,int32_t);
-/* Count 0..10; zero touches no input/output. No history or gain array. */
+/* Count 0..20; zero touches no input/output. No history or gain array. */
 extern void speex_avr_zero_innovation_n(int16_t *,const int8_t *,int32_t,uint8_t);
 #endif
 #endif

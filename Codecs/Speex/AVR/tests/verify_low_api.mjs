@@ -42,6 +42,15 @@ if(countLowFusion)for(const m of [2,8]){
  if(meta.wideband)assert.ok(symbols.has(name),name);
  if(symbols.has(name))lowEntries.set(address(name),m);
 }
+const countForcedZero=process.argv.includes('--count-forced-zero');
+const zeroNames=[...symbols.keys()].filter(n=>n==='speex_nb8_zero_frame'||n.startsWith('speex_nb8_zero_frame.'));
+if(countForcedZero)assert.equal(zeroNames.length,1,'NB8 zero-frame producer');
+const zeroFrameEntry=countForcedZero?address(zeroNames[0]):-1;
+const zeroVectorEntry=countForcedZero?address('speex_avr_zero_innovation_n'):-1;
+const adaptiveEntry=countForcedZero?address('speex_avr_long_innovation_n'):-1;
+let zeroActive=null,zeroFrameCalls=0,zeroVectorCalls=0,zeroFrameMuls=0,zeroMinMuls=Infinity,zeroMaxMuls=0;
+const previousRead=cpu.readData.bind(cpu);
+cpu.readData=a=>{if(zeroActive)zeroActive.reads.add(a);return previousRead(a);};
 function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  assert.ok(cpu.cycles<deadline,'API timeout');const opcode=cpu.progMem[cpu.pc];
  if(cpu.pc*2===meanEntry){
@@ -59,6 +68,15 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  if(prepareActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++prepareActive.muls;
  if(lowEntries.has(cpu.pc*2)){assert.equal(lowActive,null);lowActive={mode:lowEntries.get(cpu.pc*2),sp:cpu.SP,muls:0};}
  if(lowActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++lowActive.muls;
+ if(cpu.pc*2===zeroFrameEntry){assert.equal(zeroActive,null);zeroActive={sp:cpu.SP,blocks:[],reads:new Set(),muls:0};}
+ if(zeroActive){
+  assert.notEqual(cpu.pc*2,adaptiveEntry,'No adaptive kernel in a zero-coefficient frame');
+  if((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300)++zeroActive.muls;
+ }
+ if(cpu.pc*2===zeroVectorEntry&&cpu.data[16]===20){
+  assert.ok(zeroActive,'Twenty-word zero rows belong to the zero-frame producer');
+  zeroActive.blocks.push(cpu.dataView.getUint16(24,true));++zeroVectorCalls;
+ }
  avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
  if(meanActive&&opcode===0x9508&&cpu.SP===meanActive.sp+2){
   assert.equal(cpu.dataView.getInt16(24,true),meanActive.expected,'Mean in real mixed decoder');
@@ -84,12 +102,20 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
   assert.equal(lowActive.muls,lowActive.mode===2?604:602);assert.equal(cpu.data[1],0);
   ++lowStats[lowActive.mode].calls;lowStats[lowActive.mode].muls+=lowActive.muls;lowActive=null;
  }
+ if(zeroActive&&opcode===0x9508&&cpu.SP===zeroActive.sp+2){
+  const first=zeroActive.blocks[0];assert.equal(zeroActive.blocks.length,8);
+  assert.deepEqual(zeroActive.blocks,Array.from({length:8},(_,i)=>first+40*i),'Eight complete contiguous rows');
+  for(const a of zeroActive.reads)assert.ok(a<first-290||a>=first+320,'No excitation-history/output reads');
+  assert.equal(cpu.data[1],0);++zeroFrameCalls;zeroFrameMuls+=zeroActive.muls;
+  zeroMinMuls=Math.min(zeroMinMuls,zeroActive.muls);zeroMaxMuls=Math.max(zeroMaxMuls,zeroActive.muls);zeroActive=null;
+ }
  if(meta.wideband&&cpu.data[chunks]!==lastChunk){lastChunk=cpu.data[chunks];const at=cpu.dataView.getUint16(pcm,true);output.push(Buffer.from(cpu.data.subarray(at,at+160)));}
 }}
 until(()=>cpu.data[status]===1);
 function decode(payload,width,invalidFlags=0){
  const callsBefore=meanCalls,valuesBefore=valuesCalls,foldBefore=foldCalls,vocoderBefore=vocoderCalls,prepareBefore=prepareCalls;
  const lowBefore={2:lowStats[2].calls,8:lowStats[8].calls};
+ const zeroBefore=zeroFrameCalls,vectorsBefore=zeroVectorCalls;
  cpu.data.set(payload,packet);cpu.data[bytes]=width;cpu.data[flags]=invalidFlags;
  output=[];cpu.data[status]=1;cpu.data[command]=1;until(()=>cpu.data[status]===2);
  assert.ok(Buffer.from(cpu.data.subarray(packet,packet+32)).equals(payload),'Read-only packet');
@@ -101,6 +127,11 @@ function decode(payload,width,invalidFlags=0){
  if(countPrepare)assert.equal(prepareCalls-prepareBefore,code===0&&(payload[0]>>3)===1?1:0,'Prepare only valid NB1 frames');
  if(countLowFusion)for(const m of [2,8])assert.equal(lowStats[m].calls-lowBefore[m],
   meta.wideband&&code===0&&(payload[0]>>3)===m?4:0,'Fused high-band only for matching valid WB mode');
+ if(countForcedZero){
+  const eligible=code===0&&(payload[0]>>3)===8&&(((payload[3]&3)<<2)|(payload[4]>>6))===0;
+  assert.equal(zeroFrameCalls-zeroBefore,eligible?1:0,'Fast path only for valid coefficient0 NB8/WB5.75');
+  assert.equal(zeroVectorCalls-vectorsBefore,eligible?8:0,'Eight twenty-sample zero-adaptive rows');
+ }
  return {code,pcm:meta.wideband?Buffer.concat(output):Buffer.from(cpu.data.subarray(pcm,pcm+320)),callbacks:output.length};
 }
 function reject(payload,width,badFlags=0){const answer=decode(payload,width,badFlags);assert.equal(answer.code,-1);assert.equal(answer.callbacks,0);rejected++;}
@@ -131,4 +162,7 @@ if(countPrepare)report.framePreparationArithmetic={calls:prepareCalls,hardwareMu
  perCall:prepareCounts,rejectedCallsDoNotExecute:true};
 if(countLowFusion)report.lowFusionArithmetic={byMode:lowStats,rejectedCallsAndOtherModesDoNotExecute:true,
  fourCallsPerMatchingWbFrame:true,nbApiDoesNotExecute:true};
+if(countForcedZero)report.forcedZeroArithmetic={frames:zeroFrameCalls,twentyWordCalls:zeroVectorCalls,hardwareMultiplies:zeroFrameMuls,
+ minMultipliesPerFrame:zeroMinMuls,maxMultipliesPerFrame:zeroMaxMuls,noAdaptiveKernel:true,noExcitationHistoryOrOutputReads:true,
+ invalidAndNonzeroCoefficientCallsDoNotExecute:true};
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS mixed API',JSON.stringify(report));

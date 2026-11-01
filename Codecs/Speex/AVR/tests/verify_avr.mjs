@@ -48,6 +48,8 @@ for (const table of ['cdbk_nb', 'cdbk_nb_low1', 'cdbk_nb_high1', 'gain_cdbk_lbr'
 }
 for (const name of ['malloc', 'calloc', 'realloc', 'free']) assert.ok(!symbols.has(name), 'Unexpected heap: ' + name);
 const profile = process.argv.includes('--profile');
+const forcedTiming=process.argv.includes('--forced-zero-timing'),forcedRows=[];
+if(forcedTiming)assert.equal(backend.backend,'asm','Do not execute/time the C decoder');
 const lspFunction=[...symbols].find(([name,value])=>/^speex_nb3_interpolate_lpc(?:\.|$)/.test(name)&&value<32768) ||
   [...symbols].find(([name,value])=>/^lsp_to_lpc(?:\.|$)/.test(name)&&value<32768);
 assert.ok(lspFunction,'Count the actual out-of-line LSP conversion entries');
@@ -132,12 +134,18 @@ for (const file of readdirSync(streamsDirectory).filter(s => s.endsWith('.spxraw
   report.streams.push(row);
   if (capture) writeFileSync(join(outputDirectory, file.replace('.spxraw', '.pcm')), Buffer.concat(captured));
   console.log(file, JSON.stringify(row));
+  if(forcedTiming){
+    const zero=cycles.map((_,i)=>{const p=i*packetBytes;assert.equal(raw[p]>>3,8);return (((raw[p+3]&3)<<2)|(raw[p+4]>>6))===0;});
+    forcedRows.push({stream:file,inputSha256:createHash('sha256').update(raw).digest('hex'),pcmSha256:createHash('sha256').update(expected).digest('hex'),coefficientZero:zero,cycles});
+  }
 }
 report.freeSramAtPeak = report.minStackPointer - end + 1;
 report.fitsDecoderBudget = report.maxCycles <= 320000;
 writeFileSync(resolve(outputDirectory, limit === Infinity ? 'avr-verification.json' : 'avr-smoke.json'), JSON.stringify(report, null, 2) + '\n');
 console.log('PASS: AVR PCM exact;', report.frames, 'frames; max', report.maxCycles,
   'cycles;', report.freeSramAtPeak, 'bytes spare SRAM. ISR excluded.');
+if(forcedTiming)writeFileSync(join(outputDirectory,'forced-zero-timing.json'),JSON.stringify({binarySha256:backend.binarySha256,packetBytes,
+ includesInterrupts:false,frames:report.frames,streams:forcedRows})+'\n');
 if (profile) {
   const totals = new Map();
   for (const [pc, cycles] of hits) {

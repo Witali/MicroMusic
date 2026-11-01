@@ -328,7 +328,7 @@ speex_avr_zero_innovation10:
     ret
 .size speex_avr_zero_innovation10, .-speex_avr_zero_innovation10
 
-/* Runtime count in r16, 0..10. Preserve it before scale moves to r19:r16.
+/* Runtime count in r16, 0..20. Preserve it before scale moves to r19:r16.
  * Keep the fixed-ten path and its timing unchanged. */
 .global speex_avr_zero_innovation_n
 .type speex_avr_zero_innovation_n, @function
