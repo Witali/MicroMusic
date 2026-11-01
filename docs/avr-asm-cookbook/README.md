@@ -3142,3 +3142,5 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [Charge scale-repeat syntax against complete Flash](lpx-scale-repeat.md): an isolated lossless parser costs 45..47 B, exceeds four tuning data savings, and pays off only on the measured long chain; production is unchanged.
 
 - [Clocked external SPI sources](lpx-external-spi.md): vendor-derived registers, source/arithmetic separation, corrected simavr byte timing and bounded full-player validation scope.
+
+- [Exact bounded LPX pitch history](lpx-pitch-history.md): rejected 111-byte RAM tradeoff, memory-lifetime alternatives, unchanged production decoder and measured AVR25 C throughput limits.
