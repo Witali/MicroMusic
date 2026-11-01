@@ -78,3 +78,11 @@ Selection here applies only full PCM/PWM SSE/STOI floors, retaining baseline
 rollback. A corpus/controller caller must additionally apply whole-chain
 period, clipping and joint voice/noise admission. Catalogue metric roles are
 owned copies. The existing encoder defaults, bitstream and decoder are unchanged.
+
+The [six-context P4 corpus pilot](../../research/v5-existing-extra-pass-2026-11-01/evidence/RESULTS.md)
+completed 20 full passes and 36 cap decisions. Neither policy extends the complete
+admissible size/joint-score frontier of the prior V1/anchor union. Of 48 distinct
+changed whole tuples, 47 fail the unchanged gates and the sole admissible tuple
+is dominated by prior evidence. Both policies keep baseline rollback, and neither
+is adopted as a new default controller operator. The synthetic cancellation
+result establishes candidate coverage, not natural-speech or audible benefit.
