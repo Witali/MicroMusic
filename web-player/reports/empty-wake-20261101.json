@@ -1,0 +1,7671 @@
+{
+  "schema": "micromusic-empty-wake-experiment-v1",
+  "date": "2026-11-01",
+  "baselineRef": "9e8909ff",
+  "decision": "not-retained",
+  "productionUnchanged": true,
+  "compilerIdentity": "6dff8aef30a8847d4abb3dad56d0d12d52889ac034c9cab42c13611121545a5d",
+  "compilerSourcesVerified": 41,
+  "native": {
+    "baselineBytes": 124590,
+    "baselineSha256": "244b3d3da85ff6cd065e6b105b18d26d8ae07e6615802d77f23a123338209c98",
+    "candidateBytes": 124589,
+    "candidateSha256": "ba2bc55c081ac9064c4806176da72ee2600eea3614eff19d060802eafacfbd7d"
+  },
+  "proof": {
+    "schema": "micromusic-empty-wake-build-v1",
+    "baseline": "9e8909ff",
+    "controlByteEqual": true,
+    "controlSha256": "244b3d3da85ff6cd065e6b105b18d26d8ae07e6615802d77f23a123338209c98",
+    "candidateSha256": "ba2bc55c081ac9064c4806176da72ee2600eea3614eff19d060802eafacfbd7d",
+    "candidateBytes": 124589,
+    "deviceSourceSha256": "8eb43d002122c77e4235cdb97bdd42a13c92b0e2a2c3143eacd17c2bac05b468",
+    "imports": 0,
+    "exports": 117,
+    "memoryPages": 2,
+    "maximumMemoryPages": 2,
+    "sourceCount": 17
+  },
+  "changedBodies": [
+    {
+      "index": 160,
+      "beforeBytes": 1763,
+      "afterBytes": 1762
+    }
+  ],
+  "completedTimedRuns": 256,
+  "completedWarmups": 128,
+  "exactCheckpoints": 5259,
+  "fullCandidateRuntimeSuiteRun": false,
+  "taps": {
+    "baseline": {
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "path": "build/empty-wake-baseline-tests-20261101.tap",
+      "sha256": "38ae6f5171065871e31f2400b3c277977161f20640e425bfe5014e878108e44c"
+    },
+    "candidate": {
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "path": "build/empty-wake-candidate-tests-20261101.tap",
+      "sha256": "b47556d1206c613839febf43f28b1030739b386948f9d600995edeb9fe511b83"
+    }
+  },
+  "inputs": {
+    "parity.json": "02b3803333cde5f10e658286767a002953ea889c29e5c2d9492dc42b7c0c042f",
+    "screen.json": "071010946868c5f8d0bb4164df92672808b562169447535dfe50fdbedf14a95d",
+    "confirmation.json": "b8bda19921b7e0bc0946f1e5389d2d5f91fa02e58d506f2300555a2f21e42a5e"
+  },
+  "captures": [
+    {
+      "id": "parity",
+      "parameters": {
+        "trials": 8,
+        "warmups": 4,
+        "frames": 12000,
+        "kernelFrames": 1200,
+        "instructions": 1000000,
+        "rate": 48000,
+        "block": 1024,
+        "schedule": [
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ]
+        ],
+        "changeSet": "empty-wake",
+        "boundedRegions": true,
+        "phaseLocals": true,
+        "candidateRoot": "build/empty-wake-20261101/shadow"
+      },
+      "host": {
+        "node": "v22.22.3",
+        "v8": "12.4.254.21-node.56",
+        "flags": [],
+        "platform": "win32",
+        "release": "10.0.26300",
+        "cpu": "AMD Ryzen 5 5600X 6-Core Processor             "
+      },
+      "cases": [
+        {
+          "id": "rhythmic-compatible",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+          "translationSha256": "b04c50df891f782000c439272c535928df2caf7012efd3a493e1d03659e8deff",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "finalState": {
+            "pc": 4,
+            "cycles": 2400000,
+            "irqs": 9373,
+            "maxISR": 15,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 152,
+            "registers": [
+              0,
+              1,
+              136,
+              61,
+              1,
+              0,
+              135,
+              2,
+              0,
+              0,
+              0,
+              0,
+              20,
+              3,
+              167,
+              78,
+              37,
+              0,
+              152,
+              1,
+              4,
+              9,
+              136,
+              137,
+              18,
+              8,
+              121,
+              0,
+              141,
+              0,
+              20,
+              3
+            ],
+            "idleCycles": 336492,
+            "baseHalf": "4800000",
+            "startupDeadline": "4800000",
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 2,
+              "pullups": 32,
+              "floating": 25,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "af34e1fb8dd92e06220a4eb8ed51f8bac5d3735abb76daa2ed15ed52811699b1",
+            "architectureSha256": "4bc370d5ef06fc924f4126f1c7723108144f54650f684d48c1a3cd92af7aa5ed",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "rhythmic-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000,
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+          "translationSha256": "5d9ed8c057199509bf466f70d0f0bc65446a7da6b3055b3451599f26a37d0ded",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "finalState": {
+            "pc": 4,
+            "cycles": 2400000,
+            "irqs": 9373,
+            "maxISR": 15,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 152,
+            "registers": [
+              0,
+              1,
+              136,
+              61,
+              1,
+              0,
+              135,
+              2,
+              0,
+              0,
+              0,
+              0,
+              20,
+              3,
+              167,
+              78,
+              37,
+              0,
+              152,
+              1,
+              4,
+              9,
+              136,
+              137,
+              18,
+              8,
+              121,
+              0,
+              141,
+              0,
+              20,
+              3
+            ],
+            "idleCycles": 0,
+            "timePs": "250000000000",
+            "startupDeadlinePs": "250000000000",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 1,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "1693369"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 2,
+              "pullups": 32,
+              "floating": 25,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "7b01c8e0e49590efff48753682bc35863db2e3157481304d19db2c34f9288562",
+            "architectureSha256": "cc209655ceab5045f680af23a1339dcd8fd6ba60bf503bc127a3cc8510fa4503",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "lumiere-stereo-compatible",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true
+          },
+          "frames": 12000,
+          "channels": 2,
+          "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+          "translationSha256": "91d5ebf8d4996955da9ccad652325edffc149d83f634cadce7f7c105d6e04ae6",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "finalState": {
+            "pc": 644,
+            "cycles": 2400004,
+            "irqs": 9373,
+            "maxISR": 18,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 144,
+            "registers": [
+              219,
+              1,
+              136,
+              61,
+              1,
+              0,
+              95,
+              3,
+              140,
+              136,
+              0,
+              0,
+              36,
+              3,
+              167,
+              79,
+              18,
+              2,
+              144,
+              1,
+              4,
+              0,
+              132,
+              136,
+              18,
+              5,
+              106,
+              0,
+              138,
+              0,
+              36,
+              3
+            ],
+            "idleCycles": 145494,
+            "baseHalf": "4800008",
+            "startupDeadline": "4800008",
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 3,
+              "pullups": 32,
+              "floating": 24,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "280dfaed7185f54cb9c2c97c396833cffa35ba588fabe110b608483f0b8044b7",
+            "architectureSha256": "c55815acf7583282de05e9557bc111d390678b85c7401bd07705c3428eacd29d",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "lumiere-stereo-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000,
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 12000,
+          "channels": 2,
+          "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+          "translationSha256": "92c38cf81825a9f77910503d3901be76b9e160e33ee19ae730d286896cfeb495",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "finalState": {
+            "pc": 642,
+            "cycles": 2400000,
+            "irqs": 9373,
+            "maxISR": 18,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 144,
+            "registers": [
+              219,
+              1,
+              136,
+              61,
+              1,
+              0,
+              95,
+              3,
+              140,
+              136,
+              0,
+              0,
+              36,
+              3,
+              167,
+              79,
+              18,
+              2,
+              144,
+              1,
+              4,
+              0,
+              132,
+              136,
+              18,
+              5,
+              106,
+              0,
+              138,
+              0,
+              36,
+              3
+            ],
+            "idleCycles": 0,
+            "timePs": "250000000000",
+            "startupDeadlinePs": "250000000000",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 1,
+              "execPc": 321,
+              "stage": 3,
+              "remainingHalves": "8",
+              "retired": "1680608"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 3,
+              "pullups": 32,
+              "floating": 24,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+            "architectureSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "hq4-chego-auto-compatible",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+          "translationSha256": "2d73d08e78c5eb868fabcb4266c1c2d4ca1c411ecb8043f0c3fc7548483cef5a",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "finalState": {
+            "pc": 62,
+            "cycles": 2400000,
+            "irqs": 9373,
+            "maxISR": 28,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 64,
+            "registers": [
+              0,
+              51,
+              112,
+              0,
+              119,
+              0,
+              149,
+              72,
+              1,
+              2,
+              167,
+              117,
+              46,
+              152,
+              149,
+              115,
+              51,
+              18,
+              0,
+              206,
+              234,
+              255,
+              0,
+              1,
+              72,
+              200,
+              98,
+              3,
+              251,
+              255,
+              118,
+              3
+            ],
+            "idleCycles": 0,
+            "baseHalf": "4800000",
+            "startupDeadline": "4800000",
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 2,
+              "pullups": 32,
+              "floating": 25,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "7941f799b068eed20a09b338855d7f00994a97ed73fcfc0faa34344b8e066a3f",
+            "architectureSha256": "57cd37b68b95bff1ad445d0a5470e8bf6231018be136819b15994a5872e0180c",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "hq4-chego-auto-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000,
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+          "translationSha256": "de92f17e6678dac19cabe1de92df8bc63393268f1bb03bcef1718267c77290e1",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 12
+          },
+          "finalState": {
+            "pc": 62,
+            "cycles": 2400000,
+            "irqs": 9373,
+            "maxISR": 28,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 64,
+            "registers": [
+              0,
+              51,
+              112,
+              0,
+              119,
+              0,
+              149,
+              72,
+              1,
+              2,
+              167,
+              117,
+              46,
+              152,
+              149,
+              115,
+              51,
+              18,
+              0,
+              206,
+              234,
+              255,
+              0,
+              1,
+              72,
+              200,
+              98,
+              3,
+              251,
+              255,
+              118,
+              3
+            ],
+            "idleCycles": 0,
+            "timePs": "250000000000",
+            "startupDeadlinePs": "250000000000",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 30,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "1648131"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 2,
+              "pullups": 32,
+              "floating": 25,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "4560c8033ab69e546b71fb2625ae58d85137f9131e69b74519eb1584860774ab",
+            "architectureSha256": "489ed0c1096198f63607bf3066282e7ae918a3c6b4634f3c236cea8c0c99d733",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-compatible-direct",
+          "options": {
+            "oscillatorHz": 9600000,
+            "fuseLow": 114
+          },
+          "instructions": 1000000,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "c036ec8ca67fc9f83e9d70056b884eb7675f020e2d9de69da0b4a9dc4e2584e7",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 1
+          },
+          "finalState": {
+            "pc": 8,
+            "cycles": 1249999,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              144,
+              0,
+              143,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "baseHalf": "2499998",
+            "startupDeadline": "2499998",
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 32,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 31,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "architectureSha256": "e2a3c0f0e00c0ec5837ab876c32d5198622b3dbf22d4f5de2f8636f304847d6a",
+            "pinSha256": "c76cc9098cb5c0bb03f7f0d82cad967338482b49628b54c47ed38586e7c55348"
+          }
+        },
+        {
+          "id": "kernel-physical-direct",
+          "options": {
+            "oscillatorHz": 9600000,
+            "fuseLow": 114,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "instructions": 1000000,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "2ccdee6bf165e4ba2a38aced21021bdc236f05c4e73e5826df94c1bb2ab26491",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 1
+          },
+          "finalState": {
+            "pc": 8,
+            "cycles": 1249999,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              144,
+              0,
+              143,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "130208229167",
+            "startupDeadlinePs": "130208229167",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 3,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "1000000"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 32,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 31,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "architectureSha256": "f71ee0105b06de947acec8ff55cfd42f99e30acb5328c0e9792af542af56c99a",
+            "pinSha256": "bab6051c8674b2955d410dd548dfb2d4f57cd61cdbdf1f488e18bfa3592ee4b4"
+          }
+        },
+        {
+          "id": "kernel-clki-20m-div1",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 112,
+            "clkiProfile": {
+              "phasePolicy": "digital-noninverting-zero-seed-v1",
+              "initialLevel": 1
+            },
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "2ccdee6bf165e4ba2a38aced21021bdc236f05c4e73e5826df94c1bb2ab26491",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "finalState": {
+            "pc": 10,
+            "cycles": 500000,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              160,
+              0,
+              160,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "25000000000",
+            "startupDeadlinePs": "25000000000",
+            "oscillatorHz": 0,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 4,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "400001"
+            },
+            "clki": {
+              "horizonPs": "25000000000",
+              "level": 1,
+              "queued": 0,
+              "free": 512,
+              "periodicRemaining": "0",
+              "status": "COMPLETE",
+              "aligned": true,
+              "startupCK": "0"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 40,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 23,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "43159dadde832cf8f7e68daac97bcdcd21fdfc6e412cb19797b222bcf5302761",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-clki-20m-div256",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 112,
+            "clkiProfile": {
+              "phasePolicy": "digital-noninverting-zero-seed-v1",
+              "initialLevel": 1
+            },
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "2ccdee6bf165e4ba2a38aced21021bdc236f05c4e73e5826df94c1bb2ab26491",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "finalState": {
+            "pc": 8,
+            "cycles": 1954,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              135,
+              85,
+              134,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "25000000000",
+            "startupDeadlinePs": "25000000000",
+            "oscillatorHz": 0,
+            "cpuPhase": {
+              "active": 1,
+              "execPc": 4,
+              "stage": 1,
+              "remainingHalves": "2",
+              "retired": "1564"
+            },
+            "clki": {
+              "horizonPs": "25000000000",
+              "level": 1,
+              "queued": 0,
+              "free": 512,
+              "periodicRemaining": "0",
+              "status": "WAIT_CLOCK",
+              "aligned": true,
+              "startupCK": "0"
+            },
+            "clockDivisor": 256,
+            "halted": true,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 40,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 23,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "97647d187136dd1a8ea55d1ae065460e247c39df6f7a3442e7c6e1326f7c060e",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "2ccdee6bf165e4ba2a38aced21021bdc236f05c4e73e5826df94c1bb2ab26491",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "finalState": {
+            "pc": 10,
+            "cycles": 500000,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              160,
+              0,
+              160,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "25000000000",
+            "startupDeadlinePs": "25000000000",
+            "oscillatorHz": 20000000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 4,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "400001"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 27,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "7aabaa0c8a214d0ff36c15fa7ba24b2d69bf697f234e5e5704d8fe8098bae31a",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1-direct",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "instructions": 1000000,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "2ccdee6bf165e4ba2a38aced21021bdc236f05c4e73e5826df94c1bb2ab26491",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 1
+          },
+          "finalState": {
+            "pc": 8,
+            "cycles": 1249999,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              144,
+              0,
+              143,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "62499950000",
+            "startupDeadlinePs": "62499950000",
+            "oscillatorHz": 20000000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 3,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "1000000"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 32,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 31,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "architectureSha256": "741e24cb41e357501b9f4ddcffec88b8c6eb6174bfc600b7c651c519b0ad9df9",
+            "pinSha256": "bab6051c8674b2955d410dd548dfb2d4f57cd61cdbdf1f488e18bfa3592ee4b4"
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1-adc-active",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "2ccdee6bf165e4ba2a38aced21021bdc236f05c4e73e5826df94c1bb2ab26491",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "finalState": {
+            "pc": 10,
+            "cycles": 500000,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              160,
+              0,
+              160,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "25000000000",
+            "startupDeadlinePs": "25000000000",
+            "oscillatorHz": 20000000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 4,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "400001"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 27,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "1cb0d8a6bae2257a575de628bf7ad9e47dde7ab8ada8ba69be4d36ebbbc2a20c",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-clki-20m-div1-adc-active",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 112,
+            "clkiProfile": {
+              "phasePolicy": "digital-noninverting-zero-seed-v1",
+              "initialLevel": 1
+            },
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "2ccdee6bf165e4ba2a38aced21021bdc236f05c4e73e5826df94c1bb2ab26491",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "finalState": {
+            "pc": 10,
+            "cycles": 500000,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              160,
+              0,
+              160,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "25000000000",
+            "startupDeadlinePs": "25000000000",
+            "oscillatorHz": 0,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 4,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "400001"
+            },
+            "clki": {
+              "horizonPs": "25000000000",
+              "level": 1,
+              "queued": 0,
+              "free": 512,
+              "periodicRemaining": "0",
+              "status": "COMPLETE",
+              "aligned": true,
+              "startupCK": "0"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 40,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 23,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "062162d44e934fc4f10f1642ea453355b35920f1f973b804652e9e0d2864497b",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1-watchdog-active",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "b6660768cebbce80b9ccc79970905c81f79a9fd121bdc25a4ea2597bff6ebfb8",
+          "translationSha256": "2b2e328ecc78da36e30856cc317429a7fa7c39b97dd46f57622e5a4b5f1a595c",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "finalState": {
+            "pc": 38,
+            "cycles": 500000,
+            "irqs": 1,
+            "maxISR": 10,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              157,
+              85,
+              157,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "25000000000",
+            "startupDeadlinePs": "25000000000",
+            "oscillatorHz": 20000000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 22,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "399994"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 27,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "0be408667e0de275b4a74a073ce238aa3c04565aa2e0a539a7e88f571b9a3e0c",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "id": "kernel-clki-20m-div1-watchdog-active",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 112,
+            "clkiProfile": {
+              "phasePolicy": "digital-noninverting-zero-seed-v1",
+              "initialLevel": 1
+            },
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "channels": 1,
+          "flashSha256": "b6660768cebbce80b9ccc79970905c81f79a9fd121bdc25a4ea2597bff6ebfb8",
+          "translationSha256": "2b2e328ecc78da36e30856cc317429a7fa7c39b97dd46f57622e5a4b5f1a595c",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 2
+          },
+          "finalState": {
+            "pc": 38,
+            "cycles": 500000,
+            "irqs": 1,
+            "maxISR": 10,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              157,
+              85,
+              157,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "25000000000",
+            "startupDeadlinePs": "25000000000",
+            "oscillatorHz": 0,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 22,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "399994"
+            },
+            "clki": {
+              "horizonPs": "25000000000",
+              "level": 1,
+              "queued": 0,
+              "free": 512,
+              "periodicRemaining": "0",
+              "status": "COMPLETE",
+              "aligned": true,
+              "startupCK": "0"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 40,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 23,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "5fd71a678681fb725f91dd31144d55189cdb68eea181a56086ba87cff3456fdb",
+            "architectureSha256": "21a79cf4e27b2a097ecdda4d2e86ac3b3dcaba9056755cd76207874a46bd14d8",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        }
+      ]
+    },
+    {
+      "id": "screen",
+      "parameters": {
+        "trials": 8,
+        "warmups": 4,
+        "frames": 12000,
+        "kernelFrames": 1200,
+        "instructions": 1000000,
+        "rate": 48000,
+        "block": 1024,
+        "schedule": [
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ]
+        ],
+        "changeSet": "empty-wake",
+        "boundedRegions": true,
+        "phaseLocals": true,
+        "candidateRoot": "build/empty-wake-20261101/shadow"
+      },
+      "host": {
+        "node": "v22.22.3",
+        "v8": "12.4.254.21-node.56",
+        "flags": [],
+        "platform": "win32",
+        "release": "10.0.26300",
+        "cpu": "AMD Ryzen 5 5600X 6-Core Processor             "
+      },
+      "cases": [
+        {
+          "id": "rhythmic-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000,
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+          "translationSha256": "5d9ed8c057199509bf466f70d0f0bc65446a7da6b3055b3451599f26a37d0ded",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 564
+          },
+          "finalState": {
+            "pc": 4,
+            "cycles": 2400000,
+            "irqs": 9373,
+            "maxISR": 15,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 152,
+            "registers": [
+              0,
+              1,
+              136,
+              61,
+              1,
+              0,
+              135,
+              2,
+              0,
+              0,
+              0,
+              0,
+              20,
+              3,
+              167,
+              78,
+              37,
+              0,
+              152,
+              1,
+              4,
+              9,
+              136,
+              137,
+              18,
+              8,
+              121,
+              0,
+              141,
+              0,
+              20,
+              3
+            ],
+            "idleCycles": 0,
+            "timePs": "250000000000",
+            "startupDeadlinePs": "250000000000",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 1,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "1693369"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 2,
+              "pullups": 32,
+              "floating": 25,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "7b01c8e0e49590efff48753682bc35863db2e3157481304d19db2c34f9288562",
+            "architectureSha256": "cc209655ceab5045f680af23a1339dcd8fd6ba60bf503bc127a3cc8510fa4503",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 492.2915000000012
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 526.8188000000027
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 518.6115000000009
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 430.6370000000061
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 459.3160999999982
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 430.40589999999975
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 454.09409999999843
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 427.5751999999993
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 437.4968000000026
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 435.55529999999817
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 447.36309999999867
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 483.8114000000023
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 467.2891000000018
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 496.1696000000047
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 459.58400000000256
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 497.0295999999944
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 593.9854000000014
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 629.1254000000044
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 662.0768999999927
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 690.0298999999977
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 668.8446000000004
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 673.5640999999996
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 658.2923999999912
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 665.1686999999947
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 714.9445000000014
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 731.5724999999911
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 637.3825999999972
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 518.1553999999996
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 456.93459999999686
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 405.4680000000044
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 443.4813000000031
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 407.62219999999434
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 573.2971000000007
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 504.177999999999
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 467.10289999999895
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 478.39400000000023
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 464.9967999999999
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 455.9198000000006
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 482.23309999999947
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 519.2812999999996
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 483.95640000000003
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 446.8179999999975
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 530.4574999999968
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 515.0014000000028
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 491.7570000000014
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 499.6808999999994
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 441.10579999999936
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 483.4834000000046
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 0.9344607671556114,
+                "newIdentity": 0.8303653119917421,
+                "crossVersion": 1.0776185505555989
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 0.9886309232356545,
+                "newIdentity": 1.0066203559046465,
+                "crossVersion": 1.0645924996858014
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 1.0814736396452989,
+                "newIdentity": 1.0044575281256007,
+                "crossVersion": 1.0657590679473419
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 0.9982697207570944,
+                "newIdentity": 0.9835110641356728,
+                "crossVersion": 1.0715956126735917
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 1.0422201711009782,
+                "newIdentity": 0.9441446808537649,
+                "crossVersion": 1.105685661568806
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 1.0126214597890806,
+                "newIdentity": 0.9842232410936573,
+                "crossVersion": 1.0087495065219296
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.9772708788261042,
+                "newIdentity": 0.8129424932528782,
+                "crossVersion": 1.2584464347245636
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 0.9705574933480768,
+                "newIdentity": 0.9947152044221587,
+                "crossVersion": 1.107280040931539
+              }
+            ],
+            "oldIdentity": {
+              "median": 0.9934503219963744,
+              "min": 0.9344607671556114,
+              "max": 1.0814736396452989
+            },
+            "newIdentity": {
+              "median": 0.9838671526146651,
+              "min": 0.8129424932528782,
+              "max": 1.0066203559046465
+            },
+            "crossVersion": {
+              "median": 1.0746070816145954,
+              "min": 1.0087495065219296,
+              "max": 1.2584464347245636
+            }
+          }
+        },
+        {
+          "id": "lumiere-stereo-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000,
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 12000,
+          "channels": 2,
+          "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+          "translationSha256": "92c38cf81825a9f77910503d3901be76b9e160e33ee19ae730d286896cfeb495",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 564
+          },
+          "finalState": {
+            "pc": 642,
+            "cycles": 2400000,
+            "irqs": 9373,
+            "maxISR": 18,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 144,
+            "registers": [
+              219,
+              1,
+              136,
+              61,
+              1,
+              0,
+              95,
+              3,
+              140,
+              136,
+              0,
+              0,
+              36,
+              3,
+              167,
+              79,
+              18,
+              2,
+              144,
+              1,
+              4,
+              0,
+              132,
+              136,
+              18,
+              5,
+              106,
+              0,
+              138,
+              0,
+              36,
+              3
+            ],
+            "idleCycles": 0,
+            "timePs": "250000000000",
+            "startupDeadlinePs": "250000000000",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 1,
+              "execPc": 321,
+              "stage": 3,
+              "remainingHalves": "8",
+              "retired": "1680608"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 3,
+              "pullups": 32,
+              "floating": 24,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "d6c8761df49fa9b0b62a572c7239a250a5ffde1ab2af2f14d055b93e6c594843",
+            "architectureSha256": "470f7503a4981af30dea947a386384874d26b6abb794ecb945024140106ea582",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 684.6240999999936
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 714.7316000000137
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 717.3033000000069
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 692.6229999999923
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 678.5224999999919
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 616.3237000000008
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 666.625199999995
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 655.1177000000025
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 646.7351000000053
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 681.451599999993
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 715.2641999999905
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 686.6400999999969
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 649.5993999999919
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 716.8523999999961
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 716.6740000000063
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 726.5286000000051
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 818.4377999999924
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 677.0558999999921
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 733.4919000000082
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 703.0764000000054
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 714.2004000000015
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 725.74730000001
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 747.2597999999925
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 828.2157000000007
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 715.0969000000114
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 794.8227000000188
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 722.3617999999988
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 712.4686000000147
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 730.3240999999907
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 812.0878000000084
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 739.3153000000093
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 759.0774000000092
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 506.89300000000003
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 655.324099999998
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 689.2654999999941
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 713.0637999999926
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 700.2200000000048
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 657.857799999998
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 716.0311000000074
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 660.5974999999889
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 594.3564000000042
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 496.5766000000076
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 672.3230000000112
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 730.4361999999819
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 740.7509000000136
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 751.423400000007
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 708.9759000000122
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 710.9346000000078
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 0.957875795613319,
+                "newIdentity": 0.9655929367674535,
+                "crossVersion": 0.9924250421022129
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 0.9824658725392348,
+                "newIdentity": 0.9407831600336832,
+                "crossVersion": 1.0584220756693523
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 0.9599810811166084,
+                "newIdentity": 0.9490550759584568,
+                "crossVersion": 1.0556430721804073
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 0.986681597943964,
+                "newIdentity": 1.103255329361473,
+                "crossVersion": 1.0576880490439906
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 0.9585332844166344,
+                "newIdentity": 1.2088186514584718,
+                "crossVersion": 0.964703419998931
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 0.8762781241650085,
+                "newIdentity": 1.0462886887209681,
+                "crossVersion": 1.0612521659962755
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.8996936046240179,
+                "newIdentity": 0.9863043699154854,
+                "crossVersion": 1.0508901671490851
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 1.0123112464726534,
+                "newIdentity": 1.0698353026977203,
+                "crossVersion": 0.9358971813455313
+              }
+            ],
+            "oldIdentity": {
+              "median": 0.9592571827666214,
+              "min": 0.8762781241650085,
+              "max": 1.0123112464726534
+            },
+            "newIdentity": {
+              "median": 1.0162965293182267,
+              "min": 0.9407831600336832,
+              "max": 1.2088186514584718
+            },
+            "crossVersion": {
+              "median": 1.0532666196647462,
+              "min": 0.9358971813455313,
+              "max": 1.0612521659962755
+            }
+          }
+        },
+        {
+          "id": "hq4-chego-auto-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000,
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 12000,
+          "channels": 1,
+          "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+          "translationSha256": "de92f17e6678dac19cabe1de92df8bc63393268f1bb03bcef1718267c77290e1",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 564
+          },
+          "finalState": {
+            "pc": 62,
+            "cycles": 2400000,
+            "irqs": 9373,
+            "maxISR": 28,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 64,
+            "registers": [
+              0,
+              51,
+              112,
+              0,
+              119,
+              0,
+              149,
+              72,
+              1,
+              2,
+              167,
+              117,
+              46,
+              152,
+              149,
+              115,
+              51,
+              18,
+              0,
+              206,
+              234,
+              255,
+              0,
+              1,
+              72,
+              200,
+              98,
+              3,
+              251,
+              255,
+              118,
+              3
+            ],
+            "idleCycles": 0,
+            "timePs": "250000000000",
+            "startupDeadlinePs": "250000000000",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 30,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "1648131"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 2,
+              "pullups": 32,
+              "floating": 25,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "4560c8033ab69e546b71fb2625ae58d85137f9131e69b74519eb1584860774ab",
+            "architectureSha256": "489ed0c1096198f63607bf3066282e7ae918a3c6b4634f3c236cea8c0c99d733",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 316.32279999996535
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 288.4069999999774
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 278.5193000000145
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 273.83020000004035
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 306.60089999999036
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 279.7206999999762
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 290.1065000000235
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 274.14899999999034
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 285.5325999999768
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 282.56459999998333
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 287.14340000000084
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 299.19869999999355
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 296.0340000000142
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 312.6349000000191
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 321.7855000000127
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 315.9436999999889
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 306.95910000002186
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 287.17540000000736
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 291.41820000000007
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 282.50580000001355
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 284.2574999999779
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 295.89890000002924
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 279.0849000000162
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 308.9603000000061
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 277.66969999999856
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 278.2988000000041
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 270.6755000000121
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 288.6571999999869
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 302.1328999999823
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 287.30190000000584
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 262.8891000000149
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 293.0961000000534
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 323.07100000000355
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 288.75159999999596
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 286.3886999999959
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 294.71669999998994
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 304.30189999999857
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 282.58819999999105
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 295.32150000002
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 296.13109999998414
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 278.86930000003485
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 301.58849999998347
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 317.7864000000118
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 309.8041000000085
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 317.5820999999705
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 321.7080000000278
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 298.5912000000535
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 284.09629999999015
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 1.0967930736770957,
+                "newIdentity": 0.983164182877187,
+                "crossVersion": 1.0937040676824055
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 0.9462023757922192,
+                "newIdentity": 1.0203236196374457,
+                "crossVersion": 1.0769853760056471
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 1.0419835524688803,
+                "newIdentity": 1.0105037927609957,
+                "crossVersion": 1.0319117184300224
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 0.9895272480509347,
+                "newIdentity": 1.0869883189093053,
+                "crossVersion": 1.0182854698295007
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 0.969417146904392,
+                "newIdentity": 1.0688906501044797,
+                "crossVersion": 0.9664027257355258
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 0.9577246655962705,
+                "newIdentity": 0.9818031186513563,
+                "crossVersion": 1.0734921639186292
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.9977394800121109,
+                "newIdentity": 1.066432684154916,
+                "crossVersion": 0.9944987491612641
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 0.8701108022331572,
+                "newIdentity": 0.980231057321996,
+                "crossVersion": 0.9712052704975918
+              }
+            ],
+            "oldIdentity": {
+              "median": 0.9794721974776633,
+              "min": 0.8701108022331572,
+              "max": 1.0967930736770957
+            },
+            "newIdentity": {
+              "median": 1.0154137061992206,
+              "min": 0.980231057321996,
+              "max": 1.0869883189093053
+            },
+            "crossVersion": {
+              "median": 1.0250985941297617,
+              "min": 0.9664027257355258,
+              "max": 1.0937040676824055
+            }
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1-direct",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "instructions": 1000000,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "2ccdee6bf165e4ba2a38aced21021bdc236f05c4e73e5826df94c1bb2ab26491",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 47
+          },
+          "finalState": {
+            "pc": 8,
+            "cycles": 1249999,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              144,
+              0,
+              143,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "62499950000",
+            "startupDeadlinePs": "62499950000",
+            "oscillatorHz": 20000000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 3,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "1000000"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 32,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 31,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "architectureSha256": "741e24cb41e357501b9f4ddcffec88b8c6eb6174bfc600b7c651c519b0ad9df9",
+            "pinSha256": "bab6051c8674b2955d410dd548dfb2d4f57cd61cdbdf1f488e18bfa3592ee4b4"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 12.117499999993015
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 12.70560000000114
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 13.324299999992945
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 12.153900000004796
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 13.410600000002887
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 12.964899999991758
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 8.463900000002468
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 11.293900000004214
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 11.576900000000023
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 12.897500000006403
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 9.612200000003213
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 12.34100000000035
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 13.026899999997113
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 13.709499999997206
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 12.739700000005541
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 9.607699999993201
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 11.044900000008056
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 11.646900000007008
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 9.768699999985984
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 9.646699999997509
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 13.415500000002794
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 12.101599999994505
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 11.737299999993411
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 13.318799999993644
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 9.151899999997113
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 12.052200000005541
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 12.02029999998922
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 10.989100000006147
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 11.883500000010827
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 12.001800000012736
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 13.35549999999057
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 12.115399999995134
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 10.921100000006845
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 13.156499999997322
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 10.970300000000861
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 12.101999999998952
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 10.707600000008824
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 10.525900000007823
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 11.552800000004936
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 12.095000000001164
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 11.719899999996414
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 10.739600000000792
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 9.09330000000773
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 9.68409999999858
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 8.404999999998836
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 8.79439999999886
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 11.252699999997276
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 11.126000000003842
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 0.9537133232584,
+                "newIdentity": 0.9121604887319582,
+                "crossVersion": 0.9750436829724491
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 0.631135072256323,
+                "newIdentity": 1.1479559762338005,
+                "crossVersion": 0.8804461760532787
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 1.2838892241106328,
+                "newIdentity": 0.897608063577769,
+                "crossVersion": 0.8913282393435576
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 1.4269284011789405,
+                "newIdentity": 0.9779533119935184,
+                "crossVersion": 0.8908824109975737
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 0.987511132495762,
+                "newIdentity": 0.9483124264827044,
+                "crossVersion": 0.8558973962750865
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 0.9086103853200199,
+                "newIdentity": 0.8749058924371784,
+                "crossVersion": 1.0117341545013059
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.7593551384803525,
+                "newIdentity": 0.91421179172034,
+                "crossVersion": 0.913797744729033
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 1.1238692304437583,
+                "newIdentity": 0.9906235039716028,
+                "crossVersion": 1.0447447315927896
+              }
+            ],
+            "oldIdentity": {
+              "median": 0.970612227877081,
+              "min": 0.631135072256323,
+              "max": 1.4269284011789405
+            },
+            "newIdentity": {
+              "median": 0.9312621091015222,
+              "min": 0.8749058924371784,
+              "max": 1.1479559762338005
+            },
+            "crossVersion": {
+              "median": 0.9025629920362953,
+              "min": 0.8558973962750865,
+              "max": 1.0447447315927896
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "confirmation",
+      "parameters": {
+        "trials": 8,
+        "warmups": 4,
+        "frames": 24000,
+        "kernelFrames": 1200,
+        "instructions": 10000000,
+        "rate": 48000,
+        "block": 1024,
+        "schedule": [
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "newA",
+            "newB",
+            "oldB",
+            "oldA"
+          ],
+          [
+            "newB",
+            "oldA",
+            "newA",
+            "oldB"
+          ],
+          [
+            "oldA",
+            "oldB",
+            "newB",
+            "newA"
+          ],
+          [
+            "oldB",
+            "newA",
+            "oldA",
+            "newB"
+          ]
+        ],
+        "changeSet": "empty-wake",
+        "boundedRegions": true,
+        "phaseLocals": true,
+        "candidateRoot": "build/empty-wake-20261101/shadow"
+      },
+      "host": {
+        "node": "v22.22.3",
+        "v8": "12.4.254.21-node.56",
+        "flags": [],
+        "platform": "win32",
+        "release": "10.0.26300",
+        "cpu": "AMD Ryzen 5 5600X 6-Core Processor             "
+      },
+      "cases": [
+        {
+          "id": "rhythmic-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000,
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 24000,
+          "channels": 1,
+          "flashSha256": "84ef9f4740d8af3329d9f104e65615c84579529b487639ba80c7ab434d9ffb4d",
+          "translationSha256": "5d9ed8c057199509bf466f70d0f0bc65446a7da6b3055b3451599f26a37d0ded",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 1128
+          },
+          "finalState": {
+            "pc": 650,
+            "cycles": 4800000,
+            "irqs": 18748,
+            "maxISR": 15,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 98,
+            "registers": [
+              2,
+              2,
+              16,
+              141,
+              1,
+              76,
+              95,
+              3,
+              0,
+              0,
+              0,
+              0,
+              21,
+              3,
+              32,
+              158,
+              16,
+              4,
+              98,
+              2,
+              4,
+              248,
+              136,
+              109,
+              36,
+              4,
+              106,
+              0,
+              140,
+              0,
+              21,
+              3
+            ],
+            "idleCycles": 0,
+            "timePs": "500000000000",
+            "startupDeadlinePs": "500000000000",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 323,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "3375993"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 2,
+              "pullups": 32,
+              "floating": 25,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "2d3d0878e94ee76fca68ddfd3b88636e4e73cdc9177820487e60eaf4db9ae3f1",
+            "architectureSha256": "014770bdbdd1aca92f47f96137ccd3df095e65abcb47e44c0e92a3bd4a8d4c6f",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 1544.7609999999986
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 1621.6495000000068
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 1496.0377999999837
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 1661.1487000000125
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 1641.1227000000144
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 1617.9392000000007
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 1721.5064999999959
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 1737.4142999999967
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 1650.4755999999834
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 1569.1502999999939
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 1650.7190999999948
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 1545.4240999999965
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 1469.3504000000103
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 1745.522700000016
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 1626.2764000000097
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 1482.6748999999909
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 1578.4294999999984
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 1488.2192000000286
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 1594.8316000000123
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 1558.5939999999828
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 1503.1020000000135
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 1777.4789000000237
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 1556.1850000000195
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 1621.1799999999785
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 1509.4154999999737
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 1580.3153999999777
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 1529.3314000000246
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 1562.7565999999788
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 1600.43299999999
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 1497.3592000000062
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 1482.3659000000189
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 1500.118999999977
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 1544.6190000000015
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 1553.2665000000006
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 1639.3936999999978
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 1559.4096000000009
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 1560.114499999996
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 1536.7873
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 1574.976700000001
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 1540.1786000000066
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 1569.0868000000046
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 1554.815399999985
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 1534.6533999999956
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 1688.3717000000033
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 1554.5892000000094
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 1372.1715000000004
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 1512.0343000000066
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 1407.5102999999908
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 0.9525862401215504,
+                "newIdentity": 1.1103654600171404,
+                "crossVersion": 1.0039997523960131
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 1.0489809811295527,
+                "newIdentity": 0.9312339607196762,
+                "crossVersion": 1.002517737283579
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 0.9362126481725458,
+                "newIdentity": 1.0518276037674592,
+                "crossVersion": 0.992484201309086
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 1.1772794562044766,
+                "newIdentity": 1.1067995761936693,
+                "crossVersion": 1.0407007095535188
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 0.9772781025908759,
+                "newIdentity": 1.060616272119032,
+                "crossVersion": 1.0286742532334534
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 1.0964105774806296,
+                "newIdentity": 1.0353156339356913,
+                "crossVersion": 1.1099233984889072
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.9551356014122213,
+                "newIdentity": 1.0218560869148137,
+                "crossVersion": 0.9990329566838247
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 0.9262280270401998,
+                "newIdentity": 0.9981602792845296,
+                "crossVersion": 1.0277100495742117
+              }
+            ],
+            "oldIdentity": {
+              "median": 0.9662068520015485,
+              "min": 0.9262280270401998,
+              "max": 1.1772794562044766
+            },
+            "newIdentity": {
+              "median": 1.0435716188515753,
+              "min": 0.9312339607196762,
+              "max": 1.1103654600171404
+            },
+            "crossVersion": {
+              "median": 1.0158549009851123,
+              "min": 0.992484201309086,
+              "max": 1.1099233984889072
+            }
+          }
+        },
+        {
+          "id": "lumiere-stereo-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000,
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 24000,
+          "channels": 2,
+          "flashSha256": "387c12bdaff34211a450cfa6ad69ff2dcd73d539b34349cb13a8c53a4706b236",
+          "translationSha256": "92c38cf81825a9f77910503d3901be76b9e160e33ee19ae730d286896cfeb495",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 1128
+          },
+          "finalState": {
+            "pc": 638,
+            "cycles": 4800000,
+            "irqs": 18748,
+            "maxISR": 18,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 107,
+            "registers": [
+              165,
+              2,
+              16,
+              141,
+              1,
+              76,
+              135,
+              2,
+              108,
+              115,
+              245,
+              0,
+              37,
+              3,
+              32,
+              158,
+              32,
+              0,
+              105,
+              2,
+              4,
+              242,
+              128,
+              110,
+              36,
+              5,
+              121,
+              0,
+              136,
+              0,
+              37,
+              3
+            ],
+            "idleCycles": 0,
+            "timePs": "500000000000",
+            "startupDeadlinePs": "500000000000",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 318,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "3353437"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 3,
+              "pullups": 32,
+              "floating": 24,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "47dd584e58204c3d74947f5dfe99927ac768507ff428ea5d55c12cd818a0e517",
+            "architectureSha256": "900322b1930f61b4289686148bf5d9b08ddc7fde8e9244c494b0daacd5e08abe",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 1312.5480999999272
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 1288.2832000000053
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 1499.8738999999914
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 1407.7131000000081
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 1460.3478999999788
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 1498.5779000000184
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 1548.6842000000033
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 1427.6922000000195
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 1323.833999999959
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 1366.0840000000462
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 1087.1381999999576
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 1215.283700000029
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 1414.409800000023
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 1462.276200000022
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 1398.200800000006
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 1361.6665000000212
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 1176.8557999999757
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 1039.6084999999293
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 1090.2538999999524
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 1185.399800000072
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 1212.3501000000397
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 1413.0890999999538
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 1455.643400000059
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 1306.9916000000667
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 972.964399999968
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 1380.3243000000948
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 1293.3803999999363
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 934.635399999941
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 983.534699999931
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 934.1107000000775
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 971.7603999999701
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 938.6643999999797
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 1521.096399999995
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 1752.5625000000146
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 1692.2157000000589
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 1570.8061000000307
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 1597.6546999998973
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 1612.136399999974
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 1706.937299999976
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 1667.863799999992
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 1571.5905999999814
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 1801.9964999999938
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 1898.317400000029
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 1737.7981000000436
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 1397.4284999999654
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 1407.5275000000693
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 1462.630400000009
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 1292.0412999999826
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 1.0188350666995594,
+                "newIdentity": 0.9385543011315925,
+                "crossVersion": 0.8949089171103434
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 1.0604899010708515,
+                "newIdentity": 1.0496505479262253,
+                "crossVersion": 1.0281409186019774
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 1.1178741580417986,
+                "newIdentity": 0.9690721800415744,
+                "crossVersion": 0.854723700899182
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 1.0738871816263376,
+                "newIdentity": 0.9885400963709267,
+                "crossVersion": 1.0034082805986746
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 1.0872694883275573,
+                "newIdentity": 1.1320182549489117,
+                "crossVersion": 1.0277789352072486
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 1.0811768797901087,
+                "newIdentity": 1.2006790777680567,
+                "crossVersion": 1.0230094542383288
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.7048810196269827,
+                "newIdentity": 0.7226299393434344,
+                "crossVersion": 1.0540344148178895
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 0.9880285870951357,
+                "newIdentity": 0.9951487453876995,
+                "crossVersion": 1.0440471089182164
+              }
+            ],
+            "oldIdentity": {
+              "median": 1.0671885413485946,
+              "min": 0.7048810196269827,
+              "max": 1.1178741580417986
+            },
+            "newIdentity": {
+              "median": 0.9918444208793131,
+              "min": 0.7226299393434344,
+              "max": 1.2006790777680567
+            },
+            "crossVersion": {
+              "median": 1.0253941947227887,
+              "min": 0.854723700899182,
+              "max": 1.0540344148178895
+            }
+          }
+        },
+        {
+          "id": "hq4-chego-auto-physical",
+          "options": {
+            "oscillatorHz": 9600000,
+            "optimizeFlags": true,
+            "resumable": true,
+            "osccalHz": [
+              9600000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "nvmClockProfile": 1,
+            "nvmCalibrationReferenceHz": 9600000,
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 24000,
+          "channels": 1,
+          "flashSha256": "a54f8842cc540b6c5fdc3f757180092fd502dec951cef108a16a010f62392427",
+          "translationSha256": "de92f17e6678dac19cabe1de92df8bc63393268f1bb03bcef1718267c77290e1",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 1128
+          },
+          "finalState": {
+            "pc": 60,
+            "cycles": 4800000,
+            "irqs": 18748,
+            "maxISR": 28,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 134,
+            "registers": [
+              0,
+              6,
+              51,
+              0,
+              49,
+              0,
+              93,
+              132,
+              1,
+              2,
+              135,
+              61,
+              33,
+              137,
+              90,
+              86,
+              6,
+              11,
+              0,
+              3,
+              3,
+              0,
+              0,
+              49,
+              132,
+              4,
+              139,
+              3,
+              66,
+              0,
+              19,
+              3
+            ],
+            "idleCycles": 0,
+            "timePs": "500000000000",
+            "startupDeadlinePs": "500000000000",
+            "oscillatorHz": 9600000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 31,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "3291411"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 36,
+              "driven": 2,
+              "pullups": 32,
+              "floating": 25,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "cc1f18668facd0f4bdbc440c9ba3dccc2bce7739895c8fa86cde1a97e6b67cce",
+            "architectureSha256": "b2ade0879fa75201e4f9e91f036d2e409709c649214132c7820f0d056438baaf",
+            "pinSha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 571.8199999999779
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 577.3093000000808
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 605.9939000000304
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 498.1735000000335
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 547.2570999999589
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 612.976699999912
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 566.294200000033
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 610.5723999999464
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 538.6632999999274
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 614.8158999999578
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 620.1359999998531
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 437.011599999998
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 562.7162000000535
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 470.419300000096
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 397.0732999999891
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 394.8155000000261
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 391.7125000000524
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 386.8582999999926
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 473.7817999999679
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 575.9108000000706
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 598.6361999999208
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 555.050900000002
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 570.4956999999704
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 622.1061000000336
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 595.3799999999173
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 617.308699999965
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 587.7847000000183
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 601.9575999999652
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 611.4933999999485
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 593.3318000000727
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 566.863800000021
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 581.205100000021
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 436.53429999999935
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 407.9688000000024
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 568.9818000000669
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 432.1321000000753
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 395.7958000000217
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 403.4025000000838
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 421.4235000000335
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 608.0626999999804
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 616.6758000000555
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 642.6682999999903
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 570.4627000000037
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 622.8081999999704
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 605.8438999999198
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 620.4888000000501
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 635.5529999999562
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 588.8188999999838
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 0.9904915787774384,
+                "newIdentity": 0.8220767568782599,
+                "crossVersion": 1.0457057841867
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 1.0347863919903013,
+                "newIdentity": 1.0039377803516272,
+                "crossVersion": 0.9099681492399345
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 0.7047028393773326,
+                "newIdentity": 0.876137555974015,
+                "crossVersion": 0.904604440815854
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 1.1914914688001481,
+                "newIdentity": 0.7056368734362923,
+                "crossVersion": 0.9117160726911969
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 1.2155612562578588,
+                "newIdentity": 1.0125477468108086,
+                "crossVersion": 1.3418597416228515
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 0.8922125984618572,
+                "newIdentity": 0.9529923182060254,
+                "crossVersion": 1.0055205715872493
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 0.9644769302618789,
+                "newIdentity": 1.024112400339693,
+                "crossVersion": 1.0191925257739056
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 0.9270154019652032,
+                "newIdentity": 1.020864751531002,
+                "crossVersion": 1.0025862126021177
+              }
+            ],
+            "oldIdentity": {
+              "median": 0.9774842545196587,
+              "min": 0.7047028393773326,
+              "max": 1.2155612562578588
+            },
+            "newIdentity": {
+              "median": 0.9784650492788263,
+              "min": 0.7056368734362923,
+              "max": 1.024112400339693
+            },
+            "crossVersion": {
+              "median": 1.0040533920946835,
+              "min": 0.904604440815854,
+              "max": 1.3418597416228515
+            }
+          }
+        },
+        {
+          "id": "kernel-internal-20m-div1-direct",
+          "options": {
+            "oscillatorHz": 20000000,
+            "resumable": true,
+            "fuseLow": 114,
+            "osccalHz": [
+              20000000,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "boundedRegions": true,
+            "optimizePhaseLocals": true
+          },
+          "frames": 1200,
+          "instructions": 10000000,
+          "channels": 1,
+          "flashSha256": "526134ce6f2a3e480664d3639690f07de7e4b0eb17aafa3fdf6076085b5889ea",
+          "translationSha256": "2ccdee6bf165e4ba2a38aced21021bdc236f05c4e73e5826df94c1bb2ab26491",
+          "validation": {
+            "exactWarmupAndTimedState": true,
+            "exactPcmAndPins": true,
+            "sameRuntimeModuleInsidePairs": true,
+            "identicalCPUBytesAndABI": true,
+            "freshCPUmodulePerConstruction": true,
+            "checkpointsCompared": 47
+          },
+          "finalState": {
+            "pc": 8,
+            "cycles": 12499999,
+            "irqs": 0,
+            "maxISR": 0,
+            "lost": 0,
+            "timerLost": 0,
+            "workLost": 0,
+            "duty": 128,
+            "registers": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              85,
+              160,
+              0,
+              159,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "idleCycles": 0,
+            "timePs": "624999950000",
+            "startupDeadlinePs": "624999950000",
+            "oscillatorHz": 20000000,
+            "cpuPhase": {
+              "active": 0,
+              "execPc": 3,
+              "stage": 0,
+              "remainingHalves": "0",
+              "retired": "10000000"
+            },
+            "clockDivisor": 1,
+            "halted": false,
+            "sleeping": false,
+            "resetHeld": false,
+            "starting": false,
+            "bodDisabled": false,
+            "bodRecovering": false,
+            "resetCount": 0,
+            "deviceFault": 0,
+            "pendingIRQs": 0,
+            "pins": {
+              "levels": 32,
+              "driven": 0,
+              "pullups": 32,
+              "floating": 31,
+              "contention": 0
+            }
+          },
+          "outputHashes": {
+            "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "architectureSha256": "b5f30c596739fd5d58c047bc7e187afeafb79537fb71f7052c2c10ec7be0aefa",
+            "pinSha256": "bab6051c8674b2955d410dd548dfb2d4f57cd61cdbdf1f488e18bfa3592ee4b4"
+          },
+          "runs": [
+            {
+              "trial": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 87.24789999998757
+            },
+            {
+              "trial": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 98.32150000002002
+            },
+            {
+              "trial": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 116.60430000000633
+            },
+            {
+              "trial": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 110.93280000000959
+            },
+            {
+              "trial": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 113.41969999999856
+            },
+            {
+              "trial": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 86.55879999999888
+            },
+            {
+              "trial": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 84.17510000002221
+            },
+            {
+              "trial": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 95.48579999999492
+            },
+            {
+              "trial": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 87.39330000002519
+            },
+            {
+              "trial": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 88.24720000001253
+            },
+            {
+              "trial": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 86.26230000000214
+            },
+            {
+              "trial": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 88.88530000002356
+            },
+            {
+              "trial": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 86.465200000006
+            },
+            {
+              "trial": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 89.77720000001136
+            },
+            {
+              "trial": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 84.85940000001574
+            },
+            {
+              "trial": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 90.36239999998361
+            },
+            {
+              "trial": 4,
+              "position": 0,
+              "variant": "newA",
+              "ms": 85.17329999999492
+            },
+            {
+              "trial": 4,
+              "position": 1,
+              "variant": "newB",
+              "ms": 83.33609999998589
+            },
+            {
+              "trial": 4,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 92.6420999999973
+            },
+            {
+              "trial": 4,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 93.79020000001765
+            },
+            {
+              "trial": 5,
+              "position": 0,
+              "variant": "newB",
+              "ms": 80.10109999999986
+            },
+            {
+              "trial": 5,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 88.1136000000115
+            },
+            {
+              "trial": 5,
+              "position": 2,
+              "variant": "newA",
+              "ms": 93.97479999999632
+            },
+            {
+              "trial": 5,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 85.43909999998868
+            },
+            {
+              "trial": 6,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 85.43450000000303
+            },
+            {
+              "trial": 6,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 84.28800000000047
+            },
+            {
+              "trial": 6,
+              "position": 2,
+              "variant": "newB",
+              "ms": 81.80440000002272
+            },
+            {
+              "trial": 6,
+              "position": 3,
+              "variant": "newA",
+              "ms": 83.43080000000191
+            },
+            {
+              "trial": 7,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 88.5063000000082
+            },
+            {
+              "trial": 7,
+              "position": 1,
+              "variant": "newA",
+              "ms": 81.08179999998538
+            },
+            {
+              "trial": 7,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 84.32330000001821
+            },
+            {
+              "trial": 7,
+              "position": 3,
+              "variant": "newB",
+              "ms": 81.45120000001043
+            }
+          ],
+          "warmups": [
+            {
+              "pass": 0,
+              "position": 0,
+              "variant": "oldA",
+              "ms": 126.3007000000216
+            },
+            {
+              "pass": 0,
+              "position": 1,
+              "variant": "oldB",
+              "ms": 111.0614999999816
+            },
+            {
+              "pass": 0,
+              "position": 2,
+              "variant": "newB",
+              "ms": 131.2899000000034
+            },
+            {
+              "pass": 0,
+              "position": 3,
+              "variant": "newA",
+              "ms": 109.49920000002021
+            },
+            {
+              "pass": 1,
+              "position": 0,
+              "variant": "oldB",
+              "ms": 113.20939999999246
+            },
+            {
+              "pass": 1,
+              "position": 1,
+              "variant": "newA",
+              "ms": 105.54360000000452
+            },
+            {
+              "pass": 1,
+              "position": 2,
+              "variant": "oldA",
+              "ms": 105.01399999999558
+            },
+            {
+              "pass": 1,
+              "position": 3,
+              "variant": "newB",
+              "ms": 124.6478000000061
+            },
+            {
+              "pass": 2,
+              "position": 0,
+              "variant": "newA",
+              "ms": 88.94610000000102
+            },
+            {
+              "pass": 2,
+              "position": 1,
+              "variant": "newB",
+              "ms": 81.1698000000033
+            },
+            {
+              "pass": 2,
+              "position": 2,
+              "variant": "oldB",
+              "ms": 83.14890000000014
+            },
+            {
+              "pass": 2,
+              "position": 3,
+              "variant": "oldA",
+              "ms": 85.87369999999646
+            },
+            {
+              "pass": 3,
+              "position": 0,
+              "variant": "newB",
+              "ms": 92.10129999998026
+            },
+            {
+              "pass": 3,
+              "position": 1,
+              "variant": "oldA",
+              "ms": 105.67450000002282
+            },
+            {
+              "pass": 3,
+              "position": 2,
+              "variant": "newA",
+              "ms": 89.24229999998352
+            },
+            {
+              "pass": 3,
+              "position": 3,
+              "variant": "oldB",
+              "ms": 87.22440000000643
+            }
+          ],
+          "ratios": {
+            "pairs": [
+              {
+                "trial": 0,
+                "oldIdentity": 0.8873735652931434,
+                "newIdentity": 0.951361141913322,
+                "crossVersion": 0.8143563150521171
+              },
+              {
+                "trial": 1,
+                "oldIdentity": 0.7421559041332615,
+                "newIdentity": 0.906509659027871,
+                "crossVersion": 1.074758920831879
+              },
+              {
+                "trial": 2,
+                "oldIdentity": 1.0304072578637637,
+                "newIdentity": 0.9903237723124676,
+                "crossVersion": 0.9970936521335455
+              },
+              {
+                "trial": 3,
+                "oldIdentity": 0.9935238550550632,
+                "newIdentity": 0.9814283665568326,
+                "crossVersion": 1.0514926788206027
+              },
+              {
+                "trial": 4,
+                "oldIdentity": 1.0123928537891562,
+                "newIdentity": 1.0220456680839318,
+                "crossVersion": 1.1064062064149165
+              },
+              {
+                "trial": 5,
+                "oldIdentity": 1.0313029982762363,
+                "newIdentity": 1.1732023655105421,
+                "crossVersion": 1.0000572438756559
+              },
+              {
+                "trial": 6,
+                "oldIdentity": 1.01360217350041,
+                "newIdentity": 1.0198815711621714,
+                "crossVersion": 1.0271833703090196
+              },
+              {
+                "trial": 7,
+                "oldIdentity": 0.9527378277027783,
+                "newIdentity": 0.9954647690884234,
+                "crossVersion": 1.0630420787913812
+              }
+            ],
+            "oldIdentity": {
+              "median": 1.0029583544221097,
+              "min": 0.7421559041332615,
+              "max": 1.0313029982762363
+            },
+            "newIdentity": {
+              "median": 0.9928942707004456,
+              "min": 0.906509659027871,
+              "max": 1.1732023655105421
+            },
+            "crossVersion": {
+              "median": 1.0393380245648112,
+              "min": 0.8143563150521171,
+              "max": 1.1064062064149165
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "sources": {
+    "web-player/scripts/rebuild-empty-wake.mjs": "3fd95276e2c5828fc832d694bf09b3069d2d21c4167293f0b3b05fee557a0b2a",
+    "web-player/scripts/verify-empty-wake.mjs": "150a771b8238ab771490a4128240b954eb6a2826dd755ba07ec4ac3622ec1122",
+    "web-player/scripts/benchmark-runtime-controls.mjs": "d7b5ea79b5102503c0360d38db811a806f68ef32d0a56d5cf3c443e3af6da163",
+    "web-player/scripts/lib/runtime-control-design.mjs": "9a52ba1ab6bf6c1e9864bddf5413eacaae81899f73dfb859617777e8d7d59e43",
+    "web-player/tests/helpers/wasm-code.mjs": "28831ff273f49b620c79598be34b9ffc85dc00ee76b9cc0d8f377ad4815f5c74",
+    "web-player/tests/analog-test-build.mjs": "a2dd590eb2bc5cf4968febd3a04843dfd1f9604df53f90baa1f8138aeb3e103b",
+    "web-player/tests/device-wake-delays.test.mjs": "c3b3f62d69f3d3e6ca97ea263eda27944fa8c4263cc55d575554e069f9b00950"
+  },
+  "plan": {
+    "complete": 24,
+    "total": 31,
+    "open": 7
+  },
+  "meaning": "Isolated conditional wake-delay evaluation; all elapsed runs are coupled Node execution with exact output checks. No exclusive subsystem, silicon, browser real-time or audio-underrun claim."
+}

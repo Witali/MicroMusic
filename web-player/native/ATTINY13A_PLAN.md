@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Empty wake-delay experiment, 2026-11-01: conditional evaluation of two unused
+fixed delays preserves sixteen equal-policy workload pairs and 5259 exact
+checkpoints, including active ADC/watchdog controls. Six baseline and six
+candidate boundary checks pass, retaining the sleep cursor, current-clock wake
+rounding, BOD recovery and startup/deadline failures. Two serial screens retain
+256 timed runs and 128 warmups but establish no sufficient gain over identity
+variation; the prototype is not retained. Production C/WASM/ABI/cache identity
+remain unchanged. Reusable isolated build, explicit benchmark policies and six
+new regressions remain; do not repeat this guard from entry counts alone.
+The count stays 24/31. See the [decision and data](../reports/empty-wake-20261101.md).
+
 Clock-ratio operands, 2026-11-01: nine current-runtime workloads retain 30754561
 actual ratio entries, including 148435 successful wide decompositions and zero
 long-division entries. Music prefixes use only the original short path. Bounded

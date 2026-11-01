@@ -19,6 +19,7 @@ const {values}=parseArgs({options:{'baseline-ref':{type:'string',default:'4f0955
   'candidate-root':{type:'string'},
   'change-set':{type:'string',default:'long-internal-span'},
   'validate-only':{type:'boolean'},
+  'bounded-regions':{type:'boolean',default:false},'phase-locals':{type:'boolean',default:false},
   trials:{type:'string',default:'8'},warmups:{type:'string',default:'4'},
   frames:{type:'string',default:'12000'},instructions:{type:'string',default:'1000000'},
   'kernel-frames':{type:'string',default:'1200'},
@@ -57,7 +58,7 @@ for(const key of ['exports','flags','compilerVersion','sources']){
 }
 if(scopeChange)for(const name of scopeExports){assert.ok(current.manifest.exports.includes(name));assert.ok(!old.manifest.exports.includes(name));}
 const changedInputs=Object.keys(current.manifest.inputs).filter(path=>old.manifest.inputs[path]!==current.manifest.inputs[path]);
-const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','clock-power2','clock-zero','clock-intrinsic','ns-remainder','watchdog-period','watchdog-lazy','adc-idle','io-publication-scope','deadline-dispatch','gpio-idle','timer-deadline-budget'].includes(changeSet));
+const changeSet=values['change-set'];assert.ok(['long-internal-span','service-inlining','clock-identity','clock-multiply','clock-delay','clock-power2','clock-zero','clock-intrinsic','ns-remainder','watchdog-period','watchdog-lazy','adc-idle','io-publication-scope','deadline-dispatch','gpio-idle','timer-deadline-budget','empty-wake'].includes(changeSet));
 assert.deepEqual(changedInputs,scopeChange?
   ['web-player/native/avr-device.inc','web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:changeSet==='long-internal-span'?
   ['web-player/native/peripherals/device.c','web-player/native/peripherals/device.h']:
@@ -99,6 +100,8 @@ const watchdogKernel=flash({instructions:[avr.rjmp(0,16)]},
   {at:64,instructions:[avr.reti()]});
 for(const id of ['kernel-internal-20m-div1','kernel-clki-20m-div1'])
   cases.push({...cases.find(row=>row.id===id),id:id+'-watchdog-active',binary:watchdogKernel,watchdogEnabled:true});
+if(values['bounded-regions']||values['phase-locals'])for(const item of cases)if(item.options.resumable)
+  item.options={...item.options,boundedRegions:values['bounded-regions'],optimizePhaseLocals:values['phase-locals']};
 const selected=values.case?cases.filter(row=>values.case.includes(row.id)):cases;
 if(values.case)assert.equal(selected.length,values.case.length,'unknown or duplicate case');assert.ok(selected.length);
 const snapshot=c=>({state:c.state(),diagnostics:Array.from(c._state),data:c.data.slice(),flash:c.rom.slice(),eeprom:c.eeprom.slice(),irq:Array.from(c.irqFrames)});
@@ -151,6 +154,7 @@ const report={schema:'micromusic-runtime-identical-controls-v1',createdAt:new Da
   git:{head:git(['rev-parse','HEAD']).toString().trim(),baseline:git(['rev-parse',baseline]).toString().trim(),status:git(['status','--short']).toString().trim()},
   host:{node:process.version,v8:process.versions.v8,flags:process.execArgv,platform:platform(),release:release(),cpu:cpus()[0]?.model},
   parameters:{trials,warmups,frames,kernelFrames,instructions,rate,block,schedule,changeSet,
+    ...(values['bounded-regions']||values['phase-locals']?{boundedRegions:values['bounded-regions'],phaseLocals:values['phase-locals']}:{}),
     ...(values['candidate-root']?{candidateRoot:relative(root,candidateRoot).replaceAll('\\','/')}:{})},
   provenance:{changedInputs,runtimes:Object.fromEntries(variants.map(v=>[v.id,{sha256:sha(v.binary),bytes:v.binary.length,inputs:v.manifest.inputs}])),
     sourceSha256:Object.fromEntries(support.map(path=>[path,sha(text(path))])),
