@@ -594,7 +594,10 @@ static void service_end(void) {
   * Thus the new waveform is established at T1+T2, within section6.3.1's
   * documented range, without inventing an observable hardware ripple phase. */
  if (!board.clki_enabled && board.pending_divisor && board.half>=board.clkpr_switch_half) {
-  board.divisor=board.pending_divisor; board.pending_divisor=0; board.phase=0;
+  /* at_half rounds an exact edge up to integer time. Retain the numerator
+   * progress after that edge; clearing it accumulates one rounding loss on
+   * every switch, even when the requested divisor is unchanged. */
+  board.divisor=board.pending_divisor; board.pending_divisor=0;
  }
  timer_outputs(); sources();
  inputs_at_current_time(); wake(); check_faults(); mirror();

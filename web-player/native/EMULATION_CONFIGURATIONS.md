@@ -57,6 +57,13 @@ bound to the real full model using analytical clock/Timer0/firmware pin fixtures
 Its [recorded software evidence](../reports/virtual-event-accuracy-20261027.md)
 keeps exact event/state comparisons separate from unmeasured silicon accuracy.
 
+The [2026-11-01 extension](../reports/clkpr-phase-20261101.md) adds repeated CLKPR
+writes and Timer0 output across divider changes: 44 scenarios / 18,066 events
+remain within 1 ps of analytical software references. The corrected runtime
+retains fractional source progress instead of restarting at each rounded edge.
+The explicit switching-phase fixture and outstanding silicon measurements are
+unchanged; the 10 ns allowance is never accumulated per switch.
+
 ## Historical evidence
 
 The full model was retained, not replaced by the music model:

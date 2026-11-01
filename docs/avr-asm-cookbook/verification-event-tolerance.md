@@ -55,3 +55,32 @@ delay oracle. Software agreement cannot close unresolved silicon behavior,
 instrument uncertainty or a hardware accuracy requirement for all peripherals.
 The [integration report](../../web-player/reports/virtual-event-accuracy-20261027.md)
 records every fixture's event count, maximum error and trace/source hashes.
+
+## Preserve the source remainder across a prescaler change
+
+The 2026-11-01 CLKPR correction preserves integer numerator carry after a
+rounded physical edge. For a constant source rate, changing the divider changes
+the half-cycle denominator, not the oscillator progress already elapsed after
+the exact edge. Clearing that carry restarts the waveform at the rounded wall
+timestamp and accumulates an error on repeated writes, including same-divisor
+writes. CPU reset still initializes a new phase; CLKPR does not reset the source.
+
+At an edge reached through upward rounding, the overshoot is less than one
+picosecond, so `phase < 2 * oscillatorHz`. Physical profiles cap that rate at
+2e9 while every new half-cycle denominator is at least 1e12. Retaining the
+numerator therefore remains valid even when changing to divide-by-one. The
+legacy integer source domain reaches a switch with zero remainder.
+
+The reference counts source periods from the original epoch: a /1→/2→/1
+nine-instruction loop takes ten CPU cycles and fourteen source periods under
+the selected T1+T2 fixture. It never adds durations to previously rounded
+observations. The prior native runtime drifts by 14,223 ps after 32,000 loops
+at 9 MHz; the corrected runtime matches each upward-rounded rational endpoint.
+Timer0 CTC TOP0 independently witnesses every synchronous tick on OC0A.
+
+This is a digital-model timekeeping correction. DS40002307A6.3.1 explicitly
+leaves silicon ripple phase unpredictable within its switching interval; the
+fix does not measure or select that hidden physical phase. The
+[current report](../../web-player/reports/clkpr-phase-20261101.md) retains the
+historical artifact, unchanged ABI/code-body audit, before/after failures and
+the extended 10 ns acceptance replay.

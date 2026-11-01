@@ -33,6 +33,17 @@ Timer0 TOP=0, debugWIRE, physical measurements,
 exclusive profiling and register-traffic optimization remain open under their
 original acceptance criteria. Caching changes no hardware coverage claim.
 
+Fractional CLKPR correction, 2026-11-01: committing a new internal divider now
+retains the source numerator progress after the rounded edge. The historical
+model lost it on every write, drifting 14.223 ns after 64000 switches at 9 MHz.
+All 131 focused and 2723/2723 default checks pass, including all81 divider pairs, exact Timer0 pin
+edges, partial observations and cached/direct-scanner agreement. The extended
+10 ns replay compares 44 scenarios / 18066 events with maximum software error
+1 ps. One native body changes; memory/exports/ABI and legacy WASM are unchanged.
+This fixes cumulative numerical drift in the selected transition fixture;
+unmeasured silicon ripple phase and RESET recovery remain open. Status stays
+24/31. See the [before/after evidence](../reports/clkpr-phase-20261101.md).
+
 Indirect SRAM checkpoint, 2026-11-01: optional `sramBlocks:true` combines only
 preflighted LD/ST chains, with all addresses proven in manufacturer-derived
 SRAM bounds before clocking. Alias/wrap/event/continuation failures retain

@@ -33,6 +33,41 @@ function retain(id,reference,actual,details={}){
 }
 const pinEvents=(events,bit,kind='pin')=>events.map(e=>({timePs:e.timePs,kind,signal:'PB'+bit,
   level:Number(!!(e.levels&(1<<bit))),driven:Number(!!(e.driven&(1<<bit)))}));
+function clkprImage(oldCode,newCode){
+  return sequential([avr.ldi(16,128),avr.out(IO.CLKPR,16),avr.ldi(17,oldCode),avr.out(IO.CLKPR,17),avr.nop(),
+    avr.out(IO.CLKPR,16),avr.ldi(17,newCode),avr.out(IO.CLKPR,17),avr.nop(),
+    avr.out(IO.CLKPR,16),avr.ldi(17,oldCode),avr.out(IO.CLKPR,17),avr.nop(),avr.rjmp(13,5)]);
+}
+for(const hz of [9000000,11000003]){
+  // Selected T1+T2 switching fixture: five initial /1 cycles, then each
+  // nine-instruction loop consumes six /1 and four /2 source periods.
+  // Absolute reference times never restart at a rounded observed edge.
+  const c=make(hz,clkprImage(0,1)),reference=[],actual=[];c.run(5);
+  for(let loops=4000;loops<=32000;loops+=4000){
+    assert.equal(c.run(9*4000),9*4000);
+    const fields={kind:'clkpr-checkpoint',sourcePeriods:BigInt(5+14*loops),
+      cycles:5+10*loops,retired:BigInt(5+9*loops),divisor:1};
+    reference.push({timePs:fields.sourcePeriods*second/BigInt(hz),...fields});
+    actual.push({timePs:c.state().timePs,...fields,cycles:c.cyc,
+      retired:c.state().cpuPhase.retired,divisor:c.state().clockDivisor});
+    assert.equal(c.pc,5);assert.equal(c.readIO(IO.CLKPR),0);assert.equal(c.state().deviceFault,0);
+  }
+  retain('clkpr-repeated-'+hz,reference,actual,{hz,loops:32000,switches:64001,
+    observation:'Selected lower-bound digital fixture, not a silicon ripple-phase reference'});
+}
+{
+  const hz=9000000,c=make(hz,clkprImage(1,3)),reference=[];c.run(5);
+  c.observePins(1);c.writeIO(IO.DDRB,MASK.DDB0);c.writeIO(IO.OCR0A,0);
+  c.writeIO(IO.TCCR0A,MASK.COM0A0|MASK.WGM01);c.writeIO(IO.TCCR0B,MASK.CS00);c.drainPinsPs();
+  let periods=5,level=0;
+  for(let n=0;n<16;n++)for(const weight of [2,2,2,2,8,8,8,8,2,2]){
+    periods+=weight;level^=1;reference.push({timePs:BigInt(periods)*second/BigInt(hz),kind:'timer-pin',signal:'PB0',level,driven:1});
+  }
+  assert.equal(c.run(16*9),16*9);assert.equal(c.cyc,165);assert.equal(c.state().cpuPhase.retired,149n);
+  retain('clkpr-timer0-pin',reference,pinEvents(c.drainPinsPs(),0,'timer-pin'),{hz,loops:16,cycles:160,
+    observation:'CTC TOP0 witnesses each synchronous tick through selected /2 and /8 switching'});
+  assert.equal(c.readIO(IO.TCNT0),0);assert.equal(c.state().deviceFault,0);
+}
 for(const hz of [9000000,9600000,9696000]){
   const c=make(hz),reference=[],actual=[];let halves=0;
   // Large irregular spans retain the exact fractional source-clock residue.

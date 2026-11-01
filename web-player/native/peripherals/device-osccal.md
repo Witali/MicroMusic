@@ -56,6 +56,10 @@ at the new rate. CLKPR, Timer0 prescaler/count, GPIO synchronizer stages, ADC
 prescaler/conversion and protected CPU-cycle windows are not reset. A pending
 CLKPR switch follows its existing two-edge model in the changing clock domain.
 
+The CLKPR commit also retains the source numerator carry after a rounded edge;
+it no longer reanchors the waveform at that rounded wall timestamp. See the
+[nonaccumulating CLKPR correction](../../reports/clkpr-phase-20261101.md).
+
 This is an ideal phase-continuous model, not a measured oscillator settling
 waveform. Section6.4.1 warns about frequency steps over2% per cycle, CAL steps
 over0x20, and NVM programming above nominal frequency+10%. Providing a table

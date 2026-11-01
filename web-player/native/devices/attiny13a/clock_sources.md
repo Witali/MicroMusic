@@ -46,3 +46,16 @@ and reach the first WDT timeout at 16 ms for the explicit 128 kHz fixture.
 A resumable NOP image and its package reload retain exact state/timing after
 an inactive-RC OSCCAL write. See the
 [validation report](../../../reports/low-power-clock-20261101.md).
+
+## CLKPR and fractional source progress
+
+Changing CLKPR retains the source numerator remainder after an upward-rounded
+integer physical edge. Clearing it at each pending-divider commit caused
+accumulating error even with an unchanged requested divisor. The denominator
+changes with CLKPR, while sub-picosecond source progress belongs to the same
+oscillator epoch. Reset continues to initialize the phase separately.
+
+The selected T1+T2 transition policy is unchanged; no silicon ripple phase is
+inferred. At 9 MHz the historical model drifted 14.223 ns after 64,000 switches;
+the correction matches absolute rational source-period accounting and Timer0
+pin timestamps. See the [proof and evidence](../../../reports/clkpr-phase-20261101.md).

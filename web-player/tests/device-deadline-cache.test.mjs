@@ -98,6 +98,22 @@ test('CLKPR transition and OSCCAL rate changes with retained phase cannot reuse 
   mutation(c,()=>put(c,IO.OSCCAL,1));c.cycles(7);assert.equal(c.cached(),c.scan());
   mutation(c,()=>c.reset_cpu(2));assert.equal(c.peek(IO.OSCCAL),0);
 });
+
+test('repeated fractional CLKPR switches retain exact phase and the uncached deadline',()=>{
+  const hz=9000000,c=make({physical:1,hz});put(c,IO.TCCR0B,1);
+  let oldDivisor=1,sourcePeriods=0n;
+  for(let n=0;n<1000;n++){
+    const code=n%2,newDivisor=2**code;
+    mutation(c,()=>put(c,IO.CLKPR,128));mutation(c,()=>put(c,IO.CLKPR,code));
+    c.cycles(1);assert.equal(c.cached(),c.scan());
+    c.cycles(3);sourcePeriods+=BigInt(oldDivisor+3*newDivisor);oldDivisor=newDivisor;
+    const expected=(sourcePeriods*1000000000000n+BigInt(hz)-1n)/BigInt(hz);
+    assert.equal(c.now(),expected,'absolute clock accounting');
+    assert.equal(c.phase_value(),expected*BigInt(2*hz)-sourcePeriods*2000000000000n,'source numerator carry');
+    assert.equal(c.cached(),c.scan());assert.equal(c.read(IO.TCNT0),(4*(n+1))&255);
+    assert.equal(c.fault(),0);
+  }
+});
 test('future/current digital and analog inputs invalidate insertion, head consumption and source propagation',()=>{
   const c=make();c.cycles(12);
   mutation(c,()=>assert.equal(c.pins(c.now(),1,1),1));
@@ -207,12 +223,16 @@ const power={porAssertMicrovolts:1300000,porReleaseMicrovolts:1400000,bod00Micro
   bodRecoveryNs:60000,flashProgrammingMinMicrovolts:1800000};
 const physical={oscillatorHz:10000000,osccalHz:table,powerResetProfile:power,fuseLow:0x72,fuseHigh:0xfb,
   nvmClockProfile:1,nvmCalibrationReferenceHz:10000000};
-test('actual baseline physical phase/OSCCAL/CLKPR, queued inputs and pin traces match',()=>{
+test('actual baseline physical phase, aligned CLKPR then OSCCAL, queued inputs and pins match',()=>{
   const pair=cores(sequential([avr.rjmp(0,0)]),physical);
   for(const c of pair){c.writeIO(IO.DDRB,3);c.writeIO(IO.OCR0A,191);c.writeIO(IO.OCR0B,63);
     c.writeIO(IO.TCCR0A,0xa3);c.writeIO(IO.TCCR0B,1);c.injectPinsPs({at:377777n,mask:4,levels:4});
-    c.setAnalogPs({at:999999n,pin:2,microvolts:2345678});c.clock(7);c.writeIO(IO.OSCCAL,1);
-    c.writeIO(IO.CLKPR,128);c.writeIO(IO.CLKPR,2);c.clock(7);}
+    c.setAnalogPs({at:999999n,pin:2,microvolts:2345678});c.clock(7);
+    // Keep this historical equality case on integer clock edges. The old
+    // runtime discards fractional carry during CLKPR switching; the new
+    // absolute-time/cache test above and attiny13a-clkpr-phase.test.mjs test
+    // that intentional correction independently of the historical bug.
+    c.writeIO(IO.CLKPR,128);c.writeIO(IO.CLKPR,2);c.clock(7);c.writeIO(IO.OSCCAL,1);}
   parity(pair);assert.deepEqual(pair[0].drainPinsPs(),pair[1].drainPinsPs());
   const raw=pair.map(c=>c.capturePhysical(37,44100,2));assert.ok(Buffer.from(raw[0].buffer).equals(Buffer.from(raw[1].buffer)));
   parity(pair,{conservativeIdle:true});
