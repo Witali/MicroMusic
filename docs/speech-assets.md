@@ -48,6 +48,34 @@ WAV в этой таблице — точные 8-битные PWM-отсчёт�
 | [web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex) | bread / compact | 4574 / 5582 | 756 | 19200 / 0 |
 | [web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex) | bread / quality | 4573 / 6472 | 756 | 19200 / 0 |
 
+## Speex на Arduino Nano: три фразы, три битрейта
+
+Сборщик [tools/build-speex-nano-catalog.py](../tools/build-speex-nano-catalog.py) использует те же полные открытые исходники первых трёх фраз. FFmpeg / libspeex 1.2.1 кодирует CBR с complexity 10: NB 2,15 кбит/с при 8 кГц, WB 3,95 и 9,8 кбит/с при 16 кГц. VAD, DTX и ABR выключены. Ресэмплирование сохраняет длительность и уровень; добавляется 80 мс нулевого хвоста и выравнивание до полного кадра, задержка кодека не вырезается. Ogg-заголовки и комментарии не публикуются.
+
+Исходники записаны при 7500 Гц: режим WB с выходом 16 кГц не восстанавливает отсутствующие в них высокие частоты. Номинальные битрейты отличаются от хранения с выравниванием пакетов по байтам: 2,4 / 4,0 / 10,0 кбит/с соответственно.
+
+PCM захватывается из исполняемого AVR ASM-декодера, затем полный связанный плеер проверяется против этого захвата с активными таймерами и IRQ в AVR8js 0.21.1. WAV содержит все реальные PWM-отсчёты `(duty - 128) * 256`, включая задержку и хвост. Это проверка транспортировки и тайминга; независимые проверки арифметики кодека сохранены в [Codecs/Speex/AVR/reports/prepared-admission.json](../Codecs/Speex/AVR/reports/prepared-admission.json). Полный C-декодер при подготовке этих примеров не исполняется. Аналоговый выход физической платы не измерялся.
+
+Все опубликованные прошивки используют **D3 / PD3 / OC2B**, как LPX: PWM 62,5 кГц, PCM 8 или 16 кГц. При сборке можно выбрать `--pwm-pin 3` или `--pwm-pin 9` (`SPEEX_AVR_PWM_PIN=3/9`). Сборщик каталога по умолчанию выбирает D3; низкоуровневые сборщики сохраняют прежний D9. Выбор арифметики C/ASM независим от выбора контакта.
+
+| Фраза / профиль | Сжатый поток | PWM WAV | HEX | Код / полный Flash, Б | Static / свободная SRAM на пике, Б | Отсчётов / пропусков |
+| --- | --- | --- | --- | ---: | ---: | --- |
+| chego / Speex NB · 2,15 кбит/с | [web-player/audio/speex-speech/chego/nb215.spxraw](../web-player/audio/speex-speech/chego/nb215.spxraw) | [web-player/audio/speex-speech/chego/nb215.wav](../web-player/audio/speex-speech/chego/nb215.wav) | [web-player/firmware/arduino-nano/speex-nano-chego-nb215.hex](../web-player/firmware/arduino-nano/speex-nano-chego-nb215.hex) | 12704 / 13100 | 1231 / 698 | 10560 / 0 |
+| chego / Speex WB · 3,95 кбит/с | [web-player/audio/speex-speech/chego/wb395.spxraw](../web-player/audio/speex-speech/chego/wb395.spxraw) | [web-player/audio/speex-speech/chego/wb395.wav](../web-player/audio/speex-speech/chego/wb395.wav) | [web-player/firmware/arduino-nano/speex-nano-chego-wb395.hex](../web-player/firmware/arduino-nano/speex-nano-chego-wb395.hex) | 20450 / 21110 | 1406 / 449 | 21120 / 0 |
+| chego / Speex WB · 9,8 кбит/с | [web-player/audio/speex-speech/chego/wb98.spxraw](../web-player/audio/speex-speech/chego/wb98.spxraw) | [web-player/audio/speex-speech/chego/wb98.wav](../web-player/audio/speex-speech/chego/wb98.wav) | [web-player/firmware/arduino-nano/speex-nano-chego-wb98.hex](../web-player/firmware/arduino-nano/speex-nano-chego-wb98.hex) | 17310 / 18960 | 1409 / 450 | 21120 / 0 |
+| otvechaesh / Speex NB · 2,15 кбит/с | [web-player/audio/speex-speech/otvechaesh/nb215.spxraw](../web-player/audio/speex-speech/otvechaesh/nb215.spxraw) | [web-player/audio/speex-speech/otvechaesh/nb215.wav](../web-player/audio/speex-speech/otvechaesh/nb215.wav) | [web-player/firmware/arduino-nano/speex-nano-otvechaesh-nb215.hex](../web-player/firmware/arduino-nano/speex-nano-otvechaesh-nb215.hex) | 12704 / 13046 | 1231 / 698 | 9120 / 0 |
+| otvechaesh / Speex WB · 3,95 кбит/с | [web-player/audio/speex-speech/otvechaesh/wb395.spxraw](../web-player/audio/speex-speech/otvechaesh/wb395.spxraw) | [web-player/audio/speex-speech/otvechaesh/wb395.wav](../web-player/audio/speex-speech/otvechaesh/wb395.wav) | [web-player/firmware/arduino-nano/speex-nano-otvechaesh-wb395.hex](../web-player/firmware/arduino-nano/speex-nano-otvechaesh-wb395.hex) | 20450 / 21020 | 1406 / 449 | 18240 / 0 |
+| otvechaesh / Speex WB · 9,8 кбит/с | [web-player/audio/speex-speech/otvechaesh/wb98.spxraw](../web-player/audio/speex-speech/otvechaesh/wb98.spxraw) | [web-player/audio/speex-speech/otvechaesh/wb98.wav](../web-player/audio/speex-speech/otvechaesh/wb98.wav) | [web-player/firmware/arduino-nano/speex-nano-otvechaesh-wb98.hex](../web-player/firmware/arduino-nano/speex-nano-otvechaesh-wb98.hex) | 17311 / 18736 | 1409 / 450 | 18240 / 0 |
+| vinni / Speex NB · 2,15 кбит/с | [web-player/audio/speex-speech/vinni/nb215.spxraw](../web-player/audio/speex-speech/vinni/nb215.spxraw) | [web-player/audio/speex-speech/vinni/nb215.wav](../web-player/audio/speex-speech/vinni/nb215.wav) | [web-player/firmware/arduino-nano/speex-nano-vinni-nb215.hex](../web-player/firmware/arduino-nano/speex-nano-vinni-nb215.hex) | 12704 / 13622 | 1231 / 698 | 24480 / 0 |
+| vinni / Speex WB · 3,95 кбит/с | [web-player/audio/speex-speech/vinni/wb395.spxraw](../web-player/audio/speex-speech/vinni/wb395.spxraw) | [web-player/audio/speex-speech/vinni/wb395.wav](../web-player/audio/speex-speech/vinni/wb395.wav) | [web-player/firmware/arduino-nano/speex-nano-vinni-wb395.hex](../web-player/firmware/arduino-nano/speex-nano-vinni-wb395.hex) | 20452 / 21982 | 1406 / 449 | 48960 / 0 |
+| vinni / Speex WB · 9,8 кбит/с | [web-player/audio/speex-speech/vinni/wb98.spxraw](../web-player/audio/speex-speech/vinni/wb98.spxraw) | [web-player/audio/speex-speech/vinni/wb98.wav](../web-player/audio/speex-speech/vinni/wb98.wav) | [web-player/firmware/arduino-nano/speex-nano-vinni-wb98.hex](../web-player/firmware/arduino-nano/speex-nano-vinni-wb98.hex) | 17311 / 21136 | 1409 / 450 | 48960 / 0 |
+
+Для воспроизведения нужны AVR-GCC 7.3.0 проекта, Node.js, зависимости AVR8js из `Codecs/Speex/AVR` и FFmpeg с libspeex. Контрольные суммы исходников, точных потоков, WAV и HEX, а также результаты IRQ-проверок находятся в [web-player/firmware-speex-atmega328p.json](../web-player/firmware-speex-atmega328p.json).
+
+```text
+python tools/build-speex-nano-catalog.py --avr-gcc /path/to/avr-gcc --node /path/to/node --pwm-pin 3 --publish
+```
+
 ## ATtiny13A: выбранные образы
 
 Основные три образа сохранены в [web-player/hq4-firmware.json](../web-player/hq4-firmware.json); добавленная фраза — в [web-player/firmware-attiny13a-speech-extra.json](../web-player/firmware-attiny13a-speech-extra.json). Каталоги содержат полный Flash HEX и при необходимости EEPROM HEX, контрольные суммы и пути исходников.

@@ -41,6 +41,18 @@ def document():
         '| HEX | LPX | Код / полный Flash, Б | Static SRAM, Б | Отсчётов / пропусков |','| --- | --- | ---: | ---: | --- |']
     for variant in nano['variants']:
         rows.append(f"| {link('web-player/'+variant['source'])} | {variant['clipId']} / {variant['id']} | {variant['programFlashBytes']} / {variant['flashBytes']} | {variant['staticSramBytes']} | {variant['timing']['playedSamples']} / {variant['timing']['underruns']} |")
+    speex=read('web-player/firmware-speex-atmega328p.json')
+    rows+=['','## Speex на Arduino Nano: три фразы, три битрейта','',
+        'Сборщик '+link('tools/build-speex-nano-catalog.py')+' использует те же полные открытые исходники первых трёх фраз. FFmpeg / libspeex 1.2.1 кодирует CBR с complexity 10: NB 2,15 кбит/с при 8 кГц, WB 3,95 и 9,8 кбит/с при 16 кГц. VAD, DTX и ABR выключены. Ресэмплирование сохраняет длительность и уровень; добавляется 80 мс нулевого хвоста и выравнивание до полного кадра, задержка кодека не вырезается. Ogg-заголовки и комментарии не публикуются.','',
+        'Исходники записаны при 7500 Гц: режим WB с выходом 16 кГц не восстанавливает отсутствующие в них высокие частоты. Номинальные битрейты отличаются от хранения с выравниванием пакетов по байтам: 2,4 / 4,0 / 10,0 кбит/с соответственно.','',
+        'PCM захватывается из исполняемого AVR ASM-декодера, затем полный связанный плеер проверяется против этого захвата с активными таймерами и IRQ в AVR8js 0.21.1. WAV содержит все реальные PWM-отсчёты `(duty - 128) * 256`, включая задержку и хвост. Это проверка транспортировки и тайминга; независимые проверки арифметики кодека сохранены в '+link('Codecs/Speex/AVR/reports/prepared-admission.json')+'. Полный C-декодер при подготовке этих примеров не исполняется. Аналоговый выход физической платы не измерялся.','',
+        'Все опубликованные прошивки используют **D3 / PD3 / OC2B**, как LPX: PWM 62,5 кГц, PCM 8 или 16 кГц. При сборке можно выбрать `--pwm-pin 3` или `--pwm-pin 9` (`SPEEX_AVR_PWM_PIN=3/9`). Сборщик каталога по умолчанию выбирает D3; низкоуровневые сборщики сохраняют прежний D9. Выбор арифметики C/ASM независим от выбора контакта.','',
+        '| Фраза / профиль | Сжатый поток | PWM WAV | HEX | Код / полный Flash, Б | Static / свободная SRAM на пике, Б | Отсчётов / пропусков |',
+        '| --- | --- | --- | --- | ---: | ---: | --- |']
+    for variant in speex['variants']:
+        rows.append(f"| {variant['clipId']} / {variant['label']} | {link('web-player/'+variant['stream'])} | {link('web-player/'+variant['audio'])} | {link('web-player/'+variant['source'])} | {variant['programFlashBytes']} / {variant['flashBytes']} | {variant['staticSramBytes']} / {variant['freeSramAtPeak']} | {variant['samples']} / {variant['timing']['underruns']} |")
+    rows+=['','Для воспроизведения нужны AVR-GCC 7.3.0 проекта, Node.js, зависимости AVR8js из `Codecs/Speex/AVR` и FFmpeg с libspeex. Контрольные суммы исходников, точных потоков, WAV и HEX, а также результаты IRQ-проверок находятся в '+link('web-player/firmware-speex-atmega328p.json')+'.','',
+        '```text','python tools/build-speex-nano-catalog.py --avr-gcc /path/to/avr-gcc --node /path/to/node --pwm-pin 3 --publish','```']
     rows+=['','## ATtiny13A: выбранные образы','',
         'Основные три образа сохранены в '+link('web-player/hq4-firmware.json')+'; добавленная фраза — в '+link('web-player/firmware-attiny13a-speech-extra.json')+'. Каталоги содержат полный Flash HEX и при необходимости EEPROM HEX, контрольные суммы и пути исходников.','',
         '| Фраза | Кодек | Сохранённый источник | Скрипт сборки / подбора | Flash / EEPROM, Б |','| --- | --- | --- | --- | ---: |']
