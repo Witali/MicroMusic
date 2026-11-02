@@ -76,6 +76,12 @@ branch. The final quality branch retains the existing decoder.
 
 ## Reproduce locally
 
+The tools and rejected parser prototypes are preserved on isolated local
+branch `codex/lpx-lowrate-decode-budget`: parser commit `cac53776` and external
+observer commit `bbc48753`. Use that branch for the commands below. This final
+quality branch retains their evidence without enabling or importing the
+rejected decoder features.
+
 `build_release_observer.py --producer` builds the external observer from
 `validation/atmega328p/sim_producer.c`, which reuses the existing playback
 observer. `profile_release_producer.py` builds and verifies a complete image

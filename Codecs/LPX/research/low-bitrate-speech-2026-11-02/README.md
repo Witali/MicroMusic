@@ -76,6 +76,15 @@ Those final images use the existing decoder, not the rejected metadata320 or
 scale-ramp prototypes. No additional decoder complexity is adopted merely
 because it fits a 10–20% allowance.
 
+Separate bounded pilots tried shared metadata, a 49-point existing-header grid
+at each budget, and raw-scale interpolation. None passed all protected quality
+guards. The ramp cost only +0.27% / +2.26% producer work, but added 316 / 422 B
+of program Flash and 4 B SRAM without an admitted corpus benefit. Some tuning
+proxies improved while other guards worsened; these rejections do not prove
+that every possible encoder for the experimental formats must lose.
+[Measured costs and the external AVR observation method](../../../../docs/avr-asm-cookbook/lpx-producer-budget.md)
+remain available, with the runnable prototypes preserved separately.
+
 The measured campaign used encoder source at commit `9b83ac21`, with its
 complete pinned research source archived privately. Subsequent correctness
 fixes retain feasible seeds after individual spectral-proposal failures and

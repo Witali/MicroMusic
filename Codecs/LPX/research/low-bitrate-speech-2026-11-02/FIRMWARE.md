@@ -53,7 +53,13 @@ matching simavr 1.6 SDK. Its observer ABI differs from `sim_profile.c`; do not
 substitute an old profiling runner. The SDK used here needs `-lelf -lz -lzstd
 -lpthread -lm` after `-l:libsimavr.so.2`.
 
-The local reproduction tool builds both complete images, checks their exact
+The paired browser reproduction tool is preserved separately on local branch
+`codex/arduino-speech-player` at `cafd572b`, with its pinned browser runtime in
+parent `d73f9c8e`. Run the following command from that branch. The quality-only
+branch retains the independent corpus admission tool documented below; it does
+not adopt the browser UI or vendor runtime.
+
+The paired tool builds both complete images, checks their exact
 embedded audio regions and linked costs, runs the external simavr observer,
 and then executes the exact browser core against the same independent PWM:
 
