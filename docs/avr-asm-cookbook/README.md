@@ -3144,3 +3144,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [Clocked external SPI sources](lpx-external-spi.md): vendor-derived registers, source/arithmetic separation, corrected simavr byte timing and bounded full-player validation scope.
 
 - [Exact bounded LPX pitch history](lpx-pitch-history.md): rejected 111-byte RAM tradeoff, memory-lifetime alternatives, unchanged production decoder and measured AVR25 C throughput limits.
+
+## ATtiny13A: fit speech parameters and check noise
+
+[Bounded speech data and spectral selection](tiny-speech-budget.md): dictionary/parameter search fits the complete phrase, then an aligned noise/spectral objective selects a 1014-byte image plus 64-byte EEPROM. Active-IRQ output verification and the STOI tradeoff are recorded; decoder assembly is unchanged.
