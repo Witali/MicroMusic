@@ -1,0 +1,3706 @@
+{
+  "schema": "lpx-rejected-decoder-budget-host-evidence-v1",
+  "date": "2026-11-02",
+  "scope": "One complete public2.4s tuning phrase; not heldout or corpus quality evidence",
+  "samples": 19200,
+  "rate_hz": 8000,
+  "adopted": false,
+  "decoder_features_enabled_on_final_quality_branch": false,
+  "native_oracle_verified": true,
+  "verified_pcm16_wav_exports": true,
+  "experiments": [
+    {
+      "experiment": "metadata320",
+      "cap_kbps": 3,
+      "samples": 19200,
+      "complete_byte_cap": 900,
+      "selected_id": 0,
+      "protected_bytes_retained": true,
+      "recorded_attempts": 26,
+      "unique_complete_outputs": 26,
+      "new_admissible_outputs": 0,
+      "search_wall_seconds": 115.5643798999954,
+      "actual_work_totals": {
+        "parameter_trials": 348650,
+        "selected_block_replays": 1500,
+        "pulse_position_sign_trials": 179276800,
+        "committed_group_replays": 5602400
+      },
+      "candidates": [
+        {
+          "id": 0,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": "protected_incumbent",
+          "score": 1.088074621050234,
+          "admissible": true,
+          "rejected_by": [],
+          "pcm_ser_db": 4.74060257973983,
+          "pwm_ser_db": 4.73555263310815,
+          "pcm_stoi": 0.7598099244316283,
+          "pwm_stoi": 0.7593497728719046,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 1,
+          "version": 9,
+          "file_bytes": 788,
+          "origin": {
+            "family": "incumbent_spectra"
+          },
+          "score": 1.2014461134924543,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 3.738369619618613,
+          "pwm_ser_db": 3.740836111358328,
+          "pcm_stoi": 0.6954893269939213,
+          "pwm_stoi": 0.6960259641540464,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 2,
+          "version": 9,
+          "file_bytes": 897,
+          "origin": {
+            "family": "uniform",
+            "cadence": 1,
+            "pre_q14": 13926,
+            "bandwidth": 0.97
+          },
+          "score": 1.0341647554905882,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.7245950925685105,
+          "pwm_ser_db": 3.730195156580059,
+          "pcm_stoi": 0.719200309482763,
+          "pwm_stoi": 0.7191864767687237,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 3,
+          "version": 9,
+          "file_bytes": 831,
+          "origin": {
+            "family": "uniform",
+            "cadence": 2,
+            "pre_q14": 13926,
+            "bandwidth": 0.97
+          },
+          "score": 1.0779646537954222,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.943779573021745,
+          "pwm_ser_db": 2.94339872109521,
+          "pcm_stoi": 0.6579296997375195,
+          "pwm_stoi": 0.6577636403356864,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 30
+        },
+        {
+          "id": 4,
+          "version": 9,
+          "file_bytes": 792,
+          "origin": {
+            "family": "uniform",
+            "cadence": 4,
+            "pre_q14": 13926,
+            "bandwidth": 0.97
+          },
+          "score": 1.3444178756313563,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.718907295904568,
+          "pwm_ser_db": 2.71266848858039,
+          "pcm_stoi": 0.6076697098095386,
+          "pwm_stoi": 0.6071291582809114,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 5,
+          "version": 9,
+          "file_bytes": 770,
+          "origin": {
+            "family": "uniform",
+            "cadence": 8,
+            "pre_q14": 13926,
+            "bandwidth": 0.97
+          },
+          "score": 1.3930104597480386,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 2.8211961263663508,
+          "pwm_ser_db": 2.812641805865073,
+          "pcm_stoi": 0.5901335168407597,
+          "pwm_stoi": 0.5901766736920234,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 8
+        },
+        {
+          "id": 6,
+          "version": 9,
+          "file_bytes": 889,
+          "origin": {
+            "family": "uniform",
+            "cadence": 1,
+            "pre_q14": 13926,
+            "bandwidth": 0.94
+          },
+          "score": 1.068110816426446,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.572185803218783,
+          "pwm_ser_db": 3.565784860598073,
+          "pcm_stoi": 0.7280655431901895,
+          "pwm_stoi": 0.727982917366344,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 59
+        },
+        {
+          "id": 7,
+          "version": 9,
+          "file_bytes": 828,
+          "origin": {
+            "family": "uniform",
+            "cadence": 2,
+            "pre_q14": 13926,
+            "bandwidth": 0.94
+          },
+          "score": 1.2247897224565354,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.748885019916685,
+          "pwm_ser_db": 2.7435507816264963,
+          "pcm_stoi": 0.6477651329788374,
+          "pwm_stoi": 0.6479906438018107,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 30
+        },
+        {
+          "id": 8,
+          "version": 9,
+          "file_bytes": 789,
+          "origin": {
+            "family": "uniform",
+            "cadence": 4,
+            "pre_q14": 13926,
+            "bandwidth": 0.94
+          },
+          "score": 1.4048523020831511,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.570922142219962,
+          "pwm_ser_db": 2.5659106690448525,
+          "pcm_stoi": 0.5628938500835056,
+          "pwm_stoi": 0.5626366523721666,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 9,
+          "version": 9,
+          "file_bytes": 769,
+          "origin": {
+            "family": "uniform",
+            "cadence": 8,
+            "pre_q14": 13926,
+            "bandwidth": 0.94
+          },
+          "score": 1.5271633602402475,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 2.7093994480167085,
+          "pwm_ser_db": 2.698639152087079,
+          "pcm_stoi": 0.5696958695328023,
+          "pwm_stoi": 0.5695504225353207,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 8
+        },
+        {
+          "id": 10,
+          "version": 9,
+          "file_bytes": 898,
+          "origin": {
+            "family": "uniform",
+            "cadence": 1,
+            "pre_q14": 11469,
+            "bandwidth": 0.97
+          },
+          "score": 1.27002736604307,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.8895855492366556,
+          "pwm_ser_db": 3.884115095194931,
+          "pcm_stoi": 0.7543233432928242,
+          "pwm_stoi": 0.75454510049809,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 59
+        },
+        {
+          "id": 11,
+          "version": 9,
+          "file_bytes": 832,
+          "origin": {
+            "family": "uniform",
+            "cadence": 2,
+            "pre_q14": 11469,
+            "bandwidth": 0.97
+          },
+          "score": 1.2106868723388693,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.038075009046871,
+          "pwm_ser_db": 3.0362020308187887,
+          "pcm_stoi": 0.6566104573199788,
+          "pwm_stoi": 0.656776623746863,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 30
+        },
+        {
+          "id": 12,
+          "version": 9,
+          "file_bytes": 792,
+          "origin": {
+            "family": "uniform",
+            "cadence": 4,
+            "pre_q14": 11469,
+            "bandwidth": 0.97
+          },
+          "score": 1.369999738405842,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.9296956458348316,
+          "pwm_ser_db": 2.920002983245464,
+          "pcm_stoi": 0.6069472459499674,
+          "pwm_stoi": 0.6069224585295904,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 13,
+          "version": 9,
+          "file_bytes": 769,
+          "origin": {
+            "family": "uniform",
+            "cadence": 8,
+            "pre_q14": 11469,
+            "bandwidth": 0.97
+          },
+          "score": 1.2744501708234965,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.8285051805479986,
+          "pwm_ser_db": 2.819293467207689,
+          "pcm_stoi": 0.5933144755338117,
+          "pwm_stoi": 0.5923920024952628,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 8
+        },
+        {
+          "id": 14,
+          "version": 9,
+          "file_bytes": 886,
+          "origin": {
+            "family": "uniform",
+            "cadence": 1,
+            "pre_q14": 11469,
+            "bandwidth": 0.94
+          },
+          "score": 1.2403934117059343,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.6924652894694097,
+          "pwm_ser_db": 3.6917054324884804,
+          "pcm_stoi": 0.7534798564803477,
+          "pwm_stoi": 0.7531491532105814,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 57
+        },
+        {
+          "id": 15,
+          "version": 9,
+          "file_bytes": 827,
+          "origin": {
+            "family": "uniform",
+            "cadence": 2,
+            "pre_q14": 11469,
+            "bandwidth": 0.94
+          },
+          "score": 1.154406832501714,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.325301084460142,
+          "pwm_ser_db": 3.3192049564929076,
+          "pcm_stoi": 0.6726808691699286,
+          "pwm_stoi": 0.6722679635960401,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 30
+        },
+        {
+          "id": 16,
+          "version": 9,
+          "file_bytes": 789,
+          "origin": {
+            "family": "uniform",
+            "cadence": 4,
+            "pre_q14": 11469,
+            "bandwidth": 0.94
+          },
+          "score": 1.4408872753828086,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 3.0304583935168723,
+          "pwm_ser_db": 3.028908661669055,
+          "pcm_stoi": 0.5952412536769404,
+          "pwm_stoi": 0.5951021878284495,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 17,
+          "version": 9,
+          "file_bytes": 769,
+          "origin": {
+            "family": "uniform",
+            "cadence": 8,
+            "pre_q14": 11469,
+            "bandwidth": 0.94
+          },
+          "score": 1.309314173530011,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 2.9976007668468725,
+          "pwm_ser_db": 2.992606962877634,
+          "pcm_stoi": 0.5964125570505237,
+          "pwm_stoi": 0.5959480428587214,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 8
+        },
+        {
+          "id": 18,
+          "version": 9,
+          "file_bytes": 897,
+          "origin": {
+            "family": "uniform",
+            "cadence": 1,
+            "pre_q14": 8192,
+            "bandwidth": 0.97
+          },
+          "score": 0.9932233622354918,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 3.9709695984780553,
+          "pwm_ser_db": 3.9733897941787264,
+          "pcm_stoi": 0.7431212141409739,
+          "pwm_stoi": 0.742987291207835,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 59
+        },
+        {
+          "id": 19,
+          "version": 9,
+          "file_bytes": 833,
+          "origin": {
+            "family": "uniform",
+            "cadence": 2,
+            "pre_q14": 8192,
+            "bandwidth": 0.97
+          },
+          "score": 1.1226189042183128,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.380330162550726,
+          "pwm_ser_db": 3.3732159172185354,
+          "pcm_stoi": 0.6785198294770386,
+          "pwm_stoi": 0.679113917943669,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 30
+        },
+        {
+          "id": 20,
+          "version": 9,
+          "file_bytes": 790,
+          "origin": {
+            "family": "uniform",
+            "cadence": 4,
+            "pre_q14": 8192,
+            "bandwidth": 0.97
+          },
+          "score": 1.2904280813466489,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.030388533334538,
+          "pwm_ser_db": 3.0199897551850237,
+          "pcm_stoi": 0.6136562272052891,
+          "pwm_stoi": 0.6132794948220847,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 21,
+          "version": 9,
+          "file_bytes": 769,
+          "origin": {
+            "family": "uniform",
+            "cadence": 8,
+            "pre_q14": 8192,
+            "bandwidth": 0.97
+          },
+          "score": 1.3323222041923128,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 3.060301170940945,
+          "pwm_ser_db": 3.0565557469323323,
+          "pcm_stoi": 0.5830307065929994,
+          "pwm_stoi": 0.5821588220297805,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 8
+        },
+        {
+          "id": 22,
+          "version": 9,
+          "file_bytes": 892,
+          "origin": {
+            "family": "uniform",
+            "cadence": 1,
+            "pre_q14": 8192,
+            "bandwidth": 0.94
+          },
+          "score": 1.2144302203396298,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.8238869545770986,
+          "pwm_ser_db": 3.8208162703276,
+          "pcm_stoi": 0.7364972824979732,
+          "pwm_stoi": 0.7364053264433723,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 23,
+          "version": 9,
+          "file_bytes": 831,
+          "origin": {
+            "family": "uniform",
+            "cadence": 2,
+            "pre_q14": 8192,
+            "bandwidth": 0.94
+          },
+          "score": 1.1280407161669634,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.2494611269207248,
+          "pwm_ser_db": 3.2511020022812835,
+          "pcm_stoi": 0.6725824214136888,
+          "pwm_stoi": 0.6723201095862834,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 30
+        },
+        {
+          "id": 24,
+          "version": 9,
+          "file_bytes": 789,
+          "origin": {
+            "family": "uniform",
+            "cadence": 4,
+            "pre_q14": 8192,
+            "bandwidth": 0.94
+          },
+          "score": 1.2259618470916462,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 2.919953670290428,
+          "pwm_ser_db": 2.9205728038737835,
+          "pcm_stoi": 0.6071313406059212,
+          "pwm_stoi": 0.6077394269794089,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 25,
+          "version": 9,
+          "file_bytes": 769,
+          "origin": {
+            "family": "uniform",
+            "cadence": 8,
+            "pre_q14": 8192,
+            "bandwidth": 0.94
+          },
+          "score": 1.3047995710636682,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.020409309146483,
+          "pwm_ser_db": 3.0253424151481645,
+          "pcm_stoi": 0.5625552599030763,
+          "pwm_stoi": 0.5626939969026126,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 8
+        }
+      ]
+    },
+    {
+      "experiment": "existing_headers",
+      "cap_kbps": 2,
+      "samples": 19200,
+      "complete_byte_cap": 600,
+      "selected_id": 0,
+      "protected_bytes_retained": true,
+      "recorded_attempts": 50,
+      "unique_complete_outputs": 49,
+      "new_admissible_outputs": 0,
+      "search_wall_seconds": 12.243949499999871,
+      "actual_work_totals": null,
+      "candidates": [
+        {
+          "id": 0,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": "protected_incumbent",
+          "score": 1.434976502862968,
+          "admissible": true,
+          "rejected_by": [],
+          "pcm_ser_db": 2.1652999509140223,
+          "pwm_ser_db": 2.1611316486968564,
+          "pcm_stoi": 0.6343245894536561,
+          "pwm_stoi": 0.6346180517903891,
+          "pcm_source_period_matches": 2,
+          "pwm_source_period_matches": 2,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 37,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 1,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 9830,
+            "bright_q14": 0
+          },
+          "score": 1.382887125634317,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.7897862151040322,
+          "pwm_ser_db": 1.7824110417984385,
+          "pcm_stoi": 0.6302726080699582,
+          "pwm_stoi": 0.6308355291437248,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 30,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 2,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 9830,
+            "bright_q14": 2048
+          },
+          "score": 1.4616684239973543,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.6127248873843094,
+          "pwm_ser_db": 1.6057470285480706,
+          "pcm_stoi": 0.6301829982228746,
+          "pwm_stoi": 0.6294267956507851,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 3,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 9830,
+            "bright_q14": 4096
+          },
+          "score": 1.5507441934875228,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.360012113507274,
+          "pwm_ser_db": 1.3523339644667043,
+          "pcm_stoi": 0.6300260439156433,
+          "pwm_stoi": 0.6291720344822452,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 4,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 9830,
+            "bright_q14": 6144
+          },
+          "score": 1.6821933994475775,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.0444509936778903,
+          "pwm_ser_db": 1.0333479198894038,
+          "pcm_stoi": 0.6298172535998776,
+          "pwm_stoi": 0.6300164367009667,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 5,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 9830,
+            "bright_q14": 8192
+          },
+          "score": 1.8114147732103107,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 0.6797307050052047,
+          "pwm_ser_db": 0.666159125062721,
+          "pcm_stoi": 0.6297227025242443,
+          "pwm_stoi": 0.6278399256882647,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 6,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 9830,
+            "bright_q14": 10240
+          },
+          "score": 1.9692064998649896,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 0.2810824134400564,
+          "pwm_ser_db": 0.26361076457045507,
+          "pcm_stoi": 0.6298059151712324,
+          "pwm_stoi": 0.6288076103417242,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 9,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 7,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 9830,
+            "bright_q14": 11469
+          },
+          "score": 2.088495267095456,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 0.03179977749392594,
+          "pwm_ser_db": 0.01002389316085307,
+          "pcm_stoi": 0.6297040498907642,
+          "pwm_stoi": 0.6285451234333423,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 11,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 8,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 11878,
+            "bright_q14": 0
+          },
+          "score": 1.3469850100573857,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 2.0750227582834753,
+          "pwm_ser_db": 2.0696410691917877,
+          "pcm_stoi": 0.6328164157030443,
+          "pwm_stoi": 0.632700096129807,
+          "pcm_source_period_matches": 2,
+          "pwm_source_period_matches": 2,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 32,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 9,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 11878,
+            "bright_q14": 2048
+          },
+          "score": 1.3922901653116104,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.9585702204360143,
+          "pwm_ser_db": 1.9557105629119753,
+          "pcm_stoi": 0.6326630286814762,
+          "pwm_stoi": 0.6323864021994167,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 6,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 10,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 11878,
+            "bright_q14": 4096
+          },
+          "score": 1.4414107607222886,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.7508050808441151,
+          "pwm_ser_db": 1.7477331885031027,
+          "pcm_stoi": 0.6324950108133487,
+          "pwm_stoi": 0.6315075365202951,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 6,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 11,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 11878,
+            "bright_q14": 6144
+          },
+          "score": 1.544286220585553,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.4643745195196334,
+          "pwm_ser_db": 1.460251853933518,
+          "pcm_stoi": 0.6323091591724534,
+          "pwm_stoi": 0.6319731132316192,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 12,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 11878,
+            "bright_q14": 8192
+          },
+          "score": 1.6561009785109397,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.1144995671531375,
+          "pwm_ser_db": 1.1072332304724957,
+          "pcm_stoi": 0.6322389306463592,
+          "pwm_stoi": 0.6331226672269415,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 13,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 11878,
+            "bright_q14": 10240
+          },
+          "score": 1.7969907113958357,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 0.7166155584504658,
+          "pwm_ser_db": 0.7036173775972067,
+          "pcm_stoi": 0.6323111088155982,
+          "pwm_stoi": 0.6330561291747266,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 14,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 11878,
+            "bright_q14": 11469
+          },
+          "score": 1.9019405473739737,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 0.4608370457962474,
+          "pwm_ser_db": 0.4437502779006502,
+          "pcm_stoi": 0.6322709146057277,
+          "pwm_stoi": 0.6328839024129436,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 15,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 12902,
+            "bright_q14": 0
+          },
+          "score": 1.3635500174607462,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 2.1639257384314883,
+          "pwm_ser_db": 2.15881451231507,
+          "pcm_stoi": 0.6336641380369414,
+          "pwm_stoi": 0.6335700949443127,
+          "pcm_source_period_matches": 2,
+          "pwm_source_period_matches": 2,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 35,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 16,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 12902,
+            "bright_q14": 2048
+          },
+          "score": 1.3917037050913672,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.09117401674297,
+          "pwm_ser_db": 2.0898092855737023,
+          "pcm_stoi": 0.633490174812336,
+          "pwm_stoi": 0.633685743470843,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 6,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 17,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 12902,
+            "bright_q14": 4096
+          },
+          "score": 1.421218764800764,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.9196262172352956,
+          "pwm_ser_db": 1.920323229134501,
+          "pcm_stoi": 0.6333079719319142,
+          "pwm_stoi": 0.6328049449262713,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 6,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 18,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 12902,
+            "bright_q14": 6144
+          },
+          "score": 1.5024742111812897,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.660433593150504,
+          "pwm_ser_db": 1.6600455078245233,
+          "pcm_stoi": 0.6331419897350459,
+          "pwm_stoi": 0.6322857876410518,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 6,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 19,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 12902,
+            "bright_q14": 8192
+          },
+          "score": 1.597167655262301,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.3288115935169156,
+          "pwm_ser_db": 1.3245133699483294,
+          "pcm_stoi": 0.6330193065981841,
+          "pwm_stoi": 0.6319077281845974,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 20,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 12902,
+            "bright_q14": 10240
+          },
+          "score": 1.7309216098562492,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 0.9413427631173333,
+          "pwm_ser_db": 0.932233044311368,
+          "pcm_stoi": 0.6330152527038169,
+          "pwm_stoi": 0.6338056416954022,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 21,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 12902,
+            "bright_q14": 11469
+          },
+          "score": 1.829060490230332,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 0.6885307208079208,
+          "pwm_ser_db": 0.6754613196611132,
+          "pcm_stoi": 0.6331295885097769,
+          "pwm_stoi": 0.6338852150162897,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 22,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 13926,
+            "bright_q14": 2048
+          },
+          "score": 1.4454694403394628,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.151185308629192,
+          "pwm_ser_db": 2.1485997066834357,
+          "pcm_stoi": 0.63413126462408,
+          "pwm_stoi": 0.6341959971380252,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 23,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 13926,
+            "bright_q14": 4096
+          },
+          "score": 1.4411648213279795,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.0322651421887463,
+          "pwm_ser_db": 2.033650494092191,
+          "pcm_stoi": 0.6339431230347152,
+          "pwm_stoi": 0.6327988052616842,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 24,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 13926,
+            "bright_q14": 6144
+          },
+          "score": 1.4916850820162733,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.816756108620731,
+          "pwm_ser_db": 1.8189046139456335,
+          "pcm_stoi": 0.6337626411900241,
+          "pwm_stoi": 0.632861705885548,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 25,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 13926,
+            "bright_q14": 8192
+          },
+          "score": 1.5605977314483508,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.5184313534140659,
+          "pwm_ser_db": 1.5186694781581256,
+          "pcm_stoi": 0.6336363947561531,
+          "pwm_stoi": 0.6334325164694069,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 26,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 13926,
+            "bright_q14": 10240
+          },
+          "score": 1.6769986999773323,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.1539994332393435,
+          "pwm_ser_db": 1.1488510383939763,
+          "pcm_stoi": 0.6335807411922083,
+          "pwm_stoi": 0.6340018868991831,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 8,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 27,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 13926,
+            "bright_q14": 11469
+          },
+          "score": 1.765641085704285,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 0.9106536335758053,
+          "pwm_ser_db": 0.899957485169633,
+          "pcm_stoi": 0.6336029113789261,
+          "pwm_stoi": 0.6329169514609662,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 8,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 28,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 14950,
+            "bright_q14": 0
+          },
+          "score": 1.7333956757884907,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 1.9530262084702785,
+          "pwm_ser_db": 1.9410728308780305,
+          "pcm_stoi": 0.6345107052977095,
+          "pwm_stoi": 0.6342675445833797,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 41,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 29,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 14950,
+            "bright_q14": 2048
+          },
+          "score": 1.67669649791471,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.0310689480055726,
+          "pwm_ser_db": 2.026567364081604,
+          "pcm_stoi": 0.6343245691954142,
+          "pwm_stoi": 0.6343109148934823,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 30,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 14950,
+            "bright_q14": 4096
+          },
+          "score": 1.6183034858907734,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.0014561066856813,
+          "pwm_ser_db": 2.002356867542759,
+          "pcm_stoi": 0.6341309000118749,
+          "pwm_stoi": 0.6344383052196322,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 31,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 14950,
+            "bright_q14": 6144
+          },
+          "score": 1.6008887381574843,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.866294658811689,
+          "pwm_ser_db": 1.8690194969862273,
+          "pcm_stoi": 0.6339567100397453,
+          "pwm_stoi": 0.6335513322889456,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 32,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 14950,
+            "bright_q14": 8192
+          },
+          "score": 1.6097156918198836,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.6350616913606797,
+          "pwm_ser_db": 1.636979571161308,
+          "pcm_stoi": 0.6338338220308826,
+          "pwm_stoi": 0.6339493034916147,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 33,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 14950,
+            "bright_q14": 10240
+          },
+          "score": 1.678695899452606,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.32237774159631,
+          "pwm_ser_db": 1.3203812254976535,
+          "pcm_stoi": 0.6337941282450732,
+          "pwm_stoi": 0.6334157586833334,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 34,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 14950,
+            "bright_q14": 11469
+          },
+          "score": 1.7458920273140637,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.1028635758164427,
+          "pwm_ser_db": 1.0970132886736423,
+          "pcm_stoi": 0.6338438750735828,
+          "pwm_stoi": 0.6332664196061045,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 8,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 35,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 15974,
+            "bright_q14": 0
+          },
+          "score": 9.943612568740601,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 0.42178634798890413,
+          "pwm_ser_db": 0.37674634215967895,
+          "pcm_stoi": 0.6355486393249664,
+          "pwm_stoi": 0.6355565505684654,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 48,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 36,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 15974,
+            "bright_q14": 2048
+          },
+          "score": 7.9058685636312624,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 0.8073337929101866,
+          "pwm_ser_db": 0.7721643714018187,
+          "pcm_stoi": 0.6354208508995439,
+          "pwm_stoi": 0.6347234332603698,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 5,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 37,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 15974,
+            "bright_q14": 4096
+          },
+          "score": 4.042597091005076,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.1004515882420869,
+          "pwm_ser_db": 1.0772992596830182,
+          "pcm_stoi": 0.6353009840890562,
+          "pwm_stoi": 0.6351552644899714,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 5,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 38,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 15974,
+            "bright_q14": 6144
+          },
+          "score": 2.7983469221834163,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.2790850583044384,
+          "pwm_ser_db": 1.2664375379103563,
+          "pcm_stoi": 0.6352071272819928,
+          "pwm_stoi": 0.6352948898869778,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 5,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 39,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 15974,
+            "bright_q14": 8192
+          },
+          "score": 2.4037909359242136,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.3281984589172857,
+          "pwm_ser_db": 1.3195905430371657,
+          "pcm_stoi": 0.6351738103896306,
+          "pwm_stoi": 0.6343786820733728,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 5,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 40,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 15974,
+            "bright_q14": 10240
+          },
+          "score": 2.1409447331963065,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.2433563255537843,
+          "pwm_ser_db": 1.240830636538178,
+          "pcm_stoi": 0.6352577384041855,
+          "pwm_stoi": 0.6353100259095417,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 6,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 41,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 15974,
+            "bright_q14": 11469
+          },
+          "score": 2.0397369289283303,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.1308775729700167,
+          "pwm_ser_db": 1.1252319383756118,
+          "pcm_stoi": 0.6354149629025617,
+          "pwm_stoi": 0.6343317911322589,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 6,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 42,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 16384,
+            "bright_q14": 0
+          },
+          "score": 14181236.10284107,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": -13.255265730984247,
+          "pwm_ser_db": -13.245080447466538,
+          "pcm_stoi": 0.3941976793643035,
+          "pwm_stoi": 0.3873198008605335,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 10264,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 43,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 16384,
+            "bright_q14": 2048
+          },
+          "score": 10880753.622647762,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": -12.13974140691265,
+          "pwm_ser_db": -12.281854937357146,
+          "pcm_stoi": 0.39391253264597775,
+          "pwm_stoi": 0.39445963356348135,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 44,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 16384,
+            "bright_q14": 4096
+          },
+          "score": 7995474.516448186,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": -10.870784965610342,
+          "pwm_ser_db": -11.017965584319537,
+          "pcm_stoi": 0.39359213879281013,
+          "pwm_stoi": 0.3958170794379605,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 45,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 16384,
+            "bright_q14": 6144
+          },
+          "score": 5553244.678522782,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": -9.405306181792758,
+          "pwm_ser_db": -9.509962040557392,
+          "pcm_stoi": 0.39323220246901847,
+          "pwm_stoi": 0.3918262539351434,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 46,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 16384,
+            "bright_q14": 8192
+          },
+          "score": 3558122.4117205474,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": -7.6845039710496845,
+          "pwm_ser_db": -7.801381341942073,
+          "pcm_stoi": 0.39284026013898604,
+          "pwm_stoi": 0.39233967476620835,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 47,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 16384,
+            "bright_q14": 10240
+          },
+          "score": 2000346.2829532754,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": -5.636826217129865,
+          "pwm_ser_db": -5.767868526224661,
+          "pcm_stoi": 0.3923330620650906,
+          "pwm_stoi": 0.3926428244996138,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 48,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": {
+            "pre_q14": 16384,
+            "bright_q14": 11469
+          },
+          "score": 1276282.4724746426,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": -4.230314470439332,
+          "pwm_ser_db": -4.323034981817008,
+          "pcm_stoi": 0.39188929578336557,
+          "pwm_stoi": 0.3925848322878711,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 2,
+          "spectrum_updates": 60
+        }
+      ]
+    },
+    {
+      "experiment": "existing_headers",
+      "cap_kbps": 3,
+      "samples": 19200,
+      "complete_byte_cap": 900,
+      "selected_id": 0,
+      "protected_bytes_retained": true,
+      "recorded_attempts": 50,
+      "unique_complete_outputs": 49,
+      "new_admissible_outputs": 0,
+      "search_wall_seconds": 10.163434899994172,
+      "actual_work_totals": null,
+      "candidates": [
+        {
+          "id": 0,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": "protected_incumbent",
+          "score": 1.088074621050234,
+          "admissible": true,
+          "rejected_by": [],
+          "pcm_ser_db": 4.74060257973983,
+          "pwm_ser_db": 4.73555263310815,
+          "pcm_stoi": 0.7598099244316283,
+          "pwm_stoi": 0.7593497728719046,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 1,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 7373,
+            "bright_q14": 0
+          },
+          "score": 1.0657982587261705,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 4.034024113729875,
+          "pwm_ser_db": 4.036193144600631,
+          "pcm_stoi": 0.7607707161915829,
+          "pwm_stoi": 0.760326368410232,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 3,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 2,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 7373,
+            "bright_q14": 2048
+          },
+          "score": 1.1044476140070931,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 3.514305291050702,
+          "pwm_ser_db": 3.518215745805342,
+          "pcm_stoi": 0.760841867488275,
+          "pwm_stoi": 0.7606859866782579,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 1,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 3,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 7373,
+            "bright_q14": 4096
+          },
+          "score": 1.1558584504377847,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.8943854274530176,
+          "pwm_ser_db": 2.896960026341397,
+          "pcm_stoi": 0.7608925291232375,
+          "pwm_stoi": 0.7606966330852574,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 4,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 4,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 7373,
+            "bright_q14": 6144
+          },
+          "score": 1.234525404101836,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.2191546881400797,
+          "pwm_ser_db": 2.213380728040365,
+          "pcm_stoi": 0.7607911850198142,
+          "pwm_stoi": 0.7600863993238968,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 4,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 5,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 7373,
+            "bright_q14": 8192
+          },
+          "score": 1.330602965253258,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 1.521605341511446,
+          "pwm_ser_db": 1.5063517751861077,
+          "pcm_stoi": 0.7606763263953322,
+          "pwm_stoi": 0.7596012696661618,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 5,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 6,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 7373,
+            "bright_q14": 10240
+          },
+          "score": 1.455000699785527,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 0.8258597583291092,
+          "pwm_ser_db": 0.8011170861782257,
+          "pcm_stoi": 0.7602931286828413,
+          "pwm_stoi": 0.7580938278836465,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 7,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 7373,
+            "bright_q14": 11469
+          },
+          "score": 1.530094718982955,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 0.41545238647752863,
+          "pwm_ser_db": 0.38875950252500924,
+          "pcm_stoi": 0.759793147693316,
+          "pwm_stoi": 0.7602362572691089,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 9,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 8,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 9421,
+            "bright_q14": 0
+          },
+          "score": 1.0528904382590618,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 4.597863817802617,
+          "pwm_ser_db": 4.597989642658001,
+          "pcm_stoi": 0.7605190232316353,
+          "pwm_stoi": 0.7599462166537723,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 1,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 9,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 9421,
+            "bright_q14": 2048
+          },
+          "score": 1.0707109801501988,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 4.203974027359708,
+          "pwm_ser_db": 4.213001268123412,
+          "pcm_stoi": 0.7605986542976619,
+          "pwm_stoi": 0.7593142998532418,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 10,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 9421,
+            "bright_q14": 4096
+          },
+          "score": 1.0928408465934252,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.6409870806092175,
+          "pwm_ser_db": 3.651970635974008,
+          "pcm_stoi": 0.7606668862423104,
+          "pwm_stoi": 0.7600061050708397,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 11,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 9421,
+            "bright_q14": 6144
+          },
+          "score": 1.1522384519597564,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.9706897042001206,
+          "pwm_ser_db": 2.9729100968908866,
+          "pcm_stoi": 0.7607309515340027,
+          "pwm_stoi": 0.7601696767363139,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 1,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 12,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 9421,
+            "bright_q14": 8192
+          },
+          "score": 1.224040316780376,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.246358565448603,
+          "pwm_ser_db": 2.240683729579825,
+          "pcm_stoi": 0.7607644791568758,
+          "pwm_stoi": 0.759882188081085,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 4,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 13,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 9421,
+            "bright_q14": 10240
+          },
+          "score": 1.3378020514518183,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 1.5041415161855551,
+          "pwm_ser_db": 1.487379497009065,
+          "pcm_stoi": 0.7607947836968846,
+          "pwm_stoi": 0.7593573792742851,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 5,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 14,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 9421,
+            "bright_q14": 11469
+          },
+          "score": 1.4138709406177825,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 1.0613900583829499,
+          "pwm_ser_db": 1.0421636983078055,
+          "pcm_stoi": 0.7607506300960672,
+          "pwm_stoi": 0.7613016832179829,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 15,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 10445,
+            "bright_q14": 0
+          },
+          "score": 1.057277021229732,
+          "admissible": false,
+          "rejected_by": [
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 4.749066789748299,
+          "pwm_ser_db": 4.750492476939066,
+          "pcm_stoi": 0.7602340771569848,
+          "pwm_stoi": 0.7600557798249489,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 1,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 16,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 10445,
+            "bright_q14": 2048
+          },
+          "score": 1.0606900359486713,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse"
+          ],
+          "pcm_ser_db": 4.4725325537276115,
+          "pwm_ser_db": 4.483144421952591,
+          "pcm_stoi": 0.7603283054886514,
+          "pwm_stoi": 0.7605700143206132,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 17,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 10445,
+            "bright_q14": 4096
+          },
+          "score": 1.0669952978848225,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 3.984513652986613,
+          "pwm_ser_db": 3.9979093770090275,
+          "pcm_stoi": 0.7604022913992197,
+          "pwm_stoi": 0.759293627308901,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 18,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 10445,
+            "bright_q14": 6144
+          },
+          "score": 1.111858084992591,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.349501847146832,
+          "pwm_ser_db": 3.3569740897326126,
+          "pcm_stoi": 0.7604839696110021,
+          "pwm_stoi": 0.7608499303786036,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 19,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 10445,
+            "bright_q14": 8192
+          },
+          "score": 1.1734341255592131,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.6310212633362355,
+          "pwm_ser_db": 2.6297214423434303,
+          "pcm_stoi": 0.7606092504700979,
+          "pwm_stoi": 0.7602098579589055,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 3,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 20,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 10445,
+            "bright_q14": 10240
+          },
+          "score": 1.2791061802001948,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 1.8771356045512015,
+          "pwm_ser_db": 1.8676395535287738,
+          "pcm_stoi": 0.76072824758229,
+          "pwm_stoi": 0.7605146275740009,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 4,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 21,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 10445,
+            "bright_q14": 11469
+          },
+          "score": 1.3521924735348212,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 1.4214929870699566,
+          "pwm_ser_db": 1.4066286371677474,
+          "pcm_stoi": 0.7608869001242876,
+          "pwm_stoi": 0.7599021698102651,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 5,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 22,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 11469,
+            "bright_q14": 2048
+          },
+          "score": 1.0793530170579326,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse"
+          ],
+          "pcm_ser_db": 4.6244396715924365,
+          "pwm_ser_db": 4.634961260213818,
+          "pcm_stoi": 0.7599135659041865,
+          "pwm_stoi": 0.7597542981941772,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 23,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 11469,
+            "bright_q14": 4096
+          },
+          "score": 1.0650548255818943,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse"
+          ],
+          "pcm_ser_db": 4.257400174597878,
+          "pwm_ser_db": 4.275689496912038,
+          "pcm_stoi": 0.7600120179017855,
+          "pwm_stoi": 0.7601131989317831,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 24,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 11469,
+            "bright_q14": 6144
+          },
+          "score": 1.084865718240703,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.6966612004052344,
+          "pwm_ser_db": 3.7100898059878844,
+          "pcm_stoi": 0.7601147814864241,
+          "pwm_stoi": 0.760050222650247,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 25,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 11469,
+            "bright_q14": 8192
+          },
+          "score": 1.1309556496619027,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 3.0113089314770947,
+          "pwm_ser_db": 3.0197327377854832,
+          "pcm_stoi": 0.760284200075584,
+          "pwm_stoi": 0.759832906404941,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 1,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 26,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 11469,
+            "bright_q14": 10240
+          },
+          "score": 1.2280677985779165,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.2624828585244363,
+          "pwm_ser_db": 2.2585913833376567,
+          "pcm_stoi": 0.7605137064945279,
+          "pwm_stoi": 0.7590477555955356,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 4,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 27,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 11469,
+            "bright_q14": 11469
+          },
+          "score": 1.289900642366535,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 1.8010129371566796,
+          "pwm_ser_db": 1.7894175653654263,
+          "pcm_stoi": 0.7607487248318536,
+          "pwm_stoi": 0.7609473838651618,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 4,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 28,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 12493,
+            "bright_q14": 0
+          },
+          "score": 1.1631027649817638,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 4.507967254799682,
+          "pwm_ser_db": 4.492842974797354,
+          "pcm_stoi": 0.7591437546981967,
+          "pwm_stoi": 0.7593760570653612,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 1,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 29,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 12493,
+            "bright_q14": 2048
+          },
+          "score": 1.1357943988931458,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 4.5878958549736515,
+          "pwm_ser_db": 4.593299013329009,
+          "pcm_stoi": 0.7592538122447894,
+          "pwm_stoi": 0.7589166159594369,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 30,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 12493,
+            "bright_q14": 4096
+          },
+          "score": 1.0890957520091704,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse"
+          ],
+          "pcm_ser_db": 4.394850764186614,
+          "pwm_ser_db": 4.410906228117063,
+          "pcm_stoi": 0.7593712735268728,
+          "pwm_stoi": 0.7593747789467237,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 31,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 12493,
+            "bright_q14": 6144
+          },
+          "score": 1.0821635746744187,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.9623240335791103,
+          "pwm_ser_db": 3.980210476501152,
+          "pcm_stoi": 0.759496881989426,
+          "pwm_stoi": 0.7595050811856476,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 32,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 12493,
+            "bright_q14": 8192
+          },
+          "score": 1.1013421191984443,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.354467111634639,
+          "pwm_ser_db": 3.3654455869305435,
+          "pcm_stoi": 0.7596952400436953,
+          "pwm_stoi": 0.7596584498670387,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 33,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 12493,
+            "bright_q14": 10240
+          },
+          "score": 1.1833244916776602,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.6410950839303142,
+          "pwm_ser_db": 2.6429357718847086,
+          "pcm_stoi": 0.760084698927353,
+          "pwm_stoi": 0.7594302767713268,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 3,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 34,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 12493,
+            "bright_q14": 11469
+          },
+          "score": 1.23820904764788,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.1865310229025554,
+          "pwm_ser_db": 2.1815886327591603,
+          "pcm_stoi": 0.7603598652519749,
+          "pwm_stoi": 0.7589516096310337,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 4,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 35,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 13517,
+            "bright_q14": 0
+          },
+          "score": 1.2929909368658956,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 3.993712671199512,
+          "pwm_ser_db": 3.9690555376699175,
+          "pcm_stoi": 0.7581768031845284,
+          "pwm_stoi": 0.7577610279433318,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 4,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 36,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 13517,
+            "bright_q14": 2048
+          },
+          "score": 1.23901862777037,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 4.282452158303357,
+          "pwm_ser_db": 4.275736433341778,
+          "pcm_stoi": 0.7583039259759836,
+          "pwm_stoi": 0.7580547489238713,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 37,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 13517,
+            "bright_q14": 4096
+          },
+          "score": 1.1531393354761055,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 4.309174296011852,
+          "pwm_ser_db": 4.319269324865093,
+          "pcm_stoi": 0.7584298472949775,
+          "pwm_stoi": 0.7576781506552673,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 38,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 13517,
+            "bright_q14": 6144
+          },
+          "score": 1.119130345835428,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 4.069128232322835,
+          "pwm_ser_db": 4.088596099213352,
+          "pcm_stoi": 0.7585872401073734,
+          "pwm_stoi": 0.7588843737658404,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 39,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 13517,
+            "bright_q14": 8192
+          },
+          "score": 1.0962914537639707,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.6027258732138416,
+          "pwm_ser_db": 3.6198649242185175,
+          "pcm_stoi": 0.7588262711495717,
+          "pwm_stoi": 0.7589842019698643,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 40,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 13517,
+            "bright_q14": 10240
+          },
+          "score": 1.1518910047268096,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.9759142231040387,
+          "pwm_ser_db": 2.984362927263899,
+          "pcm_stoi": 0.7592646304609318,
+          "pwm_stoi": 0.7588440226545173,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 1,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 41,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 13517,
+            "bright_q14": 11469
+          },
+          "score": 1.195508042867909,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.5512701946138434,
+          "pwm_ser_db": 2.555310334589636,
+          "pcm_stoi": 0.7596931167310167,
+          "pwm_stoi": 0.7589369204065506,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 3,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 42,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 15565,
+            "bright_q14": 0
+          },
+          "score": 3.5003957920121813,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 1.5278388656447006,
+          "pwm_ser_db": 1.464965816567883,
+          "pcm_stoi": 0.7551281250954521,
+          "pwm_stoi": 0.7549959538797306,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 7,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 43,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 15565,
+            "bright_q14": 2048
+          },
+          "score": 3.034496868235629,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.2056952591249974,
+          "pwm_ser_db": 2.161083321820472,
+          "pcm_stoi": 0.7552716688933735,
+          "pwm_stoi": 0.7552043518535014,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 44,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 15565,
+            "bright_q14": 4096
+          },
+          "score": 2.4902867782760683,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.7635866659093153,
+          "pwm_ser_db": 2.7393605047178253,
+          "pcm_stoi": 0.7554237310804132,
+          "pwm_stoi": 0.7553812540284176,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 45,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 15565,
+            "bright_q14": 6144
+          },
+          "score": 2.0563245890064223,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.1354682604223565,
+          "pwm_ser_db": 3.129381063471621,
+          "pcm_stoi": 0.7556239909008157,
+          "pwm_stoi": 0.7549492687874292,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 46,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 15565,
+            "bright_q14": 8192
+          },
+          "score": 1.6734516846719691,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 3.265440259826277,
+          "pwm_ser_db": 3.272589593353805,
+          "pcm_stoi": 0.7559297061914261,
+          "pwm_stoi": 0.7555934568201483,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 47,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 15565,
+            "bright_q14": 10240
+          },
+          "score": 1.453878223910979,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 3.1313592614466246,
+          "pwm_ser_db": 3.1430841099964897,
+          "pcm_stoi": 0.7564782527107552,
+          "pwm_stoi": 0.7558383102748513,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 1,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 48,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": {
+            "pre_q14": 15565,
+            "bright_q14": 11469
+          },
+          "score": 1.3564488152967558,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.932412177352855,
+          "pwm_ser_db": 2.9423125262688026,
+          "pcm_stoi": 0.7570317155309214,
+          "pwm_stoi": 0.757040022219001,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 1,
+          "spectrum_updates": 15
+        }
+      ]
+    },
+    {
+      "experiment": "scale_ramp",
+      "cap_kbps": 2,
+      "samples": 19200,
+      "complete_byte_cap": 600,
+      "selected_id": 0,
+      "protected_bytes_retained": true,
+      "recorded_attempts": 6,
+      "unique_complete_outputs": 6,
+      "new_admissible_outputs": 0,
+      "search_wall_seconds": 26.780367500003194,
+      "actual_work_totals": {
+        "full_model_reconstructions": 1,
+        "parameter_trials": 36020,
+        "selected_block_replays": 240,
+        "pulse_position_sign_trials": 18565120,
+        "committed_group_replays": 145040,
+        "lookahead_sample_renders": 5664640,
+        "lookahead_group_renders": 70808
+      },
+      "candidates": [
+        {
+          "id": 0,
+          "version": 8,
+          "file_bytes": 578,
+          "origin": "protected_incumbent",
+          "score": 1.434976502862968,
+          "admissible": true,
+          "rejected_by": [],
+          "pcm_ser_db": 2.1652999509140223,
+          "pwm_ser_db": 2.1611316486968564,
+          "pcm_stoi": 0.6343245894536561,
+          "pwm_stoi": 0.6346180517903891,
+          "pcm_source_period_matches": 2,
+          "pwm_source_period_matches": 2,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 37,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 1,
+          "version": 10,
+          "file_bytes": 578,
+          "origin": "payload_only_new_ramp_semantics",
+          "score": 1.472153848731968,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse"
+          ],
+          "pcm_ser_db": 2.1374318039068956,
+          "pwm_ser_db": 2.1301695503637443,
+          "pcm_stoi": 0.646753796702133,
+          "pwm_stoi": 0.6471956730430829,
+          "pcm_source_period_matches": 2,
+          "pwm_source_period_matches": 2,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 26,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 2,
+          "version": 10,
+          "file_bytes": 578,
+          "origin": {
+            "full_refit": true,
+            "clip_guard": false,
+            "next_block_lookahead": false
+          },
+          "score": 1.1566225420153469,
+          "admissible": false,
+          "rejected_by": [
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 2.27442153207807,
+          "pwm_ser_db": 2.2689859164880852,
+          "pcm_stoi": 0.6404266731567738,
+          "pwm_stoi": 0.6416171242788627,
+          "pcm_source_period_matches": 2,
+          "pwm_source_period_matches": 2,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 43,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 3,
+          "version": 10,
+          "file_bytes": 578,
+          "origin": {
+            "full_refit": true,
+            "clip_guard": true,
+            "next_block_lookahead": false
+          },
+          "score": 1.1157186543635944,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pwm8_sse"
+          ],
+          "pcm_ser_db": 2.1238528148215012,
+          "pwm_ser_db": 2.121204976523503,
+          "pcm_stoi": 0.6401012058263241,
+          "pwm_stoi": 0.6401107296051314,
+          "pcm_source_period_matches": 2,
+          "pwm_source_period_matches": 2,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 4,
+          "version": 10,
+          "file_bytes": 578,
+          "origin": {
+            "full_refit": true,
+            "clip_guard": false,
+            "next_block_lookahead": true
+          },
+          "score": 1.6365790397961133,
+          "admissible": false,
+          "rejected_by": [
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 2.2933310470096075,
+          "pwm_ser_db": 2.2940610348517483,
+          "pcm_stoi": 0.6678920041130181,
+          "pwm_stoi": 0.6685913434245315,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 31,
+          "spectrum_updates": 60
+        },
+        {
+          "id": 5,
+          "version": 10,
+          "file_bytes": 578,
+          "origin": {
+            "full_refit": true,
+            "clip_guard": true,
+            "next_block_lookahead": true
+          },
+          "score": 1.742674606417388,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 1.4849466952575427,
+          "pwm_ser_db": 1.4847135018080573,
+          "pcm_stoi": 0.5905800285752003,
+          "pwm_stoi": 0.5903870012718879,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 60
+        }
+      ]
+    },
+    {
+      "experiment": "scale_ramp",
+      "cap_kbps": 3,
+      "samples": 19200,
+      "complete_byte_cap": 900,
+      "selected_id": 0,
+      "protected_bytes_retained": true,
+      "recorded_attempts": 6,
+      "unique_complete_outputs": 6,
+      "new_admissible_outputs": 0,
+      "search_wall_seconds": 11.944572699983837,
+      "actual_work_totals": {
+        "full_model_reconstructions": 1,
+        "parameter_trials": 75512,
+        "selected_block_replays": 480,
+        "pulse_position_sign_trials": 19453952,
+        "committed_group_replays": 607936,
+        "lookahead_sample_renders": 5991680,
+        "lookahead_group_renders": 299584
+      },
+      "candidates": [
+        {
+          "id": 0,
+          "version": 5,
+          "file_bytes": 900,
+          "origin": "protected_incumbent",
+          "score": 1.088074621050234,
+          "admissible": true,
+          "rejected_by": [],
+          "pcm_ser_db": 4.74060257973983,
+          "pwm_ser_db": 4.73555263310815,
+          "pcm_stoi": 0.7598099244316283,
+          "pwm_stoi": 0.7593497728719046,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 1,
+          "version": 10,
+          "file_bytes": 900,
+          "origin": "payload_only_new_ramp_semantics",
+          "score": 1.1367045762212775,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 4.526264566441968,
+          "pwm_ser_db": 4.519022059642591,
+          "pcm_stoi": 0.7468207263229801,
+          "pwm_stoi": 0.746181079090706,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 6,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 2,
+          "version": 10,
+          "file_bytes": 900,
+          "origin": {
+            "full_refit": true,
+            "clip_guard": false,
+            "next_block_lookahead": false
+          },
+          "score": 1.111463650807289,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_stoi",
+            "pwm8_stoi",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 4.760816997653338,
+          "pwm_ser_db": 4.747942739866091,
+          "pcm_stoi": 0.7310959911141102,
+          "pwm_stoi": 0.7308126204404791,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 20,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 3,
+          "version": 10,
+          "file_bytes": 900,
+          "origin": {
+            "full_refit": true,
+            "clip_guard": true,
+            "next_block_lookahead": false
+          },
+          "score": 1.1396175321050088,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_stoi",
+            "pwm8_stoi"
+          ],
+          "pcm_ser_db": 4.773833098309503,
+          "pwm_ser_db": 4.767131876925697,
+          "pcm_stoi": 0.7401796391817482,
+          "pwm_stoi": 0.739438242415737,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 4,
+          "version": 10,
+          "file_bytes": 900,
+          "origin": {
+            "full_refit": true,
+            "clip_guard": false,
+            "next_block_lookahead": true
+          },
+          "score": 1.1573464771907498,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_stoi",
+            "pwm8_stoi",
+            "hard_clipping"
+          ],
+          "pcm_ser_db": 4.7961246848632175,
+          "pwm_ser_db": 4.789424966281396,
+          "pcm_stoi": 0.7417355027396516,
+          "pwm_stoi": 0.7416972429368281,
+          "pcm_source_period_matches": 1,
+          "pwm_source_period_matches": 1,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 35,
+          "spectrum_updates": 15
+        },
+        {
+          "id": 5,
+          "version": 10,
+          "file_bytes": 900,
+          "origin": {
+            "full_refit": true,
+            "clip_guard": true,
+            "next_block_lookahead": true
+          },
+          "score": 1.1590450980318274,
+          "admissible": false,
+          "rejected_by": [
+            "pcm16_sse",
+            "pcm16_stoi",
+            "pwm8_sse",
+            "pwm8_stoi",
+            "source_period_tolerance"
+          ],
+          "pcm_ser_db": 4.622941819773139,
+          "pwm_ser_db": 4.627099542617755,
+          "pcm_stoi": 0.7393507268889418,
+          "pwm_stoi": 0.7392165279311318,
+          "pcm_source_period_matches": 0,
+          "pwm_source_period_matches": 0,
+          "source_period_frames": 9,
+          "hard_clipped_samples": 0,
+          "spectrum_updates": 15
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Numerical proxies are not listening scores",
+    "Measured pilot wall times exclude the fixed preflight and library preparation",
+    "Target cost probes are separate same-payload/density diagnostics in decoder-costs.json",
+    "No additional quality searches or heldout rollout were performed after pilot rejection"
+  ]
+}
