@@ -1,11 +1,11 @@
-# Exact bounded forced-pitch products: isolated prototype
+# Exact bounded forced-pitch products
 
 Target: ATmega328P / classic AVR5 with MUL/MULSU, GNU AVR ABI, AVR GCC 7.3.0,
 `-Os -flto -mcall-prologues -mrelax`, O2 scalar wrappers. Original project
 arithmetic/register adaptation of the pinned Xiph Speex forced-pitch formulas.
-Retain existing Xiph BSD provenance. **Not connected to production decoding
-yet**: the results below are scalar measurements without interrupts, not new
-profile or real-time admission.
+Retain existing Xiph BSD provenance. The initial scalar prototype below is now
+connected to NB3.95/WB5.75. Scalar timings exclude interrupts; complete-image
+and real-time admission are recorded separately below.
 
 For signed16 x and coefficient c in 0..63:
 
@@ -62,5 +62,12 @@ Explicit C Q6 remains exact but its wrapper takes 88..91 cycles on this MCU.
 Retained reports are `Codecs/Speex/AVR/reports/forced-math-unit-{asm,c}.json`.
 Build with `--avr-gcc`; run the verifier on `build/forced-math-unit/asm` and
 `build/forced-math-unit/c`. Only isolated C arithmetic executes, never the C
-decoder. Next: measure the complete controller, check its PCM/state and all
-affected profiles, then admit loaded IRQ/SPI before selecting this backend.
+decoder.
+
+The combined complete-image stage saves about 374 cycles per speech frame,
+0.117 CPU percentage points, and 88 B bare Flash without increasing static
+SRAM or peak stack. Full raw, +3%-load WB IRQ and actual SPI remain exact with
+zero underruns. WB SPI minimum queue grows 31 -> 33 samples. Zero-coefficient
+frames cost five extra caller cycles, included in the measured totals. NB1's
+coefficient caller is unchanged; its 0..64 domain is preserved for later reuse.
+[Exact workload, variant comparison and admission](../../Codecs/Speex/AVR/WB_FORCED_MATH.md).

@@ -70,6 +70,10 @@ products and history words in nonzero frames without changing quantizers.
 Speech CPU becomes 28.76% NB3.95 / 71.78% WB5.75, with full output checks and
 the same C fallback selection. The preceding zero-coefficient path is retained.
 
+[Bounded ancestry/coefficient arithmetic](WB_FORCED_MATH.md) subsequently lowers
+speech CPU to 28.64% / 71.66%, shrinks bare Flash 88 B and preserves all rounding
+and output checks. Submode1's coefficient caller is not changed by that stage.
+
 `SPEEX_ENABLE_NB8=1` adds 79-bit / 10-byte NB and 115-bit / 15-byte WB
 packets. `--low-rates 3` enables both new pairs. The original forced pitch
 builds prediction before adding innovation; feeding completed output back

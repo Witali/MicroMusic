@@ -76,6 +76,14 @@ Nonzero NB3.95/WB5.75 frames use **640 fewer MULs**; speech decoder CPU falls
 shrinks 13 B and WB stack stays fixed. Full PCM, loaded WB IRQ and scheduled
 SPI checks retain exact output; WB SPI minimum queue improves 23 -> 31 samples.
 
+[Bounded forced-pitch arithmetic](WB_FORCED_MATH.md) then replaces the ancestry
+product with exact signed22/Q6 arithmetic and narrows coefficient calculation
+to unsigned16. NB3.95/WB5.75 speech CPU falls **28.76% -> 28.64% / 71.78% ->
+71.66%**; bare Flash shrinks 88 B with unchanged static SRAM and peak stack.
+Full PCM, loaded WB IRQ and SPI checks stay exact without underruns; WB SPI
+minimum queue improves 31 -> 33. The Q6 ASM domain is exhaustively verified
+over 4194304 pairs, with explicitly selectable C preserved.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100
