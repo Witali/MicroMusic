@@ -107,6 +107,12 @@ All 10627 raw frames, both full +8%/+11% IRQ runs and 3600 continuous SPI frames
 remain exact without underruns. Equivalent C is selectable on AVR itself;
 the general primitive retains arbitrary-context behavior.
 
+[Prepared-context ASM dispatch](WB_PREPARED_DISPATCH.md) then moves the proven
+selector beside the shared prologue. Every WB3.95 frame saves 52/60 cycles;
+speech CPU improves **69.222% ->69.205%**, Flash shrinks 18 B and RAM stays fixed.
+Full raw, +8%/+11% IRQ and scheduled SPI retain exact PCM/PWM and zero underruns.
+The C dispatcher is explicitly selectable and both C images remain byte-identical.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

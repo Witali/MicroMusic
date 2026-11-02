@@ -102,6 +102,7 @@ noise_gain = (uint16_t)(32767u - ((uint16_t)g<<9) + previous_gain);
 ```
 
 Host checks cover all 65536 pulse amplitudes and all 65 gains. Retain bounds/casts
-when adapting. Prepared dispatch inside ASM, finite pitch-root lookup and paired
-opposite-noise prefold remain unmeasured candidates. Do not use completed innovation as prediction.
+when adapting. [Prepared dispatch inside ASM](speex-prepared-dispatch.md) is now
+admitted separately. Finite pitch-root lookup and paired opposite-noise prefold
+remain unmeasured candidates. Do not use completed innovation as prediction.
 Measure compiled callers, stack and loaded IRQ/SPI before accepting them.

@@ -13,8 +13,8 @@ ADDED=['tests/avr_nb1_zero_vocoder.c','tests/build_nb1_zero_vocoder.py','tests/v
        'tests/audit_nb1_zero_synthesis.py']
 
 
-def timing(corpus):
-    traces=[json.loads((OUT/e/'wb395/packet-timing.json').read_text()) for e in ['before','after']]
+def timing(corpus,*,out=OUT):
+    traces=[json.loads((out/e/'wb395/packet-timing.json').read_text()) for e in ['before','after']]
     assert all(t['frames']==10627 and len(t['streams'])==18 for t in traces)
     gains=list(map(int,re.search(r'ol_gain_table\[32\]=\{([^}]+)\}',(ROOT/'vendor/speex-1.2.1/libspeex/nb_celp.c').read_text())[1].split(',')))
     groups={name:dict(frames=0,beforeCycles=0,afterCycles=0,deltaMin=None,deltaMax=None) for name in ['zero','ordinary']}

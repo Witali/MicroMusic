@@ -3052,6 +3052,11 @@ incoming cursor state, share the prologue/epilogue, preserve arbitrary-table
 behavior in the general entry and remove only proven zero work. Its portable C
 equivalent and explicit backend selection are verified on the same vectors.
 
+[Tail-dispatch beside a shared prologue](speex-prepared-dispatch.md): retain
+arguments, reuse a dead pointer register after its final displacement read and
+branch into existing bodies without another stack frame. Includes measured
+complete-caller gains, explicit C selection and the official ISA constraints.
+
 [Bounded forced-pitch arithmetic](speex-bounded-forced-math.md): exact
 signed22/Q6 alignment and unsigned16 coefficient mapping, exhaustive AVR input
 domain and explicitly selectable C, with measured full decoder/IRQ/SPI admission.
