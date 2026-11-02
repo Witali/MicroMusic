@@ -11,6 +11,17 @@
 #include "lowrate_mean_kernel.inc"
 #if SPEEX_ENABLE_NB1 && SPEEX_ENABLE_WB1
 .text
+.global speex_nb1_synthesize40_prepared_avr
+.type speex_nb1_synthesize40_prepared_avr,@function
+speex_nb1_synthesize40_prepared_avr:
+    /* Context pointer remains in r20:r21. The final displacement load may
+     * reuse ZH: there is no postincrement or subsequent read through Z.
+     * Preserve all arguments and r1; only caller-clobbered r0/Z are changed. */
+    movw r30,r20
+    ldd r0,Z+(2*SPEEX_NB1_PREVIOUS)
+    ldd r31,Z+(2*SPEEX_NB1_PREVIOUS+1)
+    or r0,r31
+    breq speex_nb1_synthesize40_zero_avr
 .global speex_nb1_synthesize40_avr
 .type speex_nb1_synthesize40_avr,@function
 speex_nb1_synthesize40_avr:
@@ -175,4 +186,5 @@ speex_nb1_synthesize40_zero_avr:
     rjmp .Lnb1_done
 .size speex_nb1_synthesize40_avr,.-speex_nb1_synthesize40_avr
 .size speex_nb1_synthesize40_zero_avr,.-speex_nb1_synthesize40_zero_avr
+.size speex_nb1_synthesize40_prepared_avr,.-speex_nb1_synthesize40_prepared_avr
 #endif

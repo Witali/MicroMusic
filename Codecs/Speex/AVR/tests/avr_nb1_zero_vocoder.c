@@ -18,7 +18,7 @@ int main(void)
         else if(voc_command==2)speex_nb1_synthesize40_c(voc_out,voc_classes,voc_context,&voc_cursor);
         else if(voc_command==3)speex_nb1_synthesize40_zero_avr(voc_out,voc_classes,voc_context,&voc_cursor);
         else if(voc_command==4)speex_nb1_synthesize40_zero_c(voc_out,voc_classes,voc_context,&voc_cursor);
-        else speex_nb1_synthesize40_zero(voc_out,voc_classes,voc_context,&voc_cursor);
+        else speex_nb1_synthesize40_prepared(voc_out,voc_classes,voc_context,&voc_cursor);
         voc_command=0;voc_status=2;
     }
 }

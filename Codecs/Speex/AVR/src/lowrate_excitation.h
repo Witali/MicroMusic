@@ -226,8 +226,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_subframe(DecState *st,int16_
     SpeexNb1Cursor cursor={st->voc_m1,context[SPEEX_NB1_PRIOR_NOISE],st->voc_mean,st->voc_offset,2};
     uint8_t *symbols=(uint8_t *)st->excBuf+40*sub;
     speex_low_noise_indices40(symbols,&st->seed);
-    if(speex_nb1_context_is_zero(context))speex_nb1_synthesize40_zero(exc,symbols,context,&cursor);
-    else speex_nb1_synthesize40(exc,symbols,context,&cursor);
+    speex_nb1_synthesize40_prepared(exc,symbols,context,&cursor);
     st->voc_offset=cursor.phase;st->voc_m1=cursor.prior_pulse;st->voc_mean=cursor.mean;
     st->voc_previous=st->excBuf[SPEEX_NB1_VALUES_WORD+cursor.last];
     context[SPEEX_NB1_PRIOR_NOISE]=cursor.prior_noise;
