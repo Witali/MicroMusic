@@ -81,6 +81,31 @@ in simulation, not C real-time or physical-board/analog behavior. Encoder
 rate prices may use serialized bits for proposals, but the final resource
 frontier must use actual complete application measurements.
 
+The 2026-11-02 low-rate pair shows why optional parser cost matters for short
+clips. On the same 2.4-second phrase, sparse80 stores 578 B versus 900 B for
+v5/P4, but requires 4880 B versus 4574 B of program Flash. The complete
+images therefore differ by only 16 B: 5458 versus 5474 B. Both pass every
+PWM sample with active timer interrupts at 16 MHz / 8 kHz, queue256/prefill192,
+in simavr and the exact browser ATmega328P core. Sparse80 remains an explicit
+default-off stream-parser option; the arithmetic/backend guards are separate.
+The ordinary v5 control is byte-identical when that parser is off. This is
+measured parser/layout cost for two streams, not a quality comparison or a
+general speedup. [Full costs, numerical fallback limits and reproduction](../../Codecs/LPX/research/low-bitrate-speech-2026-11-02/FIRMWARE.md).
+
+The later frozen 27-case corpus admission builds both caps independently:
+54 complete four-second images and 1,728,000 exact PWM samples with zero
+underruns under live simavr interrupts. Full Flash ranges are 5458–5866 B at
+2 kbit/s and 5988–6074 B at 3 kbit/s; program ranges are 4879–4880 and
+4573–4574 B respectively. All use 756 B static SRAM, at most 60 B observed
+stack, and minimum queue192. These are complete per-image measurements, not
+payload-only estimates. [Anonymous per-image receipts](../../Codecs/LPX/research/low-bitrate-speech-2026-11-02/corpus-firmware.json).
+
+The final selections after three same-format quality rounds also pass all
+54 production-image gates: 23 changed streams were freshly simulated and 31
+identical streams reused fully revalidated image/timing receipts. Final full
+Flash spans 5456–5866 B at 2 kbit/s and 5988–6074 B at 3 kbit/s; the program
+and SRAM ranges above are unchanged. [Final active-IRQ evidence](../../Codecs/LPX/research/low-bitrate-speech-2026-11-02/CAMPAIGN_FINAL_FIRMWARE.md).
+
 [Perceptual pair evidence](../../Codecs/LPX/research/v5-encoder-candidate-admission-2026-10-28/README.md)
 and [held-out smaller-and-better pair](../../Codecs/LPX/research/v5-pareto95-player-admission-2026-10-28/README.md)
 retain the original project method, source/toolchain provenance and exact

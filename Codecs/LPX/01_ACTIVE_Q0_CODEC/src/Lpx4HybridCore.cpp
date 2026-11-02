@@ -253,9 +253,16 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  if(flags!=LPX4_FIXED_SPEECH_FLAGS){error_=UNSUPPORTED;return false;}
 #endif
 #if LPX4_COMPACT_ONLY
+#if LPX4_ENABLE_SPARSE80
+ if(version==8 && flags==15)speechProfile_=6|64;
+ else{
+#endif
  if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
  // Compact-only needs one flags byte: bit1 selects6k, bit7 extra pulses.
  speechProfile_=flags;
+#if LPX4_ENABLE_SPARSE80
+ }
+#endif
 #else
 #if LPX4_ENABLE_SPEECH_COMPACT
  if(version==5 && ((flags&127)==4 || (flags&127)==6)){
@@ -282,7 +289,12 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
  const uint16_t frames=read16(),blocks=read16();
 #if LPX4_COMPACT_ONLY
- const bool geometry=frames==320 && blocks==160;
+ const bool geometry=frames==320 && blocks==
+#if LPX4_ENABLE_SPARSE80
+ ((speechProfile_&64)?320:160);
+#else
+ 160;
+#endif
  const uint16_t payload=read16();
  // Subtract the header from the bounded input span; no untrusted wide sum.
  if(sampleCount_>64000 || !sampleCount_ || (size<22 || payload!=(uint16_t)(size-22))){
@@ -464,6 +476,10 @@ bool Lpx4HybridCore::readFrame(){
   speechHalf_^=1;
 #endif
 #if LPX4_COMPACT_ONLY
+#if LPX4_ENABLE_SPARSE80
+  // readFrame toggled bit3: only the first160 half reads320 metadata.
+  if((speechProfile_&64) && !(subIndex_&8))return !error_;
+#endif
   const uint8_t blockScale=readBits(5);
 #else
   mode_=6;quantLimit_=32;
@@ -576,6 +592,13 @@ bool Lpx4HybridCore::readBlock(){
 }
 #endif
 bool Lpx4HybridCore::readSubframe(){
+#if LPX4_ENABLE_SPARSE80
+ if(speechProfile_&64){
+  const uint8_t code=readBits(6);
+  pulsePos_[0]=code+((code+2)>>2);pulseAmp_[0]=readOne()?7:-8;
+  pulseIndex_=0;pulseCount_=1;return !error_;
+ }
+#endif
 #if LPX4_ENABLE_SPEECH
 #if !LPX4_COMPACT_ONLY
  if(LPX4_SPEECH_FLAGS){
@@ -789,7 +812,12 @@ bool Lpx4HybridCore::readUnary8(uint8_t& high){
 bool Lpx4HybridCore::decodeCode(int8_t& q){
 #if LPX4_COMPACT_ONLY
  int16_t decoded=pitchPredict();
+#if LPX4_ENABLE_SPARSE80
+ const uint8_t phase=(speechProfile_&64)?(subIndex_&3):(subIndex_&1);
+ if(pulseIndex_<pulseCount_ && pulsePos_[pulseIndex_]==subPos_+phase*20){
+#else
  if(pulseIndex_<pulseCount_ && pulsePos_[pulseIndex_]==(subPos_+((subIndex_&1)?20:0))){
+#endif
   decoded+=pulseAmp_[pulseIndex_++];
  }
  if(error_)return false;
@@ -1047,7 +1075,11 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #if !LPX4_COMPACT_ONLY
         if(!(subIndex_&3)&&!readBlock())return false;
 #endif
+#if LPX4_ENABLE_SPARSE80
+        if(!(subIndex_&((speechProfile_&64)?3:1))&&!readSubframe())return false;
+#else
         if(!(subIndex_&1)&&!readSubframe())return false;
+#endif
         interpolateLsf(
 #if LPX4_COMPACT_ONLY
             subIndex_&7
@@ -1153,6 +1185,26 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     --remaining_;
 #endif
     ++subPos_;
+#if LPX4_ENABLE_SPARSE80
+    // Validate all stored last-packet pulse fields even for a partial tail.
+    // This consumes input padding only, without producing extra samples.
+    if((speechProfile_&64) &&
+#if LPX4_BATCHED_REMAINING
+       remaining_<=20 && subPos_==remaining_){
+#else
+       !remaining_){
+#endif
+        const uint16_t tail=(uint16_t)sampleCount_%320u;
+        uint8_t unread=tail?(uint16_t)(320u-tail)/80u:0;
+        while(unread--)readBits(7);
+#if LPX4_ROM_POINTER
+        const bool trailing=bytes_!=0;
+#else
+        const bool trailing=cursor_!=bytes_;
+#endif
+        if(error_||trailing||bitBuffer_){error_=CORRUPT_STREAM;return false;}
+    }
+#endif
     if(subPos_==20){
         subPos_=0;
 #if LPX4_BATCHED_REMAINING

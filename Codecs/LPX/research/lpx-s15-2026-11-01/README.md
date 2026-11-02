@@ -1,5 +1,10 @@
 # LPX-S15: experimental low-rate example
 
+Historical experiment below. The same syntax now has a separate explicit
+[sparse80 decoder option](../../01_ACTIVE_Q0_CODEC/SPARSE80.md) for the
+2 kbit/s work; it remains disabled in ordinary v5 builds. The original
+1.5 kbit/s search and measurements are preserved as historical evidence.
+
 This is a separate research format, **version 8 / mode 15**. It is not v5,
 is not accepted by the production decoder, and has no target firmware,
 Flash, RAM, CPU, real-time or perceptual-quality admission. Its immediate

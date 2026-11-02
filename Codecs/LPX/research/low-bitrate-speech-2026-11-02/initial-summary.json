@@ -1,0 +1,211 @@
+{
+  "schema": "lpx-initial-corpus-aggregate-v1",
+  "cases": 27,
+  "budgeted_jobs": 54,
+  "passed_jobs": 54,
+  "source_audio_seconds": 108,
+  "rows": [
+    {
+      "group": "all_speech",
+      "kbps": 2,
+      "cases": 20,
+      "changed_cases": 17,
+      "bytes_sum": 18987,
+      "candidate_count_sum": 140,
+      "measured_search_wall_seconds_sum": 1489.2447532000078,
+      "baseline": {
+        "pwm_ser_db": 4.0607274906123045,
+        "mean_pwm_stoi": 0.6632521178171025,
+        "source_period_coverage": 0.3654946852003271,
+        "source_period_frames": 1223,
+        "within_tolerance_frames": 447,
+        "clipped_samples": 1
+      },
+      "selected": {
+        "pwm_ser_db": 4.607793776281518,
+        "mean_pwm_stoi": 0.6755596252669084,
+        "source_period_coverage": 0.526573998364677,
+        "source_period_frames": 1223,
+        "within_tolerance_frames": 644,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "group": "all_speech",
+      "kbps": 3,
+      "cases": 20,
+      "changed_cases": 20,
+      "bytes_sum": 29973,
+      "candidate_count_sum": 260,
+      "measured_search_wall_seconds_sum": 2791.9467478000442,
+      "baseline": {
+        "pwm_ser_db": 4.784334972730172,
+        "mean_pwm_stoi": 0.5936550270177532,
+        "source_period_coverage": 0.3883892068683565,
+        "source_period_frames": 1223,
+        "within_tolerance_frames": 475,
+        "clipped_samples": 0
+      },
+      "selected": {
+        "pwm_ser_db": 7.341923043763362,
+        "mean_pwm_stoi": 0.7021435104552503,
+        "source_period_coverage": 0.6663941128372853,
+        "source_period_frames": 1223,
+        "within_tolerance_frames": 815,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "group": "tuning_speech",
+      "kbps": 2,
+      "cases": 10,
+      "changed_cases": 10,
+      "bytes_sum": 9495,
+      "candidate_count_sum": 70,
+      "measured_search_wall_seconds_sum": 764.1157392000023,
+      "baseline": {
+        "pwm_ser_db": 4.959526945032881,
+        "mean_pwm_stoi": 0.6300807739553138,
+        "source_period_coverage": 0.4,
+        "source_period_frames": 755,
+        "within_tolerance_frames": 302,
+        "clipped_samples": 0
+      },
+      "selected": {
+        "pwm_ser_db": 5.697002362952351,
+        "mean_pwm_stoi": 0.6438536791477862,
+        "source_period_coverage": 0.5774834437086093,
+        "source_period_frames": 755,
+        "within_tolerance_frames": 436,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "group": "tuning_speech",
+      "kbps": 3,
+      "cases": 10,
+      "changed_cases": 10,
+      "bytes_sum": 14991,
+      "candidate_count_sum": 130,
+      "measured_search_wall_seconds_sum": 1365.0486536000099,
+      "baseline": {
+        "pwm_ser_db": 5.908696182520831,
+        "mean_pwm_stoi": 0.5753726601098399,
+        "source_period_coverage": 0.47152317880794703,
+        "source_period_frames": 755,
+        "within_tolerance_frames": 356,
+        "clipped_samples": 0
+      },
+      "selected": {
+        "pwm_ser_db": 9.129075231819805,
+        "mean_pwm_stoi": 0.6713702125715348,
+        "source_period_coverage": 0.7284768211920529,
+        "source_period_frames": 755,
+        "within_tolerance_frames": 550,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "group": "heldout_speech",
+      "kbps": 2,
+      "cases": 10,
+      "changed_cases": 7,
+      "bytes_sum": 9492,
+      "candidate_count_sum": 70,
+      "measured_search_wall_seconds_sum": 725.1290140000056,
+      "baseline": {
+        "pwm_ser_db": 3.483331171529006,
+        "mean_pwm_stoi": 0.6964234616788911,
+        "source_period_coverage": 0.30982905982905984,
+        "source_period_frames": 468,
+        "within_tolerance_frames": 145,
+        "clipped_samples": 1
+      },
+      "selected": {
+        "pwm_ser_db": 3.9306840976082826,
+        "mean_pwm_stoi": 0.7072655713860303,
+        "source_period_coverage": 0.4444444444444444,
+        "source_period_frames": 468,
+        "within_tolerance_frames": 208,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "group": "heldout_speech",
+      "kbps": 3,
+      "cases": 10,
+      "changed_cases": 10,
+      "bytes_sum": 14982,
+      "candidate_count_sum": 130,
+      "measured_search_wall_seconds_sum": 1426.8980942000344,
+      "baseline": {
+        "pwm_ser_db": 4.089530298886947,
+        "mean_pwm_stoi": 0.6119373939256665,
+        "source_period_coverage": 0.25427350427350426,
+        "source_period_frames": 468,
+        "within_tolerance_frames": 119,
+        "clipped_samples": 0
+      },
+      "selected": {
+        "pwm_ser_db": 6.3499750375422614,
+        "mean_pwm_stoi": 0.7329168083389657,
+        "source_period_coverage": 0.5662393162393162,
+        "source_period_frames": 468,
+        "within_tolerance_frames": 265,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "group": "negative_controls",
+      "kbps": 2,
+      "cases": 7,
+      "changed_cases": 6,
+      "bytes_sum": 5653,
+      "candidate_count_sum": 45,
+      "measured_search_wall_seconds_sum": 514.260826200014,
+      "baseline": {
+        "pwm_ser_db": -10.961837331903793,
+        "mean_pwm_stoi": null,
+        "source_period_coverage": 0.44014510278113667,
+        "source_period_frames": 827,
+        "within_tolerance_frames": 364,
+        "clipped_samples": 10708
+      },
+      "selected": {
+        "pwm_ser_db": -10.93337700710614,
+        "mean_pwm_stoi": null,
+        "source_period_coverage": 0.6299879081015719,
+        "source_period_frames": 827,
+        "within_tolerance_frames": 521,
+        "clipped_samples": 10702
+      }
+    },
+    {
+      "group": "negative_controls",
+      "kbps": 3,
+      "cases": 7,
+      "changed_cases": 6,
+      "bytes_sum": 10402,
+      "candidate_count_sum": 73,
+      "measured_search_wall_seconds_sum": 641.1724878000095,
+      "baseline": {
+        "pwm_ser_db": -10.940092009703221,
+        "mean_pwm_stoi": null,
+        "source_period_coverage": 0.49939540507859737,
+        "source_period_frames": 827,
+        "within_tolerance_frames": 413,
+        "clipped_samples": 10677
+      },
+      "selected": {
+        "pwm_ser_db": -10.817045524807057,
+        "mean_pwm_stoi": null,
+        "source_period_coverage": 0.6457073760580411,
+        "source_period_frames": 827,
+        "within_tolerance_frames": 534,
+        "clipped_samples": 10359
+      }
+    }
+  ],
+  "trial_counter_scope": "Measured per unique output only; duplicate-output calls omitted pending reconstruction",
+  "wall_scope": "Sum of actual per-search wall times under two to four concurrent workers; not elapsed campaign time or CPU time"
+}

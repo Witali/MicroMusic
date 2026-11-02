@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "status": "measured-isa-simulators",
+  "physicalBoardTested": false,
+  "scope": "Two frozen 2.4-second LPX speech streams; firmware timing is not a corpus-wide guarantee",
+  "target": "ATmega328P",
+  "core": "AVR5",
+  "cpuHz": 16000000,
+  "sampleHz": 8000,
+  "pwmHz": 62500,
+  "output": "OC2B / PD3 / Arduino D3",
+  "arithmetic": "Explicit LPX4_ENABLE_ASM=1 with compiler AVR5/hardware-MUL guards; selectable C fallback retained",
+  "compiler": "AVR-GCC 7.3.0",
+  "options": [
+    "-mmcu=atmega328p",
+    "-DF_CPU=16000000UL",
+    "-Os",
+    "-std=gnu++11",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-DLPX4_AVR_DOT_UNROLL=1",
+    "-DLPX4_FUNCTION_TUNING=0",
+    "-DLPX4_V3_FEATURES=24",
+    "-DLPX4_ENABLE_SPEECH=1",
+    "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+    "-DLPX4_COMPACT_ONLY=1",
+    "-DLPX4_ENABLE_ASM=1",
+    "-flto",
+    "-mcall-prologues",
+    "-mrelax",
+    "-DLPX_PLAYER_QUEUE=256",
+    "-DLPX_PLAYER_PREFILL=192",
+    "-DLPX_PLAYER_IRQ_LOAD=0"
+  ],
+  "defaultOffControl": {
+    "audioBytes": 1008,
+    "fullFlashBytes": 5582,
+    "newAndHeadCoreImagesByteIdentical": true
+  },
+  "cControl": {
+    "profile": "v5-p4-3k-provisional",
+    "audioBytes": 895,
+    "producedPwmSamples": 19200,
+    "allProducedPwmMatchesAsmAndNative": true,
+    "underruns": 8493,
+    "realTimeSupported": false
+  },
+  "measurements": [
+    {
+      "profile": "sparse80-2k",
+      "targetKbps": 2,
+      "actualBitrateBps": 1926.6666666666667,
+      "samples": 19200,
+      "audioBytes": 578,
+      "programFlashBytes": 4880,
+      "fullFlashBytes": 5458,
+      "staticSramBytes": 756,
+      "peakStackBytes": 60,
+      "freeSramAtPeakBytes": 1231,
+      "queueBytes": 256,
+      "prefillSamples": 192,
+      "simavr": {
+        "completePwmExact": true,
+        "playedSamples": 19200,
+        "underruns": 0,
+        "minimumQueueBeforeEof": 192,
+        "timerIntervalCycles": [
+          1997,
+          2003
+        ],
+        "totalCycles": 38567769
+      },
+      "browserCore": {
+        "completePwmExact": true,
+        "playedSamples": 19200,
+        "interrupts": 19200,
+        "lostInterrupts": 0,
+        "underruns": 0,
+        "timerIntervalCycles": [
+          1995,
+          2005
+        ],
+        "playbackCycles": 38563756
+      },
+      "extraOptions": [
+        "-DLPX4_ENABLE_SPARSE80=1"
+      ]
+    },
+    {
+      "profile": "v5-p4-3k",
+      "targetKbps": 3,
+      "actualBitrateBps": 3000.0,
+      "samples": 19200,
+      "audioBytes": 900,
+      "programFlashBytes": 4574,
+      "fullFlashBytes": 5474,
+      "staticSramBytes": 756,
+      "peakStackBytes": 60,
+      "freeSramAtPeakBytes": 1231,
+      "queueBytes": 256,
+      "prefillSamples": 192,
+      "simavr": {
+        "completePwmExact": true,
+        "playedSamples": 19200,
+        "underruns": 0,
+        "minimumQueueBeforeEof": 192,
+        "timerIntervalCycles": [
+          1997,
+          2003
+        ],
+        "totalCycles": 38570387
+      },
+      "browserCore": {
+        "completePwmExact": true,
+        "playedSamples": 19200,
+        "interrupts": 19200,
+        "lostInterrupts": 0,
+        "underruns": 0,
+        "timerIntervalCycles": [
+          1995,
+          2004
+        ],
+        "playbackCycles": 38566373
+      },
+      "extraOptions": []
+    }
+  ],
+  "round": 0
+}

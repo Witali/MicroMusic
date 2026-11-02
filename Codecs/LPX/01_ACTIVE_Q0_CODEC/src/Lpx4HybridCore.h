@@ -34,7 +34,7 @@
 #if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_ENABLE_SPEECH
 #error Compact speech requires LPX4_ENABLE_SPEECH
 #endif
-// Explicit Flash-size profile: accept v5 only and omit all legacy parsers.
+// Explicit Flash-size profile: accept v5 by default and omit legacy parsers.
 // Use the same flags for the core and every consumer (class layout differs).
 // Arithmetic and hardware Flash backend selection remain independent.
 #ifndef LPX4_COMPACT_ONLY
@@ -48,6 +48,17 @@
 #endif
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && !LPX4_COMPACT_ONLY
 #error The sram512 memory profile requires LPX4_COMPACT_ONLY
+#endif
+// Optional version8/mode15 sparse80 parser; independent opt-in, no added state.
+// Standard version5 flags remain strict. Use the same flag in all consumers.
+#ifndef LPX4_ENABLE_SPARSE80
+#define LPX4_ENABLE_SPARSE80 0
+#endif
+#if LPX4_ENABLE_SPARSE80 != 0 && LPX4_ENABLE_SPARSE80 != 1
+#error LPX4_ENABLE_SPARSE80 must be 0 or 1
+#endif
+#if LPX4_ENABLE_SPARSE80 && !LPX4_COMPACT_ONLY
+#error LPX4_ENABLE_SPARSE80 requires LPX4_COMPACT_ONLY
 #endif
 #if LPX4_COMPACT_ONLY
 #define LPX4_MAX_PULSES 3
