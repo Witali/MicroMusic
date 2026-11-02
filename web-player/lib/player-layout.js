@@ -13,24 +13,24 @@ export const playerDevices={
 
 // All collections use the same header, hardware, transport, signal and library
 // slots in index.html. A device changes their content, never their order.
-export function applyCollectionLayout(document,{device,speech,preview=false}) {
+export function applyCollectionLayout(document,{device,speech,preview=false,codec}) {
   const nano=device==='atmega328p',lpx=preview||nano;
   const name=playerDevices[device].name;
   if(!speech)return;
   document.title=`MicroMusic / ${name} — речевые кодеки`;
   document.querySelector('.intro .eyebrow').textContent=name+' / РЕЧЕВЫЕ КОДЕКИ';
-  document.querySelector('.intro h1').textContent=lpx?'Речь с кодеком LPX.':'Речь в одном килобайте.';
+  document.querySelector('.intro h1').textContent=nano?'Речь с LPX и Speex.':lpx?'Речь с кодеком LPX.':'Речь в одном килобайте.';
   document.querySelector('.subtitle').textContent=lpx?'Речевые профили LPX. Сравните с исходной записью.':'Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
   document.querySelector('.library h2').textContent=lpx?'Выберите качество':'Выберите фразу';
   document.querySelector('.library-caption').textContent=nano?'Речевые прошивки для Arduino Nano · ATmega328P · 16 МГц.':lpx?'Речевые профили LPX для выбранной платы.':'Слушайте речь из прошивки и сравнивайте с исходной записью.';
   document.querySelector('.source-only').hidden=true;
   const history=document.querySelector('.header-link');
-  history.href=lpx?'https://github.com/Witali/MicroMusic/blob/main/Codecs/LPX/README.md':'https://github.com/Witali/MicroMusic/blob/main/ATtiny13A/Sound/AUDIO_REFERENCES.md';
-  history.textContent=lpx?'Кодек LPX ↗':'Звуковые эталоны ↗';
-  document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и нативные LPX-превью';
+  history.href=codec==='speex'?'https://github.com/Witali/MicroMusic/blob/main/Codecs/Speex/AVR/README.md':lpx?'https://github.com/Witali/MicroMusic/blob/main/Codecs/LPX/README.md':'https://github.com/Witali/MicroMusic/blob/main/ATtiny13A/Sound/AUDIO_REFERENCES.md';
+  history.textContent=codec==='speex'?'Кодек Speex ↗':lpx?'Кодек LPX ↗':'Звуковые эталоны ↗';
+  document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и сравнение с оригиналом';
 }
 
-export function applyDeviceLayout(document,{device,board:currentBoard,speech:speechCollection}) {
+export function applyDeviceLayout(document,{device,board:currentBoard,speech:speechCollection,pwmOutput='D3 / PD3 / OC2B'}) {
   const $=id=>document.getElementById(id);
   const selectedEngine=()=>document.querySelector('input[name="engine"]:checked').value;
   const tiny88=device==='attiny88',nano=device==='atmega328p',name=playerDevices[device].name;
@@ -40,7 +40,7 @@ export function applyDeviceLayout(document,{device,board:currentBoard,speech:spe
   document.body.dataset.board=tiny88?currentBoard:'';
   $('device-select').value=device;
   $('device-control').hidden=false;
-  $('device-note').textContent=nano?'Речевые прошивки LPX · Arduino Nano · 16 МГц':speechCollection?'Речевые прошивки и профили выбранного чипа':'Та же мелодия · прошивка для выбранного чипа';
+  $('device-note').textContent=nano?'Речевые прошивки · Arduino Nano · 16 МГц':speechCollection?'Речевые прошивки и профили выбранного чипа':'Та же мелодия · прошивка для выбранного чипа';
   $('board-control').hidden=!tiny88;
   $('board-select').value=currentBoard;
   $('board-isp-option').disabled=speechCollection;
@@ -73,7 +73,9 @@ export function applyDeviceLayout(document,{device,board:currentBoard,speech:spe
   $('engine-note').textContent='При смене — сброс на начало.';
   if(nano){
     document.body.dataset.board='arduino-nano-16mhz';
-    $('tiny88-power').textContent='Arduino Nano · 16 МГц · PWM: D3 / PD3 / OC2B · выход через RC-фильтр на вход усилителя · общая земля GND.';
+    $('tiny88-power').textContent='Arduino Nano · 16 МГц · PWM: '+pwmOutput+' · выход через RC-фильтр на вход усилителя · общая земля GND.';
+    $('chip-nano').setAttribute('aria-label','Arduino Nano, ATmega328P, 16 МГц, выход PWM '+pwmOutput);
+    document.querySelector('.nano-output').textContent=(pwmOutput.startsWith('D9')?'D9 / OC1A':'D3 / OC2B')+' → RC → AUDIO';
     $('package-file').disabled=true;
   }
   if(!speechCollection) {

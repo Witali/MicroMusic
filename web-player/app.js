@@ -1,7 +1,8 @@
-import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js';
-import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js';
+import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js?v=20261102-speex-nano';
+import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-speex-nano';
+import {speexFirmwareEntries} from './lib/speex-preview.js?v=20261102-speex-nano';
 import {speechSignals,speechWindow} from './lib/speech-waveform.js';
-import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js';
+import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js?v=20261102-speex-nano';
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
@@ -12,6 +13,7 @@ const canvas = $('wave');
 const originalAudio = $('original-audio');
 const previewAudio=$('preview-audio'), previewWaves=new Map();
 const nativePreview=()=>selected?.playback==='native-pwm8';
+const previewCodec=()=>selected?.codec==='speex'?'Speex':'LPX';
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
 let audio, output, scopes=[new Float32Array(512)], headroom=0;
 let signalPoint='output', signalScopes={input:scopes,output:scopes};
@@ -33,7 +35,7 @@ function audioControls() {
 function signalPointUI() {
   if(nativePreview()){
     $('scope-zero').textContent='0';$('scope-left-label').textContent='НАТИВНОЕ PWM8-ПРЕВЬЮ';
-    canvas.dataset.signal='preview';canvas.setAttribute('aria-label','Осциллограмма выбранного WAV-превью LPX');
+    canvas.dataset.signal='preview';canvas.setAttribute('aria-label','Осциллограмма выбранного WAV-превью '+previewCodec());
     return;
   }
   const input=signalPoint==='input';
@@ -51,7 +53,7 @@ function signalPointUI() {
 }
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function deviceUI(device) {
-  applyDeviceLayout(document,{device,board:currentBoard,speech:speechCollection});
+  applyDeviceLayout(document,{device,board:currentBoard,speech:speechCollection,pwmOutput:selected?.firmware?.pwmOutput});
 }
 async function switchDevice(device,board=currentBoard) {
   if(!catalog&&speechCollection)return;
@@ -64,7 +66,7 @@ async function switchDevice(device,board=currentBoard) {
   board=boardId(board);
   if(speechCollection){
     const entries=orderSpeechEntries(catalog.entries.filter(entry=>(entry.device||'attiny13a')===device),speechExamples);
-    if(!entries.length){showError('LPX-примеры временно недоступны.');$('device-select').value=currentDevice;return;}
+    if(!entries.length){showError('Речевые примеры временно недоступны.');$('device-select').value=currentDevice;return;}
     currentDevice=device;if(device==='attiny88')currentBoard='mh-et-live-16mhz';
     $('search').value='';load(selectSpeechEntry(entries,selected));return;
   }
@@ -96,14 +98,16 @@ function transport() {
   $('play').disabled = !runtimeReady || busy;
   $('play-original').textContent=originalPlaying||originalLoading ? 'Остановить оригинал' : 'Прослушать оригинал';
   $('play-original').setAttribute('aria-pressed',String(originalPlaying||originalLoading));
-  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? (nativePreview()?'Нативное превью LPX':'Воспроизведение') : completed ? 'Завершено' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
+  $('run-status').textContent = originalLoading ? 'Загрузка оригинала…' : originalPlaying ? 'Оригинальная запись' : busy ? 'Подключение звука…' : playing ? (nativePreview()?'Нативное превью '+previewCodec():'Воспроизведение') : completed ? 'Завершено' : runtimeReady ? (hasPlayed ? 'Пауза' : 'Готов к запуску') : 'Загрузка образа…';
 }
 function previewUI(enabled) {
   document.body.dataset.preview=String(enabled);
   for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import'])$(id).hidden=enabled;
   $('rom-hash').hidden=enabled&&!selected?.firmware;
   $('preview-note').hidden=!enabled;
-  $('preview-playback-note').textContent=selected?.firmware
+  $('preview-playback-note').textContent=selected?.codec==='speex'
+    ? 'ПРЕВЬЮ · Точные PWM8-отсчёты этой AVR-прошивки Speex. Полный HEX проверен с активными прерываниями, без пропусков. В браузере воспроизводится WAV; физическая плата не проверялась.'
+    : selected?.firmware
     ? 'ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Полный HEX для Arduino Nano проверен в simavr с активными прерываниями, без пропусков. В браузере воспроизводится WAV; физическая плата не проверялась.'
     : 'ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Целевая плата — MH-ET LIVE Tiny88, 16 МГц. Работа LPX-прошивки на этой плате ещё не подтверждена.';
   $('preview-format-note').hidden=!enabled||!selected?.formatNotice;
@@ -282,7 +286,7 @@ function load(entry,{autoplay=false}={}) {
   deviceUI(currentDevice);
   $('device-select').disabled=false;
   previewUI(nativePreview());
-  applyCollectionLayout(document,{device:currentDevice,speech:speechCollection,preview:nativePreview()});
+  applyCollectionLayout(document,{device:currentDevice,speech:speechCollection,preview:nativePreview(),codec:entry.codec});
   const speechEntries=speechCollection?catalog.entries.filter(item=>(item.device||'attiny13a')===currentDevice):[];
   speechProfileUI(document,speechEntries,entry);
   if(speechExamples&&speechCollection){
@@ -331,7 +335,7 @@ function load(entry,{autoplay=false}={}) {
   $('right-output-label').title=micronucleus?'D10 на плате MH-ET LIVE':tiny88?'Вывод 16 в корпусе PDIP-28':'Вывод 6 в 8-выводных корпусах';
   $('left-output-label').textContent='L · '+(micronucleus?'PB1 / OC1A · D9':tiny88?'PB1 / OC1A · вывод 15':'PB0 / OC0A · вывод 5');
   $('left-output-label').title=micronucleus?'D9 на плате MH-ET LIVE':tiny88?'Вывод 15 в корпусе PDIP-28':'Вывод 5 в 8-выводных корпусах';
-  $('audio-mode').textContent=nativePreview()?'НАТИВНОЕ ПРЕВЬЮ · 8 кГц · МОНО':stereo?'СТЕРЕО · 2 PWM-ВЫХОДА':'МОНО · 1 PWM-ВЫХОД';
+  $('audio-mode').textContent=nativePreview()?`НАТИВНОЕ ПРЕВЬЮ · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц · МОНО`:stereo?'СТЕРЕО · 2 PWM-ВЫХОДА':'МОНО · 1 PWM-ВЫХОД';
   signalPointUI();
   $('average-label').textContent=stereo?'СРЕДНИЙ PWM · L / R':'СРЕДНИЙ PWM';
   $(tiny88?'chip-attiny88':'chip-attiny13a').setAttribute('aria-label',tiny88
@@ -348,13 +352,13 @@ function load(entry,{autoplay=false}={}) {
       : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json');
     $('speech-audit').href=research.endsWith('.md')
       ? new URL(research,'https://github.com/Witali/MicroMusic/blob/main/web-player/').href : research;
-    $('speech-audit').textContent=entry.codec?.startsWith('lpx') ? 'Исследование LPX ↗' : entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
+    $('speech-audit').textContent=entry.codec==='speex'?'Исследование Speex ↗':entry.codec?.startsWith('lpx') ? 'Исследование LPX ↗' : entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
       : entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
   }
   $('speech-audit').hidden=entry.kind!=='speech';
   const capacity=micronucleus?6012:tiny88?8192:1024, prefix=micronucleus?'attiny88-mh-et-live-16mhz':currentDevice;
   if(nativePreview()){
-    const file=entry.id+'.lpx';
+    const file=entry.id+(entry.streamExtension||'.lpx');
     $('rom-name').href=entry.streamUrl;$('rom-name').download=file;$('rom-name').textContent=file;
     $('download').textContent='↓ Flash HEX';
     downloadUI('download',entry.firmware?.source,entry.firmware?entry.id+'.hex':null,entry.firmware?'Полный Flash HEX для Arduino Nano / ATmega328P · 16 МГц.':'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
@@ -549,12 +553,17 @@ try {
     if(!response.ok)throw Error('HTTP '+response.status);
     speechExamples=readSpeechExamples(await response.json());
   }catch{/* Older/offline catalogs retain their own examples when the shared index is unavailable. */}
-  let previewError,nanoError;
+  let previewError,nanoError,speexError;
   try{
     const response=await fetch(new URL('./firmware-atmega328p.json?v=20261102-nano',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...lpxFirmwareEntries(await response.json(),import.meta.url));
   }catch(error){nanoError=error;}
+  try{
+    const response=await fetch(new URL('./firmware-speex-atmega328p.json?v=20261102-speex-nano',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    catalog.entries.push(...speexFirmwareEntries(await response.json(),import.meta.url));
+  }catch(error){speexError=error;}
   try{
     const response=await fetch(new URL('./audio/lpx-bread/manifest.json?v=20261101-flash',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
@@ -567,7 +576,7 @@ try {
     if(data.schemaVersion!==1||!Array.isArray(data.clips))throw Error('Неверный набор LPX.');
     catalog.entries.push(...data.clips.flatMap(clip=>lpxPreviewEntries(clip,import.meta.url)));
   }catch{/* Existing LPX clips remain usable if additional assets cannot load. */}
-  document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и нативные LPX-превью';
+  document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и сравнение с оригиналом';
   if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
     try {
       const localResponse=await fetch('../build/hq4-preview/firmware.json');
@@ -591,7 +600,7 @@ try {
   const available=orderSpeechEntries(catalog.entries.filter(entry=>(entry.device||'attiny13a')===device),speechExamples);
   load(available.find(entry=>entry.id===id)||available[0]||catalog.entries.find(entry=>entry.id===catalog.defaultId));
   if(previewError&&(device==='attiny88'||requested.startsWith('lpx-bread-')))showError('LPX-примеры временно недоступны.');
-  if(nanoError&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');
+  if(nanoError&&speexError&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');
   }
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();

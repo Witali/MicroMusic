@@ -93,6 +93,6 @@ export function previewWaveform(buffer,{sampleHz,phraseSamples}) {
     offset=start+bytes+(bytes&1);
   }
   if(!format||format.encoding!==1||format.channels!==1||format.rate!==sampleHz||format.bits!==16||format.align!==2
-    ||!payload||payload.bytes!==phraseSamples*2)throw Error('WAV не соответствует LPX-примеру.');
+    ||!payload||payload.bytes!==phraseSamples*2)throw Error('WAV не соответствует звуковому примеру.');
   return Float32Array.from({length:phraseSamples},(_,index)=>view.getInt16(payload.start+index*2,true)/32768);
 }

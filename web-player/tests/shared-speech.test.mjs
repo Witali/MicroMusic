@@ -23,7 +23,7 @@ test('all speech devices show the same four phrases in the same order',async()=>
 
 test('changing microcontroller retains the phrase and supported quality',async()=>{
   const app=await playerApp({device:'atmega328p',firmware:'lpx-nano-vinni-quality'});await flush();
-  assert.equal(app.get('speech-profile-select').children.length,2);
+  assert.equal(app.get('speech-profile-select').children.length,5);
   await choose(app,'attiny88');assert.equal(app.location.searchParams.get('firmware'),'lpx-vinni-quality');
   await choose(app,'attiny13a');assert.equal(app.location.searchParams.get('firmware'),'hq4-vinni');
   assert.equal(app.get('speech-profile-control').hidden,true);

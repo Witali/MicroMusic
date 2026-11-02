@@ -78,7 +78,7 @@ test('choosing Nano from music routes to the same AVR page with speech selected'
 });
 
 test('a failed Nano catalog leaves other speech devices usable',async()=>{
-  const app=await playerApp({fetchHook:({url,response})=>url.pathname.endsWith('/firmware-atmega328p.json')?{ok:false,status:503}:response});
+  const app=await playerApp({fetchHook:({url,response})=>/\/firmware-(speex-)?atmega328p\.json$/.test(url.pathname)?{ok:false,status:503}:response});
   assert.equal(app.get('error').hidden,true);assert.equal(cards(app).length,4);
   await choose(app,'atmega328p');assert.match(app.get('error').textContent,/недоступны/);
   assert.equal(app.get('device-select').value,'attiny13a');

@@ -7,8 +7,8 @@
   <title>MicroMusic / ATtiny13A — плеер прошивок</title>
   <meta name="description" content="Музыка и речевые прошивки ATtiny13A, ATtiny88 и Arduino Nano / ATmega328P: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261102-shared-speech">
-  <script type="module" src="./app.js?v=20261102-signal-view"></script>
+  <link rel="stylesheet" href="./styles.css?v=20261102-speex-nano">
+  <script type="module" src="./app.js?v=20261102-speex-nano"></script>
 </head>
 <body>
   <header class="site-header">
@@ -43,7 +43,7 @@
             <div class="fuse-clock"><strong id="fuse-clock-value">Внутренний RC · 9,6 МГц</strong><span id="fuse-clock-note">CKDIV8 отключён · делитель /1</span><a id="fuse-datasheet" href="https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf" target="_blank" rel="noopener">Фьюзы в datasheet, §17.2 ↗</a></div>
           </div>
           <div class="now-playing"><span id="selected-order" class="version-number">06</span><div><span class="eyebrow">ВЫБРАННАЯ ВЕРСИЯ</span><h2 id="selected-title">Люмьер · стерео</h2><p id="selected-description">Загрузка…</p></div></div>
-          <div id="speech-profile-control" class="device-control speech-profile-control" hidden><label for="speech-profile-select">Качество речи</label><select id="speech-profile-select"></select></div>
+          <div id="speech-profile-control" class="device-control speech-profile-control" hidden><label for="speech-profile-select">Качество речи</label><select id="speech-profile-select"></select><p id="speech-profile-details" class="speech-profile-details" aria-live="polite" hidden></p></div>
           <p id="preview-note" class="hardware-note preview-note" hidden><strong id="preview-format-note" hidden></strong><span id="flash-measurement-note" hidden></span><span id="preview-playback-note">ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Целевая плата — MH-ET LIVE Tiny88, 16 МГц. Работа LPX-прошивки на этой плате ещё не подтверждена.</span></p>
           <div class="elapsed-line"><span>ВРЕМЯ ВОСПРОИЗВЕДЕНИЯ</span><output id="elapsed">00:00.0</output></div>
           <div class="transport"><button id="play" class="primary" disabled><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Слушать</span><kbd>Space</kbd></button><button id="play-original" class="original-play" type="button" aria-pressed="false" hidden>Прослушать оригинал</button><button id="reset" disabled>↺ Сначала</button><div class="transport-links"><a id="download" class="download-link" aria-disabled="true">↓ Flash HEX</a><a id="download-eeprom" class="download-link" aria-disabled="true">↓ EEPROM</a></div></div>
@@ -78,7 +78,7 @@
       <details><summary>Образ Flash <span id="rom-size"></span></summary><pre id="memory" aria-label="Первые 128 байт Flash"></pre></details>
     </section>
     <div class="loaded-rom"><span class="file-icon">▤</span><div><a id="rom-name" href="#" download>synth.hex</a><span id="rom-details"></span></div><span id="rom-hash" class="rom-hash" title="SHA-256 Flash"></span></div>
-    <div class="archive-links"><a id="original-player" href="#" target="_blank" rel="noopener">Исходный HTML-плеер ↗</a><a id="wav-link" href="#" target="_blank" rel="noopener">Звуковой пример WAV ↗</a><a id="reference-wav" href="#" target="_blank" rel="noopener" hidden>Оригинальная запись WAV ↗</a><a id="speech-audit" href="../ATtiny13A/Sound/research/hq4-emulator-comparison.json" target="_blank" rel="noopener" hidden>Исследование речи ↗</a><a href="./?collection=hq4">Речевые кодеки AVR ↗</a><a href="./?collection=hq4&amp;device=atmega328p">Arduino Nano / LPX ↗</a><a href="../i8080/Emulator/">Эмулятор Intel 8080 ↗</a><span>Одинаковые образы объединены по SHA-256.</span></div>
+    <div class="archive-links"><a id="original-player" href="#" target="_blank" rel="noopener">Исходный HTML-плеер ↗</a><a id="wav-link" href="#" target="_blank" rel="noopener">Звуковой пример WAV ↗</a><a id="reference-wav" href="#" target="_blank" rel="noopener" hidden>Оригинальная запись WAV ↗</a><a id="speech-audit" href="../ATtiny13A/Sound/research/hq4-emulator-comparison.json" target="_blank" rel="noopener" hidden>Исследование речи ↗</a><a href="./?collection=hq4">Речевые кодеки AVR ↗</a><a href="./?collection=hq4&amp;device=atmega328p">Arduino Nano / LPX и Speex ↗</a><a href="../i8080/Emulator/">Эмулятор Intel 8080 ↗</a><span>Одинаковые образы объединены по SHA-256.</span></div>
     <footer><span>MICROMUSIC / LAB <i>·</i> На основе HTML-эмуляторов проекта</span><span>Моно / стерео PWM · Worker + AudioWorklet</span></footer>
   </main>
   <noscript>Для плеера необходим JavaScript.</noscript>

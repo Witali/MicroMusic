@@ -26,6 +26,7 @@ function firmwareSummary(entry){
   if(entry.available===false)return entry.unavailableReason;
   const voices=entry.voices??4;
   if(entry.playback==='native-pwm8'){
+    if(entry.phraseCard)return entry.profileCaption||entry.profileLabel||entry.title;
     const program=entry.firmware?.programFlashBytes??entry.flashMeasurement?.programFlashBytes;
     return `${entry.profileCaption?entry.profileCaption+' · ':''}${program?.toLocaleString('ru')??'—'} Б код · ${entry.streamBytes.toLocaleString('ru')} Б данных · ${bitrateLabel(entry.bitrateBps)}`;
   }
