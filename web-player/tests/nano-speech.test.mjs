@@ -59,7 +59,8 @@ test('switching devices stops audio, replaces catalog and restores the right dow
   await app.get('play').onclick();assert.equal(app.preview.paused,false);
   await choose(app,'attiny88');assert.equal(app.preview.paused,true);
   assert.ok(cards(app).every(card=>card.dataset.firmware.startsWith('lpx-')));
-  assert.equal(app.get('download').getAttribute('aria-disabled'),'true');
+  assert.equal(app.get('download').getAttribute('aria-disabled'),null);
+  assert.match(app.get('download').href,/\/firmware\/attiny88\/lpx-tiny88-chego-compact\.hex$/);
   await choose(app,'attiny13a');assert.ok(cards(app).slice(0,3).every(card=>card.dataset.firmware.startsWith('hq4-')));
   assert.equal(app.get('chip-nano').hidden,true);
   const worker=app.workers.at(-1);await choose(app,'atmega328p');assert.equal(worker.terminated,true);

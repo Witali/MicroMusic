@@ -119,7 +119,8 @@ test('unknown music boards fall back to 8 MHz and Tiny88 speech has only the int
   assert.equal(speech.get('device-select').value,'attiny88');assert.equal(speech.get('board-control').hidden,false);
   assert.equal(speech.workers.length,0);assert.equal(speech.get('board-select').value,board);
   assert.equal(speech.get('board-isp-option').disabled,true);
-  assert.match(speech.get('tiny88-power').textContent,/Целевой профиль.*16 МГц/);
+  assert.match(speech.get('tiny88-power').textContent,/MH-ET LIVE Tiny88.*16 МГц.*D9 \/ PB1 \/ OC1A/);
+  assert.equal(speech.get('download').getAttribute('aria-disabled'),null);
   assert.equal(speech.location.searchParams.get('board'),board);
   assert.equal(speech.get('board-upload').hidden,true);
 });

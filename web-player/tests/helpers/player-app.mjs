@@ -9,6 +9,7 @@ import {RealtimeMonitor} from '../../lib/realtime.js';
 import {universalPackageEntry} from '../../lib/universal-package.js';
 import {lpxPreviewEntries,lpxFirmwareEntries,previewWaveform} from '../../lib/native-preview.js';
 import {speexFirmwareEntries} from '../../lib/speex-preview.js';
+import {lpxTiny88FirmwareEntries} from '../../lib/tiny88-preview.js';
 
 export function deferred(){
   let resolve,reject;
@@ -103,7 +104,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     }
   }
   const window={devicePixelRatio:1,AudioContext:Context,addEventListener:(type,listener)=>windowEvents.set(type,listener)};
-  const sandbox={speechSignals,speechWindow,readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI,renderFirmwareCatalog,bitrateLabel,tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout,document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,lpxFirmwareEntries,previewWaveform,speexFirmwareEntries,
+  const sandbox={speechSignals,speechWindow,readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI,renderFirmwareCatalog,bitrateLabel,tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout,document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,lpxFirmwareEntries,previewWaveform,speexFirmwareEntries,lpxTiny88FirmwareEntries,
     Worker,AudioWorkletNode:Worklet,ResizeObserver:class{observe(){}},
     MessageChannel:class{constructor(){this.port1={};this.port2={};}},
     performance:{now:()=>Date.now()},setTimeout:()=>1,clearTimeout(){},

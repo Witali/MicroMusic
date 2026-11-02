@@ -261,7 +261,7 @@ test('returning to Tiny13 restores exact HQ4 firmware, controls, binary download
   assert.equal(app.get('preview-note').hidden,true);assert.equal(app.body.dataset.preview,'false');
   assert.equal(app.get('board-isp-option').disabled,true);assert.equal(app.get('board-control').hidden,true);
   assert.equal(app.get('download').textContent,'↓ Flash HEX');assert.match(app.get('download').download,/\.hex$/);
-  assert.equal(app.location.searchParams.has('device'),false);assert.equal(app.location.searchParams.has('board'),false);
+  assert.equal(app.location.searchParams.get('device'),'attiny13a');assert.equal(app.location.searchParams.has('board'),false);
   await app.get('play').onclick();assert.equal(app.body.dataset.playing,'true');assert.equal(app.get('run-status').textContent,'Воспроизведение');
 });
 

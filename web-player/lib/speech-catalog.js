@@ -52,5 +52,10 @@ export function speechProfileUI(document,entries,selected){
   details.textContent=selected.playback==='native-pwm8'
     ?`${selected.firmware?'Прошивка':selected.flashMeasurement?'Тестовая сборка':'Прошивка'}: ${program===undefined?'не измерена':size(program)} · Звук: ${size(selected.streamBytes)}`:'';
   details.hidden=!details.textContent;
+  const warning=document.getElementById('speech-upload-warning');
+  const firmware=selected.device==='attiny88'?selected.firmware:undefined;
+  warning.textContent=firmware?.requiresIsp
+    ? `Образ ${size(firmware.flashBytes)}${firmware.flashBytes>6144?' больше 6 КиБ (6 144 байта) и':''} превышает лимит штатного USB-загрузчика MH-ET LIVE (${size(firmware.bootloaderLimitBytes)}). Нужен ISP; полный образ помещается в ${size(firmware.flashLimitBytes)} Flash. Загрузка через ISP заменяет USB-загрузчик.`:'';
+  warning.hidden=!warning.textContent;
   document.getElementById('speech-profile-control').hidden=variants.length<2;
 }

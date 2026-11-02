@@ -1,6 +1,7 @@
 import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js?v=20261102-speex-nano';
-import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-speex-nano';
+import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-tiny88-lpx';
 import {speexFirmwareEntries} from './lib/speex-preview.js?v=20261102-speex-nano';
+import {lpxTiny88FirmwareEntries} from './lib/tiny88-preview.js?v=20261102-tiny88-lpx';
 import {speechSignals,speechWindow} from './lib/speech-waveform.js';
 import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js?v=20261102-speex-nano';
 import { parseHex } from './lib/hex.js';
@@ -102,13 +103,14 @@ function transport() {
 }
 function previewUI(enabled) {
   document.body.dataset.preview=String(enabled);
+  document.body.dataset.pwmPin=enabled&&selected?.firmware?String(selected.firmware.pwmPin):'';
   for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import'])$(id).hidden=enabled;
   $('rom-hash').hidden=enabled&&!selected?.firmware;
   $('preview-note').hidden=!enabled;
   $('preview-playback-note').textContent=selected?.codec==='speex'
     ? 'ПРЕВЬЮ · Точные PWM8-отсчёты этой AVR-прошивки Speex. Полный HEX проверен с активными прерываниями, без пропусков. В браузере воспроизводится WAV; физическая плата не проверялась.'
     : selected?.firmware
-    ? 'ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Полный HEX для Arduino Nano проверен в simavr с активными прерываниями, без пропусков. В браузере воспроизводится WAV; физическая плата не проверялась.'
+    ? `ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Полный HEX для ${currentDevice==='attiny88'?'ATtiny88':'Arduino Nano'} проверен в simavr с активными прерываниями, без пропусков. В браузере воспроизводится WAV; физическая плата не проверялась.`
     : 'ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Целевая плата — MH-ET LIVE Tiny88, 16 МГц. Работа LPX-прошивки на этой плате ещё не подтверждена.';
   $('preview-format-note').hidden=!enabled||!selected?.formatNotice;
   $('preview-format-note').textContent=enabled&&selected?.formatNotice?selected.formatNotice+' ':'';
@@ -116,7 +118,14 @@ function previewUI(enabled) {
   $('flash-measurement-note').textContent=enabled&&selected?.flashMeasurement?'Размер относится к тестовой сборке без очереди и звукового ISR. ':'';
   document.querySelector('.signal-outputs').hidden=enabled;
   if(enabled){
-    if(currentDevice==='attiny88')$('tiny88-power').textContent='Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц.';
+    if(currentDevice==='attiny88'){
+      $('tiny88-power').textContent=selected?.firmware
+        ? 'MH-ET LIVE Tiny88 · 16 МГц · PWM: '+selected.firmware.pwmOutput+' · речь 8 кГц · PWM 62,5 кГц · выход через RC-фильтр на вход усилителя · общая земля GND.'
+        : 'Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц.';
+      if(selected?.firmware)$('board-note').textContent=selected.firmware.requiresIsp
+        ? 'Внешний генератор · 16 МГц · этот образ загружается через ISP'
+        : 'Внешний генератор · 16 МГц · образ помещается в область USB-загрузчика';
+    }
     $('cpu-status').textContent='';$('memory').textContent='';$('rom-size').textContent='';
     for(const id of ['average','isr','lost','headroom','tempo','lag'])$(id).textContent='—';
   }
@@ -339,7 +348,8 @@ function load(entry,{autoplay=false}={}) {
   signalPointUI();
   $('average-label').textContent=stereo?'СРЕДНИЙ PWM · L / R':'СРЕДНИЙ PWM';
   $(tiny88?'chip-attiny88':'chip-attiny13a').setAttribute('aria-label',tiny88
-    ? micronucleus?'MH-ET LIVE Tiny88, 16 МГц: '+(stereo?'R — D10 / PB2, L — D9 / PB1':'моно — D10 / PB2'):'ATtiny88, PDIP-28, вид сверху: '+(stereo?'правый канал PB2 вывод 16, левый канал PB1 вывод 15':'выход PWM PB2 вывод 16')
+    ? entry.firmware&&nativePreview()?'MH-ET LIVE Tiny88, 16 МГц: PWM '+entry.firmware.pwmOutput
+      :micronucleus?'MH-ET LIVE Tiny88, 16 МГц: '+(stereo?'R — D10 / PB2, L — D9 / PB1':'моно — D10 / PB2'):'ATtiny88, PDIP-28, вид сверху: '+(stereo?'правый канал PB2 вывод 16, левый канал PB1 вывод 15':'выход PWM PB2 вывод 16')
     : 'ATtiny13A, вид сверху: '+(stereo?'правый канал PB1 вывод 6, левый канал PB0 вывод 5':'выход PWM PB1 вывод 6'));
   draw();
   $('elapsed').textContent='00:00.0'; $('average').textContent=stereo?'128.0 / 128.0':'128.0'; $('headroom').textContent='—';
@@ -361,7 +371,9 @@ function load(entry,{autoplay=false}={}) {
     const file=entry.id+(entry.streamExtension||'.lpx');
     $('rom-name').href=entry.streamUrl;$('rom-name').download=file;$('rom-name').textContent=file;
     $('download').textContent='↓ Flash HEX';
-    downloadUI('download',entry.firmware?.source,entry.firmware?entry.id+'.hex':null,entry.firmware?'Полный Flash HEX для Arduino Nano / ATmega328P · 16 МГц.':'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
+    downloadUI('download',entry.firmware?.source,entry.firmware?entry.id+'.hex':null,entry.firmware
+      ? tiny88?`Полный Flash HEX для ATtiny88 · 16 МГц · ${entry.firmware.requiresIsp?'загрузка через ISP':'USB-загрузчик или ISP'}.`:'Полный Flash HEX для Arduino Nano / ATmega328P · 16 МГц.'
+      : 'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
     downloadUI('download-eeprom',null,null,'EEPROM не используется этим примером.');
     const measurement=entry.flashMeasurement;
     const cost=entry.firmware
@@ -404,7 +416,7 @@ function load(entry,{autoplay=false}={}) {
   const bytes=parseHex(entry.flashHex,capacity); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   }
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id);
-  if(currentDevice!=='attiny13a')url.searchParams.set('device',currentDevice);else url.searchParams.delete('device');
+  url.searchParams.set('device',currentDevice);
   if(speechCollection)url.searchParams.set('collection','hq4');
   if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
@@ -576,6 +588,15 @@ try {
     if(data.schemaVersion!==1||!Array.isArray(data.clips))throw Error('Неверный набор LPX.');
     catalog.entries.push(...data.clips.flatMap(clip=>lpxPreviewEntries(clip,import.meta.url)));
   }catch{/* Existing LPX clips remain usable if additional assets cannot load. */}
+  try{
+    const response=await fetch(new URL('./firmware-lpx-attiny88.json?v=20261102-tiny88-lpx',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const verified=lpxTiny88FirmwareEntries(await response.json(),import.meta.url);
+    const ids=new Set(verified.map(entry=>entry.id));
+    catalog.entries=catalog.entries.filter(entry=>!ids.has(entry.id));
+    catalog.entries.push(...verified);
+    previewError=undefined;
+  }catch{/* Retain the existing WAV-only previews when verified firmware is unavailable. */}
   document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и сравнение с оригиналом';
   if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
     try {
@@ -596,9 +617,10 @@ try {
   const id=catalog.aliases?.[requested]??requested;
   const exact=catalog.entries.find(entry=>entry.id===id);
   const requestedDevice=new URL(location.href).searchParams.get('device');
-  const device=requestedDevice==='atmega328p'||exact?.device==='atmega328p'?'atmega328p':exact?.playback==='native-pwm8'||requestedDevice==='attiny88'?'attiny88':'attiny13a';
+  const device=['attiny13a','attiny88','atmega328p'].includes(requestedDevice)?requestedDevice
+    :exact?.device==='atmega328p'?'atmega328p':exact?.playback==='native-pwm8'?'attiny88':'attiny13a';
   const available=orderSpeechEntries(catalog.entries.filter(entry=>(entry.device||'attiny13a')===device),speechExamples);
-  load(available.find(entry=>entry.id===id)||available[0]||catalog.entries.find(entry=>entry.id===catalog.defaultId));
+  load(available.find(entry=>entry.id===id)||selectSpeechEntry(available,exact)||catalog.entries.find(entry=>entry.id===catalog.defaultId));
   if(previewError&&(device==='attiny88'||requested.startsWith('lpx-bread-')))showError('LPX-примеры временно недоступны.');
   if(nanoError&&speexError&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');
   }
