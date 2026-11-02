@@ -193,6 +193,40 @@ for the restricted lossless profile (maximum backward pitch access: 145 samples)
 
 ## PWM player
 
+The audio pin is a build setting, independent of the C/ASM arithmetic backend:
+`SPEEX_AVR_PWM_PIN=3` selects **D3 / PD3 / OC2B**, while `=9` selects
+**D9 / PB1 / OC1A**. The NB, WB, SPI and RAM-stream builders accept
+`--pwm-pin 3` or `--pwm-pin 9`. Low-level builders retain D9 by default for
+compatibility; the public Nano gallery explicitly defaults to **D3**, matching
+the LPX examples. Unsupported pins and clocks fail compilation.
+
+[avr_audio_output.h](src/avr_audio_output.h) uses the manufacturer's register
+and interrupt definitions. At 16 MHz, both routings produce 62.5 kHz 8-bit
+PWM. D3 uses Timer2 for PWM and Timer1 CTC for 8/16 kHz PCM; D9 uses Timer1
+for PWM and Timer2 CTC for PCM. Both timers are owned by the standalone player;
+do not combine it with another component that reconfigures either timer.
+
+[nano-output-routing.json](reports/nano-output-routing.json) records 18 complete
+IRQ gallery checks: all nine phrases/profiles on both pins, identical PWM,
+and byte-identical D9 binaries against the saved pre-change baseline.
+Hardware-only tests observe the selected GPIO carrier at 8/16 kHz PCM, and
+two continuous D3 SPI runs cover 6000 NB2.15 + 3600 WB3.95 frames with zero
+underruns and exact PWM. C player variants compile/link on both pins without
+executing a full C decoder. These are ISA/peripheral simulations, not physical
+board measurements. Historical core admission reports retain their original
+source hashes; the routing report explicitly records the hardware overlay.
+
+```sh
+python Codecs/Speex/AVR/tools/build.py --avr-gcc /path/to/avr-gcc --backend asm --low-rates 4 --player clip-nb215.spxraw --pwm-pin 3
+python Codecs/Speex/AVR/tools/build_wb.py --avr-gcc /path/to/avr-gcc --backend asm --low-rates 4 --stream clip-wb395.spxraw --pwm-pin 3
+node Codecs/Speex/AVR/tests/verify_audio_output.mjs /path/to/avr-gcc
+```
+
+The [public speech inventory](../../../docs/speech-assets.md) describes the
+three shared phrases at NB2.15, WB3.95 and WB9.8, their raw packets, exact
+simulated PWM WAVs and downloadable HEX. Rebuild all nine with
+`tools/build-speex-nano-catalog.py --avr-gcc /path/to/avr-gcc --node /path/to/node --pwm-pin 3 --publish`.
+
 `src/player.c` reads embedded packets from Flash and sends the high eight bits
 of PCM, converted to unsigned samples, to **OC1A / PB1 / Arduino D9**.
 Timer1 runs 8-bit fast PWM at 62.5 kHz; Timer2 CTC advances PCM at 8 kHz.

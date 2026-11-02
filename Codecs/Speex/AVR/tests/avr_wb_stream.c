@@ -16,11 +16,9 @@ int main(void)
 {
     /* Same hardware initialization as src/wb_player.c; all addresses derive
      * from the manufacturer's avr/io.h, including the host's PWM hook. */
-    cli();DDRB|=(1<<PB1);OCR1A=128;
-    TCCR1A=(1<<COM1A1)|(1<<WGM10);TCCR1B=(1<<WGM12)|(1<<CS10);
-    TCCR2A=(1<<WGM21);OCR2A=124;speex_wb1_init();
+    cli();speex_audio_init();speex_wb1_init();
     stream_packet_address=(uint16_t)(uintptr_t)packet;
-    stream_pwm_address=_SFR_MEM_ADDR(OCR1AL);
+    stream_pwm_address=_SFR_MEM_ADDR(SPEEX_AUDIO_PWM);
     for(;;) {
         stream_status=1;while(!stream_command){}
 #if defined(SPEEX_AVR_FRAME_LOAD_CYCLES) && SPEEX_AVR_FRAME_LOAD_CYCLES > 0

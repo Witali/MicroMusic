@@ -12,6 +12,8 @@ import {loadSpiModel} from './spi_model.mjs';
 const dir = resolve(process.argv[2]), stream = resolve(process.argv[3]);
 const oraclePath = resolve(process.argv[4]), modelPath = resolve(process.argv[5]);
 const metadata = JSON.parse(readFileSync(join(dir, 'input.json')));
+const pwmPin=metadata.pwmPin??9;assert.ok([3,9].includes(pwmPin));
+const pwmAddress=pwmPin===3?timer2Config.OCRB:timer1Config.OCRA;
 assert.equal(metadata.backend, 'asm');
 const binary = readFileSync(join(dir, 'player.bin'));
 const raw = readFileSync(stream), expected = readFileSync(oraclePath);
@@ -75,8 +77,8 @@ spi.onByte = value => {
 
 const pwm = Buffer.alloc(expected.length / 2 + 1);
 let outputs = 0, lastTime = 0, minInterval = Infinity, maxInterval = 0, minQueue = 127;
-const previous = cpu.writeHooks[timer1Config.OCRA];
-cpu.writeHooks[timer1Config.OCRA] = (value, old, at, mask) => {
+const previous = cpu.writeHooks[pwmAddress];
+cpu.writeHooks[pwmAddress] = (value, old, at, mask) => {
   if (cpu.data[started]) {
     assert.ok(outputs < pwm.length, 'PWM output count');
     pwm[outputs++] = value;

@@ -55,7 +55,8 @@ def oracle(compiler):
         *[source/'libspeex'/(s+'.c') for s in units],build.ROOT/'tests/wb_oracle_qmf.c',
         build.ROOT/'tests/decode_rates.c','-o',out/('decode.exe' if sys.platform=='win32' else 'decode')])
 
-def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packet_bytes=None,enable_nb4=None,low_rates=0):
+def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packet_bytes=None,enable_nb4=None,low_rates=0,pwm_pin=9):
+    if pwm_pin not in (3,9):raise ValueError('PWM pin must be D3 or D9')
     if load<0 or load>320000 or (load and stream is None):raise ValueError('Load requires a player stream and 0..320000 cycles')
     if packet_bytes not in (None,10,15,20,25,32):raise ValueError('Invalid WB packet width')
     width=packet_bytes or 25
@@ -77,8 +78,9 @@ def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packe
         (out/'sample.h').write_text('#define SPEEX_SAMPLE_PACKET_BYTES '+str(width)+'\n#define SPEEX_SAMPLE_FRAMES '+str(len(data)//width)+
             '\nstatic const uint8_t sample_data[] PROGMEM={'+','.join(map(str,data))+'};\n')
         (out/'input.json').write_text(json.dumps(dict(file=stream.name,
-            sha256=hashlib.sha256(data).hexdigest(),frames=len(data)//width,packetBytes=width,frameLoadCycles=load),indent=2)+'\n')
+            sha256=hashlib.sha256(data).hexdigest(),frames=len(data)//width,packetBytes=width,frameLoadCycles=load,pwmPin=pwm_pin),indent=2)+'\n')
         main=build.ROOT/'src/wb_player.c'
+        options+=['-DSPEEX_AVR_PWM_PIN='+str(pwm_pin)]
         if load:options+=['-DSPEEX_AVR_FRAME_LOAD_CYCLES='+str(load)]
     enabled=width==32 if enable_nb4 is None else bool(enable_nb4)
     if width==32 and not enabled:raise ValueError('32-byte packets require the NB4 feature')
@@ -123,6 +125,7 @@ def main():
     parser.add_argument('--avr-gcc');parser.add_argument('--backend',choices=['asm','c'],default='c')
     parser.add_argument('--stream',type=Path);parser.add_argument('--frame-load-cycles',type=int,default=0)
     parser.add_argument('--out',type=Path);parser.add_argument('--export-c',type=Path)
+    parser.add_argument('--pwm-pin',type=int,choices=[3,9],default=9,help='PWM output pin for the player (default D9)')
     parser.add_argument('--packet-bytes',type=int,choices=[10,15,20,25,32],help='Bare mailbox width; player width is inferred')
     parser.add_argument('--low-rates',type=int,choices=range(8),default=0,help='Feature mask: NB2=1, NB8=2, NB1=4')
     parser.add_argument('--enable-nb4',action='store_true',default=None,help='Enable WB 12.8/NB 11 kbit/s (automatic for 32-byte AVR input)')
@@ -135,7 +138,7 @@ def main():
     if args.cc:
         host(args.cc,True if args.enable_nb4 is None else args.enable_nb4,args.low_rates)
         if args.reference:oracle(args.cc)
-    if args.avr_gcc:avr(args.avr_gcc,args.backend,args.stream,args.frame_load_cycles,args.out,args.kernels,args.packet_bytes,args.enable_nb4,args.low_rates)
+    if args.avr_gcc:avr(args.avr_gcc,args.backend,args.stream,args.frame_load_cycles,args.out,args.kernels,args.packet_bytes,args.enable_nb4,args.low_rates,args.pwm_pin)
     if args.export_c:export_c(args.export_c.resolve(),bool(args.enable_nb4),args.low_rates)
     if not(args.cc or args.avr_gcc or args.export_c):parser.error('Select --cc, --avr-gcc or --export-c')
 if __name__=='__main__':main()

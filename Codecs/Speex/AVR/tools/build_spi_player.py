@@ -39,6 +39,7 @@ def main():
     p.add_argument('--stream', type=Path, help='Uniform raw Speex packets, not Ogg')
     p.add_argument('--wideband', action='store_true')
     p.add_argument('--backend', choices=['c', 'asm'], default='c')
+    p.add_argument('--pwm-pin', type=int, choices=[3,9], default=9, help='PWM output pin (default D9)')
     p.add_argument('--low-rates', type=int, choices=range(8), default=7)
     p.add_argument('--enable-nb4', action='store_true')
     p.add_argument('--address', type=lambda value: int(value, 0), default=0xff80)
@@ -91,6 +92,7 @@ def main():
         options.remove('-DSPEEX_ENABLE_WB1=1')
         options.append('-DSPEEX_AVR_OUTPUT_HOOK')
     options += ['-Os', '-flto', '-mmcu=atmega328p', '-mcall-prologues', '-mrelax',
+                '-DSPEEX_AVR_PWM_PIN='+str(args.pwm_pin),
                 '-ffunction-sections', '-fdata-sections', '-I'+str(out), '-I'+str(args.driver_dir.resolve()),
                 '-DSPEEX_SPI_WIDEBAND='+str(int(args.wideband)),
                 '-DSPEEX_SPI_CAPTURE_PCM='+str(int(args.capture_pcm))]
@@ -110,7 +112,7 @@ def main():
     symbols = subprocess.check_output([prefix+'nm'+ext, '-n', exe], text=True)
     (out/'symbols.txt').write_text(symbols)
     assert ' sample_data' not in symbols and 'speex_embedded_player_unused_main' not in symbols
-    metadata = dict(backend=args.backend, wideband=args.wideband, capturePcm=args.capture_pcm,
+    metadata = dict(backend=args.backend, wideband=args.wideband, capturePcm=args.capture_pcm,pwmPin=args.pwm_pin,
         lowRates=args.low_rates, nb4Enabled=args.enable_nb4, packetBytes=width, frames=frames,
         flashAddress=args.address, streamBytes=len(data), inputSha256=digest(args.stream),
         binarySha256=digest(out/'player.bin'), cpuHz=16000000, spiHz=8000000,

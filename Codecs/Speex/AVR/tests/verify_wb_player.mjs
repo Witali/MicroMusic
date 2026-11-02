@@ -10,6 +10,8 @@ import {tickAvr} from './avr_tick.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const build = resolve(process.argv[3] || join(root,'build/wb-asm-player'));
 const metadata = JSON.parse(readFileSync(join(build, 'input.json')));
+const pwmPin=metadata.pwmPin??9;assert.ok([3,9].includes(pwmPin));
+const pwmAddress=pwmPin===3?timer2Config.OCRB:timer1Config.OCRA;
 const input = process.argv[2] ? resolve(process.argv[2]) : join(root, 'reference/R4/data', metadata.file);
 const raw = readFileSync(input);
 const frameLoadCycles = metadata.frameLoadCycles || 0;
@@ -43,8 +45,8 @@ cpu.writeHooks[head] = (value, old, address, mask) => {
   if (cpu.data[started] && value !== old) readyTimes.push(cpu.cycles);
   return previousHead?.(value, old, address, mask) ?? false;
 };
-const previous = cpu.writeHooks[0x88]; // OCR1AL
-cpu.writeHooks[0x88] = (value, old, address, mask) => {
+const previous = cpu.writeHooks[pwmAddress];
+cpu.writeHooks[pwmAddress] = (value, old, address, mask) => {
   if (cpu.data[started]) {
     samples.push(value); times.push(cpu.cycles);
     // Exclude the intentional final drain after input is exhausted.

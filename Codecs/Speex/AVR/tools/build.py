@@ -157,7 +157,8 @@ def export_c(destination, enable_nb4=False,low_rates=0):
     return destination
 
 
-def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_bytes=None, enable_nb4=None,low_rates=0,destination=None):
+def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_bytes=None, enable_nb4=None,low_rates=0,destination=None,pwm_pin=9):
+    if pwm_pin not in (3,9):raise ValueError('PWM pin must be D3 or D9')
     if backend not in ('asm', 'c'):
         raise ValueError('Unknown arithmetic backend: ' + backend)
     if packet_bytes not in (None,6,10,15,20,28):
@@ -188,10 +189,11 @@ def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_byt
             '\nstatic const uint8_t sample_data[] PROGMEM = {\n' + ',\n'.join(rows) + '\n};\n', encoding='utf-8')
         (output / 'input.json').write_text(json.dumps({'file': packet_file.name,
             'sha256': hashlib.sha256(data).hexdigest(), 'frames': len(data)//width,'packetBytes':width,
-            'frameLoadCycles': frame_load_cycles}, indent=2) + '\n', encoding='utf-8')
+            'frameLoadCycles': frame_load_cycles,'pwmPin':pwm_pin}, indent=2) + '\n', encoding='utf-8')
         name = 'speex-player'
         main = ROOT / 'src/player.c'
         definitions.append('SPEEX_AVR_OUTPUT_HOOK')
+        definitions.append('SPEEX_AVR_PWM_PIN='+str(pwm_pin))
         if frame_load_cycles:
             definitions.append('SPEEX_AVR_FRAME_LOAD_CYCLES=' + str(frame_load_cycles))
     enabled=width==28 if enable_nb4 is None else bool(enable_nb4)
@@ -238,6 +240,7 @@ if __name__ == '__main__':
     parser.add_argument('--packet-bytes',type=int,choices=[6,10,15,20,28],help='Bare AVR mailbox width; player width is inferred')
     parser.add_argument('--low-rates',type=int,choices=range(8),default=0,help='Feature mask: NB2=1, NB8=2, NB1=4')
     parser.add_argument('--out',type=Path,help='AVR build directory')
+    parser.add_argument('--pwm-pin',type=int,choices=[3,9],default=9,help='PWM output pin for the player (D3 or D9; default D9)')
     parser.add_argument('--enable-nb4',action='store_true',default=None,help='Enable NB 11 kbit/s (automatic for 28-byte AVR input)')
     parser.add_argument('--frame-load-cycles', type=int, default=0,
                         help='Inject this many extra CPU cycles per player frame to verify headroom (test only)')
@@ -253,5 +256,5 @@ if __name__ == '__main__':
         parser.error('--frame-load-cycles requires --player and --avr-gcc')
     if args.backend == 'asm' and not args.avr_gcc:
         parser.error('The asm backend requires --avr-gcc')
-    print(avr(args.avr_gcc, args.player, args.frame_load_cycles, args.backend or 'c',args.packet_bytes,args.enable_nb4,args.low_rates,args.out)
+    print(avr(args.avr_gcc, args.player, args.frame_load_cycles, args.backend or 'c',args.packet_bytes,args.enable_nb4,args.low_rates,args.out,args.pwm_pin)
           if args.avr_gcc else host(args.cc, args.variant,bool(args.enable_nb4),args.low_rates))

@@ -34,16 +34,10 @@ int main(void)
     uint32_t frames = SPEEX_SPI_FRAME_COUNT;
     uint8_t i;
     cli();
-    DDRB |= (1 << PB1);
-    OCR1A = 128;
-    TCCR1A = (1 << COM1A1) | (1 << WGM10);
-    TCCR1B = (1 << WGM12) | (1 << CS10);
-    TCCR2A = (1 << WGM21);
+    speex_audio_init();
 #if SPEEX_SPI_WIDEBAND
-    OCR2A = 124;
     speex_wb1_init();
 #else
-    OCR2A = 249;
     speex_avr_init();
 #endif
     avr_spi_flash_init(&reader);

@@ -29,11 +29,20 @@ ATmega328P at 16 MHz uses the manufacturer's `avr/io.h` definitions:
 
 | Function | Pin |
 | --- | --- |
-| PWM output, Timer1 OC1A | PB1 / Arduino D9 |
+| PWM output, default Timer1 OC1A | PB1 / Arduino D9 |
+| PWM output with `--pwm-pin 3`, Timer2 OC2B | PD3 / Arduino D3 |
 | Flash active-low CS, hardware SS kept output | PB2 / D10 |
 | MOSI | PB3 / D11 |
 | MISO | PB4 / D12 |
 | SCK | PB5 / D13 |
+
+Select exactly one PWM routing at build time with `--pwm-pin 3` or
+`--pwm-pin 9` (`SPEEX_AVR_PWM_PIN=3/9`). This is independent of `--backend`.
+Both use 62.5 kHz PWM; the other timer supplies 8/16 kHz PCM interrupts.
+The Nano gallery uses D3 for both LPX and Speex. The
+[routing report](reports/nano-output-routing.json) adds 6000 NB2.15 and
+3600 WB3.95 continuous D3 SPI frames with exact PWM and zero underruns.
+Older measurements below retain their original D9/source baseline.
 
 Hardware SPI runs Mode 0, MSB first, F_CPU/2 = 8 MHz. Begin sends `0b`, three
 address bytes and one dummy byte. CS remains low during sequential playback;

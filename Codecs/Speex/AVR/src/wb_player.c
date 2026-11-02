@@ -1,4 +1,4 @@
-/* ATmega328P @ 16 MHz: 62.5 kHz 8-bit PWM on OC1A / PB1 / Arduino D9.
+/* ATmega328P @ 16 MHz: selectable D3/D9, 62.5 kHz 8-bit PWM.
  * Timer2 CTC advances PCM at 16 kHz. A synchronous callback emits 80 PCM
  * samples through a 128-byte ring. No full 640-byte PCM frame is allocated. */
 #include "speex_wb1.h"
@@ -6,6 +6,8 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include "sample.h"
+#define SPEEX_AUDIO_SAMPLE_HZ 16000
+#include "avr_audio_output.h"
 
 static volatile uint8_t ring[128];
 static volatile uint8_t head, tail, input_finished;
@@ -29,16 +31,15 @@ static __attribute__((noinline,noclone)) void speex_player_frame_load(void)
 }
 #endif
 
-ISR(TIMER2_COMPA_vect)
+ISR(SPEEX_AUDIO_PCM_VECTOR)
 {
     if (tail != head) {
-        OCR1A = ring[tail];
+        SPEEX_AUDIO_PWM = ring[tail];
         tail = (tail + 1) & 127;
     } else {
-        OCR1A = 128;
+        SPEEX_AUDIO_PWM = 128;
         if (input_finished) {
-            TCCR2B = 0;
-            TIMSK2 = 0;
+            speex_audio_stop();
             speex_player_done = 1;
         } else {
             ++speex_player_underruns;
@@ -59,10 +60,7 @@ static void output(const int16_t *samples, uint8_t count,void *context)
     head = write;
     if (!speex_player_started && head >= 80) {
         speex_player_started = 1;
-        TCNT2 = 0;
-        TIFR2 = (1 << OCF2A);
-        TIMSK2 = (1 << OCIE2A);
-        TCCR2B = (1 << CS21); /* 16 MHz / 8 / 125 = 16 kHz */
+        speex_audio_start();
         sei();
     }
 }
@@ -72,12 +70,7 @@ int main(void)
     uint16_t frame;
     uint8_t i;
     cli();
-    DDRB |= (1 << PB1);
-    OCR1A = 128;
-    TCCR1A = (1 << COM1A1) | (1 << WGM10);
-    TCCR1B = (1 << WGM12) | (1 << CS10);
-    TCCR2A = (1 << WGM21);
-    OCR2A = 124;
+    speex_audio_init();
     speex_wb1_init();
     for (frame = 0; frame < SPEEX_SAMPLE_FRAMES; ++frame) {
 #if defined(SPEEX_AVR_FRAME_LOAD_CYCLES) && SPEEX_AVR_FRAME_LOAD_CYCLES > 0
