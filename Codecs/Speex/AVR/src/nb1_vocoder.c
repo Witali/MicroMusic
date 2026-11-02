@@ -21,4 +21,20 @@ void speex_nb1_synthesize40_c(int16_t *out,const uint8_t *symbols,
     cursor->prior_pulse=prior_pulse;cursor->prior_noise=prior_noise;cursor->mean=mean;
     cursor->phase=phase-40;cursor->last=last;
 }
+void speex_nb1_synthesize40_zero_c(int16_t *out,const uint8_t *symbols,
+    const int16_t *context,SpeexNb1Cursor *cursor)
+{
+    int16_t delta=(int16_t)((uint16_t)cursor->prior_pulse-(uint16_t)cursor->prior_noise),mean=cursor->mean;
+    uint8_t phase=cursor->phase,last=2,pitch=(uint8_t)context[SPEEX_NB1_PITCH];
+    for(uint8_t i=0;i<40;i++) {
+        if(i==phase)phase+=pitch;
+        last=symbols[i];
+        int16_t value=(int16_t)(context[SPEEX_NB1_CURRENT+last]+delta);
+        delta=0;
+        mean=speex_low_mean_c(mean,value);
+        out[i]=(int16_t)(value-mean);
+    }
+    cursor->prior_pulse=0;cursor->prior_noise=0;cursor->mean=mean;
+    cursor->phase=phase-40;cursor->last=last;
+}
 #endif

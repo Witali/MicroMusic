@@ -19,10 +19,12 @@ const [packet,bytes,command,status,result,chunks,pcm,end]=['cache_packet','cache
  'cache_result','cache_chunks','cache_pcm','__bss_end'].map(at);
 const prepare=entry('speex_nb1_excitation_prepare'),generate=entry('speex_nb1_excitation_subframe'),
  values=entry('speex_low_noise_values5'),indices=entry('speex_low_noise_indices40'),fold=entry('speex_wb_noise_fold40_avr');
+const generalVocoder=entry('speex_nb1_synthesize40_avr'),zeroVocoder=entry('speex_nb1_synthesize40_zero_avr');
 const program=new Uint16Array(16384).fill(65535);new Uint8Array(program.buffer).set(binary);const cpu=new CPU(program,2048);
 let base,live,frameBegin,workEnd,ctx,seedAt,pulseAt,meanAt,prevAt,phaseAt;
 let row=null,prepPending=null,genPending=null,foldPending=null,parts=[],oldChunks=0,minSP=2303;
 let cacheFrames=0,generatedBlocks=0,foldedBlocks=0,valuesCalls=0,indicesCalls=0;
+let generalVocoderCalls=0,zeroVocoderCalls=0;
 let zeroGainFrames=0,nonzeroToZero=0,zeroToNonzero=0,zeroWithPriorPulse=0,lastGainZero=null;
 const memory=(p,n)=>Buffer.from(cpu.data.subarray(p,p+n));
 const s16=p=>cpu.dataView.getInt16(p,true),word=n=>Number(BigInt.asIntN(16,BigInt(n)));
@@ -39,6 +41,10 @@ function cacheIntact(){
 function until(done){const limit=cpu.cycles+3000000;while(!done()){
  assert.ok(cpu.cycles<limit,'Streaming mailbox timeout');const pc=cpu.pc*2,opcode=cpu.progMem[cpu.pc];
  if(row){
+  if(pc===generalVocoder||pc===zeroVocoder){
+   assert.equal(row.mode,1);assert.equal(pc===zeroVocoder,row.zeroContext,'Independent prepared-context selection');
+   ++row.vocoder;if(pc===zeroVocoder)++zeroVocoderCalls;else ++generalVocoderCalls;
+  }
   if(pc===prepare){
    assert.equal(row.mode,1);assert.equal(row.prepared,false);row.prepared=true;
    cpu.data.fill(0xa5,workEnd,live);row.delayed=memory(live,frameBegin-live);
@@ -105,7 +111,7 @@ function sqrt(x){
 }
 let seed=1000,state={pulse:0,mean:0,previous:0,phase:0};
 function prepared(payload){
- const mode=payload[0]>>3,result={mode,prepared:false,gen:0,fold:0,values:0,indices:0};if(mode!==1)return result;
+ const mode=payload[0]>>3,result={mode,prepared:false,gen:0,fold:0,values:0,indices:0,vocoder:0};if(mode!==1)return result;
  const scale=Math.floor(28406*gains[field(payload,34,5)]/32768),pitch=17+field(payload,23,7);
  const coefficient=(2185*(field(payload,30,4)<<6)+16384)>>15,g=Math.max(0,Math.min(64,(24576*(coefficient-13)+8192)>>14));
  result.zeroGain=g===0;result.priorPulse=state.pulse;
@@ -120,6 +126,8 @@ function prepared(payload){
  }
  const current=table.map(v=>q15(32767-435*g,v)),previous=table.map(v=>q15(77*g,v));
  const pulseNow=q15(22938,amplitude),pulsePrevious=q15(9830,amplitude);
+ result.zeroContext=previous[0]===0;
+ if(result.zeroContext)assert.ok(previous.every(v=>v===0)&&pulseNow===0&&pulsePrevious===0);
  let {pulse,mean,phase}=state,priorNoise=q15(77*g,state.previous);result.initialNoise=priorNoise;
  [...current,...previous,pulseNow,pulsePrevious,priorNoise,pitch].forEach((v,i)=>result.context.writeInt16LE(v,2*i));
  for(let sub=0;sub<4;sub++){
@@ -144,6 +152,7 @@ for(let f=0;f<source.frames;f++){
  assert.equal(cpu.dataView.getInt8(result),0);assert.equal(parts.length,4);
  assert.ok(Buffer.concat(parts).equals(expected.subarray(f*640,(f+1)*640)),'Mixed PCM '+f);
  assert.deepEqual([row.prepared,row.gen,row.fold,row.values,row.indices],row.mode===1?[true,4,4,1,4]:[false,0,0,0,0]);
+ assert.equal(row.vocoder,row.mode===1?4:0);
  assert.equal(cpu.dataView.getUint32(seedAt,true),seed);if(row.mode===1){
   cacheIntact();++cacheFrames;
   if(row.zeroGain){++zeroGainFrames;if(row.priorPulse!==0)++zeroWithPriorPulse;if(lastGainZero===false)++nonzeroToZero;}
@@ -151,7 +160,7 @@ for(let f=0;f<source.frames;f++){
   lastGainZero=row.zeroGain;
 }row=null;
 }
-const corpusCounts={cacheFrames,generatedBlocks,foldedBlocks,valuesCalls,indicesCalls};
+const corpusCounts={cacheFrames,generatedBlocks,foldedBlocks,valuesCalls,indicesCalls,generalVocoderCalls,zeroVocoderCalls};
 cpu.data[status]=0;cpu.data[command]=2;until(()=>cpu.data[status]===1);
 assert.equal(cpu.dataView.getUint32(seedAt,true),1000);assert.ok(memory(base,208).every(v=>v===0));
 // Natural mixed speech has no zero-gain frame beginning with a nonzero pulse.
@@ -173,14 +182,22 @@ for(let code=0;code<4;code++){
  parts=[];cpu.data[status]=1;cpu.data[command]=1;until(()=>cpu.data[status]===2);
  assert.equal(cpu.dataView.getInt8(result),0);assert.equal(parts.length,4);
  assert.deepEqual([row.prepared,row.gen,row.fold,row.values,row.indices],[true,4,4,1,4]);
+ assert.equal(row.vocoder,4);
  assert.equal(cpu.dataView.getUint32(seedAt,true),seed);cacheIntact();
  targeted.push({code,priorPulse:pulse,priorMean:mean,priorNoise:previous,priorPhase:phase,independentExcitationAndQuarterStatesExact:true});row=null;
 }
+// The broader arithmetic predicate also admits gain>0 with scale<=4096,
+// but no legal packet can create that case with the pinned 32-entry table.
+// Arbitrary incoming prior noise is covered by the isolated vector fixture.
+const packetScales=gains.map(g=>Math.floor(28406*g/32768));assert.equal(packetScales.length,32);
+assert.ok(packetScales.every(s=>s>4096));
 const report={binarySha256:metadata.binarySha256,inputSha256:source.inputSha256,pcmSha256:source.pcmSha256,frames:source.frames,
  ...corpusCounts,cacheBytes:170,contextBytes:28,prefoldBytes:10,reusedWorkspaceBytes:208,
  guardBytes:2,firstDelayedInputByte:210,nextHistorySourceByte:320,independentOriginalVocoder:true,allPartialStatesExact:true,
  classesAndSeedPerQuarterExact:true,readOnlyFoldWorkspace:true,outputAndScratchBounds:true,pcmExact:true,resetClearsWorkspace:true,
  zeroGainFrames,nonzeroToZero,zeroToNonzero,zeroFramesWithPriorPulse:zeroWithPriorPulse,preparationPreservesPersistentState:true,
  targetedZeroGainWithPriorPulse:{cases:targeted,allFourGainCodes:true,scope:'Injected persistent states; independent original excitation, quarter state, seed, fold and guards; no PCM-oracle claim for these four frames'},
+ positiveGainZeroContext:{packetScaleCodes:32,minimumScale:Math.min(...packetScales),zeroBoundary:4096,unreachableForAllPacketScales:true},
+ preparedContextDispatchExact:true,
  includesInterrupts:false,physicalBoardTested:false,flashBytes:binary.length,staticSramBytes:end-256,peakStack:2303-minSP,freeSram:minSP-end+1};
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS',JSON.stringify(report));

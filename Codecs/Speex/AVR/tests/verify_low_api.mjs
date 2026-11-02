@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {join,resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {CPU,avrInstruction} from 'avr8js';
 const dir=resolve(process.argv[2]),input=resolve(process.argv[3]);
 const meta=JSON.parse(readFileSync(join(dir,'backend.json'))),data=JSON.parse(readFileSync(join(input,'input.json')));
@@ -28,7 +29,16 @@ const countFold=process.argv.includes('--count-noise-fold');
 const foldEntry=countFold?address('speex_wb_noise_fold40_avr'):-1;
 let foldActive=null,foldCalls=0,foldMultiplies=0;
 const countVocoder=process.argv.includes('--count-vocoder');
-const vocoderEntry=countVocoder?address('speex_nb1_synthesize40_avr'):-1;
+const zeroVocoderAvailable=symbols.has('speex_nb1_synthesize40_zero_avr');
+const vocoderEntries=new Map();
+if(countVocoder){
+ vocoderEntries.set(address('speex_nb1_synthesize40_avr'),'general');
+ if(zeroVocoderAvailable)vocoderEntries.set(address('speex_nb1_synthesize40_zero_avr'),'zero');
+}
+const olGains=countVocoder?readFileSync(fileURLToPath(new URL('../vendor/speex-1.2.1/libspeex/nb_celp.c',import.meta.url)),'utf8')
+ .match(/ol_gain_table\[32\]=\{([^}]+)\}/)[1].split(',').map(Number):[];
+let expectedZeroContext=false;
+const vocoderPaths={general:{calls:0,muls:0},zero:{calls:0,muls:0}};
 let vocoderActive=null,vocoderCalls=0,vocoderMultiplies=0;
 const countNb1Gain=process.argv.includes('--count-nb1-gain');
 const countPrepare=process.argv.includes('--count-noise-prepare')||countNb1Gain;
@@ -89,7 +99,11 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  if(valuesActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++valuesActive.muls;
  if(cpu.pc*2===foldEntry){assert.equal(foldActive,null);foldActive={sp:cpu.SP,muls:0};}
  if(foldActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++foldActive.muls;
- if(cpu.pc*2===vocoderEntry){assert.equal(vocoderActive,null);vocoderActive={sp:cpu.SP,muls:0};}
+ if(vocoderEntries.has(cpu.pc*2)){
+  assert.equal(vocoderActive,null);const path=vocoderEntries.get(cpu.pc*2);
+  assert.equal(path,zeroVocoderAvailable&&expectedZeroContext?'zero':'general','Prepared-context vector selection');
+  vocoderActive={sp:cpu.SP,muls:0,path};
+ }
  if(vocoderActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++vocoderActive.muls;
  if(cpu.pc*2===prepareEntry){assert.equal(prepareActive,null);prepareActive={sp:cpu.SP,muls:0,gainReads:[],zeroGain:expectedGainCode<4};}
  if(prepareActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++prepareActive.muls;
@@ -150,7 +164,8 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  }
  if(vocoderActive&&opcode===0x9508&&cpu.SP===vocoderActive.sp+2){
   assert.equal(vocoderActive.muls,160,'Forty exact single-product mean updates');assert.equal(cpu.data[1],0);
-  ++vocoderCalls;vocoderMultiplies+=vocoderActive.muls;vocoderActive=null;
+  ++vocoderCalls;vocoderMultiplies+=vocoderActive.muls;
+  ++vocoderPaths[vocoderActive.path].calls;vocoderPaths[vocoderActive.path].muls+=vocoderActive.muls;vocoderActive=null;
  }
  if(prepareActive&&opcode===0x9508&&cpu.SP===prepareActive.sp+2){
   if(countNb1Gain){assert.deepEqual(prepareActive.gainReads,[nb1GainTable+expectedGainCode]);++gainLookups;++gainHistogram[expectedGainCode];}
@@ -179,6 +194,7 @@ function decode(payload,width,invalidFlags=0){
  const oneBefore=oneSamples,oneMulsBefore=oneMuls,adaptiveBefore=adaptiveCalls;
  const q6Before=q6Calls;
  const gainBefore=gainLookups;expectedGainCode=((payload[3]&3)<<2)|(payload[4]>>6);
+ expectedZeroContext=expectedGainCode<4||Math.floor(28406*olGains[(payload[4]>>1)&31]/32768)<=4096;
  expectedCoefficient=Math.min(63,(2185*((((payload[3]&3)<<2)|(payload[4]>>6))<<6)+16384)>>15);
  cpu.data.set(payload,packet);cpu.data[bytes]=width;cpu.data[flags]=invalidFlags;
  output=[];cpu.data[status]=1;cpu.data[command]=1;until(()=>cpu.data[status]===2);
@@ -235,7 +251,8 @@ if(countValues)report.noiseTableArithmetic={calls:valuesCalls,hardwareMultiplies
 if(countFold)report.noiseFoldArithmetic={calls:foldCalls,hardwareMultiplies:foldMultiplies,
  transformedValuesPerNb1Frame:16,foldMulsPerNb1Frame:112,controllerMulsPerNb1Frame:116,rejectedCallsDoNotExecute:true};
 if(countVocoder)report.vocoderArithmetic={calls:vocoderCalls,hardwareMultiplies:vocoderMultiplies,
- callsPerNb1Frame:4,hardwareMultipliesPerNb1Frame:640,rejectedCallsDoNotExecute:true};
+ callsPerNb1Frame:4,hardwareMultipliesPerNb1Frame:640,rejectedCallsDoNotExecute:true,
+ zeroContextDispatchAvailable:zeroVocoderAvailable,byPath:vocoderPaths,preparedContextDispatchExact:true};
 if(countPrepare)report.framePreparationArithmetic={calls:prepareCalls,hardwareMultiplies:prepareMultiplies,
  perCall:prepareCounts,byGain:prepareGroups,rejectedCallsDoNotExecute:true};
 if(countNb1Gain)report.nb1GainLookup={calls:gainLookups,codeHistogram:gainHistogram,exactFlashAddressPerFrame:true,
