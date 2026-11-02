@@ -3144,3 +3144,5 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [Clocked external SPI sources](lpx-external-spi.md): vendor-derived registers, source/arithmetic separation, corrected simavr byte timing and bounded full-player validation scope.
 
 - [Exact bounded LPX pitch history](lpx-pitch-history.md): rejected 111-byte RAM tradeoff, memory-lifetime alternatives, unchanged production decoder and measured AVR25 C throughput limits.
+
+- [Select LPX multiplication by real target capability](lpx-multiply-selection.md): explicit C/ASM choice, compiler-linked software fallback, and assembled AVR5/AVR25 checks without redefining CPU macros.
