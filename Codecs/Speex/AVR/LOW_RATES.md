@@ -16,6 +16,11 @@ ATmega328P, 16 MHz, 2 KB SRAM; explicit AVR ASM is the playback target.
 Portable C fallback selection and the existing compact Q7/16-tap QMF remain.
 Original Xiph 1.2.1 files, mode tables and BSD provenance stay unchanged.
 
+The latest [exact finite NB1 gain map](WB_GAIN_MAP.md) brings NB2.15/WB3.95
+speech CPU to 31.90%/69.47%, with 82 B less Flash, unchanged working memory
+and fresh paired full PCM, +8%/+11% WB IRQ and SPI admission. Historical
+figures below retain their original stage context.
+
 ## Stage 1: NB5.95 / WB7.75
 
 `SPEEX_ENABLE_NB2=1` adds submode 2: 119 meaningful bits / 15 bytes, 160

@@ -69,5 +69,6 @@ The combined complete-image stage saves about 374 cycles per speech frame,
 SRAM or peak stack. Full raw, +3%-load WB IRQ and actual SPI remain exact with
 zero underruns. WB SPI minimum queue grows 31 -> 33 samples. Zero-coefficient
 frames cost five extra caller cycles, included in the measured totals. NB1's
-coefficient caller is unchanged; its 0..64 domain is preserved for later reuse.
+coefficient caller was unchanged at this stage; its preserved 0..64 domain is
+subsequently reused in the [exact finite gain map](speex-finite-gain.md).
 [Exact workload, variant comparison and admission](../../Codecs/Speex/AVR/WB_FORCED_MATH.md).

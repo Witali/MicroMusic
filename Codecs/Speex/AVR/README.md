@@ -84,6 +84,13 @@ Full PCM, loaded WB IRQ and SPI checks stay exact without underruns; WB SPI
 minimum queue improves 31 -> 33. The Q6 ASM domain is exhaustively verified
 over 4194304 pairs, with explicitly selectable C preserved.
 
+[The exact finite NB1 gain map](WB_GAIN_MAP.md) then composes sixteen control
+codes through both original quantizers. NB2.15/WB3.95 speech CPU improves
+**32.00% ->31.90% / 69.57% ->69.47%**, with 82 B less Flash and unchanged
+static SRAM/peak stack. Paired full PCM, +8%/+11% WB IRQ and scheduled SPI
+stay exact without underruns. The gain lookup is portable C and uses sixteen
+Flash bytes; quiet speech and all RNG/state behavior are preserved.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

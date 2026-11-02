@@ -140,8 +140,10 @@ python Codecs/Speex/AVR/tests/check_refill_c_export.py --clang <windows-clang> -
 python Codecs/Speex/AVR/tests/audit_forced_math.py --corpus <low-corpus>
 ```
 
-Further unmeasured candidates: reuse the unclamped coefficient helper in NB1,
-inline the sole-caller zero-frame controller, and improve section ownership
-for the old shared ASM vector body. None is included in these results. Existing
+The subsequent [finite NB1 map](WB_GAIN_MAP.md) measures coefficient reuse,
+factored arithmetic and their exact finite composition, selecting each caller's
+fastest recipe. Further unmeasured candidates include inlining the sole-caller
+zero-frame controller and section ownership for the old ASM body. None is
+included in the results above. Existing
 Xiph algorithm/table BSD provenance remains intact; helper/register/test
 adaptations are original project work.

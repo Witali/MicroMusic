@@ -1,0 +1,93 @@
+{
+  "scope": "Isolated scalar C arithmetic; no C decoder execution/timing",
+  "backend": "c",
+  "binarySha256": "a4c917241db68c73964896cd278bddeb14cd6f628d4856f578a3512d1f335bd2",
+  "all16Codes": true,
+  "originalNarrowAndFactoredAndTableExact": true,
+  "code15Coefficient64": true,
+  "coefficients": [
+    0,
+    4,
+    9,
+    13,
+    17,
+    21,
+    26,
+    30,
+    34,
+    38,
+    43,
+    47,
+    51,
+    55,
+    60,
+    64
+  ],
+  "gains": [
+    0,
+    0,
+    0,
+    0,
+    6,
+    12,
+    20,
+    26,
+    32,
+    38,
+    45,
+    51,
+    57,
+    63,
+    64,
+    64
+  ],
+  "tableInFlash": true,
+  "exactFlashAddresses": true,
+  "lookupHasNoMuls": true,
+  "calleeSavedAndR1Returns": 80,
+  "statistics": [
+    {
+      "name": "nb1_gain_original",
+      "calls": 16,
+      "muls": 144,
+      "lpm": 0,
+      "minCycles": 298,
+      "maxCycles": 301
+    },
+    {
+      "name": "nb1_gain_coefficient",
+      "calls": 16,
+      "muls": 96,
+      "lpm": 0,
+      "minCycles": 162,
+      "maxCycles": 165
+    },
+    {
+      "name": "nb1_gain_factored",
+      "calls": 16,
+      "muls": 32,
+      "lpm": 0,
+      "minCycles": 33,
+      "maxCycles": 35
+    },
+    {
+      "name": "nb1_gain_lookup",
+      "calls": 16,
+      "muls": 0,
+      "lpm": 16,
+      "minCycles": 11,
+      "maxCycles": 11
+    },
+    {
+      "name": "nb1_gain_bounded_lookup",
+      "calls": 16,
+      "muls": 0,
+      "lpm": 16,
+      "minCycles": 14,
+      "maxCycles": 14
+    }
+  ],
+  "peakStack": 8,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

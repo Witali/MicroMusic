@@ -3040,6 +3040,11 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Compose the exact finite vocoder gain map](speex-finite-gain.md): preserve
+both quantizers in sixteen Flash bytes, compare complete caller recipes and
+retain range information where the measured compiler benefits. Includes
+host-checked, unmeasured complementary-coefficient and unity-Q15 identities.
+
 [Bounded forced-pitch arithmetic](speex-bounded-forced-math.md): exact
 signed22/Q6 alignment and unsigned16 coefficient mapping, exhaustive AVR input
 domain and explicitly selectable C, with measured full decoder/IRQ/SPI admission.
