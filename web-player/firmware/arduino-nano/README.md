@@ -4,13 +4,17 @@ The shared AVR page is `../../?collection=hq4&device=atmega328p`. The same
 microcontroller selector, player, signal panel and catalog serve ATtiny13A,
 ATtiny88 and Nano; there is no separate Nano HTML layout.
 
-Both images contain the already-public 2.4-second phrase from
-`web-player/audio/lpx-bread/`. They play once after reset; reset starts again.
+Eight images contain the four already-public speech phrases, in compact and
+higher-quality LPX profiles. The common order is defined by
+`web-player/speech-examples.json`. They play once after reset; reset starts again.
 EEPROM is unused. These are complete application HEX files without a
 bootloader; they fit within the classic Nano's 30,720-byte application budget.
 Keep the existing board bootloader and fuse settings when uploading.
 
-| Profile | LPX stream | Program | Full Flash | Static SRAM |
+The original bread phrase retains these sizes; the complete eight-image
+inventory and compression recipes are in [the shared documentation](../../../docs/speech-assets.md).
+
+| Bread profile | LPX stream | Program | Full Flash | Static SRAM |
 | --- | ---: | ---: | ---: | ---: |
 | Compact | 1,008 B | 4,574 B | 5,582 B | 756 B |
 | Quality | 1,899 B | 4,573 B | 6,472 B | 756 B |
@@ -23,11 +27,11 @@ documents D3/PD3. Definitions come from the existing AVR-LibC headers in
 the project's pinned AVR-GCC 7.3.0 toolchain, without copied register addresses.
 
 The browser plays the public native-decoder WAV and displays its waveform;
-it does not emulate Nano. Both complete HEX files were independently run in
-simavr 1.6 with Timer1 interrupts active: all 19,200 samples and output ticks,
+it does not emulate Nano. All eight complete HEX files were independently run in
+simavr 1.6 with Timer1 interrupts active: every declared sample and output tick,
 zero underruns, exact equality to the displayed WAV. Observed sample intervals
 were 1,997–2,003 CPU cycles, maximum ISR 68 cycles, minimum observed stack
-margin 1,231 bytes. These results cover these two images; no physical-board
+margin 1,231 bytes for the original bread pair. These results cover the retained images; no physical-board
 or analog-output test is claimed. Path-free receipts and SHA-256 hashes are
 in `../../firmware-atmega328p.json`; private build logs remain in ignored `build/`.
 

@@ -30,61 +30,65 @@ def main():
     parser.add_argument('--enable-asm', action='store_true')
     args = parser.parse_args()
     player = ROOT / 'web-player'
-    preview = json.loads((player / 'audio/lpx-bread/manifest.json').read_text(encoding='utf-8'))
-    preview['variants'] = [v for v in preview['variants'] if v['id'] in ('compact', 'quality')]
+    previews = json.loads((player / 'audio/lpx-speech/manifest.json').read_text(encoding='utf-8'))['clips']
+    bread = json.loads((player / 'audio/lpx-bread/manifest.json').read_text(encoding='utf-8'))
+    previews.append(dict(bread, clipId='bread'))
     variants = []
     images = []
-    for variant in preview['variants']:
-        variant.pop('flashMeasurement', None)
-        stream = player / variant['stream']
-        folder = ROOT / 'build/nano-lpx' / variant['id']
-        result = simulate([stream.read_bytes()], folder, args.avr_bin,
-                          args.observer, lib=args.lib, wsl=args.wsl,
-                          assembly=args.enable_asm)
-        cost, report = result['cost'], result['report']
-        if cost['flash_bytes'] > 30720 or cost['static_sram_bytes'] >= 2048:
-            raise ValueError('Firmware exceeds the classic Nano application budget')
-        with wave.open(str(player / variant['audio']), 'rb') as audio:
-            if (audio.getnchannels(), audio.getsampwidth(), audio.getframerate(), audio.getnframes()) != (1, 2, 8000, preview['samples']):
-                raise ValueError('Unexpected public preview format')
-            actual_preview = audio.readframes(preview['samples'])
-        expected_preview = b''.join(struct.pack('<h', (value - 128) * 256)
-                                    for value in (folder / 'valid.pcm8').read_bytes())
-        if actual_preview != expected_preview:
-            raise ValueError('Simulated firmware output differs from public WAV')
-        name = 'lpx-nano-bread-' + variant['id'] + '.hex'
-        image = (folder / 'player.hex').read_bytes()
-        variants.append(dict(id=variant['id'], source='firmware/arduino-nano/' + name,
-                             flashBytes=cost['flash_bytes'],
-                             programFlashBytes=cost['program_flash_bytes'],
-                             staticSramBytes=cost['static_sram_bytes'],
-                             hexSha256=sha(image), streamSha256=sha(stream.read_bytes()),
-                             timing=dict(simulator='simavr 1.6', playedSamples=report['played'],
-                                         underruns=report['underruns'],
-                                         minTickCycles=report['tick_interval_min_cycles'],
-                                         maxTickCycles=report['tick_interval_max_cycles'],
-                                         maxIrqCycles=report['irq_cycles_max'],
-                                         stackMarginBytes=report['stack_margin_all_bytes'])))
-        images.append((name, image))
+    for preview in previews:
+        clip_id = preview['clipId']
+        preview['variants'] = [v for v in preview['variants'] if v['id'] in ('compact', 'quality')]
+        for variant in preview['variants']:
+            variant.pop('flashMeasurement', None)
+            stream = player / variant['stream']
+            folder = ROOT / 'build/nano-lpx' / (variant['id'] if clip_id == 'bread' else clip_id + '-' + variant['id'])
+            result = simulate([stream.read_bytes()], folder, args.avr_bin,
+                              args.observer, lib=args.lib, wsl=args.wsl,
+                              assembly=args.enable_asm)
+            cost, report = result['cost'], result['report']
+            if cost['flash_bytes'] > 30720 or cost['static_sram_bytes'] >= 2048:
+                raise ValueError('Firmware exceeds the classic Nano application budget')
+            with wave.open(str(player / variant['audio']), 'rb') as audio:
+                if (audio.getnchannels(), audio.getsampwidth(), audio.getframerate(), audio.getnframes()) != (1, 2, 8000, preview['samples']):
+                    raise ValueError('Unexpected public preview format')
+                actual_preview = audio.readframes(preview['samples'])
+            expected_preview = b''.join(struct.pack('<h', (value - 128) * 256)
+                                        for value in (folder / 'valid.pcm8').read_bytes())
+            if actual_preview != expected_preview:
+                raise ValueError('Simulated firmware output differs from public WAV')
+            name = 'lpx-nano-' + clip_id + '-' + variant['id'] + '.hex'
+            image = (folder / 'player.hex').read_bytes()
+            variants.append(dict(id=variant['id'], clipId=clip_id, source='firmware/arduino-nano/' + name,
+                                 flashBytes=cost['flash_bytes'],
+                                 programFlashBytes=cost['program_flash_bytes'],
+                                 staticSramBytes=cost['static_sram_bytes'],
+                                 hexSha256=sha(image), streamSha256=sha(stream.read_bytes()),
+                                 timing=dict(simulator='simavr 1.6', playedSamples=report['played'],
+                                             underruns=report['underruns'],
+                                             minTickCycles=report['tick_interval_min_cycles'],
+                                             maxTickCycles=report['tick_interval_max_cycles'],
+                                             maxIrqCycles=report['irq_cycles_max'],
+                                             stackMarginBytes=report['stack_margin_all_bytes'])))
+            images.append((name, image))
     sources = [*sorted((CODEC / 'src').glob('*')),
                CODEC / 'examples/AVR_V5_PLAYER/player.cpp',
                CODEC / 'examples/AVR_V5_PLAYER/player_config.h',
                CODEC / 'tools/build_release_player.py', Path(__file__)]
-    catalog = dict(schema='micromusic-lpx-avr-firmware-v1', device='atmega328p',
+    catalog = dict(schema='micromusic-lpx-avr-firmware-v2', device='atmega328p',
                    cpuHz=16000000, sampleHz=8000, pwmHz=62500, pwmOutput='D3 / PD3 / OC2B',
                    queue=256, prefill=192, assemblyEnabled=args.enable_asm,
                    physicalBoardMeasured=False,
                    sourceHashEncoding='text-lf',
                    sourceSha256={p.relative_to(ROOT).as_posix(): sha(p.read_bytes().replace(b'\r\n', b'\n'))
                                  for p in sources if p.is_file()},
-                   preview=preview, variants=variants)
+                   clips=previews, variants=variants)
     destination = player / 'firmware/arduino-nano'
     destination.mkdir(parents=True, exist_ok=True)
     for name, image in images:
         (destination / name).write_bytes(image)
     (player / 'firmware-atmega328p.json').write_text(
         json.dumps(catalog, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
-    print('Verified two Nano firmware images: exact public WAV, 19200 samples each, no underruns.')
+    print(f'Verified {len(variants)} Nano firmware images: exact public WAVs, complete output, no underruns.')
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 {
-  "schema": "micromusic-lpx-avr-firmware-v1",
+  "schema": "micromusic-lpx-avr-firmware-v2",
   "device": "atmega328p",
   "cpuHz": 16000000,
   "sampleHz": 8000,
@@ -24,44 +24,270 @@
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/AVR_V5_PLAYER/player.cpp": "ebaa83e7e47eb8e26d38e74cf6ba693de1682c8c98f079af927dff808a683674",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/AVR_V5_PLAYER/player_config.h": "52492e9a832bc567c02cfaa6253fedcd0ea3a9a813930e4e609f79f0e43b62c9",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py": "1fba71295fbe982ae57a10678a32bfc490a7f1e5a32a5e47c994275c653ce97c",
-    "tools/build-nano-speech-catalog.py": "db92b6944ca449dd47c22ac1df33352cb03692ccaeb3c584e1c90dfdfa2810dc"
+    "tools/build-nano-speech-catalog.py": "e4a6809887ce8539c2b551515e9bf86de6363251977580f09dcf9a675fccec43"
   },
-  "preview": {
-    "schemaVersion": 1,
-    "title": "«И того, и другого, и можно без хлеба»",
-    "codec": "LPX",
-    "sampleRate": 8000,
-    "samples": 19200,
-    "durationSeconds": 2.4,
-    "previewKind": "native-pwm8",
-    "reference": {
-      "audio": "audio/lpx-bread/original.wav",
-      "label": "Исходник · 8 кГц, моно"
-    },
-    "variants": [
-      {
-        "id": "compact",
-        "label": "Компактный",
-        "profile": 4,
-        "audio": "audio/lpx-bread/compact.wav",
-        "stream": "audio/lpx-bread/compact.lpx",
-        "bytes": 1008,
-        "bitrateBps": 3360.0
+  "clips": [
+    {
+      "schemaVersion": 1,
+      "clipId": "chego",
+      "title": "Чего тебе нужно?",
+      "codec": "LPX",
+      "sampleRate": 8000,
+      "samples": 9831,
+      "durationSeconds": 1.228875,
+      "previewKind": "native-pwm8",
+      "reference": {
+        "audio": "audio/originals/chego.wav",
+        "playback": "audio/originals/playback/chego.wav",
+        "sourceSha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+        "label": "Исходная запись"
       },
-      {
-        "id": "quality",
-        "label": "Повышенное качество",
-        "profile": 6,
-        "audio": "audio/lpx-bread/quality.wav",
-        "stream": "audio/lpx-bread/quality.lpx",
-        "bytes": 1899,
-        "bitrateBps": 6330.0
-      }
-    ]
-  },
+      "variants": [
+        {
+          "id": "compact",
+          "label": "Компактный",
+          "profile": 4,
+          "audio": "audio/lpx-speech/chego/compact.wav",
+          "stream": "audio/lpx-speech/chego/compact.lpx",
+          "bytes": 536,
+          "bitrateBps": 3489.3703590682535
+        },
+        {
+          "id": "quality",
+          "label": "Повышенное качество",
+          "profile": 6,
+          "audio": "audio/lpx-speech/chego/quality.wav",
+          "stream": "audio/lpx-speech/chego/quality.lpx",
+          "bytes": 791,
+          "bitrateBps": 5149.425287356322
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "clipId": "otvechaesh",
+      "title": "Что ж ты не отвечаешь?",
+      "codec": "LPX",
+      "sampleRate": 8000,
+      "samples": 8466,
+      "durationSeconds": 1.05825,
+      "previewKind": "native-pwm8",
+      "reference": {
+        "audio": "audio/originals/otvechaesh.wav",
+        "playback": "audio/originals/playback/otvechaesh.wav",
+        "sourceSha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+        "label": "Исходная запись"
+      },
+      "variants": [
+        {
+          "id": "compact",
+          "label": "Компактный",
+          "profile": 4,
+          "audio": "audio/lpx-speech/otvechaesh/compact.wav",
+          "stream": "audio/lpx-speech/otvechaesh/compact.lpx",
+          "bytes": 470,
+          "bitrateBps": 3553.0356721001654
+        },
+        {
+          "id": "quality",
+          "label": "Повышенное качество",
+          "profile": 6,
+          "audio": "audio/lpx-speech/otvechaesh/quality.wav",
+          "stream": "audio/lpx-speech/otvechaesh/quality.lpx",
+          "bytes": 692,
+          "bitrateBps": 5231.27805339003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "clipId": "vinni",
+      "title": "Сова! Открывай! Медведь пришёл!",
+      "codec": "LPX",
+      "sampleRate": 8000,
+      "samples": 23757,
+      "durationSeconds": 2.969625,
+      "previewKind": "native-pwm8",
+      "reference": {
+        "audio": "audio/originals/vinni.wav",
+        "playback": "audio/originals/playback/vinni.wav",
+        "sourceSha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+        "label": "Исходная запись"
+      },
+      "variants": [
+        {
+          "id": "compact",
+          "label": "Компактный",
+          "profile": 4,
+          "audio": "audio/lpx-speech/vinni/compact.wav",
+          "stream": "audio/lpx-speech/vinni/compact.lpx",
+          "bytes": 1243,
+          "bitrateBps": 3348.5709475102076
+        },
+        {
+          "id": "quality",
+          "label": "Повышенное качество",
+          "profile": 6,
+          "audio": "audio/lpx-speech/vinni/quality.wav",
+          "stream": "audio/lpx-speech/vinni/quality.lpx",
+          "bytes": 1862,
+          "bitrateBps": 5016.12156417056
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "title": "«И того, и другого, и можно без хлеба»",
+      "codec": "LPX",
+      "sampleRate": 8000,
+      "samples": 19200,
+      "durationSeconds": 2.4,
+      "previewKind": "native-pwm8",
+      "reference": {
+        "audio": "audio/lpx-bread/original.wav",
+        "label": "Исходник · 8 кГц, моно"
+      },
+      "variants": [
+        {
+          "id": "compact",
+          "label": "Компактный",
+          "profile": 4,
+          "audio": "audio/lpx-bread/compact.wav",
+          "stream": "audio/lpx-bread/compact.lpx",
+          "bytes": 1008,
+          "bitrateBps": 3360.0
+        },
+        {
+          "id": "quality",
+          "label": "Повышенное качество",
+          "profile": 6,
+          "audio": "audio/lpx-bread/quality.wav",
+          "stream": "audio/lpx-bread/quality.lpx",
+          "bytes": 1899,
+          "bitrateBps": 6330.0
+        }
+      ],
+      "clipId": "bread"
+    }
+  ],
   "variants": [
     {
       "id": "compact",
+      "clipId": "chego",
+      "source": "firmware/arduino-nano/lpx-nano-chego-compact.hex",
+      "flashBytes": 5110,
+      "programFlashBytes": 4574,
+      "staticSramBytes": 756,
+      "hexSha256": "2c363d184ab2eae13f1f25c0b5e0642ab823fd3f0cb98f1ba1ac6af1a00fccf2",
+      "streamSha256": "dcc709cd0d502b04fad930c17904fd8da202c32352fdfcfa7e5c5d394bbe64b8",
+      "timing": {
+        "simulator": "simavr 1.6",
+        "playedSamples": 9831,
+        "underruns": 0,
+        "minTickCycles": 1997,
+        "maxTickCycles": 2003,
+        "maxIrqCycles": 68,
+        "stackMarginBytes": 1231
+      }
+    },
+    {
+      "id": "quality",
+      "clipId": "chego",
+      "source": "firmware/arduino-nano/lpx-nano-chego-quality.hex",
+      "flashBytes": 5364,
+      "programFlashBytes": 4573,
+      "staticSramBytes": 756,
+      "hexSha256": "d63b9f620b9ab407c893b4d00800b12b801e7c58add2115985595375a8df5c41",
+      "streamSha256": "97ac77212d74149a08e5ec472b59c1b02520b9b1718e5f3e4742c036d4c8ee67",
+      "timing": {
+        "simulator": "simavr 1.6",
+        "playedSamples": 9831,
+        "underruns": 0,
+        "minTickCycles": 1998,
+        "maxTickCycles": 2003,
+        "maxIrqCycles": 68,
+        "stackMarginBytes": 1231
+      }
+    },
+    {
+      "id": "compact",
+      "clipId": "otvechaesh",
+      "source": "firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex",
+      "flashBytes": 5044,
+      "programFlashBytes": 4574,
+      "staticSramBytes": 756,
+      "hexSha256": "d32c0036bddbea2abefd4adc61b1a5720e2448feb53a6c3ef0431fb69bbebb64",
+      "streamSha256": "be9b8e74208e61b43c89510e1a2b0634cbd4c52d1f1175a5844c7d2845b2149c",
+      "timing": {
+        "simulator": "simavr 1.6",
+        "playedSamples": 8466,
+        "underruns": 0,
+        "minTickCycles": 1997,
+        "maxTickCycles": 2003,
+        "maxIrqCycles": 68,
+        "stackMarginBytes": 1231
+      }
+    },
+    {
+      "id": "quality",
+      "clipId": "otvechaesh",
+      "source": "firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex",
+      "flashBytes": 5266,
+      "programFlashBytes": 4574,
+      "staticSramBytes": 756,
+      "hexSha256": "f4b84e2b8ef94088a7dfd6adf3b1eecc208e1d02ea88fd0dc41b90082311f1a3",
+      "streamSha256": "5df660b88ff2a3e7764810dfb761aef664b9526c09a8b435cca2a8aa0272757c",
+      "timing": {
+        "simulator": "simavr 1.6",
+        "playedSamples": 8466,
+        "underruns": 0,
+        "minTickCycles": 1997,
+        "maxTickCycles": 2003,
+        "maxIrqCycles": 68,
+        "stackMarginBytes": 1231
+      }
+    },
+    {
+      "id": "compact",
+      "clipId": "vinni",
+      "source": "firmware/arduino-nano/lpx-nano-vinni-compact.hex",
+      "flashBytes": 5816,
+      "programFlashBytes": 4573,
+      "staticSramBytes": 756,
+      "hexSha256": "34aa5cbe618c0f83826ae5011f196f51ae33768670842f3b9500c3a11a684768",
+      "streamSha256": "ff653ed9b127e60eea987cf9c087871db6a859f80de9d4faf3a4528a8e03d4d4",
+      "timing": {
+        "simulator": "simavr 1.6",
+        "playedSamples": 23757,
+        "underruns": 0,
+        "minTickCycles": 1997,
+        "maxTickCycles": 2003,
+        "maxIrqCycles": 68,
+        "stackMarginBytes": 1231
+      }
+    },
+    {
+      "id": "quality",
+      "clipId": "vinni",
+      "source": "firmware/arduino-nano/lpx-nano-vinni-quality.hex",
+      "flashBytes": 6436,
+      "programFlashBytes": 4574,
+      "staticSramBytes": 756,
+      "hexSha256": "c870895dca775d41e767c35e15ce3ac300ac32af7262b6bd023f967186ee63d4",
+      "streamSha256": "7331c3cb8ffcb06d5b7099ed936d225f16f16d47c81b42e7733fb681c8881412",
+      "timing": {
+        "simulator": "simavr 1.6",
+        "playedSamples": 23757,
+        "underruns": 0,
+        "minTickCycles": 1997,
+        "maxTickCycles": 2003,
+        "maxIrqCycles": 68,
+        "stackMarginBytes": 1231
+      }
+    },
+    {
+      "id": "compact",
+      "clipId": "bread",
       "source": "firmware/arduino-nano/lpx-nano-bread-compact.hex",
       "flashBytes": 5582,
       "programFlashBytes": 4574,
@@ -80,6 +306,7 @@
     },
     {
       "id": "quality",
+      "clipId": "bread",
       "source": "firmware/arduino-nano/lpx-nano-bread-quality.hex",
       "flashBytes": 6472,
       "programFlashBytes": 4573,
