@@ -89,6 +89,9 @@ def build(source,output,*,assembly=False,queue=32,repeat=1,wsl=None,avr_bin=None
     flags += [f'-DLPX4_FIXED_PRE_Q14={int.from_bytes(blob[12:14],"little")}',
               f'-DLPX4_FIXED_BRIGHT_Q14={int.from_bytes(blob[14:16],"little")}',
               f'-DLPX4_FIXED_SPEECH_FLAGS={blob[5]}']
+    # Measured AVR25 ASM recipe: avoid repeated small reader bodies and reduce
+    # foreground register pressure. The explicitly selected C recipe stays C.
+    if assembly:flags+=['-fno-inline-small-functions']
     flags+=list(extra_flags)
     run('avr-g++',*flags,path(ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp'),
         path(ROOT/'src/Lpx4HybridCore.cpp'),'-Wl,--gc-sections','-o',path(output/'player.elf'))

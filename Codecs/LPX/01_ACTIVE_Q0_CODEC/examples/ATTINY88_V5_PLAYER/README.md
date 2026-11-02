@@ -13,10 +13,10 @@ images and proves that the embedded audio array exactly matches the input.
 This reserves 1536 of 8192 Flash bytes; use the actual bootloader origin as
 `--flash-limit` if the board reserves more. Nothing is flashed automatically.
 
-The selected P4 example occupies 6418 bytes; the real P6 prefix 6454 bytes.
-P6 synthetic stress images occupy 6288/6302 bytes. Complete repeated playback
+The selected P4 example occupies 6.137 KiB; the real P6 prefix 6.268 KiB.
+P6 synthetic stress images occupy 6254/6268 bytes. Complete repeated playback
 with active IRQs reproduces portable C PWM exactly. Average decode costs are
-about 1574/1540 cycles for the P4/P6 ROM examples and 1819/1901 cycles for the
+about 1536/1510 cycles for the P4/P6 ROM examples and 1804/1884 cycles for the
 two dense P6 stress cases. The target 1500 cycles is approached by the ROM
 examples, not established as a worst-case bound. The FIFO covers individual
 frame conversions exceeding 20k cycles.
@@ -96,10 +96,42 @@ The matrix covers real P4, an exact whole-packet real P6 prefix, P6 extra
 innovations with changing/clustered spectra and lag 18/145, long reset chains,
 ten partial/complete tails, C ISR, C arithmetic rejection, FIFO16 rejection,
 and Flash-cap rejection. A separate full P6 timing-only run explicitly raises
-the limit to 8192; its7390-byte image does not fit the requested bootloader
+the limit to 8192; its7354-byte image does not fit the requested bootloader
 budget. Generated audio, logs, ELF/HEX and reference PWM stay in ignored
 `build/`. [Anonymous measurements](measurements.json) retain numerical results
 and source hashes without audio or private input fingerprints.
+
+## Accepted 2/3 kbit/s speech and size optimization
+
+`--enable-sparse80` explicitly enables v8/mode15 for 2 kbit/s speech; ordinary
+v5/P4 carries the accepted 3 kbit/s selections. Both use the same decoder,
+FIFO, ISR and selectable C fallback. New source streams are not repacked or
+trimmed by the firmware builder.
+
+The final 54 four-second selections were rebuilt and replayed on Tiny88:
+1,728,000 exact PWM samples, active interrupts, zero underruns. All 27
+2 kbit/s images fit the 6.5 KiB limit (5.826–6.227 KiB); 12 of 27 3 kbit/s
+images fit. The other 15 pass timing under the explicit 8 KiB experiment cap
+but occupy up to6.561 KiB and are not admitted with the bootloader reserve.
+The default builder still rejects images exceeding6.5 KiB.
+
+The bounded size changes save6–134 bytes with no increased mean decode cost
+on any of these54 streams. Exact 14-step fixed-Q14 attenuation discards unused
+product bits; zero history skips a whole MAC subtraction. The measured ASM
+recipe also uses `-fno-inline-small-functions`; the C recipe is unchanged.
+All18 older matrix configurations retain their intended acceptance/rejection.
+The P4 ROM changes6418→6284 bytes and1574.49→1536.23 mean IRQ-active cycles;
+its observed stack changes67→60 bytes. The real P6 prefix saves36 bytes and
+30.39 cycles/sample. [Anonymous before/after measurements](lowrate-size-measurements.json)
+pin the54 workloads and the exact source contexts.
+
+With private inputs available, reproduce the paired corpus replay using
+`tests/verify_attiny88_lowrate.py MANIFEST build/tiny88-lowrate --jobs 2`;
+add `--wsl Ubuntu` on Windows. Only its anonymous `summary.json` is suitable
+for retention; media, bindings and other outputs remain in ignored `build/`.
+For complete fixed-Q14 arithmetic/ABI coverage, add `--exhaustive-fixed` to
+`verify_avr25_math.mjs`: 482,710 cases per C/ASM/forced-generic backend with
+active interrupts, including all signed16 states for seven coefficients.
 
 The original bounded simavr model binding covers CPU memory, PortB and the two
 timers used by this image. It is not a full ATtiny88 board model. Physical-board

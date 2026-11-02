@@ -1,0 +1,1346 @@
+{
+  "schema": "lpx-avr25-size-admission-v1",
+  "cpu": "ATtiny88 / AVR25",
+  "cpu_hz": 16000000,
+  "sample_hz": 8000,
+  "compiler": "AVR-GCC 7.3.0",
+  "queue": 32,
+  "prefill": 24,
+  "static_sram_bytes": 435,
+  "release_flash_limit": 6656,
+  "timing_experiment_flash_limit": 8192,
+  "physical_board_measured": false,
+  "baseline_commit": "e0b618ecd9b65fdfba5397a6f49b16568b62318b",
+  "baseline_source_sha256": {
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4HybridCore.cpp": "cb9bb6bb73abf66e6d34221df3f58fff4d9cbb173a6e273941ff7480f5605c69",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4HybridCore.h": "5f392dd1f10d83717a1557ad61d08eea2db9b1510a037652ce62233e2edcd5d8",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4Math.h": "557d1c9dfccb35e75be4c74aad953fac566ccdcdca4461359656dd9c3b494707",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4MultiplyAvr.h": "52c5cbe9a23eb7e976498eb3b92ec135f5238e77a0fc2a1897f7cb0dc670cb1e",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4MultiplyC.h": "71106bfa35cde9eb8e9f0200c9a7bd47bef796f17605957a1acd2e942802e82a",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\profiles\\Lpx4Sram512.h": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\examples\\ATTINY88_V5_PLAYER\\player.cpp": "3cddb027f456828f795ef84c22ddb2df010e6d8f91c36571e25132d5834ea616",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\build_attiny88_player.py": "4a1fe68deeb457596ca88ffa27460768628e23bba7841c6cbb4e42bc44a72de4",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\verify_attiny88_player.py": "986191a6092d5da85bcce29261897981f97e3a23ca6f782192701a590a4b0b53",
+    "Codecs\\LPX\\validation\\attiny88\\sim_player.c": "d7ce16e4383160c6ad2c8b084ca5bdab73d2c4e52e14d06cd053e28e2b8aaf7b",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\verify_attiny88_lowrate.py": "16e934a4a32a717427e613b3969f2e04c2501e0bc107c9ed05453c8af046c9be"
+  },
+  "source_sha256": {
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4HybridCore.cpp": "cb9bb6bb73abf66e6d34221df3f58fff4d9cbb173a6e273941ff7480f5605c69",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4HybridCore.h": "5f392dd1f10d83717a1557ad61d08eea2db9b1510a037652ce62233e2edcd5d8",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4Math.h": "d34a4cce7b68cf2e031cf7276420e28d93b86f5a1125b2387bdbcbf38c522198",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4MultiplyAvr.h": "52c5cbe9a23eb7e976498eb3b92ec135f5238e77a0fc2a1897f7cb0dc670cb1e",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\src\\Lpx4MultiplyC.h": "71106bfa35cde9eb8e9f0200c9a7bd47bef796f17605957a1acd2e942802e82a",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\profiles\\Lpx4Sram512.h": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\examples\\ATTINY88_V5_PLAYER\\player.cpp": "3cddb027f456828f795ef84c22ddb2df010e6d8f91c36571e25132d5834ea616",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\build_attiny88_player.py": "56583206e50af8b53a9111a2fd9f2526b3f9250c5144a96225a9a7fbcb7a3700",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tools\\verify_attiny88_player.py": "986191a6092d5da85bcce29261897981f97e3a23ca6f782192701a590a4b0b53",
+    "Codecs\\LPX\\validation\\attiny88\\sim_player.c": "d7ce16e4383160c6ad2c8b084ca5bdab73d2c4e52e14d06cd053e28e2b8aaf7b",
+    "Codecs\\LPX\\01_ACTIVE_Q0_CODEC\\tests\\verify_attiny88_lowrate.py": "16e934a4a32a717427e613b3969f2e04c2501e0bc107c9ed05453c8af046c9be"
+  },
+  "arithmetic_cases_per_backend": 482710,
+  "cases": [
+    {
+      "ordinal": 0,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 944,
+      "before": {
+        "flash_bytes": 6372,
+        "program_bytes": 5428,
+        "decode_irq_mean_cycles": 1449.60805,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6334,
+        "program_bytes": 5390,
+        "decode_irq_mean_cycles": 1432.787122,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 0,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1500,
+      "before": {
+        "flash_bytes": 6852,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1406.499875,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6718,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1377.877252,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 1,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 951,
+      "before": {
+        "flash_bytes": 6378,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 1589.497467,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6340,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 1572.824462,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 18
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 1,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1499,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5351,
+        "decode_irq_mean_cycles": 1472.784026,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5217,
+        "decode_irq_mean_cycles": 1444.007099,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 19
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 2,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 978,
+      "before": {
+        "flash_bytes": 6266,
+        "program_bytes": 5288,
+        "decode_irq_mean_cycles": 1516.727608,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6260,
+        "program_bytes": 5282,
+        "decode_irq_mean_cycles": 1516.121216,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 18
+      },
+      "flash_saved_bytes": 6,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 2,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1499,
+      "before": {
+        "flash_bytes": 6710,
+        "program_bytes": 5211,
+        "decode_irq_mean_cycles": 1447.348636,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6606,
+        "program_bytes": 5107,
+        "decode_irq_mean_cycles": 1433.559889,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 3,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 983,
+      "before": {
+        "flash_bytes": 6270,
+        "program_bytes": 5287,
+        "decode_irq_mean_cycles": 1480.027396,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6264,
+        "program_bytes": 5281,
+        "decode_irq_mean_cycles": 1478.250751,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 6,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 3,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1498,
+      "before": {
+        "flash_bytes": 6710,
+        "program_bytes": 5212,
+        "decode_irq_mean_cycles": 1435.10708,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6606,
+        "program_bytes": 5108,
+        "decode_irq_mean_cycles": 1420.388166,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 4,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 926,
+      "before": {
+        "flash_bytes": 6354,
+        "program_bytes": 5428,
+        "decode_irq_mean_cycles": 1381.030773,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6316,
+        "program_bytes": 5390,
+        "decode_irq_mean_cycles": 1357.923255,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 20
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 4,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1500,
+      "before": {
+        "flash_bytes": 6712,
+        "program_bytes": 5212,
+        "decode_irq_mean_cycles": 1315.005911,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6608,
+        "program_bytes": 5108,
+        "decode_irq_mean_cycles": 1299.789311,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 5,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 957,
+      "before": {
+        "flash_bytes": 6384,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 1506.199587,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6346,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 1486.708219,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 5,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1499,
+      "before": {
+        "flash_bytes": 6710,
+        "program_bytes": 5211,
+        "decode_irq_mean_cycles": 1411.490899,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6606,
+        "program_bytes": 5107,
+        "decode_irq_mean_cycles": 1397.601951,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 6,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 922,
+      "before": {
+        "flash_bytes": 6350,
+        "program_bytes": 5428,
+        "decode_irq_mean_cycles": 1393.923818,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6312,
+        "program_bytes": 5390,
+        "decode_irq_mean_cycles": 1375.775019,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 6,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1500,
+      "before": {
+        "flash_bytes": 6712,
+        "program_bytes": 5212,
+        "decode_irq_mean_cycles": 1364.59185,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6608,
+        "program_bytes": 5108,
+        "decode_irq_mean_cycles": 1350.638792,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 7,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 945,
+      "before": {
+        "flash_bytes": 6372,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 1459.332687,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6334,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 1439.348136,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 7,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1500,
+      "before": {
+        "flash_bytes": 6852,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1418.01548,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6718,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1385.308513,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 8,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 928,
+      "before": {
+        "flash_bytes": 6216,
+        "program_bytes": 5288,
+        "decode_irq_mean_cycles": 1368.406743,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6210,
+        "program_bytes": 5282,
+        "decode_irq_mean_cycles": 1368.245684,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 6,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 8,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1500,
+      "before": {
+        "flash_bytes": 6852,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1363.895484,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6718,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1335.305604,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 9,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 947,
+      "before": {
+        "flash_bytes": 6374,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 1435.418064,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6336,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 1418.5668,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 9,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1500,
+      "before": {
+        "flash_bytes": 6852,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1391.989805,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6718,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1363.316612,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 10,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 932,
+      "before": {
+        "flash_bytes": 6220,
+        "program_bytes": 5288,
+        "decode_irq_mean_cycles": 1405.482643,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6214,
+        "program_bytes": 5282,
+        "decode_irq_mean_cycles": 1404.873436,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 6,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 10,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1499,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5351,
+        "decode_irq_mean_cycles": 1355.576995,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5217,
+        "decode_irq_mean_cycles": 1326.380473,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 11,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 947,
+      "before": {
+        "flash_bytes": 6374,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 1417.065205,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6336,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 1399.975951,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 11,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1498,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1359.922254,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1330.915624,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 12,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 952,
+      "before": {
+        "flash_bytes": 6380,
+        "program_bytes": 5428,
+        "decode_irq_mean_cycles": 1398.770672,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6342,
+        "program_bytes": 5390,
+        "decode_irq_mean_cycles": 1381.020609,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 12,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1500,
+      "before": {
+        "flash_bytes": 6712,
+        "program_bytes": 5212,
+        "decode_irq_mean_cycles": 1287.754472,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6608,
+        "program_bytes": 5108,
+        "decode_irq_mean_cycles": 1273.124124,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 13,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 945,
+      "before": {
+        "flash_bytes": 6372,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 1361.242557,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6334,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 1341.327433,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 13,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1498,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1321.205904,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1290.100513,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 14,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 986,
+      "before": {
+        "flash_bytes": 6414,
+        "program_bytes": 5428,
+        "decode_irq_mean_cycles": 1323.521641,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6376,
+        "program_bytes": 5390,
+        "decode_irq_mean_cycles": 1296.590005,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 14,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1498,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1299.962534,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1267.198774,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 15,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 969,
+      "before": {
+        "flash_bytes": 6256,
+        "program_bytes": 5287,
+        "decode_irq_mean_cycles": 1312.102702,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6250,
+        "program_bytes": 5281,
+        "decode_irq_mean_cycles": 1304.658369,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 6,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 15,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1490,
+      "before": {
+        "flash_bytes": 6702,
+        "program_bytes": 5212,
+        "decode_irq_mean_cycles": 1255.300851,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6598,
+        "program_bytes": 5108,
+        "decode_irq_mean_cycles": 1237.386477,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 16,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 976,
+      "before": {
+        "flash_bytes": 6404,
+        "program_bytes": 5428,
+        "decode_irq_mean_cycles": 1563.650363,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6366,
+        "program_bytes": 5390,
+        "decode_irq_mean_cycles": 1546.295909,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 19
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 16,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1499,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5351,
+        "decode_irq_mean_cycles": 1482.84601,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5217,
+        "decode_irq_mean_cycles": 1453.632162,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 20
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 17,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 981,
+      "before": {
+        "flash_bytes": 6408,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 1415.49312,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6370,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 1391.027708,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 17,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1499,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5351,
+        "decode_irq_mean_cycles": 1397.499249,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5217,
+        "decode_irq_mean_cycles": 1365.383006,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 18,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 909,
+      "before": {
+        "flash_bytes": 6336,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 1374.091788,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6298,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 1350.728453,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 18,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1498,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1412.16037,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1382.740399,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 19,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 909,
+      "before": {
+        "flash_bytes": 6196,
+        "program_bytes": 5287,
+        "decode_irq_mean_cycles": 1370.674099,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6190,
+        "program_bytes": 5281,
+        "decode_irq_mean_cycles": 1370.345415,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 6,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 19,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1499,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5351,
+        "decode_irq_mean_cycles": 1403.389136,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5217,
+        "decode_irq_mean_cycles": 1374.356455,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 20,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 865,
+      "before": {
+        "flash_bytes": 6152,
+        "program_bytes": 5287,
+        "decode_irq_mean_cycles": 1466.010258,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6146,
+        "program_bytes": 5281,
+        "decode_irq_mean_cycles": 1465.484864,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 20
+      },
+      "flash_saved_bytes": 6,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 20,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1500,
+      "before": {
+        "flash_bytes": 6712,
+        "program_bytes": 5212,
+        "decode_irq_mean_cycles": 1414.564486,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6608,
+        "program_bytes": 5108,
+        "decode_irq_mean_cycles": 1400.070553,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 21,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 884,
+      "before": {
+        "flash_bytes": 6312,
+        "program_bytes": 5428,
+        "decode_irq_mean_cycles": 1438.2328,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6274,
+        "program_bytes": 5390,
+        "decode_irq_mean_cycles": 1421.396547,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 21,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1499,
+      "before": {
+        "flash_bytes": 6710,
+        "program_bytes": 5211,
+        "decode_irq_mean_cycles": 1317.063548,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6606,
+        "program_bytes": 5107,
+        "decode_irq_mean_cycles": 1302.849919,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 22,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 877,
+      "before": {
+        "flash_bytes": 6164,
+        "program_bytes": 5287,
+        "decode_irq_mean_cycles": 1477.581968,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6158,
+        "program_bytes": 5281,
+        "decode_irq_mean_cycles": 1477.208875,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 6,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 22,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1500,
+      "before": {
+        "flash_bytes": 6852,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1367.554572,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6718,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1338.203997,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 23,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 890,
+      "before": {
+        "flash_bytes": 6178,
+        "program_bytes": 5288,
+        "decode_irq_mean_cycles": 1711.492463,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6172,
+        "program_bytes": 5282,
+        "decode_irq_mean_cycles": 1711.469321,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 6,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 23,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1499,
+      "before": {
+        "flash_bytes": 6710,
+        "program_bytes": 5211,
+        "decode_irq_mean_cycles": 1642.788498,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6606,
+        "program_bytes": 5107,
+        "decode_irq_mean_cycles": 1628.500031,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 24,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 790,
+      "before": {
+        "flash_bytes": 6218,
+        "program_bytes": 5428,
+        "decode_irq_mean_cycles": 1669.010477,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6180,
+        "program_bytes": 5390,
+        "decode_irq_mean_cycles": 1652.462566,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 20
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 24,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1498,
+      "before": {
+        "flash_bytes": 6850,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 1643.691863,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6716,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 1614.034244,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 16
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": false
+    },
+    {
+      "ordinal": 25,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 767,
+      "before": {
+        "flash_bytes": 6194,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 907.026645,
+        "stack_bytes": 66
+      },
+      "after": {
+        "flash_bytes": 6156,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 827.778584,
+        "stack_bytes": 66,
+        "stack_margin_bytes": 10,
+        "min_queue": 21
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 25,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1492,
+      "before": {
+        "flash_bytes": 6704,
+        "program_bytes": 5212,
+        "decode_irq_mean_cycles": 1189.523236,
+        "stack_bytes": 67
+      },
+      "after": {
+        "flash_bytes": 6600,
+        "program_bytes": 5108,
+        "decode_irq_mean_cycles": 1166.634851,
+        "stack_bytes": 60,
+        "stack_margin_bytes": 16,
+        "min_queue": 22
+      },
+      "flash_saved_bytes": 104,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 26,
+      "kbps": 2,
+      "samples": 32000,
+      "stream_bytes": 577,
+      "before": {
+        "flash_bytes": 6004,
+        "program_bytes": 5427,
+        "decode_irq_mean_cycles": 620.005817,
+        "stack_bytes": 62
+      },
+      "after": {
+        "flash_bytes": 5966,
+        "program_bytes": 5389,
+        "decode_irq_mean_cycles": 504.007068,
+        "stack_bytes": 62,
+        "stack_margin_bytes": 14,
+        "min_queue": 27
+      },
+      "flash_saved_bytes": 38,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    },
+    {
+      "ordinal": 26,
+      "kbps": 3,
+      "samples": 32000,
+      "stream_bytes": 1414,
+      "before": {
+        "flash_bytes": 6766,
+        "program_bytes": 5352,
+        "decode_irq_mean_cycles": 638.439298,
+        "stack_bytes": 63
+      },
+      "after": {
+        "flash_bytes": 6632,
+        "program_bytes": 5218,
+        "decode_irq_mean_cycles": 512.485771,
+        "stack_bytes": 56,
+        "stack_margin_bytes": 20,
+        "min_queue": 27
+      },
+      "flash_saved_bytes": 134,
+      "underruns": 0,
+      "pwm_exact": true,
+      "fits_6656": true
+    }
+  ],
+  "arithmetic_test_configurations": [
+    "C",
+    "ASM",
+    "forced generic C"
+  ]
+}

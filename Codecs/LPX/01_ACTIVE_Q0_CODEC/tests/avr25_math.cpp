@@ -34,6 +34,11 @@ __attribute__((noinline,used)) void math_case(){
     case 16:math_out=lpx4AttenuateFixedQ14<8192>(math_x);break;
     case 17:math_out=lpx4AttenuateFixedQ14<0>(math_x);break;
     case 18:math_out=lpx4AttenuateFixedQ14<16384>(math_x);break;
+    case 19:math_out=lpx4AttenuateFixedQ14<13926>(math_x);break;
+    case 20:math_out=lpx4AttenuateFixedQ14<11469>(math_x);break;
+    case 21:math_out=lpx4AttenuateFixedQ14<1>(math_x);break;
+    case 22:math_out=lpx4AttenuateFixedQ14<16383>(math_x);break;
+    case 23:math_out=lpx4AttenuateFixedQ14<4096>(math_x);break;
     }
 }
 }

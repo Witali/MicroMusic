@@ -268,7 +268,7 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 // low product byte is ever computed. r23's low nibble is immaterial.
 #define LPX4_NOMUL_PRODUCT \
     "tst r21\n\tbrne 9f\n\ttst r20\n\tbrne 7f\n\t" \
-    "clr r23\n\tclr r24\n\tclr r25\n\trjmp 8f\n\t7: rjmp 6f\n\t" \
+    "rjmp 5f\n\t7: rjmp 6f\n\t" \
     "9: cpi r21,255\n\tbrne 7f\n\tsbrc r20,7\n\trjmp 6f\n\t7:\n\t" \
     "mov r22,r20\n\tclr r24\n\tclr r25\n\t" \
     ".rept 8\n\t" LPX4_NOMUL_HIGH_STEP ".endr\n\t" \
@@ -288,7 +288,7 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 #define LPX4_NOMUL_SUB \
     LPX4_NOMUL_PRODUCT \
     "andi r23,240\n\tsub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\t" \
-    "sbc %D0,__zero_reg__\n\tsbrc r25,7\n\tinc %D0\n\t"
+    "sbc %D0,__zero_reg__\n\tsbrc r25,7\n\tinc %D0\n\t5:\n\t"
 #if LPX4_USE_AVR_NOMUL_ASM
 static inline __attribute__((always_inline)) int16_t lpx4NomulAttenuate(uint16_t coefficient,int16_t state){
     return (int16_t)lpx4Shift14(lpx4Mul16((int16_t)coefficient,state));
@@ -530,19 +530,20 @@ static inline __attribute__((always_inline)) int16_t lpx4AttenuateFixedQ14(int16
     if(coefficient==0)return 0;
     if(coefficient==8192)return state>>1;
     if(coefficient==64)return state>>8;
+    if(coefficient==16384)return state;
 #if LPX4_USE_AVR_NOMUL_ASM
-    int32_t product;
-    int16_t result;
+    // A[j+1]=floor((A[j]+bit[j]*uint16(state))/2). After14 bits A is
+    // floor(coefficient*uint16(state)/16384); no low product bytes are needed.
+    // Correct a negative state by exactly4*coefficient in the result word.
+    uint16_t result;
     __asm__(
-        "clr %C1\n\tclr %D1\n\t"
-        ".irp bit,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15\n\t"
-        ".if (%3 & (1<<\\bit))\n\tadd %C1,%A2\n\tadc %D1,%B2\n\t.else\n\tclc\n\t.endif\n\t"
-        "ror %D1\n\tror %C1\n\t.if \\bit>=14\n\tror %B1\n\t.endif\n\t.endr\n\t"
-        "sbrs %B2,7\n\trjmp 1f\n\tsubi %C1,lo8(%3)\n\tsbci %D1,hi8(%3)\n\t1:\n\t"
-        ".rept 2\n\tlsl %B1\n\trol %C1\n\trol %D1\n\t.endr\n\t"
-        "movw %A0,%C1\n\t"
-        : "=&r"(result),"=&d"(product) : "r"(state),"n"(coefficient) : "cc");
-    return result;
+        "clr %A0\n\tclr %B0\n\t"
+        ".irp bit,0,1,2,3,4,5,6,7,8,9,10,11,12,13\n\t"
+        ".if (%2 & (1<<\\bit))\n\tadd %A0,%A1\n\tadc %B0,%B1\n\t.else\n\tclc\n\t.endif\n\t"
+        "ror %B0\n\tror %A0\n\t.endr\n\t"
+        "sbrs %B1,7\n\trjmp 1f\n\tsubi %A0,lo8(4*%2)\n\tsbci %B0,hi8(4*%2)\n\t1:\n\t"
+        : "=&d"(result) : "r"(state),"n"(coefficient) : "cc");
+    return (int16_t)result;
 #else
     return (int16_t)(((int32_t)coefficient*state)>>14);
 #endif

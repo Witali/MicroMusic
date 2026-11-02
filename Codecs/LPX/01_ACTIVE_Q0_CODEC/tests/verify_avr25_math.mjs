@@ -50,7 +50,8 @@ for(let i=0;i<1200;i++){
  check(5,x,y,x+Math.trunc((y-x)*t/(1<<bits)),{bits,t});
  const pwmGain=i&1?130:random()%256;
  check(6,x,pwmGain,Math.max(0,Math.min(255,128+Math.floor((x*pwmGain+8192)/16384))));
- for(const [kind,c]of [[9,13094],[10,64],[11,7800]])check(kind,x,0,Math.floor(x*c/16384));
+ for(const [kind,c]of [[9,13094],[10,64],[11,7800],[19,13926],[20,11469],
+                     [21,1],[22,16383],[23,4096]])check(kind,x,0,Math.floor(x*c/16384));
  const wide=random()|0;
  check(12,0,0,Math.floor(wide/4096),{exc:wide});check(13,0,0,Math.floor(wide/16384),{exc:wide});
  check(14,0,y,(wide*y)|0,{exc:wide});
@@ -75,6 +76,10 @@ for(const x of boundary){
 }
 for(const value of [-3145728,-32769,-32768,-32767,-1,0,1,32767,32768,3145728])
  check(8,0,0,Math.max(-32767,Math.min(32767,value)),{exc:value});
+if(process.argv.includes('--exhaustive-fixed'))
+ for(let x=-32768;x<=32767;x++)
+  for(const [kind,c]of [[9,13094],[11,7800],[19,13926],[20,11469],
+                      [21,1],[22,16383],[23,4096]])check(kind,x,0,Math.floor(x*c/16384));
 const results=[];
 for(const {cpu,sym,name}of cpus){
  const irqs=cpu.data[sym('math_irqs')]|cpu.data[sym('math_irqs')+1]<<8;

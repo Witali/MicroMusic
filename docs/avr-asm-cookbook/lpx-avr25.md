@@ -65,8 +65,10 @@ Paired complete-player measurements: C ISR 63 cycles; selected ASM ISR 40 cycles
 Reserving only one register and saving r0 instead measured 44 cycles, +12 B
 Flash and +1 B peak stack, so it was rejected. Reserving more registers is
 not automatically faster: foreground spills matter. The C ISR remains a
-valid smaller alternative on the measured P4 stream; its decode mean is
-about10 cycles lower because no foreground registers are reserved.
+valid alternative on the measured P4 stream. With the current size recipe,
+its full image is6320 B and its decode mean1543.79 cycles; the selected ASM
+ISR image is6284 B at1536.23 cycles. Register pressure and inlining must be
+measured together; the old ISR-only screening is not a current size ranking.
 
 ## Admission and limits
 
@@ -91,10 +93,10 @@ records the complete matrix. Selected results, with active IRQs:
 
 | Complete workload | Samples | Full Flash incl.audio | Mean decode wall cycles | Underruns |
 | --- | ---: | ---: | ---: | ---: |
-| P4 ROM, four reset chains | 76800 | 6418 B | 1574.49 | 0 |
-| P6 real ROM prefix, eight chains | 76800 | 6454 B | 1540.05 | 0 |
-| P6 + extras, changing spectra, lag145 | 51200 | 6288 B | 1819.02 | 0 |
-| P6 + extras, clustered spectra, lag18 | 51200 | 6302 B | 1900.69 | 0 |
+| P4 ROM, four reset chains | 76800 | 6284 B | 1536.23 | 0 |
+| P6 real ROM prefix, eight chains | 76800 | 6418 B | 1509.66 | 0 |
+| P6 + extras, changing spectra, lag145 | 51200 | 6254 B | 1803.85 | 0 |
+| P6 + extras, clustered spectra, lag18 | 51200 | 6268 B | 1884.19 | 0 |
 
 All PWM bytes equal a separately compiled portable C decoder, with ordinary
 two-anchor LPC and unchanged source level. Output write intervals are
@@ -103,9 +105,9 @@ the observed worst stack is 67 B, leaving 9 B by the observer's SP convention.
 The peak single decode call exceeds20k cycles; FIFO admission, rather than
 average throughput alone, is essential. No further timer events occur after EOF.
 
-The 16-slot control has 6 underruns; C arithmetic has 34177 underruns on its
+The 16-slot control has 1 underrun; C arithmetic has 34177 underruns on its
 declared control. They are rejected. The complete high-quality 19200-sample
-ROM also passes timing, but its7390-byte image **exceeds 6656** and is not
+ROM also passes timing, but its7354-byte image **exceeds 6656** and is not
 admitted under the bootloader budget. The real P6 prefix preserves exactly
 the first 9600 samples and fits the budget. This is bounded workload evidence,
 not a guarantee for every valid stream or application load.
@@ -136,12 +138,57 @@ for supported AVR25 from the real compiler ISA macros. There are two user
 choices: portable C by default, or explicit `LPX4_ENABLE_ASM=1`. Forcing
 `LPX4_ARCH_GENERIC` still selects C on AVR; unsupported targets also use C.
 
-This is a source organization change with no measured Flash, SRAM or speed
-gain. AVR-GCC 7.3.0 rebuilt all 18 Tiny88 matrix images byte-identically;
+At the extraction commit4039d576 this was a source organization change with
+no measured Flash, SRAM or speed gain. AVR-GCC7.3.0 rebuilt all18 Tiny88 matrix images byte-identically;
 every timing/output/acceptance row also matches the previous matrix, including
 the heavy P6 cases and rejection controls. All eight WebUI Nano HEX files
 remain byte-identical and pass complete active-IRQ/WAV verification. Portable
 C passes 5,768,584 independent cases per host configuration. Real AVR25
 C/ASM/forced-generic each pass the same 17,958 arithmetic/ABI cases with
 active interrupts; instruction counts are unchanged. Updated source hashes
-in the matrix and WebUI catalog include both multiplication headers.
+in the matrix and WebUI catalog include both multiplication headers. The
+following size changes are a separate measured improvement.
+
+## Smaller exact AVR25 code without losing measured throughput
+
+For constant0≤c<16384 and signed16 x, start a16-bit accumulator A=0 and repeat
+`A=floor((A+bit[j]*uint16(x))/2)` for j=0..13. The addition uses its17th carry
+bit during rotation. The result is exactly `floor(c*uint16(x)/16384)`;
+subtract4*c if x<0 to obtain the signed floor. c=16384 is the identity.
+This original project recurrence removes the old final two product steps,
+low-byte collection, shifts and extra register pair. The existing portable
+C expression stays explicitly selectable on AVR.
+
+The fused synthesis macro also branches past the entire subtraction when
+history is zero; it need not construct a zero product in three registers.
+The local forward label is private to the MAC macro. Other history routes,
+per-product rounding and the in-place history movement are unchanged.
+Both kernels require supported AVR25, GNU AVR ABI and explicit ASM enable.
+They preserve r1 and the ISR-reserved registers; SREG is declared clobbered.
+
+The exact linked Tiny88 player was measured with AVR-GCC7.3.0, `-Os -flto
+-mcall-prologues -mrelax`, FIFO32/prefill24 and the existing SRAM512 profile.
+The selected ASM build adds `-fno-inline-small-functions`: on the tested P4
+image it saves another98 B and reduces mean cycles and observed stack.
+Other screened switches did not reduce size and were not adopted. This is
+evidence for this compiler/workload, not a universal inlining rule.
+
+All54 accepted2/3 kbit/s four-second streams pass exact independent PWM,
+complete EOF/timer checks and zero underruns with IRQ active. Compared with
+the baseline, full Flash decreases6–134 B and mean IRQ-active decode cost
+decreases0.023–125.954 cycles/sample; no case gets slower. All27 sparse80
+2 kbit/s images and12/27 ordinary-v5 3 kbit/s images fit6656 B. The remaining
+15 require up to6718 B: timing passes under an explicit8192 B cap but the
+bootloader-budget release gate rejects them. The original18-case matrix,
+including dense P6 and rejection controls, passes again; its current values
+are in the table above. No audio, sample count, source gain or codec parameter
+changes were used to obtain these savings.
+
+Arithmetic/ABI verification checks482,710 cases per C/ASM/forced-generic
+backend, with active Timer1 IRQs and no lost interrupts. Seven fixed
+coefficients cover every signed16 state; an independent integer recurrence
+check covers1,032,211 state/coefficient cases. Anonymous before/after numbers
+and code hashes are retained in
+[the size admission](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/lowrate-size-measurements.json).
+Private input bindings and generated media stay ignored. Reproduction and
+physical/simulator limits remain as stated in the player guide.
