@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {deferred,playerApp} from './helpers/player-app.mjs';
+import {deferred,playerApp} from './helpers/legacy-player-app.mjs';
 
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
 const tiny13=JSON.parse(readFileSync(new URL('../firmware.json',import.meta.url)));

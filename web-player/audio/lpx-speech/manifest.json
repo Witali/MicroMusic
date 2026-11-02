@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "clips": [
+    {
+      "schemaVersion": 1,
+      "clipId": "chego",
+      "title": "Чего тебе нужно?",
+      "codec": "LPX",
+      "sampleRate": 8000,
+      "samples": 9831,
+      "durationSeconds": 1.228875,
+      "previewKind": "native-pwm8",
+      "reference": {
+        "audio": "audio/originals/chego.wav",
+        "playback": "audio/originals/playback/chego.wav",
+        "sourceSha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+        "label": "Исходная запись"
+      },
+      "variants": [
+        {
+          "id": "compact",
+          "label": "Компактный",
+          "profile": 4,
+          "audio": "audio/lpx-speech/chego/compact.wav",
+          "stream": "audio/lpx-speech/chego/compact.lpx",
+          "bytes": 536,
+          "bitrateBps": 3489.3703590682535
+        },
+        {
+          "id": "quality",
+          "label": "Повышенное качество",
+          "profile": 6,
+          "audio": "audio/lpx-speech/chego/quality.wav",
+          "stream": "audio/lpx-speech/chego/quality.lpx",
+          "bytes": 791,
+          "bitrateBps": 5149.425287356322
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "clipId": "otvechaesh",
+      "title": "Что ж ты не отвечаешь?",
+      "codec": "LPX",
+      "sampleRate": 8000,
+      "samples": 8466,
+      "durationSeconds": 1.05825,
+      "previewKind": "native-pwm8",
+      "reference": {
+        "audio": "audio/originals/otvechaesh.wav",
+        "playback": "audio/originals/playback/otvechaesh.wav",
+        "sourceSha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+        "label": "Исходная запись"
+      },
+      "variants": [
+        {
+          "id": "compact",
+          "label": "Компактный",
+          "profile": 4,
+          "audio": "audio/lpx-speech/otvechaesh/compact.wav",
+          "stream": "audio/lpx-speech/otvechaesh/compact.lpx",
+          "bytes": 470,
+          "bitrateBps": 3553.0356721001654
+        },
+        {
+          "id": "quality",
+          "label": "Повышенное качество",
+          "profile": 6,
+          "audio": "audio/lpx-speech/otvechaesh/quality.wav",
+          "stream": "audio/lpx-speech/otvechaesh/quality.lpx",
+          "bytes": 692,
+          "bitrateBps": 5231.27805339003
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "clipId": "vinni",
+      "title": "Сова! Открывай! Медведь пришёл!",
+      "codec": "LPX",
+      "sampleRate": 8000,
+      "samples": 23757,
+      "durationSeconds": 2.969625,
+      "previewKind": "native-pwm8",
+      "reference": {
+        "audio": "audio/originals/vinni.wav",
+        "playback": "audio/originals/playback/vinni.wav",
+        "sourceSha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+        "label": "Исходная запись"
+      },
+      "variants": [
+        {
+          "id": "compact",
+          "label": "Компактный",
+          "profile": 4,
+          "audio": "audio/lpx-speech/vinni/compact.wav",
+          "stream": "audio/lpx-speech/vinni/compact.lpx",
+          "bytes": 1243,
+          "bitrateBps": 3348.5709475102076
+        },
+        {
+          "id": "quality",
+          "label": "Повышенное качество",
+          "profile": 6,
+          "audio": "audio/lpx-speech/vinni/quality.wav",
+          "stream": "audio/lpx-speech/vinni/quality.lpx",
+          "bytes": 1862,
+          "bitrateBps": 5016.12156417056
+        }
+      ]
+    }
+  ],
+  "generator": "tools/prepare-shared-speech.py",
+  "sourceSha256NormalizedLF": {
+    "tools/prepare-shared-speech.py": "383666018b445baec615f117895df5369d79b20bf37ed2baf8a856ae1fe14862",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "6aa98f754d4ea68f2f4d7fbd3f2414406bc9591b6489bc5fe3bc74c0a355c59d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "97f4a7997250b1053a95dc4737e85166247b0051d643861a7df03ae1b644c86c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29"
+  }
+}

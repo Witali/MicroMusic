@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {playerApp,deferred} from './helpers/player-app.mjs';
+import {playerApp,deferred} from './helpers/legacy-player-app.mjs';
 import {legacyManifest as manifest,publishedManifest,threeVariantManifest,low15Fixture} from './helpers/lpx-manifests.mjs';
 
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');

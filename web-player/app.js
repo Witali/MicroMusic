@@ -1,10 +1,13 @@
+import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js';
+import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js';
+import {speechSignals,speechWindow} from './lib/speech-waveform.js';
+import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js';
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
-import { lpxPreviewEntries, previewWaveform } from './lib/native-preview.js?v=20261101-flash';
+import { lpxPreviewEntries, lpxFirmwareEntries, previewWaveform } from './lib/native-preview.js?v=20261102-nano';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
-const bitrateLabel = bps => `${bps%1000?'≈ ':''}${Math.round(bps/1000).toLocaleString('ru')} кбит/с`;
 const canvas = $('wave');
 const originalAudio = $('original-audio');
 const previewAudio=$('preview-audio'), previewWaves=new Map();
@@ -16,14 +19,12 @@ let session=0, hasPlayed=false, completed=false, realtime;
 let playAttempt=0, busyAttempt=0;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
 let originalLoading=false, originalAttempt=0;
-const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4';
-const tiny88Boards={
-  'bare-8mhz':{cpuHz:8000000,catalog:'./firmware-attiny88.json'},
-  'mh-et-live-16mhz':{cpuHz:16000000,catalog:'./firmware-attiny88-16mhz.json'},
-};
-const boardId=value=>Object.hasOwn(tiny88Boards,value)?value:'bare-8mhz';
+const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4'||new URL(location.href).searchParams.get('device')==='atmega328p';
 let currentDevice='attiny13a', currentBoard=boardId(new URL(location.href).searchParams.get('board')), deviceRequest=0;
 let importAttempt=0;
+let speechExamples;
+let speechWaveforms,phraseRaw,phraseSignals,phraseSignalKey,playbackSeconds=0;
+let scopeView='phrase';
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -50,62 +51,22 @@ function signalPointUI() {
 }
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function deviceUI(device) {
-  const tiny88=device==='attiny88', name=tiny88?'ATtiny88':'ATtiny13A';
-  const micronucleus=tiny88&&currentBoard==='mh-et-live-16mhz';
-  const mhz=tiny88?tiny88Boards[currentBoard].cpuHz/1000000:9.6;
-  document.body.dataset.device=device;
-  document.body.dataset.board=tiny88?currentBoard:'';
-  $('device-select').value=device;
-  $('device-control').hidden=false;
-  $('board-control').hidden=!tiny88;
-  $('board-select').value=currentBoard;
-  $('board-isp-option').disabled=speechCollection;
-  $('board-isp-option').textContent='ATtiny88 · 8 МГц · ISP';
-  $('board-note').textContent=micronucleus?'Внешний генератор · загрузка по USB · тембры во Flash':'Внутренний RC · загрузка Flash и EEPROM через ISP';
-  $('tiny88-clock').textContent=mhz+' MHz · '+(micronucleus?'MH-ET LIVE':'PDIP-28');
-  $('chip-attiny13a').hidden=tiny88; $('chip-attiny88').hidden=!tiny88;
-  $('tiny88-power').hidden=!tiny88;
-  $('tiny88-power').textContent=micronucleus?'MH-ET LIVE: питание по USB · моно / R — D10 · L — D9.':'PDIP-28: питание VCC 7 и AVCC 20 · земля GND 8 и 22.';
-  document.querySelector('.tiny88-vcc').textContent=micronucleus?'USB 5 В':'VCC 7';
-  document.querySelector('.tiny88-gnd').textContent=micronucleus?'GND':'GND 8';
-  $('machine-memory').textContent=tiny88?'8':'1';
-  $('machine-details').textContent=tiny88?`512 Б SRAM · 64 Б EEPROM · ${mhz} МГц`:'64 Б SRAM · 64 Б EEPROM · 9,6 МГц';
-  $('fuses').setAttribute('aria-label',micronucleus?'Штатные настройки платы MH-ET LIVE':'Рекомендуемые фьюзы '+name);
-  $('fuse-low').textContent=micronucleus?'—':tiny88?'0xEE':'0x7A';
-  $('fuse-high').textContent=micronucleus?'—':tiny88?'0xDF':'0xFF';
-  $('fuse-high-note').textContent=micronucleus?'сохранить фьюзы платы':tiny88?'SPI включён · RESET включён':'сохранить заводской';
-  $('fuse-extended').hidden=!tiny88; $('fuse-extended-value').textContent=micronucleus?'—':'0xFF';
-  $('fuse-clock-value').textContent=micronucleus?'Внешний генератор · 16 МГц':'Внутренний RC · '+(tiny88?'8':'9,6')+' МГц';
-  $('fuse-clock-note').textContent=micronucleus?'Штатный Micronucleus · делитель /1 в прошивке':'CKDIV8 отключён · делитель /1';
-  $('fuse-datasheet').href=tiny88?'https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf':'https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf';
-  $('fuse-datasheet').textContent='Фьюзы в datasheet, §'+(tiny88?'20.2':'17.2')+' ↗';
-  for(const choice of document.querySelectorAll('input[name="engine"]'))choice.disabled=false;
-  if(document.querySelector('input[name="engine"]:checked').disabled){
-    for(const choice of document.querySelectorAll('input[name="engine"]'))choice.checked=choice.value==='wasm';
-  }
-  $('package-file').disabled=false;
-  $('package-import-label').textContent=micronucleus?'Открыть пакет UM88 для Micronucleus':tiny88?'Открыть пакет UM88':'Открыть пакет ATtiny13A';
-  $('engine-note').textContent='При смене — сброс на начало.';
-  if(!speechCollection) {
-    document.title=`MicroMusic / ${name} — плеер прошивок`;
-    document.querySelector('.intro .eyebrow').textContent=name+' / МУЗЫКА ИЗ МАШИННОГО КОДА';
-    document.querySelector('.library h2').textContent=tiny88?'Музыка на ATtiny88':'Как звучит один килобайт?';
-    document.querySelector('.source-only').hidden=tiny88;
-    const history=document.querySelector('.header-link');
-    history.href=tiny88?'https://github.com/Witali/MicroMusic/blob/main/ATtiny88/Music/HARDWARE_REVIEW_RU.md':'../ATtiny13A/Music/DEVELOPMENT_HISTORY_RU.txt';
-    history.textContent=tiny88?'Подключение ATtiny88 ↗':'История разработки ↗';
-  }
+  applyDeviceLayout(document,{device,board:currentBoard,speech:speechCollection});
 }
 async function switchDevice(device,board=currentBoard) {
   if(!catalog&&speechCollection)return;
   const request=++deviceRequest;
-  device=device==='attiny88'?'attiny88':'attiny13a';
+  device=device==='atmega328p'?'atmega328p':device==='attiny88'?'attiny88':'attiny13a';
+  if(device==='atmega328p'&&!speechCollection){
+    const url=new URL(location.href);url.searchParams.set('collection','hq4');url.searchParams.set('device',device);
+    url.searchParams.delete('firmware');url.searchParams.delete('board');location.href=url.href;return;
+  }
   board=boardId(board);
   if(speechCollection){
-    const entries=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
+    const entries=orderSpeechEntries(catalog.entries.filter(entry=>(entry.device||'attiny13a')===device),speechExamples);
     if(!entries.length){showError('LPX-примеры временно недоступны.');$('device-select').value=currentDevice;return;}
     currentDevice=device;if(device==='attiny88')currentBoard='mh-et-live-16mhz';
-    $('search').value='';load(entries[0]);return;
+    $('search').value='';load(selectSpeechEntry(entries,selected));return;
   }
   try {
     const response=await fetch(device==='attiny88'?tiny88Boards[board].catalog:'./firmware.json');
@@ -139,15 +100,19 @@ function transport() {
 }
 function previewUI(enabled) {
   document.body.dataset.preview=String(enabled);
-  for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import','rom-hash'])$(id).hidden=enabled;
+  for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import'])$(id).hidden=enabled;
+  $('rom-hash').hidden=enabled&&!selected?.firmware;
   $('preview-note').hidden=!enabled;
+  $('preview-playback-note').textContent=selected?.firmware
+    ? 'ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Полный HEX для Arduino Nano проверен в simavr с активными прерываниями, без пропусков. В браузере воспроизводится WAV; физическая плата не проверялась.'
+    : 'ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Целевая плата — MH-ET LIVE Tiny88, 16 МГц. Работа LPX-прошивки на этой плате ещё не подтверждена.';
   $('preview-format-note').hidden=!enabled||!selected?.formatNotice;
   $('preview-format-note').textContent=enabled&&selected?.formatNotice?selected.formatNotice+' ':'';
   $('flash-measurement-note').hidden=!enabled||!selected?.flashMeasurement;
   $('flash-measurement-note').textContent=enabled&&selected?.flashMeasurement?'Размер относится к тестовой сборке без очереди и звукового ISR. ':'';
   document.querySelector('.signal-outputs').hidden=enabled;
   if(enabled){
-    $('tiny88-power').textContent='Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц.';
+    if(currentDevice==='attiny88')$('tiny88-power').textContent='Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц.';
     $('cpu-status').textContent='';$('memory').textContent='';$('rom-size').textContent='';
     for(const id of ['average','isr','lost','headroom','tempo','lag'])$(id).textContent='—';
   }
@@ -182,11 +147,23 @@ async function loadPreviewWave(entry,epoch) {
     })());
     const waveform=await previewWaves.get(entry.nativeAudioUrl);
     if(session!==epoch||selected!==entry)return;
-    scopes=[waveform];signalScopes={input:scopes,output:scopes};canvas.dataset.samples=String(waveform.length);draw();
+    phraseRaw=waveform;phraseSignals=null;scopes=[waveform];signalScopes={input:scopes,output:scopes};canvas.dataset.samples=String(waveform.length);draw();
   }catch{
     previewWaves.delete(entry.nativeAudioUrl);
     if(session===epoch&&selected===entry)$('scope-left-label').textContent='WAV-ПРЕВЬЮ · ОСЦИЛЛОГРАММА НЕДОСТУПНА';
   }
+}
+async function loadFirmwareWave(entry,epoch){
+  const asset=speechWaveforms?.entries.find(item=>item.id===entry.id&&item.flashSha256===entry.flashSha256
+    &&(item.eepromSha256??null)===(entry.eepromSha256??null)&&item.phraseSamples===entry.phraseSamples);
+  if(!asset){if(speechWaveforms)$('scope-note').textContent='Для этого образа доступен текущий сигнал при воспроизведении.';return;}
+  try{
+    const url=new URL(asset.audio,import.meta.url);url.searchParams.set('v',asset.wavSha256.slice(0,16));
+    const response=await fetch(url);if(!response.ok)throw Error('HTTP '+response.status);
+    const wave=previewWaveform(await response.arrayBuffer(),entry);
+    if(session!==epoch||selected!==entry)return;
+    phraseRaw=wave;phraseSignals=null;canvas.dataset.samples=String(wave.length);draw();
+  }catch{if(session===epoch)$('scope-note').textContent='Полная форма недоступна; текущий сигнал появится при воспроизведении.';}
 }
 function draw() {
   const now=performance.now(), wait=1000/30-(now-lastScopeDraw);
@@ -196,8 +173,19 @@ function draw() {
   }
   if(scopeDrawTimer!==undefined){clearTimeout(scopeDrawTimer);scopeDrawTimer=undefined;}
   lastScopeDraw=now;
-  drawWave(canvas,scopes[0],'#c9ef86');
+  let view=scopes[0];
+  if(speechCollection&&phraseRaw){
+    const key=[signalPoint,$('cutoff').value,$('volume').value].join('/');
+    if(!phraseSignals||phraseSignalKey!==key){phraseSignals=speechSignals(phraseRaw,selected.sampleHz,{native:nativePreview(),...audioControls()});phraseSignalKey=key;}
+    const signal=phraseSignals[signalPoint],seconds=nativePreview()?previewAudio.currentTime:playbackSeconds;
+    if(scopeView==='phrase')view=signal;
+    else if(nativePreview()||!hasPlayed)view=speechWindow(signal,phraseSignals.sampleRate,seconds);
+    canvas.dataset.view=scopeView;
+    document.querySelector('.scope-scale').textContent=scopeView==='phrase'?(selected.phraseSamples/selected.sampleHz).toLocaleString('ru')+' с · вся фраза':'85 мс · текущий сигнал';
+  }
+  drawWave(canvas,view,'#c9ef86');
   if(scopes[1])drawWave($('wave-right'),scopes[1],'#86d9ef');
+  if(playing&&nativePreview())scopeDrawTimer=setTimeout(()=>{scopeDrawTimer=undefined;draw();},1000/30);
 }
 function drawWave(canvas,scope,color){
   const ctx=canvas.getContext('2d');
@@ -210,9 +198,16 @@ function drawWave(canvas,scope,color){
   for (let y=0;y<=height;y+=height/4) { ctx.moveTo(0,y); ctx.lineTo(width,y); } ctx.stroke();
   ctx.strokeStyle='#647b45'; ctx.setLineDash([4,5]); ctx.beginPath(); ctx.moveTo(0,height/2); ctx.lineTo(width,height/2); ctx.stroke(); ctx.setLineDash([]);
   ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.beginPath();
-  for (let i=0;i<scope.length;i++) { const x=i/(scope.length-1)*width,y=height/2-scope[i]*height*.43; if (!i) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
-  if(nativePreview()){
-    const x=Math.min(1,previewAudio.currentTime/(selected.phraseSamples/selected.sampleHz))*width;
+  if(scope.length>width*2){
+    for(let x=0;x<width;x++){
+      const start=Math.floor(x*scope.length/width),end=Math.max(start+1,Math.floor((x+1)*scope.length/width));
+      let low=Infinity,high=-Infinity;for(let i=start;i<end;i++){low=Math.min(low,scope[i]);high=Math.max(high,scope[i]);}
+      ctx.moveTo(x,height/2-high*height*.43);ctx.lineTo(x,height/2-low*height*.43);
+    }
+  }else for (let i=0;i<scope.length;i++) { const x=i/(scope.length-1)*width,y=height/2-scope[i]*height*.43; if (!i) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
+  if(speechCollection&&scopeView==='phrase'){
+    const seconds=nativePreview()?previewAudio.currentTime:playbackSeconds;
+    const x=Math.min(1,seconds/(selected.phraseSamples/selected.sampleHz))*width;
     ctx.strokeStyle='#e8eddf';ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,height);ctx.stroke();
   }
 }
@@ -241,25 +236,8 @@ function downloadUI(id,source,filename,title) {
 function renderCatalog() {
   const query=$('search').value.toLocaleLowerCase('ru').trim();
   const available=catalog.entries.filter(entry=>!speechCollection||(entry.device||'attiny13a')===currentDevice);
-  const entries=available.filter(e => `${e.title} ${e.description} ${e.id} ${e.flashBytes??e.streamBytes}`.toLocaleLowerCase('ru').includes(query));
-  $('catalog').replaceChildren(); $('catalog-count').textContent=query ? `${entries.length} / ${available.length}` : available.length;
-  for (const entry of entries) {
-    const item=document.createElement('div'); item.setAttribute('role','listitem');
-    const button=document.createElement('button'); button.className='firmware-card'; button.dataset.firmware=entry.id;
-    button.setAttribute('aria-pressed',String(selected?.id===entry.id));
-    const number=document.createElement('span'); number.className='card-number'; number.textContent=entry.order;
-    const body=document.createElement('span'); body.className='card-body';
-    const name=document.createElement('strong'); name.textContent=entry.title;
-    const voices=entry.voices??4;
-    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.playback==='native-pwm8'
-      ? `${entry.flashMeasurement?.programFlashBytes.toLocaleString('ru')??'—'} Б код · ${entry.streamBytes.toLocaleString('ru')} Б данных · ${bitrateLabel(entry.bitrateBps)}`
-      : entry.kind==='package'?'FLASH + EEPROM · PB0 / PB1':entry.kind==='speech'
-      ? `${entry.flashBytes} Б Flash${entry.eepromBytes ? ` + ${entry.eepromBytes} Б EEPROM` : ''} · речь ${(entry.sampleHz/1000).toLocaleString('ru')} кГц`
-      : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}${entry.audioChannels===2?' · СТЕРЕО L / R':''}`;
-    const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
-    body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
-  }
-  if (!entries.length) { const p=document.createElement('p'); p.className='empty'; p.textContent='Ничего не найдено. Попробуйте другое название.'; $('catalog').append(p); }
+  const entries=speechCollection?speechCatalogRows(available,selected,speechExamples,currentDevice):available;
+  renderFirmwareCatalog(document,{entries,selectedId:selected?.id,query,onSelect:load});
 }
 function connectAudio() {
   if (nativePreview()||!runtime||!output || !runtimeReady || connectedRuntime===runtime) return;
@@ -296,15 +274,22 @@ function load(entry,{autoplay=false}={}) {
   const autoplayAttempt=playAttempt;
   output?.port.postMessage({type:'disconnect'});
   selected=entry; headroom=0;
+  phraseRaw=null;phraseSignals=null;playbackSeconds=0;let displayOrder=entry.order;
+  canvas.dataset.view=speechCollection?scopeView:'live';
+  $('signal-view-control').hidden=!speechCollection;$('signal-view').value=scopeView;
+  $('scope-note').textContent=speechCollection?'Вся фраза — полный сигнал выбранного образа; текущий сигнал — окно 85 мс.':'';
   if(speechCollection){currentDevice=entry.device||'attiny13a';if(currentDevice==='attiny88')currentBoard='mh-et-live-16mhz';}
   deviceUI(currentDevice);
   $('device-select').disabled=false;
   previewUI(nativePreview());
-  if(speechCollection){
-    document.title=`MicroMusic / ${currentDevice==='attiny88'?'ATtiny88':'ATtiny13A'} — речевые кодеки`;
-    document.querySelector('.intro .eyebrow').textContent=(nativePreview()?'ATtiny88':'ATtiny13A')+' / РЕЧЕВЫЕ КОДЕКИ';
-    document.querySelector('.intro h1').textContent=nativePreview()?'Речь с кодеком LPX.':'Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent=nativePreview()?'Два качества одного фрагмента. Сравните с исходной записью.':'Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
+  applyCollectionLayout(document,{device:currentDevice,speech:speechCollection,preview:nativePreview()});
+  const speechEntries=speechCollection?catalog.entries.filter(item=>(item.device||'attiny13a')===currentDevice):[];
+  speechProfileUI(document,speechEntries,entry);
+  if(speechExamples&&speechCollection){
+    const example=speechExamples.examples.find(item=>item.id===entry.audioReferenceId);
+    document.querySelector('.library h2').textContent='Выберите фразу';
+    document.querySelector('.subtitle').textContent='Одинаковые фразы для всех микроконтроллеров. Сравните кодеки и исходную запись.';
+    if(example)displayOrder=example.order;
   }
   previewAudio.removeAttribute('src');previewAudio.load();delete canvas.dataset.samples;
   if(entry.devicePackage){
@@ -356,7 +341,7 @@ function load(entry,{autoplay=false}={}) {
   $('elapsed').textContent='00:00.0'; $('average').textContent=stereo?'128.0 / 128.0':'128.0'; $('headroom').textContent='—';
   $('tempo').textContent='100.0%'; $('lag').textContent='0.0 мс'; realtime?.resetAnchor();
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
-  $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
+  $('selected-order').textContent=displayOrder; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
   if(entry.kind==='speech') {
     const research=entry.research||(entry.codec?.startsWith('lpx')?'../Codecs/LPX/README.md':entry.codec==='hq4-t'
       ? '../ATtiny13A/Sound/codec/timbre/README.md'
@@ -372,10 +357,12 @@ function load(entry,{autoplay=false}={}) {
     const file=entry.id+'.lpx';
     $('rom-name').href=entry.streamUrl;$('rom-name').download=file;$('rom-name').textContent=file;
     $('download').textContent='↓ Flash HEX';
-    downloadUI('download',null,null,'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
+    downloadUI('download',entry.firmware?.source,entry.firmware?entry.id+'.hex':null,entry.firmware?'Полный Flash HEX для Arduino Nano / ATmega328P · 16 МГц.':'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
     downloadUI('download-eeprom',null,null,'EEPROM не используется этим примером.');
     const measurement=entry.flashMeasurement;
-    const cost=measurement
+    const cost=entry.firmware
+      ? `${entry.firmware.programFlashBytes.toLocaleString('ru')} Б программа + ${entry.streamBytes.toLocaleString('ru')} Б звук = ${entry.firmware.flashBytes.toLocaleString('ru')} Б Flash · ${entry.firmware.staticSramBytes} Б SRAM`
+      : measurement
       ? `${measurement.programFlashBytes.toLocaleString('ru')} Б программа + ${measurement.encodedBytes.toLocaleString('ru')} Б звук = ${measurement.totalFlashBytes.toLocaleString('ru')} Б Flash · тестовая сборка`
       : `Программа: — (не измерено) · ${entry.streamBytes.toLocaleString('ru')} Б данных LPX`;
     $('rom-details').textContent=`${cost} · ${bitrateLabel(entry.bitrateBps)} · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
@@ -383,6 +370,10 @@ function load(entry,{autoplay=false}={}) {
     $('original-player').hidden=true;$('wav-link').hidden=false;$('wav-link').href=entry.nativeAudioUrl;
     $('reference-wav').hidden=false;$('reference-wav').href=originalUrl;
     $('rom-hash').textContent='';$('rom-hash').title='';
+    if(entry.firmware){
+      $('rom-name').href=entry.firmware.source;$('rom-name').download=entry.id+'.hex';$('rom-name').textContent=entry.id+'.hex';
+      $('rom-hash').textContent=entry.firmware.hexSha256.slice(0,16)+'…';$('rom-hash').title='SHA-256 HEX: '+entry.firmware.hexSha256;
+    }
     previewAudio.src=entry.nativeAudioUrl;previewAudio.volume=+$('volume').value;previewAudio.load();
     document.querySelector('.scope-scale').textContent=(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')+' с · вся запись';
     loadPreviewWave(entry,session);
@@ -409,7 +400,8 @@ function load(entry,{autoplay=false}={}) {
   const bytes=parseHex(entry.flashHex,capacity); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   }
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id);
-  if(tiny88)url.searchParams.set('device','attiny88');else url.searchParams.delete('device');
+  if(currentDevice!=='attiny13a')url.searchParams.set('device',currentDevice);else url.searchParams.delete('device');
+  if(speechCollection)url.searchParams.set('collection','hq4');
   if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
@@ -417,6 +409,7 @@ function load(entry,{autoplay=false}={}) {
     previewUI(true);runtimeReady=true;transport();if(autoplay)toggle();return;
   }
   document.querySelector('.scope-scale').textContent='85 мс';
+  if(speechCollection)loadFirmwareWave(entry,session);
   const worker=new Worker(new URL('./worker.js?v=20261026-signal-point',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
@@ -450,6 +443,7 @@ async function ensureAudio() {
       const timing=realtime.observe(data,performance.now());
       const duration=selected.playOnce ? selected.phraseSamples/selected.sampleHz : Infinity;
       const seconds=Math.min(timing.seconds,duration);
+      playbackSeconds=seconds;draw();
       elapsed(seconds);
       $('tempo').textContent=timing.tempoPercent.toFixed(1)+'%'; $('lag').textContent=timing.lagMs.toFixed(1)+' мс';
       $('tempo').dataset.wallMs=timing.wallMs.toFixed(3); $('tempo').dataset.audioMs=timing.audioMs.toFixed(3);
@@ -484,8 +478,9 @@ async function toggle() {
   finally { if(busyAttempt===attempt){busy=false;transport();} }
 }
 $('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
-$('volume').oninput=()=>{originalAudio.volume=previewAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
-$('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+$('volume').oninput=()=>{originalAudio.volume=previewAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});draw();};
+$('cutoff').onchange=()=>{runtime?.postMessage({type:'controls',controls:audioControls()});draw();};
+$('signal-view').onchange=()=>{scopeView=$('signal-view').value==='live'?'live':'phrase';canvas.dataset.view=scopeView;draw();};
 $('signal-point').onchange=()=>{
   signalPoint=$('signal-point').value==='input'?'input':'output';signalPointUI();
   runtime?.postMessage({type:'controls',controls:audioControls()});
@@ -494,6 +489,10 @@ for (const choice of document.querySelectorAll('input[name="engine"]')) choice.o
   if (selected) load(selected);
 };
 $('device-select').onchange=()=>switchDevice($('device-select').value);
+$('speech-profile-select').onchange=()=>{
+  const entry=catalog.entries.find(item=>item.id===$('speech-profile-select').value&&(item.device||'attiny13a')===currentDevice);
+  if(entry)load(entry);
+};
 $('board-select').onchange=()=>switchDevice('attiny88',$('board-select').value);
 $('package-file').onchange=async event=>{
   if(nativePreview())return;
@@ -518,17 +517,9 @@ try {
   deviceUI('attiny13a');
   if(speech){
     $('device-select').disabled=true;
-    document.title='MicroMusic / ATtiny13A — речевые кодеки';
-    document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
-    document.querySelector('.intro h1').textContent='Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent='Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
-    document.querySelector('.library h2').textContent='Выберите фразу';
-    document.querySelector('.library-caption').textContent='Слушайте речь из прошивки и сравнивайте с исходной записью.';
-    document.querySelector('.source-only').hidden=true;
-    const history=document.querySelector('.header-link');history.href='https://github.com/Witali/MicroMusic/blob/main/ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
+    applyCollectionLayout(document,{device:'attiny13a',speech:true});
     $('original-player').textContent='Плеер из ChatGPT ↗';
     $('speech-audit').hidden=false;
-    document.querySelector('footer span:last-child').textContent='Речевые кодеки · Worker + AudioWorklet';
   }
   if(!speech) {
     await switchDevice(new URL(location.href).searchParams.get('device'));
@@ -538,12 +529,44 @@ try {
   const response=await fetch(speech?'./hq4-firmware.json?v=20261023-mobile-original':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
-  let previewError;
+  try{
+    const response=await fetch(new URL('./audio/speech-waveforms/manifest.json?v=20261102-signal-view',import.meta.url));
+    if(response.ok){const data=await response.json();if(data.schemaVersion===1&&Array.isArray(data.entries))speechWaveforms=data;}
+  }catch{/* Live signal remains available without saved phrase duties. */}
+  try{
+    const response=await fetch(new URL('./firmware-attiny13a-speech-extra.json?v=20261102-shared-speech',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const extra=await response.json();
+    if(extra.schema!==1||!Array.isArray(extra.entries))throw Error('Неверный каталог дополнительных фраз.');
+    for(const entry of extra.entries){
+      if(entry.kind!=='speech'||entry.audioReferenceId!=='bread'||entry.flashBytes>1024||entry.eepromBytes>64)throw Error('Неверный образ ATtiny13A.');
+      if(parseHex(entry.flashHex,1024).length!==entry.flashBytes)throw Error('Неверный размер Flash.');
+    }
+    catalog.entries.push(...extra.entries);
+  }catch{/* Retained original speech stays usable if supplemental firmware is unavailable. */}
+  try{
+    const response=await fetch(new URL('./speech-examples.json?v=20261102-shared-speech',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    speechExamples=readSpeechExamples(await response.json());
+  }catch{/* Older/offline catalogs retain their own examples when the shared index is unavailable. */}
+  let previewError,nanoError;
+  try{
+    const response=await fetch(new URL('./firmware-atmega328p.json?v=20261102-nano',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    catalog.entries.push(...lpxFirmwareEntries(await response.json(),import.meta.url));
+  }catch(error){nanoError=error;}
   try{
     const response=await fetch(new URL('./audio/lpx-bread/manifest.json?v=20261101-flash',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...lpxPreviewEntries(await response.json(),import.meta.url));
   }catch(error){previewError=error;}
+  try{
+    const response=await fetch(new URL('./audio/lpx-speech/manifest.json?v=20261102-shared-speech',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const data=await response.json();
+    if(data.schemaVersion!==1||!Array.isArray(data.clips))throw Error('Неверный набор LPX.');
+    catalog.entries.push(...data.clips.flatMap(clip=>lpxPreviewEntries(clip,import.meta.url)));
+  }catch{/* Existing LPX clips remain usable if additional assets cannot load. */}
   document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и нативные LPX-превью';
   if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
     try {
@@ -563,10 +586,12 @@ try {
   const requested=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
   const id=catalog.aliases?.[requested]??requested;
   const exact=catalog.entries.find(entry=>entry.id===id);
-  const device=exact?.playback==='native-pwm8'||new URL(location.href).searchParams.get('device')==='attiny88'?'attiny88':'attiny13a';
-  const available=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
+  const requestedDevice=new URL(location.href).searchParams.get('device');
+  const device=requestedDevice==='atmega328p'||exact?.device==='atmega328p'?'atmega328p':exact?.playback==='native-pwm8'||requestedDevice==='attiny88'?'attiny88':'attiny13a';
+  const available=orderSpeechEntries(catalog.entries.filter(entry=>(entry.device||'attiny13a')===device),speechExamples);
   load(available.find(entry=>entry.id===id)||available[0]||catalog.entries.find(entry=>entry.id===catalog.defaultId));
   if(previewError&&(device==='attiny88'||requested.startsWith('lpx-bread-')))showError('LPX-примеры временно недоступны.');
+  if(nanoError&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');
   }
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();

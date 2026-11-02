@@ -3148,3 +3148,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 
 - [AVR25 software products and exact shifts](examples/lpx-avr25/README.md): standalone arithmetic provenance, C fallbacks and active-interrupt measurements.
 - [Real-time LPX on AVR25 without MUL](lpx-avr25.md): integrated exact arithmetic, fixed-header ROM specialization, an audited reserved-register ISR, 32-byte FIFO and complete P4/P6 admission within a 6.5 KiB image budget.
+
+## ATtiny13A: fit speech parameters and check noise
+
+[Bounded speech data and spectral selection](tiny-speech-budget.md): dictionary/parameter search fits the complete phrase, then an aligned noise/spectral objective selects a 1014-byte image plus 64-byte EEPROM. Active-IRQ output verification and the STOI tradeoff are recorded; decoder assembly is unchanged.

@@ -55,11 +55,12 @@ test('legacy variants remain in the research archive and old links preserve the 
   for(const target of Object.values(catalog.aliases))assert.ok(catalog.entries.some(e=>e.id===target));
 });
 
-test('home page offers exactly the three selected speech phrases',()=>{
+test('home page offers the four shared speech phrases',()=>{
   const html=read('index.html').toString();
   const speech=html.match(/<article class="player player-speech">([\s\S]*?)<\/article>/)[1];
   const linkedIds=[...speech.matchAll(/firmware=([^"&]+)/g)].map(match=>match[1]);
-  assert.deepEqual(linkedIds,catalog.entries.map(entry=>entry.id));
+  const extra=JSON.parse(read('web-player/firmware-attiny13a-speech-extra.json'));
+  assert.deepEqual(linkedIds,[...catalog.entries,...extra.entries].map(entry=>entry.id));
 });
 test('speech variants share the exact public canonical WAV for their phrase',()=>{
   const urls=new Set();

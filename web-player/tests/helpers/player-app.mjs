@@ -1,9 +1,13 @@
+import {speechSignals,speechWindow} from '../../lib/speech-waveform.js';
+import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from '../../lib/speech-catalog.js';
+import {renderFirmwareCatalog,bitrateLabel} from '../../lib/player-catalog.js';
+import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from '../../lib/player-layout.js';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 import {parseHex} from '../../lib/hex.js';
 import {RealtimeMonitor} from '../../lib/realtime.js';
 import {universalPackageEntry} from '../../lib/universal-package.js';
-import {lpxPreviewEntries,previewWaveform} from '../../lib/native-preview.js';
+import {lpxPreviewEntries,lpxFirmwareEntries,previewWaveform} from '../../lib/native-preview.js';
 
 export function deferred(){
   let resolve,reject;
@@ -98,7 +102,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     }
   }
   const window={devicePixelRatio:1,AudioContext:Context,addEventListener:(type,listener)=>windowEvents.set(type,listener)};
-  const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,previewWaveform,
+  const sandbox={speechSignals,speechWindow,readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI,renderFirmwareCatalog,bitrateLabel,tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout,document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,lpxFirmwareEntries,previewWaveform,
     Worker,AudioWorkletNode:Worklet,ResizeObserver:class{observe(){}},
     MessageChannel:class{constructor(){this.port1={};this.port2={};}},
     performance:{now:()=>Date.now()},setTimeout:()=>1,clearTimeout(){},

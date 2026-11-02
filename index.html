@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#101411">
-  <meta name="description" content="Все плееры MicroMusic: музыка и речевые кодеки ATtiny13A, Intel 8080 и лаборатории звуковых кодеков.">
+  <meta name="description" content="Все плееры MicroMusic: музыка и речевые кодеки ATtiny13A, ATtiny88, Arduino Nano / ATmega328P, Intel 8080 и лаборатории звуковых кодеков.">
   <title>MicroMusic — все плееры</title>
   <link rel="icon" href="web-player/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="site/home.css?v=20261023-card">
+  <link rel="stylesheet" href="site/home.css?v=20261102-nano">
 </head>
 <body>
   <a class="skip" href="#players">Перейти к плеерам</a>
@@ -25,7 +25,7 @@
     </section>
 
     <section id="players" class="section" aria-labelledby="players-title">
-      <div class="section-heading"><h2 id="players-title">Выберите плеер</h2><span>01 — 03</span></div>
+      <div class="section-heading"><h2 id="players-title">Выберите плеер</h2><span>01 — 04</span></div>
       <div class="players-grid">
         <article class="player player-music">
           <div class="card-top"><span class="number">01 / МУЗЫКА</span><span class="chip">ATtiny13A</span></div>
@@ -40,13 +40,22 @@
           <div class="card-top"><span class="number">02 / РЕЧЬ</span><span class="chip">ATtiny13A</span></div>
           <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><path d="M5 22v4m7-12v20m8-27v34m8-23v12m8-27v42m8-32v22m8-17v12m7-8v4"/></svg></div>
           <h3>Речь в одном<br>килобайте</h3>
-          <p>Три речевые фразы, по одному выбранному варианту. Прошивка и оригинальная запись рядом для сравнения.</p>
-          <div class="spec"><span>7,5 кГц</span><span>3 фразы</span></div>
+          <p>Четыре речевые фразы, по одному выбранному варианту. Прошивка и оригинальная запись рядом для сравнения.</p>
+          <div class="spec"><span>7,5 кГц</span><span>4 фразы</span></div>
           <a class="open" href="web-player/?collection=hq4">Открыть речевой плеер <span aria-hidden="true">↗</span></a>
-          <div class="examples" aria-label="Открыть речевой пример"><a href="web-player/?collection=hq4&amp;firmware=hq4-chego-tiny">Чего тебе нужно?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-otvechaesh-tiny">Что ж ты не отвечаешь?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-vinni">Винни-Пух</a></div>
+          <div class="examples" aria-label="Открыть речевой пример"><a href="web-player/?collection=hq4&amp;firmware=hq4-chego-tiny">Чего тебе нужно?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-otvechaesh-tiny">Что ж ты не отвечаешь?</a><a href="web-player/?collection=hq4&amp;firmware=hq4-vinni">Винни-Пух</a><a href="web-player/?collection=hq4&amp;firmware=hq4-bread-tiny">И того, и другого…</a></div>
+        </article>
+        <article class="player player-speech player-nano">
+          <div class="card-top"><span class="number">03 / РЕЧЬ LPX</span><span class="chip">Arduino Nano</span></div>
+          <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="15" y="5" width="34" height="38" rx="3"/><path d="M8 12h7m-7 8h7m-7 8h7m-7 8h7m34-24h7m-7 8h7m-7 8h7m-7 8h7M24 24h4l3-8 4 16 4-8h3"/></svg></div>
+          <h3>Речь LPX<br>на Arduino Nano</h3>
+          <p>ATmega328P, четыре фразы, два речевых профиля и готовые HEX. Прослушайте LPX, сравните с оригиналом и скачайте прошивку.</p>
+          <div class="spec"><span>16 МГц</span><span>8 кГц · моно</span></div>
+          <a class="open" href="web-player/?collection=hq4&amp;device=atmega328p">Открыть Arduino Nano <span aria-hidden="true">↗</span></a>
+          <div class="examples" aria-label="Речевые профили Arduino Nano"><a href="web-player/?collection=hq4&amp;device=atmega328p&amp;firmware=lpx-nano-bread-compact">Компактный LPX</a><a href="web-player/?collection=hq4&amp;device=atmega328p&amp;firmware=lpx-nano-bread-quality">Повышенное качество</a></div>
         </article>
         <article class="player player-intel">
-          <div class="card-top"><span class="number">03 / ЭМУЛЯТОР</span><span class="chip">Intel 8080</span></div>
+          <div class="card-top"><span class="number">04 / ЭМУЛЯТОР</span><span class="chip">Intel 8080</span></div>
           <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 64 48"><rect x="17" y="8" width="30" height="32" rx="3"/><path d="M9 15h8m-8 9h8m-8 9h8m30-18h8m-8 9h8m-8 9h8M25 1v7m14-7v7M25 40v7m14-7v7M25 19l-4 5 4 5m14-10 4 5-4 5"/></svg></div>
           <h3>Звук<br>Intel 8080</h3>
           <p>Загрузите свой образ или выберите готовый пример. Эмуляция процессора, управление частотой и звук в реальном времени.</p>
