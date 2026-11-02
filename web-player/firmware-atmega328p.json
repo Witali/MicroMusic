@@ -1,0 +1,100 @@
+{
+  "schema": "micromusic-lpx-avr-firmware-v1",
+  "device": "atmega328p",
+  "cpuHz": 16000000,
+  "sampleHz": 8000,
+  "pwmHz": 62500,
+  "pwmOutput": "D3 / PD3 / OC2B",
+  "queue": 256,
+  "prefill": 192,
+  "assemblyEnabled": true,
+  "physicalBoardMeasured": false,
+  "sourceHashEncoding": "text-lf",
+  "sourceSha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "48923d2ddd3c45135d9c33dd3e36c9ef221f98f155bb2e9421f472aa51250a7a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/INPUT_CALLBACK.md": "9470f3e91f3d335d628e6e86589d80c4cbd35016d464bfacce7e5a72aeeba8e4",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "2993d1275aec899543731f9e5efa72887237a5696fe1a7d63057bf486b9bffb4",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "c7211f7c039bbfe17014cb8f145d40412b544fe86d04df897d6877efcae6f3d0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/AVR_V5_PLAYER/player.cpp": "ebaa83e7e47eb8e26d38e74cf6ba693de1682c8c98f079af927dff808a683674",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/AVR_V5_PLAYER/player_config.h": "52492e9a832bc567c02cfaa6253fedcd0ea3a9a813930e4e609f79f0e43b62c9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py": "1fba71295fbe982ae57a10678a32bfc490a7f1e5a32a5e47c994275c653ce97c",
+    "tools/build-nano-speech-catalog.py": "db92b6944ca449dd47c22ac1df33352cb03692ccaeb3c584e1c90dfdfa2810dc"
+  },
+  "preview": {
+    "schemaVersion": 1,
+    "title": "«И того, и другого, и можно без хлеба»",
+    "codec": "LPX",
+    "sampleRate": 8000,
+    "samples": 19200,
+    "durationSeconds": 2.4,
+    "previewKind": "native-pwm8",
+    "reference": {
+      "audio": "audio/lpx-bread/original.wav",
+      "label": "Исходник · 8 кГц, моно"
+    },
+    "variants": [
+      {
+        "id": "compact",
+        "label": "Компактный",
+        "profile": 4,
+        "audio": "audio/lpx-bread/compact.wav",
+        "stream": "audio/lpx-bread/compact.lpx",
+        "bytes": 1008,
+        "bitrateBps": 3360.0
+      },
+      {
+        "id": "quality",
+        "label": "Повышенное качество",
+        "profile": 6,
+        "audio": "audio/lpx-bread/quality.wav",
+        "stream": "audio/lpx-bread/quality.lpx",
+        "bytes": 1899,
+        "bitrateBps": 6330.0
+      }
+    ]
+  },
+  "variants": [
+    {
+      "id": "compact",
+      "source": "firmware/arduino-nano/lpx-nano-bread-compact.hex",
+      "flashBytes": 5582,
+      "programFlashBytes": 4574,
+      "staticSramBytes": 756,
+      "hexSha256": "4eb9cdfab1da4547e21c30344bb6531e1c61aa5c26f6e923032483c1082e23e9",
+      "streamSha256": "b2bfe6a869659735b2986e6e2636e8e0fbc290d93670c50e08cd68381894a6bb",
+      "timing": {
+        "simulator": "simavr 1.6",
+        "playedSamples": 19200,
+        "underruns": 0,
+        "minTickCycles": 1997,
+        "maxTickCycles": 2003,
+        "maxIrqCycles": 68,
+        "stackMarginBytes": 1231
+      }
+    },
+    {
+      "id": "quality",
+      "source": "firmware/arduino-nano/lpx-nano-bread-quality.hex",
+      "flashBytes": 6472,
+      "programFlashBytes": 4573,
+      "staticSramBytes": 756,
+      "hexSha256": "918b53a5107280008656e522c9543c1ffeb53397c5b81b9fe276b9108e497cbf",
+      "streamSha256": "6e65c2cd10356ee2eccc3fb285992919c6219d84c47a57a444262c0f240d9a39",
+      "timing": {
+        "simulator": "simavr 1.6",
+        "playedSamples": 19200,
+        "underruns": 0,
+        "minTickCycles": 1997,
+        "maxTickCycles": 2003,
+        "maxIrqCycles": 68,
+        "stackMarginBytes": 1231
+      }
+    }
+  ]
+}
