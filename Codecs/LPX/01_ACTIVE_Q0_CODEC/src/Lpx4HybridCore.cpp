@@ -2,6 +2,14 @@
 #include "Lpx4Math.h"
 #include <stddef.h>
 #include <string.h>
+#ifdef LPX4_FIXED_SPEECH_FLAGS
+#if !LPX4_COMPACT_ONLY
+#error Fixed speech flags require compact-only decoding
+#endif
+#define LPX4_SPEECH_FLAGS LPX4_FIXED_SPEECH_FLAGS
+#else
+#define LPX4_SPEECH_FLAGS speechProfile_
+#endif
 // Compile-time amplitude calibration: same compressed bits, same decoder path.
 #ifndef LPX4_PWM_GAIN
 #define LPX4_PWM_GAIN 130
@@ -241,6 +249,9 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
   error_=BAD_HEADER;return false;
  }
  const uint8_t version=readByte(),flags=readByte();
+#ifdef LPX4_FIXED_SPEECH_FLAGS
+ if(flags!=LPX4_FIXED_SPEECH_FLAGS){error_=UNSUPPORTED;return false;}
+#endif
 #if LPX4_COMPACT_ONLY
  if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
  // Compact-only needs one flags byte: bit1 selects6k, bit7 extra pulses.
@@ -248,7 +259,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #else
 #if LPX4_ENABLE_SPEECH_COMPACT
  if(version==5 && ((flags&127)==4 || (flags&127)==6)){
-  speechProfile_=flags&127;speechCompact_=1|(flags&128);
+  LPX4_SPEECH_FLAGS=flags&127;speechCompact_=1|(flags&128);
  }else
 #endif
 #if LPX4_ENABLE_SPEECH
@@ -280,7 +291,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #else
  bool geometry=frames==160 && blocks==80;
 #if LPX4_ENABLE_SPEECH
- if(speechProfile_){
+ if(LPX4_SPEECH_FLAGS){
   geometry=frames==320 && blocks==160;
   // Full final packet is mandatory, even for a partial sample tail. Bound
   // the count before addition/multiplication; reject truncation at begin().
@@ -291,12 +302,18 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
   // Accepted counts are <=64000: count+319 and the byte length fit uint16.
   // Larger counts are still rejected by the full-width guard below.
-  complete=size==(uint16_t)(20+(((uint16_t)sampleCount_+319u)/320u)*(speechProfile_==4?20:30));
+  complete=size==(uint16_t)(20+(((uint16_t)sampleCount_+319u)/320u)*(LPX4_SPEECH_FLAGS==4?20:30));
   if(sampleCount_>64000 || !sampleCount_ || !complete){
    error_=BAD_HEADER;return false;
   }
  }
 #endif
+#endif
+#ifdef LPX4_FIXED_PRE_Q14
+ if(preQ14_!=LPX4_FIXED_PRE_Q14){error_=UNSUPPORTED;return false;}
+#endif
+#ifdef LPX4_FIXED_BRIGHT_Q14
+ if(brightQ14_!=LPX4_FIXED_BRIGHT_Q14){error_=UNSUPPORTED;return false;}
 #endif
  if(error_||sampleRate_!=8000||!sampleCount_||!geometry||
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
@@ -369,7 +386,7 @@ bool Lpx4HybridCore::readFrame(){
 #endif
 #if LPX4_ENABLE_SPEECH
 #if !LPX4_COMPACT_ONLY
- if(speechProfile_){
+ if(LPX4_SPEECH_FLAGS){
 #else
  {
 #endif
@@ -383,7 +400,7 @@ bool Lpx4HybridCore::readFrame(){
    // The second half uses cached LPC; the next first half refreshes prev.
    for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
 #endif
-   const uint8_t bits=(speechProfile_&2)?6:5;
+   const uint8_t bits=(LPX4_SPEECH_FLAGS&2)?6:5;
 #if !LPX4_COMPACT_ONLY
    const uint8_t shift=10-bits;
 #endif
@@ -401,7 +418,7 @@ bool Lpx4HybridCore::readFrame(){
      const uint8_t k=bits-4-(uint8_t)delta;
      // Gap max:63+1+63=127. Delta range:-64..126. Reject before widening.
      int8_t last=-1;
-     const uint8_t limit=((speechProfile_&2)+2)<<4;
+     const uint8_t limit=((LPX4_SPEECH_FLAGS&2)+2)<<4;
      for(uint8_t i=0;i<10;i++){
       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
       // Compact Rice codes use at most seven bits: delta is -64..63.
@@ -435,7 +452,7 @@ bool Lpx4HybridCore::readFrame(){
     if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
     cur_[i]=v;
    }
-   if(speechProfile_==6 && readBits(6)){error_=CORRUPT_STREAM;return false;}
+   if(LPX4_SPEECH_FLAGS==6 && readBits(6)){error_=CORRUPT_STREAM;return false;}
    }
 #endif
   }
@@ -525,7 +542,7 @@ bool Lpx4HybridCore::readFrame(){
 #if !LPX4_COMPACT_ONLY
 bool Lpx4HybridCore::readBlock(){
 #if LPX4_ENABLE_SPEECH
- if(speechProfile_)return !error_;
+ if(LPX4_SPEECH_FLAGS)return !error_;
 #endif
 #if LPX4_V3_FEATURES & 8
  if(!(formatFeatures_&8) || readOne())
@@ -561,7 +578,7 @@ bool Lpx4HybridCore::readBlock(){
 bool Lpx4HybridCore::readSubframe(){
 #if LPX4_ENABLE_SPEECH
 #if !LPX4_COMPACT_ONLY
- if(speechProfile_){
+ if(LPX4_SPEECH_FLAGS){
   subType_=2;pulseIndex_=0;pulseCount_=2;
 #else
  {
@@ -571,9 +588,9 @@ bool Lpx4HybridCore::readSubframe(){
   uint16_t pair=0;
   uint8_t second=0;
 #if LPX4_COMPACT_ONLY
-  if(speechProfile_&2){
+  if(LPX4_SPEECH_FLAGS&2){
 #else
-  if(speechCompact_ && speechProfile_==6){
+  if(speechCompact_ && LPX4_SPEECH_FLAGS==6){
 #endif
    pair=readBits(8);pair|=(uint16_t)readOne()<<8;
    if(pair>=400){error_=CORRUPT_STREAM;return false;}
@@ -585,7 +602,7 @@ bool Lpx4HybridCore::readSubframe(){
   for(uint8_t i=0;i<2;i++){
    uint8_t pos;
    int8_t amp;
-   if(!(speechProfile_&2)){
+   if(!(LPX4_SPEECH_FLAGS&2)){
     pos=readBits(4);pos+=(pos+2)>>2;
     amp=readOne()?8:-8;
    }else{
@@ -608,7 +625,7 @@ bool Lpx4HybridCore::readSubframe(){
   }
 #if LPX4_ENABLE_SPEECH_COMPACT
 #if LPX4_COMPACT_ONLY
-  if((speechProfile_&128) && readOne()){
+  if((LPX4_SPEECH_FLAGS&128) && readOne()){
 #else
   if((speechCompact_&128) && readOne()){
 #endif
@@ -833,12 +850,12 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
 // Normal spectra take the single-multiply fast path; split product only if
 // absolute polynomial coefficient would overflow signed int32 when *8192.
 static inline int32_t polyMulQ12(int32_t v,int16_t c){
-    if(v<=250000L && v>=-250000L)return lpx4Shift12(v*c);
+    if(v<=250000L && v>=-250000L)return lpx4Shift12(lpx4Mul32x16(v,c));
     const int32_t hi=truncShift(v,4);
     int8_t rem=(uint8_t)v&15;
     if(v<0 && rem)rem-=16;
     // Preserve the original separate floors of the two split products.
-    return ((hi*c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
+    return (lpx4Mul32x16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
 }
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
 // The next 111 ring slots are dead: the largest v5 pitch lag is 145, and
@@ -915,11 +932,11 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
         // For segments1/2, u is 0/1/2. Factoring centered q+1 values
         // gives the even-grid index directly, without widening and shifting back.
         const uint8_t u=t>>3;
-        const uint8_t node=(uint8_t)(prev_[i]*(2-u)+cur_[i]*u-1)<<((speechProfile_&2)?0:1);
+        const uint8_t node=(uint8_t)(prev_[i]*(2-u)+cur_[i]*u-1)<<((LPX4_SPEECH_FLAGS&2)?0:1);
         const int16_t cc=(int16_t)-cosineEvenNode(node);
 #elif LPX4_COMPACT_ONLY
         const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(
-            centeredLsf(prev_[i],speechProfile_),centeredLsf(cur_[i],speechProfile_),t));
+            centeredLsf(prev_[i],LPX4_SPEECH_FLAGS),centeredLsf(cur_[i],LPX4_SPEECH_FLAGS),t));
 #else
         const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(prev_[i],cur_[i],t));
 #endif
@@ -1101,7 +1118,11 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,a_,hist_));
     hist_[0]=pred;
 #endif
+#ifdef LPX4_FIXED_PRE_Q14
+    int16_t deemph=LPX4_FIXED_PRE_Q14?lpx4AddClip15(pred,lpx4AttenuateFixedQ14<LPX4_FIXED_PRE_Q14>(prevDeemph_)):pred;
+#else
     int16_t deemph=preQ14_?lpx4AddClip15(pred,lpx4AttenuateQ14(preQ14_,prevDeemph_)):pred;
+#endif
     // Between samples, brightness history is exactly clipQ14(prevDeemph_).
     // Derive it before publishing the new deemphasis state.
     const int16_t prevBright=lpx4ClipQ14(prevDeemph_);
@@ -1109,7 +1130,11 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     int16_t clipped=lpx4ClipQ14(deemph);
     // Header validation limits brightness to11469; both clipped values are
     // +/-16384. The un-clipped difference is within +/-27853, signed16-safe.
+#ifdef LPX4_FIXED_BRIGHT_Q14
+    int16_t b=LPX4_FIXED_BRIGHT_Q14?lpx4ClipQ14((int16_t)(clipped-lpx4AttenuateFixedQ14<LPX4_FIXED_BRIGHT_Q14>(prevBright))):clipped;
+#else
     int16_t b=brightQ14_?lpx4ClipQ14((int16_t)(clipped-lpx4AttenuateQ14(brightQ14_,prevBright))):clipped;
+#endif
     // Preserve the signed post-deemphasis/post-brightness output BEFORE PWM.
     // This is the exact integer sample used by both optional 16-bit output
     // and legacy PWM conversion; no 8-bit quantization has happened yet.

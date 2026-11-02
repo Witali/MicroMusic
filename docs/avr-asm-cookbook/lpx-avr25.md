@@ -1,0 +1,126 @@
+# LPX on AVR25 without MUL
+
+Measured on ATtiny88 / AVR25, GNU AVR ABI, AVR-GCC 7.3.0, `-Os -flto
+-mcall-prologues -mrelax -fno-jump-tables -fno-exceptions -fno-rtti
+-ffunction-sections -fdata-sections -std=gnu++11`, requested16 MHz /8 kHz.
+Arithmetic needs the real `__AVR_ARCH__==25`, no `__AVR_HAVE_MUL__`, and the
+separate explicit `LPX4_ENABLE_ASM=1`. C remains the default, including on
+AVR25. The hardware player accepts only real `-mmcu=attiny88`.
+
+## Exact software arithmetic
+
+The [production math header](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h)
+extends the project's [original standalone prototype](examples/lpx-avr25/README.md).
+No manufacturer assembly listing was copied. Useful techniques:
+
+- Unsigned carry-rotation multiplication plus independent signed corrections
+  retains the entire 16x16 product, including both signed minima. Keep this
+  full-product routine shared to limit Flash.
+- LPC needs product bits 12..31. Shift a separate multiplier byte and capture
+  outgoing product bits only in the last four rounds; never construct the
+  discarded low 12 bits. Subtract the multiplicand in the final signed
+  multiplier round. A zero or narrow history value takes an exact shorter path.
+- Keep a Q4 accumulator and clear each product's low nibble before subtraction.
+  This preserves **each original Q12 floor**; shifting the sum once is not a
+  substitute for those floors. Ten full-range products and bounded excitation
+  fit the signed 32-bit Q4 accumulator. Reverse traversal consumes history before
+  shifting it, without another buffer.
+- Byte-by-word excitation, exact gain 14 identity
+  `floor((14*x+8)/16) = x + floor((4-x)/8)`, and common excitation values avoid
+  full software products. PWM gain 130 uses an exact 24-bit shift/add identity,
+  retaining rounding and clipping for the entire signed 16-bit domain.
+- A ROM build can pin the **existing** header's flags, deemphasis and brightness.
+  The parser explicitly rejects mismatches. Constant Q14 products discard
+  unused bits and assemble only the additions required by the constant's bits.
+  This changes neither compressed data nor decoded output. With no fixed-header
+  defines, the portable dynamic library interface remains available.
+
+`LPX4_ARCH=LPX4_ARCH_GENERIC` explicitly restores C arithmetic on a real AVR.
+The real CPU and Flash-memory macros are never replaced. The SRAM512 profile
+and its 96-byte dead-history workspace are reused unchanged.
+
+## Short interrupt with a bounded FIFO
+
+The [player](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp)
+uses a 32-byte FIFO, 31 usable slots, prefill 24. Head/tail are atomic bytes;
+final head+EOF publish together. Decode runs with interrupts enabled.
+Timer0 CTC /8 /250 requests8 kHz; Timer1 fast8-bit PWM drives OC1A/PB1 at 62.5 kHz.
+
+The separately enabled `LPX25_ENABLE_ASM_ISR=1` reserves r2/r3 across **all**
+foreground compilation using `-ffixed-r2 -ffixed-r3`. r2 is scratch and r3
+holds SREG. Only Z is pushed/popped; r1 stays untouched. FIFO alignment makes
+`base | tail` valid without carry propagation. Foreground code stops the timer
+after the final ISR drains the queue; no EOF check runs on every interrupt.
+This assumes the standalone foreground drain loop and the measured interrupt
+load. Arbitrary application ISRs or additional consumers need new admission.
+
+The builder checks ELF function bodies for hardware MUL and forbidden uses of
+the reserved registers, including linked runtime functions. It permits only
+the standard ABI save/restore operations in GCC's prologue/epilogue helpers.
+Do not link an unaudited library that keeps live values in r2/r3 during IRQs.
+`LPX25_ENABLE_ASM_ISR=0` selects the equivalent C ISR independently of arithmetic.
+
+Paired complete-player measurements: C ISR 63 cycles; selected ASM ISR 40 cycles
+(2.5 us at 16 MHz), including hardware entry, vector jump and completed RETI.
+Reserving only one register and saving r0 instead measured 44 cycles, +12 B
+Flash and +1 B peak stack, so it was rejected. Reserving more registers is
+not automatically faster: foreground spills matter. The C ISR remains a
+valid smaller alternative on the measured P4 stream; its decode mean is
+about10 cycles lower because no foreground registers are reserved.
+
+## Admission and limits
+
+Full simavr 1.6 execution uses an original bounded ATtiny88 model binding for
+CPU memory, PortB, Timer0 and Timer1. Addresses/bits/vectors come from a
+separate AVR object compiled with the retained official
+[Microchip ATtiny_DFP 3.4.278](../../ATtiny88/Music/universal/vendor/README.md).
+It does not substitute an ATmega device. Unused peripherals are not modeled.
+The old music emulator lacks Timer0 Compare support and is not used for
+playback admission; its AVR25 CPU supplies the separate arithmetic/ABI checks.
+
+The adapter explicitly corrects two simavr 1.6 timing boundaries: hardware
+IRQ entry was not charged by `avr_service_interrupts`, so four AVRe cycles
+are added; RUNNING falls before RETI, so duration is finalized only after
+that instruction retires. The selected handler is 36 cycles from the vector
+through RETI, plus 4 cycles of hardware entry. Decode wall times include
+the corrected entry cost. Timer callbacks and FIFO admission are rerun with
+that clock advance; this is not only a correction to a printed ISR number.
+
+The [source-bound receipt](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/measurements.json)
+records the complete matrix. Selected results, with active IRQs:
+
+| Complete workload | Samples | Full Flash incl.audio | Mean decode wall cycles | Underruns |
+| --- | ---: | ---: | ---: | ---: |
+| P4 ROM, four reset chains | 76800 | 6418 B | 1574.49 | 0 |
+| P6 real ROM prefix, eight chains | 76800 | 6454 B | 1540.05 | 0 |
+| P6 + extras, changing spectra, lag145 | 51200 | 6288 B | 1819.02 | 0 |
+| P6 + extras, clustered spectra, lag18 | 51200 | 6302 B | 1900.69 | 0 |
+
+All PWM bytes equal a separately compiled portable C decoder, with ordinary
+two-anchor LPC and unchanged source level. Output write intervals are
+1991..2009 cycles, without accumulated rate drift. Static RAM is 435 B;
+the observed worst stack is 67 B, leaving 9 B by the observer's SP convention.
+The peak single decode call exceeds20k cycles; FIFO admission, rather than
+average throughput alone, is essential. No further timer events occur after EOF.
+
+The 16-slot control has 6 underruns; C arithmetic has 34177 underruns on its
+declared control. They are rejected. The complete high-quality 19200-sample
+ROM also passes timing, but its7390-byte image **exceeds 6656** and is not
+admitted under the bootloader budget. The real P6 prefix preserves exactly
+the first 9600 samples and fits the budget. This is bounded workload evidence,
+not a guarantee for every valid stream or application load.
+
+The arithmetic probe compares C / ASM / forced-generic on the same AVR25 CPU,
+with active Timer1 interrupts, random/boundary products, signed extrema,
+history shifts, rounding, clipping, r1, callee-save registers and stack balance.
+Native regressions retain dynamic-header and SRAM512 behavior. Reproduction
+commands are in the [player guide](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/README.md).
+
+Physical hardware and the analog output have not been measured. The requested
+16 MHz model does not extend the manufacturer's ordinary 12 MHz speed rating.
+
+Primary references: [AVR200 / AN0936, revision 0936D](https://ww1.microchip.com/downloads/en/Appnotes/doc0936.pdf),
+[ATtiny48/88 datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf),
+[simavr 1.6 timer API/implementation](https://github.com/buserror/simavr/blob/v1.6/simavr/sim/avr_timer.c).
+
+Timing-boundary references: [simavr 1.6 interrupt dispatch](https://github.com/buserror/simavr/blob/v1.6/simavr/sim/sim_interrupts.c), [RETI retirement](https://github.com/buserror/simavr/blob/v1.6/simavr/sim/sim_core.c).

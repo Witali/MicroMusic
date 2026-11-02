@@ -3146,4 +3146,5 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [Exact bounded LPX pitch history](lpx-pitch-history.md): rejected 111-byte RAM tradeoff, memory-lifetime alternatives, unchanged production decoder and measured AVR25 C throughput limits.
 - [LPX SRAM512 memory profile](lpx-sram512.md): reuse 96 dead pitch-ring bytes for exact LSF polynomial scratch; explicit RAM/CPU tradeoff, unchanged defaults, and separate AVR5/Tiny88 timing limits.
 
-- [AVR25 software products and exact shifts](examples/lpx-avr25/README.md): selectable C/ASM arithmetic prototypes for cores without MUL, with exact-output, ABI and active-interrupt measurements; not integrated into the LPX decoder.
+- [AVR25 software products and exact shifts](examples/lpx-avr25/README.md): standalone arithmetic provenance, C fallbacks and active-interrupt measurements.
+- [Real-time LPX on AVR25 without MUL](lpx-avr25.md): integrated exact arithmetic, fixed-header ROM specialization, an audited reserved-register ISR, 32-byte FIFO and complete P4/P6 admission within a 6.5 KiB image budget.
