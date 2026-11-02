@@ -105,7 +105,7 @@ export function lpxDialogueEntry(data,baseURL) {
   const source=asset(data.firmware,'firmware/arduino-nano/lpx-nano-dialogue-quality.hex');
   return {id:'lpx-nano-dialogue-quality',audioReferenceId:'dialogue',order:'05',title:data.title,
     description:'Четыре реплики · громкость выровнена · паузы 0,5 / 1,5 / 0,5 с',
-    profile:6,profileLabel:'LPX · Диалог с паузами',kind:'speech',codec:'lpx-v5',formatVersion:5,
+    profile:6,profileLabel:'Повышенное качество',kind:'speech',codec:'lpx-v5',formatVersion:5,
     playback:'native-pwm8',device:'atmega328p',intendedBoard:'arduino-nano-16mhz',
     sampleHz:8000,phraseSamples:data.samples,audioChannels:1,playOnce:true,streamBytes:data.streamBytes,
     bitrateBps:data.streamBytes*8*8000/data.samples,outputLevel:data.outputLevel,

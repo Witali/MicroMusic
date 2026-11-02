@@ -20,9 +20,11 @@ test('dialogue is selectable in the shared speech catalog with working audio, wa
   for(const prefix of ['/','/MicroMusic/']){
     const app=await playerApp({prefix,device:'atmega328p',firmware:'speex-nano-vinni-wb98'});await flush();
     const row=cards(app).at(-1);
-    assert.equal(row.dataset.firmware,'lpx-nano-dialogue-quality');assert.equal(row.children[0].textContent,'05');
+    assert.equal(row.dataset.firmware,'speex-nano-dialogue-wb98');assert.equal(row.children[0].textContent,'05');
     assert.equal(row.children[1].children[0].textContent,manifest.title);
     row.onclick();await flush();
+    assert.equal(app.location.searchParams.get('firmware'),'speex-nano-dialogue-wb98');
+    app.get('speech-profile-select').value='lpx-nano-dialogue-quality';app.get('speech-profile-select').onchange();await flush();
     assert.equal(app.location.searchParams.get('firmware'),'lpx-nano-dialogue-quality');
     assert.equal(app.get('selected-title').textContent,manifest.title);
     assert.equal(app.preview.src,'https://example.test'+prefix+'web-player/'+manifest.audio+'?v='+manifest.outputLevel.after.pcmSha256.slice(0,16));
@@ -33,7 +35,7 @@ test('dialogue is selectable in the shared speech catalog with working audio, wa
     assert.equal(app.get('wave').dataset.samples,String(manifest.samples));
     assert.equal(app.get('play-original').hidden,true);assert.equal(app.get('reference-wav').hidden,true);
     assert.equal(app.get('reference-wav').getAttribute('href'),null);
-    assert.equal(app.get('speech-profile-control').hidden,true);assert.equal(app.workers.length,0);
+    assert.equal(app.get('speech-profile-control').hidden,false);assert.equal(app.workers.length,0);
     await app.get('play').onclick();assert.equal(app.preview.paused,false);
     app.preview.advance(4);app.get('reset').onclick();await flush();
     assert.equal(app.preview.paused,true);assert.equal(app.preview.currentTime,0);
@@ -48,7 +50,7 @@ test('dialogue deep links infer Nano and unavailable dialogue assets leave exist
   const linked=await playerApp({firmware:'lpx-nano-dialogue-quality'});await flush();
   assert.equal(linked.get('device-select').value,'atmega328p');
   assert.equal(linked.location.searchParams.get('firmware'),'lpx-nano-dialogue-quality');
-  const without=await playerApp({device:'atmega328p',fetchHook:({url,response})=>url.pathname.endsWith('/audio/lpx-dialogue/manifest.json')?{ok:false,status:404}:response});await flush();
+  const without=await playerApp({device:'atmega328p',fetchHook:({url,response})=>url.pathname.endsWith('/audio/lpx-dialogue/manifest.json')||url.pathname.endsWith('/firmware-speex-dialogue-atmega328p.json')?{ok:false,status:404}:response});await flush();
   assert.equal(without.get('error').hidden,true);assert.equal(cards(without).length,4);
   const only=await playerApp({device:'atmega328p',fetchHook:({url,response})=>/\/firmware-(speex-)?atmega328p\.json$/.test(url.pathname)?{ok:false,status:503}:response});await flush();
   assert.equal(only.get('error').hidden,true);assert.equal(only.get('device-select').value,'atmega328p');

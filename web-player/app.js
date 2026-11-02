@@ -1,13 +1,13 @@
 import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js?v=20261102-speex-nano';
-import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-nano-dialogue';
-import {speexFirmwareEntries} from './lib/speex-preview.js?v=20261102-speex-bread';
+import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-speex-dialogue';
+import {speexFirmwareEntries,speexDialogueProfiles} from './lib/speex-preview.js?v=20261102-speex-dialogue';
 import {lpxTiny88FirmwareEntries} from './lib/tiny88-preview.js?v=20261102-tiny88-lpx';
 import {speechSignals,speechWindow} from './lib/speech-waveform.js';
 import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js?v=20261102-speex-nano';
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
-import { lpxPreviewEntries, lpxFirmwareEntries, lpxDialogueEntry, previewWaveform } from './lib/native-preview.js?v=20261102-output-range';
+import { lpxPreviewEntries, lpxFirmwareEntries, lpxDialogueEntry, previewWaveform } from './lib/native-preview.js?v=20261102-speex-dialogue';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -520,7 +520,7 @@ for (const choice of document.querySelectorAll('input[name="engine"]')) choice.o
 $('device-select').onchange=()=>switchDevice($('device-select').value);
 $('speech-profile-select').onchange=()=>{
   const entry=catalog.entries.find(item=>item.id===$('speech-profile-select').value&&(item.device||'attiny13a')===currentDevice);
-  if(entry)load(entry);
+  if(entry)load(entry);else $('speech-profile-select').value=selected.id;
 };
 $('board-select').onchange=()=>switchDevice('attiny88',$('board-select').value);
 $('package-file').onchange=async event=>{
@@ -578,22 +578,29 @@ try {
     if(!response.ok)throw Error('HTTP '+response.status);
     speechExamples=readSpeechExamples(await response.json());
   }catch{/* Older/offline catalogs retain their own examples when the shared index is unavailable. */}
-  let previewError,nanoError,speexError,dialogueError;
+  let previewError;
   try{
     const response=await fetch(new URL('./firmware-atmega328p.json?v=20261102-output-range',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...lpxFirmwareEntries(await response.json(),import.meta.url));
-  }catch(error){nanoError=error;}
+  }catch{/* Other Nano catalogs remain usable. */}
   try{
     const response=await fetch(new URL('./firmware-speex-atmega328p.json?v=20261102-speex-bread',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...speexFirmwareEntries(await response.json(),import.meta.url));
-  }catch(error){speexError=error;}
+  }catch{/* LPX remains usable without the individual Speex catalog. */}
   try{
     const response=await fetch(new URL('./audio/lpx-dialogue/manifest.json?v=20261102-output-range',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(lpxDialogueEntry(await response.json(),import.meta.url));
-  }catch(error){dialogueError=error;}
+  }catch{/* Individual recordings and Speex dialogue remain usable. */}
+  try{
+    const response=await fetch(new URL('./firmware-speex-dialogue-atmega328p.json?v=20261102-speex-dialogue',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const profiles=speexDialogueProfiles(await response.json(),import.meta.url);
+    catalog.entries.push(...profiles.entries);
+    for(const entry of catalog.entries)if(entry.audioReferenceId==='dialogue')entry.unavailableProfiles=profiles.unavailableProfiles;
+  }catch{/* LPX dialogue and individual recordings remain usable. */}
   try{
     const response=await fetch(new URL('./audio/lpx-bread/manifest.json?v=20261102-output-range',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
@@ -640,7 +647,7 @@ try {
   const available=orderSpeechEntries(catalog.entries.filter(entry=>(entry.device||'attiny13a')===device),speechExamples);
   load(available.find(entry=>entry.id===id)||selectSpeechEntry(available,exact)||catalog.entries.find(entry=>entry.id===catalog.defaultId));
   if(previewError&&(device==='attiny88'||requested.startsWith('lpx-bread-')))showError('LPX-примеры временно недоступны.');
-  if(nanoError&&speexError&&dialogueError&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');
+  if(!available.length&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');
   }
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();

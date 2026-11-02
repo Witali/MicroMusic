@@ -8,7 +8,6 @@ from pathlib import Path
 import argparse
 import hashlib
 import json
-import math
 import shutil
 import subprocess
 import sys
@@ -20,6 +19,7 @@ sys.path.insert(0,str(CODEC/'tools'))
 from output_paths import protect_outputs
 from profile_avr import linux_path
 from pwm_output_level import apply_gain,choose_gain,describe_level
+from dialogue_source import loudness,prepare_clips
 
 NATIVE=r'''
 #include <stdint.h>
@@ -48,16 +48,6 @@ def sha(data):return hashlib.sha256(data).hexdigest()
 
 def save(path,value):
     path.write_text(json.dumps(value,ensure_ascii=False,indent=2,allow_nan=False)+'\n',encoding='utf-8',newline='\n')
-
-
-def loudness(path,ffmpeg):
-    command=[ffmpeg,'-hide_banner','-nostats','-i',str(path),'-af',
-             'loudnorm=I=-18:TP=-1.5:LRA=11:print_format=json','-f','null','-']
-    result=subprocess.run(command,capture_output=True,text=True,check=True)
-    measure=json.JSONDecoder().raw_decode(result.stderr[result.stderr.rfind('{'):])[0]
-    values=dict(lufs=float(measure['input_i']),truePeakDb=float(measure['input_tp']))
-    if not all(math.isfinite(v) for v in values.values()):raise ValueError('Speech loudness is not finite')
-    return values
 
 
 class NativeReference:
@@ -97,8 +87,6 @@ def pause_stream(samples):
 
 def build(args):
     import numpy as np
-    import soundfile as sf
-    from scipy.signal import resample_poly
     from speech_v4 import encode
     from speech_compact import repack,decode_model
     from standard_metrics import pwm_duties
@@ -130,26 +118,10 @@ def build(args):
     if any(p.is_symlink() or p.exists() and p.stat().st_nlink>1 for p in targets):raise ValueError('Output alias')
     common=NativeReference(output/'native-common',wsl=args.wsl)
     compact=NativeReference(output/'native-v5',wsl=args.wsl,compact=True)
-    prepared={};levels=[]
-    for name,source in zip(names,source_files):
-        pcm,rate=sf.read(source,dtype='int16')
-        if pcm.ndim!=1 or not len(pcm):raise ValueError('Expected nonempty mono source')
-        if rate!=8000:
-            divisor=math.gcd(int(rate),8000)
-            pcm=np.clip(np.rint(resample_poly(pcm.astype(float),8000//divisor,int(rate)//divisor)),-32768,32767).astype(np.int16)
-        folder=output/name;folder.mkdir(exist_ok=True)
-        reference=folder/'reference.wav';write_pcm16_wav(reference,pcm)
-        measured=loudness(reference,ffmpeg);prepared[name]=(pcm,folder,measured)
-        levels.append(measured)
-    target=min(float(recipe['targetLufs']),*(m['lufs']+recipe['truePeakLimitDb']-m['truePeakDb'] for m in levels))
+    prepared,target=prepare_clips(recipe,names,source_files,output,ffmpeg)
     clips={}
     for name in names:
-        pcm,folder,initial=prepared[name];gain_db=target-initial['lufs']
-        adjusted=np.rint(pcm.astype(float)*10**(gain_db/20))
-        if adjusted.min()<-32768 or adjusted.max()>32767:raise ValueError('Normalization would clip PCM16')
-        normalized=folder/'normalized.wav';write_pcm16_wav(normalized,adjusted.astype(np.int16))
-        before_encoding=loudness(normalized,ffmpeg)
-        if before_encoding['truePeakDb']>recipe['truePeakLimitDb']+.1:raise ValueError('Normalized true peak exceeds the ceiling')
+        adjusted,folder,initial,before_encoding,gain_db=prepared[name];pcm=adjusted
         seed,decoded,_=encode(adjusted.astype(np.int16),6,common,pre=13926,bandwidth=.97)
         stream,_=repack(seed);model=decode_model(stream)
         if not np.array_equal(decoded,model) or not np.array_equal(decoded,compact.decode_one_s16(stream,len(pcm))):
@@ -195,7 +167,7 @@ def build(args):
     actual=(output/'avr/valid.pcm8').read_bytes()
     if actual!=expected:raise ValueError('Actual firmware output differs from the complete dialogue')
     write_pcm16_wav(output/'dialogue.wav',(np.frombuffer(actual,dtype=np.uint8).astype(np.int16)-128)*256)
-    sources=[recipe_path,Path(__file__),ROOT/'Codecs/common/pwm_gain.h',ROOT/'tools/pwm_output_level.py',*sorted((CODEC/'src').glob('*')),CODEC/'examples/AVR_V5_PLAYER/player.cpp',
+    sources=[recipe_path,Path(__file__),ROOT/'tools/dialogue_source.py',ROOT/'Codecs/common/pwm_gain.h',ROOT/'tools/pwm_output_level.py',*sorted((CODEC/'src').glob('*')),CODEC/'examples/AVR_V5_PLAYER/player.cpp',
              CODEC/'examples/AVR_V5_PLAYER/player_config.h',CODEC/'tools/build_release_player.py',
              CODEC/'tools/speech_v4.py',CODEC/'tools/speech_compact.py',CODEC/'tools/pcm16_wav.py',
              CODEC.parent/'validation/atmega328p/sim_player.c']

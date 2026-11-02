@@ -35,17 +35,28 @@ export function speechCatalogRows(entries,selected,definition,device){
       flashBytes:measurement?.flashBytes};
   });
   // Board-specific recordings follow the four shared comparison phrases.
-  return rows.concat(entries.filter(entry=>!definition.examples.some(example=>example.id===entry.audioReferenceId))
-    .map(entry=>({...entry,selection:entry,phraseCard:true,profileCaption:entry.profileLabel})));
+  const extra=new Map();
+  for(const entry of entries)if(!definition.examples.some(example=>example.id===entry.audioReferenceId)){
+    const variants=extra.get(entry.audioReferenceId)??[];variants.push(entry);extra.set(entry.audioReferenceId,variants);
+  }
+  for(const variants of extra.values()){
+    const chosen=variants.find(entry=>entry.id===selected?.id)
+      ||variants.find(entry=>entry.codec===selected?.codec&&entry.profile===selected?.profile)||variants[0];
+    rows.push({...chosen,selection:chosen,phraseCard:true,profileCaption:chosen.profileLabel});
+  }
+  return rows;
 }
 
 export function speechProfileUI(document,entries,selected){
   const variants=entries.filter(entry=>entry.audioReferenceId&&entry.audioReferenceId===selected.audioReferenceId);
+  const options=[...variants,...(selected.unavailableProfiles??[])].sort((a,b)=>(a.profileMenuOrder??0)-(b.profileMenuOrder??0));
   const select=document.getElementById('speech-profile-select');select.replaceChildren();
-  const mixed=new Set(variants.map(entry=>entry.codec)).size>1;
-  for(const entry of variants){
+  const mixed=new Set(options.map(entry=>entry.codec)).size>1;
+  for(const entry of options){
     const option=document.createElement('option');option.value=entry.id;
-    option.textContent=(mixed&&entry.codec?.startsWith('lpx')?'LPX · ':'')+(entry.profileLabel||entry.title);select.append(option);
+    option.textContent=(mixed&&entry.codec?.startsWith('lpx')?'LPX · ':'')+(entry.profileLabel||entry.title);
+    if(entry.available===false){option.disabled=true;option.textContent+=' · не помещается';option.title=entry.unavailableReason;}
+    select.append(option);
   }
   document.querySelector('label[for="speech-profile-select"]').textContent=mixed?'Кодек и качество':'Качество речи';
   select.value=selected.id;
@@ -60,5 +71,5 @@ export function speechProfileUI(document,entries,selected){
   warning.textContent=firmware?.requiresIsp
     ? `Образ ${size(firmware.flashBytes)}${firmware.flashBytes>6144?' больше 6 КиБ (6 144 байта) и':''} превышает лимит штатного USB-загрузчика MH-ET LIVE (${size(firmware.bootloaderLimitBytes)}). Нужен ISP; полный образ помещается в ${size(firmware.flashLimitBytes)} Flash. Загрузка через ISP заменяет USB-загрузчик.`:'';
   warning.hidden=!warning.textContent;
-  document.getElementById('speech-profile-control').hidden=variants.length<2;
+  document.getElementById('speech-profile-control').hidden=options.length<2;
 }

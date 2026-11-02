@@ -43,3 +43,31 @@ profiles. There is no before/after decoder speed claim.
 [Recipe, normalization results and reproduction](../../ATmega328/Sound/lpx-dialogue/README.md),
 [builder](../../tools/build-nano-dialogue.py),
 [path-free hashes and receipt](../../web-player/audio/lpx-dialogue/manifest.json).
+
+## Reuse normalized source across codec choices
+
+`tools/dialogue_source.py` now owns the common resampling and constant
+pre-encoding loudness preparation. LPX and Speex use those same source copies;
+the Speex version does not transcode decoded LPX. Rebuilding LPX after extraction
+retains its exact HEX and PWM WAV bytes, including the sample-exact pauses.
+
+The continuous Speex stream includes 80 ms source padding and complete 20 ms
+frames. At 8/16 kHz it emits 81,920/163,840 samples, respectively, through the
+existing 128-byte player queue. The frame counter is sufficient for all 512
+frames; do not impose LPX's per-stream sample limit on this separate format.
+
+On the existing AVR5 / 16 MHz / GCC 7.3.0 D3 ASM profile, NB2.15, WB3.95 and
+WB9.8 complete with exact independent captured PWM and zero underruns under
+active timers/IRQ in AVR8js 0.21.1. Complete Flash is 15,904 / 25,668 / 30,208 B;
+packet data is 3,072 / 5,120 / 12,800 B. Minimum free SRAM is 698 / 449 / 450 B.
+WB9.8 leaves 512 B below the classic Nano's conservative 30 KiB application
+boundary. This extends workload admission; no new decoder assembly is added.
+Existing explicitly selectable C backends and independent hardware routing
+remain available. No physical-board or new full-C timing claim is made.
+
+Only verified fitting images enter the selectable catalog. Oversized measured
+profiles remain disabled choices with no public HEX or WAV. The UI groups
+codec variants into one dialogue card.
+[Builder](../../tools/build-speex-dialogue.py),
+[source recipe and commands](../../ATmega328/Sound/lpx-dialogue/README.md),
+[complete hashes and timing](../../web-player/firmware-speex-dialogue-atmega328p.json).

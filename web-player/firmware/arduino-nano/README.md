@@ -16,6 +16,11 @@ An additional [combined dialogue](../../?collection=hq4&device=atmega328p&firmwa
 normalized phrases in conversation order, with 0.5 / 1.5 / 0.5-second pauses.
 Its [recipe and validation](../../../ATmega328/Sound/lpx-dialogue/README.md)
 describe the separate 10.240 KiB image, 756 B static SRAM and exact PWM preview.
+Its selector also offers three complete Speex dialogue images (15.531,
+25.066 and 29.500 KiB). All fit the 30 KiB application budget and pass complete
+active-IRQ playback. Measured oversized profiles remain disabled in the menu;
+their HEX files are not published. Receipts are in
+`../../firmware-speex-dialogue-atmega328p.json`.
 
 EEPROM is unused. These are complete application HEX files without a
 bootloader; they fit within the classic Nano's 30 KiB application budget.
