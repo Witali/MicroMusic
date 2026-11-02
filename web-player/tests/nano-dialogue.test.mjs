@@ -25,8 +25,8 @@ test('dialogue is selectable in the shared speech catalog with working audio, wa
     row.onclick();await flush();
     assert.equal(app.location.searchParams.get('firmware'),'lpx-nano-dialogue-quality');
     assert.equal(app.get('selected-title').textContent,manifest.title);
-    assert.equal(app.preview.src,'https://example.test'+prefix+'web-player/'+manifest.audio);
-    assert.equal(app.get('download').href,'https://example.test'+prefix+'web-player/'+manifest.firmware);
+    assert.equal(app.preview.src,'https://example.test'+prefix+'web-player/'+manifest.audio+'?v='+manifest.outputLevel.after.pcmSha256.slice(0,16));
+    assert.equal(app.get('download').href,'https://example.test'+prefix+'web-player/'+manifest.firmware+'?v='+manifest.hexSha256.slice(0,16));
     assert.equal(app.get('download').download,'lpx-nano-dialogue-quality.hex');
     assert.equal(app.get('download').getAttribute('aria-disabled'),null);
     assert.equal(app.get('download-eeprom').getAttribute('aria-disabled'),'true');

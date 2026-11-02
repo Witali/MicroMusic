@@ -24,7 +24,28 @@
           "audio": "audio/lpx-speech/chego/compact.wav",
           "stream": "audio/lpx-speech/chego/compact.lpx",
           "bytes": 536,
-          "bitrateBps": 3489.3703590682535
+          "bitrateBps": 3489.3703590682535,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 128,
+            "shift": 7,
+            "gain": 1.0,
+            "gainDb": 0.0,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 21,
+              "maximumDuty": 255,
+              "rms": 17.767325509552197,
+              "pcmSha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf"
+            },
+            "after": {
+              "minimumDuty": 21,
+              "maximumDuty": 255,
+              "rms": 17.767325509552197,
+              "pcmSha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf"
+            }
+          }
         },
         {
           "id": "quality",
@@ -33,7 +54,28 @@
           "audio": "audio/lpx-speech/chego/quality.wav",
           "stream": "audio/lpx-speech/chego/quality.lpx",
           "bytes": 791,
-          "bitrateBps": 5149.425287356322
+          "bitrateBps": 5149.425287356322,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 128,
+            "shift": 7,
+            "gain": 1.0,
+            "gainDb": 0.0,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 53,
+              "maximumDuty": 255,
+              "rms": 17.182340786690812,
+              "pcmSha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea"
+            },
+            "after": {
+              "minimumDuty": 53,
+              "maximumDuty": 255,
+              "rms": 17.182340786690812,
+              "pcmSha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea"
+            }
+          }
         }
       ]
     },
@@ -60,7 +102,28 @@
           "audio": "audio/lpx-speech/otvechaesh/compact.wav",
           "stream": "audio/lpx-speech/otvechaesh/compact.lpx",
           "bytes": 470,
-          "bitrateBps": 3553.0356721001654
+          "bitrateBps": 3553.0356721001654,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 128,
+            "shift": 7,
+            "gain": 1.0,
+            "gainDb": 0.0,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 0,
+              "maximumDuty": 251,
+              "rms": 23.304152216131758,
+              "pcmSha256": "70bcb3b622b39bb4499ce8dc586aae4b6a909172853e11f99299af466f011c02"
+            },
+            "after": {
+              "minimumDuty": 0,
+              "maximumDuty": 251,
+              "rms": 23.304152216131758,
+              "pcmSha256": "70bcb3b622b39bb4499ce8dc586aae4b6a909172853e11f99299af466f011c02"
+            }
+          }
         },
         {
           "id": "quality",
@@ -69,7 +132,28 @@
           "audio": "audio/lpx-speech/otvechaesh/quality.wav",
           "stream": "audio/lpx-speech/otvechaesh/quality.lpx",
           "bytes": 692,
-          "bitrateBps": 5231.27805339003
+          "bitrateBps": 5231.27805339003,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 143,
+            "shift": 7,
+            "gain": 1.1171875,
+            "gainDb": 0.9625213563438689,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 30,
+              "maximumDuty": 241,
+              "rms": 23.24982440765966,
+              "pcmSha256": "77f447114a2a2f1734339eabf7537b24ebde914389830bb76fc232ed21d3df91"
+            },
+            "after": {
+              "minimumDuty": 19,
+              "maximumDuty": 254,
+              "rms": 25.97770219059485,
+              "pcmSha256": "8a2ad409c311c8b24e6709773ca752af0424dc45c7cd1d0cc6dc1034b8baf8d4"
+            }
+          }
         }
       ]
     },
@@ -96,7 +180,28 @@
           "audio": "audio/lpx-speech/vinni/compact.wav",
           "stream": "audio/lpx-speech/vinni/compact.lpx",
           "bytes": 1243,
-          "bitrateBps": 3348.5709475102076
+          "bitrateBps": 3348.5709475102076,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 190,
+            "shift": 7,
+            "gain": 1.484375,
+            "gainDb": 3.4308726260992115,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 43,
+              "maximumDuty": 201,
+              "rms": 14.650784755762233,
+              "pcmSha256": "a7ea4cfc5c316bae12ef371966f2fd6cc3ea77c6a6b760036a021e450218a2a8"
+            },
+            "after": {
+              "minimumDuty": 2,
+              "maximumDuty": 236,
+              "rms": 21.735346931335915,
+              "pcmSha256": "64496b450b394adccacd91594d4ffd7da71e6bf3cb91473dda2439c776ea41af"
+            }
+          }
         },
         {
           "id": "quality",
@@ -105,7 +210,28 @@
           "audio": "audio/lpx-speech/vinni/quality.wav",
           "stream": "audio/lpx-speech/vinni/quality.lpx",
           "bytes": 1862,
-          "bitrateBps": 5016.12156417056
+          "bitrateBps": 5016.12156417056,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 179,
+            "shift": 7,
+            "gain": 1.3984375,
+            "gainDb": 2.912861226640496,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 49,
+              "maximumDuty": 218,
+              "rms": 14.882164031033254,
+              "pcmSha256": "d7749a8d25359d85474163c5e083c01acb0920fbf66a205ce3288a33244bb9d9"
+            },
+            "after": {
+              "minimumDuty": 18,
+              "maximumDuty": 254,
+              "rms": 20.83237771938055,
+              "pcmSha256": "6788b512c3292ca1b60508d6825ce0f09cdbbbace7dabb5db2b66c62125993f2"
+            }
+          }
         }
       ]
     }

@@ -53,7 +53,7 @@ def target_path(path,wsl):
         return '/mnt/'+p.drive[0].lower()+'/'+ '/'.join(p.parts[1:])
     return str(p)
 
-def build(source,output,*,assembly=False,queue=32,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=16):
+def build(source,output,*,assembly=False,queue=32,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=16,output_gain=128):
     source,output=Path(source).resolve(),Path(output).resolve()
     if output==REPO/'build' or REPO/'build' not in output.parents or source==output or output.is_symlink():
         raise ValueError('Use an output subdirectory under ignored repository build/')
@@ -70,6 +70,7 @@ def build(source,output,*,assembly=False,queue=32,repeat=1,wsl=None,avr_bin=None
     if queue not in (16,24,32) or not 1<=repeat<=255 or lpc_segments not in (1,2,4):raise ValueError('Invalid playback geometry')
     if not 1<=flash_limit<=8192:raise ValueError('Flash limit must be1..8192 bytes')
     if isinstance(mul16_unroll,bool) or mul16_unroll not in (1,2,4,8,16):raise ValueError('Invalid AVR25 multiply unroll')
+    if type(output_gain) is not int or not 128<=output_gain<=255:raise ValueError('Invalid Q7 output gain')
     output.mkdir(parents=True,exist_ok=True)
     path=lambda p:target_path(p,wsl)
     prefix=['wsl','-d',wsl,'--'] if wsl else []
@@ -82,7 +83,7 @@ def build(source,output,*,assembly=False,queue=32,repeat=1,wsl=None,avr_bin=None
     flags=['-mmcu=attiny88','-DF_CPU=16000000UL','-Os','-flto','-mcall-prologues','-mrelax',
            '-fno-jump-tables','-fno-exceptions','-fno-rtti','-ffunction-sections','-fdata-sections',
            '-std=gnu++11','-DLPX4_FUNCTION_TUNING=0',f'-DLPX4_ENABLE_ASM={int(assembly)}',f'-DLPX3_LPC_SEGMENTS={lpc_segments}',
-           f'-DLPX25_QUEUE={queue}',f'-DLPX25_REPEAT={repeat}',
+           f'-DLPX25_QUEUE={queue}',f'-DLPX25_REPEAT={repeat}',f'-DPWM_GAIN_Q7={output_gain}',
            f'-DLPX4_AVR25_MUL16_UNROLL={mul16_unroll}',
            '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(DFP),
            '-I'+path(ROOT/'src'),'-I'+path(output)]

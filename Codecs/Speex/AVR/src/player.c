@@ -8,6 +8,7 @@
 #include "sample.h"
 #define SPEEX_AUDIO_SAMPLE_HZ 8000
 #include "avr_audio_output.h"
+#include "../../../common/pwm_gain.h"
 
 static volatile uint8_t ring[128];
 static volatile uint8_t head, tail, input_finished;
@@ -53,7 +54,7 @@ void speex_avr_output(const int16_t *samples, uint8_t count)
     while (((tail - head - 1) & 127) < count) { }
     write = head;
     for (i = 0; i < count; ++i) {
-        ring[write] = ((uint16_t)samples[i] >> 8) ^ 128;
+        ring[write] = micromusic_pwm_gain(((uint16_t)samples[i] >> 8) ^ 128);
         write = (write + 1) & 127;
     }
     head = write;

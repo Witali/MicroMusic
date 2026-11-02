@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {join, resolve} from 'node:path';
 import {CPU, avrInstruction, AVRTimer, timer1Config, timer2Config} from 'avr8js';
 import {tickAvr} from './avr_tick.mjs';
+import {pwmGain} from '../../../common/pwm-gain.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const build = resolve(process.argv[3] || join(root,'build/wb-asm-player'));
@@ -18,7 +19,7 @@ const frameLoadCycles = metadata.frameLoadCycles || 0;
 assert.equal(createHash('sha256').update(raw).digest('hex'), metadata.sha256);
 const oracle = readFileSync(resolve(process.argv[4]));
 assert.equal(oracle.length,metadata.frames*640);
-const expected = Buffer.from(Array.from({length: oracle.length / 2}, (_,i) => oracle[i*2+1] ^ 128));
+const expected = Buffer.from(pwmGain(Array.from({length: oracle.length / 2}, (_,i) => oracle[i*2+1] ^ 128),metadata.outputGainQ7??128));
 const binary = readFileSync(join(build, 'wb.bin'));
 const backend=JSON.parse(readFileSync(join(build,'backend.json'),'utf8'));
 assert.equal(createHash('sha256').update(binary).digest('hex'),backend.binarySha256);

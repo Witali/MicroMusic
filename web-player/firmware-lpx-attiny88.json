@@ -15,11 +15,11 @@
   "mul16Unroll": 2,
   "sourceHashEncoding": "text-lf",
   "sourceSha256": {
-    "tools/build-tiny88-speech-catalog.py": "bfbac89b726846aa5eee245c78c46d49411280d48b45017f999b80d545cffd82",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_attiny88_player.py": "32a7e8a2ecad88ed58b7a0053b4312fe4315776c1ae3a9b1ad9578938b269305",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/verify_attiny88_player.py": "6eb5087d3c5f76168ba4708fdb8dd7ed2d60a575608cca5d3ec57fa8e7b08b27",
+    "tools/build-tiny88-speech-catalog.py": "4b2ae1b569a105a1dfc4674da3ae313cb9675e4c43e7954c7adadddf8ccd922a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_attiny88_player.py": "efcc253a1b190c78ce6eac59d40d23194696856c4254aa86dadbfc78e0271700",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/verify_attiny88_player.py": "a920fd4afff9a02db0cccda67fcc3613b775666f2b0e1f2dfa549b391e3f5ab2",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/profiles/Lpx4Sram512.h": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp": "9f7c89776080775fe8a46788eb717c0b9803943a94f44132b7e5fe26416f308d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp": "1cd359b1022ba0271290604832bba33278e803fae9d99a3adf34e94e1be7135f",
     "Codecs/LPX/validation/attiny88/sim_player.c": "66506b9828bb12bc965d1f838166cdaf24a011d835c3a5e16ba6a6ab17da9e54",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "2d4d6bed68db8c684c896de7c544cbc986601ceb63c247c9746bfbe7730625e5",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "e4373b32eb4f4ac9d744a470b6569ad2651aead0bd71b41ea216d6111235ea27",
@@ -27,7 +27,9 @@
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyAvr.h": "b3b13d1981f13e734e51ed4b2a9d60f3a58557512fe1d009c34b8a37c381fe99",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "f45569017cd38489198f63c14bed9a1fb501c0c2983eb5540cb9597595e2004a",
-    "ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h": "63c792cc9961aca81bfb3602e0d1d3cf01a37f35a449a6b6e2e6c8b41cc1e892"
+    "ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h": "63c792cc9961aca81bfb3602e0d1d3cf01a37f35a449a6b6e2e6c8b41cc1e892",
+    "Codecs/common/pwm_gain.h": "283d4b7aace6116711300f6aad927339c48ced0008f15affc72aa294241c4f26",
+    "tools/pwm_output_level.py": "08b1b5f53ac9cc5bbd688b44809675af706ee7f9e9f29e4a5b1db27a81d3e243"
   },
   "clips": [
     {
@@ -53,7 +55,28 @@
           "audio": "audio/lpx-speech/chego/compact.wav",
           "stream": "audio/lpx-speech/chego/compact.lpx",
           "bytes": 536,
-          "bitrateBps": 3489.3703590682535
+          "bitrateBps": 3489.3703590682535,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 128,
+            "shift": 7,
+            "gain": 1.0,
+            "gainDb": 0.0,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 21,
+              "maximumDuty": 255,
+              "rms": 17.767325509552197,
+              "pcmSha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf"
+            },
+            "after": {
+              "minimumDuty": 21,
+              "maximumDuty": 255,
+              "rms": 17.767325509552197,
+              "pcmSha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf"
+            }
+          }
         },
         {
           "id": "quality",
@@ -62,7 +85,28 @@
           "audio": "audio/lpx-speech/chego/quality.wav",
           "stream": "audio/lpx-speech/chego/quality.lpx",
           "bytes": 791,
-          "bitrateBps": 5149.425287356322
+          "bitrateBps": 5149.425287356322,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 128,
+            "shift": 7,
+            "gain": 1.0,
+            "gainDb": 0.0,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 53,
+              "maximumDuty": 255,
+              "rms": 17.182340786690812,
+              "pcmSha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea"
+            },
+            "after": {
+              "minimumDuty": 53,
+              "maximumDuty": 255,
+              "rms": 17.182340786690812,
+              "pcmSha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea"
+            }
+          }
         }
       ]
     },
@@ -89,7 +133,28 @@
           "audio": "audio/lpx-speech/otvechaesh/compact.wav",
           "stream": "audio/lpx-speech/otvechaesh/compact.lpx",
           "bytes": 470,
-          "bitrateBps": 3553.0356721001654
+          "bitrateBps": 3553.0356721001654,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 128,
+            "shift": 7,
+            "gain": 1.0,
+            "gainDb": 0.0,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 0,
+              "maximumDuty": 251,
+              "rms": 23.304152216131758,
+              "pcmSha256": "70bcb3b622b39bb4499ce8dc586aae4b6a909172853e11f99299af466f011c02"
+            },
+            "after": {
+              "minimumDuty": 0,
+              "maximumDuty": 251,
+              "rms": 23.304152216131758,
+              "pcmSha256": "70bcb3b622b39bb4499ce8dc586aae4b6a909172853e11f99299af466f011c02"
+            }
+          }
         },
         {
           "id": "quality",
@@ -98,7 +163,28 @@
           "audio": "audio/lpx-speech/otvechaesh/quality.wav",
           "stream": "audio/lpx-speech/otvechaesh/quality.lpx",
           "bytes": 692,
-          "bitrateBps": 5231.27805339003
+          "bitrateBps": 5231.27805339003,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 143,
+            "shift": 7,
+            "gain": 1.1171875,
+            "gainDb": 0.9625213563438689,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 30,
+              "maximumDuty": 241,
+              "rms": 23.24982440765966,
+              "pcmSha256": "77f447114a2a2f1734339eabf7537b24ebde914389830bb76fc232ed21d3df91"
+            },
+            "after": {
+              "minimumDuty": 19,
+              "maximumDuty": 254,
+              "rms": 25.97770219059485,
+              "pcmSha256": "8a2ad409c311c8b24e6709773ca752af0424dc45c7cd1d0cc6dc1034b8baf8d4"
+            }
+          }
         }
       ]
     },
@@ -125,7 +211,28 @@
           "audio": "audio/lpx-speech/vinni/compact.wav",
           "stream": "audio/lpx-speech/vinni/compact.lpx",
           "bytes": 1243,
-          "bitrateBps": 3348.5709475102076
+          "bitrateBps": 3348.5709475102076,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 190,
+            "shift": 7,
+            "gain": 1.484375,
+            "gainDb": 3.4308726260992115,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 43,
+              "maximumDuty": 201,
+              "rms": 14.650784755762233,
+              "pcmSha256": "a7ea4cfc5c316bae12ef371966f2fd6cc3ea77c6a6b760036a021e450218a2a8"
+            },
+            "after": {
+              "minimumDuty": 2,
+              "maximumDuty": 236,
+              "rms": 21.735346931335915,
+              "pcmSha256": "64496b450b394adccacd91594d4ffd7da71e6bf3cb91473dda2439c776ea41af"
+            }
+          }
         },
         {
           "id": "quality",
@@ -134,7 +241,28 @@
           "audio": "audio/lpx-speech/vinni/quality.wav",
           "stream": "audio/lpx-speech/vinni/quality.lpx",
           "bytes": 1862,
-          "bitrateBps": 5016.12156417056
+          "bitrateBps": 5016.12156417056,
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 179,
+            "shift": 7,
+            "gain": 1.3984375,
+            "gainDb": 2.912861226640496,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 49,
+              "maximumDuty": 218,
+              "rms": 14.882164031033254,
+              "pcmSha256": "d7749a8d25359d85474163c5e083c01acb0920fbf66a205ce3288a33244bb9d9"
+            },
+            "after": {
+              "minimumDuty": 18,
+              "maximumDuty": 254,
+              "rms": 20.83237771938055,
+              "pcmSha256": "6788b512c3292ca1b60508d6825ce0f09cdbbbace7dabb5db2b66c62125993f2"
+            }
+          }
         }
       ]
     },
@@ -166,6 +294,27 @@
             "flashMeasurementKind": "unpaced-test-image",
             "memoryProfile": "sram512",
             "target": "attiny88"
+          },
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 128,
+            "shift": 7,
+            "gain": 1.0,
+            "gainDb": 0.0,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 0,
+              "maximumDuty": 255,
+              "rms": 20.578493020627143,
+              "pcmSha256": "5496c43e512e6630e158e30c0bc0ff8d697f9ca4bb869f6e19d5f1b22b562030"
+            },
+            "after": {
+              "minimumDuty": 0,
+              "maximumDuty": 255,
+              "rms": 20.578493020627143,
+              "pcmSha256": "5496c43e512e6630e158e30c0bc0ff8d697f9ca4bb869f6e19d5f1b22b562030"
+            }
           }
         },
         {
@@ -183,6 +332,27 @@
             "flashMeasurementKind": "unpaced-test-image",
             "memoryProfile": "sram512",
             "target": "attiny88"
+          },
+          "outputLevel": {
+            "implementation": "producer-constant-q7",
+            "numerator": 128,
+            "shift": 7,
+            "gain": 1.0,
+            "gainDb": 0.0,
+            "rounding": "nearest-ties-positive",
+            "saturatedSamples": 0,
+            "before": {
+              "minimumDuty": 0,
+              "maximumDuty": 255,
+              "rms": 21.89666902940567,
+              "pcmSha256": "de5e8e3a27ce8bc7e2e43c6a7e2158974101d20b854adb337e45ee3062fad4fe"
+            },
+            "after": {
+              "minimumDuty": 0,
+              "maximumDuty": 255,
+              "rms": 21.89666902940567,
+              "pcmSha256": "de5e8e3a27ce8bc7e2e43c6a7e2158974101d20b854adb337e45ee3062fad4fe"
+            }
           }
         },
         {
@@ -220,6 +390,27 @@
       "staticSramBytes": 422,
       "peakStackBytes": 60,
       "stackMarginBytes": 29,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 128,
+        "shift": 7,
+        "gain": 1.0,
+        "gainDb": 0.0,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 21,
+          "maximumDuty": 255,
+          "rms": 17.767325509552197,
+          "pcmSha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf"
+        },
+        "after": {
+          "minimumDuty": 21,
+          "maximumDuty": 255,
+          "rms": 17.767325509552197,
+          "pcmSha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf"
+        }
+      },
       "fitsStandardBootloader": true,
       "requiresIsp": false,
       "timing": {
@@ -243,6 +434,27 @@
       "staticSramBytes": 422,
       "peakStackBytes": 65,
       "stackMarginBytes": 24,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 128,
+        "shift": 7,
+        "gain": 1.0,
+        "gainDb": 0.0,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 53,
+          "maximumDuty": 255,
+          "rms": 17.182340786690812,
+          "pcmSha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea"
+        },
+        "after": {
+          "minimumDuty": 53,
+          "maximumDuty": 255,
+          "rms": 17.182340786690812,
+          "pcmSha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea"
+        }
+      },
       "fitsStandardBootloader": true,
       "requiresIsp": false,
       "timing": {
@@ -266,6 +478,27 @@
       "staticSramBytes": 422,
       "peakStackBytes": 60,
       "stackMarginBytes": 29,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 128,
+        "shift": 7,
+        "gain": 1.0,
+        "gainDb": 0.0,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 0,
+          "maximumDuty": 251,
+          "rms": 23.304152216131758,
+          "pcmSha256": "70bcb3b622b39bb4499ce8dc586aae4b6a909172853e11f99299af466f011c02"
+        },
+        "after": {
+          "minimumDuty": 0,
+          "maximumDuty": 251,
+          "rms": 23.304152216131758,
+          "pcmSha256": "70bcb3b622b39bb4499ce8dc586aae4b6a909172853e11f99299af466f011c02"
+        }
+      },
       "fitsStandardBootloader": true,
       "requiresIsp": false,
       "timing": {
@@ -282,36 +515,78 @@
       "id": "quality",
       "clipId": "otvechaesh",
       "source": "firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex",
-      "hexSha256": "c660a8182e60d46b3c6a26d334879134631cfe966513bbd10ca2f81686a60652",
+      "hexSha256": "7f3e2d8f2d8d5d3b42281f34f2e53398c8737aa692f75c45837c33b09e94e259",
       "streamSha256": "5df660b88ff2a3e7764810dfb761aef664b9526c09a8b435cca2a8aa0272757c",
-      "flashBytes": 5802,
-      "programFlashBytes": 5110,
+      "flashBytes": 5902,
+      "programFlashBytes": 5210,
       "staticSramBytes": 422,
       "peakStackBytes": 65,
       "stackMarginBytes": 24,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 143,
+        "shift": 7,
+        "gain": 1.1171875,
+        "gainDb": 0.9625213563438689,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 30,
+          "maximumDuty": 241,
+          "rms": 23.24982440765966,
+          "pcmSha256": "77f447114a2a2f1734339eabf7537b24ebde914389830bb76fc232ed21d3df91"
+        },
+        "after": {
+          "minimumDuty": 19,
+          "maximumDuty": 254,
+          "rms": 25.97770219059485,
+          "pcmSha256": "8a2ad409c311c8b24e6709773ca752af0424dc45c7cd1d0cc6dc1034b8baf8d4"
+        }
+      },
       "fitsStandardBootloader": true,
       "requiresIsp": false,
       "timing": {
         "playedSamples": 8466,
         "underruns": 0,
-        "minTickCycles": 1992,
-        "maxTickCycles": 2008,
+        "minTickCycles": 1991,
+        "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 12
+        "minQueuedSamplesBeforeOutput": 9
       }
     },
     {
       "id": "compact",
       "clipId": "vinni",
       "source": "firmware/attiny88/lpx-tiny88-vinni-compact.hex",
-      "hexSha256": "8849383e849a391c14006a3a83b2bab71779fe177c3f2d4fd9c18e62161642ac",
+      "hexSha256": "a494292e22900721dc54171941ad712eb2af2fa4f940389a34821d6ea90c90b0",
       "streamSha256": "ff653ed9b127e60eea987cf9c087871db6a859f80de9d4faf3a4528a8e03d4d4",
-      "flashBytes": 6190,
-      "programFlashBytes": 4947,
+      "flashBytes": 6316,
+      "programFlashBytes": 5073,
       "staticSramBytes": 422,
       "peakStackBytes": 60,
       "stackMarginBytes": 29,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 190,
+        "shift": 7,
+        "gain": 1.484375,
+        "gainDb": 3.4308726260992115,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 43,
+          "maximumDuty": 201,
+          "rms": 14.650784755762233,
+          "pcmSha256": "a7ea4cfc5c316bae12ef371966f2fd6cc3ea77c6a6b760036a021e450218a2a8"
+        },
+        "after": {
+          "minimumDuty": 2,
+          "maximumDuty": 236,
+          "rms": 21.735346931335915,
+          "pcmSha256": "64496b450b394adccacd91594d4ffd7da71e6bf3cb91473dda2439c776ea41af"
+        }
+      },
       "fitsStandardBootloader": false,
       "requiresIsp": true,
       "timing": {
@@ -321,30 +596,51 @@
         "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 11
+        "minQueuedSamplesBeforeOutput": 6
       }
     },
     {
       "id": "quality",
       "clipId": "vinni",
       "source": "firmware/attiny88/lpx-tiny88-vinni-quality.hex",
-      "hexSha256": "5b1ce73870e16516424b0ca2d9776b230c0822c6769e0c3c677c3c6ba3047237",
+      "hexSha256": "24a56f162488b63b1f21f2584f38868d31ae1dee0976e110d6c375cfb3f2a7e0",
       "streamSha256": "7331c3cb8ffcb06d5b7099ed936d225f16f16d47c81b42e7733fb681c8881412",
-      "flashBytes": 6972,
-      "programFlashBytes": 5110,
+      "flashBytes": 7074,
+      "programFlashBytes": 5212,
       "staticSramBytes": 422,
       "peakStackBytes": 65,
       "stackMarginBytes": 24,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 179,
+        "shift": 7,
+        "gain": 1.3984375,
+        "gainDb": 2.912861226640496,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 49,
+          "maximumDuty": 218,
+          "rms": 14.882164031033254,
+          "pcmSha256": "d7749a8d25359d85474163c5e083c01acb0920fbf66a205ce3288a33244bb9d9"
+        },
+        "after": {
+          "minimumDuty": 18,
+          "maximumDuty": 254,
+          "rms": 20.83237771938055,
+          "pcmSha256": "6788b512c3292ca1b60508d6825ce0f09cdbbbace7dabb5db2b66c62125993f2"
+        }
+      },
       "fitsStandardBootloader": false,
       "requiresIsp": true,
       "timing": {
         "playedSamples": 23757,
         "underruns": 0,
-        "minTickCycles": 1992,
+        "minTickCycles": 1991,
         "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 10
+        "minQueuedSamplesBeforeOutput": 1
       }
     },
     {
@@ -358,6 +654,27 @@
       "staticSramBytes": 422,
       "peakStackBytes": 60,
       "stackMarginBytes": 29,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 128,
+        "shift": 7,
+        "gain": 1.0,
+        "gainDb": 0.0,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 0,
+          "maximumDuty": 255,
+          "rms": 20.578493020627143,
+          "pcmSha256": "5496c43e512e6630e158e30c0bc0ff8d697f9ca4bb869f6e19d5f1b22b562030"
+        },
+        "after": {
+          "minimumDuty": 0,
+          "maximumDuty": 255,
+          "rms": 20.578493020627143,
+          "pcmSha256": "5496c43e512e6630e158e30c0bc0ff8d697f9ca4bb869f6e19d5f1b22b562030"
+        }
+      },
       "fitsStandardBootloader": true,
       "requiresIsp": false,
       "timing": {
@@ -381,6 +698,27 @@
       "staticSramBytes": 422,
       "peakStackBytes": 66,
       "stackMarginBytes": 23,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 128,
+        "shift": 7,
+        "gain": 1.0,
+        "gainDb": 0.0,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 0,
+          "maximumDuty": 255,
+          "rms": 21.89666902940567,
+          "pcmSha256": "de5e8e3a27ce8bc7e2e43c6a7e2158974101d20b854adb337e45ee3062fad4fe"
+        },
+        "after": {
+          "minimumDuty": 0,
+          "maximumDuty": 255,
+          "rms": 21.89666902940567,
+          "pcmSha256": "de5e8e3a27ce8bc7e2e43c6a7e2158974101d20b854adb337e45ee3062fad4fe"
+        }
+      },
       "fitsStandardBootloader": false,
       "requiresIsp": true,
       "timing": {
@@ -404,6 +742,27 @@
       "staticSramBytes": 422,
       "peakStackBytes": 66,
       "stackMarginBytes": 23,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 128,
+        "shift": 7,
+        "gain": 1.0,
+        "gainDb": 0.0,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 0,
+          "maximumDuty": 255,
+          "rms": 17.135568515031338,
+          "pcmSha256": "6ee37f5fff6409cc04f531e27e78db69a9ffc1b4ea5b06ed474453bf97c784b4"
+        },
+        "after": {
+          "minimumDuty": 0,
+          "maximumDuty": 255,
+          "rms": 17.135568515031338,
+          "pcmSha256": "6ee37f5fff6409cc04f531e27e78db69a9ffc1b4ea5b06ed474453bf97c784b4"
+        }
+      },
       "fitsStandardBootloader": true,
       "requiresIsp": false,
       "timing": {

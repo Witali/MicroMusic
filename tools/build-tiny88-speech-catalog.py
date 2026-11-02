@@ -34,7 +34,7 @@ def main():
         CODEC/'profiles/Lpx4Sram512.h',CODEC/'examples/ATTINY88_V5_PLAYER/player.cpp',
         CODEC.parent/'validation/attiny88/sim_player.c',
         *sorted((CODEC/'src').glob('Lpx4*')),
-        ROOT/'ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h']
+        ROOT/'ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h',ROOT/'Codecs/common/pwm_gain.h',ROOT/'tools/pwm_output_level.py']
     hashes={path.relative_to(ROOT).as_posix():sha(path,True) for path in sources if path.is_file()}
     clips=read(ROOT/'web-player/audio/lpx-speech/manifest.json')['clips']
     clips.append(dict(read(ROOT/'web-player/audio/lpx-bread/manifest.json'),clipId='bread'))
@@ -45,7 +45,7 @@ def main():
             name=clip['clipId']+'-'+variant['id'];folder=out/name
             stream=ROOT/'web-player'/variant['stream']
             result=verify(stream,folder,wsl=args.wsl,queue=args.queue,mul16_unroll=args.mul16_unroll,
-                sparse80=variant['id']=='low15',flash_limit=8192)
+                sparse80=variant['id']=='low15',flash_limit=8192,normalize_output=True)
             assert result['accepted'] and result['pwm_exact'] and result['underruns']==0,name
             assert result['samples']==clip['samples'] and result['static_ram_bytes']+result['stack_bytes']<512
             with wave.open(str(ROOT/'web-player'/variant['audio']),'rb') as f:
@@ -58,7 +58,7 @@ def main():
             row=dict(id=variant['id'],clipId=clip['clipId'],source=source,
                 hexSha256=sha(hexfile),streamSha256=sha(stream),flashBytes=result['flash_bytes'],
                 programFlashBytes=result['program_excluding_audio_bytes'],staticSramBytes=result['static_ram_bytes'],
-                peakStackBytes=result['stack_bytes'],stackMarginBytes=result['stack_margin'],
+                peakStackBytes=result['stack_bytes'],stackMarginBytes=result['stack_margin'],outputLevel=result['outputLevel'],
                 fitsStandardBootloader=result['fits_standard_bootloader'],requiresIsp=result['requires_isp'],
                 timing=dict(playedSamples=result['samples'],underruns=result['underruns'],
                     minTickCycles=result['output_gap_min'],maxTickCycles=result['output_gap_max'],

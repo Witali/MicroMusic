@@ -48,7 +48,7 @@ export function lpxPreviewEntries(data,baseURL) {
       formatNotice:experimental?'LPX-S15 · экспериментальный формат; нужен отдельный декодер.':'',
       intendedBoard:'mh-et-live-16mhz',profile:definition.profile,sampleHz:data.sampleRate,phraseSamples:data.samples,
       playOnce:true,audioChannels:1,streamBytes:variant.bytes,bitrateBps:variant.bitrateBps,
-      flashMeasurement:readFlashMeasurement(variant.flashMeasurement,variant.bytes),
+      flashMeasurement:readFlashMeasurement(variant.flashMeasurement,variant.bytes),outputLevel:variant.outputLevel,
       nativeAudioUrl:asset(variant.audio,'.wav'),streamUrl:asset(variant.stream,'.lpx'),originalAudioUrl:reference,
       originalPlaybackUrl:data.reference.playback?asset(data.reference.playback,'.wav'):undefined};
   });
@@ -108,7 +108,7 @@ export function lpxDialogueEntry(data,baseURL) {
     profile:6,profileLabel:'LPX · Диалог с паузами',kind:'speech',codec:'lpx-v5',formatVersion:5,
     playback:'native-pwm8',device:'atmega328p',intendedBoard:'arduino-nano-16mhz',
     sampleHz:8000,phraseSamples:data.samples,audioChannels:1,playOnce:true,streamBytes:data.streamBytes,
-    bitrateBps:data.streamBytes*8*8000/data.samples,
+    bitrateBps:data.streamBytes*8*8000/data.samples,outputLevel:data.outputLevel,
     nativeAudioUrl:asset(data.audio,'audio/lpx-dialogue/dialogue.wav'),
     research:'../ATmega328/Sound/lpx-dialogue/README.md',
     firmware:{source,flashBytes:data.flashBytes,programFlashBytes:data.programFlashBytes,

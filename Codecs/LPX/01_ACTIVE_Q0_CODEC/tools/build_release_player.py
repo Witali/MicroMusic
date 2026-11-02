@@ -64,13 +64,14 @@ def checked_image(folder,avr_bin,streams,queue):
         syms[name]=matches[0]
     return syms,ranges
 
-def build(streams,output,avr_bin,*,source=None,queue=256,prefill=None,irq=0,assembly=False,sparse80=False):
+def build(streams,output,avr_bin,*,source=None,queue=256,prefill=None,irq=0,assembly=False,sparse80=False,output_gain=128):
     if not isinstance(streams,(list,tuple)) or not 1<=len(streams)<=255 or any(not isinstance(b,(bytes,bytearray,memoryview)) or not 1<=len(b)<=65535 for b in streams):
         raise ValueError('Expected 1..255 nonempty bounded byte streams')
     if isinstance(queue,bool) or not isinstance(queue,int) or queue not in (128,256,512):raise ValueError('Unsupported queue')
     prefill=queue*3//4 if prefill is None else prefill
     if isinstance(prefill,bool) or not isinstance(prefill,int) or not 1<=prefill<queue:raise ValueError('Invalid prefill')
     if isinstance(irq,bool) or not isinstance(irq,int) or not 0<=irq<=600 or not isinstance(assembly,bool) or not isinstance(sparse80,bool):raise ValueError('Invalid backend or IRQ load')
+    if type(output_gain) is not int or not 128<=output_gain<=255:raise ValueError('Invalid Q7 output gain')
     streams=[bytes(b) for b in streams];source=ROOT if source is None else Path(source);src=srcdir(source);avr_bin=Path(avr_bin)
     folder=guard(output,[*src.rglob('*')]);env=environment(source,avr_bin,True,harness=EXAMPLE/'player.cpp',required_symbols=(),retained_symbols=())
     env['settings']={**env['settings'],'queue':queue,'prefill':prefill}
@@ -78,12 +79,12 @@ def build(streams,output,avr_bin,*,source=None,queue=256,prefill=None,irq=0,asse
     if sparse80:flags.append('-DLPX4_ENABLE_SPARSE80=1')
     flags=[f for f in flags if not f.startswith(('-DLPX4_PROFILE_QUEUE=','-DLPX4_PROFILE_PREFILL=','-DLPX4_PROFILE_IRQ_LOAD='))]
     flags += [f'-DLPX_PLAYER_QUEUE={queue}',f'-DLPX_PLAYER_PREFILL={prefill}',f'-DLPX_PLAYER_IRQ_LOAD={irq}',
-              '-DLPX_PLAYER_DATA_HEADER="voice_data.h"']
+              '-DLPX_PLAYER_DATA_HEADER="voice_data.h"',f'-DPWM_GAIN_Q7={output_gain}']
     header=voice_header(streams).replace('profile_','lpx_')+f'#define LPX_PLAYER_SEGMENTS {len(streams)}\n'
     sample_counts=[int.from_bytes(b[8:12],'little') if len(b)>=12 else None for b in streams]
     layout=voice_header([b'' for _ in streams]).replace('profile_','lpx_')+f'#define LPX_PLAYER_SEGMENTS {len(streams)}\n'
     recipe={'environment':build_provenance(env),'compiler_options':flags,
-            'player_config_sha256':digest(EXAMPLE/'player_config.h'),'voice_layout_sha256':sha(layout.encode()),
+            'player_config_sha256':digest(EXAMPLE/'player_config.h'),'output_gain_sha256':digest(REPOSITORY/'Codecs/common/pwm_gain.h'),'voice_layout_sha256':sha(layout.encode()),
             'declared_segment_samples':sample_counts}
     build_fingerprint=sha(canonical(recipe));hashes=[sha(b) for b in streams]
     fingerprint=sha(canonical([build_fingerprint,hashes,sha(header.encode())]));cache=folder/'cost.json'
@@ -153,11 +154,13 @@ def validate(report,actual,expected,*,expected_error=0):
     if expected_error==0:good=good and report.get('produced')==len(expected) and report.get('queued_at_stop')==0 and report.get('timer_started')==1
     return bool(good)
 
-def simulate(streams,output,avr_bin,runner,*,source=None,queue=256,prefill=None,irq=0,assembly=False,sparse80=False,lib=None,wsl=None,expected_pwm=None,expected_error=0,require_valid=True):
+def simulate(streams,output,avr_bin,runner,*,source=None,queue=256,prefill=None,irq=0,assembly=False,sparse80=False,lib=None,wsl=None,expected_pwm=None,expected_error=0,require_valid=True,output_gain=128):
     if sparse80 and expected_pwm is None:raise ValueError('Sparse80 simulation requires an independent expected PWM stream')
-    folder=guard(output,[runner]);cost=build(streams,folder,avr_bin,source=source,queue=queue,prefill=prefill,irq=irq,assembly=assembly,sparse80=sparse80)
+    folder=guard(output,[runner]);cost=build(streams,folder,avr_bin,source=source,queue=queue,prefill=prefill,irq=irq,assembly=assembly,sparse80=sparse80,output_gain=output_gain)
     observer_metadata(folder,cost,avr_bin)
     expected=b''.join(pwm_duties(decode_model(b)).tobytes() for b in streams) if expected_pwm is None else bytes(expected_pwm)
+    if expected_pwm is None and output_gain!=128:
+        expected=bytes(max(0,min(255,((v*output_gain+64)>>7)+128-output_gain)) for v in expected)
     provenance=validation_provenance(runner,lib,wsl,sources=(Path(__file__),VALIDATION/'sim_player.c',VALIDATION/'player_hardware.cpp',EXAMPLE/'player_config.h'))
     provenance['runner_sources']={'sim_player.c':digest(VALIDATION/'sim_player.c')}
     fingerprint=sha(canonical([provenance,cost['image_sha256'],digest(folder/'observer.txt'),sha(expected),expected_error]))

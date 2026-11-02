@@ -4,6 +4,7 @@
 #include <avr/pgmspace.h>
 #include <util/atomic.h>
 #include "Lpx4HybridCore.h"
+#include "../../../../common/pwm_gain.h"
 #ifndef __AVR_ATtiny88__
 #error This hardware driver requires the real ATtiny88 target
 #endif
@@ -110,7 +111,7 @@ int main(){
         __asm__ __volatile__(".global lpx25_decode_end\nlpx25_decode_end:" ::: "memory");
         if(!decoded){lpx25_error=decoder.error();break;}
         const bool last=decoder.finished() && repeats==1;
-        lpx25_queue[head]=sample;barrier();
+        lpx25_queue[head]=micromusic_pwm_gain(sample);barrier();
         // Final head and EOF are one publication, even with byte indices.
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE){lpx25_head=next;if(last)lpx25_eof=1;}
         if(!started && (next==LPX25_QUEUE*3/4 || last)){

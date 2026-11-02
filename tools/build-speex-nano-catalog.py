@@ -14,6 +14,7 @@ ROOT=Path(__file__).resolve().parents[1];CODEC=ROOT/'Codecs/Speex/AVR'
 sys.path.insert(0,str(CODEC/'tools'))
 import build,build_wb
 from prepare_real_speech import packets
+from pwm_output_level import apply_gain,choose_gain,describe_level
 PROFILES=[dict(id='nb215',band='NB',hz=8000,nominal=2150,width=6,mode=1,mask=4),
           dict(id='wb395',band='WB',hz=16000,nominal=3950,width=10,mode=1,mask=4),
           dict(id='wb98',band='WB',hz=16000,nominal=9800,width=25,mode=3,mask=0)]
@@ -43,7 +44,7 @@ def main():
             assert name in HARDWARE_PATHS,name
             changes[name]=dict(admittedSha256=h,currentSha256=current)
     sources={(CODEC/name).relative_to(ROOT).as_posix():sha(CODEC/name,True) for name in baseline['sourceSha256']}
-    for path in [Path(__file__),CODEC/'tools/capture_examples.mjs',CODEC/'src/avr_audio_output.h',
+    for path in [Path(__file__),ROOT/'Codecs/common/pwm_gain.h',ROOT/'Codecs/common/pwm-gain.mjs',ROOT/'tools/pwm_output_level.py',CODEC/'tools/capture_examples.mjs',CODEC/'src/avr_audio_output.h',
                  *[CODEC/name for name in HARDWARE_PATHS]]:
         sources[path.relative_to(ROOT).as_posix()]=sha(path,True)
     version=subprocess.check_output([args.ffmpeg,'-version'],text=True).splitlines()[0].split()[2]
@@ -92,14 +93,17 @@ def main():
             samples=len(frames)*(hz//50);assert samples>=input_samples+round(hz*.08)
             reference=folder/'decoder.pcm'
             invoke([args.node,CODEC/'tools/capture_examples.mjs',decoders[profile['id']],raw,reference,*(['--wideband'] if wb else [])],folder/'capture.log')
+            raw_pwm=bytes(value^128 for value in reference.read_bytes()[1::2])
+            gain=choose_gain(raw_pwm);level=describe_level(raw_pwm,gain)
             player=folder/'player'
-            if wb:build_wb.avr(args.avr_gcc,backend='asm',stream=raw,packet_bytes=profile['width'],low_rates=profile['mask'],enable_nb4=False,destination=player,pwm_pin=args.pwm_pin)
-            else:build.avr(args.avr_gcc,backend='asm',packet_file=raw,packet_bytes=profile['width'],low_rates=profile['mask'],enable_nb4=False,destination=player,pwm_pin=args.pwm_pin)
+            if wb:build_wb.avr(args.avr_gcc,backend='asm',stream=raw,packet_bytes=profile['width'],low_rates=profile['mask'],enable_nb4=False,destination=player,pwm_pin=args.pwm_pin,output_gain=gain)
+            else:build.avr(args.avr_gcc,backend='asm',packet_file=raw,packet_bytes=profile['width'],low_rates=profile['mask'],enable_nb4=False,destination=player,pwm_pin=args.pwm_pin,output_gain=gain)
             if wb:command=[args.node,CODEC/'tests/verify_wb_player.mjs',raw,player,reference]
             else:command=[args.node,CODEC/'tests/verify_player.mjs',raw,'--firmware',player,'--oracle',reference]
             invoke(command,folder/'player.log')
             report=json.loads((player/'player-verification.json').read_text(encoding='utf-8'));pwm=(player/'player-pwm.u8').read_bytes()
             assert report['passed'] and report['includesInterrupts'] and report['underruns']==0 and len(pwm)==samples
+            assert pwm==apply_gain(raw_pwm,gain)
             assert report['samples']==samples and report['flashBytes']<=30720 and report['freeSramAtPeak']>0
             wav=folder/(profile['id']+'.wav')
             with wave.open(str(wav),'wb') as f:
@@ -108,7 +112,7 @@ def main():
             ident=f'speex-nano-{clip}-{profile["id"]}'
             label=f'Speex {profile["band"]} · {str(profile["nominal"]/1000).replace(".",",")} кбит/с'
             row=dict(id=ident,clipId=clip,profile=profile['id'],label=label,band=profile['band'],sampleHz=hz,
-                nominalBitrateBps=profile['nominal'],packetBytes=profile['width'],frames=len(frames),samples=samples,
+                nominalBitrateBps=profile['nominal'],packetBytes=profile['width'],frames=len(frames),samples=samples,outputLevel=level,
                 inputSamples=input_samples,encoderLibraryVersion=header[8:28].rstrip(b'\0').decode('ascii'),
                 stream=f'audio/speex-speech/{clip}/{profile["id"]}.spxraw',streamBytes=raw.stat().st_size,streamSha256=sha(raw),
                 audio=f'audio/speex-speech/{clip}/{profile["id"]}.wav',audioSha256=sha(wav),pwmSha256=hashlib.sha256(pwm).hexdigest(),

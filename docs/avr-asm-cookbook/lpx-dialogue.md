@@ -26,6 +26,10 @@ common C, compact C and Python model output. C is the default backend, even on
 AVR; `--enable-asm` explicitly enables supported AVR assembly. Flash access and
 timer setup are independent of that choice.
 
+The following measurements describe the initial unity-output image at
+`095e701a`. The current release adds [calibrated output gain](pwm-output-level.md)
+and has updated complete-image receipts.
+
 Measured with simavr 1.6 and the calibrated observer charging four hardware
 entry cycles and the completed RETI: four P6 phrases and three P4 pauses
 (0.5 / 1.5 / 0.5 s), 81,254 samples, 10.15675 s. Full Flash is 10,406 B

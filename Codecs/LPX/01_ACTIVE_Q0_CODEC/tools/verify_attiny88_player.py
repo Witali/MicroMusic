@@ -7,7 +7,10 @@ import argparse
 import json
 from pathlib import Path
 import subprocess
+import sys
 from build_attiny88_player import build,target_path,ROOT,REPO
+sys.path.insert(0,str(REPO/'tools'))
+from pwm_output_level import apply_gain,choose_gain,describe_level
 
 REFERENCE=r'''
 #include <stdio.h>
@@ -23,7 +26,7 @@ int main(){
 '''
 
 def verify(source,output,*,assembly=True,asm_isr=True,queue=32,repeat=1,wsl=None,
-           flash_limit=8192,lpc_segments=2,sparse80=False,mul16_unroll=16):
+           flash_limit=8192,lpc_segments=2,sparse80=False,mul16_unroll=16,normalize_output=False):
     output=Path(output).resolve()
     cost=build(source,output,assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll)
     prefix=['wsl','-d',wsl,'--'] if wsl else []
@@ -40,6 +43,11 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=32,repeat=1,wsl=None
         '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(ROOT/'src'),
         path(output/'reference.cpp'),path(ROOT/'src/Lpx4HybridCore.cpp'),'-o',path(output/'reference'))
     expected=run(path(output/'reference'))*repeat
+    gain=choose_gain(expected) if normalize_output else 128
+    level=describe_level(expected,gain)
+    if gain!=128:
+        cost=build(source,output,assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll,output_gain=gain)
+        expected=apply_gain(expected,gain)
     (output/'expected.pwm').write_bytes(expected)
     run('gcc','-O2','-std=c11','-I'+path(output),'-I/usr/include/simavr',
         path(ROOT.parent/'validation/attiny88/sim_player.c'),'-lsimavr','-lelf','-o',path(output/'sim_player'))
@@ -52,7 +60,7 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=32,repeat=1,wsl=None
         flash_limit=flash_limit,queue=queue,repeat=repeat,assembly=assembly,asm_isr=asm_isr,
         embedded_audio_bytes=cost['embedded_audio_bytes'],program_excluding_audio_bytes=cost['program_excluding_audio_bytes'],
         physical_board_measured=False,bootloader_application_bytes=cost['bootloader_application_bytes'],
-        fits_standard_bootloader=cost['fits_standard_bootloader'],requires_isp=cost['requires_isp'],mul16_unroll=mul16_unroll)
+        fits_standard_bootloader=cost['fits_standard_bootloader'],requires_isp=cost['requires_isp'],mul16_unroll=mul16_unroll,outputLevel=level)
     timing['accepted']=bool(exact and timing['samples']==timing['ticks']==timing['timer_events']==cost['samples']
         and not timing['underruns'] and timing['error']==0 and timing['eof']==timing['stopped']==1
         and timing['queue_empty'] and timing['timer_stopped'] and timing['stack_margin']>0

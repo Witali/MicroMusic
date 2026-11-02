@@ -112,7 +112,10 @@ test('verified Tiny88 firmware replaces previews once and retains quality across
       assert.equal(app.location.searchParams.get('board'),'mh-et-live-16mhz');
       assert.equal(app.get('speech-profile-select').children.length,clip==='bread'?3:2);
       assert.ok(app.get('speech-profile-select').children.every(option=>!option.value.startsWith('speex-')));
-      assert.equal(app.get('download').href,'https://example.test'+prefix+`web-player/firmware/attiny88/lpx-tiny88-${clip}-quality.hex`);
+      const download=new URL(app.get('download').href);
+      assert.equal(download.origin+download.pathname,'https://example.test'+prefix+`web-player/firmware/attiny88/lpx-tiny88-${clip}-quality.hex`);
+      const level=data.clips.find(c=>c.clipId===clip).variants.find(v=>v.id==='quality').outputLevel;
+      assert.equal(download.searchParams.get('v'),level?.numerator>128?'a'.repeat(16):null);
       assert.equal(cards(app).length,4);
     }
     app.get('speech-profile-select').value='lpx-bread-low15';app.get('speech-profile-select').onchange();await flush();

@@ -11,7 +11,7 @@ higher-quality LPX profiles. The common order is defined by
 An additional [combined dialogue](../../?collection=hq4&device=atmega328p&firmware=lpx-nano-dialogue-quality) plays the four
 normalized phrases in conversation order, with 0.5 / 1.5 / 0.5-second pauses.
 Its [recipe and validation](../../../ATmega328/Sound/lpx-dialogue/README.md)
-describe the separate 10.162 KiB image, 756 B static SRAM and exact PWM preview.
+describe the separate 10.240 KiB image, 756 B static SRAM and exact PWM preview.
 
 EEPROM is unused. These are complete application HEX files without a
 bootloader; they fit within the classic Nano's 30 KiB application budget.
@@ -37,11 +37,14 @@ it does not emulate Nano. All eight complete HEX files were independently run in
 simavr 1.6 with Timer1 interrupts active: every declared sample and output tick,
 zero underruns, exact equality to the displayed WAV. Observed sample intervals
 were 1,995–2,005 CPU cycles, maximum complete interrupt 76 cycles, minimum observed stack
-margin 1,231 bytes across all eight images. The observer charges the four-cycle
+margin 1,229 bytes across all eight images. The observer charges the four-cycle
 AVRe hardware entry omitted by simavr 1.6 and finishes timing after RETI
 retires; the previous 68-cycle figure omitted these eight cycles. All eight
-images were rebuilt from the merged AVR25/Nano sources and remain byte-identical
-to the previous Nano release. Their complete sizes are 4.926–6.320 KiB.
+images were rebuilt with calibrated producer-side output gain. Five already
+full-range images retain unity and their exact bytes; three quiet images use
+more of the PWM range. Their complete sizes are 4.926–6.365 KiB.
+The codec state and ISR are unchanged; the complete waveform proves no added
+saturation. [Arithmetic, costs and verification](../../../docs/avr-asm-cookbook/pwm-output-level.md).
 These results cover the retained images; no physical-board
 or analog-output test is claimed. Path-free receipts and SHA-256 hashes are
 in `../../firmware-atmega328p.json`; private build logs remain in ignored `build/`.

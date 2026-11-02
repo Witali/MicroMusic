@@ -7,7 +7,7 @@ import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './li
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
-import { lpxPreviewEntries, lpxFirmwareEntries, lpxDialogueEntry, previewWaveform } from './lib/native-preview.js?v=20261102-nano-dialogue';
+import { lpxPreviewEntries, lpxFirmwareEntries, lpxDialogueEntry, previewWaveform } from './lib/native-preview.js?v=20261102-output-range';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -152,17 +152,26 @@ previewAudio.addEventListener('error',()=>{
   if(!nativePreview())return;
   pause();showError('Не удалось загрузить LPX-превью.');
 });
+function outputAssetURL(entry,source,digest){
+  const level=entry.firmware?.outputLevel??entry.outputLevel;
+  if(!(level?.numerator>128))return source;
+  const url=new URL(source);url.searchParams.set('v',digest.slice(0,16));return url.href;
+}
+function previewAudioURL(entry){
+  return outputAssetURL(entry,entry.nativeAudioUrl,(entry.firmware?.outputLevel??entry.outputLevel)?.after?.pcmSha256);
+}
 async function loadPreviewWave(entry,epoch) {
+  const source=previewAudioURL(entry);
   try {
-    if(!previewWaves.has(entry.nativeAudioUrl))previewWaves.set(entry.nativeAudioUrl,(async()=>{
-      const response=await fetch(entry.nativeAudioUrl);if(!response.ok)throw Error('HTTP '+response.status);
+    if(!previewWaves.has(source))previewWaves.set(source,(async()=>{
+      const response=await fetch(source);if(!response.ok)throw Error('HTTP '+response.status);
       return previewWaveform(await response.arrayBuffer(),entry);
     })());
-    const waveform=await previewWaves.get(entry.nativeAudioUrl);
+    const waveform=await previewWaves.get(source);
     if(session!==epoch||selected!==entry)return;
     phraseRaw=waveform;phraseSignals=null;scopes=[waveform];signalScopes={input:scopes,output:scopes};canvas.dataset.samples=String(waveform.length);draw();
   }catch{
-    previewWaves.delete(entry.nativeAudioUrl);
+    previewWaves.delete(source);
     if(session===epoch&&selected===entry)$('scope-left-label').textContent='WAV-ПРЕВЬЮ · ОСЦИЛЛОГРАММА НЕДОСТУПНА';
   }
 }
@@ -371,9 +380,10 @@ function load(entry,{autoplay=false}={}) {
   const capacity=micronucleus?6012:tiny88?8192:1024, prefix=micronucleus?'attiny88-mh-et-live-16mhz':currentDevice;
   if(nativePreview()){
     const file=entry.id+(entry.streamExtension||'.lpx');
+    const firmwareSource=entry.firmware?outputAssetURL(entry,entry.firmware.source,entry.firmware.hexSha256):undefined;
     $('rom-name').href=entry.streamUrl;$('rom-name').download=file;$('rom-name').textContent=file;
     $('download').textContent='↓ Flash HEX';
-    downloadUI('download',entry.firmware?.source,entry.firmware?entry.id+'.hex':null,entry.firmware
+    downloadUI('download',firmwareSource,entry.firmware?entry.id+'.hex':null,entry.firmware
       ? tiny88?`Полный Flash HEX для ATtiny88 · 16 МГц · ${entry.firmware.requiresIsp?'загрузка через ISP':'USB-загрузчик или ISP'}.`:'Полный Flash HEX для Arduino Nano / ATmega328P · 16 МГц.'
       : 'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
     downloadUI('download-eeprom',null,null,'EEPROM не используется этим примером.');
@@ -385,15 +395,15 @@ function load(entry,{autoplay=false}={}) {
       : `Программа: — (не измерено) · ${entry.streamBytes.toLocaleString('ru')} Б данных LPX`;
     $('rom-details').textContent=`${cost} · ${bitrateLabel(entry.bitrateBps)} · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
     $('board-upload').hidden=true;$('upload-command').textContent='';$('reset').disabled=false;
-    $('original-player').hidden=true;$('wav-link').hidden=false;$('wav-link').href=entry.nativeAudioUrl;
+    $('original-player').hidden=true;$('wav-link').hidden=false;$('wav-link').href=previewAudioURL(entry);
     $('reference-wav').hidden=!originalUrl;
     if(originalUrl)$('reference-wav').href=originalUrl;else $('reference-wav').removeAttribute('href');
     $('rom-hash').textContent='';$('rom-hash').title='';
     if(entry.firmware){
-      $('rom-name').href=entry.firmware.source;$('rom-name').download=entry.id+'.hex';$('rom-name').textContent=entry.id+'.hex';
+      $('rom-name').href=firmwareSource;$('rom-name').download=entry.id+'.hex';$('rom-name').textContent=entry.id+'.hex';
       $('rom-hash').textContent=entry.firmware.hexSha256.slice(0,16)+'…';$('rom-hash').title='SHA-256 HEX: '+entry.firmware.hexSha256;
     }
-    previewAudio.src=entry.nativeAudioUrl;previewAudio.volume=+$('volume').value;previewAudio.load();
+    previewAudio.src=previewAudioURL(entry);previewAudio.volume=+$('volume').value;previewAudio.load();
     document.querySelector('.scope-scale').textContent=(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')+' с · вся запись';
     loadPreviewWave(entry,session);
   }else{
@@ -570,34 +580,34 @@ try {
   }catch{/* Older/offline catalogs retain their own examples when the shared index is unavailable. */}
   let previewError,nanoError,speexError,dialogueError;
   try{
-    const response=await fetch(new URL('./firmware-atmega328p.json?v=20261102-nano',import.meta.url));
+    const response=await fetch(new URL('./firmware-atmega328p.json?v=20261102-output-range',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...lpxFirmwareEntries(await response.json(),import.meta.url));
   }catch(error){nanoError=error;}
   try{
-    const response=await fetch(new URL('./firmware-speex-atmega328p.json?v=20261102-speex-nano',import.meta.url));
+    const response=await fetch(new URL('./firmware-speex-atmega328p.json?v=20261102-output-range',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...speexFirmwareEntries(await response.json(),import.meta.url));
   }catch(error){speexError=error;}
   try{
-    const response=await fetch(new URL('./audio/lpx-dialogue/manifest.json?v=20261102-nano-dialogue',import.meta.url));
+    const response=await fetch(new URL('./audio/lpx-dialogue/manifest.json?v=20261102-output-range',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(lpxDialogueEntry(await response.json(),import.meta.url));
   }catch(error){dialogueError=error;}
   try{
-    const response=await fetch(new URL('./audio/lpx-bread/manifest.json?v=20261101-flash',import.meta.url));
+    const response=await fetch(new URL('./audio/lpx-bread/manifest.json?v=20261102-output-range',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...lpxPreviewEntries(await response.json(),import.meta.url));
   }catch(error){previewError=error;}
   try{
-    const response=await fetch(new URL('./audio/lpx-speech/manifest.json?v=20261102-shared-speech',import.meta.url));
+    const response=await fetch(new URL('./audio/lpx-speech/manifest.json?v=20261102-output-range',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     const data=await response.json();
     if(data.schemaVersion!==1||!Array.isArray(data.clips))throw Error('Неверный набор LPX.');
     catalog.entries.push(...data.clips.flatMap(clip=>lpxPreviewEntries(clip,import.meta.url)));
   }catch{/* Existing LPX clips remain usable if additional assets cannot load. */}
   try{
-    const response=await fetch(new URL('./firmware-lpx-attiny88.json?v=20261102-tiny88-lpx',import.meta.url));
+    const response=await fetch(new URL('./firmware-lpx-attiny88.json?v=20261102-output-range',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     const verified=lpxTiny88FirmwareEntries(await response.json(),import.meta.url);
     const ids=new Set(verified.map(entry=>entry.id));

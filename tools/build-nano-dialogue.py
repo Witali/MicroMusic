@@ -19,6 +19,7 @@ CODEC=ROOT/'Codecs/LPX/01_ACTIVE_Q0_CODEC'
 sys.path.insert(0,str(CODEC/'tools'))
 from output_paths import protect_outputs
 from profile_avr import linux_path
+from pwm_output_level import apply_gain,choose_gain,describe_level
 
 NATIVE=r'''
 #include <stdint.h>
@@ -183,8 +184,9 @@ def build(args):
         segments.append(dict(**info,startSample=at,samples=len(pwm),streamBytes=len(stream),streamSha256=sha(stream)))
         at+=len(pwm)
     expected=b''.join(expected)
+    gain=choose_gain(expected);level=describe_level(expected,gain);expected=apply_gain(expected,gain)
     result=simulate(streams,output/'avr',args.avr_bin,args.observer,wsl=args.wsl,lib=args.lib,
-                    assembly=args.enable_asm,expected_pwm=expected)
+                    assembly=args.enable_asm,expected_pwm=expected,output_gain=gain)
     cost,report=result['cost'],result['report']
     if cost['flash_bytes']>30720 or cost['static_sram_bytes']>=2048:raise ValueError('Image exceeds classic Nano budget')
     if report.get('irq_entry_cycles')!=4 or report.get('irq_reti_complete') is not True:raise ValueError('Expected calibrated full-IRQ timing')
@@ -193,7 +195,7 @@ def build(args):
     actual=(output/'avr/valid.pcm8').read_bytes()
     if actual!=expected:raise ValueError('Actual firmware output differs from the complete dialogue')
     write_pcm16_wav(output/'dialogue.wav',(np.frombuffer(actual,dtype=np.uint8).astype(np.int16)-128)*256)
-    sources=[recipe_path,Path(__file__),*sorted((CODEC/'src').glob('*')),CODEC/'examples/AVR_V5_PLAYER/player.cpp',
+    sources=[recipe_path,Path(__file__),ROOT/'Codecs/common/pwm_gain.h',ROOT/'tools/pwm_output_level.py',*sorted((CODEC/'src').glob('*')),CODEC/'examples/AVR_V5_PLAYER/player.cpp',
              CODEC/'examples/AVR_V5_PLAYER/player_config.h',CODEC/'tools/build_release_player.py',
              CODEC/'tools/speech_v4.py',CODEC/'tools/speech_compact.py',CODEC/'tools/pcm16_wav.py',
              CODEC.parent/'validation/atmega328p/sim_player.c']
@@ -204,7 +206,7 @@ def build(args):
                   ffmpegVersion=subprocess.check_output([ffmpeg,'-version'],text=True).splitlines()[0].split('Copyright')[0].strip(),
                   flashBytes=cost['flash_bytes'],programFlashBytes=cost['program_flash_bytes'],streamBytes=cost['stream_bytes'],
                   staticSramBytes=cost['static_sram_bytes'],hexSha256=sha(image),wavSha256=sha((output/'dialogue.wav').read_bytes()),
-                  normalization=dict(method='EBU R128 integrated loudness, constant source gain before encoding',
+                  outputLevel=level,normalization=dict(method='EBU R128 integrated loudness, constant source gain before encoding',
                                      targetLufs=target,sourceSpreadLu=normalized_spread,decodedSpreadLu=decoded_spread,
                                      truePeakLimitDb=recipe['truePeakLimitDb']),segments=segments,
                   timing={key:report[key] for key in ('played','underruns','timer_ticks','timer_events','queued_at_stop',

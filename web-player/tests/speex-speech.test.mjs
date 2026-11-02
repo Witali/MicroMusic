@@ -67,8 +67,8 @@ test('all Speex deep links select the right sample rate, shared D3 pin, audio an
   for(const prefix of ['/','/MicroMusic/'])for(const variant of catalog.variants){
     const app=await playerApp({prefix,device:'atmega328p',firmware:variant.id});await flush();
     assert.equal(app.location.searchParams.get('firmware'),variant.id);
-    assert.equal(app.preview.src,'https://example.test'+prefix+'web-player/'+variant.audio);
-    assert.equal(app.get('download').href,'https://example.test'+prefix+'web-player/'+variant.source);
+    assert.equal(app.preview.src,'https://example.test'+prefix+'web-player/'+variant.audio+(variant.outputLevel.numerator>128?'?v='+variant.outputLevel.after.pcmSha256.slice(0,16):''));
+    assert.equal(app.get('download').href,'https://example.test'+prefix+'web-player/'+variant.source+(variant.outputLevel.numerator>128?'?v='+variant.hexSha256.slice(0,16):''));
     assert.equal(app.get('download').download,variant.id+'.hex');
     assert.match(app.get('tiny88-power').textContent,/D3 \/ PD3 \/ OC2B/);
     assert.equal(app.get('speech-profile-select').children.length,5);
@@ -103,7 +103,7 @@ test('switching every phrase preserves codec/quality and unavailable profiles ne
 test('switching device stops Speex playback',async()=>{
   const app=await playerApp({device:'atmega328p',firmware:'speex-nano-chego-wb98'});await flush();
   app.get('speech-profile-select').value='speex-nano-chego-nb215';app.get('speech-profile-select').onchange();await flush();
-  assert.ok(app.preview.src.endsWith('/chego/nb215.wav'));
+  assert.ok(new URL(app.preview.src).pathname.endsWith('/chego/nb215.wav'));
   await app.get('play').onclick();app.get('device-select').value='attiny88';await app.get('device-select').onchange();await flush();
   assert.equal(app.preview.paused,true);assert.equal(app.get('device-select').value,'attiny88');
 });

@@ -157,7 +157,8 @@ def export_c(destination, enable_nb4=False,low_rates=0):
     return destination
 
 
-def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_bytes=None, enable_nb4=None,low_rates=0,destination=None,pwm_pin=9):
+def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_bytes=None, enable_nb4=None,low_rates=0,destination=None,pwm_pin=9,output_gain=128):
+    if type(output_gain) is not int or not 128<=output_gain<=255:raise ValueError('Invalid Q7 output gain')
     if pwm_pin not in (3,9):raise ValueError('PWM pin must be D3 or D9')
     if backend not in ('asm', 'c'):
         raise ValueError('Unknown arithmetic backend: ' + backend)
@@ -189,7 +190,7 @@ def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_byt
             '\nstatic const uint8_t sample_data[] PROGMEM = {\n' + ',\n'.join(rows) + '\n};\n', encoding='utf-8')
         (output / 'input.json').write_text(json.dumps({'file': packet_file.name,
             'sha256': hashlib.sha256(data).hexdigest(), 'frames': len(data)//width,'packetBytes':width,
-            'frameLoadCycles': frame_load_cycles,'pwmPin':pwm_pin}, indent=2) + '\n', encoding='utf-8')
+            'frameLoadCycles': frame_load_cycles,'pwmPin':pwm_pin,'outputGainQ7':output_gain}, indent=2) + '\n', encoding='utf-8')
         name = 'speex-player'
         main = ROOT / 'src/player.c'
         definitions.append('SPEEX_AVR_OUTPUT_HOOK')
@@ -204,7 +205,7 @@ def avr(compiler, packet_file=None, frame_load_cycles=0, backend='c', packet_byt
     flags = ['-std=c11', '-mmcu=atmega328p', '-mcall-prologues', '-mrelax',
              '-Os', '-flto', '-fwrapv', '-fno-strict-aliasing',
              '-ffunction-sections', '-fdata-sections', '-fstack-usage',
-             *['-D' + d for d in definitions],
+             *['-D' + d for d in definitions],'-DPWM_GAIN_Q7='+str(output_gain),
              '-I' + str(source / 'include'), '-I' + str(source / 'libspeex'),
              '-I' + str(ROOT / 'src'), '-I' + str(output)]
     executable = output / (name + '.elf')

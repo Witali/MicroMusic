@@ -4,6 +4,7 @@
 #include <util/atomic.h>
 #include "player_config.h"
 #include "Lpx4HybridCore.h"
+#include "../../../../common/pwm_gain.h"
 #ifndef LPX_PLAYER_DATA_HEADER
 #define LPX_PLAYER_DATA_HEADER "synthetic_voice.h"
 #endif
@@ -68,7 +69,7 @@ static bool produce(LpxPlayerIndex head,LpxPlayerIndex next){
     uint8_t value;
     if(!decoder.next(value)){fail();return false;}
     const bool last=decoder.finished() && segment==LPX_PLAYER_SEGMENTS-1;
-    lpx_player_queue[head]=value;barrier();
+    lpx_player_queue[head]=micromusic_pwm_gain(value);barrier();
     // Atomic byte publication suffices normally. Final head+EOF are one
     // publication: otherwise an ISR could consume the last sample before EOF.
 #if LPX_PLAYER_QUEUE<=256

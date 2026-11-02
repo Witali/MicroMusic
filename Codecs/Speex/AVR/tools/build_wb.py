@@ -55,7 +55,8 @@ def oracle(compiler):
         *[source/'libspeex'/(s+'.c') for s in units],build.ROOT/'tests/wb_oracle_qmf.c',
         build.ROOT/'tests/decode_rates.c','-o',out/('decode.exe' if sys.platform=='win32' else 'decode')])
 
-def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packet_bytes=None,enable_nb4=None,low_rates=0,pwm_pin=9):
+def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packet_bytes=None,enable_nb4=None,low_rates=0,pwm_pin=9,output_gain=128):
+    if type(output_gain) is not int or not 128<=output_gain<=255:raise ValueError('Invalid Q7 output gain')
     if pwm_pin not in (3,9):raise ValueError('PWM pin must be D3 or D9')
     if load<0 or load>320000 or (load and stream is None):raise ValueError('Load requires a player stream and 0..320000 cycles')
     if packet_bytes not in (None,10,15,20,25,32):raise ValueError('Invalid WB packet width')
@@ -63,7 +64,7 @@ def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packe
     source=prepare();out=destination or build.ROOT/'build'/('wb-'+backend+('-player' if stream else '-decoder'))
     out=out.resolve();out.mkdir(parents=True,exist_ok=True)
     options=['-mmcu=atmega328p','-mcall-prologues','-mrelax',
-        '-Os','-flto','-ffunction-sections','-fdata-sections','-fstack-usage','-I'+str(out)]
+        '-Os','-flto','-ffunction-sections','-fdata-sections','-fstack-usage','-I'+str(out),'-DPWM_GAIN_Q7='+str(output_gain)]
     main=build.ROOT/('tests/wb_kernels.c' if kernels else 'tests/wb_decode.c')
     if stream:
         data=stream.read_bytes()
@@ -78,7 +79,7 @@ def avr(compiler,backend,stream=None,load=0,destination=None,kernels=False,packe
         (out/'sample.h').write_text('#define SPEEX_SAMPLE_PACKET_BYTES '+str(width)+'\n#define SPEEX_SAMPLE_FRAMES '+str(len(data)//width)+
             '\nstatic const uint8_t sample_data[] PROGMEM={'+','.join(map(str,data))+'};\n')
         (out/'input.json').write_text(json.dumps(dict(file=stream.name,
-            sha256=hashlib.sha256(data).hexdigest(),frames=len(data)//width,packetBytes=width,frameLoadCycles=load,pwmPin=pwm_pin),indent=2)+'\n')
+            sha256=hashlib.sha256(data).hexdigest(),frames=len(data)//width,packetBytes=width,frameLoadCycles=load,pwmPin=pwm_pin,outputGainQ7=output_gain),indent=2)+'\n')
         main=build.ROOT/'src/wb_player.c'
         options+=['-DSPEEX_AVR_PWM_PIN='+str(pwm_pin)]
         if load:options+=['-DSPEEX_AVR_FRAME_LOAD_CYCLES='+str(load)]
