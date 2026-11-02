@@ -1,0 +1,56 @@
+{
+  "scope": "Isolated C/ASM arithmetic; no C decoder execution or timing",
+  "backend": "asm",
+  "binarySha256": "eab509b90bafad3c01feb4d8ea7515962bc5bcab473df5b42fe5ac4d737859d7",
+  "structuredCases": 9856,
+  "randomCases": 8192,
+  "all16CoefficientCodes": true,
+  "all64Q6Coefficients": true,
+  "exhaustiveCases": 4194304,
+  "selectedAliasesExplicitC": false,
+  "exhaustiveSigned16ByUnsigned6": true,
+  "originalAndCAndIndependentExact": true,
+  "negativeTiesPreserved": true,
+  "checkedCalleeSavedReturns": 33696,
+  "checkedR1Returns": 4223904,
+  "peakStack": 8,
+  "statistics": [
+    {
+      "name": "forced_math_selected",
+      "calls": 4204160,
+      "muls": 8408320,
+      "minCycles": 24,
+      "maxCycles": 24
+    },
+    {
+      "name": "forced_math_c_reference",
+      "calls": 9856,
+      "muls": 39424,
+      "minCycles": 88,
+      "maxCycles": 91
+    },
+    {
+      "name": "forced_math_original",
+      "calls": 9856,
+      "muls": 49280,
+      "minCycles": 70,
+      "maxCycles": 73
+    },
+    {
+      "name": "forced_math_coefficient",
+      "calls": 16,
+      "muls": 32,
+      "minCycles": 17,
+      "maxCycles": 17
+    },
+    {
+      "name": "forced_math_original_coefficient",
+      "calls": 16,
+      "muls": 80,
+      "minCycles": 154,
+      "maxCycles": 154
+    }
+  ],
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

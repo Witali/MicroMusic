@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Bounded forced-pitch scalar prototype](speex-bounded-forced-math.md): exact
+signed22/Q6 alignment and unsigned16 coefficient mapping, exhaustive AVR input
+domain and explicitly selectable C; full decoder integration remains unmeasured.
+
 [Specialize a sparse three-tap predictor](speex-one-tap.md): remove two
 provably zero taps, reuse the original transform macro, preserve the necessary
 pitch clamp and extend only the completed-history range that is actually read.
