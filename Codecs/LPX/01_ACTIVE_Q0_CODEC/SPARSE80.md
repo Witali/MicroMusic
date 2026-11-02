@@ -50,3 +50,10 @@ the independent expansion oracle. The default build does not enable sparse80.
 Target Flash, stack and real-time admission must be measured using the whole
 linked player with active interrupts for the selected stream. A native format
 test or a smaller compressed file does not establish target timing.
+
+The SRAM512 Tiny88 builder and verifier also accept `--enable-sparse80`.
+It remains independent from `--enable-asm` and `--asm-isr` in the builder.
+The fixed header checks raw mode15, then specializes the existing internal
+P6+sparse80 arithmetic; the default C reference keeps dynamic parameters.
+All 320 final sample positions are checked against ordinary-v5 expansion
+with fixed header constants and the SRAM512 workspace enabled.

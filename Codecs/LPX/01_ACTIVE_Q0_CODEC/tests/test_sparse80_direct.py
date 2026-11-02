@@ -62,6 +62,25 @@ class Sparse80DirectTests(unittest.TestCase):
                 np.testing.assert_array_equal(direct.decode_one_s16(blob,n),v5.decode_one_s16(blob,n))
                 np.testing.assert_array_equal(direct.decode_one(blob,n),v5.decode_one(blob,n))
 
+    def test_fixed_sparse80_sram512_matches_expansion_and_rejects_other_headers(self):
+        fixed=native(self.root/'fixed-sram512.so',self.compiler,2,sparse80=True,defines=(
+            '-include',str(ROOT/'profiles/Lpx4Sram512.h'),'-DLPX4_FIXED_SPEECH_FLAGS=15',
+            '-DLPX4_FIXED_PRE_Q14=8192','-DLPX4_FIXED_BRIGHT_Q14=11469'))
+        common=self.pairs[2][0]
+        for complete in (320,640):
+            blob=fixture(complete);expected=common.decode_one_s16(expand(blob),complete)
+            for n in range(complete-319,complete+1):
+                tail=bytearray(blob);tail[8:12]=n.to_bytes(4,'little')
+                np.testing.assert_array_equal(fixed.decode_one_s16(bytes(tail),n),expected[:n])
+                np.testing.assert_array_equal(fixed.decode_one(bytes(tail),n),pwm_duties(expected[:n]))
+        blob=fixture(320)
+        for offset,value in ((12,8193),(14,11468)):
+            bad=bytearray(blob);bad[offset:offset+2]=value.to_bytes(2,'little')
+            self.assertIsNone(fixed.decode_one(bytes(bad),320))
+        for name in ('compact.lpx','quality.lpx'):
+            blob=(REPO/'web-player/audio/lpx-bread'/name).read_bytes()
+            self.assertIsNone(fixed.decode_one(blob,int.from_bytes(blob[8:12],'little')))
+
     def test_all_final_packet_sample_tails(self):
         for common,direct,_ in self.pairs.values():
             for complete in (320,640):

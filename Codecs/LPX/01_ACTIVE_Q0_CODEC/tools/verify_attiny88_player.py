@@ -23,9 +23,9 @@ int main(){
 '''
 
 def verify(source,output,*,assembly=True,asm_isr=True,queue=32,repeat=1,wsl=None,
-           flash_limit=6656,lpc_segments=2):
+           flash_limit=6656,lpc_segments=2,sparse80=False):
     output=Path(output).resolve()
-    cost=build(source,output,assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,flash_limit=flash_limit)
+    cost=build(source,output,assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,flash_limit=flash_limit,sparse80=sparse80)
     prefix=['wsl','-d',wsl,'--'] if wsl else []
     path=lambda p:target_path(p,wsl)
     def run(*args):
@@ -36,6 +36,7 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=32,repeat=1,wsl=None
     if run('pkg-config','--modversion','simavr').decode().strip()!='1.6':
         raise ValueError('This calibrated interrupt-entry adapter requires simavr1.6')
     run('g++','-O2','-std=c++11',f'-DLPX3_LPC_SEGMENTS={lpc_segments}',
+        *(['-DLPX4_ENABLE_SPARSE80=1'] if sparse80 else []),
         '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(ROOT/'src'),
         path(output/'reference.cpp'),path(ROOT/'src/Lpx4HybridCore.cpp'),'-o',path(output/'reference'))
     expected=run(path(output/'reference'))*repeat
@@ -66,6 +67,7 @@ if __name__=='__main__':
     ap.add_argument('--wsl');ap.add_argument('--c',action='store_true');ap.add_argument('--c-isr',action='store_true')
     ap.add_argument('--queue',type=int,choices=(16,32),default=32);ap.add_argument('--repeat',type=int,default=1)
     ap.add_argument('--flash-limit',type=int,default=6656)
+    ap.add_argument('--enable-sparse80',action='store_true')
     a=ap.parse_args();r=verify(a.input,a.output,wsl=a.wsl,assembly=not a.c,asm_isr=not a.c_isr,
-        queue=a.queue,repeat=a.repeat,flash_limit=a.flash_limit)
+        queue=a.queue,repeat=a.repeat,flash_limit=a.flash_limit,sparse80=a.enable_sparse80)
     print(json.dumps(r));raise SystemExit(0 if r['accepted'] else 1)
