@@ -8,7 +8,7 @@ Eight images contain the four already-public speech phrases, in compact and
 higher-quality LPX profiles. The common order is defined by
 `web-player/speech-examples.json`. They play once after reset; reset starts again.
 EEPROM is unused. These are complete application HEX files without a
-bootloader; they fit within the classic Nano's 30,720-byte application budget.
+bootloader; they fit within the classic Nano's 30 KiB application budget.
 Keep the existing board bootloader and fuse settings when uploading.
 
 The original bread phrase retains these sizes; the complete eight-image
@@ -30,8 +30,13 @@ The browser plays the public native-decoder WAV and displays its waveform;
 it does not emulate Nano. All eight complete HEX files were independently run in
 simavr 1.6 with Timer1 interrupts active: every declared sample and output tick,
 zero underruns, exact equality to the displayed WAV. Observed sample intervals
-were 1,997–2,003 CPU cycles, maximum ISR 68 cycles, minimum observed stack
-margin 1,231 bytes for the original bread pair. These results cover the retained images; no physical-board
+were 1,995–2,005 CPU cycles, maximum complete interrupt 76 cycles, minimum observed stack
+margin 1,231 bytes across all eight images. The observer charges the four-cycle
+AVRe hardware entry omitted by simavr 1.6 and finishes timing after RETI
+retires; the previous 68-cycle figure omitted these eight cycles. All eight
+images were rebuilt from the merged AVR25/Nano sources and remain byte-identical
+to the previous Nano release. Their complete sizes are 4.926–6.320 KiB.
+These results cover the retained images; no physical-board
 or analog-output test is claimed. Path-free receipts and SHA-256 hashes are
 in `../../firmware-atmega328p.json`; private build logs remain in ignored `build/`.
 

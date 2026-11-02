@@ -35,7 +35,7 @@ static uint64_t irq_start,irq_total,irq_max,output_first,output_last;
 static uint64_t previous_output,min_output=UINT64_MAX,max_output;
 static uint32_t minimum_sp=UINT32_MAX,minimum_sp_play=UINT32_MAX,min_queue=UINT32_MAX;
 static uint32_t old_head,entry_tail,entry_head,expected_sample,irq_writes;
-static unsigned in_irq,started,valid,observer_errors,sp_ready;
+static unsigned in_irq,irq_finishing,started,valid,observer_errors,sp_ready;
 static int read_metadata(const char *path){
     FILE *file=fopen(path,"rb");if(!file)return 0;
     char text[1024];size_t bytes=fread(text,1,sizeof(text)-1,file);
@@ -151,6 +151,9 @@ static void audio_irq(struct avr_irq_t *irq,uint32_t value,void *param){
         if(ticks){uint64_t d=cpu->cycle-previous_tick;if(d<min_tick)min_tick=d;if(d>max_tick)max_tick=d;}
         else first_tick=cpu->cycle;
         previous_tick=cpu->cycle;++ticks;
+        // simavr 1.6 does not charge AVRe's four-cycle hardware entry.
+        // Advance before executing the vector; timers see it on avr_run.
+        cpu->cycle+=4;
         entry_head=index_at(HEAD_ADDR);entry_tail=index_at(TAIL_ADDR);
         if(entry_tail>=m[QUEUE_SIZE] || entry_head>=m[QUEUE_SIZE]){
             ++observer_errors;valid=0;expected_sample=128;return;
@@ -162,7 +165,8 @@ static void audio_irq(struct avr_irq_t *irq,uint32_t value,void *param){
         if(!in_irq || irq_writes!=1)++observer_errors;
         uint32_t tail=index_at(TAIL_ADDR),expected=(entry_tail+(valid?1:0))&(m[QUEUE_SIZE]-1);
         if(tail!=expected || index_at(HEAD_ADDR)!=entry_head)++observer_errors;
-        uint64_t duration=cpu->cycle-irq_start;irq_total+=duration;if(duration>irq_max)irq_max=duration;
+        // RUNNING falls before RETI retires. Finish timing after avr_run.
+        irq_finishing=1;
         in_irq=0;
     }
 }
@@ -175,6 +179,7 @@ int main(int argc,char **argv){
     cpu->frequency=16000000;
     if(!metadata_valid(argv[1])){fprintf(stderr,"Invalid observer metadata/ELF/device contract\n");return 2;}
     avr_load_firmware(cpu,&firmware);
+    cpu->run_cycle_limit=1;
     output=fopen(argv[2],"wb");if(!output)return 5;
     avr_irq_t *audio=avr_get_interrupt_irq(cpu,m[TIMER_VECTOR]);if(!audio)return 4;
     avr_irq_register_notify(audio+AVR_INT_IRQ_PENDING,timer_event,NULL);
@@ -183,6 +188,10 @@ int main(int argc,char **argv){
     int state=cpu_Running;uint64_t stopped_at=0;
     while(cpu->cycle<UINT64_C(2000000000) && state!=cpu_Crashed && state!=cpu_Done){
         state=avr_run(cpu);
+        if(irq_finishing){
+            uint64_t duration=cpu->cycle-irq_start;irq_total+=duration;if(duration>irq_max)irq_max=duration;
+            irq_finishing=0;
+        }
         uint32_t sp=cpu->data[m[SPL_ADDR]]|((uint32_t)cpu->data[m[SPH_ADDR]]<<8);
         if(sp>=(uint32_t)cpu->ioend+1 && sp<=cpu->ramend)sp_ready=1;
         if(sp_ready && sp<minimum_sp)minimum_sp=sp;
@@ -217,7 +226,7 @@ int main(int argc,char **argv){
       "\"stopped\":%u,\"eof\":%u,\"decoder_error\":%u,\"observer_errors\":%u,"
       "\"timer_started\":%u,\"timer_ticks\":%llu,\"timer_events\":%llu,\"produced\":%llu,\"played\":%llu,\"underruns\":%llu,\"queued_at_stop\":%u,"
       "\"tick_interval_min_cycles\":%llu,\"tick_interval_max_cycles\":%llu,\"pwm_interval_min_cycles\":%llu,\"pwm_interval_max_cycles\":%llu,"
-      "\"irq_cycles_total\":%llu,\"irq_cycles_max\":%llu,\"min_queue_before_producer_eof\":%u,"
+      "\"irq_cycles_total\":%llu,\"irq_cycles_max\":%llu,\"irq_entry_cycles\":4,\"irq_reti_complete\":true,\"min_queue_before_producer_eof\":%u,"
       "\"minimum_stack_pointer_all\":%u,\"minimum_stack_pointer_playback\":%u,\"bss_end\":%u,\"stack_margin_all_bytes\":%d,\"stack_margin_playback_bytes\":%d,\"total_cycles\":%llu}\n",
       cpu->data[m[STOP_ADDR]],cpu->data[m[EOF_ADDR]],cpu->data[m[ERROR_ADDR]],observer_errors,
       started,(unsigned long long)ticks,(unsigned long long)pending_ticks,(unsigned long long)produced,(unsigned long long)played,(unsigned long long)underruns,queued,

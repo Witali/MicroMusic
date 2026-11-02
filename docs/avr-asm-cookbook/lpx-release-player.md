@@ -85,3 +85,30 @@ frontier must use actual complete application measurements.
 and [held-out smaller-and-better pair](../../Codecs/LPX/research/v5-pareto95-player-admission-2026-10-28/README.md)
 retain the original project method, source/toolchain provenance and exact
 anonymous scope; private audio and media fingerprints stay in ignored build.
+
+## Complete interrupt timing on simavr 1.6 (2026-11-02)
+
+simavr 1.6 does not charge AVRe's four hardware response cycles, and its
+RUNNING notification falls before RETI's four cycles retire. The current
+ATmega328P observer advances the CPU clock by four at entry, completes the
+duration after `avr_run` returns from RETI and uses one-instruction stepping.
+This matches the [Tiny88 observer calibration](lpx-avr25.md); it changes the
+host measurement, not the AVR firmware. Do not apply it to another simulator
+version without checking that runtime's entry and return behavior.
+
+All eight WebUI Nano P4/P6 images were rebuilt from the merged sources using
+AVR-GCC 7.3.0, the existing small-code recipe, explicit ASM and FIFO256/192.
+The exact HEX bytes and 756-byte static SRAM remain unchanged. Full images
+occupy 4.926–6.320 KiB. Every one of 122,508 output samples matches the public
+WAV, with zero underruns, empty final queues and stopped sample timers.
+Calibrated complete IRQ maximum is 76 cycles (previous uncalibrated value:
+68); sample IRQ intervals are 1995–2005 cycles and observed stack margin is
+1231 bytes. [Source hashes and per-image timing](../../web-player/firmware-atmega328p.json)
+pin this eight-image admission; earlier matrices remain historical evidence.
+
+The explicitly selected C fallback was also rebuilt on the longest quality
+phrase (`vinni`, P6, 23,757 samples). Valid decoded PWM remains exact, but
+6,356 empty-buffer ticks correctly reject continuous 8 kHz admission. This
+negative control verifies that the release gate detects insufficient
+throughput. C remains selectable; real-time support here applies to ASM.
+No physical-board or analog measurement is claimed.

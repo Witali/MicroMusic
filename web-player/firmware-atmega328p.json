@@ -16,15 +16,19 @@
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/INPUT_CALLBACK.md": "9470f3e91f3d335d628e6e86589d80c4cbd35016d464bfacce7e5a72aeeba8e4",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "2993d1275aec899543731f9e5efa72887237a5696fe1a7d63057bf486b9bffb4",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "c7211f7c039bbfe17014cb8f145d40412b544fe86d04df897d6877efcae6f3d0",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "3e305a5fe5851c8d421c744c256c178f790b068f1c741a0005f48dd8e3c96a8a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "d052a61b535c18bf8fc6c2e04c777d6bf02f4c803c5acd236121e5e2cbaf5f89",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "a192f502235b4c258bcd443a3af974e8b5727e15d399ef0c8aa23a29a0cf63a9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "86dd3aad4c492c50a4f42b23aaf8cc78ef1e232ee6af7f89d1730b960534382f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/AVR_V5_PLAYER/player.cpp": "ebaa83e7e47eb8e26d38e74cf6ba693de1682c8c98f079af927dff808a683674",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/AVR_V5_PLAYER/player_config.h": "52492e9a832bc567c02cfaa6253fedcd0ea3a9a813930e4e609f79f0e43b62c9",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py": "1fba71295fbe982ae57a10678a32bfc490a7f1e5a32a5e47c994275c653ce97c",
-    "tools/build-nano-speech-catalog.py": "e4a6809887ce8539c2b551515e9bf86de6363251977580f09dcf9a675fccec43"
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_observer.py": "857d9cd987968742b549224d2271b01a8318adcc05b30d1a8773498f181fa44a",
+    "Codecs/LPX/validation/atmega328p/sim_player.c": "373a80d8c66e48e1d21ba90b36655ca11d1a1a7060e8e1753e6e769b3daeee8a",
+    "Codecs/LPX/validation/atmega328p/player_hardware.cpp": "f65df39755a35177697b4945dcb367678ca32d160f564eeec20bde135731f427",
+    "tools/build-nano-speech-catalog.py": "ba825e88bb1bd88052526b87ad1477065d4e52141b717b7f994608dc779ded90"
   },
   "clips": [
     {
@@ -186,7 +190,9 @@
         "underruns": 0,
         "minTickCycles": 1997,
         "maxTickCycles": 2003,
-        "maxIrqCycles": 68,
+        "maxIrqCycles": 76,
+        "irqEntryCycles": 4,
+        "irqRetiComplete": true,
         "stackMarginBytes": 1231
       }
     },
@@ -203,9 +209,11 @@
         "simulator": "simavr 1.6",
         "playedSamples": 9831,
         "underruns": 0,
-        "minTickCycles": 1998,
-        "maxTickCycles": 2003,
-        "maxIrqCycles": 68,
+        "minTickCycles": 1996,
+        "maxTickCycles": 2004,
+        "maxIrqCycles": 76,
+        "irqEntryCycles": 4,
+        "irqRetiComplete": true,
         "stackMarginBytes": 1231
       }
     },
@@ -224,7 +232,9 @@
         "underruns": 0,
         "minTickCycles": 1997,
         "maxTickCycles": 2003,
-        "maxIrqCycles": 68,
+        "maxIrqCycles": 76,
+        "irqEntryCycles": 4,
+        "irqRetiComplete": true,
         "stackMarginBytes": 1231
       }
     },
@@ -243,7 +253,9 @@
         "underruns": 0,
         "minTickCycles": 1997,
         "maxTickCycles": 2003,
-        "maxIrqCycles": 68,
+        "maxIrqCycles": 76,
+        "irqEntryCycles": 4,
+        "irqRetiComplete": true,
         "stackMarginBytes": 1231
       }
     },
@@ -262,7 +274,9 @@
         "underruns": 0,
         "minTickCycles": 1997,
         "maxTickCycles": 2003,
-        "maxIrqCycles": 68,
+        "maxIrqCycles": 76,
+        "irqEntryCycles": 4,
+        "irqRetiComplete": true,
         "stackMarginBytes": 1231
       }
     },
@@ -281,7 +295,9 @@
         "underruns": 0,
         "minTickCycles": 1997,
         "maxTickCycles": 2003,
-        "maxIrqCycles": 68,
+        "maxIrqCycles": 76,
+        "irqEntryCycles": 4,
+        "irqRetiComplete": true,
         "stackMarginBytes": 1231
       }
     },
@@ -298,9 +314,11 @@
         "simulator": "simavr 1.6",
         "playedSamples": 19200,
         "underruns": 0,
-        "minTickCycles": 1997,
-        "maxTickCycles": 2003,
-        "maxIrqCycles": 68,
+        "minTickCycles": 1996,
+        "maxTickCycles": 2004,
+        "maxIrqCycles": 76,
+        "irqEntryCycles": 4,
+        "irqRetiComplete": true,
         "stackMarginBytes": 1231
       }
     },
@@ -317,9 +335,11 @@
         "simulator": "simavr 1.6",
         "playedSamples": 19200,
         "underruns": 0,
-        "minTickCycles": 1997,
-        "maxTickCycles": 2003,
-        "maxIrqCycles": 68,
+        "minTickCycles": 1995,
+        "maxTickCycles": 2005,
+        "maxIrqCycles": 76,
+        "irqEntryCycles": 4,
+        "irqRetiComplete": true,
         "stackMarginBytes": 1231
       }
     }

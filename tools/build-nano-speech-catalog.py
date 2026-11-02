@@ -46,6 +46,8 @@ def main():
                               args.observer, lib=args.lib, wsl=args.wsl,
                               assembly=args.enable_asm)
             cost, report = result['cost'], result['report']
+            if report.get('irq_entry_cycles') != 4 or report.get('irq_reti_complete') is not True:
+                raise ValueError('Nano release requires calibrated complete interrupt timing')
             if cost['flash_bytes'] > 30720 or cost['static_sram_bytes'] >= 2048:
                 raise ValueError('Firmware exceeds the classic Nano application budget')
             with wave.open(str(player / variant['audio']), 'rb') as audio:
@@ -68,12 +70,17 @@ def main():
                                              minTickCycles=report['tick_interval_min_cycles'],
                                              maxTickCycles=report['tick_interval_max_cycles'],
                                              maxIrqCycles=report['irq_cycles_max'],
+                                             irqEntryCycles=report['irq_entry_cycles'],
+                                             irqRetiComplete=report['irq_reti_complete'],
                                              stackMarginBytes=report['stack_margin_all_bytes'])))
             images.append((name, image))
     sources = [*sorted((CODEC / 'src').glob('*')),
                CODEC / 'examples/AVR_V5_PLAYER/player.cpp',
                CODEC / 'examples/AVR_V5_PLAYER/player_config.h',
-               CODEC / 'tools/build_release_player.py', Path(__file__)]
+               CODEC / 'tools/build_release_player.py',
+               CODEC / 'tools/build_release_observer.py',
+               CODEC.parent / 'validation/atmega328p/sim_player.c',
+               CODEC.parent / 'validation/atmega328p/player_hardware.cpp', Path(__file__)]
     catalog = dict(schema='micromusic-lpx-avr-firmware-v2', device='atmega328p',
                    cpuHz=16000000, sampleHz=8000, pwmHz=62500, pwmOutput='D3 / PD3 / OC2B',
                    queue=256, prefill=192, assemblyEnabled=args.enable_asm,

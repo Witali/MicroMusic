@@ -70,6 +70,13 @@ APIs. It independently derives useful output, hardware ticks, underruns,
 publication/consumption counts, queue state and IRQ duration. Stack observation
 covers startup/prefill and playback, with those coverage labels separate.
 
+The current observer targets simavr 1.6: it charges the four-cycle AVRe
+hardware entry that this runtime omits and ends IRQ timing after RETI retires.
+One-instruction stepping preserves stack and output observation. Historical
+receipts below predate this calibration and are not updated measurements.
+The eight WebUI Nano releases were rebuilt and verified with the calibrated
+observer; see the [release catalog](../../../../../web-player/firmware-atmega328p.json).
+
 A separate `player_hardware.cpp` object obtains addresses, vector number and
 configuration from vendor headers. It is never linked into the production
 ELF. Its sidecar combines those values with actual ELF playback addresses.

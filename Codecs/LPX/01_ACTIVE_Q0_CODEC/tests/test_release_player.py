@@ -56,7 +56,7 @@ class ReleaseObserverMetadataTests(unittest.TestCase):
         malformed.append(('swapped-state',' '.join(map(str,bad)).encode()))
         bad=list(values);bad[17]=bad[16]
         malformed.append(('prefill-at-capacity',' '.join(map(str,bad)).encode()))
-        bad=list(values);bad[16]=256;bad[17]=192;bad[18]=1
+        bad=list(values);bad[16]=128 if values[16]!=128 else 256;bad[17]=bad[16]*3//4;bad[18]=1
         malformed.append(('wrong-elf-queue',' '.join(map(str,bad)).encode()))
         valid=' '.join(map(str,values)).encode()
         malformed += [('empty',b''),('negative',b'-1 '+valid),('overflow',b'4294967296 '+valid),

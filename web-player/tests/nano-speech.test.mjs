@@ -28,7 +28,8 @@ test('Nano releases contain the exact public LPX streams and match sanitized tim
     assert.equal(variant.programFlashBytes+stream.length,variant.flashBytes);
     assert.ok(variant.staticSramBytes<2048);assert.ok(variant.timing.stackMarginBytes>0);
     assert.equal(variant.timing.playedSamples,clip.samples);assert.equal(variant.timing.underruns,0);
-    assert.ok(variant.timing.minTickCycles>=1997);assert.ok(variant.timing.maxTickCycles<=2003);
+    assert.equal(variant.timing.irqEntryCycles,4);assert.equal(variant.timing.irqRetiComplete,true);
+    assert.ok(variant.timing.minTickCycles>=1995);assert.ok(variant.timing.maxTickCycles<=2005);
   }
   assert.equal(catalog.sourceHashEncoding,'text-lf');
   for(const [path,expected] of Object.entries(catalog.sourceSha256))
