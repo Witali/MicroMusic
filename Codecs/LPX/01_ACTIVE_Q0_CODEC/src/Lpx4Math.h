@@ -137,69 +137,15 @@ static inline __attribute__((always_inline)) int32_t lpx4Shift14(int32_t v){
 #endif
 static LPX4_MUL_INLINE int32_t lpx4Mul16(int16_t x,int16_t y);
 
-#if LPX4_USE_AVR_NOMUL_ASM
-template<bool signedByte,bool signedWord>
-static inline __attribute__((always_inline)) int32_t lpx4ByteWord(uint8_t x,uint16_t y){
-    int32_t result;
-    __asm__(
-        "mov %A0,%1\n\tclr %B0\n\tclr %C0\n\tlsr %A0\n\t"
-        ".rept 8\n\tbrcc 1f\n\tadd %B0,%A2\n\tadc %C0,%B2\n\t"
-        "1: ror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
-        ".if %3\n\tsbrs %1,7\n\trjmp 2f\n\tsub %B0,%A2\n\tsbc %C0,%B2\n\t2:\n\t.endif\n\t"
-        ".if %4\n\tsbrc %B2,7\n\tsub %C0,%1\n\t.endif\n\t"
-        "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\t"
-        : "=&r"(result) : "r"(x),"r"(y),"I"(signedByte),"I"(signedWord) : "cc");
-    return result;
-}
+// Exact signed8 x signed16, signed8 x unsigned16 and signed16 x signed16.
+// Parser, filters and memory access share these same C/ASM interfaces.
+#if LPX4_USE_AVR_ASM || LPX4_USE_AVR_NOMUL_ASM
+#include "Lpx4MultiplyAvr.h"
+#else
+#include "Lpx4MultiplyC.h"
 #endif
 
-// Exact signed8 x signed16 product. Both partial products fit signed24;
-// keep the full signed16 x signed16 helper separate.
-static inline __attribute__((always_inline)) int32_t lpx4Mul8x16(int8_t x,int16_t y){
-#if LPX4_USE_AVR_ASM
-    int32_t result;
-    __asm__(
-        "mulsu %1,%A2\n\tmovw %A0,r0\n\t"
-        "mov %C0,r1\n\tlsl %C0\n\tsbc %C0,%C0\n\t"
-        "muls %1,%B2\n\tadd %B0,r0\n\tadc %C0,r1\n\t"
-        "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\t"
-        "clr __zero_reg__\n\t"
-        : "=&r"(result) : "a"(x),"a"(y) : "r0","r1","cc");
-    return result;
-#elif LPX4_USE_AVR_NOMUL_ASM
-    return lpx4ByteWord<true,true>((uint8_t)x,(uint16_t)y);
-#else
-    return (int32_t)x*y;
-#endif
-}
 
-// Exact signed8 x unsigned16; full product fits signed24 even for x=-128.
-static inline __attribute__((always_inline)) int32_t lpx4Mul8xU16(int8_t x,uint16_t y){
-#if LPX4_USE_AVR_ASM
-    int32_t result;
-    __asm__(
-        "mulsu %1,%A2\n\tmovw %A0,r0\n\t"
-        "mov %C0,r1\n\tlsl %C0\n\tsbc %C0,%C0\n\t"
-        "mulsu %1,%B2\n\tadd %B0,r0\n\tadc %C0,r1\n\t"
-        "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\tclr __zero_reg__\n\t"
-        : "=&r"(result) : "a"(x),"a"(y) : "r0","r1","cc");
-    return result;
-#elif LPX4_USE_AVR_NOMUL_ASM
-    if(!x)return 0;
-    if(x==1)return y;
-    if(x==-1)return -(int32_t)y;
-    if(x==3 || x==-3){
-        uint32_t triple=y;
-        __asm__("lsl %A0\n\trol %B0\n\trol %C0\n\t"
-                "add %A0,%A1\n\tadc %B0,%B1\n\tadc %C0,__zero_reg__\n\t"
-                : "+&r"(triple) : "r"(y) : "cc");
-        return x<0?-(int32_t)triple:(int32_t)triple;
-    }
-    return lpx4ByteWord<true,false>((uint8_t)x,y);
-#else
-    return (int32_t)x*y;
-#endif
-}
 
 // Pitch gain0..31, history code -32..31: rounded Q4 lies in -62..60.
 // Extract product bits4..11 with two nibble swaps instead of 16-bit shifts.
@@ -230,37 +176,6 @@ static inline __attribute__((always_inline)) int32_t lpx4Excitation(int8_t x,uin
     return lpx4Mul8x16(x,(int16_t)step);
 }
 
-static LPX4_MUL_INLINE int32_t lpx4Mul16(int16_t x,int16_t y){
-#if LPX4_USE_AVR_ASM
-    int32_t result;
-    __asm__(
-        "clr r2\n\tmuls %B1,%B2\n\tmovw %C0,r0\n\t"
-        "mul %A1,%A2\n\tmovw %A0,r0\n\t"
-        "mulsu %B1,%A2\n\tsbc %D0,r2\n\t"
-        "add %B0,r0\n\tadc %C0,r1\n\tadc %D0,r2\n\t"
-        "mulsu %B2,%A1\n\tsbc %D0,r2\n\t"
-        "add %B0,r0\n\tadc %C0,r1\n\tadc %D0,r2\n\t"
-        "clr __zero_reg__\n\t"
-        : "=&r"(result) : "a"(x),"a"(y) : "r0","r1","r2","cc");
-    return result;
-#elif LPX4_USE_AVR_NOMUL_ASM
-    // Original AVR25 prototype: unsigned carry-rotation product, followed by
-    // two independent modulo-2^32 signed corrections. Includes signed minima.
-    uint32_t result;
-    uint16_t original=y;
-    __asm__(
-        "movw %A0,%A2\n\tclr %C0\n\tclr %D0\n\t"
-        "lsr %B0\n\tror %A0\n\t"
-        ".rept 16\n\tbrcc 1f\n\tadd %C0,%A1\n\tadc %D0,%B1\n\t"
-        "1: ror %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
-        "sbrs %B1,7\n\trjmp 2f\n\tsub %C0,%A2\n\tsbc %D0,%B2\n\t"
-        "2: sbrs %B2,7\n\trjmp 3f\n\tsub %C0,%A1\n\tsbc %D0,%B1\n\t3:\n\t"
-        : "=&r"(result) : "r"(x),"r"(original) : "cc");
-    return (int32_t)result;
-#else
-    return (int32_t)x*y;
-#endif
-}
 
 // Low 32 bits of a signed32 x signed16 product. The decoder checks the
 // polynomial bound before calling; modular decomposition avoids signed UB.

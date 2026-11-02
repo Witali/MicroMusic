@@ -124,3 +124,24 @@ Primary references: [AVR200 / AN0936, revision 0936D](https://ww1.microchip.com/
 [simavr 1.6 timer API/implementation](https://github.com/buserror/simavr/blob/v1.6/simavr/sim/avr_timer.c).
 
 Timing-boundary references: [simavr 1.6 interrupt dispatch](https://github.com/buserror/simavr/blob/v1.6/simavr/sim/sim_interrupts.c), [RETI retirement](https://github.com/buserror/simavr/blob/v1.6/simavr/sim/sim_core.c).
+
+## Share the decoder and select C or ASM multiplication
+
+`Lpx4Math.h` now selects one private multiplication header:
+`Lpx4MultiplyC.h` or `Lpx4MultiplyAvr.h`. Both expose the same exact signed
+8x16, signed8 x unsigned16 and signed16 x signed16 functions. Parsing,
+memory access, filters and the public decoder interface stay shared. The
+ASM header selects hardware MUL for supported AVR5 and software products
+for supported AVR25 from the real compiler ISA macros. There are two user
+choices: portable C by default, or explicit `LPX4_ENABLE_ASM=1`. Forcing
+`LPX4_ARCH_GENERIC` still selects C on AVR; unsupported targets also use C.
+
+This is a source organization change with no measured Flash, SRAM or speed
+gain. AVR-GCC 7.3.0 rebuilt all 18 Tiny88 matrix images byte-identically;
+every timing/output/acceptance row also matches the previous matrix, including
+the heavy P6 cases and rejection controls. All eight WebUI Nano HEX files
+remain byte-identical and pass complete active-IRQ/WAV verification. Portable
+C passes 5,768,584 independent cases per host configuration. Real AVR25
+C/ASM/forced-generic each pass the same 17,958 arithmetic/ABI cases with
+active interrupts; instruction counts are unchanged. Updated source hashes
+in the matrix and WebUI catalog include both multiplication headers.

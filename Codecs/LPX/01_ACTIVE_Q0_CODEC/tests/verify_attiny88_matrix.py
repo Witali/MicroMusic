@@ -80,7 +80,8 @@ def run(output,controls=True):
         except ValueError as exc:
             if 'Complete image' not in str(exc):raise
         else:raise AssertionError('The bootloader Flash cap was not enforced')
-    sources=[ROOT/'src/Lpx4Math.h',ROOT/'src/Lpx4HybridCore.cpp',ROOT/'src/Lpx4HybridCore.h',
+    sources=[ROOT/'src/Lpx4Math.h',ROOT/'src/Lpx4MultiplyC.h',ROOT/'src/Lpx4MultiplyAvr.h',
+             ROOT/'src/Lpx4HybridCore.cpp',ROOT/'src/Lpx4HybridCore.h',
              ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp',ROOT/'tools/build_attiny88_player.py',
              ROOT/'tools/verify_attiny88_player.py',ROOT.parent/'validation/attiny88/sim_player.c',Path(__file__)]
     receipt=dict(schema='lpx-avr25-realtime-v1',cpu='ATtiny88 / AVR25',clock_hz=16000000,
