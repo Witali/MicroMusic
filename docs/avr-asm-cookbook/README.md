@@ -3047,6 +3047,11 @@ admitted gain-zero preparation, exhaustive unity-Q15 arithmetic, retained prior
 pulses and measured shared-loop Flash/speed tradeoffs. Complementary-coefficient
 identities remain host-checked, without target admission.
 
+The same entry now includes measured zero-context quarter synthesis: retain
+incoming cursor state, share the prologue/epilogue, preserve arbitrary-table
+behavior in the general entry and remove only proven zero work. Its portable C
+equivalent and explicit backend selection are verified on the same vectors.
+
 [Bounded forced-pitch arithmetic](speex-bounded-forced-math.md): exact
 signed22/Q6 alignment and unsigned16 coefficient mapping, exhaustive AVR input
 domain and explicitly selectable C, with measured full decoder/IRQ/SPI admission.

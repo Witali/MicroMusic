@@ -1,0 +1,43 @@
+{
+  "scope": "Isolated C/ASM vectors; no C decoder execution or timing",
+  "backend": "asm",
+  "binarySha256": "e1175b853e49d48dc19531738b8fdb2d584c0776234ebc352b7e56ae446eb654",
+  "cases": 33255,
+  "pathsPerCase": 5,
+  "pitchPhasePairs": 18432,
+  "fullSigned16CurrentSweep": true,
+  "incomingDifferenceOverflowEdges": true,
+  "originalTwoProductReference": true,
+  "wordsAndCursorExact": true,
+  "readOnlyInputsAndOutputBounds": true,
+  "explicitCSelectionVerified": true,
+  "calleeSavedAndR1Returns": 99765,
+  "stats": {
+    "general": {
+      "calls": 33255,
+      "minCycles": 3177,
+      "maxCycles": 3268,
+      "muls": 5320800,
+      "previousBytes": 2660400,
+      "pulseBytes": 133020
+    },
+    "zero": {
+      "calls": 66510,
+      "minCycles": 2660,
+      "maxCycles": 2745,
+      "muls": 10641600,
+      "previousBytes": 0,
+      "pulseBytes": 0
+    }
+  },
+  "pairedZeroMinusGeneralCycles": {
+    "min": -526,
+    "max": -517,
+    "total": -17224155,
+    "mean": -517.9418132611637
+  },
+  "removedPreviousAndPulseBytesPer40": 84,
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "peakStack": 46
+}

@@ -62,6 +62,28 @@ Target/toolchain/ABI are those above; benefits are only measured for this build.
 [Bounded and general helpers](../../Codecs/Speex/AVR/src/nb1_zero_gain.h),
 [complete evidence and reproduction](../../Codecs/Speex/AVR/WB_ZERO_GAIN.md).
 
+## Specialize a proven zero context without clearing its incoming cursor
+
+For prepared NB1 contexts only, previous[0]==0 proves all previous words and
+both new pulses zero. The arithmetic proof covers the complete bounded domain;
+the pinned 32 packet scales start at 16384, so current packets reach this path
+only at gain 0. Keep the general arbitrary-table entry unchanged in meaning.
+
+A separate zero ASM entry shares the existing prologue/epilogue via a short-
+lived T selector through flag-neutral setup. Consume incoming pulse-minus-noise
+on sample0, then omit previous-table and pulse work. Preserve mean, phase,
+last class and RNG. Its explicitly selectable C equivalent uses the same
+cursor/context interface; allocate no RAM flag. Architecture + explicit ASM
+enablement remain necessary, independent of hardware memory reads.
+
+On the target/toolchain above, 33255 vectors per backend compare general/zero
+C/ASM and the selected path with the original recurrence. Zero ASM saves
+517..526 cycles /84 SRAM bytes read per 40 words, with 160 mean MULs unchanged.
+Complete WB3.95 speech CPU improves 69.388% ->69.222% for 188 B Flash; static and
+peak RAM stay fixed. Ordinary frames cost 100 extra dispatch cycles, already
+included. Full PCM, +8/+11% IRQ and scheduled SPI remain exact without underruns.
+[Contract, measurements and scope](../../Codecs/Speex/AVR/WB_ZERO_SYNTHESIS.md).
+
 ## Further identities: host-checked, not admitted on target
 
 These original derivations have only exhaustive host-integer formula checks;
@@ -80,6 +102,6 @@ noise_gain = (uint16_t)(32767u - ((uint16_t)g<<9) + previous_gain);
 ```
 
 Host checks cover all 65536 pulse amplitudes and all 65 gains. Retain bounds/casts
-when adapting. Zero-gain quarter synthesis and paired opposite-noise prefold
-remain unmeasured candidates. Do not use completed innovation as prediction.
+when adapting. Prepared dispatch inside ASM, finite pitch-root lookup and paired
+opposite-noise prefold remain unmeasured candidates. Do not use completed innovation as prediction.
 Measure compiled callers, stack and loaded IRQ/SPI before accepting them.

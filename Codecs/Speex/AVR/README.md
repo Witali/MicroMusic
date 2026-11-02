@@ -99,6 +99,14 @@ grows 2 B and WB stack/static SRAM stay unchanged. Full raw, +8%/+11% WB IRQ
 and continuous SPI pass without underruns. Full-domain unity arithmetic and
 explicit nonzero-prior-pulse state cases are verified; portable C is retained.
 
+[Exact zero-context quarter synthesis](WB_ZERO_SYNTHESIS.md) then removes
+unused previous-noise/pulse reads while preserving the incoming cursor on the
+first sample and the exact mean/phase recurrence. WB3.95 speech CPU improves
+**69.388% ->69.222%**, with 188 B extra Flash and unchanged static/peak SRAM.
+All 10627 raw frames, both full +8%/+11% IRQ runs and 3600 continuous SPI frames
+remain exact without underruns. Equivalent C is selectable on AVR itself;
+the general primitive retains arbitrary-context behavior.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100
