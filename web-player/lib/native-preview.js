@@ -1,4 +1,4 @@
-// Native previews are catalog audio entries, never AVR firmware images.
+// Native audio and downloadable firmware have separate, explicit metadata.
 function readFlashMeasurement(value,encodedBytes) {
   if(value===undefined)return undefined;
   if(!value||value.target!=='attiny88'||value.memoryProfile!=='sram512'||value.flashMeasurementKind!=='unpaced-test-image'
@@ -46,6 +46,25 @@ export function lpxPreviewEntries(data,baseURL) {
       playOnce:true,audioChannels:1,streamBytes:variant.bytes,bitrateBps:variant.bitrateBps,
       flashMeasurement:readFlashMeasurement(variant.flashMeasurement,variant.bytes),
       nativeAudioUrl:asset(variant.audio,'.wav'),streamUrl:asset(variant.stream,'.lpx'),originalAudioUrl:reference};
+  });
+}
+
+export function lpxFirmwareEntries(data,baseURL) {
+  if(data.schema!=='micromusic-lpx-avr-firmware-v1'||data.device!=='atmega328p'||data.cpuHz!==16000000||data.sampleHz!==8000
+    ||!Array.isArray(data.variants)||data.variants.length!==2||new Set(data.variants.map(variant=>variant?.id)).size!==2)
+    throw Error('Неверный каталог речевых прошивок Arduino Nano.');
+  const base=new URL('./',baseURL);
+  return lpxPreviewEntries(data.preview,baseURL).filter(entry=>entry.codec==='lpx-v5').map(entry=>{
+    const variant=data.variants.find(item=>item.id===entry.id.replace('lpx-bread-',''));
+    if(!variant||!['flashBytes','programFlashBytes','staticSramBytes'].every(key=>Number.isSafeInteger(variant[key])&&variant[key]>0)
+      ||variant.flashBytes>30720||variant.staticSramBytes>=2048||variant.programFlashBytes+entry.streamBytes!==variant.flashBytes
+      ||!/^[a-f0-9]{64}$/.test(variant.hexSha256)||variant.timing?.underruns!==0||variant.timing?.playedSamples!==entry.phraseSamples)
+      throw Error('Неверные параметры прошивки Arduino Nano.');
+    const source=new URL(variant.source,base);
+    if(source.origin!==base.origin||!source.pathname.startsWith(base.pathname+'firmware/arduino-nano/')||!source.pathname.endsWith('.hex'))
+      throw Error('Неверный адрес прошивки Arduino Nano.');
+    return {...entry,id:entry.id.replace('lpx-bread-','lpx-nano-bread-'),device:'atmega328p',intendedBoard:'arduino-nano-16mhz',
+      flashMeasurement:undefined,firmware:{...variant,source:source.href}};
   });
 }
 

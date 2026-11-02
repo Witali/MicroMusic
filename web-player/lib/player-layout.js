@@ -5,29 +5,56 @@ export const tiny88Boards={
 };
 export const boardId=value=>Object.hasOwn(tiny88Boards,value)?value:'bare-8mhz';
 
+export const playerDevices={
+  attiny13a:{name:'ATtiny13A',flashBytes:1024,sramBytes:64,eepromBytes:64,cpuHz:9600000},
+  attiny88:{name:'ATtiny88',flashBytes:8192,sramBytes:512,eepromBytes:64,cpuHz:8000000},
+  atmega328p:{name:'Arduino Nano / ATmega328P',flashBytes:32768,sramBytes:2048,eepromBytes:1024,cpuHz:16000000},
+};
+
+// All collections use the same header, hardware, transport, signal and library
+// slots in index.html. A device changes their content, never their order.
+export function applyCollectionLayout(document,{device,speech,preview=false}) {
+  const nano=device==='atmega328p',lpx=preview||nano;
+  const name=playerDevices[device].name;
+  if(!speech)return;
+  document.title=`MicroMusic / ${name} — речевые кодеки`;
+  document.querySelector('.intro .eyebrow').textContent=name+' / РЕЧЕВЫЕ КОДЕКИ';
+  document.querySelector('.intro h1').textContent=lpx?'Речь с кодеком LPX.':'Речь в одном килобайте.';
+  document.querySelector('.subtitle').textContent=lpx?'Речевые профили LPX. Сравните с исходной записью.':'Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
+  document.querySelector('.library h2').textContent=lpx?'Выберите качество':'Выберите фразу';
+  document.querySelector('.library-caption').textContent=nano?'Речевые прошивки для Arduino Nano · ATmega328P · 16 МГц.':lpx?'Речевые профили LPX для выбранной платы.':'Слушайте речь из прошивки и сравнивайте с исходной записью.';
+  document.querySelector('.source-only').hidden=true;
+  const history=document.querySelector('.header-link');
+  history.href=lpx?'https://github.com/Witali/MicroMusic/blob/main/Codecs/LPX/README.md':'https://github.com/Witali/MicroMusic/blob/main/ATtiny13A/Sound/AUDIO_REFERENCES.md';
+  history.textContent=lpx?'Кодек LPX ↗':'Звуковые эталоны ↗';
+  document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и нативные LPX-превью';
+}
+
 export function applyDeviceLayout(document,{device,board:currentBoard,speech:speechCollection}) {
   const $=id=>document.getElementById(id);
   const selectedEngine=()=>document.querySelector('input[name="engine"]:checked').value;
-  const tiny88=device==='attiny88', name=tiny88?'ATtiny88':'ATtiny13A';
+  const tiny88=device==='attiny88',nano=device==='atmega328p',name=playerDevices[device].name;
   const micronucleus=tiny88&&currentBoard==='mh-et-live-16mhz';
   const mhz=tiny88?tiny88Boards[currentBoard].cpuHz/1000000:9.6;
   document.body.dataset.device=device;
   document.body.dataset.board=tiny88?currentBoard:'';
   $('device-select').value=device;
   $('device-control').hidden=false;
+  $('device-note').textContent=nano?'Речевые прошивки LPX · Arduino Nano · 16 МГц':speechCollection?'Речевые прошивки и профили выбранного чипа':'Та же мелодия · прошивка для выбранного чипа';
   $('board-control').hidden=!tiny88;
   $('board-select').value=currentBoard;
   $('board-isp-option').disabled=speechCollection;
   $('board-isp-option').textContent='ATtiny88 · 8 МГц · ISP';
   $('board-note').textContent=micronucleus?'Внешний генератор · загрузка по USB · тембры во Flash':'Внутренний RC · загрузка Flash и EEPROM через ISP';
   $('tiny88-clock').textContent=mhz+' MHz · '+(micronucleus?'MH-ET LIVE':'PDIP-28');
-  $('chip-attiny13a').hidden=tiny88; $('chip-attiny88').hidden=!tiny88;
-  $('tiny88-power').hidden=!tiny88;
+  $('chip-attiny13a').hidden=tiny88||nano; $('chip-attiny88').hidden=!tiny88;
+  $('chip-nano').hidden=!nano;
+  $('tiny88-power').hidden=!tiny88&&!nano;
   $('tiny88-power').textContent=micronucleus?'MH-ET LIVE: питание по USB · моно / R — D10 · L — D9.':'PDIP-28: питание VCC 7 и AVCC 20 · земля GND 8 и 22.';
   document.querySelector('.tiny88-vcc').textContent=micronucleus?'USB 5 В':'VCC 7';
   document.querySelector('.tiny88-gnd').textContent=micronucleus?'GND':'GND 8';
-  $('machine-memory').textContent=tiny88?'8':'1';
-  $('machine-details').textContent=tiny88?`512 Б SRAM · 64 Б EEPROM · ${mhz} МГц`:'64 Б SRAM · 64 Б EEPROM · 9,6 МГц';
+  $('machine-memory').textContent=String(playerDevices[device].flashBytes/1024);
+  $('machine-details').textContent=nano?'2 КБ SRAM · 1 КБ EEPROM · 16 МГц':tiny88?`512 Б SRAM · 64 Б EEPROM · ${mhz} МГц`:'64 Б SRAM · 64 Б EEPROM · 9,6 МГц';
   $('fuses').setAttribute('aria-label',micronucleus?'Штатные настройки платы MH-ET LIVE':'Рекомендуемые фьюзы '+name);
   $('fuse-low').textContent=micronucleus?'—':tiny88?'0xEE':'0x7A';
   $('fuse-high').textContent=micronucleus?'—':tiny88?'0xDF':'0xFF';
@@ -44,6 +71,11 @@ export function applyDeviceLayout(document,{device,board:currentBoard,speech:spe
   $('package-file').disabled=false;
   $('package-import-label').textContent=micronucleus?'Открыть пакет UM88 для Micronucleus':tiny88?'Открыть пакет UM88':'Открыть пакет ATtiny13A';
   $('engine-note').textContent='При смене — сброс на начало.';
+  if(nano){
+    document.body.dataset.board='arduino-nano-16mhz';
+    $('tiny88-power').textContent='Arduino Nano · 16 МГц · PWM: D3 / PD3 / OC2B · выход через RC-фильтр на вход усилителя · общая земля GND.';
+    $('package-file').disabled=true;
+  }
   if(!speechCollection) {
     document.title=`MicroMusic / ${name} — плеер прошивок`;
     document.querySelector('.intro .eyebrow').textContent=name+' / МУЗЫКА ИЗ МАШИННОГО КОДА';

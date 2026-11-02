@@ -1,11 +1,11 @@
-import {tiny88Boards,boardId,applyDeviceLayout} from './lib/player-layout.js';
+import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js';
+import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js';
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
-import { lpxPreviewEntries, previewWaveform } from './lib/native-preview.js?v=20261101-flash';
+import { lpxPreviewEntries, lpxFirmwareEntries, previewWaveform } from './lib/native-preview.js?v=20261102-nano';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
-const bitrateLabel = bps => `${bps%1000?'≈ ':''}${Math.round(bps/1000).toLocaleString('ru')} кбит/с`;
 const canvas = $('wave');
 const originalAudio = $('original-audio');
 const previewAudio=$('preview-audio'), previewWaves=new Map();
@@ -17,7 +17,7 @@ let session=0, hasPlayed=false, completed=false, realtime;
 let playAttempt=0, busyAttempt=0;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
 let originalLoading=false, originalAttempt=0;
-const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4';
+const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4'||new URL(location.href).searchParams.get('device')==='atmega328p';
 let currentDevice='attiny13a', currentBoard=boardId(new URL(location.href).searchParams.get('board')), deviceRequest=0;
 let importAttempt=0;
 
@@ -51,7 +51,11 @@ function deviceUI(device) {
 async function switchDevice(device,board=currentBoard) {
   if(!catalog&&speechCollection)return;
   const request=++deviceRequest;
-  device=device==='attiny88'?'attiny88':'attiny13a';
+  device=device==='atmega328p'?'atmega328p':device==='attiny88'?'attiny88':'attiny13a';
+  if(device==='atmega328p'&&!speechCollection){
+    const url=new URL(location.href);url.searchParams.set('collection','hq4');url.searchParams.set('device',device);
+    url.searchParams.delete('firmware');url.searchParams.delete('board');location.href=url.href;return;
+  }
   board=boardId(board);
   if(speechCollection){
     const entries=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
@@ -91,15 +95,19 @@ function transport() {
 }
 function previewUI(enabled) {
   document.body.dataset.preview=String(enabled);
-  for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import','rom-hash'])$(id).hidden=enabled;
+  for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import'])$(id).hidden=enabled;
+  $('rom-hash').hidden=enabled&&!selected?.firmware;
   $('preview-note').hidden=!enabled;
+  $('preview-playback-note').textContent=selected?.firmware
+    ? 'ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Полный HEX для Arduino Nano проверен в simavr с активными прерываниями, без пропусков. В браузере воспроизводится WAV; физическая плата не проверялась.'
+    : 'ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Целевая плата — MH-ET LIVE Tiny88, 16 МГц. Работа LPX-прошивки на этой плате ещё не подтверждена.';
   $('preview-format-note').hidden=!enabled||!selected?.formatNotice;
   $('preview-format-note').textContent=enabled&&selected?.formatNotice?selected.formatNotice+' ':'';
   $('flash-measurement-note').hidden=!enabled||!selected?.flashMeasurement;
   $('flash-measurement-note').textContent=enabled&&selected?.flashMeasurement?'Размер относится к тестовой сборке без очереди и звукового ISR. ':'';
   document.querySelector('.signal-outputs').hidden=enabled;
   if(enabled){
-    $('tiny88-power').textContent='Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц.';
+    if(currentDevice==='attiny88')$('tiny88-power').textContent='Целевой профиль: MH-ET LIVE Tiny88 · 16 МГц.';
     $('cpu-status').textContent='';$('memory').textContent='';$('rom-size').textContent='';
     for(const id of ['average','isr','lost','headroom','tempo','lag'])$(id).textContent='—';
   }
@@ -193,25 +201,7 @@ function downloadUI(id,source,filename,title) {
 function renderCatalog() {
   const query=$('search').value.toLocaleLowerCase('ru').trim();
   const available=catalog.entries.filter(entry=>!speechCollection||(entry.device||'attiny13a')===currentDevice);
-  const entries=available.filter(e => `${e.title} ${e.description} ${e.id} ${e.flashBytes??e.streamBytes}`.toLocaleLowerCase('ru').includes(query));
-  $('catalog').replaceChildren(); $('catalog-count').textContent=query ? `${entries.length} / ${available.length}` : available.length;
-  for (const entry of entries) {
-    const item=document.createElement('div'); item.setAttribute('role','listitem');
-    const button=document.createElement('button'); button.className='firmware-card'; button.dataset.firmware=entry.id;
-    button.setAttribute('aria-pressed',String(selected?.id===entry.id));
-    const number=document.createElement('span'); number.className='card-number'; number.textContent=entry.order;
-    const body=document.createElement('span'); body.className='card-body';
-    const name=document.createElement('strong'); name.textContent=entry.title;
-    const voices=entry.voices??4;
-    const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.playback==='native-pwm8'
-      ? `${entry.flashMeasurement?.programFlashBytes.toLocaleString('ru')??'—'} Б код · ${entry.streamBytes.toLocaleString('ru')} Б данных · ${bitrateLabel(entry.bitrateBps)}`
-      : entry.kind==='package'?'FLASH + EEPROM · PB0 / PB1':entry.kind==='speech'
-      ? `${entry.flashBytes} Б Flash${entry.eepromBytes ? ` + ${entry.eepromBytes} Б EEPROM` : ''} · речь ${(entry.sampleHz/1000).toLocaleString('ru')} кГц`
-      : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}${entry.audioChannels===2?' · СТЕРЕО L / R':''}`;
-    const arrow=document.createElement('span'); arrow.className='card-arrow'; arrow.textContent=selected?.id===entry.id ? '●' : '↗'; arrow.setAttribute('aria-hidden','true');
-    body.append(name,meta); button.append(number,body,arrow); button.onclick=()=>load(entry); item.append(button); $('catalog').append(item);
-  }
-  if (!entries.length) { const p=document.createElement('p'); p.className='empty'; p.textContent='Ничего не найдено. Попробуйте другое название.'; $('catalog').append(p); }
+  renderFirmwareCatalog(document,{entries:available,selectedId:selected?.id,query,onSelect:load});
 }
 function connectAudio() {
   if (nativePreview()||!runtime||!output || !runtimeReady || connectedRuntime===runtime) return;
@@ -252,12 +242,7 @@ function load(entry,{autoplay=false}={}) {
   deviceUI(currentDevice);
   $('device-select').disabled=false;
   previewUI(nativePreview());
-  if(speechCollection){
-    document.title=`MicroMusic / ${currentDevice==='attiny88'?'ATtiny88':'ATtiny13A'} — речевые кодеки`;
-    document.querySelector('.intro .eyebrow').textContent=(nativePreview()?'ATtiny88':'ATtiny13A')+' / РЕЧЕВЫЕ КОДЕКИ';
-    document.querySelector('.intro h1').textContent=nativePreview()?'Речь с кодеком LPX.':'Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent=nativePreview()?'Два качества одного фрагмента. Сравните с исходной записью.':'Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
-  }
+  applyCollectionLayout(document,{device:currentDevice,speech:speechCollection,preview:nativePreview()});
   previewAudio.removeAttribute('src');previewAudio.load();delete canvas.dataset.samples;
   if(entry.devicePackage){
     for(const choice of document.querySelectorAll('input[name="engine"]')){choice.disabled=choice.value!=='transpiled';choice.checked=choice.value==='transpiled';}
@@ -324,10 +309,12 @@ function load(entry,{autoplay=false}={}) {
     const file=entry.id+'.lpx';
     $('rom-name').href=entry.streamUrl;$('rom-name').download=file;$('rom-name').textContent=file;
     $('download').textContent='↓ Flash HEX';
-    downloadUI('download',null,null,'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
+    downloadUI('download',entry.firmware?.source,entry.firmware?entry.id+'.hex':null,entry.firmware?'Полный Flash HEX для Arduino Nano / ATmega328P · 16 МГц.':'Flash HEX недоступен: готовая звуковая прошивка для ATtiny88 ещё не проверена.');
     downloadUI('download-eeprom',null,null,'EEPROM не используется этим примером.');
     const measurement=entry.flashMeasurement;
-    const cost=measurement
+    const cost=entry.firmware
+      ? `${entry.firmware.programFlashBytes.toLocaleString('ru')} Б программа + ${entry.streamBytes.toLocaleString('ru')} Б звук = ${entry.firmware.flashBytes.toLocaleString('ru')} Б Flash · ${entry.firmware.staticSramBytes} Б SRAM`
+      : measurement
       ? `${measurement.programFlashBytes.toLocaleString('ru')} Б программа + ${measurement.encodedBytes.toLocaleString('ru')} Б звук = ${measurement.totalFlashBytes.toLocaleString('ru')} Б Flash · тестовая сборка`
       : `Программа: — (не измерено) · ${entry.streamBytes.toLocaleString('ru')} Б данных LPX`;
     $('rom-details').textContent=`${cost} · ${bitrateLabel(entry.bitrateBps)} · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
@@ -335,6 +322,10 @@ function load(entry,{autoplay=false}={}) {
     $('original-player').hidden=true;$('wav-link').hidden=false;$('wav-link').href=entry.nativeAudioUrl;
     $('reference-wav').hidden=false;$('reference-wav').href=originalUrl;
     $('rom-hash').textContent='';$('rom-hash').title='';
+    if(entry.firmware){
+      $('rom-name').href=entry.firmware.source;$('rom-name').download=entry.id+'.hex';$('rom-name').textContent=entry.id+'.hex';
+      $('rom-hash').textContent=entry.firmware.hexSha256.slice(0,16)+'…';$('rom-hash').title='SHA-256 HEX: '+entry.firmware.hexSha256;
+    }
     previewAudio.src=entry.nativeAudioUrl;previewAudio.volume=+$('volume').value;previewAudio.load();
     document.querySelector('.scope-scale').textContent=(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')+' с · вся запись';
     loadPreviewWave(entry,session);
@@ -361,7 +352,8 @@ function load(entry,{autoplay=false}={}) {
   const bytes=parseHex(entry.flashHex,capacity); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   }
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id);
-  if(tiny88)url.searchParams.set('device','attiny88');else url.searchParams.delete('device');
+  if(currentDevice!=='attiny13a')url.searchParams.set('device',currentDevice);else url.searchParams.delete('device');
+  if(speechCollection)url.searchParams.set('collection','hq4');
   if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
@@ -470,17 +462,9 @@ try {
   deviceUI('attiny13a');
   if(speech){
     $('device-select').disabled=true;
-    document.title='MicroMusic / ATtiny13A — речевые кодеки';
-    document.querySelector('.intro .eyebrow').textContent='ATtiny13A / РЕЧЬ ИЗ МАШИННОГО КОДА';
-    document.querySelector('.intro h1').textContent='Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent='Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
-    document.querySelector('.library h2').textContent='Выберите фразу';
-    document.querySelector('.library-caption').textContent='Слушайте речь из прошивки и сравнивайте с исходной записью.';
-    document.querySelector('.source-only').hidden=true;
-    const history=document.querySelector('.header-link');history.href='https://github.com/Witali/MicroMusic/blob/main/ATtiny13A/Sound/AUDIO_REFERENCES.md';history.textContent='Звуковые эталоны ↗';
+    applyCollectionLayout(document,{device:'attiny13a',speech:true});
     $('original-player').textContent='Плеер из ChatGPT ↗';
     $('speech-audit').hidden=false;
-    document.querySelector('footer span:last-child').textContent='Речевые кодеки · Worker + AudioWorklet';
   }
   if(!speech) {
     await switchDevice(new URL(location.href).searchParams.get('device'));
@@ -490,7 +474,12 @@ try {
   const response=await fetch(speech?'./hq4-firmware.json?v=20261023-mobile-original':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
-  let previewError;
+  let previewError,nanoError;
+  try{
+    const response=await fetch(new URL('./firmware-atmega328p.json?v=20261102-nano',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    catalog.entries.push(...lpxFirmwareEntries(await response.json(),import.meta.url));
+  }catch(error){nanoError=error;}
   try{
     const response=await fetch(new URL('./audio/lpx-bread/manifest.json?v=20261101-flash',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
@@ -515,10 +504,12 @@ try {
   const requested=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
   const id=catalog.aliases?.[requested]??requested;
   const exact=catalog.entries.find(entry=>entry.id===id);
-  const device=exact?.playback==='native-pwm8'||new URL(location.href).searchParams.get('device')==='attiny88'?'attiny88':'attiny13a';
+  const requestedDevice=new URL(location.href).searchParams.get('device');
+  const device=requestedDevice==='atmega328p'||exact?.device==='atmega328p'?'atmega328p':exact?.playback==='native-pwm8'||requestedDevice==='attiny88'?'attiny88':'attiny13a';
   const available=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
   load(available.find(entry=>entry.id===id)||available[0]||catalog.entries.find(entry=>entry.id===catalog.defaultId));
   if(previewError&&(device==='attiny88'||requested.startsWith('lpx-bread-')))showError('LPX-примеры временно недоступны.');
+  if(nanoError&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');
   }
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();
