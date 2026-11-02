@@ -3042,8 +3042,10 @@ verified against the frozen 91-stream corpus.
 
 [Compose the exact finite vocoder gain map](speex-finite-gain.md): preserve
 both quantizers in sixteen Flash bytes, compare complete caller recipes and
-retain range information where the measured compiler benefits. Includes
-host-checked, unmeasured complementary-coefficient and unity-Q15 identities.
+retain range information where the measured compiler benefits. Also covers
+admitted gain-zero preparation, exhaustive unity-Q15 arithmetic, retained prior
+pulses and measured shared-loop Flash/speed tradeoffs. Complementary-coefficient
+identities remain host-checked, without target admission.
 
 [Bounded forced-pitch arithmetic](speex-bounded-forced-math.md): exact
 signed22/Q6 alignment and unsigned16 coefficient mapping, exhaustive AVR input

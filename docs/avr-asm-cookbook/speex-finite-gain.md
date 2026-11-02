@@ -36,6 +36,32 @@ controls execute, never the C decoder.
 [controller](../../Codecs/Speex/AVR/src/lowrate_excitation.h),
 [scope, resources and reproduction](../../Codecs/Speex/AVR/WB_GAIN_MAP.md).
 
+## Admit an exactly zero control result without suppressing the signal
+
+Gain codes 0..3 produce exactly zero pulse gain. Skip the original square root,
+new pulse/previous-noise products and use `n-(n>0)` for the current noise's
+gain 32767. The noise bound -14771..14771 excludes -32768; the complete signed16
+identity adds `(n==INT16_MIN)`. Keep the old persistent pulse and mean, original
+noise, phase, prior raw noise and all 160 RNG steps. Zero pulse gain is not silence.
+
+Both helpers are portable C, with no new ASM, table or RAM field. Exhaustive
+AVR scalar runs cover 196607 ABI/r1 returns per backend; ASM-enable 1/0 images
+are byte-identical. Generic/bounded helpers take 23..24 / 12..13 cycles including
+RET, 0 MULs. The isolated C original takes 147..150 / 4 MULs, which is not the
+production inline ASM cost. Full C decoders compile/link only.
+
+Complete NB2.15/WB3.95 speech CPU improves 31.904% ->31.791% / 69.474% ->69.388%.
+Cost: 100/132 B Flash and 2 B NB stack, unchanged static RAM/WB stack. A common
+WB prefold loop saves 78 B versus duplicated branches for 3.24 extra mean cycles
+on the 384-frame layout screen. Nonzero WB frames cost at most 4 extra cycles
+against baseline; zero frames save 876..927. Full raw, +8/+11% IRQ and scheduled
+SPI retain exact PCM/PWM and no underruns. State tests add explicit nonzero
+prior pulses at zero gain because that boundary is absent from the mixed corpus.
+Target/toolchain/ABI are those above; benefits are only measured for this build.
+
+[Bounded and general helpers](../../Codecs/Speex/AVR/src/nb1_zero_gain.h),
+[complete evidence and reproduction](../../Codecs/Speex/AVR/WB_ZERO_GAIN.md).
+
 ## Further identities: host-checked, not admitted on target
 
 These original derivations have only exhaustive host-integer formula checks;
@@ -51,14 +77,9 @@ previous_gain = 77u*g;
 noise_gain = (uint16_t)(32767u - ((uint16_t)g<<9) + previous_gain);
 /* Exactly 32767-435*g because 435+77=512. */
 
-/* Every signed16 n, including -32768. */
-unity_q15 = n - (n>0) + (n==INT16_MIN);
-/* Exactly floor(32767*n/32768). */
 ```
 
-Host checks cover all 65536 pulse amplitudes, all 65 gains and all 65536 unity-Q15
-inputs. Retain bounds/casts when adapting. Gain-zero preparation could avoid
-pulse/previous-noise products, but must still generate noise, retain the prior
-pulse, update state and preserve all 160 RNG steps. Do not interpret zero pulse
-gain as silence or use completed innovation as prediction. Measure compiled
-callers, stack and loaded IRQ/SPI before accepting these optimizations.
+Host checks cover all 65536 pulse amplitudes and all 65 gains. Retain bounds/casts
+when adapting. Zero-gain quarter synthesis and paired opposite-noise prefold
+remain unmeasured candidates. Do not use completed innovation as prediction.
+Measure compiled callers, stack and loaded IRQ/SPI before accepting them.

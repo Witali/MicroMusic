@@ -91,6 +91,14 @@ static SRAM/peak stack. Paired full PCM, +8%/+11% WB IRQ and scheduled SPI
 stay exact without underruns. The gain lookup is portable C and uses sixteen
 Flash bytes; quiet speech and all RNG/state behavior are preserved.
 
+[Exact zero-gain preparation](WB_ZERO_GAIN.md) skips products and the square
+root whose original results are provably zero, retaining current noise and the
+old persistent pulse. NB2.15/WB3.95 speech CPU improves **31.904% ->31.791% /
+69.474% ->69.388%** with identical PCM. Bare Flash grows 100/132 B; NB peak stack
+grows 2 B and WB stack/static SRAM stay unchanged. Full raw, +8%/+11% WB IRQ
+and continuous SPI pass without underruns. Full-domain unity arithmetic and
+explicit nonzero-prior-pulse state cases are verified; portable C is retained.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

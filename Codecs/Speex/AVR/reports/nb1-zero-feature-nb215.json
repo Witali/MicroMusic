@@ -1,0 +1,54 @@
+{
+  "simulator": "avr8js 0.21.1",
+  "compiler": "AVR GCC",
+  "mcu": "ATmega328P",
+  "backend": "asm",
+  "binarySha256": "e2f2ea27a716eba64b43aa4dc3f3f588be0a28ac52d92bfadadfc5bae148669d",
+  "lspConversionEntry": "speex_nb3_interpolate_lpc",
+  "flashBytes": 12632,
+  "staticSramBytes": 1096,
+  "includesInterrupts": false,
+  "frames": 384,
+  "maxCycles": 103192,
+  "minStackPointer": 2192,
+  "streams": [
+    {
+      "stream": "coverage4096.spxraw",
+      "frames": 128,
+      "minCycles": 89587,
+      "maxCycles": 102583,
+      "meanCycles": 102229,
+      "stackBytes": 111,
+      "freeSramAtPeak": 841,
+      "lspConversions": 509,
+      "lspCacheHits": 3,
+      "resetVerified": true
+    },
+    {
+      "stream": "en_letter_a.spxraw",
+      "frames": 128,
+      "minCycles": 85652,
+      "maxCycles": 103192,
+      "meanCycles": 101865,
+      "stackBytes": 111,
+      "freeSramAtPeak": 841,
+      "lspConversions": 481,
+      "lspCacheHits": 31,
+      "resetVerified": true
+    },
+    {
+      "stream": "ru_slutskaya_a.spxraw",
+      "frames": 128,
+      "minCycles": 84914,
+      "maxCycles": 103188,
+      "meanCycles": 102360,
+      "stackBytes": 111,
+      "freeSramAtPeak": 841,
+      "lspConversions": 497,
+      "lspCacheHits": 15,
+      "resetVerified": true
+    }
+  ],
+  "freeSramAtPeak": 841,
+  "fitsDecoderBudget": true
+}

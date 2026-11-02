@@ -1,0 +1,126 @@
+{
+  "scope": "384-frame complete ASM layout screens; no C decoder/IRQ",
+  "baselineSourceVerified": true,
+  "rows": [
+    {
+      "variant": "before",
+      "profile": "nb215",
+      "sourceSha256": "4c70526134843dddf479712246b623ec435084317b04f3fcc0cf3df4779d8c89",
+      "binarySha256": "bf14fe5e01e0ff183293622e50f8af36c036852b764058d82d00d767cab6af74",
+      "meanCycles": 102670.1640625,
+      "flashBytes": 17318,
+      "staticSramBytes": 1104,
+      "peakStack": 110,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "before",
+      "profile": "wb395",
+      "sourceSha256": "4c70526134843dddf479712246b623ec435084317b04f3fcc0cf3df4779d8c89",
+      "binarySha256": "52822c18e39ce0b25f92393755a01e04873343cae37bc0c71ffa55f87272a925",
+      "meanCycles": 223671.5390625,
+      "flashBytes": 25592,
+      "staticSramBytes": 1284,
+      "peakStack": 200,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "root-only",
+      "profile": "nb215",
+      "sourceSha256": "27a5d7a198d19885ccbe706df45b43fdf4da6da4353a55053bbe935e0225e00f",
+      "binarySha256": "73aba66b6ee1b9af404237f749ef209e3126a414ea419b51c566bd9d851c7c95",
+      "meanCycles": 102422.84895833333,
+      "flashBytes": 17356,
+      "staticSramBytes": 1104,
+      "peakStack": 110,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "root-only",
+      "profile": "wb395",
+      "sourceSha256": "27a5d7a198d19885ccbe706df45b43fdf4da6da4353a55053bbe935e0225e00f",
+      "binarySha256": "69af9f1d7c50562bd876ff76227abd6521f711aa9a6b0ccd45dd6dab550c78c1",
+      "meanCycles": 223379.27604166666,
+      "flashBytes": 25722,
+      "staticSramBytes": 1284,
+      "peakStack": 200,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "loop",
+      "profile": "nb215",
+      "sourceSha256": "ad5853364b2f611f5f87c2b2364871e3936ce486a828b066afe31af8bf8ae98b",
+      "binarySha256": "2223fb6a5a3524aa1f02f34847f823baf3875f289ec4aafcfb6c69e0be530b31",
+      "meanCycles": 102341.49479166667,
+      "flashBytes": 17400,
+      "staticSramBytes": 1104,
+      "peakStack": 110,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "loop",
+      "profile": "wb395",
+      "sourceSha256": "ad5853364b2f611f5f87c2b2364871e3936ce486a828b066afe31af8bf8ae98b",
+      "binarySha256": "abe8656f9c869bff5a35bfca968ce496be3757765f1fdb8d68adaf961ec25904",
+      "meanCycles": 223319.55729166666,
+      "flashBytes": 25706,
+      "staticSramBytes": 1284,
+      "peakStack": 200,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "split",
+      "profile": "nb215",
+      "sourceSha256": "158d8a1087653a6982c0ca81892f5146d16831cdf436341adbdeb1f19aea65e2",
+      "binarySha256": "09b81d79da9b61023f67d02c8cc041451a301b6f0dd4c32b1a661768f641a1e6",
+      "meanCycles": 102162.078125,
+      "flashBytes": 17418,
+      "staticSramBytes": 1104,
+      "peakStack": 112,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "split",
+      "profile": "wb395",
+      "sourceSha256": "158d8a1087653a6982c0ca81892f5146d16831cdf436341adbdeb1f19aea65e2",
+      "binarySha256": "9b99e33fa5e7e8aa4ee10f180bbbcc786e29584c88a75fc60afab92be192db40",
+      "meanCycles": 223237.44791666666,
+      "flashBytes": 25802,
+      "staticSramBytes": 1284,
+      "peakStack": 200,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "common-fold",
+      "profile": "nb215",
+      "sourceSha256": "0cfb60238f25c2fe11e5b81e137fc6dd91fa4145a509fb4e2b0ea1244a3e185f",
+      "binarySha256": "09b81d79da9b61023f67d02c8cc041451a301b6f0dd4c32b1a661768f641a1e6",
+      "meanCycles": 102162.078125,
+      "flashBytes": 17418,
+      "staticSramBytes": 1104,
+      "peakStack": 112,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "common-fold",
+      "profile": "wb395",
+      "sourceSha256": "0cfb60238f25c2fe11e5b81e137fc6dd91fa4145a509fb4e2b0ea1244a3e185f",
+      "binarySha256": "461338f9b140cd09c6d614a0e94e62f2cb51f06931cea959806953532d029cf5",
+      "meanCycles": 223240.6875,
+      "flashBytes": 25724,
+      "staticSramBytes": 1284,
+      "peakStack": 200,
+      "pcmExact": true,
+      "resetExact": true
+    }
+  ]
+}

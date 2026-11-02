@@ -1,0 +1,74 @@
+{
+  "binarySha256": "3b3653c914b7a762d3eddb891cfa2b011624da9fb97dcc6a453ad33a0bd8bcb4",
+  "inputSha256": "a7d9fe117070b9e0c3cffb5a06667de233dc7e289a768a777710952dc1b8c122",
+  "pcmSha256": "f02abd03333a94e410e77023cb4cc6f418bca92604de85fb6fafcccb7e265022",
+  "frames": 1024,
+  "cacheFrames": 205,
+  "generatedBlocks": 820,
+  "foldedBlocks": 820,
+  "valuesCalls": 205,
+  "indicesCalls": 820,
+  "cacheBytes": 170,
+  "contextBytes": 28,
+  "prefoldBytes": 10,
+  "reusedWorkspaceBytes": 208,
+  "guardBytes": 2,
+  "firstDelayedInputByte": 210,
+  "nextHistorySourceByte": 320,
+  "independentOriginalVocoder": true,
+  "allPartialStatesExact": true,
+  "classesAndSeedPerQuarterExact": true,
+  "readOnlyFoldWorkspace": true,
+  "outputAndScratchBounds": true,
+  "pcmExact": true,
+  "resetClearsWorkspace": true,
+  "zeroGainFrames": 49,
+  "nonzeroToZero": 21,
+  "zeroToNonzero": 21,
+  "zeroFramesWithPriorPulse": 0,
+  "preparationPreservesPersistentState": true,
+  "targetedZeroGainWithPriorPulse": {
+    "cases": [
+      {
+        "code": 0,
+        "priorPulse": 1,
+        "priorMean": 0,
+        "priorNoise": 14771,
+        "priorPhase": 0,
+        "independentExcitationAndQuarterStatesExact": true
+      },
+      {
+        "code": 1,
+        "priorPulse": -1,
+        "priorMean": 0,
+        "priorNoise": -14771,
+        "priorPhase": 1,
+        "independentExcitationAndQuarterStatesExact": true
+      },
+      {
+        "code": 2,
+        "priorPulse": 9830,
+        "priorMean": 32767,
+        "priorNoise": 1,
+        "priorPhase": 39,
+        "independentExcitationAndQuarterStatesExact": true
+      },
+      {
+        "code": 3,
+        "priorPulse": -9830,
+        "priorMean": -32768,
+        "priorNoise": -1,
+        "priorPhase": 40,
+        "independentExcitationAndQuarterStatesExact": true
+      }
+    ],
+    "allFourGainCodes": true,
+    "scope": "Injected persistent states; independent original excitation, quarter state, seed, fold and guards; no PCM-oracle claim for these four frames"
+  },
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "flashBytes": 25870,
+  "staticSramBytes": 1329,
+  "peakStack": 200,
+  "freeSram": 519
+}
