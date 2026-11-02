@@ -141,8 +141,6 @@ analog claim is made. Compact WB output here retains the established Q7/16-tap
 QMF and does not claim equivalence to full 64-tap Xiph synthesis. Existing
 algorithm/codebook provenance and BSD notices remain intact.
 
-Unmeasured next candidates: the exact smaller ancestry identity
-`(x*(c<<7)+4096)>>13 == (x*c+32)>>6`, the bounded coefficient mapping
-`(2185*(code<<6)+16384)>>15 == (2185*code+256)>>9`, and function-section
-ownership for the old shared vector body. Preserve every rounding boundary
-and measure the complete caller before accepting those changes.
+The subsequent [bounded-math stage](WB_FORCED_MATH.md) implements and measures
+the exact smaller Q6 ancestry product and unsigned16 coefficient mapping.
+Function-section ownership for the old shared vector body remains unmeasured.

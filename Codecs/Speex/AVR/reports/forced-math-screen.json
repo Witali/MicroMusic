@@ -1,0 +1,94 @@
+{
+  "scope": "Matched three-stream 384-frame ASM screening; no IRQ or C decoder",
+  "rows": [
+    {
+      "variant": "before",
+      "profile": "nb395",
+      "sourceSha256": "039ee5cc438ae50fa61b9ed2ee3f4512c820a95f613a598809d5dfef139c8745",
+      "binarySha256": "6ad0b89b270c1386a6efe0cf0e7531673ed7fcd1f3ec28a91907f42a841271db",
+      "flashBytes": 17488,
+      "meanCycles": 90087.22135416667,
+      "peakStack": 108,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "before",
+      "profile": "wb575",
+      "sourceSha256": "039ee5cc438ae50fa61b9ed2ee3f4512c820a95f613a598809d5dfef139c8745",
+      "binarySha256": "ab2d7dbc8004dcf99c591eb1df9b5776d46df34bf3265f07f5c23d2915d1e1f2",
+      "flashBytes": 25762,
+      "meanCycles": 228658.828125,
+      "peakStack": 199,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "coefficient",
+      "profile": "nb395",
+      "sourceSha256": "0ac77ae9fd10fb008c64ea3c7c9273a94668a6296d089d3036b01c4d2735a318",
+      "binarySha256": "ff06b23e519e92cfb64e81728058d67712911c4305533fadd1644dad96c47979",
+      "flashBytes": 17470,
+      "meanCycles": 90016.859375,
+      "peakStack": 108,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "coefficient",
+      "profile": "wb575",
+      "sourceSha256": "0ac77ae9fd10fb008c64ea3c7c9273a94668a6296d089d3036b01c4d2735a318",
+      "binarySha256": "1f23fe014542d9a5303ba2e8ee7cf3b43fa0428ce2b86b2190f39c28f1ea07a9",
+      "flashBytes": 25744,
+      "meanCycles": 228585.48697916666,
+      "peakStack": 199,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "q6",
+      "profile": "nb395",
+      "sourceSha256": "1d7fc78e5a0ecbb74b21ec85bf43c8951d118561ba139e355dbcdd46109d3734",
+      "binarySha256": "d3315d8da3f605814b40f5314cc7f4a4cb6e29a634b5c67bc56e91865a8f6d1e",
+      "flashBytes": 17418,
+      "meanCycles": 89942.0703125,
+      "peakStack": 108,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "q6",
+      "profile": "wb575",
+      "sourceSha256": "1d7fc78e5a0ecbb74b21ec85bf43c8951d118561ba139e355dbcdd46109d3734",
+      "binarySha256": "2d26718971463bcc41401764be0d818780584014ce7a0f800bd060b6d6ea51ad",
+      "flashBytes": 25692,
+      "meanCycles": 228499.625,
+      "peakStack": 199,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "both",
+      "profile": "nb395",
+      "sourceSha256": "4ae4735ea93b1ba87461b9363d2e9c3e1e883bb516544cf56e347faa44ca94d5",
+      "binarySha256": "0c7b080058dde2c3a2dc904df66f1edaff64f16e1a7d414bf4440e0cf5c4643d",
+      "flashBytes": 17400,
+      "meanCycles": 89874.22135416667,
+      "peakStack": 108,
+      "pcmExact": true,
+      "resetExact": true
+    },
+    {
+      "variant": "both",
+      "profile": "wb575",
+      "sourceSha256": "4ae4735ea93b1ba87461b9363d2e9c3e1e883bb516544cf56e347faa44ca94d5",
+      "binarySha256": "d191e2a36524b99a84a48fe23b396f3ae7a970fda47f5c68383888b180f8b2f6",
+      "flashBytes": 25674,
+      "meanCycles": 228428.81770833334,
+      "peakStack": 199,
+      "pcmExact": true,
+      "resetExact": true
+    }
+  ],
+  "baselineSourceVerified": true
+}

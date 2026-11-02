@@ -1,0 +1,551 @@
+{
+  "scope": "Paired complete-history command intervals, excluding reset/startup/IRQ; before traces reused after verification",
+  "profiles": {
+    "nb215": {
+      "frames": 10627,
+      "beforeBinarySha256": "bf14fe5e01e0ff183293622e50f8af36c036852b764058d82d00d767cab6af74",
+      "afterBinarySha256": "09b81d79da9b61023f67d02c8cc041451a301b6f0dd4c32b1a661768f641a1e6",
+      "codeGroups": [
+        {
+          "code": 0,
+          "frames": 2136,
+          "beforeCycles": 218366968,
+          "afterCycles": 216341717,
+          "deltaMin": -967,
+          "deltaMax": -916
+        },
+        {
+          "code": 1,
+          "frames": 259,
+          "beforeCycles": 26699649,
+          "afterCycles": 26455249,
+          "deltaMin": -967,
+          "deltaMax": -916
+        },
+        {
+          "code": 2,
+          "frames": 266,
+          "beforeCycles": 27441899,
+          "afterCycles": 27190920,
+          "deltaMin": -967,
+          "deltaMax": -916
+        },
+        {
+          "code": 3,
+          "frames": 392,
+          "beforeCycles": 40408999,
+          "afterCycles": 40039060,
+          "deltaMin": -967,
+          "deltaMax": -916
+        },
+        {
+          "code": 4,
+          "frames": 542,
+          "beforeCycles": 55837609,
+          "afterCycles": 55780769,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 5,
+          "frames": 544,
+          "beforeCycles": 56050479,
+          "afterCycles": 55993505,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 6,
+          "frames": 570,
+          "beforeCycles": 58799871,
+          "afterCycles": 58739998,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 7,
+          "frames": 534,
+          "beforeCycles": 54911063,
+          "afterCycles": 54854878,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 8,
+          "frames": 580,
+          "beforeCycles": 59695195,
+          "afterCycles": 59634073,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 9,
+          "frames": 634,
+          "beforeCycles": 65232381,
+          "afterCycles": 65165535,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 10,
+          "frames": 721,
+          "beforeCycles": 74045993,
+          "afterCycles": 73969890,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 11,
+          "frames": 871,
+          "beforeCycles": 89171944,
+          "afterCycles": 89079956,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 12,
+          "frames": 1182,
+          "beforeCycles": 120708167,
+          "afterCycles": 120583320,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 13,
+          "frames": 884,
+          "beforeCycles": 89261994,
+          "afterCycles": 89168651,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 14,
+          "frames": 256,
+          "beforeCycles": 26416731,
+          "afterCycles": 26389825,
+          "deltaMin": -106,
+          "deltaMax": -101
+        },
+        {
+          "code": 15,
+          "frames": 256,
+          "beforeCycles": 26418329,
+          "afterCycles": 26391423,
+          "deltaMin": -106,
+          "deltaMax": -101
+        }
+      ],
+      "speech": {
+        "frames": 6467,
+        "beforeCycles": 660232072,
+        "afterCycles": 657893628,
+        "codeHistogram": [
+          1816,
+          3,
+          10,
+          136,
+          286,
+          288,
+          314,
+          278,
+          324,
+          378,
+          465,
+          615,
+          926,
+          628,
+          0,
+          0
+        ],
+        "beforeMeanCycles": 102092.48059378382,
+        "beforeCpuPercent": 31.903900185557447,
+        "afterMeanCycles": 101730.88418122777,
+        "afterCpuPercent": 31.79090130663368,
+        "zeroGainFrames": 1965
+      },
+      "streams": [
+        {
+          "stream": "coverage4096.spxraw",
+          "frames": 4096,
+          "beforeCycles": 422632764,
+          "afterCycles": 421343516
+        },
+        {
+          "stream": "en_letter_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 41468100,
+          "afterCycles": 41333908
+        },
+        {
+          "stream": "en_letter_b.spxraw",
+          "frames": 405,
+          "beforeCycles": 41414737,
+          "afterCycles": 41259936
+        },
+        {
+          "stream": "en_normcore_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 40856697,
+          "afterCycles": 40722393
+        },
+        {
+          "stream": "en_normcore_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 40682354,
+          "afterCycles": 40546745
+        },
+        {
+          "stream": "en_portrait_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 41273832,
+          "afterCycles": 41116675
+        },
+        {
+          "stream": "en_portrait_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 41464668,
+          "afterCycles": 41296977
+        },
+        {
+          "stream": "en_sense_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 41363828,
+          "afterCycles": 41190731
+        },
+        {
+          "stream": "en_sense_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 41295320,
+          "afterCycles": 41145338
+        },
+        {
+          "stream": "padding64.spxraw",
+          "frames": 64,
+          "beforeCycles": 6602435,
+          "afterCycles": 6541625
+        },
+        {
+          "stream": "ru_pushkin_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 41401213,
+          "afterCycles": 41225455
+        },
+        {
+          "stream": "ru_pushkin_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 40946709,
+          "afterCycles": 40770417
+        },
+        {
+          "stream": "ru_russia_a.spxraw",
+          "frames": 405,
+          "beforeCycles": 41606057,
+          "afterCycles": 41518560
+        },
+        {
+          "stream": "ru_russia_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 41167929,
+          "afterCycles": 41018046
+        },
+        {
+          "stream": "ru_slutskaya_a.spxraw",
+          "frames": 405,
+          "beforeCycles": 41490049,
+          "afterCycles": 41340601
+        },
+        {
+          "stream": "ru_slutskaya_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 41405041,
+          "afterCycles": 41276810
+        },
+        {
+          "stream": "ru_square_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 41163655,
+          "afterCycles": 41027931
+        },
+        {
+          "stream": "ru_square_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 41231883,
+          "afterCycles": 41103105
+        }
+      ]
+    },
+    "wb395": {
+      "frames": 10627,
+      "beforeBinarySha256": "52822c18e39ce0b25f92393755a01e04873343cae37bc0c71ffa55f87272a925",
+      "afterBinarySha256": "461338f9b140cd09c6d614a0e94e62f2cb51f06931cea959806953532d029cf5",
+      "codeGroups": [
+        {
+          "code": 0,
+          "frames": 2157,
+          "beforeCycles": 480450972,
+          "afterCycles": 478493577,
+          "deltaMin": -927,
+          "deltaMax": -876
+        },
+        {
+          "code": 1,
+          "frames": 258,
+          "beforeCycles": 57979520,
+          "afterCycles": 57746334,
+          "deltaMin": -927,
+          "deltaMax": -876
+        },
+        {
+          "code": 2,
+          "frames": 267,
+          "beforeCycles": 60006841,
+          "afterCycles": 59765582,
+          "deltaMin": -927,
+          "deltaMax": -876
+        },
+        {
+          "code": 3,
+          "frames": 383,
+          "beforeCycles": 85942099,
+          "afterCycles": 85595825,
+          "deltaMin": -927,
+          "deltaMax": -876
+        },
+        {
+          "code": 4,
+          "frames": 529,
+          "beforeCycles": 118200732,
+          "afterCycles": 118201665,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 5,
+          "frames": 569,
+          "beforeCycles": 127268491,
+          "afterCycles": 127269499,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 6,
+          "frames": 537,
+          "beforeCycles": 120325196,
+          "afterCycles": 120326149,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 7,
+          "frames": 573,
+          "beforeCycles": 128260349,
+          "afterCycles": 128261389,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 8,
+          "frames": 590,
+          "beforeCycles": 132172306,
+          "afterCycles": 132173422,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 9,
+          "frames": 630,
+          "beforeCycles": 141121940,
+          "afterCycles": 141123120,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 10,
+          "frames": 716,
+          "beforeCycles": 160406795,
+          "afterCycles": 160408238,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 11,
+          "frames": 903,
+          "beforeCycles": 201745822,
+          "afterCycles": 201747670,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 12,
+          "frames": 1124,
+          "beforeCycles": 250064401,
+          "afterCycles": 250066800,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 13,
+          "frames": 879,
+          "beforeCycles": 194677138,
+          "afterCycles": 194678972,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 14,
+          "frames": 256,
+          "beforeCycles": 57619202,
+          "afterCycles": 57619672,
+          "deltaMin": -1,
+          "deltaMax": 4
+        },
+        {
+          "code": 15,
+          "frames": 256,
+          "beforeCycles": 57621648,
+          "afterCycles": 57622118,
+          "deltaMin": -1,
+          "deltaMax": 4
+        }
+      ],
+      "speech": {
+        "frames": 6467,
+        "beforeCycles": 1437729964,
+        "afterCycles": 1435944570,
+        "codeHistogram": [
+          1837,
+          2,
+          11,
+          127,
+          273,
+          313,
+          281,
+          317,
+          334,
+          374,
+          460,
+          647,
+          868,
+          623,
+          0,
+          0
+        ],
+        "beforeMeanCycles": 222317.91618988712,
+        "beforeCpuPercent": 69.47434880933973,
+        "afterMeanCycles": 222041.83856502242,
+        "afterCpuPercent": 69.3880745515695,
+        "zeroGainFrames": 1977
+      },
+      "streams": [
+        {
+          "stream": "coverage4096.spxraw",
+          "frames": 4096,
+          "beforeCycles": 921743977,
+          "afterCycles": 920824201
+        },
+        {
+          "stream": "en_letter_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 89907113,
+          "afterCycles": 89812711
+        },
+        {
+          "stream": "en_letter_b.spxraw",
+          "frames": 405,
+          "beforeCycles": 90113706,
+          "afterCycles": 90007340
+        },
+        {
+          "stream": "en_normcore_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 88896289,
+          "afterCycles": 88803728
+        },
+        {
+          "stream": "en_normcore_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 89062601,
+          "afterCycles": 88956463
+        },
+        {
+          "stream": "en_portrait_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 89888474,
+          "afterCycles": 89764704
+        },
+        {
+          "stream": "en_portrait_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 90392845,
+          "afterCycles": 90260239
+        },
+        {
+          "stream": "en_sense_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 90043056,
+          "afterCycles": 89900136
+        },
+        {
+          "stream": "en_sense_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 90069600,
+          "afterCycles": 89958352
+        },
+        {
+          "stream": "padding64.spxraw",
+          "frames": 64,
+          "beforeCycles": 14389511,
+          "afterCycles": 14331261
+        },
+        {
+          "stream": "ru_pushkin_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 89758207,
+          "afterCycles": 89605481
+        },
+        {
+          "stream": "ru_pushkin_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 89480529,
+          "afterCycles": 89326093
+        },
+        {
+          "stream": "ru_russia_a.spxraw",
+          "frames": 405,
+          "beforeCycles": 90463264,
+          "afterCycles": 90409579
+        },
+        {
+          "stream": "ru_russia_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 88917801,
+          "afterCycles": 88818383
+        },
+        {
+          "stream": "ru_slutskaya_a.spxraw",
+          "frames": 405,
+          "beforeCycles": 90457369,
+          "afterCycles": 90336570
+        },
+        {
+          "stream": "ru_slutskaya_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 90255826,
+          "afterCycles": 90149598
+        },
+        {
+          "stream": "ru_square_a.spxraw",
+          "frames": 404,
+          "beforeCycles": 89898678,
+          "afterCycles": 89808328
+        },
+        {
+          "stream": "ru_square_b.spxraw",
+          "frames": 404,
+          "beforeCycles": 90124606,
+          "afterCycles": 90026865
+        }
+      ]
+    }
+  }
+}

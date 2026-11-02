@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {join,resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {CPU,avrInstruction} from 'avr8js';
 const dir=resolve(process.argv[2]),input=resolve(process.argv[3]);
 const meta=JSON.parse(readFileSync(join(dir,'backend.json'))),data=JSON.parse(readFileSync(join(input,'input.json')));
@@ -28,13 +29,32 @@ const countFold=process.argv.includes('--count-noise-fold');
 const foldEntry=countFold?address('speex_wb_noise_fold40_avr'):-1;
 let foldActive=null,foldCalls=0,foldMultiplies=0;
 const countVocoder=process.argv.includes('--count-vocoder');
-const vocoderEntry=countVocoder?address('speex_nb1_synthesize40_avr'):-1;
+const zeroVocoderAvailable=symbols.has('speex_nb1_synthesize40_zero_avr');
+const vocoderEntries=new Map();
+if(countVocoder){
+ vocoderEntries.set(address('speex_nb1_synthesize40_avr'),'general');
+ if(zeroVocoderAvailable)vocoderEntries.set(address('speex_nb1_synthesize40_zero_avr'),'zero');
+}
+const olGains=countVocoder?readFileSync(fileURLToPath(new URL('../vendor/speex-1.2.1/libspeex/nb_celp.c',import.meta.url)),'utf8')
+ .match(/ol_gain_table\[32\]=\{([^}]+)\}/)[1].split(',').map(Number):[];
+let expectedZeroContext=false;
+const vocoderPaths={general:{calls:0,muls:0},zero:{calls:0,muls:0}};
 let vocoderActive=null,vocoderCalls=0,vocoderMultiplies=0;
-const countPrepare=process.argv.includes('--count-noise-prepare');
+const countNb1Gain=process.argv.includes('--count-nb1-gain');
+const countPrepare=process.argv.includes('--count-noise-prepare')||countNb1Gain;
+const gainTables=[...symbols.keys()].filter(n=>n==='speex_nb1_gain_table'||n.startsWith('speex_nb1_gain_table.'));
+if(countNb1Gain)assert.equal(gainTables.length,1,'Exactly one finite NB1 gain table');
+const nb1GainTable=countNb1Gain?address(gainTables[0]):-1;
+let gainLookups=0,expectedGainCode=0;const gainHistogram=Array(16).fill(0);
+if(countNb1Gain)for(let code=0;code<16;code++){
+ const c=(2185n*BigInt(code<<6)+16384n)>>15n,g=Number((24576n*(c-13n)+8192n)>>14n);
+ assert.equal(binary[nb1GainTable+code],Math.max(0,Math.min(64,g)));
+}
 const prepareNames=[...symbols.keys()].filter(n=>n==='speex_nb1_excitation_prepare'||n.startsWith('speex_nb1_excitation_prepare.'));
 if(countPrepare)assert.equal(prepareNames.length,1,'NB1 frame preparation entry');
 const prepareEntry=countPrepare?address(prepareNames[0]):-1;
 let prepareActive=null,prepareCalls=0,prepareMultiplies=0;const prepareCounts=[];
+const prepareGroups={zero:{calls:0,muls:0,min:Infinity,max:0},nonzero:{calls:0,muls:0,min:Infinity,max:0}};
 const countLowFusion=process.argv.includes('--count-low-fusion'),lowEntries=new Map();
 const lowStats={2:{calls:0,muls:0},8:{calls:0,muls:0}};let lowActive=null;
 if(countLowFusion)for(const m of [2,8]){
@@ -52,6 +72,19 @@ const oneEntry=countForcedOne?address('speex_avr_forced_innovation_n'):-1;
 const adaptiveEntry=countForcedZero||countForcedOne?address('speex_avr_long_innovation_n'):-1;
 let oneActive=null,oneCalls=0,oneSamples=0,oneMuls=0,oneFrames=0,adaptiveCalls=0,expectedCoefficient=0;
 const oneCounts=Array(11).fill(0);
+const countForcedQ6=process.argv.includes('--count-forced-q6');
+let q6Start=-1,q6Active=null,q6Calls=0,q6Muls=0,q6Cycles=0;
+if(countForcedQ6){
+ const frames=[...symbols.keys()].filter(n=>n==='speex_nb8_excitation_frame'||n.startsWith('speex_nb8_excitation_frame.'));
+ assert.equal(frames.length,1);const start=address(frames[0]);
+ const stop=Math.min(...[...symbols.values()].filter(a=>a>start&&a<binary.length));
+ const pattern=[[0xff88,0x0300],[0xff00,0x0100],[0xfc00,0x9c00],[0xfc00,0x2c00],[0xfc00,0x0c00],
+  [0xffff,0x2411],[0xfc00,0x1c00],[0xf000,0x5000],[0xf000,0x4000],[0xf000,0x4000],
+  [0xfc00,0x0c00],[0xfc00,0x1c00],[0xfc00,0x1c00],[0xfc00,0x0c00],[0xfc00,0x1c00],[0xfc00,0x1c00]];
+ const matches=[];
+ for(let p=start/2;p+pattern.length<=stop/2;p++)if(pattern.every(([mask,value],i)=>(program[p+i]&mask)===value))matches.push(p*2);
+ assert.equal(matches.length,1,'One exact inline Q6 body in the real controller');q6Start=matches[0];
+}
 let zeroActive=null,zeroFrameCalls=0,zeroVectorCalls=0,zeroFrameMuls=0,zeroMinMuls=Infinity,zeroMaxMuls=0;
 const previousRead=cpu.readData.bind(cpu);
 cpu.readData=a=>{if(zeroActive)zeroActive.reads.add(a);return previousRead(a);};
@@ -66,10 +99,17 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  if(valuesActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++valuesActive.muls;
  if(cpu.pc*2===foldEntry){assert.equal(foldActive,null);foldActive={sp:cpu.SP,muls:0};}
  if(foldActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++foldActive.muls;
- if(cpu.pc*2===vocoderEntry){assert.equal(vocoderActive,null);vocoderActive={sp:cpu.SP,muls:0};}
+ if(vocoderEntries.has(cpu.pc*2)){
+  assert.equal(vocoderActive,null);const path=vocoderEntries.get(cpu.pc*2);
+  assert.equal(path,zeroVocoderAvailable&&expectedZeroContext?'zero':'general','Prepared-context vector selection');
+  vocoderActive={sp:cpu.SP,muls:0,path};
+ }
  if(vocoderActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++vocoderActive.muls;
- if(cpu.pc*2===prepareEntry){assert.equal(prepareActive,null);prepareActive={sp:cpu.SP,muls:0};}
+ if(cpu.pc*2===prepareEntry){assert.equal(prepareActive,null);prepareActive={sp:cpu.SP,muls:0,gainReads:[],zeroGain:expectedGainCode<4};}
  if(prepareActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++prepareActive.muls;
+ if(prepareActive&&countNb1Gain&&((opcode&0xfe0f)===0x9004||(opcode&0xfe0f)===0x9005||opcode===0x95c8)){
+  const a=cpu.dataView.getUint16(30,true);if(a>=nb1GainTable&&a<nb1GainTable+16)prepareActive.gainReads.push(a);
+ }
  if(lowEntries.has(cpu.pc*2)){assert.equal(lowActive,null);lowActive={mode:lowEntries.get(cpu.pc*2),sp:cpu.SP,muls:0};}
  if(lowActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++lowActive.muls;
  if(cpu.pc*2===zeroFrameEntry){assert.equal(zeroActive,null);zeroActive={sp:cpu.SP,blocks:[],reads:new Set(),muls:0};}
@@ -88,7 +128,23 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
   const n=cpu.data[12];assert.ok(n>=1&&n<=10);oneActive={sp:cpu.SP,n,muls:0};
  }
  if(oneActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++oneActive.muls;
+ if(cpu.pc*2===q6Start){
+  assert.equal(q6Active,null);
+  const hi=16+((opcode>>4)&7),coefficientReg=16+(opcode&7),mul=program[cpu.pc+2],lo=(mul>>4)&31;
+  assert.equal(hi,lo+1);assert.equal((mul&15)|((mul>>5)&16),coefficientReg);
+  const value=cpu.dataView.getInt16(lo,true),coefficient=cpu.data[coefficientReg];assert.equal(coefficient,expectedCoefficient);
+  const target=2*((program[cpu.pc+1]>>4)&15);
+  q6Active={start:cpu.cycles,target,lo,hi,coefficientReg,value,coefficient,
+   expected:Number((BigInt(value)*(BigInt(coefficient)<<7n)+4096n)>>13n),muls:0};
+ }
+ if(q6Active&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++q6Active.muls;
  avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);assert.ok(cpu.SP>=end,'SRAM collision');
+ if(q6Active&&cpu.pc*2===q6Start+32){
+  const a=q6Active,cycles=cpu.cycles-a.start;assert.equal(cycles,18);assert.equal(a.muls,2);
+  assert.equal(cpu.dataView.getInt16(a.target,true),a.expected);assert.equal(cpu.data[1],0);
+  assert.equal(cpu.dataView.getInt16(a.lo,true),a.value);assert.equal(cpu.data[a.coefficientReg],a.coefficient);
+  ++q6Calls;q6Muls+=a.muls;q6Cycles+=cycles;q6Active=null;
+ }
  if(oneActive&&opcode===0x9508&&cpu.SP===oneActive.sp+2){
   assert.equal(oneActive.muls,6*oneActive.n);assert.equal(cpu.data[1],0);
   ++oneCalls;++oneCounts[oneActive.n];oneSamples+=oneActive.n;oneMuls+=oneActive.muls;oneActive=null;
@@ -108,10 +164,14 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  }
  if(vocoderActive&&opcode===0x9508&&cpu.SP===vocoderActive.sp+2){
   assert.equal(vocoderActive.muls,160,'Forty exact single-product mean updates');assert.equal(cpu.data[1],0);
-  ++vocoderCalls;vocoderMultiplies+=vocoderActive.muls;vocoderActive=null;
+  ++vocoderCalls;vocoderMultiplies+=vocoderActive.muls;
+  ++vocoderPaths[vocoderActive.path].calls;vocoderPaths[vocoderActive.path].muls+=vocoderActive.muls;vocoderActive=null;
  }
  if(prepareActive&&opcode===0x9508&&cpu.SP===prepareActive.sp+2){
-  assert.equal(cpu.data[1],0);++prepareCalls;prepareMultiplies+=prepareActive.muls;prepareCounts.push(prepareActive.muls);prepareActive=null;
+  if(countNb1Gain){assert.deepEqual(prepareActive.gainReads,[nb1GainTable+expectedGainCode]);++gainLookups;++gainHistogram[expectedGainCode];}
+  assert.equal(cpu.data[1],0);++prepareCalls;prepareMultiplies+=prepareActive.muls;prepareCounts.push(prepareActive.muls);
+  const group=prepareGroups[prepareActive.zeroGain?'zero':'nonzero'];++group.calls;group.muls+=prepareActive.muls;group.min=Math.min(group.min,prepareActive.muls);group.max=Math.max(group.max,prepareActive.muls);
+  prepareActive=null;
  }
  if(lowActive&&opcode===0x9508&&cpu.SP===lowActive.sp+2){
   assert.equal(lowActive.muls,lowActive.mode===2?604:602);assert.equal(cpu.data[1],0);
@@ -132,6 +192,9 @@ function decode(payload,width,invalidFlags=0){
  const lowBefore={2:lowStats[2].calls,8:lowStats[8].calls};
  const zeroBefore=zeroFrameCalls,vectorsBefore=zeroVectorCalls;
  const oneBefore=oneSamples,oneMulsBefore=oneMuls,adaptiveBefore=adaptiveCalls;
+ const q6Before=q6Calls;
+ const gainBefore=gainLookups;expectedGainCode=((payload[3]&3)<<2)|(payload[4]>>6);
+ expectedZeroContext=expectedGainCode<4||Math.floor(28406*olGains[(payload[4]>>1)&31]/32768)<=4096;
  expectedCoefficient=Math.min(63,(2185*((((payload[3]&3)<<2)|(payload[4]>>6))<<6)+16384)>>15);
  cpu.data.set(payload,packet);cpu.data[bytes]=width;cpu.data[flags]=invalidFlags;
  output=[];cpu.data[status]=1;cpu.data[command]=1;until(()=>cpu.data[status]===2);
@@ -156,6 +219,13 @@ function decode(payload,width,invalidFlags=0){
   if((payload[0]>>3)===8)assert.equal(adaptiveCalls,adaptiveBefore,'No three-tap kernel for NB8');
   if(eligible)++oneFrames;
  }
+ if(countForcedQ6){
+  const eligible=code===0&&(payload[0]>>3)===8&&expectedCoefficient!==0;
+  const pitch=17+((payload[2]&1)<<6)+(payload[3]>>2);
+  const expected=eligible?4*Array.from({length:40},(_,j)=>Math.floor(j/pitch)).reduce((a,b)=>a+b,0):0;
+  assert.equal(q6Calls-q6Before,expected,'Exact short-lag ancestor count; no calls in rejected/other/zero frames');
+ }
+ if(countNb1Gain)assert.equal(gainLookups-gainBefore,code===0&&(payload[0]>>3)===1?1:0,'Gain read once only for a valid NB1 frame');
  return {code,pcm:meta.wideband?Buffer.concat(output):Buffer.from(cpu.data.subarray(pcm,pcm+320)),callbacks:output.length};
 }
 function reject(payload,width,badFlags=0){const answer=decode(payload,width,badFlags);assert.equal(answer.code,-1);assert.equal(answer.callbacks,0);rejected++;}
@@ -181,9 +251,12 @@ if(countValues)report.noiseTableArithmetic={calls:valuesCalls,hardwareMultiplies
 if(countFold)report.noiseFoldArithmetic={calls:foldCalls,hardwareMultiplies:foldMultiplies,
  transformedValuesPerNb1Frame:16,foldMulsPerNb1Frame:112,controllerMulsPerNb1Frame:116,rejectedCallsDoNotExecute:true};
 if(countVocoder)report.vocoderArithmetic={calls:vocoderCalls,hardwareMultiplies:vocoderMultiplies,
- callsPerNb1Frame:4,hardwareMultipliesPerNb1Frame:640,rejectedCallsDoNotExecute:true};
+ callsPerNb1Frame:4,hardwareMultipliesPerNb1Frame:640,rejectedCallsDoNotExecute:true,
+ zeroContextDispatchAvailable:zeroVocoderAvailable,byPath:vocoderPaths,preparedContextDispatchExact:true};
 if(countPrepare)report.framePreparationArithmetic={calls:prepareCalls,hardwareMultiplies:prepareMultiplies,
- perCall:prepareCounts,rejectedCallsDoNotExecute:true};
+ perCall:prepareCounts,byGain:prepareGroups,rejectedCallsDoNotExecute:true};
+if(countNb1Gain)report.nb1GainLookup={calls:gainLookups,codeHistogram:gainHistogram,exactFlashAddressPerFrame:true,
+ originalFiniteMapVerified:true,invalidAndOtherModeCallsDoNotExecute:true};
 if(countLowFusion)report.lowFusionArithmetic={byMode:lowStats,rejectedCallsAndOtherModesDoNotExecute:true,
  fourCallsPerMatchingWbFrame:true,nbApiDoesNotExecute:true};
 if(countForcedZero)report.forcedZeroArithmetic={frames:zeroFrameCalls,twentyWordCalls:zeroVectorCalls,hardwareMultiplies:zeroFrameMuls,
@@ -191,4 +264,7 @@ if(countForcedZero)report.forcedZeroArithmetic={frames:zeroFrameCalls,twentyWord
  invalidAndNonzeroCoefficientCallsDoNotExecute:true};
 if(countForcedOne)report.forcedOneArithmetic={frames:oneFrames,calls:oneCalls,samples:oneSamples,hardwareMultiplies:oneMuls,
  callsByCount:oneCounts,sixMulsPerSample:true,noThreeTapKernelForNb8:true,invalidOtherModeAndZeroCoefficientCallsDoNotExecute:true};
+if(countForcedQ6)report.forcedQ6Arithmetic={calls:q6Calls,hardwareMultiplies:q6Muls,cycles:q6Cycles,cyclesPerCall:18,
+ twoMulsPerCall:true,exactDuringDecoder:true,inputRegistersAndR1Preserved:true,exactAncestryCounts:true,
+ invalidOtherModeAndZeroCoefficientCallsDoNotExecute:true};
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS mixed API',JSON.stringify(report));

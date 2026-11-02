@@ -76,6 +76,43 @@ Nonzero NB3.95/WB5.75 frames use **640 fewer MULs**; speech decoder CPU falls
 shrinks 13 B and WB stack stays fixed. Full PCM, loaded WB IRQ and scheduled
 SPI checks retain exact output; WB SPI minimum queue improves 23 -> 31 samples.
 
+[Bounded forced-pitch arithmetic](WB_FORCED_MATH.md) then replaces the ancestry
+product with exact signed22/Q6 arithmetic and narrows coefficient calculation
+to unsigned16. NB3.95/WB5.75 speech CPU falls **28.76% -> 28.64% / 71.78% ->
+71.66%**; bare Flash shrinks 88 B with unchanged static SRAM and peak stack.
+Full PCM, loaded WB IRQ and SPI checks stay exact without underruns; WB SPI
+minimum queue improves 31 -> 33. The Q6 ASM domain is exhaustively verified
+over 4194304 pairs, with explicitly selectable C preserved.
+
+[The exact finite NB1 gain map](WB_GAIN_MAP.md) then composes sixteen control
+codes through both original quantizers. NB2.15/WB3.95 speech CPU improves
+**32.00% ->31.90% / 69.57% ->69.47%**, with 82 B less Flash and unchanged
+static SRAM/peak stack. Paired full PCM, +8%/+11% WB IRQ and scheduled SPI
+stay exact without underruns. The gain lookup is portable C and uses sixteen
+Flash bytes; quiet speech and all RNG/state behavior are preserved.
+
+[Exact zero-gain preparation](WB_ZERO_GAIN.md) skips products and the square
+root whose original results are provably zero, retaining current noise and the
+old persistent pulse. NB2.15/WB3.95 speech CPU improves **31.904% ->31.791% /
+69.474% ->69.388%** with identical PCM. Bare Flash grows 100/132 B; NB peak stack
+grows 2 B and WB stack/static SRAM stay unchanged. Full raw, +8%/+11% WB IRQ
+and continuous SPI pass without underruns. Full-domain unity arithmetic and
+explicit nonzero-prior-pulse state cases are verified; portable C is retained.
+
+[Exact zero-context quarter synthesis](WB_ZERO_SYNTHESIS.md) then removes
+unused previous-noise/pulse reads while preserving the incoming cursor on the
+first sample and the exact mean/phase recurrence. WB3.95 speech CPU improves
+**69.388% ->69.222%**, with 188 B extra Flash and unchanged static/peak SRAM.
+All 10627 raw frames, both full +8%/+11% IRQ runs and 3600 continuous SPI frames
+remain exact without underruns. Equivalent C is selectable on AVR itself;
+the general primitive retains arbitrary-context behavior.
+
+[Prepared-context ASM dispatch](WB_PREPARED_DISPATCH.md) then moves the proven
+selector beside the shared prologue. Every WB3.95 frame saves 52/60 cycles;
+speech CPU improves **69.222% ->69.205%**, Flash shrinks 18 B and RAM stays fixed.
+Full raw, +8%/+11% IRQ and scheduled SPI retain exact PCM/PWM and zero underruns.
+The C dispatcher is explicitly selectable and both C images remain byte-identical.
+
 An adaptation of the **original Xiph Speex 1.2.1 fixed-point decoder** for
 ATmega328P at 16 MHz, with a linked PWM player and reproducible host/AVR tests.
 The ASM player passes ISA simulation on all 31 streams: **9,100

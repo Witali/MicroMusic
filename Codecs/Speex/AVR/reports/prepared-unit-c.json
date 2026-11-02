@@ -1,0 +1,56 @@
+{
+  "scope": "Isolated C/ASM vectors; no C decoder execution or timing",
+  "backend": "c",
+  "binarySha256": "cf86c308fa70dbaa09021744cead1e1a8092323fda0fb1eaa12f75f61345c5d1",
+  "cases": 98791,
+  "zeroCases": 33256,
+  "ordinaryCases": 65535,
+  "zeroPathsPerCase": 5,
+  "ordinaryPathsPerCase": 3,
+  "pitchPhasePairs": 18432,
+  "fullSigned16CurrentSweep": true,
+  "incomingDifferenceOverflowEdges": true,
+  "fullSigned16PredicateSweep": true,
+  "preparedEntryTailBranchAndArgumentsExact": true,
+  "originalTwoProductReference": true,
+  "wordsAndCursorExact": true,
+  "readOnlyInputsAndOutputBounds": true,
+  "explicitCSelectionVerified": true,
+  "calleeSavedAndR1Returns": 132047,
+  "stats": {
+    "general": {
+      "calls": 98791,
+      "minCycles": 3177,
+      "maxCycles": 3268,
+      "muls": 15806560,
+      "previousBytes": 7903280,
+      "pulseBytes": 395164
+    },
+    "zero": {
+      "calls": 33256,
+      "minCycles": 2660,
+      "maxCycles": 2745,
+      "muls": 5320960,
+      "previousBytes": 0,
+      "pulseBytes": 0
+    },
+    "prepared": {
+      "calls": 0,
+      "minCycles": null,
+      "maxCycles": 0,
+      "muls": 0,
+      "previousBytes": 0,
+      "pulseBytes": 0
+    }
+  },
+  "pairedZeroMinusGeneralCycles": {
+    "min": -526,
+    "max": -517,
+    "total": -17224672,
+    "mean": -517.9417849410632
+  },
+  "removedPreviousAndPulseBytesPer40": 84,
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "peakStack": 30
+}

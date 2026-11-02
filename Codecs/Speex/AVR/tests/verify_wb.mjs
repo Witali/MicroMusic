@@ -29,6 +29,8 @@ let totalCycles=0,collectingProfile=false;
 const profiling=process.argv.includes('--profile'),hits=new Map();
 const forcedTiming=process.argv.includes('--forced-zero-timing'),forcedRows=[];
 if(forcedTiming)assert.equal(backend,'asm','Do not execute/time the C decoder');
+const packetTiming=process.argv.includes('--packet-timing'),packetRows=[];
+if(packetTiming)assert.equal(backend,'asm','Do not execute/time the C decoder');
 for(const name of readdirSync(streams).filter(s=>s.endsWith('.spxraw')).sort()){
  const raw=readFileSync(join(streams,name));assert.equal(raw.length%packetBytes,0);
  const expected=readFileSync(join(oracle,name.replace('.spxraw','.pcm')));assert.equal(expected.length,raw.length/packetBytes*640);
@@ -64,11 +66,14 @@ for(const name of readdirSync(streams).filter(s=>s.endsWith('.spxraw')).sort()){
   const zero=cycles.map((_,i)=>{const p=i*packetBytes;assert.equal(raw[p]>>3,8);return (((raw[p+3]&3)<<2)|(raw[p+4]>>6))===0;});
   forcedRows.push({stream:name,inputSha256:createHash('sha256').update(raw).digest('hex'),pcmSha256:createHash('sha256').update(expected).digest('hex'),coefficientZero:zero,cycles});
  }
+ if(packetTiming)packetRows.push({stream:name,inputSha256:createHash('sha256').update(raw).digest('hex'),pcmSha256:createHash('sha256').update(expected).digest('hex'),cycles});
 }
 report.meanCycles=totalCycles/report.frames;report.peakStack=2303-report.minSP;report.freeSram=report.minSP-end+1;
 writeFileSync(join(dir,'verification.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));
 if(forcedTiming)writeFileSync(join(dir,'forced-zero-timing.json'),JSON.stringify({binarySha256:metadata.binarySha256,packetBytes,
  includesInterrupts:false,frames:report.frames,streams:forcedRows})+'\n');
+if(packetTiming)writeFileSync(join(dir,'packet-timing.json'),JSON.stringify({binarySha256:metadata.binarySha256,packetBytes,
+ includesInterrupts:false,frames:report.frames,streams:packetRows})+'\n');
 if(profiling){
  const functions=[...symbols].filter(([,at])=>at<binary.length).sort((a,b)=>a[1]-b[1]);
  const totals=new Map();

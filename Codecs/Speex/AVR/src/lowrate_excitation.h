@@ -57,6 +57,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb2_excitation_frame(int16_t *frame,
 #endif
 #if SPEEX_ENABLE_NB8
 #include "forced_pitch.h"
+#include "forced_math.h"
 extern const int8_t exc_20_32_table[640];
 /* Forced coefficient 0 has no adaptive contribution, including short-lag
  * ancestors. Reuse the exact zero primitive on complete twenty-word rows. */
@@ -86,8 +87,7 @@ static SPEEX_NB3_ALWAYS_INLINE int16_t speex_forced_source(const int16_t *exc,
     int at=(int)sample-pitch;uint8_t depth=0;
     while(at>=0){at-=pitch;++depth;}
     int16_t value=exc[at];
-    while(depth--)value=(int16_t)speex_avr_asr13(
-        MULT16_16(value,(int16_t)coefficient<<7)+4096);
+    while(depth--)value=speex_forced_q6(value,coefficient);
     return value;
 }
 static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
@@ -97,7 +97,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
     /* Sixteen codes produce 0..64 (clamped to63); only code0 produces0.
      * Test it before computing a coefficient or reading the unused pitch. */
     if(!coded_coefficient){speex_nb8_zero_frame(frame,packet,scale,indices);return;}
-    uint8_t coefficient=(2185L*(int16_t)(coded_coefficient<<6)+16384)>>15;
+    uint8_t coefficient=speex_forced_coefficient_c(coded_coefficient);
     if(coefficient>63)coefficient=63;
     uint8_t pitch=17+speex_packet_field(packet,23,7);
     int16_t edge[10];
@@ -128,6 +128,8 @@ static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
 }
 #endif
 #if SPEEX_ENABLE_NB1
+#include "nb1_gain.h"
+#include "nb1_zero_gain.h"
 static SPEEX_NB3_ALWAYS_INLINE int16_t speex_low_q15(int16_t a,int16_t b)
 {return speex_avr_asr15_word(MULT16_16(a,b));}
 /* NB1's provisional adaptive+innovation sum is overwritten by the vocoder.
@@ -145,14 +147,15 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *
 #endif
 {
     uint8_t pitch=17+speex_packet_field(packet,23,7);
-    int16_t coefficient=(2185L*(int16_t)(speex_packet_field(packet,30,4)<<6)+16384)>>15;
-    int16_t g=(int16_t)((24576L*(coefficient-13)+8192)>>14);
-    if(g<0)g=0;if(g>64)g=64;
-    int16_t amplitude=(int16_t)((int32_t)spx_sqrt(2*(int16_t)pitch)*
-        (int16_t)(((int32_t)g*((scale+8192)>>14)+32)>>6));
-    int16_t noise_gain=32767-435*g,previous_gain=77*g;
-    int16_t pulse_now=speex_low_q15(22938,amplitude);
-    int16_t pulse_previous=speex_low_q15(9830,amplitude);
+    int16_t g=speex_nb1_gain_selected_c(speex_packet_field(packet,30,4));
+    int16_t noise_gain=32767,previous_gain=0,pulse_now=0,pulse_previous=0;
+    if(g) {
+        int16_t amplitude=(int16_t)((int32_t)spx_sqrt(2*(int16_t)pitch)*
+            (int16_t)(((int32_t)g*((scale+8192)>>14)+32)>>6));
+        noise_gain=32767-435*g;previous_gain=77*g;
+        pulse_now=speex_low_q15(22938,amplitude);
+        pulse_previous=speex_low_q15(9830,amplitude);
+    }
 #if SPEEX_ENABLE_WB1
     /* Synthesis starts at history word OFFSET-40 (105 in this profile).
      * Cache 160 byte classes and five word values before that live suffix.
@@ -173,15 +176,20 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *
     int16_t current[5],previous[5];
 #endif
     speex_low_noise_values5(noise,scale);
-    for(uint8_t i=0;i<5;i++) {
-        current[i]=speex_low_q15(noise_gain,noise[i]);
-        previous[i]=speex_low_q15(previous_gain,noise[i]);
-#if SPEEX_ENABLE_WB1
-        /* HB1's first quantizer is frame-invariant; class2 is exactly zero. */
-        prefold[i]=i==2?0:speex_low_q15(29491,noise[i]);
-#endif
+    if(g) {
+        for(uint8_t i=0;i<5;i++) {
+            current[i]=speex_low_q15(noise_gain,noise[i]);
+            previous[i]=speex_low_q15(previous_gain,noise[i]);
+        }
+    } else {
+        for(uint8_t i=0;i<5;i++) {
+            current[i]=speex_nb1_noise_unity_c(noise[i]);previous[i]=0;
+        }
     }
-    int16_t prior_noise=speex_low_q15(previous_gain,st->voc_previous);
+#if SPEEX_ENABLE_WB1
+    for(uint8_t i=0;i<5;i++)prefold[i]=i==2?0:speex_low_q15(29491,noise[i]);
+#endif
+    int16_t prior_noise=g?speex_low_q15(previous_gain,st->voc_previous):0;
 #if SPEEX_ENABLE_WB1
     context[SPEEX_NB1_PULSE_NOW]=pulse_now;
     context[SPEEX_NB1_PULSE_PREVIOUS]=pulse_previous;
@@ -218,7 +226,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_subframe(DecState *st,int16_
     SpeexNb1Cursor cursor={st->voc_m1,context[SPEEX_NB1_PRIOR_NOISE],st->voc_mean,st->voc_offset,2};
     uint8_t *symbols=(uint8_t *)st->excBuf+40*sub;
     speex_low_noise_indices40(symbols,&st->seed);
-    speex_nb1_synthesize40(exc,symbols,context,&cursor);
+    speex_nb1_synthesize40_prepared(exc,symbols,context,&cursor);
     st->voc_offset=cursor.phase;st->voc_m1=cursor.prior_pulse;st->voc_mean=cursor.mean;
     st->voc_previous=st->excBuf[SPEEX_NB1_VALUES_WORD+cursor.last];
     context[SPEEX_NB1_PRIOR_NOISE]=cursor.prior_noise;

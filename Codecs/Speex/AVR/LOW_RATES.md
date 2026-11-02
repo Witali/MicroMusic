@@ -16,6 +16,11 @@ ATmega328P, 16 MHz, 2 KB SRAM; explicit AVR ASM is the playback target.
 Portable C fallback selection and the existing compact Q7/16-tap QMF remain.
 Original Xiph 1.2.1 files, mode tables and BSD provenance stay unchanged.
 
+The latest [exact finite NB1 gain map](WB_GAIN_MAP.md) brings NB2.15/WB3.95
+speech CPU to 31.90%/69.47%, with 82 B less Flash, unchanged working memory
+and fresh paired full PCM, +8%/+11% WB IRQ and SPI admission. Historical
+figures below retain their original stage context.
+
 ## Stage 1: NB5.95 / WB7.75
 
 `SPEEX_ENABLE_NB2=1` adds submode 2: 119 meaningful bits / 15 bytes, 160
@@ -69,6 +74,10 @@ The subsequent [one-tap stage](WB_FORCED_ONE.md) removes the unused outer
 products and history words in nonzero frames without changing quantizers.
 Speech CPU becomes 28.76% NB3.95 / 71.78% WB5.75, with full output checks and
 the same C fallback selection. The preceding zero-coefficient path is retained.
+
+[Bounded ancestry/coefficient arithmetic](WB_FORCED_MATH.md) subsequently lowers
+speech CPU to 28.64% / 71.66%, shrinks bare Flash 88 B and preserves all rounding
+and output checks. Submode1's coefficient caller is not changed by that stage.
 
 `SPEEX_ENABLE_NB8=1` adds 79-bit / 10-byte NB and 115-bit / 15-byte WB
 packets. `--low-rates 3` enables both new pairs. The original forced pitch

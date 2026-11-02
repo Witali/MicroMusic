@@ -1,0 +1,37 @@
+{
+  "scope": "Isolated C scalar primitives; no C decoder execution/timing",
+  "backend": "c",
+  "binarySha256": "d20ae388e25502cf565fc3c334358ed0aae4e1374598ff89eb1dd04d77af752e",
+  "fullSigned16Inputs": 65536,
+  "boundedInputsExcludingMin": 65535,
+  "negativeEndpointAndFloorsExact": true,
+  "originalAndIndependentExact": true,
+  "calleeSavedAndR1Returns": 196607,
+  "noMulsInSimplifications": true,
+  "statistics": [
+    {
+      "name": "unity_original",
+      "calls": 65536,
+      "muls": 262144,
+      "minCycles": 147,
+      "maxCycles": 150
+    },
+    {
+      "name": "unity_generic",
+      "calls": 65536,
+      "muls": 0,
+      "minCycles": 23,
+      "maxCycles": 24
+    },
+    {
+      "name": "unity_noise",
+      "calls": 65535,
+      "muls": 0,
+      "minCycles": 12,
+      "maxCycles": 13
+    }
+  ],
+  "peakStack": 8,
+  "includesInterrupts": false,
+  "physicalBoardTested": false
+}

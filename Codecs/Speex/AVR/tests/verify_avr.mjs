@@ -50,6 +50,8 @@ for (const name of ['malloc', 'calloc', 'realloc', 'free']) assert.ok(!symbols.h
 const profile = process.argv.includes('--profile');
 const forcedTiming=process.argv.includes('--forced-zero-timing'),forcedRows=[];
 if(forcedTiming)assert.equal(backend.backend,'asm','Do not execute/time the C decoder');
+const packetTiming=process.argv.includes('--packet-timing'),packetRows=[];
+if(packetTiming)assert.equal(backend.backend,'asm','Do not execute/time the C decoder');
 const lspFunction=[...symbols].find(([name,value])=>/^speex_nb3_interpolate_lpc(?:\.|$)/.test(name)&&value<32768) ||
   [...symbols].find(([name,value])=>/^lsp_to_lpc(?:\.|$)/.test(name)&&value<32768);
 assert.ok(lspFunction,'Count the actual out-of-line LSP conversion entries');
@@ -138,6 +140,7 @@ for (const file of readdirSync(streamsDirectory).filter(s => s.endsWith('.spxraw
     const zero=cycles.map((_,i)=>{const p=i*packetBytes;assert.equal(raw[p]>>3,8);return (((raw[p+3]&3)<<2)|(raw[p+4]>>6))===0;});
     forcedRows.push({stream:file,inputSha256:createHash('sha256').update(raw).digest('hex'),pcmSha256:createHash('sha256').update(expected).digest('hex'),coefficientZero:zero,cycles});
   }
+  if(packetTiming)packetRows.push({stream:file,inputSha256:createHash('sha256').update(raw).digest('hex'),pcmSha256:createHash('sha256').update(expected).digest('hex'),cycles});
 }
 report.freeSramAtPeak = report.minStackPointer - end + 1;
 report.fitsDecoderBudget = report.maxCycles <= 320000;
@@ -146,6 +149,8 @@ console.log('PASS: AVR PCM exact;', report.frames, 'frames; max', report.maxCycl
   'cycles;', report.freeSramAtPeak, 'bytes spare SRAM. ISR excluded.');
 if(forcedTiming)writeFileSync(join(outputDirectory,'forced-zero-timing.json'),JSON.stringify({binarySha256:backend.binarySha256,packetBytes,
  includesInterrupts:false,frames:report.frames,streams:forcedRows})+'\n');
+if(packetTiming)writeFileSync(join(outputDirectory,'packet-timing.json'),JSON.stringify({binarySha256:backend.binarySha256,packetBytes,
+ includesInterrupts:false,frames:report.frames,streams:packetRows})+'\n');
 if (profile) {
   const totals = new Map();
   for (const [pc, cycles] of hits) {
