@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "target": "ATmega328P / AVR5",
+  "cpuHz": 16000000,
+  "sampleHz": 8000,
+  "pwmHz": 62500,
+  "compiler": "AVR-GCC 7.3.0",
+  "assemblyExplicitlyEnabled": true,
+  "cFallbackRetained": true,
+  "queueBytes": 256,
+  "prefillSamples": 192,
+  "extraIrqCycles": 0,
+  "options": [
+    "-Os",
+    "-flto",
+    "-mcall-prologues",
+    "-mrelax",
+    "LPX4_AVR_DOT_UNROLL=1",
+    "LPX4_FUNCTION_TUNING=0"
+  ],
+  "physicalBoardTested": false,
+  "nativeDirectContractTestsPassed": 18,
+  "adoption": "Neither decoder prototype is adopted; both remain explicitly opt-in on the isolated decoder-budget branch",
+  "defaultOff": {
+    "passed": true,
+    "measurements": [
+      {
+        "format": "v5",
+        "defaultOffImagesByteIdentical": true,
+        "fullFlashBytes": 5474
+      },
+      {
+        "format": "v8",
+        "defaultOffImagesByteIdentical": true,
+        "fullFlashBytes": 5458
+      }
+    ]
+  },
+  "scaleRamp": {
+    "status": "rejected for adoption: the subsequent ramp-aware tuning pilot retained the protected incumbents at both budgets",
+    "scope": "Cost-only same-payload probes followed by one tuning phrase; no full-corpus or completed-quality-round claim",
+    "producerObserver": "v2; complete live IRQ notification intervals and actual RETI steps excluded",
+    "measurements": [
+      {
+        "capKbps": 2,
+        "mode": 15,
+        "costOnlySamePayload": true,
+        "qualityImprovementEstablished": false,
+        "measurements": [
+          {
+            "label": "plain",
+            "samples": 19200,
+            "encodedBytes": 578,
+            "programFlashBytes": 4880,
+            "fullFlashBytes": 5458,
+            "staticSramBytes": 756,
+            "peakStackBytes": 60,
+            "minimumQueueBeforeEof": 192,
+            "underruns": 0,
+            "completePwmExact": true,
+            "meanProducerWorkCycles": 816.6657291666667,
+            "startupCyclesBeforeFirstProducer": 9618,
+            "setupAmortizedWorkCyclesPerSample": 817.1666666666666,
+            "worst160WorkCyclesPerSample": 920.76875,
+            "worst320WorkCyclesPerSample": 842.840625,
+            "calls": 19200,
+            "publishedCalls": 19200,
+            "preloadCalls": 192,
+            "playbackCalls": 19008,
+            "terminalPublishedCalls": 1,
+            "unpublishedCalls": 0,
+            "failedCalls": 0,
+            "boundaryErrors": 0,
+            "perCallTraceVerified": true
+          },
+          {
+            "label": "ramp",
+            "samples": 19200,
+            "encodedBytes": 578,
+            "programFlashBytes": 5196,
+            "fullFlashBytes": 5774,
+            "staticSramBytes": 760,
+            "peakStackBytes": 59,
+            "minimumQueueBeforeEof": 192,
+            "underruns": 0,
+            "completePwmExact": true,
+            "meanProducerWorkCycles": 818.86859375,
+            "startupCyclesBeforeFirstProducer": 9683,
+            "setupAmortizedWorkCyclesPerSample": 819.3729166666667,
+            "worst160WorkCyclesPerSample": 922.01875,
+            "worst320WorkCyclesPerSample": 844.325,
+            "calls": 19200,
+            "publishedCalls": 19200,
+            "preloadCalls": 192,
+            "playbackCalls": 19008,
+            "terminalPublishedCalls": 1,
+            "unpublishedCalls": 0,
+            "failedCalls": 0,
+            "boundaryErrors": 0,
+            "perCallTraceVerified": true
+          }
+        ],
+        "costRatios": {
+          "meanProducerWorkCycles": 1.0026973883005732,
+          "worst160WorkCyclesPerSample": 1.001357561276922,
+          "worst320WorkCyclesPerSample": 1.0017611573955634
+        }
+      },
+      {
+        "capKbps": 3,
+        "mode": 4,
+        "costOnlySamePayload": true,
+        "qualityImprovementEstablished": false,
+        "measurements": [
+          {
+            "label": "plain",
+            "samples": 19200,
+            "encodedBytes": 900,
+            "programFlashBytes": 4574,
+            "fullFlashBytes": 5474,
+            "staticSramBytes": 756,
+            "peakStackBytes": 60,
+            "minimumQueueBeforeEof": 192,
+            "underruns": 0,
+            "completePwmExact": true,
+            "meanProducerWorkCycles": 767.7296354166666,
+            "startupCyclesBeforeFirstProducer": 9611,
+            "setupAmortizedWorkCyclesPerSample": 768.2302083333333,
+            "worst160WorkCyclesPerSample": 912.49375,
+            "worst320WorkCyclesPerSample": 833.084375,
+            "calls": 19200,
+            "publishedCalls": 19200,
+            "preloadCalls": 192,
+            "playbackCalls": 19008,
+            "terminalPublishedCalls": 1,
+            "unpublishedCalls": 0,
+            "failedCalls": 0,
+            "boundaryErrors": 0,
+            "perCallTraceVerified": true
+          },
+          {
+            "label": "ramp",
+            "samples": 19200,
+            "encodedBytes": 900,
+            "programFlashBytes": 4996,
+            "fullFlashBytes": 5896,
+            "staticSramBytes": 760,
+            "peakStackBytes": 59,
+            "minimumQueueBeforeEof": 192,
+            "underruns": 0,
+            "completePwmExact": true,
+            "meanProducerWorkCycles": 785.0721354166667,
+            "startupCyclesBeforeFirstProducer": 9672,
+            "setupAmortizedWorkCyclesPerSample": 785.5758854166667,
+            "worst160WorkCyclesPerSample": 929.9375,
+            "worst320WorkCyclesPerSample": 850.4625,
+            "calls": 19200,
+            "publishedCalls": 19200,
+            "preloadCalls": 192,
+            "playbackCalls": 19008,
+            "terminalPublishedCalls": 1,
+            "unpublishedCalls": 0,
+            "failedCalls": 0,
+            "boundaryErrors": 0,
+            "perCallTraceVerified": true
+          }
+        ],
+        "costRatios": {
+          "meanProducerWorkCycles": 1.0225893324940984,
+          "worst160WorkCyclesPerSample": 1.0191165692915705,
+          "worst320WorkCyclesPerSample": 1.0208599819195985
+        }
+      }
+    ]
+  },
+  "meta320": {
+    "status": "rejected for adoption: all 25 new tuning candidates failed protected quality guards",
+    "scope": "One 2.4-second tuning phrase only, no full-corpus or completed-quality-round claim",
+    "observer": "v1 notification intervals excluded; conservative RETI residual retained; not the final v2 CPU gate",
+    "measurements": [
+      {
+        "label": "protected-v5",
+        "encodedBytes": 900,
+        "programFlashBytes": 4574,
+        "fullFlashBytes": 5474,
+        "staticSramBytes": 756,
+        "meanNotificationSubtractedProducerCycles": 767.7896354166667,
+        "worst160": 912.94375,
+        "worst320": 833.309375,
+        "completePwmExact": true,
+        "underruns": 0
+      },
+      {
+        "label": "rejected-meta320-dense",
+        "encodedBytes": 898,
+        "programFlashBytes": 4796,
+        "fullFlashBytes": 5694,
+        "staticSramBytes": 756,
+        "meanNotificationSubtractedProducerCycles": 837.8417708333334,
+        "worst160": 930.11875,
+        "worst320": 852.8625,
+        "completePwmExact": true,
+        "underruns": 0
+      }
+    ]
+  }
+}
