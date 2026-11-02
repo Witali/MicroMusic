@@ -57,6 +57,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb2_excitation_frame(int16_t *frame,
 #endif
 #if SPEEX_ENABLE_NB8
 #include "forced_pitch.h"
+#include "forced_math.h"
 extern const int8_t exc_20_32_table[640];
 /* Forced coefficient 0 has no adaptive contribution, including short-lag
  * ancestors. Reuse the exact zero primitive on complete twenty-word rows. */
@@ -86,8 +87,7 @@ static SPEEX_NB3_ALWAYS_INLINE int16_t speex_forced_source(const int16_t *exc,
     int at=(int)sample-pitch;uint8_t depth=0;
     while(at>=0){at-=pitch;++depth;}
     int16_t value=exc[at];
-    while(depth--)value=(int16_t)speex_avr_asr13(
-        MULT16_16(value,(int16_t)coefficient<<7)+4096);
+    while(depth--)value=speex_forced_q6(value,coefficient);
     return value;
 }
 static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
@@ -97,7 +97,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
     /* Sixteen codes produce 0..64 (clamped to63); only code0 produces0.
      * Test it before computing a coefficient or reading the unused pitch. */
     if(!coded_coefficient){speex_nb8_zero_frame(frame,packet,scale,indices);return;}
-    uint8_t coefficient=(2185L*(int16_t)(coded_coefficient<<6)+16384)>>15;
+    uint8_t coefficient=speex_forced_coefficient_c(coded_coefficient);
     if(coefficient>63)coefficient=63;
     uint8_t pitch=17+speex_packet_field(packet,23,7);
     int16_t edge[10];
