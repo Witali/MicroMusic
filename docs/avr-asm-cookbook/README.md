@@ -3165,10 +3165,11 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [Clocked external SPI sources](lpx-external-spi.md): vendor-derived registers, source/arithmetic separation, corrected simavr byte timing and bounded full-player validation scope.
 
 - [Exact bounded LPX pitch history](lpx-pitch-history.md): rejected 111-byte RAM tradeoff, memory-lifetime alternatives, unchanged production decoder and measured AVR25 C throughput limits.
-- [LPX SRAM512 memory profile](lpx-sram512.md): reuse 96 dead pitch-ring bytes for exact LSF polynomial scratch; explicit RAM/CPU tradeoff, unchanged defaults, and separate AVR5/Tiny88 timing limits.
+- [LPX SRAM512 memory profile](lpx-sram512.md): reuse 96 dead pitch-ring bytes for exact LSF polynomial scratch; original AVR5 admission and historical Tiny88 C-probe limits, linked to the current player.
 
-- [AVR25 software products and exact shifts](examples/lpx-avr25/README.md): standalone arithmetic provenance, C fallbacks and active-interrupt measurements.
-- [Real-time LPX on AVR25 without MUL](lpx-avr25.md): integrated exact arithmetic, fixed-header ROM specialization, an audited reserved-register ISR, 32-byte FIFO and complete P4/P6 admission within a 6.5 KiB image budget.
+- [AVR25 software products and exact shifts](examples/lpx-avr25/README.md): historical standalone arithmetic provenance, C fallbacks and active-interrupt measurements.
+- [Real-time LPX on AVR25 without MUL](lpx-avr25.md): original integrated arithmetic, fixed-header ROM specialization, reserved-register ISR and full P4/P6 measurements; retains the former 6.5 KiB budget as historical evidence.
+- [Tighten Tiny88 RAM and Flash budgets](lpx-tiny88-budget.md): omit stored fixed-ROM constants, check FIFO24 addressing/ELF alignment, group software-product rounds and retain only reachable P4 cosine nodes; measured complete-player IRQ checks, hard 8192-byte cap and explicit 6012-byte USB loading limit.
 
 - [Select LPX multiplication by real target capability](lpx-multiply-selection.md): explicit C/ASM choice, compiler-linked software fallback, and assembled AVR5/AVR25 checks without redefining CPU macros.
 

@@ -1,5 +1,13 @@
 # LPX on AVR25 without MUL
 
+The integration and size measurements below are retained as historical
+evidence. The later [Tiny88 memory and Flash budget entry](lpx-tiny88-budget.md)
+records fixed-ROM state removal, optional FIFO24 and the current full-player
+checks. The current hard cap is **8192 bytes**, including audio; the former
+6656-byte gate below is historical. Images above the MH-ET LIVE standard USB
+bootloader's **6012-byte** application region require ISP loading. Speex is
+excluded from the Tiny88 profile.
+
 Measured on ATtiny88 / AVR25, GNU AVR ABI, AVR-GCC 7.3.0, `-Os -flto
 -mcall-prologues -mrelax -fno-jump-tables -fno-exceptions -fno-rtti
 -ffunction-sections -fdata-sections -std=gnu++11`, requested16 MHz /8 kHz.
@@ -37,7 +45,8 @@ No manufacturer assembly listing was copied. Useful techniques:
 
 `LPX4_ARCH=LPX4_ARCH_GENERIC` explicitly restores C arithmetic on a real AVR.
 The real CPU and Flash-memory macros are never replaced. The SRAM512 profile
-and its 96-byte dead-history workspace are reused unchanged.
+and its 96-byte dead-history workspace are reused; later fixed-ROM state
+specialization is documented separately in the budget entry.
 
 ## Short interrupt with a bounded FIFO
 

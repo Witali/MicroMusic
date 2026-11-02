@@ -45,12 +45,14 @@ def prefix_v5(blob,frames):
     struct.pack_into('<H',header,20,len(payload))
     return bytes(header)+payload
 
-def run(output,controls=True):
+def run(output,controls=True,queue=32,mul16_unroll=16):
     output=Path(output).resolve()
     if REPO/'build' not in output.parents:raise ValueError('Use ignored build storage')
     output.mkdir(parents=True,exist_ok=True)
     cases=[]
     def check(name,source,expected=True,**kw):
+        kw.setdefault('queue',queue)
+        kw.setdefault('mul16_unroll',mul16_unroll)
         result=verify(source,output/name,**kw)
         if result['accepted']!=expected:raise AssertionError((name,result))
         cases.append(dict(case=name,**result));print(json.dumps(cases[-1]),flush=True)
@@ -75,8 +77,8 @@ def run(output,controls=True):
         check('c-arithmetic-reject',compact,expected=False,assembly=False,queue=16)
         small=verify(compact,output/'queue16-control',queue=16)
         cases.append(dict(case='queue16-control',**small));print(json.dumps(cases[-1]),flush=True)
-        # The larger timing-only image must be rejected at the default cap.
-        try:verify(quality,output/'size-reject')
+        # A caller can still require the historical smaller application cap.
+        try:verify(quality,output/'size-reject',flash_limit=6656)
         except ValueError as exc:
             if 'Complete image' not in str(exc):raise
         else:raise AssertionError('The bootloader Flash cap was not enforced')
@@ -85,7 +87,7 @@ def run(output,controls=True):
              ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp',ROOT/'tools/build_attiny88_player.py',
              ROOT/'tools/verify_attiny88_player.py',ROOT.parent/'validation/attiny88/sim_player.c',Path(__file__)]
     receipt=dict(schema='lpx-avr25-realtime-v1',cpu='ATtiny88 / AVR25',clock_hz=16000000,
-        sample_hz=8000,default_flash_limit=6656,physical_board_measured=False,
+        sample_hz=8000,default_flash_limit=8192,queue=queue,mul16_unroll=mul16_unroll,physical_board_measured=False,
         source_sha256={str(p.relative_to(REPO)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},cases=cases)
     (output/'matrix.json').write_text(json.dumps(receipt,indent=2)+'\n')
     return receipt
@@ -93,4 +95,6 @@ def run(output,controls=True):
 if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('output',type=Path)
     ap.add_argument('--no-controls',action='store_true')
-    args=ap.parse_args();run(args.output,not args.no_controls)
+    ap.add_argument('--queue',type=int,choices=(16,24,32),default=32)
+    ap.add_argument('--mul16-unroll',type=int,choices=(1,2,4,8,16),default=16)
+    args=ap.parse_args();run(args.output,not args.no_controls,args.queue,args.mul16_unroll)

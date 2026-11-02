@@ -2,9 +2,11 @@
 
 `standard` remains the default. The explicit `sram512` profile saves **96 bytes
 per decoder** by sharing dead pitch-history storage with the two temporary LSF
-polynomials. It accepts compact v5 only and preserves decoded PCM/PWM and the
-256-byte pitch history. It trades a small measured amount of speed and Flash
-for RAM; it is not a faster profile.
+polynomials. It requires compact-only parsing and preserves decoded PCM/PWM
+and the 256-byte pitch history. The default profile supports compact v5;
+the current Tiny88 builder separately enables v8/mode15 with
+`--enable-sparse80`. It trades a small measured amount of speed and Flash for
+RAM; it is not a faster profile.
 
 Force-include the configuration in **every translation unit**, including the
 core implementation and its callers:
@@ -29,7 +31,25 @@ The constants are `LPX4_MEMORY_PROFILE_STANDARD=0` and
 `sram512` build are rejected. Mixing profiles across translation units violates
 the class layout contract. The profile header changes no processor definition,
 clock, arithmetic backend or input-source selection. C remains available and
-is the default; ATtiny88/AVR25 has no supported AVR5 MUL assembly backend.
+is the default. ATtiny88/AVR25 has no hardware MUL; the current
+[Tiny88 player](../examples/ATTINY88_V5_PLAYER/README.md) explicitly selects
+the supported AVR25 software-product assembly backend with
+`LPX4_ENABLE_ASM=1`. `LPX4_ARCH=LPX4_ARCH_GENERIC` selects the equivalent C
+arithmetic on the same real AVR target.
+
+The current fixed-header ROM build also omits five bytes of private state
+whose values are already pinned and checked at compile time: decoder state
+is **393 bytes**, while the unpinned SRAM512 profile remains **398 bytes**.
+The optional 24-byte playback FIFO saves another eight bytes against FIFO32.
+See the [current player guide](../examples/ATTINY88_V5_PLAYER/README.md) for
+complete active-interrupt timing, static RAM, stack and Flash limits. Speex is
+excluded from this Tiny88 profile.
+
+## Historical C-only probes
+
+These measurements predate the integrated AVR25 assembly player. They describe
+the original dynamic-header C profile and remain valid evidence for that
+recipe; they do not describe the current fixed-header ROM player.
 
 On AVR-GCC 7.3, with compact v5, linear LPC history and two LPC segments, the
 ATtiny88 decoder state is **494 -> 398 bytes**. A minimal no-IRQ decode probe
@@ -56,6 +76,6 @@ files. This provenance was inspected afterward without rebuilding the images.
 
 The [cookbook entry](../../../../docs/avr-asm-cookbook/lpx-sram512.md) explains
 the lifetime proof, complete active-IRQ AVR5 comparison and validation limits.
-[Anonymous measurements](sram512-measurements.json) bind the final source bytes
-to those results. No encoded data, media fingerprints or target images are
+[Anonymous measurements](sram512-measurements.json) bind the historical source
+bytes to those results. No encoded data, media fingerprints or target images are
 included in that receipt.

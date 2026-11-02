@@ -23,9 +23,9 @@ int main(){
 '''
 
 def verify(source,output,*,assembly=True,asm_isr=True,queue=32,repeat=1,wsl=None,
-           flash_limit=6656,lpc_segments=2,sparse80=False):
+           flash_limit=8192,lpc_segments=2,sparse80=False,mul16_unroll=16):
     output=Path(output).resolve()
-    cost=build(source,output,assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,flash_limit=flash_limit,sparse80=sparse80)
+    cost=build(source,output,assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll)
     prefix=['wsl','-d',wsl,'--'] if wsl else []
     path=lambda p:target_path(p,wsl)
     def run(*args):
@@ -51,7 +51,8 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=32,repeat=1,wsl=None
     timing.update(pwm_exact=exact,flash_bytes=cost['flash_bytes'],static_ram_bytes=cost['static_ram_bytes'],
         flash_limit=flash_limit,queue=queue,repeat=repeat,assembly=assembly,asm_isr=asm_isr,
         embedded_audio_bytes=cost['embedded_audio_bytes'],program_excluding_audio_bytes=cost['program_excluding_audio_bytes'],
-        physical_board_measured=False)
+        physical_board_measured=False,bootloader_application_bytes=cost['bootloader_application_bytes'],
+        fits_standard_bootloader=cost['fits_standard_bootloader'],requires_isp=cost['requires_isp'],mul16_unroll=mul16_unroll)
     timing['accepted']=bool(exact and timing['samples']==timing['ticks']==timing['timer_events']==cost['samples']
         and not timing['underruns'] and timing['error']==0 and timing['eof']==timing['stopped']==1
         and timing['queue_empty'] and timing['timer_stopped'] and timing['stack_margin']>0
@@ -65,9 +66,10 @@ if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('input',type=Path);ap.add_argument('output',type=Path)
     ap.add_argument('--wsl');ap.add_argument('--c',action='store_true');ap.add_argument('--c-isr',action='store_true')
-    ap.add_argument('--queue',type=int,choices=(16,32),default=32);ap.add_argument('--repeat',type=int,default=1)
-    ap.add_argument('--flash-limit',type=int,default=6656)
+    ap.add_argument('--queue',type=int,choices=(16,24,32),default=32);ap.add_argument('--repeat',type=int,default=1)
+    ap.add_argument('--flash-limit',type=int,default=8192)
     ap.add_argument('--enable-sparse80',action='store_true')
+    ap.add_argument('--mul16-unroll',type=int,choices=(1,2,4,8,16),default=16)
     a=ap.parse_args();r=verify(a.input,a.output,wsl=a.wsl,assembly=not a.c,asm_isr=not a.c_isr,
-        queue=a.queue,repeat=a.repeat,flash_limit=a.flash_limit,sparse80=a.enable_sparse80)
+        queue=a.queue,repeat=a.repeat,flash_limit=a.flash_limit,sparse80=a.enable_sparse80,mul16_unroll=a.mul16_unroll)
     print(json.dumps(r));raise SystemExit(0 if r['accepted'] else 1)

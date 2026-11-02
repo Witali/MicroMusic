@@ -27,6 +27,26 @@ anchor LPC fingerprint, and separate exhaustive legal-grid scalar/anchor tests.
 Do not send arbitrary scalar bins/anchors through this reduced-grid helper.
 [Source-bound measurements, rejected exact alternative and scope](../../Codecs/LPX/research/v5-grid-cosine-2026-10-28/README.md).
 
+## Retain only reachable P4 nodes in a fixed-ROM SRAM512 build
+
+The later Tiny88 recipe pins the speech flags and rejects mismatched input
+headers. For P4 and segments 1/2, the existing node expression ends with a
+left shift by one, so every index is even. Reflection `128-index` preserves
+that parity. Keep entries 0,2,...,64 of the existing 65-word half-grid, then
+use `index>>1` after reflection. This is an exact **33-word subset**, saving
+64 table bytes; it does not round or quantize a new index. In original
+257-node coordinates these are nodes 0,4,...,128.
+
+The guard requires compact-only, SRAM512, fixed P4 flags and segments 1/2.
+P6, unpinned headers and four-segment builds retain their prior tables/helper.
+This is portable C specialization, shared by C and explicitly enabled ASM;
+arithmetic backend and manufacturer Flash access selection stay independent.
+The original oracle/model tables remain unchanged. Count the final lookup
+instructions and linked layout as well as the 64 table bytes when reporting
+complete Flash. The [Tiny88 budget entry](lpx-tiny88-budget.md) and its
+source-bound receipt record the complete active-IRQ player scope separately
+from the original AVR5 measurements above.
+
 ## Skip work on the implicit second spectral half
 
 The existing compact-only `!speechHalf_` branch can also own the `cur_→prev_`

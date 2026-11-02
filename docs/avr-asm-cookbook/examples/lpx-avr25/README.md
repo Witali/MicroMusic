@@ -1,8 +1,10 @@
 # AVR25 software products and exact shifts
 
 Original, standalone arithmetic prototype for ATtiny88 / AVR25 GNU ABI,
-AVR-GCC 7.3.0, `-Os -mrelax`, 16 MHz. It uses no hardware multiply and is
-**not integrated into the LPX decoder**. The public function interface is in
+AVR-GCC 7.3.0, `-Os -mrelax`, 16 MHz. It uses no hardware multiply. The later
+[integrated AVR25 player](../../lpx-avr25.md) has its own complete image,
+active-IRQ and stack measurements; the standalone numbers below remain
+historical arithmetic evidence. The public function interface is in
 `avr25_math.h`; `math.cpp` provides the default C implementation, including
 on AVR25 itself. Compile both C++ and `.S` with `LPX25_ENABLE_ASM=1` to
 explicitly select assembly on a real supported AVR25 target. Other targets

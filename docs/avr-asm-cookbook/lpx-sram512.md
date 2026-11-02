@@ -3,7 +3,10 @@
 The explicit `sram512` memory profile removes two 12-word polynomial arrays
 from `Lpx4HybridCore`, saving **96 persistent bytes**. The `standard` profile
 and default generated code stay unchanged. This is a measured RAM/CPU tradeoff
-for 512-byte-class devices, rather than a real-time ATtiny88 player admission.
+for 512-byte-class devices. The original measurements below are historical;
+they predate the integrated AVR25 software-product backend. See the
+[current Tiny88 player](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/README.md)
+for the later complete active-IRQ admission and its bounded workload scope.
 
 ## Lifetime and correctness
 
@@ -43,7 +46,8 @@ The measured AVR5 backend is ATmega328P, GNU ABI, AVR-GCC 7.3.0, `-Os -flto
 `LPX4_AVR_DOT_UNROLL=1`, `LPX3_LPC_SEGMENTS=2`, compact speech enabled, compact
 only. `LPX4_ENABLE_ASM=0/1` independently selects portable C or the existing
 explicit AVR5 assembly. Assembly statements and all math code are untouched.
-ATtiny88 is AVR25 without MUL and uses C. Its no-IRQ probe additionally uses
+The historical ATtiny88 no-IRQ probe used C on AVR25 without MUL; this was
+before the separately enabled AVR25 assembly backend. That probe also uses
 `-fno-jump-tables`, matching the existing bounded measurement recipe.
 Those completed probes used the installed Atmel `avr/include/avr/iotn88.h`
 (revision 2225, 2011-03-02) through `<avr/io.h>`, with AVR-LibC 2.0.0 dated
@@ -52,7 +56,7 @@ the repository's ATtiny_DFP 3.4.278 was not used. A read-only preprocessing
 trace of the saved inputs and the completed link maps now pin all actual
 transitive toolchain headers and linked runtime files in the receipt.
 
-## Final-source measurements
+## Historical profile-admission measurements
 
 Two fixed 19,200-sample streams are labelled A (P4, 1,008 bytes) and B (P6,
 1,899 bytes). The table reports complete Flash including audio, diagnostic
@@ -84,8 +88,10 @@ Mean full-probe cycles/sample is 6401.611/6404.871, with worst inter-output gaps
 existing transpiled AVR25 CPU rejects unsupported instructions; it runs the
 real Tiny88 instruction set with no pretend AVR5 hardware. No IRQ or queue
 was active. At 16 MHz/8 kHz, only 2000 cycles/sample are available, so this is
-**not real-time 8 kHz support**, and no full queue/ISR budget in 512 bytes is
-admitted. The 6310-byte image also exceeds the stated 6012-byte bootloader
+**not real-time 8 kHz support** for that C recipe, and this experiment did not
+admit a full queue/ISR budget in 512 bytes. The later
+[AVR25 assembly player](lpx-avr25.md) is a separate measurement. The
+6310-byte image also exceeds the stated 6012-byte bootloader
 application region. State-size success alone is insufficient for playback.
 
 ## Validation and provenance

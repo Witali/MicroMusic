@@ -1,5 +1,9 @@
 # Exact bounded LPX pitch history
 
+This rejected memory experiment and its C-only Tiny88 probes predate the
+[integrated AVR25 assembly player](lpx-avr25.md). Their measurements and
+provenance are retained below; they do not describe the current Tiny88 player.
+
 The [experimental patch](../../Codecs/LPX/research/v5-ram-reuse-2026-11-01/alternatives/pitch-history.patch)
 supplies `LPX4_PITCH_HISTORY_SIZE` for 145..256 bytes in the v5-only decoder.
 It is not installed in the production library: matched timing rejected it.

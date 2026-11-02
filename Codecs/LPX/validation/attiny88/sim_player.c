@@ -62,7 +62,9 @@ static void running(struct avr_irq_t *irq,uint32_t value,void *p){
   // response cycles. Account the real AVRe four-cycle hardware entry here.
   // Existing cycle timers observe the advanced clock on the next avr_run.
   cpu.cycle+=4;
-  unsigned count=(cpu.data[head]-cpu.data[tail])&(H_LPX25_QUEUE-1);
+  unsigned h=cpu.data[head],t=cpu.data[tail];
+  if(h>=H_LPX25_QUEUE || t>=H_LPX25_QUEUE){fprintf(stderr,"Invalid queue cursor\n");exit(3);}
+  unsigned count=h>=t?h-t:H_LPX25_QUEUE+h-t;
   if(!cpu.data[eof] && count<min_queue)min_queue=count;
   if(!count)underruns++;
   expected=count?cpu.data[queue+cpu.data[tail]]:128;
