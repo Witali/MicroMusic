@@ -29,7 +29,7 @@ LPX-сегменты позволяют сохранить все фразы, х
 
 ## Готовые файлы
 
-- [Страница прослушивания](../../../web-player/nano-dialogue.html).
+- [Диалог в общем каталоге речевых прошивок](../../../web-player/?collection=hq4&device=atmega328p&firmware=lpx-nano-dialogue-quality).
 - [Полный HEX](../../../web-player/firmware/arduino-nano/lpx-nano-dialogue-quality.hex).
 - [Точный PWM8 WAV](../../../web-player/audio/lpx-dialogue/dialogue.wav).
 - [Рецепт](recipe.json) и [результаты](../../../web-player/audio/lpx-dialogue/manifest.json).

@@ -75,7 +75,7 @@ test('all Speex deep links select the right sample rate, shared D3 pin, audio an
     assert.equal(app.get('speech-profile-details').hidden,false);
     assert.equal(app.get('speech-profile-details').textContent,`Прошивка: ${variant.programFlashBytes.toLocaleString('ru')} байт · Звук: ${variant.streamBytes.toLocaleString('ru')} байт`);
     assert.ok(cards(app).slice(0,3).every(card=>!card.children[1].children[1].textContent.includes('Б код')));
-    assert.equal(cards(app).length,4);assert.equal(app.workers.length,0);
+    assert.equal(cards(app).length,5);assert.equal(app.workers.length,0);
     await app.get('play').onclick();assert.equal(app.preview.paused,false);
     assert.equal(app.get('run-status').textContent,'Нативное превью Speex');
     await app.get('play-original').onclick();assert.equal(app.preview.paused,true);

@@ -1,7 +1,8 @@
 MICROMUSIC / ATtiny13A + ATtiny88 WEB PLAYER
 
 РАЗГОВОР У СОВЫ / ARDUINO NANO
-Страница nano-dialogue.html: четыре реплики LPX с нормализацией исходников
+Пятый пункт речевого каталога Nano (?collection=hq4&device=atmega328p),
+«Разговор у Совы»: четыре реплики LPX с нормализацией исходников
 до −18 LUFS и паузами 0,5 / 1,5 / 0,5 с. Прослушивание точного PWM WAV и
 скачивание полного HEX (10,162 KiB, 756 Б RAM). Рецепт и сборка:
 ../ATmega328/Sound/lpx-dialogue/README.md.

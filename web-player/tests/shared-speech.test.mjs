@@ -11,13 +11,13 @@ const flush=()=>new Promise(setImmediate);
 const cards=app=>app.get('catalog').children.map(item=>item.children[0]);
 const choose=async(app,device)=>{app.get('device-select').value=device;await app.get('device-select').onchange();await flush();};
 
-test('all speech devices show the same four phrases in the same order',async()=>{
+test('all speech devices retain the four shared phrases, with an extra Nano dialogue',async()=>{
   const app=await playerApp();await flush();
   for(const device of ['attiny13a','attiny88','atmega328p']){
     await choose(app,device);
-    assert.deepEqual(cards(app).map(card=>card.children[1].children[0].textContent),definitions.examples.map(item=>item.title));
-    assert.deepEqual(cards(app).map(card=>card.children[0].textContent),['01','02','03','04']);
-    assert.equal(app.get('catalog-count').textContent,4);
+    assert.deepEqual(cards(app).slice(0,4).map(card=>card.children[1].children[0].textContent),definitions.examples.map(item=>item.title));
+    assert.deepEqual(cards(app).slice(0,4).map(card=>card.children[0].textContent),['01','02','03','04']);
+    assert.equal(app.get('catalog-count').textContent,device==='atmega328p'?5:4);
   }
 });
 
@@ -31,7 +31,7 @@ test('changing microcontroller retains the phrase and supported quality',async()
   assert.equal(app.get('speech-profile-control').hidden,false);
   app.get('speech-profile-select').value='lpx-nano-vinni-quality';app.get('speech-profile-select').onchange();await flush();
   assert.equal(app.location.searchParams.get('firmware'),'lpx-nano-vinni-quality');
-  assert.equal(cards(app).length,4);
+  assert.equal(cards(app).length,5);
 });
 
 test('an oversized image remains in its ordered slot with a precise size and no click action',async()=>{

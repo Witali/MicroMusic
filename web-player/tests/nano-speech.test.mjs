@@ -43,7 +43,7 @@ test('Nano deep links reuse the shared page at root and GitHub Pages paths',asyn
     assert.equal(app.get('machine-memory').textContent,'32');
     assert.equal(app.get('chip-nano').hidden,false);assert.equal(app.get('chip-attiny13a').hidden,true);
     assert.equal(app.get('board-control').hidden,true);
-    assert.deepEqual(cards(app).map(card=>card.dataset.firmware),['lpx-nano-chego-compact','lpx-nano-otvechaesh-compact','lpx-nano-vinni-compact','lpx-nano-bread-compact']);
+    assert.deepEqual(cards(app).map(card=>card.dataset.firmware),['lpx-nano-chego-compact','lpx-nano-otvechaesh-compact','lpx-nano-vinni-compact','lpx-nano-bread-compact','lpx-nano-dialogue-quality']);
     assert.equal(app.workers.length,0);assert.equal(app.get('download').getAttribute('aria-disabled'),null);
     assert.ok(app.get('download').href.endsWith('/web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex'));
     assert.match(app.get('tiny88-power').textContent,/D3 \/ PD3 \/ OC2B/);
@@ -79,7 +79,7 @@ test('choosing Nano from music routes to the same AVR page with speech selected'
 });
 
 test('a failed Nano catalog leaves other speech devices usable',async()=>{
-  const app=await playerApp({fetchHook:({url,response})=>/\/firmware-(speex-)?atmega328p\.json$/.test(url.pathname)?{ok:false,status:503}:response});
+  const app=await playerApp({fetchHook:({url,response})=>/\/firmware-(speex-)?atmega328p\.json$/.test(url.pathname)||url.pathname.endsWith('/audio/lpx-dialogue/manifest.json')?{ok:false,status:503}:response});
   assert.equal(app.get('error').hidden,true);assert.equal(cards(app).length,4);
   await choose(app,'atmega328p');assert.match(app.get('error').textContent,/недоступны/);
   assert.equal(app.get('device-select').value,'attiny13a');

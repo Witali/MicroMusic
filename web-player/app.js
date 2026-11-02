@@ -1,5 +1,5 @@
 import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js?v=20261102-speex-nano';
-import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-tiny88-lpx';
+import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-nano-dialogue';
 import {speexFirmwareEntries} from './lib/speex-preview.js?v=20261102-speex-nano';
 import {lpxTiny88FirmwareEntries} from './lib/tiny88-preview.js?v=20261102-tiny88-lpx';
 import {speechSignals,speechWindow} from './lib/speech-waveform.js';
@@ -7,7 +7,7 @@ import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './li
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
-import { lpxPreviewEntries, lpxFirmwareEntries, previewWaveform } from './lib/native-preview.js?v=20261102-nano';
+import { lpxPreviewEntries, lpxFirmwareEntries, lpxDialogueEntry, previewWaveform } from './lib/native-preview.js?v=20261102-nano-dialogue';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -300,8 +300,10 @@ function load(entry,{autoplay=false}={}) {
   speechProfileUI(document,speechEntries,entry);
   if(speechExamples&&speechCollection){
     const example=speechExamples.examples.find(item=>item.id===entry.audioReferenceId);
-    document.querySelector('.library h2').textContent='Выберите фразу';
-    document.querySelector('.subtitle').textContent='Одинаковые фразы для всех микроконтроллеров. Сравните кодеки и исходную запись.';
+    document.querySelector('.library h2').textContent=currentDevice==='atmega328p'?'Выберите запись':'Выберите фразу';
+    document.querySelector('.subtitle').textContent=currentDevice==='atmega328p'
+      ? 'Фразы и диалог для Arduino Nano. Сравните кодеки и скачайте прошивку.'
+      : 'Одинаковые фразы для всех микроконтроллеров. Сравните кодеки и исходную запись.';
     if(example)displayOrder=example.order;
   }
   previewAudio.removeAttribute('src');previewAudio.load();delete canvas.dataset.samples;
@@ -384,7 +386,8 @@ function load(entry,{autoplay=false}={}) {
     $('rom-details').textContent=`${cost} · ${bitrateLabel(entry.bitrateBps)} · ${entry.phraseSamples.toLocaleString('ru')} отсчётов · ${(entry.phraseSamples/entry.sampleHz).toLocaleString('ru')} с`;
     $('board-upload').hidden=true;$('upload-command').textContent='';$('reset').disabled=false;
     $('original-player').hidden=true;$('wav-link').hidden=false;$('wav-link').href=entry.nativeAudioUrl;
-    $('reference-wav').hidden=false;$('reference-wav').href=originalUrl;
+    $('reference-wav').hidden=!originalUrl;
+    if(originalUrl)$('reference-wav').href=originalUrl;else $('reference-wav').removeAttribute('href');
     $('rom-hash').textContent='';$('rom-hash').title='';
     if(entry.firmware){
       $('rom-name').href=entry.firmware.source;$('rom-name').download=entry.id+'.hex';$('rom-name').textContent=entry.id+'.hex';
@@ -565,7 +568,7 @@ try {
     if(!response.ok)throw Error('HTTP '+response.status);
     speechExamples=readSpeechExamples(await response.json());
   }catch{/* Older/offline catalogs retain their own examples when the shared index is unavailable. */}
-  let previewError,nanoError,speexError;
+  let previewError,nanoError,speexError,dialogueError;
   try{
     const response=await fetch(new URL('./firmware-atmega328p.json?v=20261102-nano',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
@@ -576,6 +579,11 @@ try {
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...speexFirmwareEntries(await response.json(),import.meta.url));
   }catch(error){speexError=error;}
+  try{
+    const response=await fetch(new URL('./audio/lpx-dialogue/manifest.json?v=20261102-nano-dialogue',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    catalog.entries.push(lpxDialogueEntry(await response.json(),import.meta.url));
+  }catch(error){dialogueError=error;}
   try{
     const response=await fetch(new URL('./audio/lpx-bread/manifest.json?v=20261101-flash',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
@@ -622,7 +630,7 @@ try {
   const available=orderSpeechEntries(catalog.entries.filter(entry=>(entry.device||'attiny13a')===device),speechExamples);
   load(available.find(entry=>entry.id===id)||selectSpeechEntry(available,exact)||catalog.entries.find(entry=>entry.id===catalog.defaultId));
   if(previewError&&(device==='attiny88'||requested.startsWith('lpx-bread-')))showError('LPX-примеры временно недоступны.');
-  if(nanoError&&speexError&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');
+  if(nanoError&&speexError&&dialogueError&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');
   }
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }
 draw();

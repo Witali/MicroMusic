@@ -75,6 +75,46 @@ export function lpxFirmwareEntries(data,baseURL) {
   });
 }
 
+// A reset chain has one verified HEX/WAV, but no single compressed LPX file.
+export function lpxDialogueEntry(data,baseURL) {
+  const positive=value=>Number.isSafeInteger(value)&&value>0;
+  const digest=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+  const timing=data.timing;
+  if(data.schema!=='micromusic-nano-dialogue-v1'||data.device!=='atmega328p'||data.cpuHz!==16000000
+    ||data.sampleHz!==8000||data.pwmOutput!=='D3 / PD3 / OC2B'||data.playback!=='once-after-reset'
+    ||typeof data.title!=='string'||!positive(data.samples)||!Number.isFinite(data.durationSeconds)
+    ||Math.abs(data.durationSeconds-data.samples/8000)>1/8000
+    ||!['flashBytes','programFlashBytes','streamBytes','staticSramBytes'].every(key=>positive(data[key]))
+    ||data.flashBytes>30720||data.staticSramBytes>=2048||data.programFlashBytes+data.streamBytes!==data.flashBytes
+    ||!digest(data.hexSha256)||!digest(data.wavSha256)
+    ||timing?.played!==data.samples||timing.timer_ticks!==data.samples||timing.timer_events!==data.samples
+    ||timing.underruns!==0||timing.queued_at_stop!==0||timing.irq_entry_cycles!==4||timing.irq_reti_complete!==true
+    ||!positive(timing.stack_margin_all_bytes)||!positive(timing.irq_cycles_max)
+    ||!positive(timing.tick_interval_min_cycles)||!positive(timing.tick_interval_max_cycles)
+    ||timing.tick_interval_min_cycles>timing.tick_interval_max_cycles
+    ||timing.tick_interval_min_cycles<1992||timing.tick_interval_max_cycles>2008)
+    throw Error('Неверные параметры LPX-диалога Arduino Nano.');
+  const base=new URL('./',baseURL);
+  const asset=(path,expected)=>{
+    if(typeof path!=='string')throw Error('Неверный адрес LPX-диалога.');
+    const url=new URL(path,base);
+    if(url.origin!==base.origin||url.pathname!==base.pathname+expected||url.search||url.hash)
+      throw Error('Неверный адрес LPX-диалога.');
+    return url.href;
+  };
+  const source=asset(data.firmware,'firmware/arduino-nano/lpx-nano-dialogue-quality.hex');
+  return {id:'lpx-nano-dialogue-quality',audioReferenceId:'dialogue',order:'05',title:data.title,
+    description:'Четыре реплики · громкость выровнена · паузы 0,5 / 1,5 / 0,5 с',
+    profile:6,profileLabel:'LPX · Диалог с паузами',kind:'speech',codec:'lpx-v5',formatVersion:5,
+    playback:'native-pwm8',device:'atmega328p',intendedBoard:'arduino-nano-16mhz',
+    sampleHz:8000,phraseSamples:data.samples,audioChannels:1,playOnce:true,streamBytes:data.streamBytes,
+    bitrateBps:data.streamBytes*8*8000/data.samples,
+    nativeAudioUrl:asset(data.audio,'audio/lpx-dialogue/dialogue.wav'),
+    research:'../ATmega328/Sound/lpx-dialogue/README.md',
+    firmware:{source,flashBytes:data.flashBytes,programFlashBytes:data.programFlashBytes,
+      staticSramBytes:data.staticSramBytes,hexSha256:data.hexSha256,pwmPin:3,pwmOutput:data.pwmOutput}};
+}
+
 // Read the actual mono PCM16 WAV for display; audio playback uses the same URL.
 export function previewWaveform(buffer,{sampleHz,phraseSamples}) {
   const view=new DataView(buffer),tag=offset=>String.fromCharCode(...new Uint8Array(buffer,offset,4));

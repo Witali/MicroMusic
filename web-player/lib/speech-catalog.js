@@ -21,7 +21,7 @@ export function selectSpeechEntry(entries,previous){
 
 export function speechCatalogRows(entries,selected,definition,device){
   if(!definition)return entries;
-  return definition.examples.map(example=>{
+  const rows=definition.examples.map(example=>{
     const variants=entries.filter(entry=>entry.audioReferenceId===example.id);
     const chosen=variants.find(entry=>entry.id===selected?.id)
       ||variants.find(entry=>entry.codec===selected?.codec&&entry.profile===selected?.profile)
@@ -34,6 +34,9 @@ export function speechCatalogRows(entries,selected,definition,device){
       unavailableReason:variants.length?`${selected.profileLabel||selected.title} · вариант этой фразы не подготовлен`:measurement?`${measurement.flashBytes.toLocaleString('ru')} Б Flash / лимит ${measurement.flashLimitBytes.toLocaleString('ru')} Б · образ не помещается`:'Пример для этой платы не загружен',
       flashBytes:measurement?.flashBytes};
   });
+  // Board-specific recordings follow the four shared comparison phrases.
+  return rows.concat(entries.filter(entry=>!definition.examples.some(example=>example.id===entry.audioReferenceId))
+    .map(entry=>({...entry,selection:entry,phraseCard:true,profileCaption:entry.profileLabel})));
 }
 
 export function speechProfileUI(document,entries,selected){

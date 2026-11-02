@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {parseHex} from '../lib/hex.js';
-import {previewWaveform} from '../lib/native-preview.js';
+import {lpxDialogueEntry,previewWaveform} from '../lib/native-preview.js';
+import {playerApp} from './helpers/player-app.mjs';
 
 const root=new URL('../../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root));
@@ -12,6 +13,58 @@ const manifest=JSON.parse(read('web-player/audio/lpx-dialogue/manifest.json'));
 const wav=read('web-player/'+manifest.audio);
 const waveform=previewWaveform(wav.buffer.slice(wav.byteOffset,wav.byteOffset+wav.byteLength),
                               {sampleHz:8000,phraseSamples:manifest.samples});
+const flush=()=>new Promise(setImmediate);
+const cards=app=>app.get('catalog').children.map(row=>row.children[0]);
+
+test('dialogue is selectable in the shared speech catalog with working audio, waveform and HEX',async()=>{
+  for(const prefix of ['/','/MicroMusic/']){
+    const app=await playerApp({prefix,device:'atmega328p',firmware:'speex-nano-vinni-wb98'});await flush();
+    const row=cards(app).at(-1);
+    assert.equal(row.dataset.firmware,'lpx-nano-dialogue-quality');assert.equal(row.children[0].textContent,'05');
+    assert.equal(row.children[1].children[0].textContent,manifest.title);
+    row.onclick();await flush();
+    assert.equal(app.location.searchParams.get('firmware'),'lpx-nano-dialogue-quality');
+    assert.equal(app.get('selected-title').textContent,manifest.title);
+    assert.equal(app.preview.src,'https://example.test'+prefix+'web-player/'+manifest.audio);
+    assert.equal(app.get('download').href,'https://example.test'+prefix+'web-player/'+manifest.firmware);
+    assert.equal(app.get('download').download,'lpx-nano-dialogue-quality.hex');
+    assert.equal(app.get('download').getAttribute('aria-disabled'),null);
+    assert.equal(app.get('download-eeprom').getAttribute('aria-disabled'),'true');
+    assert.equal(app.get('wave').dataset.samples,String(manifest.samples));
+    assert.equal(app.get('play-original').hidden,true);assert.equal(app.get('reference-wav').hidden,true);
+    assert.equal(app.get('reference-wav').getAttribute('href'),null);
+    assert.equal(app.get('speech-profile-control').hidden,true);assert.equal(app.workers.length,0);
+    await app.get('play').onclick();assert.equal(app.preview.paused,false);
+    app.preview.advance(4);app.get('reset').onclick();await flush();
+    assert.equal(app.preview.paused,true);assert.equal(app.preview.currentTime,0);
+    app.get('search').value='разговор';app.get('search').oninput();
+    assert.deepEqual(cards(app).map(card=>card.dataset.firmware),['lpx-nano-dialogue-quality']);
+    app.get('device-select').value='attiny88';await app.get('device-select').onchange();await flush();
+    assert.ok(cards(app).every(card=>card.dataset.firmware!=='lpx-nano-dialogue-quality'));
+  }
+});
+
+test('dialogue deep links infer Nano and unavailable dialogue assets leave existing phrases usable',async()=>{
+  const linked=await playerApp({firmware:'lpx-nano-dialogue-quality'});await flush();
+  assert.equal(linked.get('device-select').value,'atmega328p');
+  assert.equal(linked.location.searchParams.get('firmware'),'lpx-nano-dialogue-quality');
+  const without=await playerApp({device:'atmega328p',fetchHook:({url,response})=>url.pathname.endsWith('/audio/lpx-dialogue/manifest.json')?{ok:false,status:404}:response});await flush();
+  assert.equal(without.get('error').hidden,true);assert.equal(cards(without).length,4);
+  const only=await playerApp({device:'atmega328p',fetchHook:({url,response})=>/\/firmware-(speex-)?atmega328p\.json$/.test(url.pathname)?{ok:false,status:503}:response});await flush();
+  assert.equal(only.get('error').hidden,true);assert.equal(only.get('device-select').value,'atmega328p');
+  assert.equal(only.location.searchParams.get('firmware'),'lpx-nano-dialogue-quality');
+  assert.equal(only.get('download').getAttribute('aria-disabled'),null);
+});
+
+test('dialogue adapter rejects foreign assets, oversized images and incomplete IRQ verification',()=>{
+  for(const mutate of [d=>d.audio='https://other.test/dialogue.wav',d=>d.firmware='../outside.hex',
+    d=>d.audio+='?v=2',d=>d.flashBytes=32768,d=>d.staticSramBytes=2048,d=>d.samples--,
+    d=>d.timing.underruns=1,d=>d.timing.irq_entry_cycles=0,d=>d.timing.irq_reti_complete=false,
+    d=>d.timing.timer_events--,d=>d.timing.tick_interval_max_cycles=3000]){
+    const bad=structuredClone(manifest);mutate(bad);
+    assert.throws(()=>lpxDialogueEntry(bad,'https://example.test/web-player/'));
+  }
+});
 
 test('combined Nano dialogue preserves the requested order and exact three pauses',()=>{
   assert.equal(manifest.device,'atmega328p');assert.equal(manifest.cpuHz,16000000);

@@ -2,13 +2,13 @@
 
 The shared AVR page is `../../?collection=hq4&device=atmega328p`. The same
 microcontroller selector, player, signal panel and catalog serve ATtiny13A,
-ATtiny88 and Nano. The additional combined dialogue has a simple listening page.
+ATtiny88 and Nano, including the additional combined dialogue.
 
 Eight images contain the four already-public speech phrases, in compact and
 higher-quality LPX profiles. The common order is defined by
 `web-player/speech-examples.json`. They play once after reset; reset starts again.
 
-An additional [combined dialogue](../../nano-dialogue.html) plays the four
+An additional [combined dialogue](../../?collection=hq4&device=atmega328p&firmware=lpx-nano-dialogue-quality) plays the four
 normalized phrases in conversation order, with 0.5 / 1.5 / 0.5-second pauses.
 Its [recipe and validation](../../../ATmega328/Sound/lpx-dialogue/README.md)
 describe the separate 10.162 KiB image, 756 B static SRAM and exact PWM preview.
