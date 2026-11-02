@@ -163,6 +163,9 @@ void Lpx4HybridCore::resetState(){
  pulseCount_=pulseIndex_=0;
 #endif
  prevDeemph_=0;
+#if LPX4_ENABLE_SCALE_RAMP
+ scalePreviousRaw_=0;scaleTargetRaw_=UINT16_MAX;
+#endif
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
@@ -242,16 +245,26 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  }
  const uint8_t version=readByte(),flags=readByte();
 #if LPX4_COMPACT_ONLY
+#if LPX4_ENABLE_SCALE_RAMP
+ if(version==10 && flags==4)speechProfile_=4|16;
+#if LPX4_ENABLE_SPARSE80
+ else if(version==10 && flags==15)speechProfile_=6|64|16;
+#endif
+ else
+#endif
+#if LPX4_ENABLE_META320
+ if(version==9 && flags==3)speechProfile_=4|32;
+ else
+#endif
 #if LPX4_ENABLE_SPARSE80
  if(version==8 && flags==15)speechProfile_=6|64;
- else{
+ else
 #endif
+ {
  if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
  // Compact-only needs one flags byte: bit1 selects6k, bit7 extra pulses.
  speechProfile_=flags;
-#if LPX4_ENABLE_SPARSE80
  }
-#endif
 #else
 #if LPX4_ENABLE_SPEECH_COMPACT
  if(version==5 && ((flags&127)==4 || (flags&127)==6)){
@@ -279,8 +292,8 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  const uint16_t frames=read16(),blocks=read16();
 #if LPX4_COMPACT_ONLY
  const bool geometry=frames==320 && blocks==
-#if LPX4_ENABLE_SPARSE80
- ((speechProfile_&64)?320:160);
+#if LPX4_ENABLE_SPARSE80 || LPX4_ENABLE_META320
+ ((speechProfile_&((LPX4_ENABLE_SPARSE80*64)|(LPX4_ENABLE_META320*32)))?320:160);
 #else
  160;
 #endif
@@ -459,9 +472,9 @@ bool Lpx4HybridCore::readFrame(){
   speechHalf_^=1;
 #endif
 #if LPX4_COMPACT_ONLY
-#if LPX4_ENABLE_SPARSE80
+#if LPX4_ENABLE_SPARSE80 || LPX4_ENABLE_META320
   // readFrame toggled bit3: only the first160 half reads320 metadata.
-  if((speechProfile_&64) && !(subIndex_&8))return !error_;
+  if((speechProfile_&((LPX4_ENABLE_SPARSE80*64)|(LPX4_ENABLE_META320*32))) && !(subIndex_&8))return !error_;
 #endif
   const uint8_t blockScale=readBits(5);
 #else
@@ -471,6 +484,12 @@ bool Lpx4HybridCore::readFrame(){
   lag_=18+readBits(7);gain_=readBits(3)<<1;
 #if LPX4_COMPACT_ONLY
   blockStep_=scaleStep(blockScale);
+#if LPX4_ENABLE_SCALE_RAMP
+  if(speechProfile_&16){
+   scalePreviousRaw_=scaleTargetRaw_==UINT16_MAX?blockStep_:scaleTargetRaw_;
+   scaleTargetRaw_=blockStep_;
+  }
+#endif
 #else
   blockStep_=scaleStep(blockScale_);
 #endif
@@ -1015,6 +1034,23 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #else
         if(!(subIndex_&1)&&!readSubframe())return false;
 #endif
+ #if LPX4_ENABLE_SCALE_RAMP
+        if(speechProfile_&16){
+            uint8_t phase=(subIndex_&7)+1;
+#if LPX4_ENABLE_SPARSE80
+            if((speechProfile_&64) && !(subIndex_&8))phase=8;
+#endif
+            // Raw endpoints are0..4016. Every signed16 intermediate is in
+            // -32128..32132; the final numerator is0..32132. No wide divide.
+            int16_t weighted=(int16_t)(scalePreviousRaw_<<3);
+            weighted+=((int16_t)scaleTargetRaw_-(int16_t)scalePreviousRaw_)*phase;
+            weighted+=4;
+            blockStep_=(uint16_t)weighted>>3;
+#if LPX4_EXCITATION_Q4
+            blockStep_<<=4;
+#endif
+        }
+#endif
         interpolateLsf(
 #if LPX4_COMPACT_ONLY
             subIndex_&7
@@ -1112,18 +1148,44 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     --remaining_;
 #endif
     ++subPos_;
-#if LPX4_ENABLE_SPARSE80
+#if LPX4_ENABLE_SPARSE80 || LPX4_ENABLE_META320 || LPX4_ENABLE_SCALE_RAMP
     // Validate all stored last-packet pulse fields even for a partial tail.
     // This consumes input padding only, without producing extra samples.
-    if((speechProfile_&64) &&
+    if((speechProfile_&((LPX4_ENABLE_SPARSE80*64)|(LPX4_ENABLE_META320*32)|(LPX4_ENABLE_SCALE_RAMP*16))) &&
 #if LPX4_BATCHED_REMAINING
        remaining_<=20 && subPos_==remaining_){
 #else
        !remaining_){
 #endif
         const uint16_t tail=(uint16_t)sampleCount_%320u;
-        uint8_t unread=tail?(uint16_t)(320u-tail)/80u:0;
-        while(unread--)readBits(7);
+#if LPX4_ENABLE_META320
+        if(speechProfile_&32){
+            uint8_t unread=tail?(uint16_t)(320u-tail)/40u:0;
+            // Reuse the bounded P4 pair reader; readBits itself accepts<=8.
+            while(unread--)readSubframe();
+        }else
+#endif
+        {
+#if LPX4_ENABLE_SPARSE80
+            if(speechProfile_&64){
+                uint8_t unread=tail?(uint16_t)(320u-tail)/80u:0;
+                while(unread--)readBits(7);
+            }else
+#endif
+            {
+#if LPX4_ENABLE_SCALE_RAMP
+                const uint8_t halfTail=(uint16_t)sampleCount_%160u;
+                uint8_t unread=halfTail?(uint8_t)(160u-halfTail)/40u:0;
+                while(unread--)readSubframe();
+                // P4 stores both metadata halves even when playback ends
+                // in the first. Consume/validate the unused second half.
+                if(subIndex_&8){
+                    readFrame();
+                    for(uint8_t i=0;i<4;i++)readSubframe();
+                }
+#endif
+            }
+        }
 #if LPX4_ROM_POINTER
         const bool trailing=bytes_!=0;
 #else

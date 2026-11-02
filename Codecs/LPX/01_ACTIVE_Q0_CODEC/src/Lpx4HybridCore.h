@@ -56,6 +56,28 @@
 #if LPX4_ENABLE_SPARSE80 && !LPX4_COMPACT_ONLY
 #error LPX4_ENABLE_SPARSE80 requires LPX4_COMPACT_ONLY
 #endif
+// Optional version9/mode3 parser: one metadata tuple per320 samples, P4 pulses.
+// Uses an existing profile bit; C/ASM selection and class layout are unchanged.
+#ifndef LPX4_ENABLE_META320
+#define LPX4_ENABLE_META320 0
+#endif
+#if LPX4_ENABLE_META320 != 0 && LPX4_ENABLE_META320 != 1
+#error LPX4_ENABLE_META320 must be 0 or 1
+#endif
+#if LPX4_ENABLE_META320 && !LPX4_COMPACT_ONLY
+#error LPX4_ENABLE_META320 requires LPX4_COMPACT_ONLY
+#endif
+// Explicit version10 amplitude-step ramp, independent of arithmetic selection.
+// Two cold raw endpoints add4 AVR bytes only when this option is enabled.
+#ifndef LPX4_ENABLE_SCALE_RAMP
+#define LPX4_ENABLE_SCALE_RAMP 0
+#endif
+#if LPX4_ENABLE_SCALE_RAMP != 0 && LPX4_ENABLE_SCALE_RAMP != 1
+#error LPX4_ENABLE_SCALE_RAMP must be 0 or 1
+#endif
+#if LPX4_ENABLE_SCALE_RAMP && !LPX4_COMPACT_ONLY
+#error LPX4_ENABLE_SCALE_RAMP requires LPX4_COMPACT_ONLY
+#endif
 #if LPX4_COMPACT_ONLY
 #define LPX4_MAX_PULSES 3
 #else
@@ -309,6 +331,10 @@ private:
     // and arithmetic backend selection are unchanged.
     ReadByte inputReader_;
     void* inputContext_;
+#endif
+#if LPX4_ENABLE_SCALE_RAMP
+    // Keep the existing hot-field offsets intact. UINT16_MAX marks no tuple.
+    uint16_t scalePreviousRaw_,scaleTargetRaw_;
 #endif
 };
 
