@@ -48,6 +48,32 @@ WAV в этой таблице — точные 8-битные PWM-отсчёт�
 | [web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex) | bread / compact | 4574 / 5582 | 756 | 19200 / 0 |
 | [web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex) | bread / quality | 4573 / 6472 | 756 | 19200 / 0 |
 
+## ATtiny88: LPX в 512 байтах RAM
+
+Сборщик [tools/build-tiny88-speech-catalog.py](../tools/build-tiny88-speech-catalog.py) переиспользует полные LPX-потоки и WAV без перекодирования. Выбран существующий AVR25 ASM без аппаратного MUL, профиль SRAM512, FIFO 24 / prefill 18 и `--mul16-unroll 2`. Для каждой полной прошивки проверены все PWM-отсчёты против независимого C-декодера и уже сохранённого WAV, активные таймеры/IRQ, ноль underruns и положительный запас стека. Переключаемые C-арифметика и C-ISR сохранены; C-арифметика не заявлена как режим реального времени. Физическая плата не измерялась.
+
+Полный HEX ограничен **8192 байтами Flash**, включая звук. USB-загрузчик MH-ET LIVE допускает только **6012 байт** приложения: при превышении страница показывает предупреждение, а скачивание остаётся доступным для загрузки через ISP. Образы больше 6 КБ также требуют ISP; превышение 8 КБ отклоняется сборщиком. Выход этого плеера — **D9 / PB1 / OC1A**, 62,5 кГц PWM и 8 кГц PCM при 16 МГц. Speex для ATtiny88 не добавлен.
+
+| Фраза / профиль | HEX | Код / звук / полный Flash, Б | Static / пик стека / запас, Б | USB-загрузчик |
+| --- | --- | ---: | ---: | --- |
+| chego / compact | [web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex) | 4948 / 536 / 5484 | 422 / 60 / 29 | Помещается |
+| chego / quality | [web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex) | 5109 / 791 / 5900 | 422 / 65 / 24 | Помещается |
+| otvechaesh / compact | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex) | 4948 / 470 / 5418 | 422 / 60 / 29 | Помещается |
+| otvechaesh / quality | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex) | 5110 / 692 / 5802 | 422 / 65 / 24 | Помещается |
+| vinni / compact | [web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex) | 4947 / 1243 / 6190 | 422 / 60 / 29 | Нужен ISP |
+| vinni / quality | [web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex) | 5110 / 1862 / 6972 | 422 / 65 / 24 | Нужен ISP |
+| bread / compact | [web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex) | 5004 / 1008 / 6012 | 422 / 60 / 29 | Помещается |
+| bread / quality | [web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex) | 5233 / 1899 / 7132 | 422 / 66 / 23 | Нужен ISP |
+| bread / low15 | [web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex) | 5079 / 417 / 5496 | 422 / 66 / 23 | Помещается |
+
+Ограничения и воспроизведение проверок: [Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/README.md](../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/README.md). Численные сравнения памяти, Flash и времени: [Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/budget-measurements.json](../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/budget-measurements.json). Измеряемый запас использует соглашение наблюдателя: `static + peakStack + margin = 511`.
+
+```text
+python tools/build-tiny88-speech-catalog.py --retain --queue 24 --mul16-unroll 2
+```
+
+На Windows добавьте `--wsl Ubuntu`, используя установленные в WSL AVR-GCC 7.3.0, g++, simavr 1.6 и libelf. `--retain` сохраняет проверенные HEX и каталог локально; команда не выполняет push, публикацию или прошивку платы.
+
 ## Speex на Arduino Nano: три фразы, три битрейта
 
 Сборщик [tools/build-speex-nano-catalog.py](../tools/build-speex-nano-catalog.py) использует те же полные открытые исходники первых трёх фраз. FFmpeg / libspeex 1.2.1 кодирует CBR с complexity 10: NB 2,15 кбит/с при 8 кГц, WB 3,95 и 9,8 кбит/с при 16 кГц. VAD, DTX и ABR выключены. Ресэмплирование сохраняет длительность и уровень; добавляется 80 мс нулевого хвоста и выравнивание до полного кадра, задержка кодека не вырезается. Ogg-заголовки и комментарии не публикуются.
