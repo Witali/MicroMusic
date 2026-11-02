@@ -1,16 +1,17 @@
 // Only retained, IRQ-verified ATmega328P images enter the public speech catalog.
 const profiles={nb215:{sampleHz:8000,packetBytes:6,nominal:2150,band:'NB'},
   wb395:{sampleHz:16000,packetBytes:10,nominal:3950,band:'WB'},wb98:{sampleHz:16000,packetBytes:25,nominal:9800,band:'WB'}};
-const phrases=['chego','otvechaesh','vinni'];
+const phrases=['chego','otvechaesh','vinni','bread'];
 const digest=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
 const positive=value=>Number.isSafeInteger(value)&&value>0;
 const outputs={3:'D3 / PD3 / OC2B',9:'D9 / PB1 / OC1A'};
 export function speexFirmwareEntries(data,baseURL){
   if(data.schema!=='micromusic-speex-avr-firmware-v1'||data.device!=='atmega328p'||data.cpuHz!==16000000
     ||data.pwmHz!==62500||!outputs[data.pwmPin]||data.pwmOutput!==outputs[data.pwmPin]||data.assemblyEnabled!==true||data.physicalBoardMeasured!==false
-    ||!digest(data.decoderAdmissionSha256)||!Array.isArray(data.clips)||data.clips.length!==3
-    ||new Set(data.clips.map(c=>c?.id)).size!==3||data.clips.some(c=>!phrases.includes(c.id)||typeof c.title!=='string'||!digest(c.originalSha256))
-    ||!Array.isArray(data.variants)||data.variants.length!==9||new Set(data.variants.map(v=>v?.clipId+'/'+v?.profile)).size!==9)
+    ||!digest(data.decoderAdmissionSha256)||!Array.isArray(data.clips)||![3,4].includes(data.clips.length)
+    ||new Set(data.clips.map(c=>c?.id)).size!==data.clips.length||data.clips.some(c=>!phrases.includes(c.id)||typeof c.title!=='string'||!digest(c.originalSha256))
+    ||phrases.slice(0,3).some(id=>!data.clips.some(clip=>clip.id===id))
+    ||!Array.isArray(data.variants)||data.variants.length!==data.clips.length*3||new Set(data.variants.map(v=>v?.clipId+'/'+v?.profile)).size!==data.variants.length)
     throw Error('Неверный каталог Speex для ATmega328P.');
   const base=new URL('./',baseURL);
   const asset=(path,expected)=>{
@@ -39,8 +40,8 @@ export function speexFirmwareEntries(data,baseURL){
       bitrateBps:v.streamBytes*8*p.sampleHz/v.samples,nominalBitrateBps:p.nominal,streamExtension:'.spxraw',
       nativeAudioUrl:asset(v.audio,`audio/speex-speech/${clip.id}/${v.profile}.wav`),
       streamUrl:asset(v.stream,`audio/speex-speech/${clip.id}/${v.profile}.spxraw`),
-      originalAudioUrl:asset(clip.originalAudioUrl,`audio/originals/${clip.id}.wav`),
-      originalPlaybackUrl:asset(clip.originalPlaybackUrl,`audio/originals/playback/${clip.id}.wav`),
+      originalAudioUrl:asset(clip.originalAudioUrl,clip.id==='bread'?'audio/lpx-bread/original.wav':`audio/originals/${clip.id}.wav`),
+      originalPlaybackUrl:asset(clip.originalPlaybackUrl,clip.id==='bread'?'audio/lpx-bread/original.wav':`audio/originals/playback/${clip.id}.wav`),
       research:'../Codecs/Speex/AVR/README.md',firmware:{...v,source,pwmPin:data.pwmPin,pwmOutput:data.pwmOutput}};
   });
 }

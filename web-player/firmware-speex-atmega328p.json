@@ -214,7 +214,7 @@
     "Codecs/Speex/AVR/tests/build_prepared_dispatch.py": "7f4a20bc0cb446ef829a737a37f57e288f0bd2c4b7abfe9cdc66e6066a487136",
     "Codecs/Speex/AVR/tests/run_prepared_dispatch.py": "292e19422952f7b69d925253acd9b41f373760494d2bebd05c5cc64d84b97d44",
     "Codecs/Speex/AVR/tests/audit_prepared_dispatch.py": "487ab2333f94902ae3ef2bdc14911d955fc138a60b7237dd5c6de4c567a6e7fa",
-    "tools/build-speex-nano-catalog.py": "723b111290ed037eefd8576b396fe50d4cefb09efa7bc623ff33f4e2b25d070a",
+    "tools/build-speex-nano-catalog.py": "66f4a64d7f7cb4726ed6b7829f684b9dc0e5986980c9dd16faafeb23df5a767a",
     "Codecs/common/pwm_gain.h": "283d4b7aace6116711300f6aad927339c48ced0008f15affc72aa294241c4f26",
     "Codecs/common/pwm-gain.mjs": "763e3f2fa638b8b1516766e971dd07d29d6cc6ce160eeb8fc9a4203c14f0f3c0",
     "tools/pwm_output_level.py": "08b1b5f53ac9cc5bbd688b44809675af706ee7f9e9f29e4a5b1db27a81d3e243",
@@ -288,6 +288,15 @@
       "originalSampleHz": 7500,
       "originalSamples": 22272,
       "originalPlaybackUrl": "audio/originals/playback/vinni.wav"
+    },
+    {
+      "id": "bread",
+      "title": "И того, и другого, и можно без хлеба",
+      "originalAudioUrl": "audio/lpx-bread/original.wav",
+      "originalSha256": "f744f2f8aa554c0da3361f309f9226d86484ca06d5cfd7b2925afad444a19d31",
+      "originalSampleHz": 8000,
+      "originalSamples": 19200,
+      "originalPlaybackUrl": "audio/lpx-bread/original.wav"
     }
   ],
   "variants": [
@@ -793,6 +802,174 @@
         "timerIntervalMinCycles": 993,
         "timerIntervalMaxCycles": 1005,
         "minQueuedSamplesBeforeOutput": 21
+      }
+    },
+    {
+      "id": "speex-nano-bread-nb215",
+      "clipId": "bread",
+      "profile": "nb215",
+      "label": "Speex NB · 2,15 кбит/с",
+      "band": "NB",
+      "sampleHz": 8000,
+      "nominalBitrateBps": 2150,
+      "packetBytes": 6,
+      "frames": 124,
+      "samples": 19840,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 130,
+        "shift": 7,
+        "gain": 1.015625,
+        "gainDb": 0.13466765317936805,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 8,
+          "maximumDuty": 252,
+          "rms": 14.067143498581276,
+          "pcmSha256": "6764aec5c5cfd392d8c686602905270c1618163b23c91ad0af0d46883c860623"
+        },
+        "after": {
+          "minimumDuty": 6,
+          "maximumDuty": 254,
+          "rms": 14.24690472891704,
+          "pcmSha256": "a08b58f444abde333a2f45b61bf0183077184f38d7a2afff61ff10db6692f0da"
+        }
+      },
+      "inputSamples": 19200,
+      "encoderLibraryVersion": "1.2.1",
+      "stream": "audio/speex-speech/bread/nb215.spxraw",
+      "streamBytes": 744,
+      "streamSha256": "b2ef2b1076d7944b471e19ac72e8180e9afb8ad0fe2c7dccb5645d0ad0341cc2",
+      "audio": "audio/speex-speech/bread/nb215.wav",
+      "audioSha256": "299aab1dfc7ff146cd970e2facff09959dff1e2f063258eb09bd50c92146d526",
+      "pwmSha256": "a08b58f444abde333a2f45b61bf0183077184f38d7a2afff61ff10db6692f0da",
+      "source": "firmware/arduino-nano/speex-nano-bread-nb215.hex",
+      "hexSha256": "eec5839ab91ab057d0f31978139bcb89053bb64f1f7bc1fd9896d0372119cc33",
+      "flashBytes": 13554,
+      "programFlashBytes": 12810,
+      "staticSramBytes": 1231,
+      "peakStackBytes": 119,
+      "freeSramAtPeak": 698,
+      "timing": {
+        "samples": 19840,
+        "underruns": 0,
+        "includesInterrupts": true,
+        "timerIntervalMinCycles": 1996,
+        "timerIntervalMaxCycles": 2004,
+        "minQueuedSamplesBeforeOutput": 73
+      }
+    },
+    {
+      "id": "speex-nano-bread-wb395",
+      "clipId": "bread",
+      "profile": "wb395",
+      "label": "Speex WB · 3,95 кбит/с",
+      "band": "WB",
+      "sampleHz": 16000,
+      "nominalBitrateBps": 3950,
+      "packetBytes": 10,
+      "frames": 124,
+      "samples": 39680,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 136,
+        "shift": 7,
+        "gain": 1.0625,
+        "gainDb": 0.526578774446983,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 11,
+          "maximumDuty": 247,
+          "rms": 14.924597950763548,
+          "pcmSha256": "ae9ac6a7e1ab8a9d9e7bdce070a777ae3acf3c167ee9699118ec95b8e4e5adee"
+        },
+        "after": {
+          "minimumDuty": 4,
+          "maximumDuty": 254,
+          "rms": 15.853255364282797,
+          "pcmSha256": "312933bdc29f0cc12131dd5dd8a753ae4bf10a3d9b41e1eebcbee6ce0c3cc592"
+        }
+      },
+      "inputSamples": 38400,
+      "encoderLibraryVersion": "1.2.1",
+      "stream": "audio/speex-speech/bread/wb395.spxraw",
+      "streamBytes": 1240,
+      "streamSha256": "b8a51d2e24a02a4d352c31209e308862c3fa2c9d45fd07cc605834618fede90f",
+      "audio": "audio/speex-speech/bread/wb395.wav",
+      "audioSha256": "eff7bb6f5eba3e1789858590d183fc8b6a9118c5e5e86e0af92e112e97ea1d25",
+      "pwmSha256": "312933bdc29f0cc12131dd5dd8a753ae4bf10a3d9b41e1eebcbee6ce0c3cc592",
+      "source": "firmware/arduino-nano/speex-nano-bread-wb395.hex",
+      "hexSha256": "ec2210cccc7f206d814e6020702d932d9b2751973119c906710ee5cd2abe32fb",
+      "flashBytes": 21766,
+      "programFlashBytes": 20526,
+      "staticSramBytes": 1406,
+      "peakStackBytes": 193,
+      "freeSramAtPeak": 449,
+      "timing": {
+        "samples": 39680,
+        "underruns": 0,
+        "includesInterrupts": true,
+        "timerIntervalMinCycles": 993,
+        "timerIntervalMaxCycles": 1005,
+        "minQueuedSamplesBeforeOutput": 27
+      }
+    },
+    {
+      "id": "speex-nano-bread-wb98",
+      "clipId": "bread",
+      "profile": "wb98",
+      "label": "Speex WB · 9,8 кбит/с",
+      "band": "WB",
+      "sampleHz": 16000,
+      "nominalBitrateBps": 9800,
+      "packetBytes": 25,
+      "frames": 124,
+      "samples": 39680,
+      "outputLevel": {
+        "implementation": "producer-constant-q7",
+        "numerator": 128,
+        "shift": 7,
+        "gain": 1.0,
+        "gainDb": 0.0,
+        "rounding": "nearest-ties-positive",
+        "saturatedSamples": 0,
+        "before": {
+          "minimumDuty": 14,
+          "maximumDuty": 255,
+          "rms": 22.090605099665215,
+          "pcmSha256": "2b38125d7f1d36dc2fe061a7e184e3b86394f96f698c66bab80979c49bb2cbc8"
+        },
+        "after": {
+          "minimumDuty": 14,
+          "maximumDuty": 255,
+          "rms": 22.090605099665215,
+          "pcmSha256": "2b38125d7f1d36dc2fe061a7e184e3b86394f96f698c66bab80979c49bb2cbc8"
+        }
+      },
+      "inputSamples": 38400,
+      "encoderLibraryVersion": "1.2.1",
+      "stream": "audio/speex-speech/bread/wb98.spxraw",
+      "streamBytes": 3100,
+      "streamSha256": "9d0821fb272cab4aa95efcb47c361927957b74b1ea7c86e22b70dfe76917f45d",
+      "audio": "audio/speex-speech/bread/wb98.wav",
+      "audioSha256": "6fcdac206ab0e745fe3d1b394daa5e114b268f650f965fb1340dee57021c065c",
+      "pwmSha256": "2b38125d7f1d36dc2fe061a7e184e3b86394f96f698c66bab80979c49bb2cbc8",
+      "source": "firmware/arduino-nano/speex-nano-bread-wb98.hex",
+      "hexSha256": "87d4a158c01b24f6163d5af7eb2dd3780e0e090374f80f97fdaa8e138e28e06a",
+      "flashBytes": 20410,
+      "programFlashBytes": 17310,
+      "staticSramBytes": 1409,
+      "peakStackBytes": 189,
+      "freeSramAtPeak": 450,
+      "timing": {
+        "samples": 39680,
+        "underruns": 0,
+        "includesInterrupts": true,
+        "timerIntervalMinCycles": 993,
+        "timerIntervalMaxCycles": 1005,
+        "minQueuedSamplesBeforeOutput": 33
       }
     }
   ]

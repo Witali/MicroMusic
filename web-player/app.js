@@ -1,6 +1,6 @@
 import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js?v=20261102-speex-nano';
 import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-nano-dialogue';
-import {speexFirmwareEntries} from './lib/speex-preview.js?v=20261102-speex-nano';
+import {speexFirmwareEntries} from './lib/speex-preview.js?v=20261102-speex-bread';
 import {lpxTiny88FirmwareEntries} from './lib/tiny88-preview.js?v=20261102-tiny88-lpx';
 import {speechSignals,speechWindow} from './lib/speech-waveform.js';
 import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js?v=20261102-speex-nano';
@@ -585,7 +585,7 @@ try {
     catalog.entries.push(...lpxFirmwareEntries(await response.json(),import.meta.url));
   }catch(error){nanoError=error;}
   try{
-    const response=await fetch(new URL('./firmware-speex-atmega328p.json?v=20261102-output-range',import.meta.url));
+    const response=await fetch(new URL('./firmware-speex-atmega328p.json?v=20261102-speex-bread',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...speexFirmwareEntries(await response.json(),import.meta.url));
   }catch(error){speexError=error;}

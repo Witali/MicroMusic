@@ -39,7 +39,7 @@ Measured before/after examples from the public retained recordings:
 | Speex Vinni NB2.15, Nano | 59..200 | 7..254 | +4.86 dB |
 | Seven-segment Nano dialogue | 47..223 | 20..254 | +2.46 dB |
 
-All 27 complete public LPX/Speex images were executed with timers and IRQ
+The initial 27 complete public LPX/Speex images were executed with timers and IRQ
 active, with exact reference PWM and zero underruns: eight Nano LPX, nine
 Tiny88 LPX, nine Nano Speex and one dialogue. LPX uses calibrated simavr 1.6;
 Speex uses AVR8js 0.21.1. No physical analog-output measurement is claimed.
@@ -60,3 +60,20 @@ Rebuild with the existing public catalog tools: `build-nano-speech-catalog.py`,
 builds do not amplify an already amplified WAV. Compressed streams and
 canonical input recordings are unchanged. The catalog keeps exact HEX/WAV
 bindings, and WebUI versions changed downloads and previews by content hash.
+
+The subsequent fourth-phrase Speex extension rebuilds all twelve D3 gallery
+images using the same decoder/player arithmetic and calibrated output stage.
+For the public 2.4-second bread original, each complete player passes exact PWM
+and zero underruns in AVR8js 0.21.1 with timers/IRQ active:
+
+| Profile | Samples | Full Flash | Free SRAM at peak | Minimum queued samples |
+| --- | ---: | ---: | ---: | ---: |
+| NB2.15 / 8 kHz | 19,840 | 13.236 KiB | 698 B | 73 |
+| WB3.95 / 16 kHz | 39,680 | 21.256 KiB | 449 B | 27 |
+| WB9.8 / 16 kHz | 39,680 | 19.932 KiB | 450 B | 33 |
+
+Output gains are 130/128, 136/128 and unity respectively; the unity profile
+already reaches PWM 255. The original is neither trimmed nor time-compressed.
+These three images are admitted on the retained D3 Nano profile; no new D9
+execution or physical-board measurement is implied. The exact hashes and
+timing receipts are in `web-player/firmware-speex-atmega328p.json`.

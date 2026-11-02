@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Encode three public phrases, capture AVR ASM PCM/PWM, retain verified Nano HEX."""
+"""Encode four public phrases, capture AVR ASM PCM/PWM, retain verified Nano HEX."""
 import argparse
 import hashlib
 import json
@@ -18,7 +18,7 @@ from pwm_output_level import apply_gain,choose_gain,describe_level
 PROFILES=[dict(id='nb215',band='NB',hz=8000,nominal=2150,width=6,mode=1,mask=4),
           dict(id='wb395',band='WB',hz=16000,nominal=3950,width=10,mode=1,mask=4),
           dict(id='wb98',band='WB',hz=16000,nominal=9800,width=25,mode=3,mask=0)]
-CLIPS=['chego','otvechaesh','vinni']
+CLIPS=['chego','otvechaesh','vinni','bread']
 # Arithmetic remains pinned to the core admission; only reviewed I/O routing,
 # builders and their timer observers may differ. Those changes are recorded.
 HARDWARE_PATHS=['src/player.c','src/wb_player.c','examples/spi_flash_player.c','tests/avr_wb_stream.c',
@@ -70,7 +70,7 @@ def main():
             source_hz=f.getframerate();source_samples=f.getnframes()
         manifest['clips'].append(dict(id=clip,title=definition['title'],originalAudioUrl=definition['originalAudioUrl'],
             originalSha256=definition['originalSha256'],originalSampleHz=source_hz,originalSamples=source_samples,
-            originalPlaybackUrl=f'audio/originals/playback/{clip}.wav'))
+            originalPlaybackUrl=definition['originalAudioUrl'] if clip=='bread' else f'audio/originals/playback/{clip}.wav'))
         for profile in PROFILES:
             hz=profile['hz'];wb=profile['band']=='WB';folder=out/clip/profile['id'];folder.mkdir(parents=True,exist_ok=True)
             resampled=folder/'input.wav'
@@ -130,7 +130,7 @@ def main():
             if dst.suffix=='.hex':dst.write_bytes(src.read_bytes().replace(b'\r\n',b'\n'))
             else:shutil.copyfile(src,dst)
         shutil.copyfile(output,ROOT/'web-player/firmware-speex-atmega328p.json')
-    print('PASS nine Speex examples: actual ASM decoder/PWM, complete phrases and no underruns; no C decoder execution')
+    print(f'PASS {len(manifest["variants"])} Speex examples: actual ASM decoder/PWM, complete phrases and no underruns; no C decoder execution')
 
 
 if __name__=='__main__':main()

@@ -223,8 +223,11 @@ node Codecs/Speex/AVR/tests/verify_audio_output.mjs /path/to/avr-gcc
 ```
 
 The [public speech inventory](../../../docs/speech-assets.md) describes the
-three shared phrases at NB2.15, WB3.95 and WB9.8, their raw packets, exact
-simulated PWM WAVs and downloadable HEX. Rebuild all nine with
+four shared phrases at NB2.15, WB3.95 and WB9.8, their raw packets, exact
+simulated PWM WAVs and downloadable HEX. All four Nano recordings offer the
+same five choices: two LPX profiles and these three Speex profiles. The fourth
+phrase uses its existing public 8 kHz original; all twelve D3 Speex images are
+verified with active timers/IRQ and calibrated constant output gain. Rebuild all twelve with
 `tools/build-speex-nano-catalog.py --avr-gcc /path/to/avr-gcc --node /path/to/node --pwm-pin 3 --publish`.
 
 `src/player.c` reads embedded packets from Flash and sends the high eight bits

@@ -13,7 +13,7 @@ test('LPX and Speex public PWM spans use calibrated firmware gain without satura
   const speex=json('firmware-speex-atmega328p.json'),dialogue=json('audio/lpx-dialogue/manifest.json');
   const recordings=[...nano.variants.map(v=>({level:v.outputLevel,audio:nano.clips.find(c=>c.clipId===v.clipId).variants.find(p=>p.id===v.id).audio})),
     ...speex.variants.map(v=>({level:v.outputLevel,audio:v.audio})),{level:dialogue.outputLevel,audio:dialogue.audio}];
-  assert.equal(recordings.length,18);
+  assert.equal(recordings.length,21);
   for(const {level,audio}of recordings){
     assert.equal(level.implementation,'producer-constant-q7');assert.equal(level.saturatedSamples,0);
     assert.ok(level.numerator>=128&&level.numerator<=255);assert.equal(level.shift,7);

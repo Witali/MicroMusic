@@ -8,6 +8,10 @@ Eight images contain the four already-public speech phrases, in compact and
 higher-quality LPX profiles. The common order is defined by
 `web-player/speech-examples.json`. They play once after reset; reset starts again.
 
+All four recordings also offer Speex NB 2.15, WB 3.95 and WB 9.8 kbit/s in the
+same codec/quality selector. The twelve Speex images, exact PWM previews and
+active-IRQ receipts are in `../../firmware-speex-atmega328p.json`.
+
 An additional [combined dialogue](../../?collection=hq4&device=atmega328p&firmware=lpx-nano-dialogue-quality) plays the four
 normalized phrases in conversation order, with 0.5 / 1.5 / 0.5-second pauses.
 Its [recipe and validation](../../../ATmega328/Sound/lpx-dialogue/README.md)
