@@ -252,7 +252,16 @@ private:
 #else
     uint32_t remaining_;
 #endif
-    uint16_t sampleRate_,preQ14_,brightQ14_,blockStep_;
+    uint16_t sampleRate_;
+    // SRAM512 ROM recipes already pin these constants in every translation
+    // unit. Validate the header locally instead of retaining unused copies.
+#if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_PRE_Q14)
+    uint16_t preQ14_;
+#endif
+#if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_BRIGHT_Q14)
+    uint16_t brightQ14_;
+#endif
+    uint16_t blockStep_;
     int16_t prevDeemph_;
     uint8_t subPos_,subIndex_; // compact: low3 subframe, bit3 post-readFrame half
 #if LPX4_BATCHED_REMAINING
@@ -267,7 +276,9 @@ private:
 #endif
 #if LPX4_ENABLE_SPEECH
     // Common:profile4/6. Compact-only:validated v5 flags (bit1 profile,bit7 extras).
+#if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_SPEECH_FLAGS)
     uint8_t speechProfile_;
+#endif
 #if !LPX4_COMPACT_ONLY
     uint8_t speechHalf_;
 #endif

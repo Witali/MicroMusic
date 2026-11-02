@@ -109,6 +109,16 @@ static inline __attribute__((always_inline)) int16_t cosineInterpolate(uint16_t 
 }
 #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
 // Exact cos_table.inc nodes0,2,...128; existing oracle tables stay unchanged.
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && defined(LPX4_FIXED_SPEECH_FLAGS) && !(LPX4_SPEECH_FLAGS&2)
+// Pinned P4 and segment1/2 produce even half-grid indices. Reflection about
+// 64 preserves that parity: retain only the 33 actually reachable entries.
+static const uint16_t LP_PROGMEM cosineEven[33]={
+ 8192,8182,8153,8103,8035,7946,7839,7713,
+ 7568,7405,7225,7027,6811,6580,6333,6070,
+ 5793,5501,5197,4880,4551,4212,3862,3503,
+ 3135,2760,2378,1990,1598,1202,803,402,0
+};
+#else
 static const uint16_t LP_PROGMEM cosineEven[65]={
  8192,8190,8182,8170,8153,8130,8103,8071,
  8035,7993,7946,7895,7839,7779,7713,7643,
@@ -120,11 +130,15 @@ static const uint16_t LP_PROGMEM cosineEven[65]={
  1598,1401,1202,1003,803,603,402,201,
  0
 };
+#endif
 // V5 centered5/6bit spectra with segments1/2 reach only even cosine
 // nodes: the caller supplies the exact index into this half-grid.
 static inline __attribute__((always_inline)) int16_t cosineEvenNode(uint8_t index){
  const bool negative=index>64;
  if(negative)index=128-index;
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && defined(LPX4_FIXED_SPEECH_FLAGS) && !(LPX4_SPEECH_FLAGS&2)
+ index>>=1;
+#endif
  int16_t value=LP_READ_U16(&cosineEven[index]);
  return negative?-value:value;
 }
@@ -136,7 +150,14 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
 #if !LPX4_ROM_POINTER
  cursor_(0),
 #endif
- sampleCount_(0),remaining_(0),sampleRate_(0),preQ14_(0),brightQ14_(0) {
+ sampleCount_(0),remaining_(0),sampleRate_(0)
+#if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_PRE_Q14)
+ ,preQ14_(0)
+#endif
+#if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_BRIGHT_Q14)
+ ,brightQ14_(0)
+#endif
+ {
 #if LPX4_ENABLE_INPUT_CALLBACK
  inputReader_=0;inputContext_=0;
 #endif
@@ -161,7 +182,9 @@ void Lpx4HybridCore::resetState(){
  subType_=lag_=gain_=ringCursor_=quantLimit_=0;
 #endif
 #if LPX4_ENABLE_SPEECH
+#if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_SPEECH_FLAGS)
  speechProfile_=0;
+#endif
 #if !LPX4_COMPACT_ONLY
  speechHalf_=0;
 #endif
@@ -259,12 +282,18 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
 #if LPX4_COMPACT_ONLY
 #if LPX4_ENABLE_SPARSE80
- if(version==8 && flags==15)speechProfile_=6|64;
+ if(version==8 && flags==15){
+#if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_SPEECH_FLAGS)
+  speechProfile_=6|64;
+#endif
+ }
  else{
 #endif
  if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
  // Compact-only needs one flags byte: bit1 selects6k, bit7 extra pulses.
+#if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_SPEECH_FLAGS)
  speechProfile_=flags;
+#endif
 #if LPX4_ENABLE_SPARSE80
  }
 #endif
@@ -287,7 +316,17 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
  }
 #endif
- sampleRate_=read16();sampleCount_=read32();preQ14_=read16();brightQ14_=read16();
+ sampleRate_=read16();sampleCount_=read32();
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && defined(LPX4_FIXED_PRE_Q14)
+ const uint16_t preQ14_=read16();
+#else
+ preQ14_=read16();
+#endif
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && defined(LPX4_FIXED_BRIGHT_Q14)
+ const uint16_t brightQ14_=read16();
+#else
+ brightQ14_=read16();
+#endif
  remaining_=sampleCount_;
 #if LPX4_BATCHED_REMAINING
  subEnd_=remaining_<20?(uint8_t)remaining_:20;
