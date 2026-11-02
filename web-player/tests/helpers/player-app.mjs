@@ -4,6 +4,8 @@ import {parseHex} from '../../lib/hex.js';
 import {RealtimeMonitor} from '../../lib/realtime.js';
 import {universalPackageEntry} from '../../lib/universal-package.js';
 import {lpxPreviewEntries,previewWaveform} from '../../lib/native-preview.js';
+import {arduinoSpeechEntries} from '../../lib/arduino-speech.js';
+import {ATMEGA328P_PROFILE,ARDUINO_BOARD} from '../../lib/atmega328p-profile.js';
 
 export function deferred(){
   let resolve,reject;
@@ -98,7 +100,7 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     }
   }
   const window={devicePixelRatio:1,AudioContext:Context,addEventListener:(type,listener)=>windowEvents.set(type,listener)};
-  const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,previewWaveform,
+  const sandbox={document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,previewWaveform,arduinoSpeechEntries,ATMEGA328P_PROFILE,ARDUINO_BOARD,
     Worker,AudioWorkletNode:Worklet,ResizeObserver:class{observe(){}},
     MessageChannel:class{constructor(){this.port1={};this.port2={};}},
     performance:{now:()=>Date.now()},setTimeout:()=>1,clearTimeout(){},

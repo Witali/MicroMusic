@@ -69,22 +69,28 @@ main{max-width:1320px;margin:auto;padding:0 40px}.intro{display:flex;align-items
 .chip-28{height:252px;gap:14px}.chip-28 .chip-dot{top:20px}
 .pin-bank{position:absolute;top:18px;bottom:18px;width:11px;display:flex;flex-direction:column;justify-content:space-between}.pin-bank.left{left:-11px}.pin-bank.right{right:-11px}.pin-bank i{display:block;height:8px;background:#64715d;flex-shrink:0}.pin-bank .pwm-right{background:#99b96b}
 .chip .tiny88-vcc{right:calc(100% + 16px);top:118px;color:#d1ab8b}.chip .tiny88-gnd{right:calc(100% + 16px);top:134px}
-body[data-device=attiny88] .board{padding-left:60px;padding-bottom:20px}
-body[data-device=attiny88] .signal-outputs{height:252px}
-body[data-device=attiny88] .right-output{top:144px}
-body[data-device=attiny88] .signal-outputs .stereo-left{top:160px}
-body[data-device=attiny88] .signal-line{height:12px;top:64px}
-body[data-device=attiny88] .signal-line>span{font-size:8px;padding:2px 4px}
-body[data-device=attiny88] .signal-line svg{height:16px;width:16px}
-body[data-device=attiny88] .signal-path>span{top:198px;left:calc(16px - var(--board-gap));font-size:9px}
-body[data-device=attiny88] .right-output>span{top:26px}
-body[data-device=attiny88] .stereo-left>span{top:26px}
-body[data-device=attiny88][data-stereo=true] .pin-bank .pwm-right{background:#86d9ef}
-body[data-device=attiny88][data-stereo=true] .pin-bank .pwm-left{background:#99b96b}
-@media(max-width:460px){.device-control{gap:10px;margin-bottom:20px}.device-control>span{flex-basis:100%;font-size:10px}.chip-28{width:142px}.chip .tiny88-vcc,.chip .tiny88-gnd{font-size:8px;right:calc(100% + 14px)}body[data-device=attiny88] .board{padding-left:50px;--board-gap:20px}.hardware-note{font-size:9px}body[data-device=attiny88] .signal-path>span{font-size:7px}}
-@container chip-board (max-width:380px){body[data-device=attiny88] .signal-path>span{display:block;left:calc(16px - var(--board-gap));font-size:7px}}
+body[data-package=avr28] .board{padding-left:60px;padding-bottom:20px}
+body[data-package=avr28] .signal-outputs{height:252px}
+body[data-package=avr28] .right-output{top:144px}
+body[data-package=avr28] .signal-outputs .stereo-left{top:160px}
+body[data-package=avr28] .signal-line{height:12px;top:64px}
+body[data-package=avr28] .signal-line>span{font-size:8px;padding:2px 4px}
+body[data-package=avr28] .signal-line svg{height:16px;width:16px}
+body[data-package=avr28] .signal-path>span{top:198px;left:calc(16px - var(--board-gap));font-size:9px}
+body[data-package=avr28] .right-output>span{top:26px}
+body[data-package=avr28] .stereo-left>span{top:26px}
+body[data-package=avr28][data-stereo=true] .pin-bank .pwm-right{background:#86d9ef}
+body[data-package=avr28][data-stereo=true] .pin-bank .pwm-left{background:#99b96b}
+@media(max-width:460px){.device-control{gap:10px;margin-bottom:20px}.device-control>span{flex-basis:100%;font-size:10px}.chip-28{width:142px}.chip .tiny88-vcc,.chip .tiny88-gnd{font-size:8px;right:calc(100% + 14px)}body[data-package=avr28] .board{padding-left:50px;--board-gap:20px}.hardware-note{font-size:9px}body[data-package=avr28] .signal-path>span{font-size:7px}}
+@container chip-board (max-width:380px){body[data-package=avr28] .signal-path>span{display:block;left:calc(16px - var(--board-gap));font-size:7px}}
 .signal-point-control{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 14px;color:var(--muted);font-size:12px}.signal-point-control select{max-width:100%;font-size:12px;padding:8px 10px}
 
 
 .preview-note{margin:16px 0 0;padding:12px 14px;border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:12px;line-height:1.6}
 body[data-preview=true] .signal-outputs{visibility:hidden}
+
+/* Arduino headers use Arduino pin names; D3 is PDIP pin 5, D9 pin 15. */
+body[data-device=atmega328p] .pin-bank .pwm-right{background:#64715d}
+body[data-device=atmega328p][data-output-pin=D3] .pin-bank.left i:nth-child(5),body[data-device=atmega328p][data-output-pin=D9] .pin-bank.right i:nth-child(14){background:#99b96b}
+body[data-device=atmega328p] .right-output{top:164px}
+body[data-device=atmega328p] .right-output .signal-line{left:20px}

@@ -2,6 +2,8 @@ import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
 import { lpxPreviewEntries, previewWaveform } from './lib/native-preview.js?v=20261101-flash';
+import { arduinoSpeechEntries } from './lib/arduino-speech.js';
+import { ATMEGA328P_PROFILE,ARDUINO_BOARD } from './lib/atmega328p-profile.js';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const bitrateLabel = bps => `${bps%1000?'≈ ':''}${Math.round(bps/1000).toLocaleString('ru')} кбит/с`;
@@ -17,6 +19,13 @@ let playAttempt=0, busyAttempt=0;
 let lastScopeDraw=-Infinity, scopeDrawTimer;
 let originalLoading=false, originalAttempt=0;
 const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4';
+// Physical device facts shared by the header, ROM view and download limits.
+const deviceSpecs={
+  attiny13a:{name:'ATtiny13A',flashBytes:1024,sramBytes:64,eepromBytes:64},
+  attiny88:{name:'ATtiny88',flashBytes:8192,sramBytes:512,eepromBytes:64},
+  atmega328p:ATMEGA328P_PROFILE,
+};
+const arduinoBoard=ARDUINO_BOARD;
 const tiny88Boards={
   'bare-8mhz':{cpuHz:8000000,catalog:'./firmware-attiny88.json'},
   'mh-et-live-16mhz':{cpuHz:16000000,catalog:'./firmware-attiny88-16mhz.json'},
@@ -24,6 +33,31 @@ const tiny88Boards={
 const boardId=value=>Object.hasOwn(tiny88Boards,value)?value:'bare-8mhz';
 let currentDevice='attiny13a', currentBoard=boardId(new URL(location.href).searchParams.get('board')), deviceRequest=0;
 let importAttempt=0;
+let priorEngine='wasm',arduinoCatalog,arduinoLoading;
+
+async function loadArduinoCatalog() {
+  if(arduinoCatalog)return arduinoCatalog;
+  if(!arduinoLoading)arduinoLoading=(async()=>{
+    const response=await fetch(new URL('./firmware-atmega328p.json',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const next=arduinoSpeechEntries(await response.json(),import.meta.url);
+    if(next.entries.some(entry=>catalog.entries.some(existing=>existing.id===entry.id)))throw Error('Повторный идентификатор прошивки.');
+    catalog.entries.push(...next.entries);arduinoCatalog=next;return next;
+  })().finally(()=>{arduinoLoading=null;});
+  return arduinoLoading;
+}
+const listedEntry=entry=>entry.id!=='lpx-bread-low15';
+
+function engineUI(arduino) {
+  const active=selectedEngine();
+  if(arduino&&active!=='avr8js')priorEngine=active;
+  for(const choice of document.querySelectorAll('input[name="engine"]')){
+    choice.disabled=arduino?choice.value!=='avr8js':choice.value==='avr8js';
+    $('engine-'+choice.value+'-option').hidden=arduino?choice.value!=='avr8js':choice.value==='avr8js';
+    if(arduino)choice.checked=choice.value==='avr8js';
+    else if(active==='avr8js')choice.checked=choice.value===priorEngine;
+  }
+}
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -44,48 +78,49 @@ function signalPointUI() {
   }
   const stereo=selected?.audioChannels===2,timer=currentDevice==='attiny88'?'1':'0';
   const physical=!input&&(selectedEngine()==='device'||!!selected?.devicePackage);
-  $('scope-left-label').textContent=physical?(stereo?'L · PB0':'МОНО · PB1'):(stereo?`L · OCR${timer}A`:`МОНО · OCR${timer}B`);
+  $('scope-left-label').textContent=currentDevice==='atmega328p'?(input?'МОНО · OCR'+selected.pwmOutput.slice(2):'МОНО · '+selected.outputPin):physical?(stereo?'L · PB0':'МОНО · PB1'):(stereo?`L · OCR${timer}A`:`МОНО · OCR${timer}B`);
   $('scope-right-label').textContent=physical?'R · PB1':`R · OCR${timer}B`;
   scopes=signalScopes[signalPoint];draw();
 }
 function selectedEngine() { return document.querySelector('input[name="engine"]:checked').value; }
 function deviceUI(device) {
-  const tiny88=device==='attiny88', name=tiny88?'ATtiny88':'ATtiny13A';
+  const tiny88=device==='attiny88',arduino=device==='atmega328p',spec=deviceSpecs[device],name=spec.name;
   const micronucleus=tiny88&&currentBoard==='mh-et-live-16mhz';
-  const mhz=tiny88?tiny88Boards[currentBoard].cpuHz/1000000:9.6;
+  const mhz=arduino?16:tiny88?tiny88Boards[currentBoard].cpuHz/1000000:9.6;
   document.body.dataset.device=device;
-  document.body.dataset.board=tiny88?currentBoard:'';
+  document.body.dataset.package=tiny88||arduino?'avr28':'avr8';
+  document.body.dataset.board=arduino?arduinoBoard:tiny88?currentBoard:'';
+  $('device-arduino-option').hidden=!speechCollection;$('device-arduino-option').disabled=!speechCollection;
   $('device-select').value=device;
+  $('device-caption').textContent=speechCollection?'Речевые кодеки · примеры для выбранного чипа':'Та же мелодия · прошивка для выбранного чипа';
   $('device-control').hidden=false;
   $('board-control').hidden=!tiny88;
   $('board-select').value=currentBoard;
   $('board-isp-option').disabled=speechCollection;
   $('board-isp-option').textContent='ATtiny88 · 8 МГц · ISP';
   $('board-note').textContent=micronucleus?'Внешний генератор · загрузка по USB · тембры во Flash':'Внутренний RC · загрузка Flash и EEPROM через ISP';
-  $('tiny88-clock').textContent=mhz+' MHz · '+(micronucleus?'MH-ET LIVE':'PDIP-28');
-  $('chip-attiny13a').hidden=tiny88; $('chip-attiny88').hidden=!tiny88;
-  $('tiny88-power').hidden=!tiny88;
-  $('tiny88-power').textContent=micronucleus?'MH-ET LIVE: питание по USB · моно / R — D10 · L — D9.':'PDIP-28: питание VCC 7 и AVCC 20 · земля GND 8 и 22.';
-  document.querySelector('.tiny88-vcc').textContent=micronucleus?'USB 5 В':'VCC 7';
-  document.querySelector('.tiny88-gnd').textContent=micronucleus?'GND':'GND 8';
-  $('machine-memory').textContent=tiny88?'8':'1';
-  $('machine-details').textContent=tiny88?`512 Б SRAM · 64 Б EEPROM · ${mhz} МГц`:'64 Б SRAM · 64 Б EEPROM · 9,6 МГц';
+  $('tiny88-clock').textContent=mhz+' MHz · '+(arduino?'Arduino Uno / Nano':micronucleus?'MH-ET LIVE':'PDIP-28');
+  $('chip-28-name').textContent=arduino?'ATmega328P':'ATtiny88';
+  $('chip-attiny13a').hidden=tiny88||arduino; $('chip-attiny88').hidden=!tiny88&&!arduino;
+  $('tiny88-power').hidden=!tiny88&&!arduino;
+  $('tiny88-power').textContent=arduino?'Arduino Uno / Nano · 16 МГц · питание USB / 5 В · общая земля GND.':micronucleus?'MH-ET LIVE: питание по USB · моно / R — D10 · L — D9.':'PDIP-28: питание VCC 7 и AVCC 20 · земля GND 8 и 22.';
+  document.querySelector('.tiny88-vcc').textContent=micronucleus||arduino?'USB 5 В':'VCC 7';
+  document.querySelector('.tiny88-gnd').textContent=micronucleus||arduino?'GND':'GND 8';
+  $('machine-memory').textContent=String(spec.flashBytes/1024);
+  $('machine-details').textContent=arduino?'2 КБ SRAM · 1 КБ EEPROM · 16 МГц':tiny88?`512 Б SRAM · 64 Б EEPROM · ${mhz} МГц`:'64 Б SRAM · 64 Б EEPROM · 9,6 МГц';
   $('fuses').setAttribute('aria-label',micronucleus?'Штатные настройки платы MH-ET LIVE':'Рекомендуемые фьюзы '+name);
-  $('fuse-low').textContent=micronucleus?'—':tiny88?'0xEE':'0x7A';
-  $('fuse-high').textContent=micronucleus?'—':tiny88?'0xDF':'0xFF';
-  $('fuse-high-note').textContent=micronucleus?'сохранить фьюзы платы':tiny88?'SPI включён · RESET включён':'сохранить заводской';
-  $('fuse-extended').hidden=!tiny88; $('fuse-extended-value').textContent=micronucleus?'—':'0xFF';
-  $('fuse-clock-value').textContent=micronucleus?'Внешний генератор · 16 МГц':'Внутренний RC · '+(tiny88?'8':'9,6')+' МГц';
-  $('fuse-clock-note').textContent=micronucleus?'Штатный Micronucleus · делитель /1 в прошивке':'CKDIV8 отключён · делитель /1';
-  $('fuse-datasheet').href=tiny88?'https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf':'https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf';
-  $('fuse-datasheet').textContent='Фьюзы в datasheet, §'+(tiny88?'20.2':'17.2')+' ↗';
-  for(const choice of document.querySelectorAll('input[name="engine"]'))choice.disabled=false;
-  if(document.querySelector('input[name="engine"]:checked').disabled){
-    for(const choice of document.querySelectorAll('input[name="engine"]'))choice.checked=choice.value==='wasm';
-  }
-  $('package-file').disabled=false;
+  $('fuse-low').textContent=arduino||micronucleus?'—':tiny88?'0xEE':'0x7A';
+  $('fuse-high').textContent=arduino||micronucleus?'—':tiny88?'0xDF':'0xFF';
+  $('fuse-high-note').textContent=arduino||micronucleus?'сохранить фьюзы платы':tiny88?'SPI включён · RESET включён':'сохранить заводской';
+  $('fuse-extended').hidden=!tiny88&&!arduino; $('fuse-extended-value').textContent=arduino||micronucleus?'—':'0xFF';
+  $('fuse-clock-value').textContent=arduino?'Arduino · 16 МГц':micronucleus?'Внешний генератор · 16 МГц':'Внутренний RC · '+(tiny88?'8':'9,6')+' МГц';
+  $('fuse-clock-note').textContent=arduino?'Штатный генератор платы · делитель /1':micronucleus?'Штатный Micronucleus · делитель /1 в прошивке':'CKDIV8 отключён · делитель /1';
+  $('fuse-datasheet').href=arduino?'https://www.microchip.com/en-us/product/ATmega328P':tiny88?'https://ww1.microchip.com/downloads/en/DeviceDoc/doc8008.pdf':'https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf';
+  $('fuse-datasheet').textContent=arduino?'Документация ATmega328P ↗':'Фьюзы в datasheet, §'+(tiny88?'20.2':'17.2')+' ↗';
+  engineUI(arduino);
+  $('package-file').disabled=arduino;
   $('package-import-label').textContent=micronucleus?'Открыть пакет UM88 для Micronucleus':tiny88?'Открыть пакет UM88':'Открыть пакет ATtiny13A';
-  $('engine-note').textContent='При смене — сброс на начало.';
+  $('engine-note').textContent=arduino?'Реальное выполнение HEX · AVR8js · ATmega328P.':'При смене — сброс на начало.';
   if(!speechCollection) {
     document.title=`MicroMusic / ${name} — плеер прошивок`;
     document.querySelector('.intro .eyebrow').textContent=name+' / МУЗЫКА ИЗ МАШИННОГО КОДА';
@@ -99,13 +134,19 @@ function deviceUI(device) {
 async function switchDevice(device,board=currentBoard) {
   if(!catalog&&speechCollection)return;
   const request=++deviceRequest;
-  device=device==='attiny88'?'attiny88':'attiny13a';
+  device=device==='atmega328p'&&speechCollection?'atmega328p':device==='attiny88'?'attiny88':'attiny13a';
   board=boardId(board);
   if(speechCollection){
-    const entries=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
+    if(device==='atmega328p'){
+      try{await loadArduinoCatalog();}catch(error){
+        if(request===deviceRequest){$('device-select').value=currentDevice;showError('Не удалось загрузить прошивки Arduino. '+error.message);}return;
+      }
+      if(request!==deviceRequest)return;
+    }
+    const entries=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device&&listedEntry(entry));
     if(!entries.length){showError('LPX-примеры временно недоступны.');$('device-select').value=currentDevice;return;}
-    currentDevice=device;if(device==='attiny88')currentBoard='mh-et-live-16mhz';
-    $('search').value='';load(entries[0]);return;
+    currentDevice=device;if(device==='attiny88')currentBoard='mh-et-live-16mhz';else if(device==='atmega328p')currentBoard=arduinoBoard;
+    $('search').value='';load(device==='atmega328p'?entries.find(entry=>entry.id===arduinoCatalog.defaultId)||entries[0]:entries[0]);return;
   }
   try {
     const response=await fetch(device==='attiny88'?tiny88Boards[board].catalog:'./firmware.json');
@@ -140,6 +181,7 @@ function transport() {
 function previewUI(enabled) {
   document.body.dataset.preview=String(enabled);
   for(const id of ['fuses','engine-controls','cutoff-control','signal-point-control','scope-metrics','avr-inspector','package-import','rom-hash'])$(id).hidden=enabled;
+  if(currentDevice==='atmega328p')$('package-import').hidden=true;
   $('preview-note').hidden=!enabled;
   $('preview-format-note').hidden=!enabled||!selected?.formatNotice;
   $('preview-format-note').textContent=enabled&&selected?.formatNotice?selected.formatNotice+' ':'';
@@ -240,7 +282,7 @@ function downloadUI(id,source,filename,title) {
 }
 function renderCatalog() {
   const query=$('search').value.toLocaleLowerCase('ru').trim();
-  const available=catalog.entries.filter(entry=>!speechCollection||(entry.device||'attiny13a')===currentDevice);
+  const available=catalog.entries.filter(entry=>listedEntry(entry)&&(!speechCollection||(entry.device||'attiny13a')===currentDevice));
   const entries=available.filter(e => `${e.title} ${e.description} ${e.id} ${e.flashBytes??e.streamBytes}`.toLocaleLowerCase('ru').includes(query));
   $('catalog').replaceChildren(); $('catalog-count').textContent=query ? `${entries.length} / ${available.length}` : available.length;
   for (const entry of entries) {
@@ -253,6 +295,7 @@ function renderCatalog() {
     const voices=entry.voices??4;
     const meta=document.createElement('span'); meta.className='card-meta'; meta.textContent=entry.playback==='native-pwm8'
       ? `${entry.flashMeasurement?.programFlashBytes.toLocaleString('ru')??'—'} Б код · ${entry.streamBytes.toLocaleString('ru')} Б данных · ${bitrateLabel(entry.bitrateBps)}`
+      : entry.device==='atmega328p'?`${entry.programFlashBytes.toLocaleString('ru')} Б код · ${entry.encodedBytes.toLocaleString('ru')} Б данных · ${bitrateLabel(entry.bitrateBps)}`
       : entry.kind==='package'?'FLASH + EEPROM · PB0 / PB1':entry.kind==='speech'
       ? `${entry.flashBytes} Б Flash${entry.eepromBytes ? ` + ${entry.eepromBytes} Б EEPROM` : ''} · речь ${(entry.sampleHz/1000).toLocaleString('ru')} кГц`
       : `${entry.flashBytes} Б Flash${entry.eepromBytes ? ' + 64 Б EEPROM' : ''} · ${entry.status==='experimental' ? 'ТЕСТ' : `${voices} ${voices===1?'ОСНОВНОЙ':'ОСНОВНЫХ'}`}${entry.releaseTailSlots ? ` · ${entry.releaseTailSlots} РЕЗЕРВНЫХ` : ''}${entry.audioChannels===2?' · СТЕРЕО L / R':''}`;
@@ -296,15 +339,15 @@ function load(entry,{autoplay=false}={}) {
   const autoplayAttempt=playAttempt;
   output?.port.postMessage({type:'disconnect'});
   selected=entry; headroom=0;
-  if(speechCollection){currentDevice=entry.device||'attiny13a';if(currentDevice==='attiny88')currentBoard='mh-et-live-16mhz';}
+  if(speechCollection){currentDevice=entry.device||'attiny13a';if(currentDevice==='attiny88')currentBoard='mh-et-live-16mhz';else if(currentDevice==='atmega328p')currentBoard=arduinoBoard;}
   deviceUI(currentDevice);
   $('device-select').disabled=false;
   previewUI(nativePreview());
   if(speechCollection){
-    document.title=`MicroMusic / ${currentDevice==='attiny88'?'ATtiny88':'ATtiny13A'} — речевые кодеки`;
-    document.querySelector('.intro .eyebrow').textContent=(nativePreview()?'ATtiny88':'ATtiny13A')+' / РЕЧЕВЫЕ КОДЕКИ';
-    document.querySelector('.intro h1').textContent=nativePreview()?'Речь с кодеком LPX.':'Речь в одном килобайте.';
-    document.querySelector('.subtitle').textContent=nativePreview()?'Два качества одного фрагмента. Сравните с исходной записью.':'Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
+    document.title=`MicroMusic / ${deviceSpecs[currentDevice].name} — речевые кодеки`;
+    document.querySelector('.intro .eyebrow').textContent=deviceSpecs[currentDevice].name+' / РЕЧЕВЫЕ КОДЕКИ';
+    document.querySelector('.intro h1').textContent=currentDevice==='atmega328p'?'Речь из прошивки Arduino.':nativePreview()?'Речь с кодеком LPX.':'Речь в одном килобайте.';
+    document.querySelector('.subtitle').textContent=currentDevice==='atmega328p'||nativePreview()?'Разные качества одного фрагмента. Сравните с исходной записью.':'Три фразы — три выбранных варианта. Сравните прошивку с оригиналом.';
   }
   previewAudio.removeAttribute('src');previewAudio.load();delete canvas.dataset.samples;
   if(entry.devicePackage){
@@ -336,20 +379,21 @@ function load(entry,{autoplay=false}={}) {
   if(originalUrl)originalAudio.src=entry.originalPlaybackUrl||originalUrl;else originalAudio.removeAttribute('src');
   originalAudio.load(); originalAudio.volume=+$('volume').value;
   const stereo=entry.audioChannels===2;
-  const tiny88=currentDevice==='attiny88', timer=tiny88?'1':'0';
+  const tiny88=currentDevice==='attiny88',arduino=currentDevice==='atmega328p', timer=tiny88?'1':'0';
   const micronucleus=tiny88&&currentBoard==='mh-et-live-16mhz';
   document.body.dataset.stereo=String(stereo);
   scopes=Array.from({length:stereo?2:1},()=>new Float32Array(512));
   signalScopes={input:scopes,output:scopes};
   $('stereo-output').hidden=!stereo;$('scope-right').hidden=!stereo;$('panorama').hidden=!stereo||!!entry.devicePackage;
-  $('right-output-label').textContent=(stereo?'R · ':'')+(micronucleus?'PB2 / OC1B · D10':tiny88?'PB2 / OC1B · вывод 16':'PB1 / OC0B · вывод 6');
-  $('right-output-label').title=micronucleus?'D10 на плате MH-ET LIVE':tiny88?'Вывод 16 в корпусе PDIP-28':'Вывод 6 в 8-выводных корпусах';
+  $('right-output-label').textContent=arduino?(entry.pwmOutput==='OC2B'?'PD3 / OC2B · D3':'PB1 / OC1A · D9'):(stereo?'R · ':'')+(micronucleus?'PB2 / OC1B · D10':tiny88?'PB2 / OC1B · вывод 16':'PB1 / OC0B · вывод 6');
+  $('right-output-label').title=arduino?entry.outputPin+' на Arduino Uno / Nano':micronucleus?'D10 на плате MH-ET LIVE':tiny88?'Вывод 16 в корпусе PDIP-28':'Вывод 6 в 8-выводных корпусах';
+  document.body.dataset.outputPin=arduino?entry.outputPin:'';
   $('left-output-label').textContent='L · '+(micronucleus?'PB1 / OC1A · D9':tiny88?'PB1 / OC1A · вывод 15':'PB0 / OC0A · вывод 5');
   $('left-output-label').title=micronucleus?'D9 на плате MH-ET LIVE':tiny88?'Вывод 15 в корпусе PDIP-28':'Вывод 5 в 8-выводных корпусах';
   $('audio-mode').textContent=nativePreview()?'НАТИВНОЕ ПРЕВЬЮ · 8 кГц · МОНО':stereo?'СТЕРЕО · 2 PWM-ВЫХОДА':'МОНО · 1 PWM-ВЫХОД';
   signalPointUI();
   $('average-label').textContent=stereo?'СРЕДНИЙ PWM · L / R':'СРЕДНИЙ PWM';
-  $(tiny88?'chip-attiny88':'chip-attiny13a').setAttribute('aria-label',tiny88
+  $(tiny88||arduino?'chip-attiny88':'chip-attiny13a').setAttribute('aria-label',arduino?'Arduino Uno / Nano, ATmega328P, 16 МГц: PWM '+entry.outputPin:tiny88
     ? micronucleus?'MH-ET LIVE Tiny88, 16 МГц: '+(stereo?'R — D10 / PB2, L — D9 / PB1':'моно — D10 / PB2'):'ATtiny88, PDIP-28, вид сверху: '+(stereo?'правый канал PB2 вывод 16, левый канал PB1 вывод 15':'выход PWM PB2 вывод 16')
     : 'ATtiny13A, вид сверху: '+(stereo?'правый канал PB1 вывод 6, левый канал PB0 вывод 5':'выход PWM PB1 вывод 6'));
   draw();
@@ -358,16 +402,16 @@ function load(entry,{autoplay=false}={}) {
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
   $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
   if(entry.kind==='speech') {
-    const research=entry.research||(entry.codec?.startsWith('lpx')?'../Codecs/LPX/README.md':entry.codec==='hq4-t'
+    const research=entry.research||(entry.codec?.startsWith('lpx')?'../Codecs/LPX/README.md':entry.codec?.startsWith('speex')?'../Codecs/Speex/AVR/README.md':entry.codec==='hq4-t'
       ? '../ATtiny13A/Sound/codec/timbre/README.md'
       : '../ATtiny13A/Sound/research/hq4-emulator-comparison.json');
     $('speech-audit').href=research.endsWith('.md')
       ? new URL(research,'https://github.com/Witali/MicroMusic/blob/main/web-player/').href : research;
-    $('speech-audit').textContent=entry.codec?.startsWith('lpx') ? 'Исследование LPX ↗' : entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
+    $('speech-audit').textContent=entry.codec?.startsWith('lpx') ? 'Исследование LPX ↗' : entry.codec?.startsWith('speex')?'Исследование Speex ↗':entry.codec==='tiny-period' ? 'Исследование речевого ядра ↗'
       : entry.codec==='hq4-t' ? 'Исследование HQ4-T ↗' : 'Сверка HQ4 ↗';
   }
   $('speech-audit').hidden=entry.kind!=='speech';
-  const capacity=micronucleus?6012:tiny88?8192:1024, prefix=micronucleus?'attiny88-mh-et-live-16mhz':currentDevice;
+  const capacity=micronucleus?6012:deviceSpecs[currentDevice].flashBytes, prefix=arduino?'arduino-atmega328p-16mhz':micronucleus?'attiny88-mh-et-live-16mhz':currentDevice;
   if(nativePreview()){
     const file=entry.id+'.lpx';
     $('rom-name').href=entry.streamUrl;$('rom-name').download=file;$('rom-name').textContent=file;
@@ -388,7 +432,8 @@ function load(entry,{autoplay=false}={}) {
     loadPreviewWave(entry,session);
   }else{
   const flashSource=entry.source||'data:text/plain;charset=utf-8,'+encodeURIComponent(entry.flashHex);
-  $('rom-name').textContent=`${prefix}-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц ${entry.kind==='speech'?'отсчёты':'PWM'}`;
+  $('rom-name').textContent=`${prefix}-${entry.id}.hex`; $('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / ${deviceSpecs[currentDevice].eepromBytes} Б EEPROM · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц ${entry.kind==='speech'?'отсчёты':'PWM'}`;
+  if(arduino)$('rom-details').textContent=`${entry.programFlashBytes.toLocaleString('ru')} Б программа + ${entry.encodedBytes.toLocaleString('ru')} Б звук = ${entry.flashBytes.toLocaleString('ru')} / ${capacity.toLocaleString('ru')} Б Flash · ${bitrateLabel(entry.bitrateBps)} · EEPROM не требуется`;
   if(micronucleus)$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б приложения · тембры во Flash · ${(entry.sampleHz/1000).toLocaleString('ru')} кГц PWM`;
   if(entry.devicePackage)$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б Flash · ${entry.eepromBytes} / 64 Б EEPROM · пакет ATtiny13A`;
   if(entry.firmwareEngine==='UM88')$('rom-details').textContent=`${entry.flashBytes} / ${capacity} Б ${micronucleus?'приложения · тембры во Flash':'Flash'} · EEPROM не требуется · синтез ${(entry.synthesisHz/1000).toLocaleString('ru')} кГц · ${(entry.pwmHz/1000).toLocaleString('ru')} кГц PWM`;
@@ -409,15 +454,15 @@ function load(entry,{autoplay=false}={}) {
   const bytes=parseHex(entry.flashHex,capacity); $('memory').textContent=Array.from({length:8},(_,line)=>formatHex(line*16,4)+'  '+Array.from(bytes.subarray(line*16,line*16+16),x=>formatHex(x)).join(' ')).join('\n');
   }
   const url=new URL(location.href); url.searchParams.set('firmware',entry.id);
-  if(tiny88)url.searchParams.set('device','attiny88');else url.searchParams.delete('device');
-  if(micronucleus)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
+  if(tiny88||arduino)url.searchParams.set('device',currentDevice);else url.searchParams.delete('device');
+  if(micronucleus||arduino)url.searchParams.set('board',currentBoard);else url.searchParams.delete('board');
   history.replaceState(null,'',url);
   renderCatalog(); transport();
   if(nativePreview()){
     previewUI(true);runtimeReady=true;transport();if(autoplay)toggle();return;
   }
   document.querySelector('.scope-scale').textContent='85 мс';
-  const worker=new Worker(new URL('./worker.js?v=20261026-signal-point',import.meta.url),{type:'module'}); runtime=worker;
+  const worker=new Worker(new URL('./worker.js?v=20261102-arduino',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
     if (data.type==='ready') {
@@ -448,7 +493,7 @@ async function ensureAudio() {
     output.port.onmessage=({data})=>{
       if (nativePreview()||data.type!=='position' || data.session!==session || !playing) return;
       const timing=realtime.observe(data,performance.now());
-      const duration=selected.playOnce ? selected.phraseSamples/selected.sampleHz : Infinity;
+      const duration=selected.playOnce ? selected.playbackCycles?selected.playbackCycles/selected.cpuHz:selected.phraseSamples/selected.sampleHz : Infinity;
       const seconds=Math.min(timing.seconds,duration);
       elapsed(seconds);
       $('tempo').textContent=timing.tempoPercent.toFixed(1)+'%'; $('lag').textContent=timing.lagMs.toFixed(1)+' мс';
@@ -496,7 +541,7 @@ for (const choice of document.querySelectorAll('input[name="engine"]')) choice.o
 $('device-select').onchange=()=>switchDevice($('device-select').value);
 $('board-select').onchange=()=>switchDevice('attiny88',$('board-select').value);
 $('package-file').onchange=async event=>{
-  if(nativePreview())return;
+  if(nativePreview()||currentDevice==='atmega328p')return;
   const file=event.target.files[0];if(!file)return;
   const attempt=++importAttempt,device=currentDevice,request=deviceRequest;
   try{
@@ -562,10 +607,14 @@ try {
   }
   const requested=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
   const id=catalog.aliases?.[requested]??requested;
-  const exact=catalog.entries.find(entry=>entry.id===id);
-  const device=exact?.playback==='native-pwm8'||new URL(location.href).searchParams.get('device')==='attiny88'?'attiny88':'attiny13a';
-  const available=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
-  load(available.find(entry=>entry.id===id)||available[0]||catalog.entries.find(entry=>entry.id===catalog.defaultId));
+  let arduinoError;
+  try{await loadArduinoCatalog();}catch(error){arduinoError=error;}
+  const exact=catalog.entries.find(entry=>entry.id===id),requestedDevice=new URL(location.href).searchParams.get('device');
+  const explicitFirmware=new URL(location.href).searchParams.has('firmware');
+  const device=['attiny88','atmega328p','attiny13a'].includes(requestedDevice)?requestedDevice:exact?.device||'attiny13a';
+  const available=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device&&listedEntry(entry));
+  load((explicitFirmware&&(exact?.device||'attiny13a')===device?exact:undefined)||available.find(entry=>entry.id===(device==='atmega328p'?arduinoCatalog?.defaultId:id))||available[0]||catalog.entries.find(entry=>entry.id===catalog.defaultId));
+  if(arduinoError&&device==='atmega328p')showError('Прошивки Arduino временно недоступны. '+arduinoError.message);
   if(previewError&&(device==='attiny88'||requested.startsWith('lpx-bread-')))showError('LPX-примеры временно недоступны.');
   }
 } catch (error) { showError('Не удалось загрузить каталог прошивок. Обновите страницу или проверьте подключение. '+error.message); }

@@ -1,5 +1,11 @@
 # LPX speech comparison
 
+The 1.5 kbit/s experiment is currently omitted from the speech library while
+quality work focuses on 2 and 3 kbit/s. Its assets and explicit archived links
+are retained. The existing Tiny88 compact/quality comparisons below are
+unchanged; they do not become real-time Tiny88 firmware. The Arduino device
+has a separate [actual-firmware path](../../native/ATMEGA328P_SPEECH.md).
+
 The user-requested phrase is retained in full: 19,200 mono samples at 8,000 Hz,
 or 2.4 seconds. `original.wav` is the MP3 decoded and resampled to this reference
 rate. Container metadata was removed. No trimming, time stretching or level
