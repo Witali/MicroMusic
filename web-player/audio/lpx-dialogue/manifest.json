@@ -1,0 +1,216 @@
+{
+  "schema": "micromusic-nano-dialogue-v1",
+  "title": "Разговор у Совы",
+  "device": "atmega328p",
+  "cpuHz": 16000000,
+  "sampleHz": 8000,
+  "samples": 81254,
+  "durationSeconds": 10.15675,
+  "pwmOutput": "D3 / PD3 / OC2B",
+  "playback": "once-after-reset",
+  "assemblyEnabled": true,
+  "physicalBoardMeasured": false,
+  "compiler": "avr-g++.exe (GCC) 7.3.0",
+  "ffmpegVersion": "ffmpeg version 8.1.1-full_build-www.gyan.dev",
+  "flashBytes": 10406,
+  "programFlashBytes": 4600,
+  "streamBytes": 5806,
+  "staticSramBytes": 756,
+  "hexSha256": "affd3d01b57c62222f5710c6d7cd6b23bd8ab6767e4b05ea5b6fefeafe5dcfb1",
+  "wavSha256": "aedac908206da63bf5fd0c48fba94c141a4b088dce7265791fa256bcca8c3786",
+  "normalization": {
+    "method": "EBU R128 integrated loudness, constant source gain before encoding",
+    "targetLufs": -18.0,
+    "sourceSpreadLu": 0.030000000000001137,
+    "decodedSpreadLu": 1.0299999999999976,
+    "truePeakLimitDb": -1.5
+  },
+  "segments": [
+    {
+      "title": "Сова! Открывай! Медведь пришёл!",
+      "gainDb": -0.620000000000001,
+      "source": "audio/originals/vinni.wav",
+      "sourceSha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+      "original": {
+        "lufs": -17.38,
+        "truePeakDb": -5.25
+      },
+      "normalized": {
+        "lufs": -18.02,
+        "truePeakDb": -5.87
+      },
+      "decoded": {
+        "lufs": -18.92,
+        "truePeakDb": -4.26
+      },
+      "kind": "speech",
+      "clipId": "vinni",
+      "startSample": 0,
+      "samples": 23757,
+      "streamBytes": 1862,
+      "streamSha256": "64fd7815a604f9593ed30e77398ad15e22ca761091023fe01f02f8a2d0b9f7aa",
+      "romOffset": 4048,
+      "romEnd": 5910,
+      "stream": "audio/lpx-dialogue/00.lpx"
+    },
+    {
+      "kind": "silence",
+      "title": "Пауза",
+      "seconds": 0.5,
+      "startSample": 23757,
+      "samples": 4000,
+      "streamBytes": 205,
+      "streamSha256": "619f547e95d2eb9e29a06734e2e868bd88f5fda9299872f71677f7bc08df110b",
+      "romOffset": 3843,
+      "romEnd": 4048,
+      "stream": "audio/lpx-dialogue/01.lpx"
+    },
+    {
+      "title": "Чего тебе нужно?",
+      "gainDb": -1.2399999999999984,
+      "source": "audio/originals/chego.wav",
+      "sourceSha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+      "original": {
+        "lufs": -16.76,
+        "truePeakDb": -0.97
+      },
+      "normalized": {
+        "lufs": -18.03,
+        "truePeakDb": -2.21
+      },
+      "decoded": {
+        "lufs": -18.46,
+        "truePeakDb": -2.56
+      },
+      "kind": "speech",
+      "clipId": "chego",
+      "startSample": 27757,
+      "samples": 9831,
+      "streamBytes": 790,
+      "streamSha256": "e91aafb8b38e179922a3bb8e0142f0f80d00e3fd8d6f6722ba9068bc71ec678d",
+      "romOffset": 3053,
+      "romEnd": 3843,
+      "stream": "audio/lpx-dialogue/02.lpx"
+    },
+    {
+      "kind": "silence",
+      "title": "Пауза",
+      "seconds": 1.5,
+      "startSample": 37588,
+      "samples": 12000,
+      "streamBytes": 552,
+      "streamSha256": "2064762a28221f931c1ab8d5825d2623e65934aa4ebf428615b24af2a79ce815",
+      "romOffset": 2501,
+      "romEnd": 3053,
+      "stream": "audio/lpx-dialogue/03.lpx"
+    },
+    {
+      "title": "Что ж ты не отвечаешь?",
+      "gainDb": -3.9700000000000006,
+      "source": "audio/originals/otvechaesh.wav",
+      "sourceSha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+      "original": {
+        "lufs": -14.03,
+        "truePeakDb": -0.89
+      },
+      "normalized": {
+        "lufs": -18.0,
+        "truePeakDb": -4.86
+      },
+      "decoded": {
+        "lufs": -18.46,
+        "truePeakDb": -5.06
+      },
+      "kind": "speech",
+      "clipId": "otvechaesh",
+      "startSample": 49588,
+      "samples": 8466,
+      "streamBytes": 692,
+      "streamSha256": "65ba968da5e4951df7dd8092b8bcd5c7badf98d1862e71b4abb97bbc35e98a92",
+      "romOffset": 1809,
+      "romEnd": 2501,
+      "stream": "audio/lpx-dialogue/04.lpx"
+    },
+    {
+      "kind": "silence",
+      "title": "Пауза",
+      "seconds": 0.5,
+      "startSample": 58054,
+      "samples": 4000,
+      "streamBytes": 205,
+      "streamSha256": "619f547e95d2eb9e29a06734e2e868bd88f5fda9299872f71677f7bc08df110b",
+      "romOffset": 1604,
+      "romEnd": 1809,
+      "stream": "audio/lpx-dialogue/05.lpx"
+    },
+    {
+      "title": "И того, и другого, и можно без хлеба",
+      "gainDb": -5.27,
+      "source": "audio/lpx-bread/original.wav",
+      "sourceSha256": "f744f2f8aa554c0da3361f309f9226d86484ca06d5cfd7b2925afad444a19d31",
+      "original": {
+        "lufs": -12.73,
+        "truePeakDb": -0.24
+      },
+      "normalized": {
+        "lufs": -18.01,
+        "truePeakDb": -5.51
+      },
+      "decoded": {
+        "lufs": -19.49,
+        "truePeakDb": -3.41
+      },
+      "kind": "speech",
+      "clipId": "bread",
+      "startSample": 62054,
+      "samples": 19200,
+      "streamBytes": 1500,
+      "streamSha256": "7690a66277d5f829adf94df9dfa7e28e96f0f6c1d997c36eedfb30f57ba4fae7",
+      "romOffset": 104,
+      "romEnd": 1604,
+      "stream": "audio/lpx-dialogue/06.lpx"
+    }
+  ],
+  "timing": {
+    "played": 81254,
+    "underruns": 0,
+    "timer_ticks": 81254,
+    "timer_events": 81254,
+    "queued_at_stop": 0,
+    "tick_interval_min_cycles": 1996,
+    "tick_interval_max_cycles": 2004,
+    "pwm_interval_min_cycles": 1996,
+    "pwm_interval_max_cycles": 2004,
+    "irq_cycles_max": 76,
+    "irq_entry_cycles": 4,
+    "irq_reti_complete": true,
+    "stack_margin_all_bytes": 1231
+  },
+  "sourceHashEncoding": "text-lf",
+  "sourceSha256": {
+    "ATmega328/Sound/lpx-dialogue/recipe.json": "a931b942dd52d441db2173e91b2901234e99b46d66a9266b47eaa28571519252",
+    "tools/build-nano-dialogue.py": "a9b358a32f98ff3252292164894a089f5524fde0313cdd5869fbeb3d1a12be51",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "48923d2ddd3c45135d9c33dd3e36c9ef221f98f155bb2e9421f472aa51250a7a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/INPUT_CALLBACK.md": "9470f3e91f3d335d628e6e86589d80c4cbd35016d464bfacce7e5a72aeeba8e4",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.cpp": "17d596b15c4016bf70b745abbe159cd6f4f3e8f2de94ce4738762bac635e0653",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "2d4d6bed68db8c684c896de7c544cbc986601ceb63c247c9746bfbe7730625e5",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "e4373b32eb4f4ac9d744a470b6569ad2651aead0bd71b41ea216d6111235ea27",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "44f05a823f7ffc00d6e335810cc29e1db447ac84065c0885f64b957baa8e02b0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyAvr.h": "b3b13d1981f13e734e51ed4b2a9d60f3a58557512fe1d009c34b8a37c381fe99",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "f45569017cd38489198f63c14bed9a1fb501c0c2983eb5540cb9597595e2004a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/native_batch_decoder.cpp": "ad7e92d2b3bbf1ab607d661cc73daaf686a2844f49e55b170e21b8079ef80b21",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/AVR_V5_PLAYER/player.cpp": "ebaa83e7e47eb8e26d38e74cf6ba693de1682c8c98f079af927dff808a683674",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/AVR_V5_PLAYER/player_config.h": "52492e9a832bc567c02cfaa6253fedcd0ea3a9a813930e4e609f79f0e43b62c9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_player.py": "ef11a56e0b3d8b633edf42e22dbd1518579005ec426e7e14570cdd02bd62fc47",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "6aa98f754d4ea68f2f4d7fbd3f2414406bc9591b6489bc5fe3bc74c0a355c59d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/pcm16_wav.py": "2fdc6d344732b12fffc7e100fc5e5c663daf87ea5c76769a86cf6d8d074cff86",
+    "Codecs/LPX/validation/atmega328p/sim_player.c": "373a80d8c66e48e1d21ba90b36655ca11d1a1a7060e8e1753e6e769b3daeee8a"
+  },
+  "audio": "audio/lpx-dialogue/dialogue.wav",
+  "firmware": "firmware/arduino-nano/lpx-nano-dialogue-quality.hex"
+}

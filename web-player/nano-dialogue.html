@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101411">
+  <title>Разговор у Совы — прошивка для Arduino Nano / MicroMusic</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css?v=20261102-tiny88-lpx">
+  <link rel="stylesheet" href="./nano-dialogue.css?v=20261102">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../">MicroMusic<span>/ LAB</span></a>
+    <a class="header-link" href="./?collection=hq4&amp;device=atmega328p">Все речевые прошивки ↗</a>
+  </header>
+  <main class="dialogue-page">
+    <div class="intro">
+      <span class="eyebrow">ARDUINO NANO / ATMEGA328P · 16 МГЦ</span>
+      <h1>Разговор у Совы</h1>
+      <p class="subtitle">Четыре знакомые реплики, один микроконтроллер. Громкость выровнена до кодирования, паузы уже внутри прошивки.</p>
+    </div>
+    <section class="panel dialogue-panel" aria-labelledby="dialogue-title">
+      <div class="panel-heading"><h2 id="dialogue-title">Кто там?</h2><span class="tag">LPX · 8 кГц</span></div>
+      <ol class="dialogue-lines">
+        <li><span class="dialogue-line">Сова! Открывай! Медведь пришёл!</span><small>Пауза 0,5 секунды</small></li>
+        <li><span class="dialogue-line">Чего тебе нужно?</span><small>Пауза 1,5 секунды</small></li>
+        <li><span class="dialogue-line">Что ж ты не отвечаешь?</span><small>Пауза 0,5 секунды</small></li>
+        <li><span class="dialogue-line">И того, и другого, и можно без хлеба.</span></li>
+      </ol>
+      <p id="audio-label">Послушать весь разговор · 10,16 секунды</p>
+      <audio controls preload="metadata" aria-labelledby="audio-label" src="./audio/lpx-dialogue/dialogue.wav">Ваш браузер не поддерживает воспроизведение WAV.</audio>
+      <div class="transport">
+        <a class="primary" href="./firmware/arduino-nano/lpx-nano-dialogue-quality.hex" download="lpx-nano-dialogue-quality.hex">Скачать прошивку HEX</a>
+        <a class="header-link" href="./audio/lpx-dialogue/dialogue.wav" download>Скачать WAV</a>
+      </div>
+      <p class="hardware-note">Полный образ: <strong>10,162 KiB</strong> из доступных 30 KiB. RAM: <strong>756 байт</strong> из 2 KiB. EEPROM не используется.</p>
+      <p class="hardware-note">После включения разговор проигрывается один раз. Reset запускает его снова. Звук — D3 / PD3 / OC2B через RC-фильтр на вход усилителя.</p>
+      <p class="hardware-note">WAV содержит точные отсчёты прошивки. Полный разговор проверен в симуляторе с прерываниями: без пропусков звука.</p>
+    </section>
+  </main>
+</body>
+</html>

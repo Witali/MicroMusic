@@ -3160,6 +3160,8 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 
 [Preserve playback while removing diagnostics](lpx-release-player.md): SPSC publication, atomic final EOF, vendor-derived unlinked metadata, exact timer/PWM/queue observation, and measured full application size.
 
+- [Compose a dialogue with one decoder](lpx-dialogue.md): normalized source copies, sample-clock pauses and reset-chain playback; complete Nano image and active-IRQ verification.
+
 - [Charge scale-repeat syntax against complete Flash](lpx-scale-repeat.md): an isolated lossless parser costs 45..47 B, exceeds four tuning data savings, and pays off only on the measured long chain; production is unchanged.
 
 - [Clocked external SPI sources](lpx-external-spi.md): vendor-derived registers, source/arithmetic separation, corrected simavr byte timing and bounded full-player validation scope.
