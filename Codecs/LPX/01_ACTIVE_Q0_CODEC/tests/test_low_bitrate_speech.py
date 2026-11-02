@@ -147,6 +147,37 @@ class LowBitrateContracts(unittest.TestCase):
                     self.assertEqual(reopened.getframerate(), 8000)
                     self.assertEqual(reopened.readframes(len(pcm)), expected.astype('<i2').tobytes())
 
+    def test_first_source_spectrum_failure_does_not_skip_a_later_fitting_plan(self):
+        reference = np.zeros(7040, np.int16)
+        high = np.asarray([list(range(22,32))]*22)
+        low = np.asarray([list(range(10))]*22)
+        self.assertEqual(spectral_bytes(high,False),332)
+        self.assertEqual(spectral_bytes(low,False),330)
+        with patch.object(encoder,'analyze',return_value=(None,None)), \
+                patch.object(encoder.speech_v4,'quantize_spectrum',side_effect=(high,low)), \
+                patch.object(encoder,'search_excitation',side_effect=self.zero_fit):
+            blob,_,report=encode(reference,3,ModelReceiver(),pres=(13926,11469),bandwidths=(.97,))
+        self.assertEqual(len(blob),330)
+        self.assertEqual(len(report['spectral_no_fit_proposals']),1)
+        self.assertEqual(report['candidates'][0]['settings']['pre_q14'],11469)
+
+    def test_feasible_retained_seed_survives_all_source_proposal_failures(self):
+        reference=np.zeros(7040,np.int16)
+        high=np.asarray([list(range(22,32))]*22)
+        seed=compact.pack(len(reference),4,[list(range(10))]*22,
+                          [(0,18,0)]*44,[(0,-8)]*352)[0]
+        self.assertEqual(len(seed),330)
+        with patch.object(encoder,'analyze',return_value=(None,None)), \
+                patch.object(encoder.speech_v4,'quantize_spectrum',return_value=high), \
+                patch.object(encoder,'search_excitation') as fit:
+            blob,pcm,report=encode(reference,3,ModelReceiver(),pres=(13926,),
+                                   bandwidths=(.97,),seeds=(seed,))
+            fit.assert_not_called()
+        self.assertEqual(blob,seed)
+        np.testing.assert_array_equal(pcm,reference)
+        self.assertTrue(report['candidates'][0]['settings']['retained_seed'])
+        self.assertEqual(report['actual_work_totals']['parameter_trials'],0)
+
     def test_invalid_cap_and_fresh_output_contract(self):
         reference = np.zeros(320, np.int16)
         for kbps in (True, 1.5, 2.0, 4):

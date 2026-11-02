@@ -30,6 +30,10 @@ from voice_input import load_voice_wav, prepare_level
 from wav_lpc import analyze, pack_frames
 
 
+class NoSpectralFit(ValueError):
+    """This source-derived proposal failed; other proposals/seeds may fit."""
+
+
 def recover_best_checkpoint(directory):
     """Read the authoritative pointer; ignore unfinished convenience copies."""
     directory = Path(directory)
@@ -85,7 +89,7 @@ def spectral_plans(target, desired, max_bytes, sparse80):
             uniform = trial
             break
     if uniform is None:
-        raise ValueError('Complete-file cap is below the legal fixed-field floor')
+        raise NoSpectralFit('No uniform source-derived spectrum fits the complete-file cap')
     weights = np.asarray([1. + np.sqrt(np.mean(np.asarray(target[i*320:(i+1)*320], np.float64)**2))
                           for i in range(frames)])
     maximum = 63 if sparse80 else 31
@@ -302,6 +306,8 @@ def encode(reference, kbps, decoder, *, output=None, level_policy='preserve',
             if np.isfinite(track.period[index]):
                 source_lags[bi] = int(np.rint(track.period[index]))
     rows, candidates, by_blob, attempts = [], [], {}, []
+    spectral_no_fit = []
+    seeds_added = False
     started = time.perf_counter()
 
     def atomic_bytes(name, data):
@@ -379,11 +385,30 @@ def encode(reference, kbps, decoder, *, output=None, level_policy='preserve',
         if candidate_sink is not None:
             candidate_sink(blob, row)
 
+    def add_seeds():
+        nonlocal seeds_added
+        if seeds_added:
+            return
+        seeds_added = True
+        for seed in seeds:
+            seed = bytes(seed)
+            if not sparse80 and compact.unpack(seed)[1] != 4:
+                raise ValueError('Expected a retained v5/P4 seed at3kbit/s')
+            modeled = sparse.decode_model(seed) if sparse80 else compact.decode_model(seed)
+            if len(modeled) != n:
+                raise ValueError('Retained seed sample count differs from reference')
+            if len(seed) <= cap:
+                add(seed, modeled, dict(retained_seed=True), 0)
+
     for pre in pres:
         for bandwidth in bandwidths:
             vectors, _ = analyze(padded, pre=pre, bandwidth=bandwidth)
             desired = speech_v4.quantize_spectrum(vectors, 6 if sparse80 else 4)
-            plans = spectral_plans(padded, desired, cap, sparse80)
+            try:
+                plans = spectral_plans(padded, desired, cap, sparse80)
+            except NoSpectralFit:
+                spectral_no_fit.append(dict(pre_q14=pre, bandwidth=bandwidth))
+                continue
             for allocation, spectra in plans:
                 shift = 4 if sparse80 else 5
                 expanded = [[(int(v)<<shift)+(1<<(shift-1)) for v in row] for row in spectra for _ in range(2)]
@@ -401,17 +426,11 @@ def encode(reference, kbps, decoder, *, output=None, level_policy='preserve',
                     add(blob, pcm, dict(pre_q14=pre, bandwidth=bandwidth,
                         allocation=allocation, expanded_lags=expanded_lags, clip_guard=clip_guard), work)
                     if len(rows) == 1:
-                        for seed in seeds:
-                            seed = bytes(seed)
-                            if not sparse80 and compact.unpack(seed)[1] != 4:
-                                raise ValueError('Expected a retained v5/P4 seed at3kbit/s')
-                            modeled = sparse.decode_model(seed) if sparse80 else compact.decode_model(seed)
-                            if len(modeled) != n:
-                                raise ValueError('Retained seed sample count differs from reference')
-                            if len(seed) <= cap:
-                                add(seed, modeled, dict(retained_seed=True), 0)
+                        add_seeds()
     if not rows:
-        raise ValueError('No feasible candidate')
+        add_seeds()
+    if not rows:
+        raise NoSpectralFit('No searched spectrum or retained seed fits the complete-file cap')
     selected = min((row for row in rows if row['admissible']), key=lambda row: (row['score'], row['file_bytes'], row['id']))
     blob, pcm = candidates[selected['id']]
     totals = {key: sum(attempt['work'][key] for attempt in attempts) for key in (
@@ -420,6 +439,7 @@ def encode(reference, kbps, decoder, *, output=None, level_policy='preserve',
         complete_byte_cap=cap, level=level, container_version=8 if sparse80 else 5,
         mode=15 if sparse80 else 4, selected_id=selected['id'], selected_bytes=len(blob),
         baseline_id=0, candidate_count=len(rows), candidates=rows,
+        spectral_no_fit_proposals=spectral_no_fit,
         attempt_count=len(attempts), attempts=attempts, actual_work_totals=totals,
         source_voiced_windows=int(track.voiced.sum()), seconds=time.perf_counter()-started,
         selection='minimum joint PCM/PWM voice+noise proxy under unchanged SSE/STOI/pitch/clipping floors',
