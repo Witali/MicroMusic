@@ -2,7 +2,13 @@ export const DEFAULT_ENGINE = 'wasm';
 
 // Load only the selected engine: JS playback also works without WebAssembly.
 export async function createRenderer(entry, sampleRate, controls, engine = DEFAULT_ENGINE) {
-  if (!['js','wasm','transpiled','device'].includes(engine)) throw new Error('Unknown AVR engine: ' + engine);
+  if (!['js','wasm','transpiled','device','avr8js'].includes(engine)) throw new Error('Unknown AVR engine: ' + engine);
+  if(entry.device==='atmega328p'){
+    if(engine!=='avr8js')throw Error('ATmega328P requires the AVR8js engine');
+    const {Renderer}=await import('./renderer-atmega328p.js');
+    const renderer=new Renderer(entry,sampleRate,controls);renderer.engine=engine;return renderer;
+  }
+  if(engine==='avr8js')throw Error('The AVR8js engine supports only ATmega328P');
   if(entry.device==='attiny88'&&engine==='device')throw Error('The physical device engine supports only ATtiny13A');
   if(entry.devicePackage){
     if(!['device','transpiled'].includes(engine))throw Error('An ATtiny13A package requires the device engine or AVR → WASM');

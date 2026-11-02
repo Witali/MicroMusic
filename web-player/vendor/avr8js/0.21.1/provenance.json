@@ -1,0 +1,27 @@
+{
+  "package": "avr8js",
+  "version": "0.21.1",
+  "upstream": "https://github.com/wokwi/avr8js",
+  "package_url": "https://registry.npmjs.org/avr8js/-/avr8js-0.21.1.tgz",
+  "package_integrity_from_existing_lock": "sha512-lS1vPaB0gB2GXoPrHFQOUG/5CRORjvnmjbs8SiPZdJpt4HkV0+v6HnNeXxo/X9lPqumqphls2Qyql8zsw9rBaw==",
+  "origin": "Retained installed package matching the repository pinned version; individual runtime file bytes are pinned below. Archive SRI is prior lock metadata, not a newly fetched archive verification.",
+  "license": "MIT",
+  "license_sha256": "71d092fa8944eb36ce929756f620ee5bf31f119d5f78a6941dc04d48f504177b",
+  "original_sha256": {
+    "cpu/cpu.js": "a12732ff35b0075ef5d41422b79a7ba8ce3bf8011fa2d9b2fab01a1aa0c770c8",
+    "cpu/instruction.js": "421c76ce7e563e2b74d48c0138b2f2013788da1fe7206125e21a59c10bf6d6be",
+    "cpu/interrupt.js": "3de9a128310cf8e5a5319d1f9c5239186dd692468dc0b2ca397bf9f543996828",
+    "peripherals/timer.js": "8b3ab7a65309afda8422f1355a1430cb12b824a082154fbbc7ef8c0ad8b49292",
+    "peripherals/gpio.js": "f4d480b50a2222c5d7ca5b74c3758a5fe42811303272e5afbc447b8e46f900af",
+    "peripherals/eeprom.js": "21cc6236dbff88daeccb10c98b0a543918c7baaeab613dcc58b1600e803596d6"
+  },
+  "browser_sha256": {
+    "cpu/cpu.js": "73bc67c89b41487cf1a84b62441be4d8f0d5252da098065754d1c7179397bfa3",
+    "cpu/instruction.js": "421c76ce7e563e2b74d48c0138b2f2013788da1fe7206125e21a59c10bf6d6be",
+    "cpu/interrupt.js": "3de9a128310cf8e5a5319d1f9c5239186dd692468dc0b2ca397bf9f543996828",
+    "peripherals/timer.js": "87a1bc022797451a1fed7db241636f5cc8e96bbbd6e715f47b343445296c9802",
+    "peripherals/gpio.js": "f4d480b50a2222c5d7ca5b74c3758a5fe42811303272e5afbc447b8e46f900af",
+    "peripherals/eeprom.js": "21cc6236dbff88daeccb10c98b0a543918c7baaeab613dcc58b1600e803596d6"
+  },
+  "adaptation": "Only append .js to extensionless relative ES module import specifiers. No execution or peripheral code changed."
+}

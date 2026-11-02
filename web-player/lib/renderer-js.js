@@ -22,11 +22,11 @@ function validateControls(cutoff, volume) {
 }
 
 export class Renderer {
-  constructor(entry, sampleRate, {cutoff = 4000, volume = 1, filtered = true} = {}, Core = AVRCore) {
+  constructor(entry, sampleRate, {cutoff = 4000, volume = 1, filtered = true} = {}, Core = AVRCore, resolveProfile = resolveAVRProfile) {
     if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000) throw new Error('Invalid audio sample rate');
     validateControls(cutoff, volume);
     if (!Number.isFinite(entry.pwmHz) || entry.pwmHz <= 0) throw new Error('Invalid audio configuration');
-    const profile = resolveAVRProfile(entry.device,{cpuHz:entry.cpuHz});
+    const profile = resolveProfile(entry.device,{cpuHz:entry.cpuHz});
     this.core = typeof Core==='function'
       ? new Core(parseHex(entry.flashHex, profile.flashBytes), entry.eepromHex ? parseHex(entry.eepromHex, profile.eepromBytes) : null, {target:profile.id,cpuHz:profile.cpuHz}) : Core;
     this.channels=entry.audioChannels||1;

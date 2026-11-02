@@ -8,6 +8,7 @@ import {Renderer as DeviceRenderer} from '../lib/renderer-device.js';
 import {AT13_IO as IO} from '../lib/attiny13a-registers.js';
 import {createRenderer} from '../lib/engines.js';
 import {playerApp} from './helpers/player-app.mjs';
+import {speechEntry} from './helpers/atmega-speech-fixture.mjs';
 
 const catalog=name=>JSON.parse(readFileSync(new URL('../'+name,import.meta.url))).entries;
 const music=catalog('firmware.json'),speech=catalog('hq4-firmware.json'),tiny88=catalog('firmware-attiny88.json');
@@ -77,6 +78,8 @@ const cases=[
   ['ATtiny13A physical',music.find(e=>e.audioChannels===2),'device'],
   ['ATtiny88 mono',tiny88.find(e=>e.audioChannels!==2),'wasm'],
   ['ATtiny88 stereo',tiny88.find(e=>e.audioChannels===2),'js'],
+  ['ATmega328P Timer2B fixture',speechEntry('OC2B'),'avr8js'],
+  ['ATmega328P Timer1A fixture',speechEntry('OC1A'),'avr8js'],
 ];
 for(const [name,entry,engine] of cases)test(name+': actual Worker switches both PCM and per-channel scopes, retaining continuous CPU/filter state',async t=>{
   const worker=new Worker(new URL('./helpers/browser-worker-node.mjs',import.meta.url));t.after(()=>worker.terminate());
