@@ -3146,3 +3146,5 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [Exact bounded LPX pitch history](lpx-pitch-history.md): rejected 111-byte RAM tradeoff, memory-lifetime alternatives, unchanged production decoder and measured AVR25 C throughput limits.
 
 - [Select LPX multiplication by real target capability](lpx-multiply-selection.md): explicit C/ASM choice, compiler-linked software fallback, and assembled AVR5/AVR25 checks without redefining CPU macros.
+
+- [Cost decoder changes using actual production work](lpx-producer-budget.md): ELF/stack producer boundaries, live IRQ/RETI exclusion, independent160/320-call window audits, default-off compatibility, and measured raw-step ramp/rejected metadata320 probes.
