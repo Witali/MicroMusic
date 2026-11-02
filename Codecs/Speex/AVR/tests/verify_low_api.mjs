@@ -30,7 +30,16 @@ let foldActive=null,foldCalls=0,foldMultiplies=0;
 const countVocoder=process.argv.includes('--count-vocoder');
 const vocoderEntry=countVocoder?address('speex_nb1_synthesize40_avr'):-1;
 let vocoderActive=null,vocoderCalls=0,vocoderMultiplies=0;
-const countPrepare=process.argv.includes('--count-noise-prepare');
+const countNb1Gain=process.argv.includes('--count-nb1-gain');
+const countPrepare=process.argv.includes('--count-noise-prepare')||countNb1Gain;
+const gainTables=[...symbols.keys()].filter(n=>n==='speex_nb1_gain_table'||n.startsWith('speex_nb1_gain_table.'));
+if(countNb1Gain)assert.equal(gainTables.length,1,'Exactly one finite NB1 gain table');
+const nb1GainTable=countNb1Gain?address(gainTables[0]):-1;
+let gainLookups=0,expectedGainCode=0;const gainHistogram=Array(16).fill(0);
+if(countNb1Gain)for(let code=0;code<16;code++){
+ const c=(2185n*BigInt(code<<6)+16384n)>>15n,g=Number((24576n*(c-13n)+8192n)>>14n);
+ assert.equal(binary[nb1GainTable+code],Math.max(0,Math.min(64,g)));
+}
 const prepareNames=[...symbols.keys()].filter(n=>n==='speex_nb1_excitation_prepare'||n.startsWith('speex_nb1_excitation_prepare.'));
 if(countPrepare)assert.equal(prepareNames.length,1,'NB1 frame preparation entry');
 const prepareEntry=countPrepare?address(prepareNames[0]):-1;
@@ -81,8 +90,11 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  if(foldActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++foldActive.muls;
  if(cpu.pc*2===vocoderEntry){assert.equal(vocoderActive,null);vocoderActive={sp:cpu.SP,muls:0};}
  if(vocoderActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++vocoderActive.muls;
- if(cpu.pc*2===prepareEntry){assert.equal(prepareActive,null);prepareActive={sp:cpu.SP,muls:0};}
+ if(cpu.pc*2===prepareEntry){assert.equal(prepareActive,null);prepareActive={sp:cpu.SP,muls:0,gainReads:[]};}
  if(prepareActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++prepareActive.muls;
+ if(prepareActive&&countNb1Gain&&((opcode&0xfe0f)===0x9004||(opcode&0xfe0f)===0x9005||opcode===0x95c8)){
+  const a=cpu.dataView.getUint16(30,true);if(a>=nb1GainTable&&a<nb1GainTable+16)prepareActive.gainReads.push(a);
+ }
  if(lowEntries.has(cpu.pc*2)){assert.equal(lowActive,null);lowActive={mode:lowEntries.get(cpu.pc*2),sp:cpu.SP,muls:0};}
  if(lowActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++lowActive.muls;
  if(cpu.pc*2===zeroFrameEntry){assert.equal(zeroActive,null);zeroActive={sp:cpu.SP,blocks:[],reads:new Set(),muls:0};}
@@ -140,6 +152,7 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
   ++vocoderCalls;vocoderMultiplies+=vocoderActive.muls;vocoderActive=null;
  }
  if(prepareActive&&opcode===0x9508&&cpu.SP===prepareActive.sp+2){
+  if(countNb1Gain){assert.deepEqual(prepareActive.gainReads,[nb1GainTable+expectedGainCode]);++gainLookups;++gainHistogram[expectedGainCode];}
   assert.equal(cpu.data[1],0);++prepareCalls;prepareMultiplies+=prepareActive.muls;prepareCounts.push(prepareActive.muls);prepareActive=null;
  }
  if(lowActive&&opcode===0x9508&&cpu.SP===lowActive.sp+2){
@@ -162,6 +175,7 @@ function decode(payload,width,invalidFlags=0){
  const zeroBefore=zeroFrameCalls,vectorsBefore=zeroVectorCalls;
  const oneBefore=oneSamples,oneMulsBefore=oneMuls,adaptiveBefore=adaptiveCalls;
  const q6Before=q6Calls;
+ const gainBefore=gainLookups;expectedGainCode=((payload[3]&3)<<2)|(payload[4]>>6);
  expectedCoefficient=Math.min(63,(2185*((((payload[3]&3)<<2)|(payload[4]>>6))<<6)+16384)>>15);
  cpu.data.set(payload,packet);cpu.data[bytes]=width;cpu.data[flags]=invalidFlags;
  output=[];cpu.data[status]=1;cpu.data[command]=1;until(()=>cpu.data[status]===2);
@@ -192,6 +206,7 @@ function decode(payload,width,invalidFlags=0){
   const expected=eligible?4*Array.from({length:40},(_,j)=>Math.floor(j/pitch)).reduce((a,b)=>a+b,0):0;
   assert.equal(q6Calls-q6Before,expected,'Exact short-lag ancestor count; no calls in rejected/other/zero frames');
  }
+ if(countNb1Gain)assert.equal(gainLookups-gainBefore,code===0&&(payload[0]>>3)===1?1:0,'Gain read once only for a valid NB1 frame');
  return {code,pcm:meta.wideband?Buffer.concat(output):Buffer.from(cpu.data.subarray(pcm,pcm+320)),callbacks:output.length};
 }
 function reject(payload,width,badFlags=0){const answer=decode(payload,width,badFlags);assert.equal(answer.code,-1);assert.equal(answer.callbacks,0);rejected++;}
@@ -220,6 +235,8 @@ if(countVocoder)report.vocoderArithmetic={calls:vocoderCalls,hardwareMultiplies:
  callsPerNb1Frame:4,hardwareMultipliesPerNb1Frame:640,rejectedCallsDoNotExecute:true};
 if(countPrepare)report.framePreparationArithmetic={calls:prepareCalls,hardwareMultiplies:prepareMultiplies,
  perCall:prepareCounts,rejectedCallsDoNotExecute:true};
+if(countNb1Gain)report.nb1GainLookup={calls:gainLookups,codeHistogram:gainHistogram,exactFlashAddressPerFrame:true,
+ originalFiniteMapVerified:true,invalidAndOtherModeCallsDoNotExecute:true};
 if(countLowFusion)report.lowFusionArithmetic={byMode:lowStats,rejectedCallsAndOtherModesDoNotExecute:true,
  fourCallsPerMatchingWbFrame:true,nbApiDoesNotExecute:true};
 if(countForcedZero)report.forcedZeroArithmetic={frames:zeroFrameCalls,twentyWordCalls:zeroVectorCalls,hardwareMultiplies:zeroFrameMuls,

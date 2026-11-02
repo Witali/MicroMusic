@@ -128,6 +128,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb8_excitation_frame(int16_t *frame,
 }
 #endif
 #if SPEEX_ENABLE_NB1
+#include "nb1_gain.h"
 static SPEEX_NB3_ALWAYS_INLINE int16_t speex_low_q15(int16_t a,int16_t b)
 {return speex_avr_asr15_word(MULT16_16(a,b));}
 /* NB1's provisional adaptive+innovation sum is overwritten by the vocoder.
@@ -145,9 +146,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *
 #endif
 {
     uint8_t pitch=17+speex_packet_field(packet,23,7);
-    int16_t coefficient=(2185L*(int16_t)(speex_packet_field(packet,30,4)<<6)+16384)>>15;
-    int16_t g=(int16_t)((24576L*(coefficient-13)+8192)>>14);
-    if(g<0)g=0;if(g>64)g=64;
+    int16_t g=speex_nb1_gain_selected_c(speex_packet_field(packet,30,4));
     int16_t amplitude=(int16_t)((int32_t)spx_sqrt(2*(int16_t)pitch)*
         (int16_t)(((int32_t)g*((scale+8192)>>14)+32)>>6));
     int16_t noise_gain=32767-435*g,previous_gain=77*g;
