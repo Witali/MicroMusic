@@ -44,6 +44,7 @@ const prepareNames=[...symbols.keys()].filter(n=>n==='speex_nb1_excitation_prepa
 if(countPrepare)assert.equal(prepareNames.length,1,'NB1 frame preparation entry');
 const prepareEntry=countPrepare?address(prepareNames[0]):-1;
 let prepareActive=null,prepareCalls=0,prepareMultiplies=0;const prepareCounts=[];
+const prepareGroups={zero:{calls:0,muls:0,min:Infinity,max:0},nonzero:{calls:0,muls:0,min:Infinity,max:0}};
 const countLowFusion=process.argv.includes('--count-low-fusion'),lowEntries=new Map();
 const lowStats={2:{calls:0,muls:0},8:{calls:0,muls:0}};let lowActive=null;
 if(countLowFusion)for(const m of [2,8]){
@@ -90,7 +91,7 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  if(foldActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++foldActive.muls;
  if(cpu.pc*2===vocoderEntry){assert.equal(vocoderActive,null);vocoderActive={sp:cpu.SP,muls:0};}
  if(vocoderActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++vocoderActive.muls;
- if(cpu.pc*2===prepareEntry){assert.equal(prepareActive,null);prepareActive={sp:cpu.SP,muls:0,gainReads:[]};}
+ if(cpu.pc*2===prepareEntry){assert.equal(prepareActive,null);prepareActive={sp:cpu.SP,muls:0,gainReads:[],zeroGain:expectedGainCode<4};}
  if(prepareActive&&((opcode&0xfc00)===0x9c00||(opcode&0xff00)===0x0200||(opcode&0xff88)===0x0300))++prepareActive.muls;
  if(prepareActive&&countNb1Gain&&((opcode&0xfe0f)===0x9004||(opcode&0xfe0f)===0x9005||opcode===0x95c8)){
   const a=cpu.dataView.getUint16(30,true);if(a>=nb1GainTable&&a<nb1GainTable+16)prepareActive.gainReads.push(a);
@@ -153,7 +154,9 @@ function until(predicate){const deadline=cpu.cycles+3000000;while(!predicate()){
  }
  if(prepareActive&&opcode===0x9508&&cpu.SP===prepareActive.sp+2){
   if(countNb1Gain){assert.deepEqual(prepareActive.gainReads,[nb1GainTable+expectedGainCode]);++gainLookups;++gainHistogram[expectedGainCode];}
-  assert.equal(cpu.data[1],0);++prepareCalls;prepareMultiplies+=prepareActive.muls;prepareCounts.push(prepareActive.muls);prepareActive=null;
+  assert.equal(cpu.data[1],0);++prepareCalls;prepareMultiplies+=prepareActive.muls;prepareCounts.push(prepareActive.muls);
+  const group=prepareGroups[prepareActive.zeroGain?'zero':'nonzero'];++group.calls;group.muls+=prepareActive.muls;group.min=Math.min(group.min,prepareActive.muls);group.max=Math.max(group.max,prepareActive.muls);
+  prepareActive=null;
  }
  if(lowActive&&opcode===0x9508&&cpu.SP===lowActive.sp+2){
   assert.equal(lowActive.muls,lowActive.mode===2?604:602);assert.equal(cpu.data[1],0);
@@ -234,7 +237,7 @@ if(countFold)report.noiseFoldArithmetic={calls:foldCalls,hardwareMultiplies:fold
 if(countVocoder)report.vocoderArithmetic={calls:vocoderCalls,hardwareMultiplies:vocoderMultiplies,
  callsPerNb1Frame:4,hardwareMultipliesPerNb1Frame:640,rejectedCallsDoNotExecute:true};
 if(countPrepare)report.framePreparationArithmetic={calls:prepareCalls,hardwareMultiplies:prepareMultiplies,
- perCall:prepareCounts,rejectedCallsDoNotExecute:true};
+ perCall:prepareCounts,byGain:prepareGroups,rejectedCallsDoNotExecute:true};
 if(countNb1Gain)report.nb1GainLookup={calls:gainLookups,codeHistogram:gainHistogram,exactFlashAddressPerFrame:true,
  originalFiniteMapVerified:true,invalidAndOtherModeCallsDoNotExecute:true};
 if(countLowFusion)report.lowFusionArithmetic={byMode:lowStats,rejectedCallsAndOtherModesDoNotExecute:true,
