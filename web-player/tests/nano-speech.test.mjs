@@ -20,13 +20,14 @@ test('Nano releases contain the exact public LPX streams and match sanitized tim
     const bytes=Buffer.from(parseHex(hex.toString(),30720));
     assert.equal(hash(hex),variant.hexSha256);
     assert.equal(bytes.length,variant.flashBytes);
-    const preview=catalog.preview.variants.find(item=>item.id===variant.id);
+    const clip=catalog.clips.find(item=>item.clipId===variant.clipId);
+    const preview=clip.variants.find(item=>item.id===variant.id);
     const stream=readFileSync(new URL('../'+preview.stream,import.meta.url));
     assert.equal(hash(stream),variant.streamSha256);
     const start=bytes.indexOf(stream);assert.ok(start>=0);assert.equal(bytes.indexOf(stream,start+1),-1);
     assert.equal(variant.programFlashBytes+stream.length,variant.flashBytes);
     assert.ok(variant.staticSramBytes<2048);assert.ok(variant.timing.stackMarginBytes>0);
-    assert.equal(variant.timing.playedSamples,19200);assert.equal(variant.timing.underruns,0);
+    assert.equal(variant.timing.playedSamples,clip.samples);assert.equal(variant.timing.underruns,0);
     assert.ok(variant.timing.minTickCycles>=1997);assert.ok(variant.timing.maxTickCycles<=2003);
   }
   assert.equal(catalog.sourceHashEncoding,'text-lf');
@@ -41,9 +42,9 @@ test('Nano deep links reuse the shared page at root and GitHub Pages paths',asyn
     assert.equal(app.get('machine-memory').textContent,'32');
     assert.equal(app.get('chip-nano').hidden,false);assert.equal(app.get('chip-attiny13a').hidden,true);
     assert.equal(app.get('board-control').hidden,true);
-    assert.deepEqual(cards(app).map(card=>card.dataset.firmware),['lpx-nano-bread-compact','lpx-nano-bread-quality']);
+    assert.deepEqual(cards(app).map(card=>card.dataset.firmware),['lpx-nano-chego-compact','lpx-nano-otvechaesh-compact','lpx-nano-vinni-compact','lpx-nano-bread-compact']);
     assert.equal(app.workers.length,0);assert.equal(app.get('download').getAttribute('aria-disabled'),null);
-    assert.ok(app.get('download').href.endsWith('/web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex'));
+    assert.ok(app.get('download').href.endsWith('/web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex'));
     assert.match(app.get('tiny88-power').textContent,/D3 \/ PD3 \/ OC2B/);
     assert.match(app.get('rom-details').textContent,/756 Б SRAM/);
     assert.match(app.get('preview-playback-note').textContent,/В браузере воспроизводится WAV/);
@@ -56,12 +57,13 @@ test('switching devices stops audio, replaces catalog and restores the right dow
   const app=await playerApp({device:'atmega328p'});await flush();
   await app.get('play').onclick();assert.equal(app.preview.paused,false);
   await choose(app,'attiny88');assert.equal(app.preview.paused,true);
-  assert.ok(cards(app).every(card=>card.dataset.firmware.startsWith('lpx-bread-')));
+  assert.ok(cards(app).every(card=>card.dataset.firmware.startsWith('lpx-')));
   assert.equal(app.get('download').getAttribute('aria-disabled'),'true');
-  await choose(app,'attiny13a');assert.ok(cards(app).every(card=>card.dataset.firmware.startsWith('hq4-')));
+  await choose(app,'attiny13a');assert.ok(cards(app).slice(0,3).every(card=>card.dataset.firmware.startsWith('hq4-')));
   assert.equal(app.get('chip-nano').hidden,true);
   const worker=app.workers.at(-1);await choose(app,'atmega328p');assert.equal(worker.terminated,true);
-  cards(app)[1].onclick();await flush();
+  cards(app)[3].onclick();await flush();
+  app.get('speech-profile-select').value='lpx-nano-bread-quality';app.get('speech-profile-select').onchange();await flush();
   assert.equal(app.location.searchParams.get('firmware'),'lpx-nano-bread-quality');
   assert.equal(app.get('download').download,'lpx-nano-bread-quality.hex');
   assert.equal(app.get('download-eeprom').getAttribute('aria-disabled'),'true');
@@ -76,7 +78,7 @@ test('choosing Nano from music routes to the same AVR page with speech selected'
 
 test('a failed Nano catalog leaves other speech devices usable',async()=>{
   const app=await playerApp({fetchHook:({url,response})=>url.pathname.endsWith('/firmware-atmega328p.json')?{ok:false,status:503}:response});
-  assert.equal(app.get('error').hidden,true);assert.equal(cards(app).length,3);
+  assert.equal(app.get('error').hidden,true);assert.equal(cards(app).length,4);
   await choose(app,'atmega328p');assert.match(app.get('error').textContent,/недоступны/);
   assert.equal(app.get('device-select').value,'attiny13a');
   await choose(app,'attiny88');assert.ok(cards(app).length>=2);

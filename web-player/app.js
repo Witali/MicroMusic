@@ -1,4 +1,6 @@
 import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js';
+import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js';
+import {speechSignals,speechWindow} from './lib/speech-waveform.js';
 import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js';
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
@@ -20,6 +22,9 @@ let originalLoading=false, originalAttempt=0;
 const speechCollection=new URL(location.href).searchParams.get('collection')==='hq4'||new URL(location.href).searchParams.get('device')==='atmega328p';
 let currentDevice='attiny13a', currentBoard=boardId(new URL(location.href).searchParams.get('board')), deviceRequest=0;
 let importAttempt=0;
+let speechExamples;
+let speechWaveforms,phraseRaw,phraseSignals,phraseSignalKey,playbackSeconds=0;
+let scopeView='phrase';
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
@@ -58,10 +63,10 @@ async function switchDevice(device,board=currentBoard) {
   }
   board=boardId(board);
   if(speechCollection){
-    const entries=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
+    const entries=orderSpeechEntries(catalog.entries.filter(entry=>(entry.device||'attiny13a')===device),speechExamples);
     if(!entries.length){showError('LPX-примеры временно недоступны.');$('device-select').value=currentDevice;return;}
     currentDevice=device;if(device==='attiny88')currentBoard='mh-et-live-16mhz';
-    $('search').value='';load(entries[0]);return;
+    $('search').value='';load(selectSpeechEntry(entries,selected));return;
   }
   try {
     const response=await fetch(device==='attiny88'?tiny88Boards[board].catalog:'./firmware.json');
@@ -142,11 +147,23 @@ async function loadPreviewWave(entry,epoch) {
     })());
     const waveform=await previewWaves.get(entry.nativeAudioUrl);
     if(session!==epoch||selected!==entry)return;
-    scopes=[waveform];signalScopes={input:scopes,output:scopes};canvas.dataset.samples=String(waveform.length);draw();
+    phraseRaw=waveform;phraseSignals=null;scopes=[waveform];signalScopes={input:scopes,output:scopes};canvas.dataset.samples=String(waveform.length);draw();
   }catch{
     previewWaves.delete(entry.nativeAudioUrl);
     if(session===epoch&&selected===entry)$('scope-left-label').textContent='WAV-ПРЕВЬЮ · ОСЦИЛЛОГРАММА НЕДОСТУПНА';
   }
+}
+async function loadFirmwareWave(entry,epoch){
+  const asset=speechWaveforms?.entries.find(item=>item.id===entry.id&&item.flashSha256===entry.flashSha256
+    &&(item.eepromSha256??null)===(entry.eepromSha256??null)&&item.phraseSamples===entry.phraseSamples);
+  if(!asset){if(speechWaveforms)$('scope-note').textContent='Для этого образа доступен текущий сигнал при воспроизведении.';return;}
+  try{
+    const url=new URL(asset.audio,import.meta.url);url.searchParams.set('v',asset.wavSha256.slice(0,16));
+    const response=await fetch(url);if(!response.ok)throw Error('HTTP '+response.status);
+    const wave=previewWaveform(await response.arrayBuffer(),entry);
+    if(session!==epoch||selected!==entry)return;
+    phraseRaw=wave;phraseSignals=null;canvas.dataset.samples=String(wave.length);draw();
+  }catch{if(session===epoch)$('scope-note').textContent='Полная форма недоступна; текущий сигнал появится при воспроизведении.';}
 }
 function draw() {
   const now=performance.now(), wait=1000/30-(now-lastScopeDraw);
@@ -156,8 +173,19 @@ function draw() {
   }
   if(scopeDrawTimer!==undefined){clearTimeout(scopeDrawTimer);scopeDrawTimer=undefined;}
   lastScopeDraw=now;
-  drawWave(canvas,scopes[0],'#c9ef86');
+  let view=scopes[0];
+  if(speechCollection&&phraseRaw){
+    const key=[signalPoint,$('cutoff').value,$('volume').value].join('/');
+    if(!phraseSignals||phraseSignalKey!==key){phraseSignals=speechSignals(phraseRaw,selected.sampleHz,{native:nativePreview(),...audioControls()});phraseSignalKey=key;}
+    const signal=phraseSignals[signalPoint],seconds=nativePreview()?previewAudio.currentTime:playbackSeconds;
+    if(scopeView==='phrase')view=signal;
+    else if(nativePreview()||!hasPlayed)view=speechWindow(signal,phraseSignals.sampleRate,seconds);
+    canvas.dataset.view=scopeView;
+    document.querySelector('.scope-scale').textContent=scopeView==='phrase'?(selected.phraseSamples/selected.sampleHz).toLocaleString('ru')+' с · вся фраза':'85 мс · текущий сигнал';
+  }
+  drawWave(canvas,view,'#c9ef86');
   if(scopes[1])drawWave($('wave-right'),scopes[1],'#86d9ef');
+  if(playing&&nativePreview())scopeDrawTimer=setTimeout(()=>{scopeDrawTimer=undefined;draw();},1000/30);
 }
 function drawWave(canvas,scope,color){
   const ctx=canvas.getContext('2d');
@@ -170,9 +198,16 @@ function drawWave(canvas,scope,color){
   for (let y=0;y<=height;y+=height/4) { ctx.moveTo(0,y); ctx.lineTo(width,y); } ctx.stroke();
   ctx.strokeStyle='#647b45'; ctx.setLineDash([4,5]); ctx.beginPath(); ctx.moveTo(0,height/2); ctx.lineTo(width,height/2); ctx.stroke(); ctx.setLineDash([]);
   ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.beginPath();
-  for (let i=0;i<scope.length;i++) { const x=i/(scope.length-1)*width,y=height/2-scope[i]*height*.43; if (!i) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
-  if(nativePreview()){
-    const x=Math.min(1,previewAudio.currentTime/(selected.phraseSamples/selected.sampleHz))*width;
+  if(scope.length>width*2){
+    for(let x=0;x<width;x++){
+      const start=Math.floor(x*scope.length/width),end=Math.max(start+1,Math.floor((x+1)*scope.length/width));
+      let low=Infinity,high=-Infinity;for(let i=start;i<end;i++){low=Math.min(low,scope[i]);high=Math.max(high,scope[i]);}
+      ctx.moveTo(x,height/2-high*height*.43);ctx.lineTo(x,height/2-low*height*.43);
+    }
+  }else for (let i=0;i<scope.length;i++) { const x=i/(scope.length-1)*width,y=height/2-scope[i]*height*.43; if (!i) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
+  if(speechCollection&&scopeView==='phrase'){
+    const seconds=nativePreview()?previewAudio.currentTime:playbackSeconds;
+    const x=Math.min(1,seconds/(selected.phraseSamples/selected.sampleHz))*width;
     ctx.strokeStyle='#e8eddf';ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,height);ctx.stroke();
   }
 }
@@ -201,7 +236,8 @@ function downloadUI(id,source,filename,title) {
 function renderCatalog() {
   const query=$('search').value.toLocaleLowerCase('ru').trim();
   const available=catalog.entries.filter(entry=>!speechCollection||(entry.device||'attiny13a')===currentDevice);
-  renderFirmwareCatalog(document,{entries:available,selectedId:selected?.id,query,onSelect:load});
+  const entries=speechCollection?speechCatalogRows(available,selected,speechExamples,currentDevice):available;
+  renderFirmwareCatalog(document,{entries,selectedId:selected?.id,query,onSelect:load});
 }
 function connectAudio() {
   if (nativePreview()||!runtime||!output || !runtimeReady || connectedRuntime===runtime) return;
@@ -238,11 +274,23 @@ function load(entry,{autoplay=false}={}) {
   const autoplayAttempt=playAttempt;
   output?.port.postMessage({type:'disconnect'});
   selected=entry; headroom=0;
+  phraseRaw=null;phraseSignals=null;playbackSeconds=0;let displayOrder=entry.order;
+  canvas.dataset.view=speechCollection?scopeView:'live';
+  $('signal-view-control').hidden=!speechCollection;$('signal-view').value=scopeView;
+  $('scope-note').textContent=speechCollection?'Вся фраза — полный сигнал выбранного образа; текущий сигнал — окно 85 мс.':'';
   if(speechCollection){currentDevice=entry.device||'attiny13a';if(currentDevice==='attiny88')currentBoard='mh-et-live-16mhz';}
   deviceUI(currentDevice);
   $('device-select').disabled=false;
   previewUI(nativePreview());
   applyCollectionLayout(document,{device:currentDevice,speech:speechCollection,preview:nativePreview()});
+  const speechEntries=speechCollection?catalog.entries.filter(item=>(item.device||'attiny13a')===currentDevice):[];
+  speechProfileUI(document,speechEntries,entry);
+  if(speechExamples&&speechCollection){
+    const example=speechExamples.examples.find(item=>item.id===entry.audioReferenceId);
+    document.querySelector('.library h2').textContent='Выберите фразу';
+    document.querySelector('.subtitle').textContent='Одинаковые фразы для всех микроконтроллеров. Сравните кодеки и исходную запись.';
+    if(example)displayOrder=example.order;
+  }
   previewAudio.removeAttribute('src');previewAudio.load();delete canvas.dataset.samples;
   if(entry.devicePackage){
     for(const choice of document.querySelectorAll('input[name="engine"]')){choice.disabled=choice.value!=='transpiled';choice.checked=choice.value==='transpiled';}
@@ -293,7 +341,7 @@ function load(entry,{autoplay=false}={}) {
   $('elapsed').textContent='00:00.0'; $('average').textContent=stereo?'128.0 / 128.0':'128.0'; $('headroom').textContent='—';
   $('tempo').textContent='100.0%'; $('lag').textContent='0.0 мс'; realtime?.resetAnchor();
   delete $('tempo').dataset.wallMs; delete $('tempo').dataset.audioMs;
-  $('selected-order').textContent=entry.order; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
+  $('selected-order').textContent=displayOrder; $('selected-title').textContent=entry.title; $('selected-description').textContent=entry.description;
   if(entry.kind==='speech') {
     const research=entry.research||(entry.codec?.startsWith('lpx')?'../Codecs/LPX/README.md':entry.codec==='hq4-t'
       ? '../ATtiny13A/Sound/codec/timbre/README.md'
@@ -361,6 +409,7 @@ function load(entry,{autoplay=false}={}) {
     previewUI(true);runtimeReady=true;transport();if(autoplay)toggle();return;
   }
   document.querySelector('.scope-scale').textContent='85 мс';
+  if(speechCollection)loadFirmwareWave(entry,session);
   const worker=new Worker(new URL('./worker.js?v=20261026-signal-point',import.meta.url),{type:'module'}); runtime=worker;
   worker.onmessage=({data})=>{
     if (runtime!==worker) return;
@@ -394,6 +443,7 @@ async function ensureAudio() {
       const timing=realtime.observe(data,performance.now());
       const duration=selected.playOnce ? selected.phraseSamples/selected.sampleHz : Infinity;
       const seconds=Math.min(timing.seconds,duration);
+      playbackSeconds=seconds;draw();
       elapsed(seconds);
       $('tempo').textContent=timing.tempoPercent.toFixed(1)+'%'; $('lag').textContent=timing.lagMs.toFixed(1)+' мс';
       $('tempo').dataset.wallMs=timing.wallMs.toFixed(3); $('tempo').dataset.audioMs=timing.audioMs.toFixed(3);
@@ -428,8 +478,9 @@ async function toggle() {
   finally { if(busyAttempt===attempt){busy=false;transport();} }
 }
 $('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
-$('volume').oninput=()=>{originalAudio.volume=previewAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});};
-$('cutoff').onchange=()=>runtime?.postMessage({type:'controls',controls:audioControls()});
+$('volume').oninput=()=>{originalAudio.volume=previewAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});draw();};
+$('cutoff').onchange=()=>{runtime?.postMessage({type:'controls',controls:audioControls()});draw();};
+$('signal-view').onchange=()=>{scopeView=$('signal-view').value==='live'?'live':'phrase';canvas.dataset.view=scopeView;draw();};
 $('signal-point').onchange=()=>{
   signalPoint=$('signal-point').value==='input'?'input':'output';signalPointUI();
   runtime?.postMessage({type:'controls',controls:audioControls()});
@@ -438,6 +489,10 @@ for (const choice of document.querySelectorAll('input[name="engine"]')) choice.o
   if (selected) load(selected);
 };
 $('device-select').onchange=()=>switchDevice($('device-select').value);
+$('speech-profile-select').onchange=()=>{
+  const entry=catalog.entries.find(item=>item.id===$('speech-profile-select').value&&(item.device||'attiny13a')===currentDevice);
+  if(entry)load(entry);
+};
 $('board-select').onchange=()=>switchDevice('attiny88',$('board-select').value);
 $('package-file').onchange=async event=>{
   if(nativePreview())return;
@@ -474,6 +529,26 @@ try {
   const response=await fetch(speech?'./hq4-firmware.json?v=20261023-mobile-original':'./firmware.json');
   if (!response.ok) throw new Error('HTTP '+response.status);
   catalog=await response.json();
+  try{
+    const response=await fetch(new URL('./audio/speech-waveforms/manifest.json?v=20261102-signal-view',import.meta.url));
+    if(response.ok){const data=await response.json();if(data.schemaVersion===1&&Array.isArray(data.entries))speechWaveforms=data;}
+  }catch{/* Live signal remains available without saved phrase duties. */}
+  try{
+    const response=await fetch(new URL('./firmware-attiny13a-speech-extra.json?v=20261102-shared-speech',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const extra=await response.json();
+    if(extra.schema!==1||!Array.isArray(extra.entries))throw Error('Неверный каталог дополнительных фраз.');
+    for(const entry of extra.entries){
+      if(entry.kind!=='speech'||entry.audioReferenceId!=='bread'||entry.flashBytes>1024||entry.eepromBytes>64)throw Error('Неверный образ ATtiny13A.');
+      if(parseHex(entry.flashHex,1024).length!==entry.flashBytes)throw Error('Неверный размер Flash.');
+    }
+    catalog.entries.push(...extra.entries);
+  }catch{/* Retained original speech stays usable if supplemental firmware is unavailable. */}
+  try{
+    const response=await fetch(new URL('./speech-examples.json?v=20261102-shared-speech',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    speechExamples=readSpeechExamples(await response.json());
+  }catch{/* Older/offline catalogs retain their own examples when the shared index is unavailable. */}
   let previewError,nanoError;
   try{
     const response=await fetch(new URL('./firmware-atmega328p.json?v=20261102-nano',import.meta.url));
@@ -485,6 +560,13 @@ try {
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...lpxPreviewEntries(await response.json(),import.meta.url));
   }catch(error){previewError=error;}
+  try{
+    const response=await fetch(new URL('./audio/lpx-speech/manifest.json?v=20261102-shared-speech',import.meta.url));
+    if(!response.ok)throw Error('HTTP '+response.status);
+    const data=await response.json();
+    if(data.schemaVersion!==1||!Array.isArray(data.clips))throw Error('Неверный набор LPX.');
+    catalog.entries.push(...data.clips.flatMap(clip=>lpxPreviewEntries(clip,import.meta.url)));
+  }catch{/* Existing LPX clips remain usable if additional assets cannot load. */}
   document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и нативные LPX-превью';
   if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
     try {
@@ -506,7 +588,7 @@ try {
   const exact=catalog.entries.find(entry=>entry.id===id);
   const requestedDevice=new URL(location.href).searchParams.get('device');
   const device=requestedDevice==='atmega328p'||exact?.device==='atmega328p'?'atmega328p':exact?.playback==='native-pwm8'||requestedDevice==='attiny88'?'attiny88':'attiny13a';
-  const available=catalog.entries.filter(entry=>(entry.device||'attiny13a')===device);
+  const available=orderSpeechEntries(catalog.entries.filter(entry=>(entry.device||'attiny13a')===device),speechExamples);
   load(available.find(entry=>entry.id===id)||available[0]||catalog.entries.find(entry=>entry.id===catalog.defaultId));
   if(previewError&&(device==='attiny88'||requested.startsWith('lpx-bread-')))showError('LPX-примеры временно недоступны.');
   if(nanoError&&device==='atmega328p')showError('Не удалось загрузить речевые прошивки Arduino Nano.');

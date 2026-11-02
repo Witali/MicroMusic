@@ -7,8 +7,8 @@
   <title>MicroMusic / ATtiny13A — плеер прошивок</title>
   <meta name="description" content="Музыка и речевые прошивки ATtiny13A, ATtiny88 и Arduino Nano / ATmega328P: исполнение AVR-кода, звук PWM и осциллограмма в браузере.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261102-nano-layout">
-  <script type="module" src="./app.js?v=20261102-nano-layout"></script>
+  <link rel="stylesheet" href="./styles.css?v=20261102-shared-speech">
+  <script type="module" src="./app.js?v=20261102-signal-view"></script>
 </head>
 <body>
   <header class="site-header">
@@ -43,6 +43,7 @@
             <div class="fuse-clock"><strong id="fuse-clock-value">Внутренний RC · 9,6 МГц</strong><span id="fuse-clock-note">CKDIV8 отключён · делитель /1</span><a id="fuse-datasheet" href="https://ww1.microchip.com/downloads/en/DeviceDoc/ATtiny13A-Data-Sheet-DS40002307A.pdf" target="_blank" rel="noopener">Фьюзы в datasheet, §17.2 ↗</a></div>
           </div>
           <div class="now-playing"><span id="selected-order" class="version-number">06</span><div><span class="eyebrow">ВЫБРАННАЯ ВЕРСИЯ</span><h2 id="selected-title">Люмьер · стерео</h2><p id="selected-description">Загрузка…</p></div></div>
+          <div id="speech-profile-control" class="device-control speech-profile-control" hidden><label for="speech-profile-select">Качество речи</label><select id="speech-profile-select"></select></div>
           <p id="preview-note" class="hardware-note preview-note" hidden><strong id="preview-format-note" hidden></strong><span id="flash-measurement-note" hidden></span><span id="preview-playback-note">ПРЕВЬЮ · Точные PWM8-отсчёты нативного декодера LPX. Целевая плата — MH-ET LIVE Tiny88, 16 МГц. Работа LPX-прошивки на этой плате ещё не подтверждена.</span></p>
           <div class="elapsed-line"><span>ВРЕМЯ ВОСПРОИЗВЕДЕНИЯ</span><output id="elapsed">00:00.0</output></div>
           <div class="transport"><button id="play" class="primary" disabled><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Слушать</span><kbd>Space</kbd></button><button id="play-original" class="original-play" type="button" aria-pressed="false" hidden>Прослушать оригинал</button><button id="reset" disabled>↺ Сначала</button><div class="transport-links"><a id="download" class="download-link" aria-disabled="true">↓ Flash HEX</a><a id="download-eeprom" class="download-link" aria-disabled="true">↓ EEPROM</a></div></div>
@@ -54,6 +55,8 @@
         </section>
         <section class="panel scope-panel" aria-label="Осциллограмма PWM">
           <div class="panel-heading"><span class="eyebrow">02 / СИГНАЛ</span><span class="technical-note" id="audio-mode">МОНО · 1 PWM-ВЫХОД</span></div>
+          <label id="signal-view-control" class="signal-point-control" hidden>Вид сигнала <select id="signal-view"><option value="phrase">Вся фраза</option><option value="live">Текущий сигнал</option></select></label>
+          <p id="scope-note" class="hardware-note"></p>
           <label id="signal-point-control" class="signal-point-control">Сигнал и звук <select id="signal-point"><option value="input">Вход PWM · регистр OCR</option><option value="output" selected>Выход · после фильтра</option></select></label>
           <div class="scope-wrap"><span class="scope-channel" id="scope-left-label">МОНО · OCR0B</span><canvas id="wave" role="img" aria-label="Звуковой выход после фильтра"></canvas><span class="scope-mark" id="scope-zero">0</span><span class="scope-scale">85 мс</span></div>
           <div class="scope-wrap right-scope" id="scope-right" hidden><span class="scope-channel" id="scope-right-label">R · OCR0B</span><canvas id="wave-right" role="img" aria-label="Правый звуковой выход после фильтра"></canvas><span class="scope-mark" id="scope-zero-right">0</span></div>
