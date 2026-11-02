@@ -1,0 +1,224 @@
+{
+  "schema": "tiny-noise-spectrogram-v1",
+  "sourceSha256": "f744f2f8aa554c0da3361f309f9226d86484ca06d5cfd7b2925afad444a19d31",
+  "inputDurationSeconds": 2.4,
+  "firmwareDurationSeconds": 2.4064,
+  "samplePeriodCycles": 1280,
+  "cpuHz": 9600000,
+  "referenceSamples": 18000,
+  "paddedSamples": 18048,
+  "incumbentEnvelopeLagSeconds": 0.0,
+  "timeCompression": false,
+  "levelMatching": false,
+  "selected": {
+    "label": "spectral-step-790",
+    "flashBytes": 1014,
+    "stoi": 0.6948705748985391,
+    "highBandExcess": 0.0009464294828343959,
+    "missingEnergy": 0.4711726573738907,
+    "rawLogSpectralError": 0.8259936870926547,
+    "fineLogSpectralError": 0.418302079918397,
+    "rawMagnitudeError": 0.7562343878684105,
+    "quietRms": 0.004557195585124503,
+    "score": 0.6680616997964759
+  },
+  "baseline": {
+    "label": "shared-speech/bread-search-model/unmodified",
+    "flashBytes": 1022,
+    "stoi": 0.7242652299396087,
+    "highBandExcess": 0.06878832641071185,
+    "missingEnergy": 0.4780412297277627,
+    "rawLogSpectralError": 1.0508117397024617,
+    "fineLogSpectralError": 0.5219165865255662,
+    "rawMagnitudeError": 0.8247371207804033,
+    "quietRms": 0.0035511363636363635,
+    "score": 0.9853478311885385
+  },
+  "initialDenoised": {
+    "label": "shared-speech/bread-search-model/noise=0.25/pitch=1.0",
+    "flashBytes": 998,
+    "stoi": 0.7082326797051769,
+    "highBandExcess": 0.002000651836233938,
+    "missingEnergy": 0.5472197668973482,
+    "rawLogSpectralError": 0.9183597826024839,
+    "fineLogSpectralError": 0.46324384307236843,
+    "rawMagnitudeError": 0.8023762262850376,
+    "quietRms": 0.00351880702816165,
+    "score": 0.7395921358905813
+  },
+  "refinementSteps": 800,
+  "acceptedSteps": 171,
+  "seed": 23121,
+  "candidateCount": 714,
+  "stoiFloor": 0.6932326797051769,
+  "candidates": [
+    {
+      "label": "spectral-step-790",
+      "flashBytes": 1014,
+      "stoi": 0.6948705748985391,
+      "highBandExcess": 0.0009464294828343959,
+      "missingEnergy": 0.4711726573738907,
+      "rawLogSpectralError": 0.8259936870926547,
+      "fineLogSpectralError": 0.418302079918397,
+      "rawMagnitudeError": 0.7562343878684105,
+      "quietRms": 0.004557195585124503,
+      "score": 0.6680616997964759
+    },
+    {
+      "label": "spectral-step-797",
+      "flashBytes": 1014,
+      "stoi": 0.6941791259788767,
+      "highBandExcess": 0.0009378147539816158,
+      "missingEnergy": 0.4709703878310279,
+      "rawLogSpectralError": 0.8265208313050361,
+      "fineLogSpectralError": 0.4183638143341745,
+      "rawMagnitudeError": 0.7561140970974644,
+      "quietRms": 0.004557195585124503,
+      "score": 0.6680756322997365
+    },
+    {
+      "label": "spectral-step-799",
+      "flashBytes": 1014,
+      "stoi": 0.6933603438630493,
+      "highBandExcess": 0.0009414237346764963,
+      "missingEnergy": 0.47126154914772145,
+      "rawLogSpectralError": 0.8262720863297792,
+      "fineLogSpectralError": 0.4182003440057241,
+      "rawMagnitudeError": 0.756282651599788,
+      "quietRms": 0.004557195585124503,
+      "score": 0.6680931629647624
+    },
+    {
+      "label": "spectral-step-789",
+      "flashBytes": 1014,
+      "stoi": 0.6945118223172418,
+      "highBandExcess": 0.0009580461948405021,
+      "missingEnergy": 0.47100321777740906,
+      "rawLogSpectralError": 0.8258812306921656,
+      "fineLogSpectralError": 0.41813792795689675,
+      "rawMagnitudeError": 0.7561461628387087,
+      "quietRms": 0.004559789076135035,
+      "score": 0.6681247900437487
+    },
+    {
+      "label": "spectral-step-787",
+      "flashBytes": 1014,
+      "stoi": 0.694610688938645,
+      "highBandExcess": 0.0009525815667675919,
+      "missingEnergy": 0.4712681927223611,
+      "rawLogSpectralError": 0.8259254469609528,
+      "fineLogSpectralError": 0.41820967408066917,
+      "rawMagnitudeError": 0.7563585711871416,
+      "quietRms": 0.004566697851424604,
+      "score": 0.6681525522284679
+    },
+    {
+      "label": "spectral-step-784",
+      "flashBytes": 1014,
+      "stoi": 0.6934107078126492,
+      "highBandExcess": 0.0009399257849705509,
+      "missingEnergy": 0.47228370628265576,
+      "rawLogSpectralError": 0.8257084921719084,
+      "fineLogSpectralError": 0.41825051592731455,
+      "rawMagnitudeError": 0.7569350777810955,
+      "quietRms": 0.0044936259711803135,
+      "score": 0.6681607545328871
+    },
+    {
+      "label": "spectral-step-786",
+      "flashBytes": 1014,
+      "stoi": 0.6938576429940632,
+      "highBandExcess": 0.0009373052385582725,
+      "missingEnergy": 0.4722610916847634,
+      "rawLogSpectralError": 0.8258691391614851,
+      "fineLogSpectralError": 0.4182966235749282,
+      "rawMagnitudeError": 0.7569376584274065,
+      "quietRms": 0.0044936259711803135,
+      "score": 0.6681826313974499
+    },
+    {
+      "label": "spectral-step-791",
+      "flashBytes": 1014,
+      "stoi": 0.6956458589684197,
+      "highBandExcess": 0.0009602698928499239,
+      "missingEnergy": 0.4715146414991022,
+      "rawLogSpectralError": 0.8257656976023546,
+      "fineLogSpectralError": 0.41860175589430754,
+      "rawMagnitudeError": 0.7563772209110311,
+      "quietRms": 0.004552004170203931,
+      "score": 0.6683069488503725
+    },
+    {
+      "label": "spectral-step-781",
+      "flashBytes": 1014,
+      "stoi": 0.6936394361804319,
+      "highBandExcess": 0.0009383683076131818,
+      "missingEnergy": 0.47303983466577304,
+      "rawLogSpectralError": 0.8256231097044486,
+      "fineLogSpectralError": 0.4184355706695871,
+      "rawMagnitudeError": 0.7573278001526358,
+      "quietRms": 0.004491871676375539,
+      "score": 0.6683242849617007
+    },
+    {
+      "label": "spectral-step-777",
+      "flashBytes": 1014,
+      "stoi": 0.6939707449242819,
+      "highBandExcess": 0.0009295133094156771,
+      "missingEnergy": 0.4734410528069531,
+      "rawLogSpectralError": 0.8259012798693504,
+      "fineLogSpectralError": 0.4182810034807537,
+      "rawMagnitudeError": 0.7574897906072534,
+      "quietRms": 0.004486604676311533,
+      "score": 0.6683587910293608
+    },
+    {
+      "label": "spectral-step-779",
+      "flashBytes": 1014,
+      "stoi": 0.6940177350514644,
+      "highBandExcess": 0.000930062568668557,
+      "missingEnergy": 0.47348402358273944,
+      "rawLogSpectralError": 0.8258983458435278,
+      "fineLogSpectralError": 0.4182400775167362,
+      "rawMagnitudeError": 0.7575169148216558,
+      "quietRms": 0.004486604676311533,
+      "score": 0.6683714008774819
+    },
+    {
+      "label": "spectral-step-788",
+      "flashBytes": 1014,
+      "stoi": 0.6934461272505257,
+      "highBandExcess": 0.0009571649267772336,
+      "missingEnergy": 0.47108041637706294,
+      "rawLogSpectralError": 0.8266513406387181,
+      "fineLogSpectralError": 0.4183167159389624,
+      "rawMagnitudeError": 0.7563033732810537,
+      "quietRms": 0.004563244771270027,
+      "score": 0.668451021670083
+    }
+  ],
+  "scriptSha256NormalizedLF": "7e1da3a786fd09f804daa87dec4ed838dc206b76a200a77b99bd129c656849de",
+  "sourceModels": [
+    {
+      "file": "ATtiny13A/Sound/research/shared-speech/bread-search-model.json",
+      "sha256": "a711be0816f455375278cf0edc84a20029ce0c16d98618fd7cafc9f6d5de65d7"
+    },
+    {
+      "file": "build/shared-speech/tiny-fit-legacy/quality-model.json",
+      "sha256": "caa51542a407b76e72f84d11e9a895cb2b44ee0f402088685f31fb1854f26f3f"
+    },
+    {
+      "file": "build/shared-speech/tiny-fit-legacy/fit-model.json",
+      "sha256": "a711be0816f455375278cf0edc84a20029ce0c16d98618fd7cafc9f6d5de65d7"
+    },
+    {
+      "file": "build/shared-speech/tiny-fit-voice-priority/quality-model.json",
+      "sha256": "1d0a37e9781ebc7a3635df4b47e444f882060bdd84932b494f29f25282425a64"
+    },
+    {
+      "file": "build/shared-speech/tiny-fit-voice-priority/fit-model.json",
+      "sha256": "df1cab2deeae418393c6252fb8258c660f18b368de85efe566dbf9cb32c90515"
+    }
+  ],
+  "modelSha256": "94b34a7dddffda7745e8643cdf140806be7ed323373ab581a37a0d5d513c0982"
+}
