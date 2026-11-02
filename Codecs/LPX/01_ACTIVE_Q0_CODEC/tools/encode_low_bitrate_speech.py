@@ -129,11 +129,13 @@ def spectral_plans(target, desired, max_bytes, sparse80):
 
 @njit(cache=True)
 def trial_group(target, co, hist, dd, cc, ring, start, group, step, lag, gain,
-                position, amplitude, pre, clip_guard):
+                position, amplitude, pre, clip_guard, valid_samples=-1):
     history, qring = hist.copy(), ring.copy()
-    output = np.empty(group, np.int16)
+    output = np.zeros(group, np.int16)
+    valid_samples = len(target) if valid_samples < 0 else valid_samples
+    played = max(0, min(group, valid_samples-start))
     loss = np.int64(0)
-    for j in range(group):
+    for j in range(played):
         at = start + j
         q = min(31, max(-32, (gain*qring[(at-lag)&255]+8)>>4))
         q = min(31, max(-32, q + (amplitude if j == position else 0)))
@@ -159,7 +161,7 @@ def trial_group(target, co, hist, dd, cc, ring, start, group, step, lag, gain,
 
 @njit(cache=True)
 def fit_block(target, co, hist, dd, cc, ring, start, group, block, step, lag,
-              gain, pre, sparse80, clip_guard):
+              gain, pre, sparse80, clip_guard, valid_samples=-1):
     history, qring = hist.copy(), ring.copy()
     pulses = np.empty((block//group, 2), np.int64)
     output = np.empty(block, np.int16)
@@ -173,11 +175,11 @@ def fit_block(target, co, hist, dd, cc, ring, start, group, block, step, lag,
             for sign in range(2):
                 amplitude = -8 if sign == 0 else (7 if sparse80 else 8)
                 err, _, _, _, _, _ = trial_group(target, co, history, dd, cc, qring,
-                    at, group, step, lag, gain, position, amplitude, pre, clip_guard)
+                    at, group, step, lag, gain, position, amplitude, pre, clip_guard, valid_samples)
                 if err < best:
                     best, best_position, best_amplitude = err, position, amplitude
         err, history, dd, cc, qring, pcm = trial_group(target, co, history, dd, cc, qring,
-            at, group, step, lag, gain, best_position, best_amplitude, pre, clip_guard)
+            at, group, step, lag, gain, best_position, best_amplitude, pre, clip_guard, valid_samples)
         pulses[part, 0], pulses[part, 1] = best_position, best_amplitude
         output[part*group:(part+1)*group] = pcm
         total += err
@@ -186,8 +188,11 @@ def fit_block(target, co, hist, dd, cc, ring, start, group, block, step, lag,
 
 @njit(cache=True)
 def search_excitation(reference, co, steps, source_lags, pre, sparse80, expanded,
-                      clip_guard=False):
+                      clip_guard=False, valid_samples=-1):
     n = len(reference)
+    valid_samples = n if valid_samples < 0 else valid_samples
+    if not 1 <= valid_samples <= n:
+        raise ValueError('Invalid played sample count')
     group, block = (80, 320) if sparse80 else (20, 160)
     params = np.empty((n//block, 3), np.int64)
     pulses = np.empty((n//group, 2), np.int64)
@@ -195,7 +200,7 @@ def search_excitation(reference, co, steps, source_lags, pre, sparse80, expanded
     hist, ring = np.zeros(10, np.int64), np.zeros(256, np.int64)
     dd = cc = 0
     emphasized, residual = np.zeros(n, np.float64), np.zeros(n, np.float64)
-    for at in range(n):
+    for at in range(valid_samples):
         emphasized[at] = reference[at]/2 - (pre*(reference[at-1]/2) if at else 0)/16384
         residual[at] = emphasized[at]
         for k in range(10):
@@ -204,12 +209,14 @@ def search_excitation(reference, co, steps, source_lags, pre, sparse80, expanded
     trials = 0
     for bi in range(n//block):
         start, stop = bi*block, (bi+1)*block
-        desired = max(1., np.sqrt(np.mean(residual[start:stop]**2)*group)/7.5)
+        played_stop = min(stop, valid_samples)
+        desired = (max(1., np.sqrt(np.mean(residual[start:played_stop]**2)*group)/7.5)
+                   if played_stop > start else 1.)
         center = max(1, min(31, int(np.rint((128+16*np.log2(desired/16.384))/8))))
         scores = np.zeros(128, np.float64)
         for candidate in range(18, 146):
             dot = energy = 0.
-            for at in range(start, stop):
+            for at in range(start, played_stop):
                 value = residual[at-candidate] if at >= candidate else 0.
                 dot += value*residual[at]
                 energy += value*value
@@ -255,12 +262,12 @@ def search_excitation(reference, co, steps, source_lags, pre, sparse80, expanded
                     if li and gain == 0:
                         continue
                     error, _, _, _, _, _, _ = fit_block(reference, co, hist, dd, cc,
-                        ring, start, group, block, steps[scale*8], lag, gain, pre, sparse80, clip_guard)
+                        ring, start, group, block, steps[scale*8], lag, gain, pre, sparse80, clip_guard, valid_samples)
                     trials += 1
                     if error < best:
                         best, best_scale, best_lag, best_gain = error, scale, lag, gain
         _, hist, dd, cc, ring, pp, pcm = fit_block(reference, co, hist, dd, cc, ring,
-            start, group, block, steps[best_scale*8], best_lag, best_gain, pre, sparse80, clip_guard)
+            start, group, block, steps[best_scale*8], best_lag, best_gain, pre, sparse80, clip_guard, valid_samples)
         params[bi] = np.asarray([best_scale, best_lag, best_gain])
         pulses[start//group:stop//group] = pp
         output[start:stop] = pcm
@@ -418,7 +425,7 @@ def encode(reference, kbps, decoder, *, output=None, level_policy='preserve',
                 choices = ((False, False), (True, True)) if not rows else ((True, True),)
                 for expanded_lags, clip_guard in choices:
                     params, pulses, pcm, work = search_excitation(padded, co, table('scale_table.inc'),
-                        source_lags, pre, sparse80, expanded_lags, clip_guard)
+                        source_lags, pre, sparse80, expanded_lags, clip_guard, n)
                     if sparse80:
                         blob = sparse.pack(n, spectra.tolist(), params.tolist(), pulses.tolist(), pre)
                     else:

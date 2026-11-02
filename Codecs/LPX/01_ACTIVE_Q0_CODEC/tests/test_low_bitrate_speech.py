@@ -83,7 +83,7 @@ class LowBitrateContracts(unittest.TestCase):
         np.testing.assert_array_equal(reference, unchanged)
 
     @staticmethod
-    def zero_fit(reference, co, steps, source_lags, pre, sparse80, expanded, clip_guard=False):
+    def zero_fit(reference, co, steps, source_lags, pre, sparse80, expanded, clip_guard=False, valid_samples=-1):
         block, group = (320, 80) if sparse80 else (160, 20)
         parameters = np.zeros((len(reference)//block, 3), np.int64)
         parameters[:, 1] = 18
