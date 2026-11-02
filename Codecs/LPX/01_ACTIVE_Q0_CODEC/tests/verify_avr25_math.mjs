@@ -4,8 +4,13 @@ import {resolve} from 'node:path';
 import assert from 'node:assert/strict';
 import {AVRCore} from '../../../../web-player/lib/avr-transpiled.js';
 const folder=resolve(process.argv[2]||'build/avr25-math');
+const sha=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
+const build=JSON.parse(readFileSync(folder+'/build.json','utf8'));
+assert.equal(build.target,'attiny88');assert.equal(build.clock_hz,16000000);
+assert.ok([1,2,4,8,16].includes(build.mul16_unroll),'Valid recorded multiply unroll factor');
 const names=['c','asm','generic'];
 const cpus=names.map(name=>{
+ assert.equal(sha(`${folder}/${name}.bin`),build.backends[name].binary_sha256,`${name} built image`);
  const nm=readFileSync(`${folder}/${name}.nm`,'utf8');
  const sym=n=>parseInt(nm.split(/\r?\n/).find(l=>l.trim().endsWith(' '+n)).trim().split(/\s+/)[0],16)&65535;
  const cpu=new AVRCore(readFileSync(`${folder}/${name}.bin`),null,{target:'attiny88',cpuHz:16000000,
@@ -39,6 +44,13 @@ const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed;};
 const signed=()=>((random()>>>8)&65535)-32768;
 const boundary=[-32768,-32767,-16384,-4096,-256,-129,-128,-1,0,1,127,128,255,256,4096,16384,32767];
 for(const x of boundary)for(const y of boundary)check(0,x,y,x*y);
+// Exercise carries and signed corrections around every bit, including the
+// loop-group boundaries for compact 1/2/4/8-round multiplication bodies.
+const carryPatterns=new Set([0x5555,0xaaaa,0x7fff,0x8000,0xffff]);
+for(let bit=0;bit<16;bit++)
+ for(const value of [1<<bit,(1<<bit)-1,(1<<bit)+1])carryPatterns.add(value&65535);
+const signedPatterns=[...carryPatterns].map(value=>(value<<16)>>16);
+for(const x of signedPatterns)for(const y of signedPatterns)check(0,x,y,x*y);
 for(let i=0;i<1200;i++){
  const x=signed(),y=signed(),byte=(random()>>>24)-128,unsigned=random()&65535;
  check(0,x,y,x*y);check(1,byte,y,byte*y);check(2,byte,unsigned,byte*unsigned);
@@ -90,9 +102,10 @@ for(const {cpu,sym,name}of cpus){
  console.log(JSON.stringify(result));
 }
 assert.ok(readFileSync(folder+'/c.bin').equals(readFileSync(folder+'/generic.bin')),'Explicit generic retains the C image');
-const sha=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
 writeFileSync(folder+'/verification.json',JSON.stringify({target:'attiny88',clock_hz:16000000,
- cases,results,physical_board_measured:false,
+ mul16_unroll:build.mul16_unroll,cases,results,physical_board_measured:false,
+ build_sha256:sha(folder+'/build.json'),
  math_header_sha256:sha(new URL('../src/Lpx4Math.h',import.meta.url)),
+ multiply_header_sha256:sha(new URL('../src/Lpx4MultiplyAvr.h',import.meta.url)),
  probe_sha256:sha(new URL('./avr25_math.cpp',import.meta.url)),
  observer_sha256:sha(new URL('./verify_avr25_math.mjs',import.meta.url))},null,2)+'\n');

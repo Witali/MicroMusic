@@ -78,6 +78,7 @@ static LPX4_MUL_INLINE int32_t lpx4Mul16(int16_t x,int16_t y){
     // two independent modulo-2^32 signed corrections. Includes signed minima.
     uint32_t result;
     uint16_t original=y;
+#if LPX4_AVR25_MUL16_UNROLL == 16
     __asm__(
         "movw %A0,%A2\n\tclr %C0\n\tclr %D0\n\t"
         "lsr %B0\n\tror %A0\n\t"
@@ -86,6 +87,20 @@ static LPX4_MUL_INLINE int32_t lpx4Mul16(int16_t x,int16_t y){
         "sbrs %B1,7\n\trjmp 2f\n\tsub %C0,%A2\n\tsbc %D0,%B2\n\t"
         "2: sbrs %B2,7\n\trjmp 3f\n\tsub %C0,%A1\n\tsbc %D0,%B1\n\t3:\n\t"
         : "=&r"(result) : "r"(x),"r"(original) : "cc");
+#else
+    uint8_t groups;
+    __asm__(
+        "movw %A0,%A3\n\tclr %C0\n\tclr %D0\n\t"
+        "lsr %B0\n\tror %A0\n\tldi %1,%5\n\t0:\n\t"
+        ".rept %4\n\tbrcc 1f\n\tadd %C0,%A2\n\tadc %D0,%B2\n\t"
+        "1: ror %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
+        // DEC and BRNE leave C intact: the last ROR supplies the next bit.
+        "dec %1\n\tbrne 0b\n\t"
+        "sbrs %B2,7\n\trjmp 2f\n\tsub %C0,%A3\n\tsbc %D0,%B3\n\t"
+        "2: sbrs %B3,7\n\trjmp 3f\n\tsub %C0,%A2\n\tsbc %D0,%B2\n\t3:\n\t"
+        : "=&r"(result),"=&d"(groups) : "r"(x),"r"(original),
+          "I"(LPX4_AVR25_MUL16_UNROLL),"I"(16/LPX4_AVR25_MUL16_UNROLL) : "cc");
+#endif
     return (int32_t)result;
 #endif
 }

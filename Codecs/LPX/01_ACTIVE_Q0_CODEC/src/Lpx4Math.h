@@ -47,6 +47,15 @@
 #if LPX4_AVR_DOT_UNROLL!=1 && LPX4_AVR_DOT_UNROLL!=3 && LPX4_AVR_DOT_UNROLL!=9
 #error LPX4_AVR_DOT_UNROLL must be 1, 3 or 9
 #endif
+// AVR25 software signed16 multiplication: keep the original fully unrolled
+// default; an explicit smaller group trades loop-latch cycles for Flash.
+#ifndef LPX4_AVR25_MUL16_UNROLL
+#define LPX4_AVR25_MUL16_UNROLL 16
+#endif
+#if LPX4_AVR25_MUL16_UNROLL!=1 && LPX4_AVR25_MUL16_UNROLL!=2 && \
+    LPX4_AVR25_MUL16_UNROLL!=4 && LPX4_AVR25_MUL16_UNROLL!=8 && LPX4_AVR25_MUL16_UNROLL!=16
+#error LPX4_AVR25_MUL16_UNROLL must be 1, 2, 4, 8 or 16
+#endif
 
 static inline int32_t lpx4Mul32x16(int32_t x,int16_t y);
 // Validated LSF10 values are 0..1023, anchor t is 0..16. Each intermediate
