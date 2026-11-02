@@ -12,7 +12,7 @@ const compiler=values.clang || join(resolve(sdk),'upstream','bin',process.platfo
 const sysroot=join(resolve(sdk),'upstream','emscripten','cache','sysroot');
 const output=join(root,'web-player','wasm');mkdirSync(output,{recursive:true});
 const exports=['layout','field_name','error_message','reset','decode','decode_idle','step','next','block','idle','clock',
- 'interrupt','write_io','update_timer','timer_mode','push','pop','push_pc','pop_pc','nzvs','arithmetic',
+ 'interrupt','write_io','write_io_masked','update_timer','timer_mode','push','pop','push_pc','pop_pc','nzvs','arithmetic',
  'read_data','write_data','timer_top','timer_counter','audio_init','audio_channels','audio_controls','render','filter','average'].map(n=>'avr_'+n);
 const flags=['--target=wasm32-unknown-unknown','-O3','-std=c11','-ffreestanding','-nostdlib',
  '--sysroot='+sysroot,'-isystem',join(sysroot,'include'),'-L'+join(sysroot,'lib','wasm32-emscripten'),

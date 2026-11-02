@@ -109,6 +109,9 @@ export function runtimeABI(exports,{resumable=false}={}) {
     state[decoder.decode(data.subarray(start,end))]=exports.avr_layout(0)+8*i;
   }
   const abi={state,data:exports.avr_layout(4),rom:exports.avr_layout(2),idle:exports.avr_layout(10),frames:exports.avr_layout(11),pwm:exports.avr_layout(13),memoryPages:exports.memory.buffer.byteLength/65536,device:typeof exports.avr_device_time==='function'};
+  // Legacy generated SBI/CBI must not reuse precompiled read/modify/write
+  // sequences after the selected-bit W1C fix. Full-device code was masked.
+  if(!abi.device)abi.maskedIO=typeof exports.avr_write_io_masked==='function';
   if(resumable){
     if(typeof exports.avr_device_phase_layout!=='function')throw Error('Runtime has no resumable CPU ABI');
     const layout=exports.avr_device_phase_layout;
@@ -134,6 +137,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   if(![8,16].includes(profile.dataAddressBits)||profile.programCounterBytes!==2)throw Error('Unsupported AVR emitter memory geometry');
   // Resumable blocks initially cover register-only operations. Memory accesses
   // retain their individual bus phases until block-wide alias guards exist.
+  if(!abi.device&&!abi.maskedIO)throw Error('Rebuild AVR WASM: masked I/O bridge is missing');
   const full=!!abi.device,canBatch=i=>resumable?pure.has(i.name):batchable(i)&&(!full||i.name!=='LPM');
   if(full&&device!==DEFAULT_DEVICE)throw Error('Full-device runtime supports only ATtiny13A');
   if(resumable&&(!full||!abi.phase||abi.phase.bytes!==80))throw Error('Resumable CPU requires its full-device phase ABI');
@@ -174,8 +178,9 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
   const imports=[['clock',0],['interrupt',1],['writeIO',2],['idle',5]];
   const CLOCK=0, IRQ=1, IO=2, IDLE=3;
   if(full)imports.push(['readIO',4],['writeMasked',7],['ready',5],['time',8],['wait',9],['control',7],['lpm',4],['audioDeadline',8],['audioSample',4],['pending',5],['cpuDeadline',10],['idleUntil',9]);
+  if(!full)imports.push(['writeMasked',7]);
   if(resumable)imports.push(['phaseClock',9],['phaseDeadline',0],['phaseRetire',1]);
-  const READ=4,MASKED=5,READY=6,TIME=7,WAIT=8,CONTROL=9,LPM=10,AUDIO_DEADLINE=11,AUDIO_SAMPLE=12,PENDING=13;
+  const READ=4,MASKED=full?5:4,READY=6,TIME=7,WAIT=8,CONTROL=9,LPM=10,AUDIO_DEADLINE=11,AUDIO_SAMPLE=12,PENDING=13;
   const firstFunction=imports.length;
   const PHASE_CLOCK=16,PHASE_DEADLINE=17,PHASE_RETIRE=18;
   const clock=value=>resumable?bytes(clockPhase(asFloat(value))):bytes(call(CLOCK,asFloat(value)),guard());
@@ -303,7 +308,7 @@ export function transpileAVR(image, abi, {optimizeFlags=true, maxBlockInstructio
       return code;
     }
     if(name==='IN')return bytes(full?bytes(clockHalf(.5),set(0,call(READ,constant(k))),clockHalf(.5),writeReg(d,X)):bytes(clock(constant(1)),writeReg(d,reg(ioStart+k))),set(7,constant(0)));
-    if(name==='OUT'||name==='SBI'||name==='CBI')return bytes(clock(constant(name==='OUT'?1:2)),set(7,full?call(MASKED,constant(name==='OUT'?k:d),name==='OUT'?reg(d):constant(name==='SBI'?1<<k:0),constant(name==='OUT'?255:1<<k)):call(IO,constant(name==='OUT'?k:d),name==='SBI'?or(reg(ioStart+d),constant(1<<k)):name==='CBI'?and(reg(ioStart+d),constant(255^(1<<k))):reg(d))),guard(),set(5,load8(flagsAddress)));
+    if(name==='OUT'||name==='SBI'||name==='CBI')return bytes(clock(constant(name==='OUT'?1:2)),set(7,name!=='OUT'||full?call(MASKED,constant(name==='OUT'?k:d),name==='OUT'?reg(d):constant(name==='SBI'?1<<k:0),constant(name==='OUT'?255:1<<k)):call(IO,constant(k),reg(d))),guard(),set(5,load8(flagsAddress)));
     if(name==='LDS'||name==='STS'){
       if(k>ramEnd)return fail(16);
       if(full&&name==='LDS')return bytes(put('pc',constant((p+2)&pcMask)),clockHalf(1.5),set(0,k>=ioStart&&k<ioEnd?call(READ,constant(k-ioStart)):reg(k)),clockHalf(.5),writeReg(d,X),set(7,constant(0)));

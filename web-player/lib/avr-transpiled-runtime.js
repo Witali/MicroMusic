@@ -5,7 +5,7 @@ import {resolveAVRProfile} from './avr-profiles.js?v=20261025-board-um88-pipelin
 const littleEndian=new Uint8Array(Uint16Array.of(1).buffer)[0]===1;
 const runtimeCaches=new WeakMap(),legacyCache=new Map();
 const abiKey=abi=>JSON.stringify([abi.data,abi.rom,abi.idle,abi.frames,abi.pwm,
-  abi.memoryPages,!!abi.device,Object.entries(abi.state).sort(([a],[b])=>a.localeCompare(b)),
+  abi.memoryPages,!!abi.device,!!abi.maskedIO,Object.entries(abi.state).sort(([a],[b])=>a.localeCompare(b)),
   abi.phase?Object.entries(abi.phase).sort(([a],[b])=>a.localeCompare(b)):null]);
 function compileTranslation(binary,abi,options) {
   const runtime=options.runtimeModule;

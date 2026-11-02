@@ -29,6 +29,7 @@
     "-Wl,--export=avr_clock",
     "-Wl,--export=avr_interrupt",
     "-Wl,--export=avr_write_io",
+    "-Wl,--export=avr_write_io_masked",
     "-Wl,--export=avr_update_timer",
     "-Wl,--export=avr_timer_mode",
     "-Wl,--export=avr_push",
@@ -49,13 +50,13 @@
     "-Wl,--export=avr_average"
   ],
   "inputs": {
-    "web-player/native/avr.c": "63714c76a2841c717f73b4e9d0afc95cbe6749934ef19067077d6193e0cc1da4",
-    "web-player/scripts/build-wasm.mjs": "0c04ff4e62d993f35e7c3c9c48d4581fb1da6d9cec9b98fbe2c2a30e1a5cfcf4"
+    "web-player/native/avr.c": "05afa6fcb4962858b47aedf38a2a32c617f6083a8f6dff363818a89a6167795d",
+    "web-player/scripts/build-wasm.mjs": "6ae55e90331f16c2ba3f276a6472adbeab67c09e0a3e0f40acd401f9a5baf780"
   },
   "artifacts": {
-    "avr.wasm": "0e1d09d63f725c5b86b15a6224056f10f691624b320458695072f68648d32e46"
+    "avr.wasm": "38cd96cc9e370e9ff727ab7a594b63ea07118be63fe01a65e4f5ca422e7be5fb"
   },
-  "bytes": 57429,
+  "bytes": 59023,
   "memoryPages": 2,
   "imports": []
 }

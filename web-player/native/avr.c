@@ -65,7 +65,7 @@ static void set_pointer(int s,int v){data[s]=v;if(C(pointerMask)>255)data[s+1]=v
 
 enum { NOP=1, CLI, SEI, RETI, RET, CALL, JUMP, BRANCH, SKIP, LDI, CPI,
  SUBI, ORI, ANDI, MOVW, ADD, ADC, SUB, AND, EOR, MOV, INC, DEC, COM,
- LSR, ASR, SWAP, IN, OUT, SBI, PUSH, POP, ST, LPM, FLAG, ROR, LDS, STS, OR, LD, CP, NEG, SBC, SBCI, ADIW, SBIW, WDR, CPC, CPSE };
+ LSR, ASR, SWAP, IN, OUT, SBI, PUSH, POP, ST, LPM, FLAG, ROR, LDS, STS, OR, LD, CP, NEG, SBC, SBCI, ADIW, SBIW, WDR, CPC, CPSE, CBI, SKIP_IO, BST, BLD };
 enum { E_PC=1, E_OPCODE, E_PUSH, E_POP, E_EXTCLK, E_WGM, E_FLASH, E_WDT,
  E_ADC, E_COMPARATOR, E_EXTIRQ, E_CLKDIV, E_COMPAREIRQ, E_EEPROM,
  E_FORCE, E_DATA, E_ST_ALIAS, E_WRITE, E_LD_ALIAS, E_READ, E_LPM_ALIAS,
@@ -169,7 +169,9 @@ static void decode(int p) {
  else if ((w&0xfe0f)==0x9000 || (w&0xfe0f)==0x9200) {o=(w&0xfe0f)==0x9000?LDS:STS;int n=((p+1)&pc_mask)*2;k=rom[n]|(rom[n+1]<<8);}
  else if ((w&0xf800)==0xb000) {o=IN;k=((w>>5)&48)|(w&15);}
  else if ((w&0xf800)==0xb800) {o=OUT;k=((w>>5)&48)|(w&15);}
- else if ((w&0xff00)==0x9a00) {o=SBI;d=(w>>3)&31;k=w&7;}
+ else if ((w&0xff00)==0x9a00 || (w&0xff00)==0x9800) {o=(w&0x200)?SBI:CBI;d=(w>>3)&31;k=w&7;}
+ else if ((w&0xff00)==0x9900 || (w&0xff00)==0x9b00) {o=SKIP_IO;d=(w>>3)&31;s=w&7;k=!!(w&0x200);}
+ else if ((w&0xfe08)==0xfa00 || (w&0xfe08)==0xf800) {o=(w&0x200)?BST:BLD;s=w&7;}
  else if ((w&0xfe0f)==0x920f) o=PUSH;
  else if ((w&0xfe0f)==0x900f) o=POP;
  else if ((w&0xfe0f)==0x900c || (w&0xfe0f)==0x900d || (w&0xfe0f)==0x900e ||
@@ -222,12 +224,15 @@ static int read_data(int a){
  }
  return data[a];
 }
-static int write_io(int io,int v) {
+static int write_io_masked(int io,int v,int mask) {
 #ifdef AVR_FULL_DEVICE
- return full_write_io(io,v,255);
+ return full_write_io(io,v,mask);
 #endif
  int a=io+32;v&=255;
  if(a<32||a>=C(sramStart))return fail(E_IO);
+ mask&=255;
+ if(a==C(tifr)){data[a]&=~(v&mask&C(flagMask));return 0;}
+ v=(data[a]&~mask)|(v&mask);
  if(a==C(spmcsr)&&(v&31))return fail(E_FLASH);
  if(a==C(wdt)){
   if(C(protectedWatchdog)){
@@ -245,12 +250,11 @@ static int write_io(int io,int v) {
   else if(S(clkprUntil)>S(cyc)){if(v&15)return fail(E_CLKDIV);data[a]=0;S(clkprUntil)=0;}
   return 0;
  }
- if(a==C(tifr)){data[a]&=~(v&C(flagMask));return 0;}
  if(a==C(timsk)&&(v&C(interruptRejectMask)))return fail(E_COMPAREIRQ);
  if(a==C(eecr)){
   if(v&10)return fail(E_EEPROM);
-  data[a]=v&0x3c;if(v&4)S(eempeUntil)=S(cyc)+4;
-  if(v&1){data[C(eedr)]=eeprom[data[C(eear)]&(C(eepromBytes)-1)];return 4;}return 0;
+  data[a]=v&0x3c;if(v&mask&4)S(eempeUntil)=S(cyc)+4;
+  if(v&mask&1){data[C(eedr)]=eeprom[data[C(eear)]&(C(eepromBytes)-1)];return 4;}return 0;
  }
  if(a==C(eear))v&=C(eepromBytes)-1;
  if(a==C(timsk))v&=C(interruptStoreMask);
@@ -265,6 +269,7 @@ static int write_io(int io,int v) {
  if(a==C(ocra)&&S(timer)){S(dutyLeft)=v;S(leftWrites)++;}
  return 0;
 }
+static int write_io(int io,int v){return write_io_masked(io,v,255);}
 static int write_data(int a,int v){
  if(a<0||a>C(ramEnd))return fail(E_WRITE);
  if(a>=32&&a<C(sramStart))return write_io(a-32,v);
@@ -323,6 +328,12 @@ static int execute(void) {
  case CALL:push_pc((int)S(pc));if(ERROR)return 0;S(pc)+=k;n=3;break;
  case JUMP:S(pc)+=k;n=2;break;
  case BRANCH:if(((FLAGS>>d)&1)==s){S(pc)+=k;n=2;}break;
+ case SKIP_IO:
+  clock_cycles(1);if(ERROR)return 0;n=0;v=read_data(d+32);if(ERROR)return 0;
+  if(((v>>s)&1)==k){int next=(int)S(pc),w=rom[next*2]|(rom[next*2+1]<<8);int words=(w&0xfe0f)==0x9000||(w&0xfe0f)==0x9200||(w&0xfe0e)==0x940c||(w&0xfe0e)==0x940e?2:1;S(pc)+=words;clock_cycles(words);}
+  break;
+ case BST:FLAGS=(FLAGS&~64)|(((data[d]>>s)&1)<<6);break;
+ case BLD:data[d]=(data[d]&~(1<<s))|(((FLAGS>>6)&1)<<s);break;
  case CPSE:case SKIP:if(o==CPSE?data[d]==data[s]:((data[d]>>s)&1)==k){int next=(int)S(pc),w=rom[next*2]|(rom[next*2+1]<<8);int words=(w&0xfe0f)==0x9000||(w&0xfe0f)==0x9200||(w&0xfe0e)==0x940c||(w&0xfe0e)==0x940e?2:1;S(pc)+=words;n=1+words;}break;
  case LDI:data[d]=k;break;
  case CPI:arithmetic(data[d],k,0,1);break;
@@ -357,7 +368,7 @@ static int execute(void) {
   if(o==LDS)data[d]=read_data(k);else n=write_data(k,v);break;
  case IN:clock_cycles(1);if(ERROR)return 0;n=0;data[d]=read_data(k+32);break;
  case OUT:clock_cycles(1);if(ERROR)return 0;n=write_io(k,data[d]);break;
- case SBI:clock_cycles(2);if(ERROR)return 0;n=write_io(d,IO(d)|(1<<k));break;
+ case SBI:case CBI:clock_cycles(2);if(ERROR)return 0;n=write_io_masked(d,o==SBI?1<<k:0,1<<k);break;
  case PUSH:push(data[d]);n=2;break;
  case POP:v=pop();if(ERROR)return 0;data[d]=v;n=2;break;
  case ST:
@@ -570,6 +581,9 @@ int avr_idle(void){ERROR=0;return skip_idle();}
 void avr_clock(double n){ERROR=0;clock_cycles(n);}
 void avr_interrupt(void){ERROR=0;interrupt_cpu();}
 int avr_write_io(int a,int v){ERROR=0;return write_io(a,v);}
+#ifndef AVR_FULL_DEVICE
+int avr_write_io_masked(int a,int v,int mask){ERROR=0;return write_io_masked(a,v,mask);}
+#endif
 void avr_update_timer(void){ERROR=0;update_timer();}
 int avr_timer_mode(void){ERROR=0;return mode();}
 void avr_push(int v){ERROR=0;push(v);}

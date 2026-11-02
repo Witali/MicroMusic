@@ -113,7 +113,11 @@ export class AVRCore {
   timerTop(){return this._call('avr_timer_top');} timerCounter(){return this._call('avr_timer_counter');}
   readData(a){return this._call('avr_read_data',a);} writeData(a,v){return this._call('avr_write_data',a,v);}
   updateTimer(){this._call('avr_update_timer');}
-  writeIO(a,v){return this._call('avr_write_io',a,v);}
+  writeIO(a,v,mask=255){
+    if(mask===255)return this._call('avr_write_io',a,v);
+    if(typeof this._exports.avr_write_io_masked!=='function')throw new Error('Rebuild AVR WASM: masked I/O bridge is missing');
+    return this._call('avr_write_io_masked',a,v,mask);
+  }
   clock(n){this._call('avr_clock',n);} interrupt(){this._call('avr_interrupt');}
   step(){this._call('avr_step');} skipIdle(){return!!this._call('avr_idle');}
   runBlock(deadline=Infinity){return!!this._call('avr_block',deadline);}

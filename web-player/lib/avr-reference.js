@@ -8,11 +8,11 @@ const OP = { NOP:1, CLI:2, SEI:3, RETI:4, RET:5, CALL:6, JUMP:7, BRANCH:8,
   SKIP:9, LDI:10, CPI:11, SUBI:12, ORI:13, ANDI:14, MOVW:15, ADD:16,
   ADC:17, SUB:18, AND:19, EOR:20, MOV:21, INC:22, DEC:23, COM:24,
   LSR:25, ASR:26, SWAP:27, IN:28, OUT:29, SBI:30, PUSH:31, POP:32, ST:33, LPM:34, FLAG:35,
-  ROR:36, LDS:37, STS:38, OR:39, LD:40, CP:41, NEG:42, SBC:43, SBCI:44, ADIW:45, SBIW:46, WDR:47, CPC:48, CPSE:49 };
+  ROR:36, LDS:37, STS:38, OR:39, LD:40, CP:41, NEG:42, SBC:43, SBCI:44, ADIW:45, SBIW:46, WDR:47, CPC:48, CPSE:49, CBI:50, SKIP_IO:51, BST:52, BLD:53 };
 const sign = (v, bit) => v & bit ? v - bit * 2 : v;
 // Maximum cycles for instructions that can execute without observing I/O.
 // Everything else remains in step(), including all peripheral and stack access.
-const BATCH_CYCLES = new Uint8Array(50);
+const BATCH_CYCLES = new Uint8Array(54);
 for (const op of [OP.NOP, OP.LDI, OP.CPI, OP.SUBI, OP.ORI, OP.ANDI, OP.MOVW,
   OP.ADD, OP.ADC, OP.SUB, OP.AND, OP.EOR, OP.OR, OP.MOV, OP.INC, OP.DEC,
   OP.COM, OP.LSR, OP.ASR, OP.ROR, OP.SWAP, OP.SBC, OP.SBCI]) BATCH_CYCLES[op] = 1;
@@ -140,7 +140,13 @@ export class AVRCore {
     }
     else if ((w & 0xf800) === 0xb000) { o = OP.IN; k = ((w >> 5) & 48) | (w & 15); }
     else if ((w & 0xf800) === 0xb800) { o = OP.OUT; k = ((w >> 5) & 48) | (w & 15); }
-    else if ((w & 0xff00) === 0x9a00) { o = OP.SBI; d = (w >> 3) & 31; k = w & 7; }
+    else if ((w & 0xff00) === 0x9a00 || (w & 0xff00) === 0x9800) {
+      o = (w & 0x200) ? OP.SBI : OP.CBI; d = (w >> 3) & 31; k = w & 7;
+    } else if ((w & 0xff00) === 0x9900 || (w & 0xff00) === 0x9b00) {
+      o = OP.SKIP_IO; d = (w >> 3) & 31; s = w & 7; k = Number(!!(w & 0x200));
+    } else if ((w & 0xfe08) === 0xfa00 || (w & 0xfe08) === 0xf800) {
+      o = (w & 0x200) ? OP.BST : OP.BLD; s = w & 7;
+    }
     else if ((w & 0xfe0f) === 0x920f) o = OP.PUSH;
     else if ((w & 0xfe0f) === 0x900f) o = OP.POP;
     else if ([0x900c,0x900d,0x900e,0x9009,0x900a,0x9001,0x9002,
@@ -245,9 +251,14 @@ export class AVRCore {
     if(address>=32&&address<this.profile.sramStart)return this.writeIO(address-32,value);
     this.data[address]=value;return 0;
   }
-  writeIO(ioAddress,value) {
+  writeIO(ioAddress,value,mask=255) {
     const address=ioAddress+32,{timer,system}=this.profile;value&=255;
     if(address<32||address>=this.profile.sramStart)throw new Error('I/O address out of range');
+    // ATtiny48/88 doc8008H register-summary note 3: SBI/CBI affect only
+    // the selected bit, including W1C flags. OUT/STS retain full-byte writes.
+    mask&=255;
+    if(address===timer.tifr){this.data[address]&=~(value&mask&timer.flagMask);return 0;}
+    value=(this.data[address]&~mask)|(value&mask);
     if(address===system.spmcsr&&(value&31))throw new Error('Flash programming/fuse access is not implemented');
     if(address===system.wdt){
       if(system.protectedWatchdog){
@@ -276,13 +287,12 @@ export class AVRCore {
       }
       return 0;
     }
-    if(address===timer.tifr){this.data[address]&=~(value&timer.flagMask);return 0;}
     if(address===timer.timsk&&(value&timer.interruptRejectMask))throw new Error(timer.interruptError);
     if(address===system.eecr){
       if(value&10)throw new Error('EEPROM programming/ready interrupt is not implemented');
       this.data[address]=value&0x3c;
-      if(value&4)this.eempeUntil=this.cyc+4;
-      if(value&1){this.data[system.eedr]=this.eeprom[this.data[system.eear]&(this.profile.eepromBytes-1)];return 4;}
+      if(value&mask&4)this.eempeUntil=this.cyc+4;
+      if(value&mask&1){this.data[system.eedr]=this.eeprom[this.data[system.eear]&(this.profile.eepromBytes-1)];return 4;}
       return 0;
     }
     if(address===system.eear)value&=this.profile.eepromBytes-1;
@@ -366,6 +376,19 @@ export class AVRCore {
       case OP.JUMP: this.pc += k; n = 2; break;
       case OP.BRANCH:
         if (((this.sreg >> d) & 1) === s) { this.pc += k; n = 2; } break;
+      case OP.SKIP_IO: {
+        this.clock(1); n = 0;
+        const value = this.readData(d+32);
+        if (((value >> s) & 1) === k) {
+          const w = this.rom[this.pc*2] | this.rom[this.pc*2+1]<<8;
+          const words = (w & 0xfe0f) === 0x9000 || (w & 0xfe0f) === 0x9200 ||
+            (w & 0xfe0e) === 0x940c || (w & 0xfe0e) === 0x940e ? 2 : 1;
+          this.pc += words; this.clock(words);
+        }
+        break;
+      }
+      case OP.BST: this.t = (r[d] >> s) & 1; break;
+      case OP.BLD: r[d] = (r[d] & ~(1 << s)) | (this.t << s); break;
       case OP.CPSE:
       case OP.SKIP:
         if (this.op[p] === OP.CPSE ? r[d] === r[s] : ((r[d] >> s) & 1) === k) {
@@ -426,7 +449,8 @@ export class AVRCore {
       case OP.OUT:
         this.clock(1); n = this.writeIO(k, r[d]); break;
       case OP.SBI:
-        this.clock(2); n = this.writeIO(d, this.io[d] | (1 << k)); break;
+      case OP.CBI:
+        this.clock(2); n = this.writeIO(d, this.op[p] === OP.SBI ? 1 << k : 0, 1 << k); break;
       case OP.PUSH: this.push(r[d]); n = 2; break;
       case OP.POP: r[d] = this.pop(); n = 2; break;
       case OP.ST:
