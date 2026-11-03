@@ -1,12 +1,16 @@
 # ATtiny88 / 16 MHz LPX v5 player
 
-The public Tiny88 firmware uses the existing **AVR25 ASM arithmetic and short
-ASM ISR** to play the measured P4/P6 and explicitly enabled sparse80 speech
-streams at 8 kHz without hardware multiplication. The SRAM512 workspace
-profile is reused. FIFO32 remains the
-default: 31 usable slots, prefill 24. `--queue 24` selects 23 usable slots and
-prefill 18, saving eight static bytes; 16/24/32 are explicit build choices.
-Speex is excluded from the Tiny88 profile.
+The builder and verifier default to a **universal runtime-header decoder** for
+LPX v5 P4/P6 at 8 kHz. Profile flags, sample metadata and filter coefficients
+come from each sound file; they are not compiled into the decoder. The existing
+SRAM512 workspace and explicitly enabled AVR25 ASM arithmetic/ISR are reused.
+The portable library still defaults to C, including on AVR.
+
+The universal player selects FIFO44: 43 usable slots, prefill 33, and software
+multiplication unroll2. `--fixed-header` explicitly restores the earlier ROM
+specialization, whose defaults remain FIFO32/prefill24 and unroll16. The retained
+public recording-specific demos use `--fixed-header --queue 24 --mul16-unroll 2`.
+Queue choices are 16/24/32/44. Speex is outside this player.
 
 The hard full-image limit is **8192 bytes**, including compressed audio,
 initialized data, startup, decoder and ISR. Larger limits and images are
@@ -28,7 +32,44 @@ OC1A/PB1 supplies62.5 kHz fast PWM. Timer0 CompareA requests a new sample every
 Timer1 keeps the final duty. This is a standalone one-shot/reset-chain driver,
 not an Arduino sketch sharing timers or interrupt vectors with a framework.
 
-## Current complete-player results
+## Universal complete-player results
+
+Fourteen complete workloads pass byte-exact portable C comparison with active
+Timer0/Timer1 and zero underruns: all eight public P4/P6 phrase variants and six
+synthetic streams with changing/clustered spectra, lag18/145, extra pulses and
+boundary filter coefficients. The same host executable also accepts 60 distinct
+combinations of file-defined profile/filter settings without recompilation.
+
+| Universal player | Measured result |
+| --- | ---: |
+| Program Flash, including startup, tables and playback, excluding audio | 5587..5588 B (about 5.46 KiB) |
+| Full image for the measured recordings | 6058..7486 B |
+| Static SRAM, including FIFO44 | 447 B |
+| Largest observed stack | 60 B |
+| Minimum observed stack margin | 4 B |
+| Mean decode wall cycles/sample, public recordings | 1595..1722 |
+| Mean decode wall cycles/sample, synthetic controls | 1034..1335 |
+| Complete ISR, including hardware entry and RETI | 42 cycles |
+
+These are standalone simulator bounds, not a guarantee for every valid spectral
+sequence or application integration. The observed four-byte stack margin does
+not cover added application/IRQ work. These complete example images need ISP;
+they exceed the 6012-byte USB application region.
+
+The universal mode does not define `LPX4_FIXED_*` and does not specialize extra
+player gain for a recording. Existing LPX header validation and compact-reader
+bounds remain: 8 kHz, up to 64000 samples per segment, and a 16-bit input length.
+No container extension or new per-record parameter is introduced.
+
+[Source-bound full playback results](universal-measurements.json),
+[C/ASM/generic arithmetic and ABI results](universal-math-measurements.json), and
+[proofs, hardware contract and rejected candidates](../../../../../docs/avr-asm-cookbook/lpx-universal-tiny88.md)
+record the exact scope. The previously unpinned FIFO24 recipe had underruns;
+the final universal recipe spends 30 additional program bytes and 20 static RAM
+bytes to meet the measured real-time requirement. This is not a claim that it
+is smaller than the recording-specialized demo builds.
+
+## Retained ROM demonstration results
 
 The selected public recipe is FIFO24 with multiplication unroll2. All nine
 complete phrase/profile combinations pass one-shot playback: **141,708 PWM
@@ -39,7 +80,7 @@ sample count, stored stream bytes or source gain is changed.
 | Complete release image measurement | Result |
 | --- | ---: |
 | Flash, including the original audio | 5418..7132 bytes |
-| Program Flash after subtracting the verified single audio array | 4947..5233 bytes |
+| Program Flash after subtracting the verified single audio array | 4948..5233 bytes |
 | Static SRAM, including FIFO | 422 bytes |
 | Largest observed stack | 66 bytes |
 | Smallest observed stack margin | 23 bytes |
@@ -71,12 +112,12 @@ python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/verify_attiny88_player.py \
   web-player/audio/lpx-bread/compact.lpx build/tiny88-player
 ```
 
-Add `--queue 24` for the measured smaller-RAM variant, and
-`--enable-sparse80` for v8/mode15 streams. Use `--repeat 2` to check a complete
+Add `--fixed-header --queue 24` for the retained ROM recipe, and
+`--enable-sparse80` for its optional v8/mode15 streams. Use `--repeat 2` to check a complete
 phrase twice without trimming or repacking its source bytes.
 
-The selected public recipe combines `--queue 24 --mul16-unroll 2`.
-The general builder/verifier retain FIFO32 and unroll16 defaults. Factors
+The retained public recipe combines `--fixed-header --queue 24 --mul16-unroll 2`.
+Universal defaults are FIFO44 and unroll2; fixed-header defaults are FIFO32 and unroll16. Factors
 1/2/4/8/16 are explicitly selectable; 16 fully unrolls the software product,
 while smaller factors group the same exact rounds in a loop. The SRAM512
 fixed-P4 build also keeps only the 33 reachable cosine half-grid words for
@@ -102,7 +143,8 @@ python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_attiny88_player.py \
 Build-only outputs remain marked `timing_verified:false`. Without explicit
 ASM flags, C is selected. `--c` and `--c-isr` on the verifier independently
 select C arithmetic and C ISR. The measured C arithmetic does not meet8 kHz.
-The C ISR is an admitted alternative for the measured P4 example.
+The C ISR is an admitted alternative for the earlier fixed-header P4 example;
+its universal timing is not claimed by the new 42-cycle ASM-ISR measurements.
 
 ROM builds pin the existing stream's format flags and two fixed filter
 constants; mismatches are rejected. No codec parameters, compressed bytes or

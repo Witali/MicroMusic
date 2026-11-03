@@ -56,6 +56,12 @@
     LPX4_AVR25_MUL16_UNROLL!=4 && LPX4_AVR25_MUL16_UNROLL!=8 && LPX4_AVR25_MUL16_UNROLL!=16
 #error LPX4_AVR25_MUL16_UNROLL must be 1, 2, 4, 8 or 16
 #endif
+#ifndef LPX4_AVR25_SATURATED_PRODUCTS
+#define LPX4_AVR25_SATURATED_PRODUCTS 0
+#endif
+#if LPX4_AVR25_SATURATED_PRODUCTS != 0 && LPX4_AVR25_SATURATED_PRODUCTS != 1
+#error LPX4_AVR25_SATURATED_PRODUCTS must be 0 or 1
+#endif
 
 static inline int32_t lpx4Mul32x16(int32_t x,int16_t y);
 // Validated LSF10 values are 0..1023, anchor t is 0..16. Each intermediate
@@ -275,10 +281,30 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 // Q12 needs only product bits12..31. Shift a separate multiplier byte;
 // capture outgoing product bits only in the final four rounds. No discarded
 // low product byte is ever computed. r23's low nibble is immaterial.
+#if LPX4_AVR25_SATURATED_PRODUCTS
+// For h=32767: floor(a*h/256)=128*a-ceil(a/256).
+// For h=-32767: floor(a*h/256)=-128*a+floor(a/256).
+// T is a private hint; skipping this route still uses the exact general product.
+#define LPX4_NOMUL_SATURATED \
+    "brtc 11f\n\tcpi r21,127\n\tbrne 10f\n\tcpi r20,255\n\tbreq 12f\n\t" \
+    "10: cpi r21,128\n\tbrne 11f\n\tcpi r20,1\n\tbrne 11f\n\t" \
+    "12: mov r24,r18\n\tmov r25,r19\n\tclr r23\n\t" \
+    "asr r25\n\tror r24\n\tror r23\n\t" \
+    "mov r22,r19\n\tclr r20\n\tsbrc r19,7\n\tdec r20\n\t" \
+    "sub r23,r22\n\tsbc r24,r20\n\tsbc r25,r20\n\t" \
+    "sbrc r21,7\n\trjmp 13f\n\ttst r18\n\tbreq 14f\n\t" \
+    "subi r23,1\n\tsbci r24,0\n\tsbci r25,0\n\t14: rjmp 8f\n\t" \
+    "13: com r23\n\tcom r24\n\tcom r25\n\t" \
+    "subi r23,255\n\tsbci r24,255\n\tsbci r25,255\n\trjmp 8f\n\t11:\n\t" \
+    ""
+#else
+#define LPX4_NOMUL_SATURATED ""
+#endif
 #define LPX4_NOMUL_PRODUCT \
     "tst r21\n\tbrne 9f\n\ttst r20\n\tbrne 7f\n\t" \
     "rjmp 5f\n\t7: rjmp 6f\n\t" \
     "9: cpi r21,255\n\tbrne 7f\n\tsbrc r20,7\n\trjmp 6f\n\t7:\n\t" \
+    LPX4_NOMUL_SATURATED \
     "mov r22,r20\n\tclr r24\n\tclr r25\n\t" \
     ".rept 8\n\t" LPX4_NOMUL_HIGH_STEP ".endr\n\t" \
     "mov r22,r21\n\t" \
@@ -299,8 +325,26 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     "andi r23,240\n\tsub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\t" \
     "sbc %D0,__zero_reg__\n\tsbrc r25,7\n\tinc %D0\n\t5:\n\t"
 #if LPX4_USE_AVR_NOMUL_ASM
+// coefficient is below 16384; the endpoint is handled by AttenuateQ14.
+// Retain only floor(coefficient*uint16(state)/16384), then correct the sign.
+// One shared runtime-coefficient kernel serves both stream-defined filters.
 static inline __attribute__((always_inline)) int16_t lpx4NomulAttenuate(uint16_t coefficient,int16_t state){
-    return (int16_t)lpx4Shift14(lpx4Mul16((int16_t)coefficient,state));
+    uint16_t result,original=coefficient;
+    __asm__(
+        "clr %A0\n\tclr %B0\n\t"
+        ".rept 8\n\tlsr %A1\n\tbrcc 2f\n\t"
+        "add %A0,%A3\n\tadc %B0,%B3\n\t"
+        "2: ror %B0\n\tror %A0\n\t.endr\n\t"
+        "mov %A1,%B1\n\t"
+        ".rept 6\n\tlsr %A1\n\tbrcc 2f\n\t"
+        "add %A0,%A3\n\tadc %B0,%B3\n\t"
+        "2: ror %B0\n\tror %A0\n\t.endr\n\t"
+        "sbrs %B3,7\n\trjmp 3f\n\t"
+        "lsl %A2\n\trol %B2\n\tlsl %A2\n\trol %B2\n\t"
+        "sub %A0,%A2\n\tsbc %B0,%B2\n\t3:\n\t"
+        : "=&r"(result),"+&r"(coefficient),"+&r"(original)
+        : "r"(state) : "cc");
+    return (int16_t)result;
 }
 #endif
 template<bool excitationQ4=false>
@@ -337,8 +381,14 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
     return result;
 #elif LPX4_USE_AVR_NOMUL_ASM
     int32_t result=excitation;
+#if LPX4_AVR25_SATURATED_PRODUCTS
+    const uint8_t saturationHint=(uint8_t)(((uint16_t)h[0]>>8)-127)<2;
+#endif
     a+=10;h+=10;
     __asm__(
+#if LPX4_AVR25_SATURATED_PRODUCTS
+        "bst %4,0\n\t"
+#endif
         ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
         "ldi r17,10\n\t1:\n\t"
         "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
@@ -347,6 +397,9 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
         ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
         : "+&r"(result),"+z"(h),"+x"(a) : "I"(!excitationQ4)
+#if LPX4_AVR25_SATURATED_PRODUCTS
+          ,"r"(saturationHint)
+#endif
         : "r17","r18","r19","r20","r21","r22","r23","r24","r25","cc","memory");
     return result;
 #else
@@ -401,6 +454,7 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
 }
 #undef LPX4_SYNTH_MUL
 #undef LPX4_NOMUL_PRODUCT
+#undef LPX4_NOMUL_SATURATED
 #undef LPX4_NOMUL_HIGH_STEP
 #undef LPX4_NOMUL_SUB
 #undef LPX4_DOT_PRODUCT
@@ -449,7 +503,16 @@ static inline __attribute__((always_inline)) int16_t lpx4AddClip15(int16_t a,int
 }
 
 static inline __attribute__((always_inline)) int16_t lpx4ClipQ14(int16_t value){
+#if LPX4_USE_AVR_NOMUL_ASM && LPX4_AVR25_SATURATED_PRODUCTS
+    uint8_t high;
+    __asm__(
+        "mov %1,%B0\n\tsubi %1,192\n\tbrpl 1f\n\t"
+        "clr %A0\n\tldi %B0,64\n\tsbrc %1,6\n\tori %B0,128\n\t1:\n\t"
+        : "+&d"(value),"=&d"(high) : : "cc");
+    return value;
+#else
     return value<-16384?-16384:(value>16384?16384:value);
+#endif
 }
 
 // Rounded legacy PWM, exact for signed16 sample and gain 0..255.
@@ -523,6 +586,7 @@ static inline int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
         : "=&r"(result),"=&r"(wide) : "a"(coefficient),"a"(state) : "r0","r1","cc");
     return result;
 #elif LPX4_USE_AVR_NOMUL_ASM
+    if(coefficient==16384)return state;
     if(coefficient==8192)return state>>1;
     if(coefficient==64)return state>>8;
     return lpx4NomulAttenuate(coefficient,state);

@@ -53,6 +53,7 @@ def run(output,controls=True,queue=32,mul16_unroll=16):
     def check(name,source,expected=True,**kw):
         kw.setdefault('queue',queue)
         kw.setdefault('mul16_unroll',mul16_unroll)
+        kw.setdefault('universal',False)
         result=verify(source,output/name,**kw)
         if result['accepted']!=expected:raise AssertionError((name,result))
         cases.append(dict(case=name,**result));print(json.dumps(cases[-1]),flush=True)
@@ -75,10 +76,10 @@ def run(output,controls=True,queue=32,mul16_unroll=16):
     if controls:
         check('c-isr',compact,asm_isr=False)
         check('c-arithmetic-reject',compact,expected=False,assembly=False,queue=16)
-        small=verify(compact,output/'queue16-control',queue=16)
+        small=verify(compact,output/'queue16-control',queue=16,universal=False)
         cases.append(dict(case='queue16-control',**small));print(json.dumps(cases[-1]),flush=True)
         # A caller can still require the historical smaller application cap.
-        try:verify(quality,output/'size-reject',flash_limit=6656)
+        try:verify(quality,output/'size-reject',flash_limit=6656,universal=False)
         except ValueError as exc:
             if 'Complete image' not in str(exc):raise
         else:raise AssertionError('The bootloader Flash cap was not enforced')

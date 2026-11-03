@@ -88,6 +88,22 @@ for(const x of boundary){
 }
 for(const value of [-3145728,-32769,-32768,-32767,-1,0,1,32767,32768,3145728])
  check(8,0,0,Math.max(-32767,Math.min(32767,value)),{exc:value});
+for(let x=-32768;x<=32767;x++)check(24,x,0,Math.max(-16384,Math.min(16384,x)));
+for(const x of boundary)for(const c of [0,1,63,64,65,8191,8192,8193,16383,16384])
+ check(4,x,c,Math.floor(x*c/16384));
+// Both hint states and all saturated-history signs, with nonzero coefficient
+// low bytes that distinguish floor from truncation before the Q12 masking.
+for(const first of [0,32767,-32767,32512,-32512])for(const history of [32767,-32767])
+ for(const coefficient of boundary){
+  const a=Array(10).fill(coefficient),h=Array(10).fill(history);h[0]=first;
+  check(7,0,0,123-a.reduce((sum,v,k)=>sum+Math.floor(v*h[k]/4096),0),{a,h,exc:123*16});
+ }
+if(process.argv.includes('--exhaustive-dynamic')){
+ for(let c=0;c<=16384;c++)for(const x of [-32768,-32767,-1,1,32767])
+  check(4,x,c,Math.floor(x*c/16384));
+ for(let x=-32768;x<=32767;x++)for(const c of [1,8191,8193,16383])
+  check(4,x,c,Math.floor(x*c/16384));
+}
 if(process.argv.includes('--exhaustive-fixed'))
  for(let x=-32768;x<=32767;x++)
   for(const [kind,c]of [[9,13094],[11,7800],[19,13926],[20,11469],

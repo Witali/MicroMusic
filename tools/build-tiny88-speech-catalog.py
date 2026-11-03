@@ -45,7 +45,7 @@ def main():
             name=clip['clipId']+'-'+variant['id'];folder=out/name
             stream=ROOT/'web-player'/variant['stream']
             result=verify(stream,folder,wsl=args.wsl,queue=args.queue,mul16_unroll=args.mul16_unroll,
-                sparse80=variant['id']=='low15',flash_limit=8192,normalize_output=True)
+                sparse80=variant['id']=='low15',flash_limit=8192,normalize_output=True,universal=False)
             assert result['accepted'] and result['pwm_exact'] and result['underruns']==0,name
             assert result['samples']==clip['samples'] and result['static_ram_bytes']+result['stack_bytes']<512
             with wave.open(str(ROOT/'web-player'/variant['audio']),'rb') as f:

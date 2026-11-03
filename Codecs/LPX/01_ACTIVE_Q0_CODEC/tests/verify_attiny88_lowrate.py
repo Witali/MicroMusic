@@ -45,7 +45,7 @@ def run(manifest_path,output,*,wsl=None,jobs=2):
             raise ValueError('Private replay binding mismatch')
         if len(blob)!=entry['encoded_bytes'] or len(expected)!=entry['samples']:
             raise ValueError('Private replay length mismatch')
-        measured=verify(stream,folder,wsl=wsl,sparse80=rate==2,flash_limit=8192)
+        measured=verify(stream,folder,wsl=wsl,sparse80=rate==2,flash_limit=8192,universal=False)
         # Independent frozen oracle checks both current portable C and actual AVR.
         exact=(folder/'expected.pwm').read_bytes()==expected and (folder/'actual.pwm').read_bytes()==expected
         row=dict(ordinal=ordinal,kbps=rate,**measured,independent_pwm_exact=exact,

@@ -17,8 +17,14 @@
 #ifndef LPX25_REPEAT
 #define LPX25_REPEAT 1
 #endif
-#if LPX25_QUEUE != 16 && LPX25_QUEUE != 24 && LPX25_QUEUE != 32
-#error Select a 16, 24 or 32 byte queue
+#ifndef LPX25_REUSE_TIMER1_HIGH
+#define LPX25_REUSE_TIMER1_HIGH 0
+#endif
+#if LPX25_REUSE_TIMER1_HIGH != 0 && LPX25_REUSE_TIMER1_HIGH != 1
+#error LPX25_REUSE_TIMER1_HIGH must be 0 or 1
+#endif
+#if LPX25_QUEUE != 16 && LPX25_QUEUE != 24 && LPX25_QUEUE != 32 && LPX25_QUEUE != 44
+#error Select a 16, 24, 32 or 44 byte queue
 #endif
 #if LPX25_REPEAT < 1 || LPX25_REPEAT > 255
 #error Repeat count must be 1..255
@@ -30,12 +36,12 @@ static Lpx4HybridCore decoder;
 extern "C" {
 // Retain OR addressing for power-of-two rings. A 24-byte array needs only
 // byte alignment: 32-byte alignment would pad its ELF section back to 32.
-uint8_t lpx25_queue[LPX25_QUEUE] __attribute__((used,externally_visible,aligned(LPX25_QUEUE==24?1:LPX25_QUEUE)));
+uint8_t lpx25_queue[LPX25_QUEUE] __attribute__((used,externally_visible,aligned(LPX25_QUEUE==24||LPX25_QUEUE==44?1:LPX25_QUEUE)));
 volatile uint8_t lpx25_head,lpx25_tail,lpx25_eof,lpx25_stopped,lpx25_error;
 }
 static inline void barrier(){__asm__ __volatile__("" ::: "memory");}
 static inline uint8_t advance(uint8_t at){
-#if LPX25_QUEUE == 24
+#if LPX25_QUEUE == 24 || LPX25_QUEUE == 44
     return ++at==LPX25_QUEUE?0:at;
 #else
     return (at+1)&(LPX25_QUEUE-1);
@@ -55,20 +61,24 @@ ISR(TIMER0_COMPA_vect,ISR_NAKED){
     __asm__ __volatile__(
         "in r3,%0\n\tpush r30\n\tpush r31\n\t"
         "lds r2,lpx25_head\n\tlds r30,lpx25_tail\n\tcp r2,r30\n\tbreq 2f\n\t"
-#if LPX25_QUEUE == 24
+#if LPX25_QUEUE == 24 || LPX25_QUEUE == 44
         "ldi r31,0\n\tsubi r30,lo8(-(lpx25_queue))\n\tsbci r31,hi8(-(lpx25_queue))\n\t"
         "ld r2,Z\n\tsubi r30,lo8(lpx25_queue)\n\tinc r30\n\t"
-        "cpi r30,24\n\tbrlo 4f\n\tclr r30\n\t4:\n\t"
+        "cpi r30,%4\n\tbrlo 4f\n\tclr r30\n\t4:\n\t"
 #else
         "ldi r31,hi8(lpx25_queue)\n\tori r30,lo8(lpx25_queue)\n\t"
         "ld r2,Z\n\tinc r30\n\tandi r30,%3\n\t"
 #endif
         "sts lpx25_tail,r30\n\trjmp 3f\n\t"
         "2: ldi r30,128\n\tmov r2,r30\n\t"
-        "3: sts %1,__zero_reg__\n\tsts %2,r2\n\t"
+        "3:\n\t"
+#if !LPX25_REUSE_TIMER1_HIGH
+        "sts %1,__zero_reg__\n\t"
+#endif
+        "sts %2,r2\n\t"
         "pop r31\n\tpop r30\n\tout %0,r3\n\treti\n\t"
         : : "I"(_SFR_IO_ADDR(SREG)),"n"(_SFR_MEM_ADDR(OCR1AH)),"n"(_SFR_MEM_ADDR(OCR1AL)),
-            "M"(LPX25_QUEUE==24?31:LPX25_QUEUE-1));
+            "M"(LPX25_QUEUE==24||LPX25_QUEUE==44?31:LPX25_QUEUE-1),"M"(LPX25_QUEUE));
 }
 #else
 ISR(TIMER0_COMPA_vect){

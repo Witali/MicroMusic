@@ -39,6 +39,7 @@ __attribute__((noinline,used)) void math_case(){
     case 21:math_out=lpx4AttenuateFixedQ14<1>(math_x);break;
     case 22:math_out=lpx4AttenuateFixedQ14<16383>(math_x);break;
     case 23:math_out=lpx4AttenuateFixedQ14<4096>(math_x);break;
+    case 24:math_out=lpx4ClipQ14(math_x);break;
     }
 }
 }

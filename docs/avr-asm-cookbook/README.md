@@ -3173,6 +3173,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [AVR25 software products and exact shifts](examples/lpx-avr25/README.md): historical standalone arithmetic provenance, C fallbacks and active-interrupt measurements.
 - [Real-time LPX on AVR25 without MUL](lpx-avr25.md): original integrated arithmetic, fixed-header ROM specialization, reserved-register ISR and full P4/P6 measurements; retains the former 6.5 KiB budget as historical evidence.
 - [Tighten Tiny88 RAM and Flash budgets](lpx-tiny88-budget.md): omit stored fixed-ROM constants, check FIFO24 addressing/ELF alignment, group software-product rounds and retain only reachable P4 cosine nodes; measured complete-player IRQ checks, hard 8192-byte cap and explicit 6012-byte USB loading limit.
+- [Universal Tiny88 LPX playback](lpx-universal-tiny88.md): runtime file parameters, exact general attenuation and saturation routes, FIFO44 and a measured standalone real-time profile; explicit C fallback and retained fixed-header demo recipe.
 
 - [Select LPX multiplication by real target capability](lpx-multiply-selection.md): explicit C/ASM choice, compiler-linked software fallback, and assembled AVR5/AVR25 checks without redefining CPU macros.
 

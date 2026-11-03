@@ -1,0 +1,75 @@
+{
+  "schema": "lpx-avr25-universal-math-v1",
+  "build": {
+    "target": "attiny88",
+    "clock_hz": 16000000,
+    "mul16_unroll": 2,
+    "saturated_products": true,
+    "backends": {
+      "c": {
+        "defines": [
+          "-DLPX4_ENABLE_ASM=0",
+          "-DLPX4_AVR25_MUL16_UNROLL=2",
+          "-DLPX4_AVR25_SATURATED_PRODUCTS=1"
+        ],
+        "binary_bytes": 1600,
+        "binary_sha256": "ddc9e6687bf7be414170bee31b62758725a80ae3f483142e9c7420d541e05576"
+      },
+      "asm": {
+        "defines": [
+          "-DLPX4_ENABLE_ASM=1",
+          "-DLPX4_AVR25_MUL16_UNROLL=2",
+          "-DLPX4_AVR25_SATURATED_PRODUCTS=1"
+        ],
+        "binary_bytes": 3600,
+        "binary_sha256": "34357741b35a1739be4e7284ee5aff63e552b62ccb45ba7202e96ce9399c0b3a"
+      },
+      "generic": {
+        "defines": [
+          "-DLPX4_ENABLE_ASM=1",
+          "-DLPX4_ARCH=LPX4_ARCH_GENERIC",
+          "-DLPX4_AVR25_MUL16_UNROLL=2",
+          "-DLPX4_AVR25_SATURATED_PRODUCTS=1"
+        ],
+        "binary_bytes": 1600,
+        "binary_sha256": "ddc9e6687bf7be414170bee31b62758725a80ae3f483142e9c7420d541e05576"
+      }
+    }
+  },
+  "verification": {
+    "target": "attiny88",
+    "clock_hz": 16000000,
+    "mul16_unroll": 2,
+    "cases": 436207,
+    "results": [
+      {
+        "backend": "c",
+        "cases": 436207,
+        "irqs": 16420,
+        "cycles": 171976399,
+        "passed": true
+      },
+      {
+        "backend": "asm",
+        "cases": 436207,
+        "irqs": 58861,
+        "cycles": 82177862,
+        "passed": true
+      },
+      {
+        "backend": "generic",
+        "cases": 436207,
+        "irqs": 16420,
+        "cycles": 171976399,
+        "passed": true
+      }
+    ],
+    "physical_board_measured": false,
+    "build_sha256": "f1913e3cd2e9c90902284b50e9fd4876df2edd5196d6a2dbbe02c072aefe7633",
+    "math_header_sha256": "6420049d48b9befaafae29dfff6be712d309b32496e5f1bbe9227385cee3941c",
+    "multiply_header_sha256": "61f7bbbffde4610a3b3b38a5e3bd1b24876c2c996ec393a0654e96d0a79e4445",
+    "probe_sha256": "8e18d0a24f3ecea003ad06d47adf88b505742335e13885bd8636986bbd88e195",
+    "observer_sha256": "077bd498186952514a05be5ed89124c5fd67971fac17a6b5077df7906eb15917"
+  },
+  "irq_counter_scope": "16-bit counters; checked against completed CPU IRQs modulo65536; no lost IRQs"
+}

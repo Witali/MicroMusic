@@ -1,5 +1,6 @@
 """ROM specialization is exact and rejects a mismatched valid header."""
 import json
+import struct
 from pathlib import Path
 import subprocess
 import tempfile
@@ -25,6 +26,32 @@ int main(int argc,char**argv){
 }
 '''
 class FixedHeaderTests(unittest.TestCase):
+    def test_one_dynamic_binary_reads_profiles_and_filter_parameters_from_each_file(self):
+        with tempfile.TemporaryDirectory() as td:
+            folder=Path(td);source=folder/'main.cpp';source.write_text(HARNESS)
+            binaries=[]
+            for memory in (0,1):
+                exe=folder/f'universal-{memory}'
+                subprocess.run(['g++','-O2','-std=c++11','-DLPX4_ENABLE_ASM=0',
+                    '-DLPX4_ENABLE_SPEECH=1','-DLPX4_ENABLE_SPEECH_COMPACT=1',
+                    '-DLPX4_COMPACT_ONLY=1',f'-DLPX4_MEMORY_PROFILE={memory}',
+                    '-I'+str(ROOT/'src'),str(source),str(ROOT/'src/Lpx4HybridCore.cpp'),'-o',str(exe)],
+                    check=True,capture_output=True)
+                binaries.append(exe)
+            stream=folder/'input.lpx';hashes=set()
+            for profile in (4,6):
+                for extras in (False,True):
+                    for pre in (0,1,8192,16383,16384):
+                        for bright in (0,64,11469):
+                            blob=bytearray(fixture(profile,641,145,'changing',extras))
+                            struct.pack_into('<HH',blob,12,pre,bright);stream.write_bytes(blob)
+                            results=[json.loads(subprocess.check_output([str(exe),str(stream)])) for exe in binaries]
+                            self.assertEqual(results[0],results[1],(profile,extras,pre,bright))
+                            self.assertEqual(results[1]['samples'],641)
+                            self.assertEqual(results[1]['error'],0)
+                            hashes.add(results[1]['hash'])
+            self.assertGreater(len(hashes),10,'The same compiled decoder must use the file-defined parameters')
+
     def test_exact_generic_and_pinned_header_and_rejections(self):
         with tempfile.TemporaryDirectory() as td:
             folder=Path(td);source=folder/'main.cpp';source.write_text(HARNESS)

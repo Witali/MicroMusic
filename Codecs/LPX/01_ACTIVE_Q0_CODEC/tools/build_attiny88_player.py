@@ -53,7 +53,7 @@ def target_path(path,wsl):
         return '/mnt/'+p.drive[0].lower()+'/'+ '/'.join(p.parts[1:])
     return str(p)
 
-def build(source,output,*,assembly=False,queue=32,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=16,output_gain=128):
+def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=None,output_gain=128,universal=True):
     source,output=Path(source).resolve(),Path(output).resolve()
     if output==REPO/'build' or REPO/'build' not in output.parents or source==output or output.is_symlink():
         raise ValueError('Use an output subdirectory under ignored repository build/')
@@ -63,11 +63,16 @@ def build(source,output,*,assembly=False,queue=32,repeat=1,wsl=None,avr_bin=None
            ((output/n).exists() and (output/n).stat().st_nlink>1) for n in names):
         raise ValueError('Output aliases input or uses a symlink')
     blob=source.read_bytes()
+    if type(universal) is not bool:raise ValueError('Universal selection must be boolean')
+    if queue is None:queue=44 if universal else 32
+    if mul16_unroll is None:mul16_unroll=2 if universal else 16
+    if universal and (output_gain!=128 or any(flag.startswith('-DLPX4_FIXED_') for flag in extra_flags)):
+        raise ValueError('Universal playback reads stream parameters without per-record specialization')
     if not isinstance(sparse80,bool):raise ValueError('Sparse80 selection must be boolean')
     if not 22<=len(blob)<=65535 or not (blob[:5]==b'L4HY\x05' and blob[5]&127 in (4,6) or
             sparse80 and blob[:6]==b'L4HY\x08\x0f'):
         raise ValueError('Expected compact v5, or sparse80 with its explicit enable')
-    if queue not in (16,24,32) or not 1<=repeat<=255 or lpc_segments not in (1,2,4):raise ValueError('Invalid playback geometry')
+    if queue not in (16,24,32,44) or not 1<=repeat<=255 or lpc_segments not in (1,2,4):raise ValueError('Invalid playback geometry')
     if not 1<=flash_limit<=8192:raise ValueError('Flash limit must be1..8192 bytes')
     if isinstance(mul16_unroll,bool) or mul16_unroll not in (1,2,4,8,16):raise ValueError('Invalid AVR25 multiply unroll')
     if type(output_gain) is not int or not 128<=output_gain<=255:raise ValueError('Invalid Q7 output gain')
@@ -89,12 +94,15 @@ def build(source,output,*,assembly=False,queue=32,repeat=1,wsl=None,avr_bin=None
            '-I'+path(ROOT/'src'),'-I'+path(output)]
     if asm_isr:flags+=['-DLPX25_ENABLE_ASM_ISR=1','-DLPX25_ISR_FIXED_REGS=1','-ffixed-r2','-ffixed-r3']
     if sparse80:flags+=['-DLPX4_ENABLE_SPARSE80=1']
-    flags += [f'-DLPX4_FIXED_PRE_Q14={int.from_bytes(blob[12:14],"little")}',
-              f'-DLPX4_FIXED_BRIGHT_Q14={int.from_bytes(blob[14:16],"little")}',
-              f'-DLPX4_FIXED_SPEECH_FLAGS={blob[5]}']
+    if universal:
+        flags+=['-DLPX4_AVR25_SATURATED_PRODUCTS=1','-DLPX25_REUSE_TIMER1_HIGH=1']
+    else:
+        flags += [f'-DLPX4_FIXED_PRE_Q14={int.from_bytes(blob[12:14],"little")}',
+                  f'-DLPX4_FIXED_BRIGHT_Q14={int.from_bytes(blob[14:16],"little")}',
+                  f'-DLPX4_FIXED_SPEECH_FLAGS={blob[5]}']
     # Measured AVR25 ASM recipe: avoid repeated small reader bodies and reduce
     # foreground register pressure. The explicitly selected C recipe stays C.
-    if assembly:flags+=['-fno-inline-small-functions']
+    if assembly:flags+=['-finline-small-functions' if universal else '-fno-inline-small-functions']
     flags+=list(extra_flags)
     run('avr-g++',*flags,path(ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp'),
         path(ROOT/'src/Lpx4HybridCore.cpp'),'-Wl,--gc-sections','-o',path(output/'player.elf'))
@@ -126,7 +134,8 @@ def build(source,output,*,assembly=False,queue=32,repeat=1,wsl=None,avr_bin=None
     def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
     report=dict(target='attiny88',cpu_hz=16000000,sample_hz=8000,queue=queue,prefill=queue*3//4,
         repeat=repeat,samples=int.from_bytes(blob[8:12],'little')*repeat,
-        assembly=assembly,asm_isr=asm_isr,sparse80=sparse80,lpc_segments=lpc_segments,mul16_unroll=mul16_unroll,flash_bytes=int(size[0])+int(size[1]),static_ram_bytes=int(size[1])+int(size[2]),
+        assembly=assembly,asm_isr=asm_isr,sparse80=sparse80,lpc_segments=lpc_segments,mul16_unroll=mul16_unroll,universal=universal,
+        flash_bytes=int(size[0])+int(size[1]),static_ram_bytes=int(size[1])+int(size[2]),
         compiler=run('avr-g++','--version').decode().splitlines()[0],compiler_options=flags,
         source_sha256={str(p.relative_to(REPO)):sha(p) for p in [ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp',
             *sorted((ROOT/'src').glob('Lpx4*')),ROOT/'profiles/Lpx4Sram512.h',DFP/'avr/iotn88.h']},
@@ -144,14 +153,18 @@ if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('input',type=Path);ap.add_argument('output',type=Path)
     ap.add_argument('--enable-asm',action='store_true');ap.add_argument('--wsl');ap.add_argument('--avr-bin')
-    ap.add_argument('--queue',type=int,choices=(16,24,32),default=32)
+    ap.add_argument('--queue',type=int,choices=(16,24,32,44),help='Default: 44 universal, 32 fixed-header')
+    mode=ap.add_mutually_exclusive_group()
+    mode.add_argument('--universal',dest='universal',action='store_true',help='Read all LPX parameters from the file (default)')
+    mode.add_argument('--fixed-header',dest='universal',action='store_false',help='Legacy opt-in ROM specialization for one recording')
+    ap.set_defaults(universal=True)
     ap.add_argument('--repeat',type=int,default=1)
     ap.add_argument('--lpc-segments',type=int,choices=(1,2,4),default=2)
     ap.add_argument('--asm-isr',action='store_true')
     ap.add_argument('--enable-sparse80',action='store_true')
-    ap.add_argument('--mul16-unroll',type=int,choices=(1,2,4,8,16),default=16)
+    ap.add_argument('--mul16-unroll',type=int,choices=(1,2,4,8,16),help='Default: 2 universal, 16 fixed-header')
     ap.add_argument('--flash-limit',type=int,default=8192,help='Hard full-image cap, at most the physical 8192 bytes')
     a=ap.parse_args()
-    r=build(a.input,a.output,assembly=a.enable_asm,queue=a.queue,repeat=a.repeat,wsl=a.wsl,avr_bin=a.avr_bin,lpc_segments=a.lpc_segments,asm_isr=a.asm_isr,flash_limit=a.flash_limit,sparse80=a.enable_sparse80,mul16_unroll=a.mul16_unroll)
+    r=build(a.input,a.output,assembly=a.enable_asm,queue=a.queue,repeat=a.repeat,wsl=a.wsl,avr_bin=a.avr_bin,lpc_segments=a.lpc_segments,asm_isr=a.asm_isr,flash_limit=a.flash_limit,sparse80=a.enable_sparse80,mul16_unroll=a.mul16_unroll,universal=a.universal)
     print(json.dumps({k:r[k] for k in ('flash_bytes','static_ram_bytes','samples','assembly')}))
     if r['requires_isp']:print('Warning: image exceeds the MH-ET LIVE standard USB bootloader limit (6012 bytes); load with an ISP programmer.')
