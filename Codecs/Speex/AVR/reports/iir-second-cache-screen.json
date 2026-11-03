@@ -1,0 +1,175 @@
+{
+  "scope": "Isolated two-order C/ASM IIR primitives; production decoder unchanged",
+  "target": "ATmega328P/classic AVR5, GNU ABI, AVR GCC 7.3.0, avr8js 0.21.1",
+  "sourceHashNormalization": "CRLF to LF; external headers and binary artifacts exact bytes",
+  "baselineKernelSha256": "0c2ab6382ebfe97cdcd412db62809ad1149d3861d790e73baf4696f0e30a982e",
+  "candidateKernelSha256": "193437dbc79dabc3a710ee062f0714a1896d53e16d29ec7d6674551607e7cda9",
+  "baselineSourceSha256": {
+    "src/avr_audio_output.h": "dd93e476ebfb2af8b86f7b92e8726f82fb2c0d8400c08c683eb49a4709cb84a3",
+    "src/avr_fixed.h": "3878d9da964234419a1b246ef5dde990b199b96a88c3476f21605f71c9049b67",
+    "src/avr_multiply.h": "36de5d16f5332c4c2924d45a4bc2f6cbea78607c6f1861e24800d72a9c48e81f",
+    "src/avr_shift.h": "92d78865eb4bbdb189a86557e22a08af88ee72cad3cf090c849fc1ae760c4a5f",
+    "src/avr_tables.h": "4e0e67e692b8093752cb2a02f4b359d710304341dd0d46d18e73c3b35598c3d9",
+    "src/bits.c": "745b06111e3ec46ec42be8bd598f7f730ffc87af2e13d474dcfaf125c2ca3b4a",
+    "src/compact_lsp.c.inc": "d902e393915c016f9fd0e351646d7f0bda00cd6a9b95c63c6ed7be56c7991811",
+    "src/compact_lsp_rates.c.inc": "60146af14dc2b86b253e87a9411e793406c04b0f72eaf982e61240262c085d65",
+    "src/forced_math.h": "3b4a9b5a0f36f8531c9a79159a53688d6ab2d53a181d7588cdd8dd3ab4fd6154",
+    "src/forced_pitch.h": "7716de88b622942af1e38739ea40e84c4872d66d97b67bc51164e620371b4560",
+    "src/iir_direct.c.inc": "584cc9fb7f1cf34cf51b7c1b708df5f4981fbaf2d653b73c9c6e9e4a5634acc5",
+    "src/iir_kernel.inc": "0c2ab6382ebfe97cdcd412db62809ad1149d3861d790e73baf4696f0e30a982e",
+    "src/innovation.h": "b42aee7475b58fe1315b78a5ef9f346dd019b66739d1469ce19fea98933e16f8",
+    "src/innovation.S": "4c83663cf3edd15eae7947bdf938ba05334daa50fbb8b3a2ccf12943f4bd45fb",
+    "src/innovation_core.inc": "96a56a6da1e0ae6ab9ec6bdf1f4499b742615146b404f4f602d1f08878310f60",
+    "src/long_pitch.h": "d4c26763b5143b86d0edfd6d1b84e37d85af2940e77d636ac8574c478cc983bd",
+    "src/lowrate_excitation.h": "36c72fb238c05768bdb0297c682c0f9ee7877f3825e3422909bca6274cce0b95",
+    "src/lowrate_mean.h": "53544dbd88d02cb95434b224780c2ee494368b37d9125a56002d8ca513c9d9c7",
+    "src/lowrate_mean.S": "7feec155fcc368c3b24dd90db57c821861e179d4f53890ea0a570edef4800f9d",
+    "src/lowrate_mean_kernel.inc": "44ef0fa5f324e6531e93e4af5e96a7576dbc07be96da8e1a06df8070859488ab",
+    "src/lowrate_noise.c": "50cfbefee37b6670be86695f75a11386ea0cf35f5ea1a04244494c77eefbd36c",
+    "src/lowrate_noise.h": "345dd85bc4f5983bd9826117ee87c510c230fdcc7d90f4fa9a515a9019b30893",
+    "src/lowrate_rng.h": "ba5d3564ad01449a68e98371d0fb2db5259f95b541d8653e0f283bff707f0689",
+    "src/lpc_dot.S": "8e40aaef0744c8614fe06f281874ebcf2173d94f3d585b00b5703bea2f851be5",
+    "src/lpc_update.S": "00bb267faac8ed005a51893c8572e48b1fa4bfc30f3cb734ac13c0a4f3d49d20",
+    "src/lsp_advance.S": "c7c92245b4af60827a477c7ffdcaf9847befe3ef691bfdf6a5ba0ca01d47fba9",
+    "src/lsp_angle.S": "a0061869a1602ea95a57aa410518b0420c524a65ed15ad7f26cf2b3ad4353391",
+    "src/lsp_finish.S": "51ea78f7e5a7733d000cbfca46f7981e310c0676221385249d2a4c618262690b",
+    "src/lsp_first.S": "12d2128c01ec50b45159545eef412a17cf3a8a40d71b5c7e6e43226b7b44cca5",
+    "src/lsp_pair.S": "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22",
+    "src/lsp_stage.S": "eaeaf109f57853cd58bfb96a181e50941912c5f2fa4e000a327b74245d741529",
+    "src/lsp_stage_macros.S": "5c997aba9ec8a46bac795e34c59b65b22201c2b0aa8cd2037d85405e3078e7c5",
+    "src/nb1_cache_layout.h": "fecb43edff19065f13fa27e3b9b408f7902103a2c7f8f86aab69fc430ef9f9aa",
+    "src/nb1_gain.h": "16585b63dcdc7898d2c0d6c408822635f20e45feed188ae1eaf2be754a1082f2",
+    "src/nb1_pitch.h": "9c968152f6f099e60531e00582eed784d9fbfa861c17c2a80eed360b33b8e841",
+    "src/nb1_vocoder.c": "77e654b178497182930bc2159b89d14ce326936f99bb4b61a3f5e6bf5040982f",
+    "src/nb1_vocoder.h": "efbcacd025768903db8bc4d9745286be4932131fb89f5ff0934966924c28fe59",
+    "src/nb1_vocoder.S": "bfa8fc37f9a86f97dcd3fd640ab2a7ac48fc7644ed47803f7349ece56a6b3942",
+    "src/nb1_zero_gain.h": "b8efc1c740186219f5d519116d0cfafb4c772c2eb6934509b81c261b7f1ae9ec",
+    "src/nb3_c_math.h": "9e89d9d789d9d9b72f7c69dcf0aa3b111a75db8a2d3963426791b2e6c9932154",
+    "src/nb3_header.h": "8d973f6bf9657858b910362d6999c32db0dc1be8f7c10bcb1e3e11d513dccd02",
+    "src/nb3_indices.h": "2171ad9e73cf6adb5abe4df9d07c262a94eabbca304789830f56b8302f36a460",
+    "src/nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "src/nb3_lsp_angle.h": "1c7b6f05e01a2067e8f07c7c342fdccf8232a209861a3d28f617b9eadd75203b",
+    "src/nb3_lsp_finish.h": "41b03398eeaeeae0d6c02da47e49ed7524b8799f25831e70d6dfe33d0ebe55c8",
+    "src/nb3_lsp_first.h": "1153f8c77c5cd2df39b1eb7c44d05e5e695a155dc5bf5e95c6d1db5c2655b9b1",
+    "src/nb3_lsp_pair.h": "ed59efb79b7a8af17e1cd3f48ade514084d599ebdd136797ed7920107ad7ac3c",
+    "src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "src/nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "src/nb4_excitation.h": "684e455ae43f57b16cefa227ab04a50b5825d978d41aa2388e995d897d776f51",
+    "src/nb4_subframe.h": "eb93b29731123939f2397888bdb9671e36979029f16d9cc304ac2a0a46346dc6",
+    "src/nb_decode.c.inc": "ee8374110d963982e8b308b12ff041fec2d630e1b83a3a258f16d5ce89e05294",
+    "src/packed24.h": "cd3d6cd54064fc9841aef7ff13abc801bff43cf79c3318b8175e52b9695dda73",
+    "src/packet_mode.h": "2729d18157a137eba36cac6695f92663858da309d64388c20011f062d197896d",
+    "src/pitch24.h": "530dbbd915a2f032067e756772eb81b29b5a8bdb429b92d22185701e09deff81",
+    "src/pitch_add.S": "6272ddbc09160381bb73fb86d2a8e97a60e20f37570df5d3896d28b59d5918ce",
+    "src/player.c": "8e960f4874f0f98c7f21f486c9c4317405a42c12bcda1330fb353658ee584454",
+    "src/profile_mode.h": "0052bc51ba4013ddc6e758a59a03fd3ecd1030c5ad07540008817180caa36d5b",
+    "src/profile_state.h": "72c6aec0f48e37bd6937a09c72dc5f97be408e7995464b711db2ec10e47af95f",
+    "src/q14.S": "8d93f106036746be2ec0400f78737c48ea3b7559428e9f1e41b1f0910333d839",
+    "src/q14_macros.S": "4913b0a3484ebf612750ea42f461ef8e17f4f95329be9dd44df6f1e3af0ec827",
+    "src/qmf_memory.c": "a1232858f274e30f7050334fc5b608edcd3d422fccda75de77430bc7831d08c3",
+    "src/qmf_memory.h": "ef340baf7353191f5c8294fb21b0f25bd46390186573a9ce8b3ef8033bc5f7e0",
+    "src/short_pitch.h": "a90485058cd47d9c762eea1bba4dda62f2f81a0e79457d67c51b69d39c2d300c",
+    "src/short_pitch_kernel.inc": "6801e39e986e600e30c0a34e240f7cb368be483d6e0d1f35ddacbf48e0e93998",
+    "src/speex_avr.c": "cb61c6c529f91219b32dd47491bdee8a0a95034e0206ce6b8a05d783df840262",
+    "src/speex_avr.h": "9ca142747c625230c30ea1cafddbf452da80bc45b25b5ee2ddeea754719e3566",
+    "src/speex_nb.h": "47ebf2505af9421b706a323528bc0f954e3a5c6069cae53fe6a6b13d84af13f7",
+    "src/speex_nb3.h": "b6aa205038d0e534991b7f0f684516dfbe4c7a8d30649550a52558c18b22f9d0",
+    "src/speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "src/speex_wb1.c": "36b1ef3767bd7436dcc67d3315678a1efe3bcb4584298f2c5feb42b830483121",
+    "src/speex_wb1.h": "6d4c9bc361ccd8b5fea23793e00bcb3345accc09e67a5114fe5bc0dd6d52abdc",
+    "src/wb_excitation_kernel.inc": "33bc675a1840fac8cecb05fc7ec4786a13267db91166db9ef76f67b64e71a399",
+    "src/wb_fold.c": "283afe5869bf0f2d39b45dfcab03eb0156a62323645384ca12cdd0cb0ca3e2e2",
+    "src/wb_fold.h": "3950dfcdc638aecfebb7ee8309c8e5e7bba59eaeabb465aca3368963e1be040d",
+    "src/wb_fold.S": "1f2d7b6f0ae346dc098fad921825fbe003d208a9dc32d5a2d34958d09c822b1f",
+    "src/wb_fold_kernel.inc": "ff52c6443df47be168638773d984a0094bd93282cb8bff282a0bd7aedd2f1a99",
+    "src/wb_gain_div.h": "eca484b59eeba1db89398bbda50dc7486b2fe9c9524cbf851aaadad18088b51e",
+    "src/wb_gain_div.S": "b22f29c1eb3cf385e0a3be89eb22e505167a2c3eedf5a1b9fa48a24b58c510f4",
+    "src/wb_iir.c": "7ce0ddaca8da575efca564660cb79337d6747e698de709b57ab74b4c5099870c",
+    "src/wb_iir.h": "cc268430e595b5a8edd14c47155028e0357a0830cd3cb8eb864a5b463020a4c2",
+    "src/wb_iir.S": "275936662303e102239afb58cb4a6d812541cd2bec68cbab7e0c03bb0ac9cd5e",
+    "src/wb_internal.h": "76839306b6484b3e25e44822a0c39e11b4dbabe4d3d1cbb65eaf01915fd8e1da",
+    "src/wb_player.c": "cd295cc8c53d603769981aa5d892c398b30487d3333769c231329b1c4a1ad8be",
+    "src/wb_qmf.c": "c27ff603c22ea71ac05ddd8256f13109593822c05fb34e71a7578c17d04a12f0",
+    "src/wb_qmf.h": "8b42180325ba8c60ee398f86ae696833f6201c580a7c68e970232e74412f6b3b",
+    "src/wb_qmf.S": "66af3d39a007be276d7b298cb167ef857bc10da84270a41eb5dee24d35e94350",
+    "src/zero_innovation.h": "dc192db47f3140e64ef11bc10c26790726ca5e1a556a99aff3a10bfbc7ce35c7",
+    "src/zero_shape_kernel.inc": "42c8aa44ff55935bbc27ecf5348629d3debbe28946fd72965e36f2c224736ed7"
+  },
+  "testSourceSha256": {
+    "tests/avr_iir_block.c": "48fdbfb9c9f8241bbf00fe0401cabf072421c716de4f5ba31b3eccb998cba534",
+    "tests/iir_nb_forced_c.c": "64ca1d710a35c987168294d8455b20ac7fd6e79aa60f6e8e9f12873e427d474d",
+    "tests/verify_iir_block.mjs": "e6287482c95a0a4ed6ad87dd40c486d99853cfe287ac3fd9d0cf28184da39367",
+    "tools/build_iir_block_test.py": "e9e0961dca1069a68a0ae9f8dc4401af54c9c7bd8a43bd6acf9b1173c5aa4f47",
+    "tests/screen_iir_second_cache.py": "426fff08b9356c8935fa3dacbf285986df26bf0172bfb61d3d0c0069f33a34bc"
+  },
+  "images": {
+    "baseline-unit": {
+      "binarySha256": "db3c433f91d03795f1a97c0b298120d15b00fbddd2a339d3680e9b954b9ca007",
+      "flashBytes": 3672,
+      "staticSramBytes": 791,
+      "deviceHeaderSha256ExactBytes": {
+        "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+        "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+        "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+      }
+    },
+    "candidate-unit": {
+      "binarySha256": "673c7f44c94c35a34a03bb1a72ee7d2475f815771b77ba59b07a71b35a4eec94",
+      "flashBytes": 3696,
+      "staticSramBytes": 791,
+      "deviceHeaderSha256ExactBytes": {
+        "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+        "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+        "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+      }
+    },
+    "candidate-irq": {
+      "binarySha256": "b75d6d09f92f213f51faea6f42bb1f037a80d123d96b74c9be2c0b5d9ba36527",
+      "flashBytes": 3850,
+      "staticSramBytes": 795,
+      "deviceHeaderSha256ExactBytes": {
+        "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+        "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+        "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+      }
+    }
+  },
+  "measuredMinAndMaxKernelCycles": {
+    "8": {
+      "before": {
+        "min": 11416,
+        "max": 11657
+      },
+      "after": {
+        "min": 11404,
+        "max": 11645
+      },
+      "minAndMaxSaving": 12
+    },
+    "10": {
+      "before": {
+        "min": 13762,
+        "max": 14003
+      },
+      "after": {
+        "min": 13744,
+        "max": 13985
+      },
+      "minAndMaxSaving": 18
+    }
+  },
+  "addedIsolatedFlashBytes": 24,
+  "staticSramAndStackUnchanged": true,
+  "explicitCObjectsByteIdentical": {
+    "nb.o": "f944898c4b2b688afed7a34b6fd9f85ba56952cb22eda5ee0e3008b298038e68",
+    "wb.o": "eeeecc11110e95452ad9e6001a98082046b621b241b2bde43c8faab153793e9c"
+  },
+  "candidateIrqInjections": 75463,
+  "dirtyR1Injections": 50077,
+  "expectedWholeWbFrameSavingCycles": 120,
+  "wholeDecoderSavingMeasured": false,
+  "productionOutputTimingAdmitted": false,
+  "physicalBoardTested": false,
+  "fullCDecoderExecuted": false
+}
