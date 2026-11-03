@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Reuse related QMF products](speex-qmf-common-product.md): one signed24
+product updates two accumulators, reducing measured multiplication count
+and exact block time while retaining the C oracle and boundary IRQ proof.
+
 [Share finite HB interpolation loops](speex-hb-interpolation.md): prove the
 codebook domain before narrowing differences, share complementary quarters
 through pointer exchange, and compare isolated speed/Flash recipes. Integration
