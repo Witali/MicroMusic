@@ -3044,6 +3044,10 @@ verified against the frozen 91-stream corpus.
 product updates two accumulators, reducing measured multiplication count
 and exact block time while retaining the C oracle and boundary IRQ proof.
 
+[Split bounded QMF accumulators into words](speex-qmf-split-accumulators.md):
+derive the high/low bias from coefficient bounds, compare stack and dead-mirror
+pointer spills, and measure both complete-image speed and maximum SRAM use.
+
 [Share finite HB interpolation loops](speex-hb-interpolation.md): prove the
 codebook domain before narrowing differences, share complementary quarters
 through pointer exchange, and compare isolated speed/Flash recipes. Integration
