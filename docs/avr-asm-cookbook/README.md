@@ -3049,6 +3049,10 @@ and loaded whole-decoder admission remain separate.
 all 128 packet pitches, retain exact byte results and selectable original C;
 measured isolated lookup/threshold/poly recipes, without a full-player claim.
 
+[Exhaust correlated LPC codebooks before narrowing](speex-finite-lpc-response.md):
+25,171,968 paired current/Xiph scalar conversions prove HB1 response 111..31849,
+with separate term/prefix bounds and exact unsigned-word reduction; no timing claim.
+
 [Compose the exact finite vocoder gain map](speex-finite-gain.md): preserve
 both quantizers in sixteen Flash bytes, compare complete caller recipes and
 retain range information where the measured compiler benefits. Also covers

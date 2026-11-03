@@ -1,0 +1,265 @@
+{
+  "scope": "Exhaustive isolated HB1 LPC response domain; no complete C decoder execution",
+  "compilerVersion": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "compilerFlags": [
+    "-std=c11",
+    "-O3",
+    "-fwrapv",
+    "-fno-strict-aliasing",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-DFIXED_POINT"
+  ],
+  "currentPrimitiveMatchesSource": true,
+  "untouchedXiphComparisons": 25171968,
+  "sourceHashMode": "Text normalized to LF",
+  "sourceSha256": {
+    "tests/host_wb_response.c": "db1fed3c226be6dc0de550a45276e9b080e227c2db6083d8774b62db79134edc",
+    "tests/check_wb_response.py": "bdbdf8317caaef7b740fa6f2f4d8275dd2ce2057ef09b452cab579ffd3602a5e",
+    "tests/check_wb_interpolation.py": "deaa540be3d67e92ab3f39d87e7d59c0b13036668bc4815dde994a7f465fc220",
+    "src/compact_lsp.c.inc": "d902e393915c016f9fd0e351646d7f0bda00cd6a9b95c63c6ed7be56c7991811",
+    "src/nb3_lsp_first.h": "1153f8c77c5cd2df39b1eb7c44d05e5e695a155dc5bf5e95c6d1db5c2655b9b1",
+    "src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "src/nb3_c_math.h": "9e89d9d789d9d9b72f7c69dcf0aa3b111a75db8a2d3963426791b2e6c9932154",
+    "src/avr_fixed.h": "3878d9da964234419a1b246ef5dde990b199b96a88c3476f21605f71c9049b67",
+    "src/speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "src/speex_wb1.c": "4af3b6d271010b599f8a1516af805e81841cba33f2a94dd9616f3a339bae9336",
+    "tools/build.py": "3a5e8f99f0858510f14871ebb6beefa0c29c3cf4991d56c2cbb582cebb2cb170",
+    "tools/apply_profile.py": "223a989b471d6a135e4e72fee56a32580ae677ef57e8cee85176e9d2da0963cf",
+    "handoff/upstream/tools/apply_upstream_port.py": "8fcb1f72fc23ec62cbf8801a50f945a1fcf0bf23394ee400984d2fc071e0c475",
+    "handoff/upstream/tools/apply_tight_exc.py": "2b81395a1a933d944ec9eae780399c3a11533e3ba12383854b2c3042b8fa77ad",
+    "vendor/speex-1.2.1/libspeex/lsp.c": "d9589073ef0e7ba8280dcd0c719166378e73025bba6ab0bfa2791ede122f9596",
+    "vendor/speex-1.2.1/libspeex/arch.h": "920d5884efa55f35ef1c62481b6b32fa1d427e7826b9b6a8f3c916107d4513c9",
+    "vendor/speex-1.2.1/libspeex/math_approx.h": "7b59408dc40f346f1c302cbddb1e5c1cfcebf61913c75b81efe41e2035237317",
+    "vendor/speex-1.2.1/libspeex/fixed_generic.h": "277197bab697189490e094211ff752f80c4f26a3d9fb6135d3d8a1e573b2a64d",
+    "vendor/speex-1.2.1/libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411"
+  },
+  "generatedSourceSha256": {
+    "libspeex/lsp.c": "47eda34db0a22e7bf742e53cbef7be74bc1e7d089189d5260c25efa51e71ba2e",
+    "libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411",
+    "libspeex/arch.h": "86a8e0cfb877e3afeff654bb3549a10383990ecd36f83c6864918b990e07ce7a",
+    "libspeex/math_approx.h": "7b59408dc40f346f1c302cbddb1e5c1cfcebf61913c75b81efe41e2035237317",
+    "libspeex/fixed_generic.h": "277197bab697189490e094211ff752f80c4f26a3d9fb6135d3d8a1e573b2a64d",
+    "include/speex/speex_types.h": "9ed799b1e5c5f272ba5967d845fdef50c0afa239bde839f5bcec3e453df3cb3c",
+    "include/speex/speex_config_types.h": "bde59dfe4452738d7e60868e481d30b62a9a400a33f83aadc323081e2e43ce03"
+  },
+  "endpointVectors": 4096,
+  "uniquePrimitiveCases": 25171968,
+  "representedQuarterCases": 67108864,
+  "responseExpression": "8274 + sum(den[odd] - den[even])",
+  "responseMin": 111,
+  "responseMax": 31849,
+  "zeroDenResponse": 8274,
+  "zeroDenInsideBounds": true,
+  "quarterRows": [
+    {
+      "quarter": 1,
+      "count": 16777216,
+      "min": 111,
+      "max": 31849,
+      "nonpositive": 0,
+      "above32767": 0,
+      "above65535": 0,
+      "minOld": 2042,
+      "minNext": 2042,
+      "maxOld": 2744,
+      "maxNext": 2232,
+      "minAngles": [
+        4976,
+        7056,
+        11088,
+        14240,
+        18224,
+        21536,
+        22976,
+        25326
+      ],
+      "minLpc": [
+        15570,
+        9209,
+        4053,
+        5365,
+        5228,
+        4934,
+        3880,
+        1060
+      ],
+      "maxAngles": [
+        6040,
+        8112,
+        10208,
+        11448,
+        15016,
+        16480,
+        17896,
+        20032
+      ],
+      "maxLpc": [
+        2039,
+        11691,
+        2374,
+        10941,
+        1665,
+        5585,
+        1049,
+        2485
+      ]
+    },
+    {
+      "quarter": 2,
+      "count": 8390656,
+      "min": 111,
+      "max": 31831,
+      "nonpositive": 0,
+      "above32767": 0,
+      "above65535": 0,
+      "minOld": 2042,
+      "minNext": 2042,
+      "maxOld": 2232,
+      "maxNext": 2744,
+      "minAngles": [
+        4976,
+        7056,
+        11088,
+        14240,
+        18224,
+        21536,
+        22976,
+        25326
+      ],
+      "minLpc": [
+        15570,
+        9209,
+        4053,
+        5365,
+        5228,
+        4934,
+        3880,
+        1060
+      ],
+      "maxAngles": [
+        5936,
+        7904,
+        9936,
+        11104,
+        14752,
+        16240,
+        17840,
+        20304
+      ],
+      "maxLpc": [
+        852,
+        10949,
+        1525,
+        10023,
+        1384,
+        4924,
+        994,
+        2416
+      ]
+    },
+    {
+      "quarter": 4,
+      "count": 4096,
+      "min": 111,
+      "max": 31605,
+      "nonpositive": 0,
+      "above32767": 0,
+      "above65535": 0,
+      "minOld": 2042,
+      "minNext": 2042,
+      "maxOld": 2744,
+      "maxNext": 2744,
+      "minAngles": [
+        4976,
+        7056,
+        11088,
+        14240,
+        18224,
+        21536,
+        22976,
+        25326
+      ],
+      "minLpc": [
+        15570,
+        9209,
+        4053,
+        5365,
+        5228,
+        4934,
+        3880,
+        1060
+      ],
+      "maxAngles": [
+        6144,
+        8320,
+        10480,
+        11792,
+        15280,
+        16720,
+        17952,
+        19760
+      ],
+      "maxLpc": [
+        3218,
+        12529,
+        3371,
+        11841,
+        2083,
+        6205,
+        1132,
+        2560
+      ]
+    }
+  ],
+  "termsAndPrefixes": [
+    {
+      "termIndex": 0,
+      "differenceMin": -15638,
+      "differenceMax": 12311,
+      "rhPrefixMin": -7446,
+      "rhPrefixMax": 20503,
+      "prefixOutsideSigned16": 0
+    },
+    {
+      "termIndex": 1,
+      "differenceMin": -13885,
+      "differenceMax": 15426,
+      "rhPrefixMin": -2506,
+      "rhPrefixMax": 27364,
+      "prefixOutsideSigned16": 0
+    },
+    {
+      "termIndex": 2,
+      "differenceMin": -9917,
+      "differenceMax": 8640,
+      "rhPrefixMin": -3057,
+      "rhPrefixMax": 30331,
+      "prefixOutsideSigned16": 0
+    },
+    {
+      "termIndex": 3,
+      "differenceMin": -6316,
+      "differenceMax": 5466,
+      "rhPrefixMin": 29,
+      "rhPrefixMax": 31767,
+      "prefixOutsideSigned16": 0
+    }
+  ],
+  "modular16ResponseExact": true,
+  "symmetryProof": [
+    "Every endpoint component is a multiple of 16. Quarter 3(old,new) equals quarter 1(new,old), including deterministic margin repair.",
+    "Quarter 2 is symmetric in old/new; all unordered pairs and the diagonal are checked.",
+    "Quarter 4 depends only on the new endpoint; all 4096 are checked."
+  ],
+  "backend": "Host portable C primitive compared with untouched pinned Xiph primitive",
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "cDecoderExecuted": false,
+  "limits": [
+    "The bound applies to the pinned 4096 HB1 codebook endpoints, exact quarter interpolation and sequential margin repair.",
+    "AVR applicability also depends on the existing exact C/ASM LPC primitive contract; this host run does not execute assembly.",
+    "Modulo 16 storage of a proven final response alone does not establish signed16 safety of intermediate terms or prefixes; separate measured ranges are included.",
+    "No decoder cycle, continuous-output or physical-board timing is measured."
+  ]
+}
