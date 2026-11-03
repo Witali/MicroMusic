@@ -110,7 +110,9 @@ test('verified Tiny88 firmware replaces previews once and retains quality across
       assert.equal(app.location.searchParams.get('firmware'),`lpx-${clip}-quality`);
       assert.equal(app.location.searchParams.get('device'),'attiny88');
       assert.equal(app.location.searchParams.get('board'),'mh-et-live-16mhz');
-      assert.equal(app.get('speech-profile-select').children.length,clip==='bread'?3:2);
+      assert.equal(app.get('speech-profile-select').children.length,2);
+      assert.deepEqual(app.get('speech-profile-select').children.map(option=>option.value),[`lpx-${clip}-compact`,`lpx-${clip}-quality`]);
+      assert.deepEqual(app.get('speech-profile-select').children.map(option=>option.textContent),['Компактный','Повышенное качество']);
       assert.ok(app.get('speech-profile-select').children.every(option=>!option.value.startsWith('speex-')));
       const download=new URL(app.get('download').href);
       assert.equal(download.origin+download.pathname,'https://example.test'+prefix+`web-player/firmware/attiny88/lpx-tiny88-${clip}-quality.hex`);
@@ -119,12 +121,16 @@ test('verified Tiny88 firmware replaces previews once and retains quality across
       assert.equal(cards(app).length,4);
     }
     app.get('speech-profile-select').value='lpx-bread-low15';app.get('speech-profile-select').onchange();await flush();
-    assert.equal(app.get('download').download,'lpx-bread-low15.hex');
-    assert.ok(cards(app).slice(0,3).every(card=>card.disabled&&card.onclick===undefined));
+    assert.equal(app.get('speech-profile-select').value,'lpx-bread-quality');
+    assert.equal(app.get('download').download,'lpx-bread-quality.hex');
+    assert.ok(cards(app).every(card=>!card.disabled));
     assert.equal(app.workers.length,0);
     const reopened=await playerApp({prefix,device:'attiny88',firmware:'lpx-bread-low15',board:'mh-et-live-16mhz',catalogs:{'firmware-lpx-attiny88.json':data}});await flush();
-    assert.equal(reopened.location.searchParams.get('firmware'),'lpx-bread-low15');
-    assert.equal(reopened.get('download').download,'lpx-bread-low15.hex');
+    assert.equal(reopened.location.searchParams.get('firmware'),'lpx-bread-compact');
+    assert.equal(reopened.get('download').download,'lpx-bread-compact.hex');
+    assert.deepEqual(reopened.get('speech-profile-select').children.map(option=>option.value),['lpx-bread-compact','lpx-bread-quality']);
+    cards(reopened)[0].onclick();await flush();
+    assert.equal(reopened.location.searchParams.get('firmware'),'lpx-chego-compact');
     reopened.get('device-select').value='atmega328p';await reopened.get('device-select').onchange();await flush();
     assert.equal(reopened.get('speech-upload-warning').hidden,true);
   }
@@ -136,7 +142,8 @@ test('unavailable or invalid Tiny88 release retains the existing complete WAV-on
     const app=await playerApp({device:'attiny88',firmware:'lpx-bread-quality',catalogs:{'firmware-lpx-attiny88.json':data},
       fetchHook:({url,response})=>!corrupt&&url.pathname.endsWith('/firmware-lpx-attiny88.json')?{ok:false,status:503}:response});await flush();
     assert.equal(app.get('error').hidden,true);assert.equal(cards(app).length,4);
-    assert.equal(app.get('speech-profile-select').children.length,3);
+    assert.equal(app.get('speech-profile-select').children.length,2);
+    assert.deepEqual(app.get('speech-profile-select').children.map(option=>option.textContent),['Компактный','Повышенное качество']);
     assert.equal(app.get('download').getAttribute('aria-disabled'),'true');
     assert.equal(app.get('speech-upload-warning').hidden,true);
     assert.ok(app.preview.src.endsWith('/audio/lpx-bread/quality.wav'));

@@ -2,16 +2,14 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {playerApp,deferred} from './helpers/legacy-player-app.mjs';
-import {legacyManifest as manifest,publishedManifest,threeVariantManifest,low15Fixture} from './helpers/lpx-manifests.mjs';
+import {legacyManifest as manifest,publishedManifest,threeVariantManifest} from './helpers/lpx-manifests.mjs';
 
 const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const flush=()=>new Promise(setImmediate);
 const legacyApp=options=>playerApp({catalogs:{'manifest.json':manifest},...options});
 const fixture=options=>legacyApp({firmware:'lpx-bread-compact',...options});
-// Before publication, the VM uses an existing same-length WAV solely to test
-// waveform transport; this fixture does not test the experimental decoder.
-const s15App=options=>playerApp({catalogs:{'manifest.json':threeVariantManifest},
-  assets:{'low15.wav':readFileSync(new URL('../audio/lpx-bread/quality.wav',import.meta.url))},...options});
+// Older manifests can still contain the archived experimental profile.
+const s15App=options=>playerApp({catalogs:{'manifest.json':threeVariantManifest},...options});
 const cards=app=>app.get('catalog').children.map(item=>item.children[0]);
 const choose=async(app,device)=>{app.get('device-select').value=device;await app.get('device-select').onchange();await flush();};
 const select=(app,id)=>cards(app).find(card=>card.dataset.firmware===id).onclick();
@@ -62,17 +60,14 @@ test('LPX deep links choose Tiny88 and the correct native asset at both root and
   }
 });
 
-test('S15 becomes the first Tiny88 choice and labels the separate experimental decoder in the shared player',async()=>{
+test('archived S15 is excluded from Tiny88 choices even with an older manifest',async()=>{
   const app=await s15App({device:'attiny88'});await flush();
-  assert.deepEqual(cards(app).map(card=>card.dataset.firmware),['lpx-bread-low15','lpx-bread-compact','lpx-bread-quality']);
-  assert.equal(app.get('catalog-count').textContent,3);assert.equal(app.workers.length,0);
-  assert.equal(app.get('selected-title').textContent,'LPX-S15 · Очень низкий битрейт');
-  assert.equal(app.get('preview-format-note').hidden,false);
-  assert.equal(app.get('preview-format-note').textContent,'LPX-S15 · экспериментальный формат; нужен отдельный декодер. ');
-  assert.equal(app.location.searchParams.get('firmware'),'lpx-bread-low15');
-  const text=app.get('rom-details').textContent.replace(/\s/g,'');
-  assert.ok(text.includes(low15Fixture.bytes+'БданныхLPX'));assert.ok(text.includes('≈1кбит/с'));
-  assert.match(app.get('rom-name').href,/\/low15\.lpx$/);assert.equal(app.get('rom-name').download,'lpx-bread-low15.lpx');
+  assert.deepEqual(cards(app).map(card=>card.dataset.firmware),['lpx-bread-compact','lpx-bread-quality']);
+  assert.equal(app.get('catalog-count').textContent,2);assert.equal(app.workers.length,0);
+  assert.equal(app.get('selected-title').textContent,'LPX · Компактный');
+  assert.equal(app.get('preview-format-note').hidden,true);
+  assert.equal(app.location.searchParams.get('firmware'),'lpx-bread-compact');
+  assert.match(app.get('rom-name').href,/\/compact\.lpx$/);
   nativeDownloads(app);
   assert.equal(app.get('wave').dataset.samples,'19200');assert.equal(app.get('avr-inspector').hidden,true);
   select(app,'lpx-bread-quality');
@@ -80,9 +75,8 @@ test('S15 becomes the first Tiny88 choice and labels the separate experimental d
   assert.equal(app.get('selected-title').textContent,'LPX · Повышенное качество');
 });
 
-test('actual published Tiny88 cards are ordered low15, compact, quality with their real costs and waveform',async()=>{
-  const low=publishedManifest.variants.find(variant=>variant.id==='low15');
-  const ids=low?['low15','compact','quality']:['compact','quality'];
+test('actual published Tiny88 cards offer compact and quality with their real costs and waveform',async()=>{
+  const ids=['compact','quality'];
   const app=await playerApp({device:'attiny88'});await flush();
   assert.deepEqual(cards(app).map(card=>card.dataset.firmware),ids.map(id=>'lpx-bread-'+id));
   for(const id of ids){
@@ -108,17 +102,11 @@ test('actual published Tiny88 cards are ordered low15, compact, quality with the
     assert.equal(app.get('machine-memory').textContent,'8');
     assert.equal(app.get('wave').dataset.samples,String(publishedManifest.samples));
   }
-  if(low){
-    assert.deepEqual(ids.map(id=>publishedManifest.variants.find(item=>item.id===id).bitrateBps),[1390,3360,6330]);
-    select(app,'lpx-bread-low15');await app.get('play').onclick();app.preview.advance(1.2);
-    assert.equal(app.get('elapsed').textContent,'00:01.2');assert.equal(app.preview.paused,false);
-    await app.get('play-original').onclick();assert.equal(app.preview.paused,true);assert.equal(app.original.paused,false);
-  }
 });
 
 test('actual Tiny88 test-image Flash split is shown without turning test code into firmware playback',async()=>{
   const app=await playerApp({device:'attiny88'});
-  const expected={low15:[4743,417,5160],compact:[4412,1008,5420],quality:[4411,1899,6310]};
+  const expected={compact:[4412,1008,5420],quality:[4411,1899,6310]};
   for(const [id,values] of Object.entries(expected)){
     const measurement=publishedManifest.variants.find(variant=>variant.id===id).flashMeasurement;
     assert.deepEqual([measurement.programFlashBytes,measurement.encodedBytes,measurement.totalFlashBytes],values);
@@ -134,10 +122,10 @@ test('actual Tiny88 test-image Flash split is shown without turning test code in
   }
 });
 
-test('an explicit legacy manifest without measurements keeps every program size unknown, including S15',async()=>{
+test('an explicit legacy manifest without measurements keeps available program sizes unknown',async()=>{
   const data=structuredClone(publishedManifest);for(const variant of data.variants)delete variant.flashMeasurement;
   const app=await playerApp({device:'attiny88',catalogs:{'manifest.json':data}});
-  for(const id of ['quality','compact','low15']){
+  for(const id of ['quality','compact']){
     select(app,'lpx-bread-'+id);
     const card=cards(app).find(item=>item.dataset.firmware==='lpx-bread-'+id);
     assert.match(card.children[1].children[1].textContent,/— Б код/);
@@ -147,19 +135,20 @@ test('an explicit legacy manifest without measurements keeps every program size 
   }
 });
 
-test('all three direct preview IDs retain correct assets and device URLs at root and Pages paths',async()=>{
+test('direct preview IDs retain assets and URLs, with archived S15 links opening compact',async()=>{
   for(const prefix of ['/','/MicroMusic/'])for(const variant of threeVariantManifest.variants){
     const app=await s15App({prefix,firmware:'lpx-bread-'+variant.id});await flush();
-    assert.equal(app.location.searchParams.get('firmware'),'lpx-bread-'+variant.id);
+    const active=variant.id==='low15'?threeVariantManifest.variants.find(item=>item.id==='compact'):variant;
+    assert.equal(app.location.searchParams.get('firmware'),'lpx-bread-'+active.id);
     assert.equal(app.location.searchParams.get('device'),'attiny88');assert.equal(app.location.searchParams.get('board'),'mh-et-live-16mhz');
-    assert.equal(app.preview.src,'https://example.test'+prefix+'web-player/'+variant.audio);
-    assert.equal(app.get('rom-name').href,'https://example.test'+prefix+'web-player/'+variant.stream);
+    assert.equal(app.preview.src,'https://example.test'+prefix+'web-player/'+active.audio);
+    assert.equal(app.get('rom-name').href,'https://example.test'+prefix+'web-player/'+active.stream);
     nativeDownloads(app);
     assert.equal(app.workers.length,0);
   }
 });
 
-test('S15 uses the same pause/replay/original/volume path and restores genuine HQ4 after a device switch',async()=>{
+test('redirected S15 links retain pause/replay/original/volume and device switching',async()=>{
   const app=await s15App({firmware:'lpx-bread-low15'});await flush();
   await app.get('play').onclick();app.preview.advance(.8);
   await app.get('play').onclick();assert.equal(app.preview.paused,true);assert.equal(app.preview.currentTime,.8);
@@ -169,8 +158,8 @@ test('S15 uses the same pause/replay/original/volume path and restores genuine H
   app.get('volume').value='.25';app.get('volume').oninput();assert.equal(app.preview.volume,.25);assert.equal(app.original.volume,.25);
   await choose(app,'attiny13a');assert.equal(app.original.paused,true);assert.equal(app.get('preview-format-note').hidden,true);
   assert.equal(app.workers.at(-1).messages[0].entry.flashHex,app.catalog.entries[0].flashHex);
-  await choose(app,'attiny88');assert.equal(app.get('selected-title').textContent,'LPX-S15 · Очень низкий битрейт');
-  assert.equal(app.get('preview-format-note').hidden,false);assert.equal(app.preview.volume,.25);
+  await choose(app,'attiny88');assert.equal(app.get('selected-title').textContent,'LPX · Компактный');
+  assert.equal(app.get('preview-format-note').hidden,true);assert.equal(app.preview.volume,.25);
 });
 
 test('native selection exposes exact data costs and LPX download, with no invented firmware/CPU UI',async()=>{

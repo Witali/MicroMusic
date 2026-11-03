@@ -627,6 +627,8 @@ try {
     catalog.entries.push(...verified);
     previewError=undefined;
   }catch{/* Retain the existing WAV-only previews when verified firmware is unavailable. */}
+  // Keep the experimental S15 assets archived, with v5 choices in the Tiny88 player.
+  catalog.entries=catalog.entries.filter(entry=>entry.device!=='attiny88'||entry.id!=='lpx-bread-low15');
   document.querySelector('footer span:last-child').textContent='Речевые кодеки · AVR-прошивки и сравнение с оригиналом';
   if(speech&&['127.0.0.1','localhost'].includes(location.hostname)) {
     try {
@@ -644,7 +646,8 @@ try {
     } catch { /* Optional private listening assets must not hide public firmware. */ }
   }
   const requested=new URL(location.href).searchParams.get('firmware')||catalog.defaultId;
-  const id=catalog.aliases?.[requested]??requested;
+  const requestedId=catalog.aliases?.[requested]??requested;
+  const id=requestedId==='lpx-bread-low15'?'lpx-bread-compact':requestedId;
   const exact=catalog.entries.find(entry=>entry.id===id);
   const requestedDevice=new URL(location.href).searchParams.get('device');
   const device=['attiny13a','attiny88','atmega328p'].includes(requestedDevice)?requestedDevice

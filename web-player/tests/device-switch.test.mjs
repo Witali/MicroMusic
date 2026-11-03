@@ -7,7 +7,7 @@ const flush=()=>new Promise(resolve=>setImmediate(resolve));
 const tiny13=JSON.parse(readFileSync(new URL('../firmware.json',import.meta.url)));
 const tiny88=JSON.parse(readFileSync(new URL('../firmware-attiny88.json',import.meta.url)));
 const previews=JSON.parse(readFileSync(new URL('../audio/lpx-bread/manifest.json',import.meta.url)));
-const defaultPreview=previews.variants.find(variant=>variant.id==='low15')||previews.variants.find(variant=>variant.id==='compact');
+const defaultPreview=previews.variants.find(variant=>variant.id==='compact');
 const init=app=>app.workers.at(-1).messages.find(message=>message.type==='init');
 const engine=(app,value)=>app.radios.find(radio=>radio.value===value);
 async function chooseDevice(app,value){
