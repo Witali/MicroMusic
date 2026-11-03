@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Replace a finite fixed-point pitch root](speex-finite-pitch-root.md): prove
+all 128 packet pitches, retain exact byte results and selectable original C;
+measured isolated lookup/threshold/poly recipes, without a full-player claim.
+
 [Compose the exact finite vocoder gain map](speex-finite-gain.md): preserve
 both quantizers in sixteen Flash bytes, compare complete caller recipes and
 retain range information where the measured compiler benefits. Also covers
