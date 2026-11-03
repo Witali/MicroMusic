@@ -1,0 +1,870 @@
+{
+  "scope": "Validated-HB1 scalar/C fallback/ABI/IRQ evidence and scalar replay only; whole-firmware admission is separate",
+  "target": "ATmega328P / classic AVR5 / GNU ABI",
+  "compiler": "avr-gcc.exe (GCC) 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "sourceHashMode": "UTF-8 text normalized to LF",
+  "sourceSha256": {
+    "src/wb_gain_div.h": "c6b6872e09d93dc8eb152396d58d5479e3984db795a9e1c77cb2929c229cf87e",
+    "src/wb_gain_div.S": "6a6f27ce4517c2cf4f03779b1d5b7e12b115ccbd05c55f6c84b744bf923abf87",
+    "src/speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "tests/avr_wb_hb_ratio.c": "b347294d91c35680ce3e3c98d492cf32d87805126519779cf31d29bc4e84433c",
+    "tests/build_wb_hb_ratio.py": "a382570da75ad25b356449a8f0a1f7a90bb435524efecf3715d1e466af8ab0c9",
+    "tests/verify_wb_hb_ratio.mjs": "22aaab44eded446cb6513fac2eb9dc06c92d3194b1a2168c85f014dd02475c1f",
+    "tests/capture_wb_hb_ratio.mjs": "bbb379f87780f68e24f173207c8a88593934cbda1e6df4e0813f4d719acb8b24",
+    "tests/audit_wb_hb_ratio.py": "5535e0b3cd9024c3151989a339718e424d2f0fea23b5856085673a5d6c2b4d93",
+    "tests/avr_wb_ratio.c": "aa558123c5728ad47d847c7f0f404d2dc4e26b47a11e29eb33b894c05a2bba51",
+    "tests/verify_wb_ratio.mjs": "577c4dcd91d80a850e810b82bef882796f34704bf7533e79aca33cce39f36f32",
+    "tests/avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f",
+    "package.json": "493477f4b8a68d5b3c93d9ab509539260a8511618266981e4648f4dfc79774c5",
+    "package-lock.json": "8a2d740662db2dfbc0bd79b7c9c62908d3f3f820f42e7771ed9ae4b98373f8b8"
+  },
+  "hbDomainProofSha256": "b869e959fb18b776b7d3b520e637380a0d52e7ea239389711497eafca4db347c",
+  "genericParentReceiptSha256": "8858dbaf366e17fd5a98263dfa69e628754c1ae988509c99f7da9ddf1fa71d02",
+  "toolSha256": {
+    "compiler": "d3a9a093afbd132302e430e4c88bbacccb0490ebf730f626b74662dc2460307b",
+    "nm": "4cf4392a0c0c44144668a1d8b70144708e32fa74b6279bab4e3041cb5345b593",
+    "objcopy": "5bc07336d3dc78ef13a36db73b66ca206447fc9a40035ba8f481901084f737d5",
+    "objdump": "6379ac8e391b100febd0be4f30461e0148cbd59435aa574c1e96ece55eac3726",
+    "cc1": "d47c916ac889376a6f479a1579c05875ce56ec22b70e654ebf427911a5980653",
+    "as": "f4742917d141a23f4863086e6c0a3803b4da3c444cf1935303165b6f7e7e754e",
+    "ld": "b8aa2ff51061ff713976e6db14e9adb492436e5b463679a8b9e718c8ff0f2bdf",
+    "collect2": "bc764c5b40a2ff8df5081e4f6abefd1acb457fa2e204485653282ffff2336040",
+    "lto1": "19fc11f9559ac33f110f4a61c0097cecd755ff3888ff9e35a6219eef6fc58ab4",
+    "lto-wrapper": "be467fba9a189c7d4c304fd6d64eda3645fecd41a262dc99d2656f330fb69fc3"
+  },
+  "deviceHeadersSha256": {
+    "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+    "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+  },
+  "domain": {
+    "low": [
+      1,
+      335949
+    ],
+    "high": [
+      111,
+      31849
+    ],
+    "roundedNumerator": [
+      183,
+      43017396
+    ],
+    "shiftedRemainderMax": 63697
+  },
+  "privateAsmBytes": 306,
+  "genericAsmBytes": 72,
+  "genericAsmBodySha256": "8a319fae720a31a29d503d5583c822677d5d1032f5aa921cd1a2d88b2182e12b",
+  "functionSectionGcBothDirectionsVerified": true,
+  "localStackBytes": 0,
+  "persistentDataBytes": 0,
+  "normalAsmCycles": "138 + popcount(quotient)",
+  "saturationAsmCycles": 16,
+  "cycleScope": "Entry through RET, excluding IRQ entry/instructions; selected wrappers include rounding/setup",
+  "fullDomain": {
+    "reportSha256": "6a85570f37aa8d7a40c4a65e53300e568ec3e7bb5d5d0e1d8b815f056f699092",
+    "binding": {
+      "mode": "Reused by verified identical complete fixture firmware",
+      "binarySha256": "e2df2c79f70b575fa5b9f756bd165c15777cf340f03fcd0778040bbc101f94dc",
+      "originalReportSha256": "6a85570f37aa8d7a40c4a65e53300e568ec3e7bb5d5d0e1d8b815f056f699092",
+      "originalInputSha256": "a672da79f7c9398a3b682283501d6c9fc0fc9009418f6fa4a2ffe7d96ad6abff",
+      "runtimeResultsChanged": false
+    },
+    "results": {
+      "backend": "asm",
+      "cases": 106727,
+      "divisorsSwept": 31739,
+      "boundaryCases": 1510,
+      "coefficientDerivedCases": 10000,
+      "allValidatedHbDivisors": true,
+      "validatedHbDivisorBounds": [
+        111,
+        31849
+      ],
+      "negativeRoundedNumerators": 0,
+      "saturatedCases": 1375,
+      "zeroQuotients": 31721,
+      "independentBigIntExact": true,
+      "explicitBackendSelectionVerified": true,
+      "calleeSavedAndR1Returns": 213454,
+      "stats": {
+        "selected": {
+          "calls": 106727,
+          "minCycles": 70,
+          "maxCycles": 207,
+          "totalCycles": 20702343
+        },
+        "asm": {
+          "calls": 213454,
+          "minCycles": 16,
+          "maxCycles": 153
+        },
+        "c": {
+          "calls": 106727,
+          "minCycles": 652,
+          "maxCycles": 700
+        }
+      },
+      "includesInterrupts": true,
+      "completedTimerInterrupts": 304939,
+      "timerCompareEvents": 304939,
+      "noLostTimerInterrupts": true,
+      "peakStack": 22
+    }
+  },
+  "currentQuickIrq": {
+    "asm": {
+      "binarySha256": "e2df2c79f70b575fa5b9f756bd165c15777cf340f03fcd0778040bbc101f94dc",
+      "reportSha256": "83b9905d304e8e001b3c53f48a1abd5e74652941e3b9b12ba72d49f324b916b7",
+      "results": {
+        "backend": "asm",
+        "cases": 1862,
+        "divisorsSwept": 32,
+        "boundaryCases": 1510,
+        "coefficientDerivedCases": 256,
+        "allValidatedHbDivisors": false,
+        "validatedHbDivisorBounds": [
+          111,
+          31849
+        ],
+        "negativeRoundedNumerators": 0,
+        "saturatedCases": 136,
+        "zeroQuotients": 151,
+        "independentBigIntExact": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 3724,
+        "stats": {
+          "selected": {
+            "calls": 1862,
+            "minCycles": 70,
+            "maxCycles": 207,
+            "totalCycles": 356457
+          },
+          "asm": {
+            "calls": 3724,
+            "minCycles": 16,
+            "maxCycles": 153
+          },
+          "c": {
+            "calls": 1862,
+            "minCycles": 652,
+            "maxCycles": 697
+          }
+        },
+        "includesInterrupts": true,
+        "completedTimerInterrupts": 5313,
+        "timerCompareEvents": 5313,
+        "noLostTimerInterrupts": true,
+        "peakStack": 22
+      }
+    },
+    "c": {
+      "binarySha256": "0d7d6bb9c298d28d78a2f6b0f78d127bac6b45b3f628c01f5f6b58a300f83d42",
+      "reportSha256": "97e4984dc90ace08d036f0682126fcd1b0ff9995ffc6268d0bd5d37ee01a2bca",
+      "results": {
+        "backend": "c",
+        "cases": 1862,
+        "divisorsSwept": 32,
+        "boundaryCases": 1510,
+        "coefficientDerivedCases": 256,
+        "allValidatedHbDivisors": false,
+        "validatedHbDivisorBounds": [
+          111,
+          31849
+        ],
+        "negativeRoundedNumerators": 0,
+        "saturatedCases": 136,
+        "zeroQuotients": 151,
+        "independentBigIntExact": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 1862,
+        "stats": {
+          "selected": {
+            "calls": 3724,
+            "minCycles": 652,
+            "maxCycles": 697,
+            "totalCycles": 2481862
+          },
+          "asm": {
+            "calls": 1862,
+            "minCycles": 16,
+            "maxCycles": 153
+          },
+          "c": {
+            "calls": 3724,
+            "minCycles": 652,
+            "maxCycles": 697
+          }
+        },
+        "includesInterrupts": true,
+        "completedTimerInterrupts": 7444,
+        "timerCompareEvents": 7444,
+        "noLostTimerInterrupts": true,
+        "peakStack": 22
+      }
+    },
+    "generic": {
+      "binarySha256": "0d7d6bb9c298d28d78a2f6b0f78d127bac6b45b3f628c01f5f6b58a300f83d42",
+      "reportSha256": "4e1297fb3dfec1f1f6759412569bdebbc44bc0dc35ca15e7e2a3b7f49eb8bcc6",
+      "results": {
+        "backend": "generic",
+        "cases": 1862,
+        "divisorsSwept": 32,
+        "boundaryCases": 1510,
+        "coefficientDerivedCases": 256,
+        "allValidatedHbDivisors": false,
+        "validatedHbDivisorBounds": [
+          111,
+          31849
+        ],
+        "negativeRoundedNumerators": 0,
+        "saturatedCases": 136,
+        "zeroQuotients": 151,
+        "independentBigIntExact": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 1862,
+        "stats": {
+          "selected": {
+            "calls": 3724,
+            "minCycles": 652,
+            "maxCycles": 697,
+            "totalCycles": 2481862
+          },
+          "asm": {
+            "calls": 1862,
+            "minCycles": 16,
+            "maxCycles": 153
+          },
+          "c": {
+            "calls": 3724,
+            "minCycles": 652,
+            "maxCycles": 697
+          }
+        },
+        "includesInterrupts": true,
+        "completedTimerInterrupts": 7444,
+        "timerCompareEvents": 7444,
+        "noLostTimerInterrupts": true,
+        "peakStack": 22
+      }
+    },
+    "generic-control": {
+      "binarySha256": "268ad3cb5a6de10dfc66d23d74e4426ca43d7803b96389576a2f57fa66289373",
+      "reportSha256": "7cb92f23f8a343f0aa2542e732015b6673ae4ff19670ca17ca4bb59eba55f70a",
+      "results": {
+        "backend": "asm",
+        "cases": 4403,
+        "divisorsSwept": 272,
+        "boundaryCases": 3331,
+        "coefficientDerivedCases": 256,
+        "negativeRoundedNumerators": 182,
+        "saturatedCases": 298,
+        "zeroQuotients": 746,
+        "independentBigIntExact": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 8806,
+        "stats": {
+          "asm": {
+            "calls": 8806,
+            "minCycles": 9,
+            "maxCycles": 257
+          },
+          "c": {
+            "calls": 4403,
+            "minCycles": 660,
+            "maxCycles": 707
+          }
+        },
+        "includesInterrupts": true,
+        "completedTimerInterrupts": 14109,
+        "timerCompareEvents": 14109,
+        "noLostTimerInterrupts": true,
+        "peakStack": 24
+      }
+    }
+  },
+  "cAndForcedGenericBinariesIdentical": true,
+  "actualReplay": {
+    "inputSha256": "c68463a07ed26a24bca7ae5bba503ba96854ccccff224b8824071f58d1591fb5",
+    "calls": 15076,
+    "frames": 3769,
+    "before": {
+      "binarySha256": "268ad3cb5a6de10dfc66d23d74e4426ca43d7803b96389576a2f57fa66289373",
+      "reportSha256": "0949c3392476de696b87b4cc9ef112b7699a6c6da242fb5e3355720893359789",
+      "timingSha256": "9712ac4dbb272bb3ae12424e1a978d336760b00e61ef60ea3cf711aefd759734",
+      "timingBytes": 60304,
+      "timingEncoding": "Little-endian uint16 pairs: raw ASM, selected wrapper",
+      "rawCyclesTotal": 3431518,
+      "selectedCyclesTotal": 4366230,
+      "timingTotalsReconciled": true,
+      "results": {
+        "backend": "asm",
+        "cases": 15076,
+        "divisorsSwept": 0,
+        "boundaryCases": 0,
+        "coefficientDerivedCases": 0,
+        "allValidatedHbDivisors": false,
+        "validatedHbDivisorBounds": [
+          111,
+          31849
+        ],
+        "negativeRoundedNumerators": 0,
+        "saturatedCases": 37,
+        "zeroQuotients": 0,
+        "independentBigIntExact": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 30152,
+        "stats": {
+          "selected": {
+            "calls": 15076,
+            "minCycles": 81,
+            "maxCycles": 313,
+            "totalCycles": 4366230
+          },
+          "asm": {
+            "calls": 30152,
+            "minCycles": 19,
+            "maxCycles": 251
+          },
+          "c": {
+            "calls": 15076,
+            "minCycles": 665,
+            "maxCycles": 701
+          }
+        },
+        "includesInterrupts": true,
+        "completedTimerInterrupts": 50181,
+        "timerCompareEvents": 50181,
+        "noLostTimerInterrupts": true,
+        "peakStack": 24
+      }
+    },
+    "after": {
+      "binarySha256": "e2df2c79f70b575fa5b9f756bd165c15777cf340f03fcd0778040bbc101f94dc",
+      "reportSha256": "ce208a3d16ea1d43caddd0258050665cf1b94b263d54b899a8260f3ef078c294",
+      "timingSha256": "88d2c36f1bc72425bc72c11339d8a49cbdb97d12ae3502df970f146457d5ec76",
+      "timingBytes": 60304,
+      "timingEncoding": "Little-endian uint16 pairs: raw ASM, selected wrapper",
+      "rawCyclesTotal": 2156823,
+      "selectedCyclesTotal": 2970927,
+      "timingTotalsReconciled": true,
+      "results": {
+        "backend": "asm",
+        "cases": 15076,
+        "divisorsSwept": 0,
+        "boundaryCases": 0,
+        "coefficientDerivedCases": 0,
+        "allValidatedHbDivisors": false,
+        "validatedHbDivisorBounds": [
+          111,
+          31849
+        ],
+        "negativeRoundedNumerators": 0,
+        "saturatedCases": 37,
+        "zeroQuotients": 0,
+        "independentBigIntExact": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 30152,
+        "stats": {
+          "selected": {
+            "calls": 15076,
+            "minCycles": 70,
+            "maxCycles": 205,
+            "totalCycles": 2970927
+          },
+          "asm": {
+            "calls": 30152,
+            "minCycles": 16,
+            "maxCycles": 151
+          },
+          "c": {
+            "calls": 15076,
+            "minCycles": 655,
+            "maxCycles": 691
+          }
+        },
+        "includesInterrupts": true,
+        "completedTimerInterrupts": 43494,
+        "timerCompareEvents": 43494,
+        "noLostTimerInterrupts": true,
+        "peakStack": 22
+      }
+    },
+    "profiles": [
+      {
+        "profile": "wb395",
+        "frames": 1152,
+        "sourceImageSha256": "875e0ec65c637e6314ced5b388b89e66906e7e3b6dc8815e4ee7cbf50f9b20bd",
+        "captureSha256": "b8c258cc6dafd03e57e322a92b5018db4ac45b135b2f7788a7bd3cc898b5e161",
+        "meanScalarCallerSavingPerFrame": 369.9045138888889,
+        "minScalarFrameSaving": 299,
+        "maxScalarFrameSaving": 400
+      },
+      {
+        "profile": "wb575",
+        "frames": 1152,
+        "sourceImageSha256": "3e021147b9f58fb17ded801efa5933ae5ed5a935390fb95e2b1d566156f20e4a",
+        "captureSha256": "cb3cf281e8a5cd1080219c4acd379d3f95e3655f40c18a324c58ed914a6d5bf5",
+        "meanScalarCallerSavingPerFrame": 369.9045138888889,
+        "minScalarFrameSaving": 299,
+        "maxScalarFrameSaving": 400
+      },
+      {
+        "profile": "wb775",
+        "frames": 1152,
+        "sourceImageSha256": "2ab8b7ab993986b7c6ff194b61463e7ac1093033c4669a26f6d5da7efcbb6ac6",
+        "captureSha256": "4ba7b2e63ee98eebb17914091ca8852742148d826a4c0c919468fa4f33ca27b2",
+        "meanScalarCallerSavingPerFrame": 369.9045138888889,
+        "minScalarFrameSaving": 299,
+        "maxScalarFrameSaving": 400
+      },
+      {
+        "profile": "wb98",
+        "frames": 249,
+        "sourceImageSha256": "5548ffa8c4f299eaaedc732eccb1b892778fc5d0861e524a65ce4178668c3bae",
+        "captureSha256": "6b113aaeaeb655f30dbbb9c1f6c5b39d85e2b798e6e692091be46949edc05a7c",
+        "meanScalarCallerSavingPerFrame": 374.7590361445783,
+        "minScalarFrameSaving": 44,
+        "maxScalarFrameSaving": 410
+      },
+      {
+        "profile": "wb128",
+        "frames": 64,
+        "sourceImageSha256": "00dee32b596217b3105d9282b27731df5063e7feeae987df4a160b994e5d2083",
+        "captureSha256": "28a1914ca7d17dbdae37492773de581167c6f2c100b275caf9c25c46860e1007",
+        "meanScalarCallerSavingPerFrame": 368.71875,
+        "minScalarFrameSaving": 354,
+        "maxScalarFrameSaving": 386
+      }
+    ],
+    "meanScalarCallerSavingPerFrame": 370.20509418944016
+  },
+  "measuredBroadDomainUnrollTradeoffs": [
+    {
+      "variant": "baseline",
+      "bytes": 72,
+      "extraBytes": 0,
+      "cases": 15076,
+      "meanCallerSaving": 0.0,
+      "savingPerFrame": 0.0,
+      "bestCallerDelta": 0,
+      "worstCallerDelta": 0,
+      "profiles": [
+        {
+          "profile": "wb395",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 0.0,
+          "minScalarFrameSaving": 0,
+          "maxScalarFrameSaving": 0
+        },
+        {
+          "profile": "wb575",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 0.0,
+          "minScalarFrameSaving": 0,
+          "maxScalarFrameSaving": 0
+        },
+        {
+          "profile": "wb775",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 0.0,
+          "minScalarFrameSaving": 0,
+          "maxScalarFrameSaving": 0
+        },
+        {
+          "profile": "wb98",
+          "frames": 249,
+          "meanScalarSavingPerFrame": 0.0,
+          "minScalarFrameSaving": 0,
+          "maxScalarFrameSaving": 0
+        },
+        {
+          "profile": "wb128",
+          "frames": 64,
+          "meanScalarSavingPerFrame": 0.0,
+          "minScalarFrameSaving": 0,
+          "maxScalarFrameSaving": 0
+        }
+      ]
+    },
+    {
+      "variant": "early",
+      "bytes": 116,
+      "extraBytes": 44,
+      "cases": 15076,
+      "meanCallerSaving": 33.289135049084635,
+      "savingPerFrame": 133.15654019633854,
+      "bestCallerDelta": -41,
+      "worstCallerDelta": 2,
+      "profiles": [
+        {
+          "profile": "wb395",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 132.97135416666666,
+          "minScalarFrameSaving": 103,
+          "maxScalarFrameSaving": 148
+        },
+        {
+          "profile": "wb575",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 132.97135416666666,
+          "minScalarFrameSaving": 103,
+          "maxScalarFrameSaving": 148
+        },
+        {
+          "profile": "wb775",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 132.97135416666666,
+          "minScalarFrameSaving": 103,
+          "maxScalarFrameSaving": 148
+        },
+        {
+          "profile": "wb98",
+          "frames": 249,
+          "meanScalarSavingPerFrame": 135.93172690763052,
+          "minScalarFrameSaving": -8,
+          "maxScalarFrameSaving": 153
+        },
+        {
+          "profile": "wb128",
+          "frames": 64,
+          "meanScalarSavingPerFrame": 132.359375,
+          "minScalarFrameSaving": 125,
+          "maxScalarFrameSaving": 141
+        }
+      ]
+    },
+    {
+      "variant": "early-u1-inverse",
+      "bytes": 122,
+      "extraBytes": 50,
+      "cases": 15076,
+      "meanCallerSaving": 34.66171398248872,
+      "savingPerFrame": 138.64685592995488,
+      "bestCallerDelta": -50,
+      "worstCallerDelta": 2,
+      "profiles": [
+        {
+          "profile": "wb395",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 138.06076388888889,
+          "minScalarFrameSaving": 112,
+          "maxScalarFrameSaving": 168
+        },
+        {
+          "profile": "wb575",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 138.06076388888889,
+          "minScalarFrameSaving": 112,
+          "maxScalarFrameSaving": 168
+        },
+        {
+          "profile": "wb775",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 138.06076388888889,
+          "minScalarFrameSaving": 112,
+          "maxScalarFrameSaving": 168
+        },
+        {
+          "profile": "wb98",
+          "frames": 249,
+          "meanScalarSavingPerFrame": 147.27710843373495,
+          "minScalarFrameSaving": -8,
+          "maxScalarFrameSaving": 178
+        },
+        {
+          "profile": "wb128",
+          "frames": 64,
+          "meanScalarSavingPerFrame": 136.71875,
+          "minScalarFrameSaving": 122,
+          "maxScalarFrameSaving": 154
+        }
+      ]
+    },
+    {
+      "variant": "early-u3",
+      "bytes": 156,
+      "extraBytes": 84,
+      "cases": 15076,
+      "meanCallerSaving": 63.215508092332186,
+      "savingPerFrame": 252.86203236932874,
+      "bestCallerDelta": -71,
+      "worstCallerDelta": 2,
+      "profiles": [
+        {
+          "profile": "wb395",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 252.8671875,
+          "minScalarFrameSaving": 193,
+          "maxScalarFrameSaving": 268
+        },
+        {
+          "profile": "wb575",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 252.8671875,
+          "minScalarFrameSaving": 193,
+          "maxScalarFrameSaving": 268
+        },
+        {
+          "profile": "wb775",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 252.8671875,
+          "minScalarFrameSaving": 193,
+          "maxScalarFrameSaving": 268
+        },
+        {
+          "profile": "wb98",
+          "frames": 249,
+          "meanScalarSavingPerFrame": 252.91967871485943,
+          "minScalarFrameSaving": -8,
+          "maxScalarFrameSaving": 273
+        },
+        {
+          "profile": "wb128",
+          "frames": 64,
+          "meanScalarSavingPerFrame": 252.359375,
+          "minScalarFrameSaving": 245,
+          "maxScalarFrameSaving": 261
+        }
+      ]
+    },
+    {
+      "variant": "early-u3-inverse",
+      "bytes": 158,
+      "extraBytes": 86,
+      "cases": 15076,
+      "meanCallerSaving": 64.58808702573627,
+      "savingPerFrame": 258.3523481029451,
+      "bestCallerDelta": -80,
+      "worstCallerDelta": 2,
+      "profiles": [
+        {
+          "profile": "wb395",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 257.95659722222223,
+          "minScalarFrameSaving": 202,
+          "maxScalarFrameSaving": 288
+        },
+        {
+          "profile": "wb575",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 257.95659722222223,
+          "minScalarFrameSaving": 202,
+          "maxScalarFrameSaving": 288
+        },
+        {
+          "profile": "wb775",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 257.95659722222223,
+          "minScalarFrameSaving": 202,
+          "maxScalarFrameSaving": 288
+        },
+        {
+          "profile": "wb98",
+          "frames": 249,
+          "meanScalarSavingPerFrame": 264.26506024096386,
+          "minScalarFrameSaving": -8,
+          "maxScalarFrameSaving": 298
+        },
+        {
+          "profile": "wb128",
+          "frames": 64,
+          "meanScalarSavingPerFrame": 256.71875,
+          "minScalarFrameSaving": 242,
+          "maxScalarFrameSaving": 274
+        }
+      ]
+    },
+    {
+      "variant": "early-u5",
+      "bytes": 198,
+      "extraBytes": 126,
+      "cases": 15076,
+      "meanCallerSaving": 68.20078270098169,
+      "savingPerFrame": 272.80313080392676,
+      "bestCallerDelta": -76,
+      "worstCallerDelta": 3,
+      "profiles": [
+        {
+          "profile": "wb395",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 272.8463541666667,
+          "minScalarFrameSaving": 207,
+          "maxScalarFrameSaving": 288
+        },
+        {
+          "profile": "wb575",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 272.8463541666667,
+          "minScalarFrameSaving": 207,
+          "maxScalarFrameSaving": 288
+        },
+        {
+          "profile": "wb775",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 272.8463541666667,
+          "minScalarFrameSaving": 207,
+          "maxScalarFrameSaving": 288
+        },
+        {
+          "profile": "wb98",
+          "frames": 249,
+          "meanScalarSavingPerFrame": 272.3172690763052,
+          "minScalarFrameSaving": -12,
+          "maxScalarFrameSaving": 293
+        },
+        {
+          "profile": "wb128",
+          "frames": 64,
+          "meanScalarSavingPerFrame": 272.359375,
+          "minScalarFrameSaving": 265,
+          "maxScalarFrameSaving": 281
+        }
+      ]
+    },
+    {
+      "variant": "early-u5-inverse",
+      "bytes": 196,
+      "extraBytes": 124,
+      "cases": 15076,
+      "meanCallerSaving": 69.57336163438578,
+      "savingPerFrame": 278.2934465375431,
+      "bestCallerDelta": -85,
+      "worstCallerDelta": 3,
+      "profiles": [
+        {
+          "profile": "wb395",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 277.9357638888889,
+          "minScalarFrameSaving": 216,
+          "maxScalarFrameSaving": 308
+        },
+        {
+          "profile": "wb575",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 277.9357638888889,
+          "minScalarFrameSaving": 216,
+          "maxScalarFrameSaving": 308
+        },
+        {
+          "profile": "wb775",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 277.9357638888889,
+          "minScalarFrameSaving": 216,
+          "maxScalarFrameSaving": 308
+        },
+        {
+          "profile": "wb98",
+          "frames": 249,
+          "meanScalarSavingPerFrame": 283.66265060240966,
+          "minScalarFrameSaving": -12,
+          "maxScalarFrameSaving": 318
+        },
+        {
+          "profile": "wb128",
+          "frames": 64,
+          "meanScalarSavingPerFrame": 276.71875,
+          "minScalarFrameSaving": 262,
+          "maxScalarFrameSaving": 294
+        }
+      ]
+    },
+    {
+      "variant": "early-u15",
+      "bytes": 394,
+      "extraBytes": 322,
+      "cases": 15076,
+      "meanCallerSaving": 76.17869461395595,
+      "savingPerFrame": 304.7147784558238,
+      "bestCallerDelta": -84,
+      "worstCallerDelta": 4,
+      "profiles": [
+        {
+          "profile": "wb395",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 304.8151041666667,
+          "minScalarFrameSaving": 230,
+          "maxScalarFrameSaving": 320
+        },
+        {
+          "profile": "wb575",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 304.8151041666667,
+          "minScalarFrameSaving": 230,
+          "maxScalarFrameSaving": 320
+        },
+        {
+          "profile": "wb775",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 304.8151041666667,
+          "minScalarFrameSaving": 230,
+          "maxScalarFrameSaving": 320
+        },
+        {
+          "profile": "wb98",
+          "frames": 249,
+          "meanScalarSavingPerFrame": 303.4136546184739,
+          "minScalarFrameSaving": -16,
+          "maxScalarFrameSaving": 325
+        },
+        {
+          "profile": "wb128",
+          "frames": 64,
+          "meanScalarSavingPerFrame": 304.359375,
+          "minScalarFrameSaving": 297,
+          "maxScalarFrameSaving": 313
+        }
+      ]
+    },
+    {
+      "variant": "early-u15-inverse",
+      "bytes": 372,
+      "extraBytes": 300,
+      "cases": 15076,
+      "meanCallerSaving": 77.55127354736004,
+      "savingPerFrame": 310.20509418944016,
+      "bestCallerDelta": -93,
+      "worstCallerDelta": 4,
+      "profiles": [
+        {
+          "profile": "wb395",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 309.9045138888889,
+          "minScalarFrameSaving": 239,
+          "maxScalarFrameSaving": 340
+        },
+        {
+          "profile": "wb575",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 309.9045138888889,
+          "minScalarFrameSaving": 239,
+          "maxScalarFrameSaving": 340
+        },
+        {
+          "profile": "wb775",
+          "frames": 1152,
+          "meanScalarSavingPerFrame": 309.9045138888889,
+          "minScalarFrameSaving": 239,
+          "maxScalarFrameSaving": 340
+        },
+        {
+          "profile": "wb98",
+          "frames": 249,
+          "meanScalarSavingPerFrame": 314.7590361445783,
+          "minScalarFrameSaving": -16,
+          "maxScalarFrameSaving": 350
+        },
+        {
+          "profile": "wb128",
+          "frames": 64,
+          "meanScalarSavingPerFrame": 308.71875,
+          "minScalarFrameSaving": 294,
+          "maxScalarFrameSaving": 326
+        }
+      ]
+    }
+  ],
+  "physicalBoardTested": false,
+  "cDecoderExecuted": false
+}

@@ -6,7 +6,7 @@
  * Result r22..25 is nonnegative signed32. Only call-clobbered registers
  * r18..26 and flags change; r1 and all callee-saved registers are untouched.
  * No stack, hardware memory access or interrupt masking. C fallback in .h. */
-.text
+.section .text.speex_wb_gain_div_avr,"ax",@progbits
 .global speex_wb_gain_div_avr
 .type speex_wb_gain_div_avr,@function
 speex_wb_gain_div_avr:
@@ -55,6 +55,7 @@ speex_wb_gain_div_avr:
  * remain. A 24-bit remainder holds 2*d-1 <=540827 without overflow.
  * Return r24:25 in 0..32767. Only caller-clobbered registers and flags
  * change; no memory, stack, interrupt mask or r1 access. */
+.section .text.speex_wb_ratio_div_avr,"ax",@progbits
 .global speex_wb_ratio_div_avr
 .type speex_wb_ratio_div_avr,@function
 speex_wb_ratio_div_avr:
@@ -99,3 +100,51 @@ speex_wb_ratio_div_avr:
     clr r25
     ret
 .size speex_wb_ratio_div_avr,.-speex_wb_ratio_div_avr
+
+/* Positive finite HB1 domain only. Numerator r22..25, divisor r20:21.
+ * n=a*128+(d>>1), a 1..335949, d 111..31849; numerator strictly positive.
+ * Remainder <d<=31849 implies shifted remainder <=63697 fits 16 bits.
+ * Unsaturated compare proves initial C=1; CP/CPC or SUB/SBC provides
+ * the next inverse quotient bit. All registers are call-clobbered.
+ * The separately selectable C reference is in wb_gain_div.h. */
+.macro speex_hb_ratio_inverse_bit
+    rol r22
+    rol r23
+    rol r26
+    rol r27
+    cp r26,r20
+    cpc r27,r21
+    brcs .Lhb_ratio_skip\@
+    sub r26,r20
+    sbc r27,r21
+.Lhb_ratio_skip\@:
+.endm
+.section .text.speex_wb_ratio_hb_div_avr,"ax",@progbits
+.global speex_wb_ratio_hb_div_avr
+.type speex_wb_ratio_hb_div_avr,@function
+speex_wb_ratio_hb_div_avr:
+    movw r26,r24
+    lsl r22
+    rol r23
+    rol r26
+    rol r27
+    cp r26,r20
+    cpc r27,r21
+    brlo .Lhb_ratio_small
+    rjmp .Lhb_ratio_saturated
+.Lhb_ratio_small:
+    .rept 15
+    speex_hb_ratio_inverse_bit
+    .endr
+    rol r22
+    rol r23
+    com r22
+    com r23
+    movw r24,r22
+    ret
+.Lhb_ratio_saturated:
+    ldi r24,255
+    ldi r25,127
+    ret
+.size speex_wb_ratio_hb_div_avr,.-speex_wb_ratio_hb_div_avr
+.purgem speex_hb_ratio_inverse_bit

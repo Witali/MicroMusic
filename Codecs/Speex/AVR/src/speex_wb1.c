@@ -137,7 +137,7 @@ static SPEEX_NB3_NOINLINE void wb_interpolate(int16_t *interp)
 }
 SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_den,const uint8_t *indices,int32_t scale)
 {
-    int16_t interp[8],ak[8];int32_t rl=8192,rh=8192,g;int16_t ratio;
+    int16_t interp[8],ak[8],rh=8192;int32_t rl=8192,g;int16_t ratio;
     const int16_t *next_den=wb.den;
     uint8_t update_lpc=!wb.repeat_lsp || (wb.first && !wb.sub);
     unsigned i;
@@ -150,10 +150,13 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
         speex_wb_lsp8(interp,ak);
         next_den=ak;
     }
-    for(i=0;i<8;i+=2)rh+=(int32_t)next_den[i+1]-next_den[i];
+    /* Exhaustive paired-Xiph HB1 proof bounds every difference and rh
+     * prefix to signed16; final rh+82 is 111..31849, including zero-den
+     * reset state. Keep the unrelated low-band response in signed32. */
+    for(i=0;i<8;i+=2)rh+=next_den[i+1]-next_den[i];
     for(i=0;i<10;i+=2)rl+=(int32_t)low_den[i+1]-low_den[i];
-    if(rh+82<=0 || rl+82<=0) {wb.error=1;return;}
-    ratio=speex_wb_ratio_div(rl+82,rh+82);
+    if(rl+82<=0) {wb.error=1;return;}
+    ratio=speex_wb_ratio_hb_div(rl+82,rh+82);
     if(ratio<=0) {wb.error=1;return;}
     g=speex_wb_gain_div(AVR_READ_I32(exp_gain+wb.gain[wb.sub]),ratio);
     speex_wb_iir40(wb.exc,wb.den,wb.pcm+40,wb.mem);

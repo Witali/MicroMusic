@@ -3057,6 +3057,11 @@ measured isolated lookup/threshold/poly recipes, without a full-player claim.
 25,171,968 paired current/Xiph scalar conversions prove HB1 response 111..31849,
 with separate term/prefix bounds and exact unsigned-word reduction; no timing claim.
 
+[Specialize division for validated HB1 responses](speex-finite-hb-ratio.md):
+retain the generic API, use a positive signed16 divisor and inverted quotient,
+and compare unrolled recipes with explicit C, ABI, IRQ and matched scalar replay.
+Whole-decoder throughput remains a separate integration gate.
+
 [Compose the exact finite vocoder gain map](speex-finite-gain.md): preserve
 both quantizers in sixteen Flash bytes, compare complete caller recipes and
 retain range information where the measured compiler benefits. Also covers
