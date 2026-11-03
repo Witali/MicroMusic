@@ -107,27 +107,33 @@ int speex_wb1_decode(const uint8_t *packet,size_t bytes,speex_wb1_output_fn outp
 int16_t *speex_wb_low_buffer(void){return wb.low;}
 static SPEEX_NB3_NOINLINE void wb_interpolate(int16_t *interp)
 {
-    /* Unquantized HB1 angles are multiples of 16. Quarter/half shifts
-     * therefore match the two separately rounded upstream P14 products.
-     * Keep each result a convex combination within signed16, then apply
-     * the original margin pass. An outlined Os helper avoids four large
-     * O3-unrolled copies in the synthesis function. */
+    /* HB1 endpoints are multiples of 16; all differences fit signed16.
+     * Exchange endpoints to share the first/third-quarter loop. See the
+     * complete domain proof and measured recipes in the AVR cookbook. */
+    const int16_t *a=wb.old_lsp,*b=wb.lsp;
+    uint8_t sub=wb.sub;
     unsigned i;
-    for(i=0;i<8;i++) {
-        int16_t a=wb.old_lsp[i],b=wb.lsp[i];
-        switch(wb.sub) {
-        case 0:interp[i]=a+((b>>2)-(a>>2));break;
-        case 1:interp[i]=(a>>1)+(b>>1);break;
-        case 2:interp[i]=b+((a>>2)-(b>>2));break;
-        default:interp[i]=b;break;
-        }
+    if(sub==2){a=wb.lsp;b=wb.old_lsp;}
+    if(sub==1) {
+        for(i=0;i<8;i++)interp[i]=a[i]+((b[i]-a[i])>>1);
+    } else if(sub==3) {
+        for(i=0;i<8;i++)interp[i]=b[i];
+    } else {
+        for(i=0;i<8;i++)interp[i]=a[i]+((b[i]-a[i])>>2);
     }
-    if(interp[0]<410)interp[0]=410;
+    /* Preserve sequential repairs, omitting only three proven-dead checks.
+     * Keep the separate half shifts after earlier repairs. */
     if(interp[7]>25736-410)interp[7]=25736-410;
-    for(i=1;i<7;i++) {
-        if(interp[i]<interp[i-1]+410)interp[i]=interp[i-1]+410;
-        if(interp[i]>interp[i+1]-410)interp[i]=(interp[i]>>1)+((interp[i+1]-410)>>1);
-    }
+#define WB_REPAIR_LO(i) if(interp[i]<interp[(i)-1]+410)interp[i]=interp[(i)-1]+410
+#define WB_REPAIR_HI(i) if(interp[i]>interp[(i)+1]-410)interp[i]=(interp[i]>>1)+((interp[(i)+1]-410)>>1)
+    WB_REPAIR_LO(1);WB_REPAIR_HI(1);
+    WB_REPAIR_LO(2);WB_REPAIR_HI(2);
+    WB_REPAIR_LO(3);
+    WB_REPAIR_HI(4);
+    WB_REPAIR_LO(5);WB_REPAIR_HI(5);
+    WB_REPAIR_LO(6);WB_REPAIR_HI(6);
+#undef WB_REPAIR_LO
+#undef WB_REPAIR_HI
 }
 SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_den,const uint8_t *indices,int32_t scale)
 {

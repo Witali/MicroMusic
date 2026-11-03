@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build/run matched ASM ratio-divider stages; never execute a full C decoder."""
+"""Build/run matched ASM WB speed stages; never execute a full C decoder."""
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
@@ -26,7 +26,7 @@ def save(path, data):
 
 def controls(args):
     if not args.avr_gcc or not args.cc or args.source_root.resolve() == ROOT:
-        raise ValueError('controls requires --avr-gcc, --cc and --source-root at baseline 9772b0a4')
+        raise ValueError('controls requires --avr-gcc, --cc and a separate baseline --source-root')
     rows = []
     for epoch, source in [('before', args.source_root), ('after', ROOT)]:
         folder = OUT / ('c-' + epoch)
@@ -48,7 +48,7 @@ def controls(args):
             '--backend', 'asm', '--low-rates', '7', '--enable-nb4', '--packet-bytes', '10', '--out', folder],
             stdout=log, stderr=subprocess.STDOUT, check=True)
     assert (folder / 'wb.bin').read_bytes() == (OUT / 'before/wb395/wb.bin').read_bytes()
-    save(OUT / 'c-controls.json', dict(images=rows, baselineRevision='9772b0a4',
+    save(OUT / 'c-controls.json', dict(images=rows, baselineRevision=args.baseline_revision,
          baselineAsmRebuiltIdentically=True, cDecoderExecuted=False))
     folder = OUT / 'export'
     # Exporter deliberately refuses an existing destination. Use a fresh stage
@@ -122,6 +122,7 @@ def prepare(args):
 
 
 def main():
+    global OUT
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--phase', choices=['prepare', 'build', 'controls', 'raw', 'irq'], required=True)
     p.add_argument('--epoch', choices=['before', 'after'], default='after')
@@ -131,10 +132,13 @@ def main():
     p.add_argument('--node')
     p.add_argument('--cc', help='Host C compiler for compile/link-only export check')
     p.add_argument('--source-root', type=Path, default=ROOT)
+    p.add_argument('--out', type=Path, default=OUT, help='Fresh ignored output root for this optimization stage')
+    p.add_argument('--baseline-revision', default='9772b0a4', help='Recorded baseline for compile/link controls')
     p.add_argument('--workers', type=int, choices=range(1, 5), default=2)
     for name in ['low-corpus', 'spi-corpus', 'gallery-root', 'dialogue-root']:
         p.add_argument('--' + name, type=Path)
     args = p.parse_args()
+    OUT = args.out.resolve()
     if args.phase == 'controls':
         controls(args)
         return

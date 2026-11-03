@@ -11,8 +11,10 @@ the portable, explicitly selectable C fallback and existing backend selection.
 generic gain-ratio divide for all five WB rates. Scalar domain/ABI/IRQ proofs,
 matched five-rate screens, complete raw comparisons and complete loaded output
 checks pass on the available corpus. The original sound is preserved.
-Exact finite pitch-root and HB interpolation candidates have isolated evidence
-and await separate integration. Speed remains the first priority; do not mark
+The [HB interpolation stage](WB_INTERPOLATION_SPEED.md) now passes exact
+five-rate raw/loaded screens. Its complete-history admission remains a separate
+gate. Exact finite pitch-root lookup and the proven positive signed16 HB response
+offer the next implementation steps. Speed remains the first priority; do not mark
 the broader optimization goal complete while these useful candidates remain.
 
 ## Acceptance rules
