@@ -22,7 +22,7 @@ test('universal Tiny88 receipt binds runtime-header playback and full IRQ result
   for(const row of receipt.cases){
     assert.equal(row.pwm_exact,true);assert.equal(row.underruns,0);
     assert.ok(row.samples>0&&row.flash_bytes<=8192&&row.min_queue>0);
-    assert.ok(row.program_excluding_audio_bytes>=5587&&row.program_excluding_audio_bytes<=5588);
+    assert.ok(row.program_excluding_audio_bytes>=5487&&row.program_excluding_audio_bytes<=5488);
     assert.equal(row.static_ram_bytes+row.stack_bytes+row.stack_margin,511);
     assert.equal(row.irq_max,42);assert.equal(row.irq_entry_cycles,4);assert.equal(row.irq_reti_complete,true);
     assert.ok(row.output_gap_min>=1980&&row.output_gap_max<=2020&&row.decode_mean<2000);
@@ -43,4 +43,23 @@ test('C, ASM and forced-generic arithmetic receipts bind the same independent AV
   assert.deepEqual(v.results.map(row=>row.backend),['c','asm','generic']);
   for(const row of v.results){assert.equal(row.cases,v.cases);assert.equal(row.passed,true);assert.ok(row.irqs>100);}
   assert.equal(build.backends.c.binary_sha256,build.backends.generic.binary_sha256);
+});
+
+test('shared universal state reset saves 100 bytes with identical measured playback',()=>{
+  const receipt=JSON.parse(read(folder+'universal-measurements.json'));
+  const change=receipt.size_optimization;
+  assert.equal(change.baseline_revision,'85d354a9565a4f2cc6cfff47726b33cf076ff1ff');
+  assert.equal(change.program_bytes_saved_per_case,100);
+  assert.equal(change.reset_function_bytes_before,122);assert.equal(change.reset_function_bytes_after,22);
+  assert.equal(change.baseline_cases.length,receipt.cases.length);
+  assert.ok(change.identical_fields.includes('decode_active_irq_mean'));
+  assert.ok(change.identical_fields.includes('decode_max'));
+  assert.ok(change.identical_fields.includes('pwm_sha256'));
+  for(const row of receipt.cases){
+    const before=change.baseline_cases.find(item=>item.case===row.case);
+    assert.equal(before.program_excluding_audio_bytes-row.program_excluding_audio_bytes,100);
+    for(const field of change.identical_fields)assert.equal(row[field],before[field],row.case+': '+field);
+  }
+  assert.equal(change.portable_input_switch_checks.reduce((sum,row)=>sum+row.cases,0),10400);
+  assert.ok(change.portable_input_switch_checks.every(row=>row.exact));
 });

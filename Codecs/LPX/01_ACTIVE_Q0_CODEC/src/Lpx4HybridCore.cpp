@@ -170,45 +170,15 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
 // Shared per-stream parser and synthesis reset. Callers retain input, public
 // stream metadata, and remaining-count initialization, including failed begin().
 void Lpx4HybridCore::resetState(){
- error_=NONE;initializedFrame_=false;
- subPos_=subIndex_=0;
-#if LPX4_BATCHED_REMAINING
- subEnd_=0;
-#endif
-#if LPX4_COMPACT_ONLY
- bitBuffer_=bitsLeft_=lag_=gain_=ringCursor_=0;blockStep_=0;
-#else
- bitBuffer_=bitsLeft_=mode_=blockScale_=riceK_=0;blockStep_=0;
- subType_=lag_=gain_=ringCursor_=quantLimit_=0;
-#endif
-#if LPX4_ENABLE_SPEECH
-#if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_SPEECH_FLAGS)
- speechProfile_=0;
-#endif
-#if !LPX4_COMPACT_ONLY
- speechHalf_=0;
-#endif
-#endif
-#if LPX4_ENABLE_SPEECH_COMPACT && !LPX4_COMPACT_ONLY
- speechCompact_=0;
-#endif
-#if LPX4_V3_FEATURES && !LPX4_COMPACT_ONLY
- formatFeatures_=0;
-#endif
-#if LPX4_ALLOW_SPARSE
- pulseCount_=pulseIndex_=0;
-#endif
- prevDeemph_=0;
+ // The transient scalar fields and zeroed history/spectrum arrays form one
+ // contiguous span. Keep input, public metadata and callback ownership outside
+ // it; LPC anchors/workspace are populated before use and need no clearing.
+ const size_t first=offsetof(Lpx4HybridCore,blockStep_);
+ const size_t end=offsetof(Lpx4HybridCore,cur_)+sizeof(cur_);
+ memset(reinterpret_cast<uint8_t*>(this)+first,0,end-first);
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
- lsfCached_=false;staticSpectrum_=false;
-#if LPX4_ROTATE_LPC_ANCHORS
- lpcAnchorOffset_=0;
-#endif
- memset(prev_,0,sizeof(prev_));memset(cur_,0,sizeof(cur_));
- memset(a_,0,sizeof(a_));memset(hist_,0,sizeof(hist_));
- memset(ringQ_,0,sizeof(ringQ_));
 }
 int16_t Lpx4HybridCore::clamp(int32_t n,int16_t low,int16_t high){
  return n<low?low:(n>high?high:(int16_t)n);

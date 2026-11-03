@@ -203,7 +203,8 @@ public:
 #endif
 private:
     // Stream lifetime and container/entropy readers.
-    void resetState();
+    // Share one clearing loop between construction and begin(), even with LTO.
+    __attribute__((noinline)) void resetState();
 #if LPX4_ENABLE_INPUT_CALLBACK
     bool beginSource(uint16_t size);
 #endif
@@ -261,6 +262,8 @@ private:
 #if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_BRIGHT_Q14)
     uint16_t brightQ14_;
 #endif
+    // resetState() clears this scalar/array span through the end of cur_.
+    // Keep retained metadata and input ownership outside that span.
     uint16_t blockStep_;
     int16_t prevDeemph_;
     uint8_t subPos_,subIndex_; // compact: low3 subframe, bit3 post-readFrame half

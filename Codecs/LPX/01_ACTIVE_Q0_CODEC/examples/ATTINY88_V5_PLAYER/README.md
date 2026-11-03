@@ -42,8 +42,8 @@ combinations of file-defined profile/filter settings without recompilation.
 
 | Universal player | Measured result |
 | --- | ---: |
-| Program Flash, including startup, tables and playback, excluding audio | 5587..5588 B (about 5.46 KiB) |
-| Full image for the measured recordings | 6058..7486 B |
+| Program Flash, including startup, tables and playback, excluding audio | 5487..5488 B (about 5.36 KiB) |
+| Full image for the measured recordings | 5958..7386 B |
 | Static SRAM, including FIFO44 | 447 B |
 | Largest observed stack | 60 B |
 | Minimum observed stack margin | 4 B |
@@ -53,8 +53,8 @@ combinations of file-defined profile/filter settings without recompilation.
 
 These are standalone simulator bounds, not a guarantee for every valid spectral
 sequence or application integration. The observed four-byte stack margin does
-not cover added application/IRQ work. These complete example images need ISP;
-they exceed the 6012-byte USB application region.
+not cover added application/IRQ work. Thirteen of these fourteen complete
+example images need ISP; the 5958-byte image fits the 6012-byte USB region.
 
 The universal mode does not define `LPX4_FIXED_*` and does not specialize extra
 player gain for a recording. Existing LPX header validation and compact-reader
@@ -65,9 +65,10 @@ No container extension or new per-record parameter is introduced.
 [C/ASM/generic arithmetic and ABI results](universal-math-measurements.json), and
 [proofs, hardware contract and rejected candidates](../../../../../docs/avr-asm-cookbook/lpx-universal-tiny88.md)
 record the exact scope. The previously unpinned FIFO24 recipe had underruns;
-the final universal recipe spends 30 additional program bytes and 20 static RAM
-bytes to meet the measured real-time requirement. This is not a claim that it
-is smaller than the recording-specialized demo builds.
+the original admission spent 30 additional program bytes and 20 static RAM
+bytes to meet real-time playback. The shared state reset now saves another
+100 program bytes (0.09765625 KiB) with identical measured playback timing.
+Parameters still come from the file; recording-specialized demos remain smaller.
 
 ## Retained ROM demonstration results
 
@@ -79,8 +80,8 @@ sample count, stored stream bytes or source gain is changed.
 
 | Complete release image measurement | Result |
 | --- | ---: |
-| Flash, including the original audio | 5418..7132 bytes |
-| Program Flash after subtracting the verified single audio array | 4948..5233 bytes |
+| Flash, including the original audio | 5320..7034 bytes |
+| Program Flash after subtracting the verified single audio array | 4850..5135 bytes |
 | Static SRAM, including FIFO | 422 bytes |
 | Largest observed stack | 66 bytes |
 | Smallest observed stack margin | 23 bytes |
@@ -88,18 +89,21 @@ sample count, stored stream bytes or source gain is changed.
 | Images fitting standard 6012-byte USB region | 6 of 9 |
 
 The other three images fit physical Flash and require ISP loading. The full
-19,200-sample P4 example fits exactly 6012 bytes. The stack margin uses the
+19,200-sample P4 example uses 5914 bytes, leaving 98 bytes below the USB limit.
+The stack margin uses the
 observer's conservative SP convention and is bounded evidence for these
 images. The separate paired memory runs decode every combination twice.
 [Current local catalog](../../../../../web-player/firmware-lpx-attiny88.json)
 retains per-image values; [anonymous budget measurements](budget-measurements.json)
 bind the before/after sources and the full timing/control scope.
 
-Matched before/after runs with the same complete phrases and repeat count save
-**202..272 program bytes**. The largest increase in mean IRQ-active decode
-cost stays below **0.510%**; every output sample stays exact and all nine runs have zero
-underruns. The smaller FIFO and loop arithmetic are a measured memory/Flash
-tradeoff with enough timing headroom for these workloads.
+The earlier FIFO/unroll optimization, recorded in the historical budget receipt,
+saved **202..272 program bytes**. The largest increase in mean IRQ-active
+decode cost was below **0.510%**; every output sample stayed exact and all nine
+runs had zero underruns. The smaller FIFO and loop arithmetic are a measured memory/Flash
+tradeoff with enough timing headroom for these workloads. The shared reset
+compaction saves a further 98 program bytes in each retained fixed-header demo,
+without changing its audio or per-sample decoder code.
 
 ## Build and independently verify
 

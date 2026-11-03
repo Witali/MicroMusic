@@ -87,8 +87,8 @@ queue and stopped sample timer.
 
 | Quantity | Measured result |
 | --- | ---: |
-| Program Flash, including startup/tables/player, excluding one verified audio array | 5587..5588 B (about5.46 KiB) |
-| Full image including each test recording | 6058..7486 B |
+| Program Flash, including startup/tables/player, excluding one verified audio array | 5487..5488 B (about 5.36 KiB) |
+| Full image including each test recording | 5958..7386 B |
 | Static SRAM including FIFO44 | 447 B |
 | Largest observed stack | 60 B |
 | Minimum observed margin, observer's conservative SP convention | 4 B |
@@ -100,15 +100,17 @@ Means include the initial33-sample prefill; interrupts are active for playback.
 The four-byte observed margin leaves no allowance for an additional application
 or ISR. This admission is bounded to the recorded standalone workloads;
 universal parsing is not a proof of real-time capacity for every possible
-valid spectral sequence or integration. The measured complete images exceed
-the6012-byte USB application region and require ISP. The hard cap remains
+valid spectral sequence or integration. Thirteen of fourteen measured complete images exceed
+the6012-byte USB application region and require ISP; the 5958-byte image fits. The hard cap remains
 8192 bytes including audio.
 
-The initial unpinned FIFO24 recipe occupied5557..5558 program bytes but had
-157..1014 underruns on the four original screening streams. The final recipe
-spends30 more program bytes and20 more static SRAM bytes to meet the measured
-real-time requirement with parameters read from the file. Do not present this
-as a Flash reduction against that failing baseline. A pure compiler change
+Before the reset compaction below, the admitted FIFO44 recipe occupied
+5587..5588 program bytes. The initial unpinned FIFO24 recipe occupied5557..5558
+program bytes but had
+157..1014 underruns on the four original screening streams. The original admission
+spent30 more program bytes and20 more static SRAM bytes to meet the measured
+real-time requirement with parameters read from the file; the later reset
+compaction saves 100 program bytes without changing that timing or SRAM. A pure compiler change
 did save168 program bytes, but the faster general arithmetic spent that
 space again. A smaller looping attenuation, one-shot control pruning and
 mirrored history were measured and rejected because of timing, size or stack.
@@ -127,3 +129,41 @@ python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_attiny88_universal.py build/t
 python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/build_avr25_math.py build/tiny88-universal-math --mul16-unroll 2 --saturated-products
 node Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_avr25_math.mjs build/tiny88-universal-math --exhaustive-dynamic
 ```
+
+## Compact shared state reset (2026-11-03)
+
+The private transient fields from `blockStep_` through the end of `cur_`
+contain only zero-initialized integral values and arrays. Clear that span
+with one `memset`, using `offsetof` and the final member's size; this includes
+any interior padding. Input pointers, bounded-source state, public metadata,
+remaining count and optional callback ownership stay outside it. LPC anchors
+and polynomial workspace are written before use and do not need clearing.
+Keep one non-inlined reset shared by construction and `begin()` even with LTO.
+No class layout, stream header, error precedence or arithmetic backend changes.
+
+Against revision `85d354a9`, with the identical compiler/options/workloads:
+
+| Quantity | Before | After |
+| --- | ---: | ---: |
+| Reset function | 122 B | 22 B |
+| Program excluding verified audio | 5587..5588 B | 5487..5488 B |
+| Static SRAM / largest observed stack | 447 / 60 B | 447 / 60 B |
+| Complete ISR | 42 cycles | 42 cycles |
+
+All fourteen full-playback PWM streams and measured decode means/maxima,
+IRQ-active means, queue minima, stack and output intervals are identical.
+The source-bound receipt records each before/after pair. This saves 100 B
+(0.09765625 KiB, about 1.79%) without doing less work on the audio path.
+Reset inlining saved 84 B; sharing its loop saves another 16 B. A simpler flags
+mask generated identical code and was not retained.
+
+The frozen parser trace still passes 1,838,989 cases in each of four builds.
+A separate 10,400-case before/after portable C check covers ROM/callback
+switching, failed begins, truncated/malformed headers, both cursor modes,
+standard/compact parsers and PCM/PWM outputs. Existing reset/copy and dynamic
+header tests also pass. The arithmetic files are unchanged, so the independent
+C/ASM/generic primitive receipt above remains applicable.
+
+Rebuilt public fixed-header Tiny88 demos save 98 B each (5320..7034 B including
+audio), retain all existing PWM samples, and have zero underruns. Their
+recording-specific builds remain distinct from the universal measurements.
