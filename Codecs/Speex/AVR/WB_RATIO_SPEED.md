@@ -1,4 +1,4 @@
-# Exact WB LPC-response division: staged speed work
+# Exact WB LPC-response division
 
 Baseline `9772b0a4`, ATmega328P / AVR5, 16 MHz / 2 KB SRAM, AVR GCC 7.3.0,
 existing Os/O2/O3 attributes, LTO, mcall-prologues and mrelax. All optional
@@ -44,14 +44,33 @@ complete WB9.8/WB12.8 corpora. WB9.8 instead uses four historical published
 ASM captures; WB12.8 uses the retained 2200-frame independent continuous SPI
 corpus. Their provenance is explicit; no new independent WB9.8 oracle is claimed.
 
-## Longer validation in progress
+## Complete available-corpus validation
 
-Both complete raw epochs have now passed **34869 frames each**: three full
+Both complete raw epochs pass **34869 frames each**: three full
 10627-frame lower-rate corpora, 788 WB9.8 public-phrase/dialogue frames and
-2200 WB12.8 continuous frames. The matching complete active-IRQ runs are a
-separate gate still running. Retain their final report before describing this
-stage as complete full-history output admission. No firmware/gallery refresh
-or publication is part of this stage.
+2200 WB12.8 continuous frames. Matching complete active-IRQ runs pass another
+**34869 frames**, with exact signed16/PWM and zero underruns. There are no
+resets inside a recording. All sample intervals remain 990..1010 cycles.
+The [full receipt](reports/wb-ratio-full.json) binds sources, both per-frame
+traces, all input/oracle hashes and loaded output evidence. Every raw frame
+is faster; the original-corpus availability limits above still apply.
+
+| Mode | Before cycles/frame | After | Decoder CPU at 16 MHz | Loaded min queue |
+| --- | ---: | ---: | ---: | ---: |
+| WB3.95 | 222570.328 | 221580.720 | 69.553% -> 69.244% | 30 |
+| WB5.75 | 231269.798 | 230252.190 | 72.272% -> 71.954% | 25 |
+| WB7.75 | 241189.073 | 240167.464 | 75.372% -> 75.052% | 20 |
+| WB9.8 | 223849.484 | 222831.359 | 69.953% -> 69.635% | 7 |
+| WB12.8 | 236755.899 | 235741.397 | 73.986% -> 73.669% | 6 |
+
+These are paired whole-workload means, including coverage inputs in lower
+rates; the mode workloads differ, so the CPU column is not a same-recording
+comparison between bitrates. Savings are 989.608..1021.609 cycles/frame,
+or 0.424..0.455% of decoder time. Flash, static SRAM and peak-stack changes
+remain exactly those in the screen. Minimum free SRAM with loaded output
+is 412/408/403/398/391 B. These ready-RAM checks establish this bounded simulator
+admission; external SPI delivery and physical-board timing are not refreshed.
+No firmware/gallery refresh or publication is part of this stage.
 
 Reproduction uses a separate baseline checkout at `9772b0a4` and fresh ignored
 `build/speed-next` output. `tests/run_wb_ratio_stage.py` has `prepare`, `build`,
@@ -65,8 +84,8 @@ only. The export destination must be fresh. Run raw/IRQ with `--node <node>`.
 ```sh
 python Codecs/Speex/AVR/tests/audit_wb_ratio.py --check
 python Codecs/Speex/AVR/tests/audit_wb_ratio_stage.py --screen
-# After all complete raw/IRQ runs finish:
 python Codecs/Speex/AVR/tests/audit_wb_ratio_stage.py --record
+python Codecs/Speex/AVR/tests/audit_wb_ratio_stage.py
 ```
 
 Next measured candidates remain open: a 16-bit remainder branch for smaller

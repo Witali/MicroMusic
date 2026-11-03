@@ -9,8 +9,8 @@ the portable, explicitly selectable C fallback and existing backend selection.
 
 [Bounded LPC-response division](WB_RATIO_SPEED.md) replaces the remaining
 generic gain-ratio divide for all five WB rates. Scalar domain/ABI/IRQ proofs,
-matched five-rate screens and complete raw comparisons pass; complete loaded
-output checks remain a separate running gate. The original sound is preserved.
+matched five-rate screens, complete raw comparisons and complete loaded output
+checks pass on the available corpus. The original sound is preserved.
 Exact finite pitch-root and HB interpolation candidates have isolated evidence
 and await separate integration. Speed remains the first priority; do not mark
 the broader optimization goal complete while these useful candidates remain.
