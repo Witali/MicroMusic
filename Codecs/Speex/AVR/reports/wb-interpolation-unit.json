@@ -1,0 +1,498 @@
+{
+  "scope": "Isolated AVR C recipes; no full C decoder execution, no IRQ admission",
+  "physicalBoardTested": false,
+  "includesInterrupts": false,
+  "cases": 17044,
+  "recipes": [
+    {
+      "scope": "Isolated interpolation only; no full C decoder",
+      "compiler": "avr-gcc.exe (GCC) 7.3.0",
+      "flags": [
+        "-std=c11",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax"
+      ],
+      "variant": 0,
+      "recipe": "original-loop-switch",
+      "binarySha256": "986edb7de7073c0795174a1e9bfaa70d5fdf2fa32c7d003961eb49a425de5d32",
+      "flashBytes": 470,
+      "sourceSha256": {
+        "tests/avr_wb_interpolation.c": "92e9545872f255877df1d0a27dfef35187c313ceaa73c8210287b1cffb82cb37",
+        "tests/build_wb_interpolation.py": "2a7eb41a8ea434218fcf957a637e358ea7782a67bbac464f8b814d2eb633c325",
+        "tests/check_wb_interpolation.py": "deaa540be3d67e92ab3f39d87e7d59c0b13036668bc4815dde994a7f465fc220",
+        "tests/verify_wb_interpolation.mjs": "66e1f0075f2f0193e45a9440c078c7b37eb98bdaf64954eed36faee3abcc398b",
+        "vendor/speex-1.2.1/libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411"
+      },
+      "cases": 17044,
+      "cyclesIncludingFunctionRet": {
+        "min": 592,
+        "max": 720,
+        "mean": 646.0801455057498
+      },
+      "perQuarter": [
+        {
+          "min": 688,
+          "max": 704,
+          "mean": 688.0122037080498
+        },
+        {
+          "min": 592,
+          "max": 608,
+          "mean": 592.0122037080498
+        },
+        {
+          "min": 704,
+          "max": 720,
+          "mean": 704.0330908237503
+        },
+        {
+          "min": 600,
+          "max": 616,
+          "mean": 600.2630837831495
+        }
+      ],
+      "pairedDeltaVsOriginal": {
+        "min": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "functionBytes": 292,
+      "staticSramBytes": 357,
+      "ownFunctionStackBytes": 7,
+      "wholeProbePeakStack": 11,
+      "calleeSavedAndR1Returns": 17044,
+      "validCorrelatedCodebookEndpoints": true,
+      "all4096NewAndOldEndpoints": true,
+      "outputAddressLowBytes": 256,
+      "exactSeparatelyRoundedXiphModel": true,
+      "guardsAndInputsIntact": true,
+      "includesInterrupts": false,
+      "physicalBoardTested": false
+    },
+    {
+      "scope": "Isolated interpolation only; no full C decoder",
+      "compiler": "avr-gcc.exe (GCC) 7.3.0",
+      "flags": [
+        "-std=c11",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax"
+      ],
+      "variant": 1,
+      "recipe": "difference-loop-switch",
+      "binarySha256": "19be43d64f154ef84f2ba1a1b5ab0d2dff595b542fd0884f92ca48a7d3c81971",
+      "flashBytes": 454,
+      "sourceSha256": {
+        "tests/avr_wb_interpolation.c": "92e9545872f255877df1d0a27dfef35187c313ceaa73c8210287b1cffb82cb37",
+        "tests/build_wb_interpolation.py": "2a7eb41a8ea434218fcf957a637e358ea7782a67bbac464f8b814d2eb633c325",
+        "tests/check_wb_interpolation.py": "deaa540be3d67e92ab3f39d87e7d59c0b13036668bc4815dde994a7f465fc220",
+        "tests/verify_wb_interpolation.mjs": "66e1f0075f2f0193e45a9440c078c7b37eb98bdaf64954eed36faee3abcc398b",
+        "vendor/speex-1.2.1/libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411"
+      },
+      "cases": 17044,
+      "cyclesIncludingFunctionRet": {
+        "min": 570,
+        "max": 686,
+        "mean": 618.0672377376203
+      },
+      "perQuarter": [
+        {
+          "min": 626,
+          "max": 638,
+          "mean": 626.0098568411171
+        },
+        {
+          "min": 602,
+          "max": 614,
+          "mean": 602.0126730814363
+        },
+        {
+          "min": 674,
+          "max": 686,
+          "mean": 674.0274583431119
+        },
+        {
+          "min": 570,
+          "max": 582,
+          "mean": 570.2189626848158
+        }
+      ],
+      "pairedDeltaVsOriginal": {
+        "min": -66,
+        "max": 14,
+        "mean": -28.012907768129548
+      },
+      "functionBytes": 276,
+      "staticSramBytes": 357,
+      "ownFunctionStackBytes": 7,
+      "wholeProbePeakStack": 11,
+      "calleeSavedAndR1Returns": 17044,
+      "validCorrelatedCodebookEndpoints": true,
+      "all4096NewAndOldEndpoints": true,
+      "outputAddressLowBytes": 256,
+      "exactSeparatelyRoundedXiphModel": true,
+      "guardsAndInputsIntact": true,
+      "includesInterrupts": false,
+      "physicalBoardTested": false
+    },
+    {
+      "scope": "Isolated interpolation only; no full C decoder",
+      "compiler": "avr-gcc.exe (GCC) 7.3.0",
+      "flags": [
+        "-std=c11",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax"
+      ],
+      "variant": 2,
+      "recipe": "difference-unswitched",
+      "binarySha256": "812647b464637a0d2b3b1c5713af404874dc458d5cedd42ca4710c1b3cf59abc",
+      "flashBytes": 514,
+      "sourceSha256": {
+        "tests/avr_wb_interpolation.c": "92e9545872f255877df1d0a27dfef35187c313ceaa73c8210287b1cffb82cb37",
+        "tests/build_wb_interpolation.py": "2a7eb41a8ea434218fcf957a637e358ea7782a67bbac464f8b814d2eb633c325",
+        "tests/check_wb_interpolation.py": "deaa540be3d67e92ab3f39d87e7d59c0b13036668bc4815dde994a7f465fc220",
+        "tests/verify_wb_interpolation.mjs": "66e1f0075f2f0193e45a9440c078c7b37eb98bdaf64954eed36faee3abcc398b",
+        "vendor/speex-1.2.1/libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411"
+      },
+      "cases": 17044,
+      "cyclesIncludingFunctionRet": {
+        "min": 373,
+        "max": 532,
+        "mean": 469.0606665102089
+      },
+      "perQuarter": [
+        {
+          "min": 499,
+          "max": 511,
+          "mean": 499.00891809434404
+        },
+        {
+          "min": 484,
+          "max": 496,
+          "mean": 484.0098568411171
+        },
+        {
+          "min": 520,
+          "max": 532,
+          "mean": 520.0246421027928
+        },
+        {
+          "min": 373,
+          "max": 385,
+          "mean": 373.19924900258155
+        }
+      ],
+      "pairedDeltaVsOriginal": {
+        "min": -231,
+        "max": -108,
+        "mean": -177.01947899554096
+      },
+      "functionBytes": 336,
+      "staticSramBytes": 357,
+      "ownFunctionStackBytes": 4,
+      "wholeProbePeakStack": 8,
+      "calleeSavedAndR1Returns": 17044,
+      "validCorrelatedCodebookEndpoints": true,
+      "all4096NewAndOldEndpoints": true,
+      "outputAddressLowBytes": 256,
+      "exactSeparatelyRoundedXiphModel": true,
+      "guardsAndInputsIntact": true,
+      "includesInterrupts": false,
+      "physicalBoardTested": false
+    },
+    {
+      "scope": "Isolated interpolation only; no full C decoder",
+      "compiler": "avr-gcc.exe (GCC) 7.3.0",
+      "flags": [
+        "-std=c11",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax"
+      ],
+      "variant": 3,
+      "recipe": "finite-loop-margin",
+      "binarySha256": "0e4cc9db3d546f6f9a58fc96c8615152f94679c27b9af8341f7c7fd07672f409",
+      "flashBytes": 526,
+      "sourceSha256": {
+        "tests/avr_wb_interpolation.c": "92e9545872f255877df1d0a27dfef35187c313ceaa73c8210287b1cffb82cb37",
+        "tests/build_wb_interpolation.py": "2a7eb41a8ea434218fcf957a637e358ea7782a67bbac464f8b814d2eb633c325",
+        "tests/check_wb_interpolation.py": "deaa540be3d67e92ab3f39d87e7d59c0b13036668bc4815dde994a7f465fc220",
+        "tests/verify_wb_interpolation.mjs": "66e1f0075f2f0193e45a9440c078c7b37eb98bdaf64954eed36faee3abcc398b",
+        "vendor/speex-1.2.1/libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411"
+      },
+      "cases": 17044,
+      "cyclesIncludingFunctionRet": {
+        "min": 397,
+        "max": 560,
+        "mean": 493.07615583196434
+      },
+      "perQuarter": [
+        {
+          "min": 523,
+          "max": 539,
+          "mean": 523.0107955878901
+        },
+        {
+          "min": 508,
+          "max": 524,
+          "mean": 508.01173433466323
+        },
+        {
+          "min": 544,
+          "max": 560,
+          "mean": 544.0302745834312
+        },
+        {
+          "min": 397,
+          "max": 413,
+          "mean": 397.2518188218728
+        }
+      ],
+      "pairedDeltaVsOriginal": {
+        "min": -205,
+        "max": -82,
+        "mean": -153.0039896737855
+      },
+      "functionBytes": 348,
+      "staticSramBytes": 357,
+      "ownFunctionStackBytes": 4,
+      "wholeProbePeakStack": 8,
+      "calleeSavedAndR1Returns": 17044,
+      "validCorrelatedCodebookEndpoints": true,
+      "all4096NewAndOldEndpoints": true,
+      "outputAddressLowBytes": 256,
+      "exactSeparatelyRoundedXiphModel": true,
+      "guardsAndInputsIntact": true,
+      "includesInterrupts": false,
+      "physicalBoardTested": false
+    },
+    {
+      "scope": "Isolated interpolation only; no full C decoder",
+      "compiler": "avr-gcc.exe (GCC) 7.3.0",
+      "flags": [
+        "-std=c11",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax"
+      ],
+      "variant": 4,
+      "recipe": "finite-unrolled-margin",
+      "binarySha256": "d7cc589733469d3e9d150cd35738275cc8933d7e7d696af6e32a8d7827ef0b13",
+      "flashBytes": 694,
+      "sourceSha256": {
+        "tests/avr_wb_interpolation.c": "92e9545872f255877df1d0a27dfef35187c313ceaa73c8210287b1cffb82cb37",
+        "tests/build_wb_interpolation.py": "2a7eb41a8ea434218fcf957a637e358ea7782a67bbac464f8b814d2eb633c325",
+        "tests/check_wb_interpolation.py": "deaa540be3d67e92ab3f39d87e7d59c0b13036668bc4815dde994a7f465fc220",
+        "tests/verify_wb_interpolation.mjs": "66e1f0075f2f0193e45a9440c078c7b37eb98bdaf64954eed36faee3abcc398b",
+        "vendor/speex-1.2.1/libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411"
+      },
+      "cases": 17044,
+      "cyclesIncludingFunctionRet": {
+        "min": 269,
+        "max": 428,
+        "mean": 365.0606665102089
+      },
+      "perQuarter": [
+        {
+          "min": 395,
+          "max": 407,
+          "mean": 395.00891809434404
+        },
+        {
+          "min": 380,
+          "max": 392,
+          "mean": 380.0098568411171
+        },
+        {
+          "min": 416,
+          "max": 428,
+          "mean": 416.02464210279277
+        },
+        {
+          "min": 269,
+          "max": 281,
+          "mean": 269.19924900258155
+        }
+      ],
+      "pairedDeltaVsOriginal": {
+        "min": -335,
+        "max": -212,
+        "mean": -281.01947899554096
+      },
+      "functionBytes": 516,
+      "staticSramBytes": 357,
+      "ownFunctionStackBytes": 4,
+      "wholeProbePeakStack": 8,
+      "calleeSavedAndR1Returns": 17044,
+      "validCorrelatedCodebookEndpoints": true,
+      "all4096NewAndOldEndpoints": true,
+      "outputAddressLowBytes": 256,
+      "exactSeparatelyRoundedXiphModel": true,
+      "guardsAndInputsIntact": true,
+      "includesInterrupts": false,
+      "physicalBoardTested": false
+    },
+    {
+      "scope": "Isolated interpolation only; no full C decoder",
+      "compiler": "avr-gcc.exe (GCC) 7.3.0",
+      "flags": [
+        "-std=c11",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax"
+      ],
+      "variant": 5,
+      "recipe": "shared-quarter-loop",
+      "binarySha256": "5eb14875440c9c3599261a4facac276bf1ecb21b33c8bba42dadbd6735d0a982",
+      "flashBytes": 476,
+      "sourceSha256": {
+        "tests/avr_wb_interpolation.c": "92e9545872f255877df1d0a27dfef35187c313ceaa73c8210287b1cffb82cb37",
+        "tests/build_wb_interpolation.py": "2a7eb41a8ea434218fcf957a637e358ea7782a67bbac464f8b814d2eb633c325",
+        "tests/check_wb_interpolation.py": "deaa540be3d67e92ab3f39d87e7d59c0b13036668bc4815dde994a7f465fc220",
+        "tests/verify_wb_interpolation.mjs": "66e1f0075f2f0193e45a9440c078c7b37eb98bdaf64954eed36faee3abcc398b",
+        "vendor/speex-1.2.1/libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411"
+      },
+      "cases": 17044,
+      "cyclesIncludingFunctionRet": {
+        "min": 375,
+        "max": 521,
+        "mean": 467.3106665102089
+      },
+      "perQuarter": [
+        {
+          "min": 509,
+          "max": 521,
+          "mean": 509.00891809434404
+        },
+        {
+          "min": 484,
+          "max": 496,
+          "mean": 484.0098568411171
+        },
+        {
+          "min": 501,
+          "max": 513,
+          "mean": 501.02464210279277
+        },
+        {
+          "min": 375,
+          "max": 387,
+          "mean": 375.19924900258155
+        }
+      ],
+      "pairedDeltaVsOriginal": {
+        "min": -229,
+        "max": -108,
+        "mean": -178.76947899554096
+      },
+      "functionBytes": 298,
+      "staticSramBytes": 357,
+      "ownFunctionStackBytes": 4,
+      "wholeProbePeakStack": 8,
+      "calleeSavedAndR1Returns": 17044,
+      "validCorrelatedCodebookEndpoints": true,
+      "all4096NewAndOldEndpoints": true,
+      "outputAddressLowBytes": 256,
+      "exactSeparatelyRoundedXiphModel": true,
+      "guardsAndInputsIntact": true,
+      "includesInterrupts": false,
+      "physicalBoardTested": false
+    },
+    {
+      "scope": "Isolated interpolation only; no full C decoder",
+      "compiler": "avr-gcc.exe (GCC) 7.3.0",
+      "flags": [
+        "-std=c11",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax"
+      ],
+      "variant": 6,
+      "recipe": "shared-quarter-finite-margin",
+      "binarySha256": "ebd7f3549e7a6a273af7077cb9509cb12f2d898b8172dc86995ef8d3d0a650d2",
+      "flashBytes": 656,
+      "sourceSha256": {
+        "tests/avr_wb_interpolation.c": "92e9545872f255877df1d0a27dfef35187c313ceaa73c8210287b1cffb82cb37",
+        "tests/build_wb_interpolation.py": "2a7eb41a8ea434218fcf957a637e358ea7782a67bbac464f8b814d2eb633c325",
+        "tests/check_wb_interpolation.py": "deaa540be3d67e92ab3f39d87e7d59c0b13036668bc4815dde994a7f465fc220",
+        "tests/verify_wb_interpolation.mjs": "66e1f0075f2f0193e45a9440c078c7b37eb98bdaf64954eed36faee3abcc398b",
+        "vendor/speex-1.2.1/libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411"
+      },
+      "cases": 17044,
+      "cyclesIncludingFunctionRet": {
+        "min": 271,
+        "max": 417,
+        "mean": 363.3106665102089
+      },
+      "perQuarter": [
+        {
+          "min": 405,
+          "max": 417,
+          "mean": 405.00891809434404
+        },
+        {
+          "min": 380,
+          "max": 392,
+          "mean": 380.0098568411171
+        },
+        {
+          "min": 397,
+          "max": 409,
+          "mean": 397.02464210279277
+        },
+        {
+          "min": 271,
+          "max": 283,
+          "mean": 271.19924900258155
+        }
+      ],
+      "pairedDeltaVsOriginal": {
+        "min": -333,
+        "max": -212,
+        "mean": -282.76947899554096
+      },
+      "functionBytes": 478,
+      "staticSramBytes": 357,
+      "ownFunctionStackBytes": 4,
+      "wholeProbePeakStack": 8,
+      "calleeSavedAndR1Returns": 17044,
+      "validCorrelatedCodebookEndpoints": true,
+      "all4096NewAndOldEndpoints": true,
+      "outputAddressLowBytes": 256,
+      "exactSeparatelyRoundedXiphModel": true,
+      "guardsAndInputsIntact": true,
+      "includesInterrupts": false,
+      "physicalBoardTested": false
+    }
+  ]
+}

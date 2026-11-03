@@ -3040,6 +3040,11 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Share finite HB interpolation loops](speex-hb-interpolation.md): prove the
+codebook domain before narrowing differences, share complementary quarters
+through pointer exchange, and compare isolated speed/Flash recipes. Integration
+and loaded whole-decoder admission remain separate.
+
 [Replace a finite fixed-point pitch root](speex-finite-pitch-root.md): prove
 all 128 packet pitches, retain exact byte results and selectable original C;
 measured isolated lookup/threshold/poly recipes, without a full-player claim.

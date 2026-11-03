@@ -1,0 +1,119 @@
+{
+  "scope": "Finite pinned HB1 codebook arithmetic only; no decoder execution or target timing",
+  "sourceSha256": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411",
+  "componentBounds": [
+    [
+      2704,
+      9024
+    ],
+    [
+      4800,
+      11168
+    ],
+    [
+      6880,
+      15088
+    ],
+    [
+      8880,
+      17936
+    ],
+    [
+      12272,
+      20560
+    ],
+    [
+      13856,
+      22784
+    ],
+    [
+      17328,
+      24256
+    ],
+    [
+      19760,
+      25600
+    ]
+  ],
+  "distinctComponentValues": [
+    323,
+    352,
+    447,
+    517,
+    464,
+    489,
+    394,
+    284
+  ],
+  "componentEndpointPairs": 1385640,
+  "quarterComponentChecks": 5542560,
+  "selectedCompleteMarginVectors": 49152,
+  "marginFullVectorExhaustive": true,
+  "exhaustiveMargin": {
+    "completeMarginVectors": 67108864,
+    "quarterValues": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "minimumSequentialSlack": [
+      [
+        -682,
+        -42
+      ],
+      [
+        -21,
+        -426
+      ],
+      [
+        -213,
+        38
+      ],
+      [
+        38,
+        -266
+      ],
+      [
+        -133,
+        -266
+      ],
+      [
+        -133,
+        -330
+      ]
+    ],
+    "sequentialRepairCounts": [
+      [
+        227498,
+        8224
+      ],
+      [
+        8224,
+        91292
+      ],
+      [
+        91292,
+        0
+      ],
+      [
+        0,
+        38909
+      ],
+      [
+        38909,
+        20919
+      ],
+      [
+        20919,
+        81332
+      ]
+    ],
+    "exact": true,
+    "omittedChecks": [
+      "first endpoint lower clamp",
+      "index 3 upper repair",
+      "index 4 lower repair"
+    ]
+  }
+}
