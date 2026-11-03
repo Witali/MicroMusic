@@ -2,7 +2,7 @@ import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js?v=2026
 import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-speex-dialogue';
 import {speexFirmwareEntries,speexDialogueProfiles} from './lib/speex-preview.js?v=20261102-speex-dialogue';
 import {lpxTiny88FirmwareEntries} from './lib/tiny88-preview.js?v=20261102-tiny88-lpx';
-import {speechSignals,speechWindow} from './lib/speech-waveform.js';
+import {speechSignals,speechWindow} from './lib/speech-waveform.js?v=20261103-playback-volume';
 import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js?v=20261102-speex-nano';
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
@@ -16,7 +16,7 @@ const previewAudio=$('preview-audio'), previewWaves=new Map();
 const nativePreview=()=>selected?.playback==='native-pwm8';
 const previewCodec=()=>selected?.codec==='speex'?'Speex':'LPX';
 let catalog, selected, runtime, runtimeReady=false, connectedRuntime, playing=false, busy=false;
-let audio, output, scopes=[new Float32Array(512)], headroom=0;
+let audio, output, playbackGain, scopes=[new Float32Array(512)], headroom=0;
 let signalPoint='output', signalScopes={input:scopes,output:scopes};
 let session=0, hasPlayed=false, completed=false, realtime;
 let playAttempt=0, busyAttempt=0;
@@ -31,7 +31,8 @@ let scopeView='phrase';
 
 function showError(message) { $('error').textContent = message; $('error').hidden = !message; }
 function audioControls() {
-  return {cutoff:+$('cutoff').value,volume:+$('volume').value,signal:signalPoint};
+  // Scope samples keep the firmware level; speaker volume is applied after the worklet.
+  return {cutoff:+$('cutoff').value,volume:1,signal:signalPoint};
 }
 function signalPointUI() {
   if(nativePreview()){
@@ -44,7 +45,7 @@ function signalPointUI() {
   $('scope-zero').textContent=$('scope-zero-right').textContent=input?'128':'0';
   for(const id of ['wave','wave-right']){
     $(id).dataset.signal=signalPoint;
-    $(id).setAttribute('aria-label',input?'Значение звука в регистре OCR до фильтра':'Звуковой выход после фильтра и громкости');
+    $(id).setAttribute('aria-label',input?'Значение звука в регистре OCR до фильтра':'Звуковой выход после фильтра');
   }
   const stereo=selected?.audioChannels===2,timer=currentDevice==='attiny88'?'1':'0';
   const physical=!input&&(selectedEngine()==='device'||!!selected?.devicePackage);
@@ -197,7 +198,7 @@ function draw() {
   lastScopeDraw=now;
   let view=scopes[0];
   if(speechCollection&&phraseRaw){
-    const key=[signalPoint,$('cutoff').value,$('volume').value].join('/');
+    const key=[signalPoint,$('cutoff').value].join('/');
     if(!phraseSignals||phraseSignalKey!==key){phraseSignals=speechSignals(phraseRaw,selected.sampleHz,{native:nativePreview(),...audioControls()});phraseSignalKey=key;}
     const signal=phraseSignals[signalPoint],seconds=nativePreview()?previewAudio.currentTime:playbackSeconds;
     if(scopeView==='phrase')view=signal;
@@ -466,7 +467,8 @@ async function ensureAudio() {
     if (!context.audioWorklet) throw new Error('AudioWorklet недоступен. Откройте страницу через localhost или HTTPS.');
     await context.audioWorklet.addModule(new URL('./audio-worklet.js',import.meta.url));
     audio=context; realtime=new RealtimeMonitor(audio.sampleRate); output=new AudioWorkletNode(audio,'firmware-output',{numberOfInputs:0,numberOfOutputs:1,outputChannelCount:[2]});
-    output.connect(audio.destination);
+    playbackGain=audio.createGain();playbackGain.gain.value=+$('volume').value;
+    output.connect(playbackGain);playbackGain.connect(audio.destination);
     output.port.onmessage=({data})=>{
       if (nativePreview()||data.type!=='position' || data.session!==session || !playing) return;
       const timing=realtime.observe(data,performance.now());
@@ -481,7 +483,7 @@ async function ensureAudio() {
     };
     output.onprocessorerror=()=>{ if(!nativePreview()){pause();showError('Ошибка звукового потока. Обновите страницу для повторного запуска.');} };
     connectAudio(); await audio.resume();
-  } catch (error) { await context.close(); audio=null; throw error; }
+  } catch (error) { await context.close(); audio=null; playbackGain=null; throw error; }
 }
 async function toggle() {
   if (!runtimeReady || busy) return;
@@ -507,7 +509,10 @@ async function toggle() {
   finally { if(busyAttempt===attempt){busy=false;transport();} }
 }
 $('play').onclick=toggle; $('play-original').onclick=toggleOriginal; $('reset').onclick=()=>load(selected); $('search').oninput=renderCatalog;
-$('volume').oninput=()=>{originalAudio.volume=previewAudio.volume=+$('volume').value;runtime?.postMessage({type:'controls',controls:audioControls()});draw();};
+$('volume').oninput=()=>{
+  const volume=+$('volume').value;originalAudio.volume=previewAudio.volume=volume;
+  playbackGain?.gain.setTargetAtTime(volume,audio.currentTime,.015);
+};
 $('cutoff').onchange=()=>{runtime?.postMessage({type:'controls',controls:audioControls()});draw();};
 $('signal-view').onchange=()=>{scopeView=$('signal-view').value==='live'?'live':'phrase';canvas.dataset.view=scopeView;draw();};
 $('signal-point').onchange=()=>{

@@ -25,7 +25,7 @@ test('complete phrase signal belongs to the exact retained firmware and PWM rece
 });
 
 test('whole phrase input/output exactly match actual firmware resampling and player filters',()=>{
-  const controls={cutoff:4000,volume:.65},signals=speechSignals(raw,entry.sampleHz,controls);
+  const controls={cutoff:4000,volume:1},signals=speechSignals(raw,entry.sampleHz,controls);
   const renderer=new Renderer(entry,48000,controls);
   const output=new Float32Array(signals.output.length),input=new Float32Array(signals.input.length);
   for(let offset=0;offset<output.length;){

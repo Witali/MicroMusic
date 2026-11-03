@@ -1,11 +1,11 @@
 import {Renderer} from './renderer-js.js';
 
-// Use the existing player DSP/resampler so full-phrase input/output views match
-// the same firmware duties and controls. The supplied core reads saved duties.
-export function speechSignals(raw,rate,{native=false,cutoff=9000,volume=.65}={}){
-  if(native)return {sampleRate:rate,input:raw,output:Float32Array.from(raw,value=>value*volume)};
+// Show firmware levels before speaker volume, with the player DSP/resampler
+// and selected filter. The supplied core reads saved duties.
+export function speechSignals(raw,rate,{native=false,cutoff=9000}={}){
+  if(native)return {sampleRate:rate,input:raw,output:raw};
   let index=0;const core={nextDuty:()=>index<raw.length?Math.round(raw[index++]*128+128):128};
-  const renderer=new Renderer({pwmHz:rate},48000,{cutoff,volume},core);
+  const renderer=new Renderer({pwmHz:rate},48000,{cutoff,volume:1},core);
   const count=Math.ceil(raw.length*48000/rate),input=new Float32Array(count),output=new Float32Array(count);
   for(let offset=0;offset<count;){
     const length=Math.min(4096,count-offset);output.set(renderer.render(length),offset);

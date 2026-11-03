@@ -25,7 +25,8 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
   if(firmware)location.searchParams.set('firmware',firmware);
   if(device)location.searchParams.set('device',device);
   if(board)location.searchParams.set('board',board);
-  const elements=new Map(),selectors=new Map(),workers=[],contexts=[],worklets=[],radios=[],fetches=[],documentEvents=new Map(),windowEvents=new Map();
+  const elements=new Map(),selectors=new Map(),workers=[],contexts=[],worklets=[],radios=[],fetches=[],documentEvents=new Map(),windowEvents=new Map(),resizeCallbacks=[];
+  let timeOffset=0;
   class Element{
     constructor(tag='div',attributes=''){
       this.tagName=tag.toUpperCase();this.textContent='';this.dataset={};this.children=[];
@@ -75,12 +76,16 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     },querySelectorAll:selector=>selector==='input[name="engine"]'?radios:[],addEventListener:(type,listener)=>documentEvents.set(type,listener)};
   const workletSetup=deferred();
   class Context{
-    constructor(){this.sampleRate=48000;this.audioWorklet={addModule:()=>holdWorklet?workletSetup.promise:Promise.resolve()};contexts.push(this);}
+    constructor(){this.sampleRate=48000;this.currentTime=0;this.destination={};this.gains=[];this.audioWorklet={addModule:()=>holdWorklet?workletSetup.promise:Promise.resolve()};contexts.push(this);}
+    createGain(){
+      const gain={value:1,targets:[],setTargetAtTime(value,time,constant){this.value=value;this.targets.push({value,time,constant});}};
+      const node={gain,connect(destination){this.destination=destination;}};this.gains.push(node);return node;
+    }
     async resume(){}async close(){}
   }
   class Worklet{
     constructor(){this.messages=[];this.port={postMessage:message=>this.messages.push(message)};worklets.push(this);}
-    connect(){}
+    connect(destination){this.destination=destination;}
   }
   class Worker{
     constructor(){this.messages=[];workers.push(this);}
@@ -105,9 +110,9 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
   }
   const window={devicePixelRatio:1,AudioContext:Context,addEventListener:(type,listener)=>windowEvents.set(type,listener)};
   const sandbox={speechSignals,speechWindow,readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI,renderFirmwareCatalog,bitrateLabel,tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout,document,window,location,URL,Float32Array,Uint8Array,console,parseHex,RealtimeMonitor,universalPackageEntry,lpxPreviewEntries,lpxFirmwareEntries,lpxDialogueEntry,previewWaveform,speexFirmwareEntries,speexDialogueProfiles,lpxTiny88FirmwareEntries,
-    Worker,AudioWorkletNode:Worklet,ResizeObserver:class{observe(){}},
+    Worker,AudioWorkletNode:Worklet,ResizeObserver:class{constructor(callback){resizeCallbacks.push(callback);}observe(){}},
     MessageChannel:class{constructor(){this.port1={};this.port2={};}},
-    performance:{now:()=>Date.now()},setTimeout:()=>1,clearTimeout(){},
+    performance:{now:()=>Date.now()+timeOffset},setTimeout:()=>1,clearTimeout(){},
     history:{replaceState:(_state,_title,url)=>{location.href=String(url);}},
     fetch:async input=>{
       const url=new URL(input,location),name=url.pathname.split('/').at(-1),index=fetches.length;
@@ -130,5 +135,6 @@ export async function playerApp({speech=true,holdWorklet=false,holdWorker=false,
     node.port.onmessage({data:{type:'position',session:connection.session,frames,clockFrames:frames,underruns:0,...extra}});
   }
   return {get,body:document.body,original:get('original-audio'),preview:get('preview-audio'),workers,contexts,worklets,workletSetup,catalog,location,selectors,position,radios,fetches,
+    redraw:()=>{timeOffset+=100;resizeCallbacks[0]();},
     keydown:event=>documentEvents.get('keydown')?.(event),pagehide:()=>windowEvents.get('pagehide')?.()};
 }
