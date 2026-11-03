@@ -11,10 +11,11 @@ the portable, explicitly selectable C fallback and existing backend selection.
 generic gain-ratio divide for all five WB rates. Scalar domain/ABI/IRQ proofs,
 matched five-rate screens, complete raw comparisons and complete loaded output
 checks pass on the available corpus. The original sound is preserved.
-The [HB interpolation stage](WB_INTERPOLATION_SPEED.md) now passes exact
-five-rate raw/loaded screens. Its complete-history admission remains a separate
-gate. Exact finite pitch-root lookup and the proven positive signed16 HB response
-offer the next implementation steps. Speed remains the first priority; do not mark
+The [combined response/QMF/IIR stage](WB_FINITE_RESPONSE.md) now passes all
+34869 available frames in both raw epochs and another 34869 loaded output frames,
+including HB interpolation and signed16 response arithmetic. Exact split QMF
+accumulators and finite pitch-root lookup offer the next implementation steps.
+Speed remains the first priority; do not mark
 the broader optimization goal complete while these useful candidates remain.
 
 ## Acceptance rules

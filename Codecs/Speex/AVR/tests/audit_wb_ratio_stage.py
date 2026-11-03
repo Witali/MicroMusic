@@ -13,6 +13,10 @@ STAGES = {
     'interpolation': dict(folder='hb-speed', label='HB interpolation', prefix='wb-interpolation', baseline='7ca56cf1',
         changes=['src/speex_wb1.c'], added=[], flashDelta=192, stackDelta=0,
         unit='wb-interpolation-unit.json', domain='wb-interpolation-domain.json'),
+    'finite': dict(folder='hb-finite-speed', label='signed16 HB response, QMF and IIR', prefix='wb-finite-response',
+        baseline='7ca56cf1', changes=['src/iir_kernel.inc', 'src/speex_wb1.c',
+            'src/wb_gain_div.S', 'src/wb_gain_div.h', 'src/wb_qmf.S'],
+        added=[], flashDelta=244, stackDelta=0, unit='wb-hb-ratio-unit.json', domain='wb-response-domain.json'),
 }
 
 
@@ -43,7 +47,7 @@ def main():
     changed = sorted(n for n in sources[0] if sources[0][n] != sources[1][n])
     assert changed == config['changes']
     assert sorted(set(sources[1]) - set(sources[0])) == config['added']
-    # The prepared pitch helper remains unused during this ratio-only stage.
+    # The prepared pitch helper remains unused during these measured stages.
     for path in (ROOT / 'src').iterdir():
         if path.is_file() and path.name != 'nb1_pitch.h':
             assert b'#include "nb1_pitch.h"' not in path.read_bytes(), path.name
@@ -94,7 +98,9 @@ def main():
                 assert r['inputSha256'] == sha(raw) and r['pcmSha256'] == sha(pcm)
             assert len(a['cycles']) == len(b['cycles']) == output['frames'] == frames
             delta = [y-x for x, y in zip(a['cycles'], b['cycles'])]
-            assert max(delta) <= 0 and (args.stage != 'ratio' or max(delta) < 0), (profile, name, max(delta))
+            assert max(delta) <= 0, (profile, name, max(delta))
+            if args.stage != 'interpolation':
+                assert max(delta) < 0, (profile, name, max(delta))
             assert output['s16AndPwmExact'] and output['fullHistoryWithoutChunkReset'] and not output['underruns']
             assert 990 <= output['timerIntervalMinCycles'] <= output['timerIntervalMaxCycles'] <= 1010
             streams.append(dict(stream=name, frames=frames, inputSha256=a['inputSha256'], pcmSha256=a['pcmSha256'],
@@ -124,6 +130,12 @@ def main():
     if args.stage == 'interpolation':
         checks += ['tests/check_wb_interpolation.py', 'tests/avr_wb_interpolation.c',
             'tests/build_wb_interpolation.py', 'tests/verify_wb_interpolation.mjs']
+    if args.stage == 'finite':
+        checks += ['tests/host_wb_response.c', 'tests/check_wb_response.py',
+            'tests/avr_wb_hb_ratio.c', 'tests/build_wb_hb_ratio.py', 'tests/verify_wb_hb_ratio.mjs',
+            'tests/audit_wb_hb_ratio.py', 'tests/capture_wb_hb_ratio.mjs',
+            'tests/screen_qmf_common_product.py', 'tests/verify_qmf_common_product_irq.mjs',
+            'tests/screen_iir_second_cache.py']
     result = dict(scope=kind + ' matched ASM ' + config['label'] + ' raw and production-IRQ comparisons',
         baselineRevision=config['baseline'], sourceHashMode='UTF-8 text normalized to LF',
         baselineSourceManifestSha256=text_sha(OUT / 'before-source.json'), sourceSha256=sources[1],
@@ -138,6 +150,10 @@ def main():
             'No new complete-C-decoder execution or timing. C controls compile/link only.'])
     if 'domain' in config:
         result['domainReceiptSha256'] = text_sha(ROOT / 'reports' / config['domain'])
+    if args.stage == 'finite':
+        result['primitiveReceiptSha256'] = {n: text_sha(ROOT / 'reports' / n) for n in
+            ['wb-interpolation-unit.json', 'wb-interpolation-domain.json',
+             'qmf-common-product-screen.json', 'iir-second-cache-screen.json']}
     destination = ROOT / 'reports' / (config['prefix'] + '-' + kind + '.json')
     if args.record:
         save(destination, result)
