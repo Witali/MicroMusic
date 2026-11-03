@@ -51,6 +51,15 @@ static inline __attribute__((always_inline)) int32_t truncShift(int32_t v,uint8_
 }
 
 static const uint8_t LP_PROGMEM bitMasks[9]={0,1,3,7,15,31,63,127,255};
+#if LPX4_COMPACT_VERSION == 9
+// High coordinates of a 20x20 pulse pair. Low two bits per position are raw.
+// The 5x5 index uses five bits; the full pair still occupies exactly nine.
+static const uint8_t LP_PROGMEM pulseHigh[25]={
+ 0,4,8,12,16,32,36,40,44,48,64,68,72,76,80,
+ 96,100,104,108,112,128,132,136,140,144
+};
+#endif
+
 
 // Exact differences of cos_table.inc, not an approximation. Every16th
 // half-wave node and its positive drop are retained. A nibble stores the
@@ -239,14 +248,19 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  remaining_=sampleCount_;
  resetState();
 #if LPX4_ENABLE_INPUT_CALLBACK
- if((!data_&&!inputReader_)||size<20){error_=BAD_HEADER;return false;}
+ if((!data_&&!inputReader_)||size<(LPX4_COMPACT_VERSION==9?13:20)){error_=BAD_HEADER;return false;}
 #else
- if(!input||size<20){error_=BAD_HEADER;return false;}
+ if(!input||size<(LPX4_COMPACT_VERSION==9?13:20)){error_=BAD_HEADER;return false;}
 #endif
+#if LPX4_COMPACT_VERSION == 9
+ if(read16()!=0x394c){error_=BAD_HEADER;return false;}
+ const uint8_t version=9,flags=readByte();
+#else
  if(readByte()!='L'||readByte()!='4'||readByte()!='H'||readByte()!='Y'){
   error_=BAD_HEADER;return false;
  }
  const uint8_t version=readByte(),flags=readByte();
+#endif
 #ifdef LPX4_FIXED_SPEECH_FLAGS
  if(flags!=LPX4_FIXED_SPEECH_FLAGS){error_=UNSUPPORTED;return false;}
 #endif
@@ -259,7 +273,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  }
  else{
 #endif
- if(version!=5 || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
+ if(version!=LPX4_COMPACT_VERSION || ((flags&127)!=4 && (flags&127)!=6)){error_=UNSUPPORTED;return false;}
  // Compact-only needs one flags byte: bit1 selects6k, bit7 extra pulses.
 #if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_SPEECH_FLAGS)
  speechProfile_=flags;
@@ -286,7 +300,12 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
  }
 #endif
- sampleRate_=read16();sampleCount_=read32();
+ sampleRate_=read16();
+#if LPX4_COMPACT_VERSION == 9
+ sampleCount_=read16();
+#else
+ sampleCount_=read32();
+#endif
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && defined(LPX4_FIXED_PRE_Q14)
  const uint16_t preQ14_=read16();
 #else
@@ -301,17 +320,24 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if LPX4_BATCHED_REMAINING
  subEnd_=remaining_<20?(uint8_t)remaining_:20;
 #endif
+#if LPX4_COMPACT_VERSION != 9
  const uint16_t frames=read16(),blocks=read16();
+#endif
 #if LPX4_COMPACT_ONLY
+#if LPX4_COMPACT_VERSION == 9
+ const bool geometry=true;
+#else
  const bool geometry=frames==320 && blocks==
 #if LPX4_ENABLE_SPARSE80
  ((LPX4_SPEECH_FLAGS&64)?320:160);
 #else
  160;
 #endif
+#endif
  const uint16_t payload=read16();
+ const uint8_t headerBytes=LPX4_COMPACT_VERSION==9?13:22;
  // Subtract the header from the bounded input span; no untrusted wide sum.
- if(sampleCount_>64000 || !sampleCount_ || (size<22 || payload!=(uint16_t)(size-22))){
+ if(sampleCount_>64000 || !sampleCount_ || (size<headerBytes || payload!=(uint16_t)(size-headerBytes))){
   error_=BAD_HEADER;return false;
  }
 #else
@@ -499,7 +525,13 @@ bool Lpx4HybridCore::readFrame(){
   mode_=6;quantLimit_=32;
   blockScale_=readBits(5)<<3;
 #endif
+#if LPX4_COMPACT_VERSION == 9
+  gain_=readBits(3)<<1;
+  // At zero gain the lag contributes exactly zero for every history value.
+  lag_=gain_?18+readBits(7):18;
+#else
   lag_=18+readBits(7);gain_=readBits(3)<<1;
+#endif
 #if LPX4_COMPACT_ONLY
   blockStep_=scaleStep(blockScale);
 #else
@@ -629,23 +661,41 @@ bool Lpx4HybridCore::readSubframe(){
 #else
   if(speechCompact_ && LPX4_SPEECH_FLAGS==6){
 #endif
+#if LPX4_COMPACT_VERSION == 9
+   const uint8_t low=readBits(4),high=readBits(5);
+   if(high>=25){error_=CORRUPT_STREAM;return false;}
+   const uint8_t coordinates=LP_READ_U8(&pulseHigh[high]);
+   pair=(low&3)|(coordinates&28);
+   second=(low>>2)|((coordinates>>3)&28);
+#else
    pair=readBits(8);pair|=(uint16_t)readOne()<<8;
    if(pair>=400){error_=CORRUPT_STREAM;return false;}
    // For n=0..399: floor(n/20)=floor(floor(n/4)/5).
    // x*205>>10 is exact /5 for x=0..99; product fits unsigned16.
    second=((uint16_t)(uint8_t)(pair>>2)*205u)>>10;
+#endif
   }
 #endif
   for(uint8_t i=0;i<2;i++){
    uint8_t pos;
    int8_t amp;
    if(!(LPX4_SPEECH_FLAGS&2)){
+#if LPX4_COMPACT_VERSION == 9
+    const uint8_t raw=readBits(5);
+    pos=raw&15;pos+=(pos+2)>>2;
+    amp=(raw&16)?8:-8;
+#else
     pos=readBits(4);pos+=(pos+2)>>2;
     amp=readOne()?8:-8;
+#endif
    }else{
 #if LPX4_ENABLE_SPEECH_COMPACT
 #if LPX4_COMPACT_ONLY
+#if LPX4_COMPACT_VERSION == 9
+    pos=i?second:(uint8_t)pair;
+#else
     pos=i?second:(uint8_t)(pair-second*20);
+#endif
 #else
     if(speechCompact_)pos=i?second:(uint8_t)(pair-second*20);
     else
@@ -1075,9 +1125,31 @@ bool Lpx4HybridCore::next(uint8_t& pcm){
 bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #endif
 #if LPX4_BATCHED_REMAINING
-    if(error_||subPos_==subEnd_)return false;
+    if(error_||subPos_==subEnd_){
+#if LPX4_COMPACT_VERSION == 9
+        // V9 stores only pulse packets touched by the declared sample count.
+        // Validate EOF on the final false next(), outside the sample hot path.
+#if LPX4_ROM_POINTER
+        const bool trailing=bytes_!=0;
 #else
-    if(error_||!remaining_)return false;
+        const bool trailing=cursor_!=bytes_;
+#endif
+        if(!error_ && (trailing||bitBuffer_))error_=CORRUPT_STREAM;
+#endif
+        return false;
+    }
+#else
+    if(error_||!remaining_){
+#if LPX4_COMPACT_VERSION == 9
+#if LPX4_ROM_POINTER
+        const bool trailing=bytes_!=0;
+#else
+        const bool trailing=cursor_!=bytes_;
+#endif
+        if(!error_ && (trailing||bitBuffer_))error_=CORRUPT_STREAM;
+#endif
+        return false;
+    }
 #endif
     if(subPos_==0){
         // All frame/block/excitation headers coincide with a 20-sample boundary.
@@ -1230,7 +1302,7 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
 #else
         if(++subIndex_==8)subIndex_=0;
 #endif
-#if LPX4_ENABLE_SPEECH_COMPACT
+#if LPX4_ENABLE_SPEECH_COMPACT && LPX4_COMPACT_VERSION != 9
         // A complete final packet must consume the declared payload, with
         // only zero bits left in its final byte. The subframe index also has
         // to wrap: second-half partial tails still have stored pulse fields.

@@ -70,6 +70,21 @@ bytes to meet real-time playback. The shared state reset now saves another
 100 program bytes (0.09765625 KiB) with identical measured playback timing.
 Parameters still come from the file; recording-specialized demos remain smaller.
 
+## Smaller v9 wire format
+
+The optional [LPX v9 format](../../LPX9_FORMAT.md) retains file-defined recording
+parameters and exact decoded PCM/PWM while reducing both compressed data and
+the universal program. The builder recognizes its `L9` identifier and selects
+only the wire-format reader; arithmetic C/ASM selection stays independent.
+The previous v5/v8 build paths remain available.
+
+Fourteen matched full-IRQ cases use 5424..5425 program bytes (about 5.30 KiB),
+62..64 bytes below v5, with the same 447-byte static SRAM, 60-byte observed
+stack and 42-cycle ISR. The eight public data files shrink by 12..43 bytes,
+with exact output and no underruns. Complete tested images use 5874..7306 B.
+[Source-bound v9 comparison](v9-measurements.json) records the workload and
+before/after timing. See the format document for conversion and verification.
+
 ## Retained ROM demonstration results
 
 The selected public recipe is FIFO24 with multiplication unroll2. All nine

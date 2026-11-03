@@ -65,6 +65,17 @@
 #else
 #define LPX4_MAX_PULSES 10
 #endif
+// Select the compact wire format independently of C/ASM and memory access.
+// V9 is an explicit small-reader profile; all recording parameters stay in ROM.
+#ifndef LPX4_COMPACT_VERSION
+#define LPX4_COMPACT_VERSION 5
+#endif
+#if LPX4_COMPACT_VERSION != 5 && LPX4_COMPACT_VERSION != 9
+#error Select compact LPX version 5 or 9
+#endif
+#if LPX4_COMPACT_VERSION == 9 && (!LPX4_COMPACT_ONLY || LPX4_ENABLE_SPARSE80)
+#error Version9 requires compact-only decoding without sparse80
+#endif
 // Mirrored LPC history avoids per-sample shifts, spending 20 B RAM.
 // The compact size profile defaults to linear; explicit 1 restores mirroring.
 // Both histories retain identical output with C and explicit supported ASM.
@@ -154,6 +165,10 @@ class Lpx4HybridCore {
 public:
     enum Error : uint8_t { NONE=0, BAD_HEADER, UNSUPPORTED, CORRUPT_STREAM, END_OF_ROM };
     Lpx4HybridCore();
+#if LPX4_COMPACT_VERSION == 9
+    // Keep cold header setup out of the foreground playback stack under LTO.
+    __attribute__((noinline))
+#endif
     bool begin(const uint8_t* bytesInProgmem, uint16_t size);
 #if LPX4_ENABLE_INPUT_CALLBACK
     // Return 0..255, or -1 on input failure/EOF. The source must already be

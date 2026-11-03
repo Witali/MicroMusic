@@ -43,6 +43,7 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
         raise ValueError('This calibrated interrupt-entry adapter requires simavr1.6')
     run('g++','-O2','-std=c++11',f'-DLPX3_LPC_SEGMENTS={lpc_segments}',
         *(['-DLPX4_ENABLE_SPARSE80=1'] if sparse80 else []),
+        f'-DLPX4_COMPACT_VERSION={cost["compact_version"]}',
         '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(ROOT/'src'),
         path(output/'reference.cpp'),path(ROOT/'src/Lpx4HybridCore.cpp'),'-o',path(output/'reference'))
     expected=run(path(output/'reference'))*repeat
