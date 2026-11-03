@@ -1,0 +1,332 @@
+{
+  "scope": "Isolated bounded LPC-response arithmetic/ABI/Timer2 evidence; no complete C decoder execution or whole-player admission",
+  "target": "ATmega328P / classic AVR5 / GNU ABI",
+  "compiler": "avr-gcc.exe (GCC) 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "sourceHashMode": "UTF-8 text normalized to LF",
+  "sourceSha256": {
+    "src/wb_gain_div.h": "eca484b59eeba1db89398bbda50dc7486b2fe9c9524cbf851aaadad18088b51e",
+    "src/wb_gain_div.S": "b22f29c1eb3cf385e0a3be89eb22e505167a2c3eedf5a1b9fa48a24b58c510f4",
+    "src/speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "tests/avr_wb_ratio.c": "aa558123c5728ad47d847c7f0f404d2dc4e26b47a11e29eb33b894c05a2bba51",
+    "tests/build_wb_ratio.py": "686340a4dcec9403ae0a7621c72889e3e9ac36a13b0fd18e27fe828d8ee6fb25",
+    "tests/verify_wb_ratio.mjs": "577c4dcd91d80a850e810b82bef882796f34704bf7533e79aca33cce39f36f32",
+    "tests/audit_wb_ratio.py": "51570a46a0883fea3941e28705bb643322cddf167a28ac07a02f2f51442e780a",
+    "tests/avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f",
+    "package.json": "493477f4b8a68d5b3c93d9ab509539260a8511618266981e4648f4dfc79774c5",
+    "package-lock.json": "8a2d740662db2dfbc0bd79b7c9c62908d3f3f820f42e7771ed9ae4b98373f8b8",
+    "vendor/speex-1.2.1/libspeex/fixed_generic.h": "277197bab697189490e094211ff752f80c4f26a3d9fb6135d3d8a1e573b2a64d",
+    "vendor/speex-1.2.1/COPYING": "2654a4264b2bfe298dedc508748d140111840c315cc8eb646a3a68c13fa75b01"
+  },
+  "sourceMetadataRebinding": "Original source-byte input/report metadata was normalized to LF by verified unchanged unit binary hashes; runtime results are unchanged",
+  "toolSha256": {
+    "compiler": "d3a9a093afbd132302e430e4c88bbacccb0490ebf730f626b74662dc2460307b",
+    "nm": "4cf4392a0c0c44144668a1d8b70144708e32fa74b6279bab4e3041cb5345b593",
+    "objcopy": "5bc07336d3dc78ef13a36db73b66ca206447fc9a40035ba8f481901084f737d5",
+    "objdump": "6379ac8e391b100febd0be4f30461e0148cbd59435aa574c1e96ece55eac3726",
+    "cc1": "d47c916ac889376a6f479a1579c05875ce56ec22b70e654ebf427911a5980653",
+    "as": "f4742917d141a23f4863086e6c0a3803b4da3c444cf1935303165b6f7e7e754e",
+    "ld": "b8aa2ff51061ff713976e6db14e9adb492436e5b463679a8b9e718c8ff0f2bdf",
+    "collect2": "bc764c5b40a2ff8df5081e4f6abefd1acb457fa2e204485653282ffff2336040",
+    "lto1": "19fc11f9559ac33f110f4a61c0097cecd755ff3888ff9e35a6219eef6fc58ab4",
+    "lto-wrapper": "be467fba9a189c7d4c304fd6d64eda3645fecd41a262dc99d2656f330fb69fc3"
+  },
+  "deviceHeadersSha256": {
+    "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+    "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+  },
+  "domain": {
+    "lowResponse": [
+      1,
+      335949
+    ],
+    "highResponse": [
+      1,
+      270414
+    ],
+    "roundedNumerator": [
+      -16256,
+      43017855
+    ],
+    "signed16DivisorHalfCast": true,
+    "quotientBits": 15,
+    "remainderBits": 24,
+    "initialRemainderMax": 1312,
+    "shiftedRemainderMax": 540827
+  },
+  "asmPrimitiveBytes": 72,
+  "localStackBytes": 0,
+  "persistentDataBytes": 0,
+  "asmCycleScope": "Entry through RET; excludes caller rounding and all IRQ instructions/entry",
+  "normalCyclesFormula": "212 + 3 * popcount(quotient)",
+  "negativeNumeratorCycles": 9,
+  "saturationFastReturnCycles": 19,
+  "cCycleScope": "Original-expression O3 scalar wrapper including rounding, saturation, prologue/epilogue and RET; not a C decoder",
+  "cAndForcedGenericBinariesIdentical": true,
+  "physicalBoardTested": false,
+  "images": {
+    "asm": {
+      "binarySha256": "faa78db19c817a51d06bbf221e7e27f07bb4d9fdca55727877948975f50e4695",
+      "compilerOptions": [
+        "-std=c11",
+        "-Werror=implicit-function-declaration",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax",
+        "-DSPEEX_NB3_ENABLE_ASM=1"
+      ],
+      "irqReportSha256": "b69dbfb2abbc256654d600c36cb2bc526425e47ab89cc3c45d5cd45a00c4e6da",
+      "irq": {
+        "scope": "Isolated C/ASM LPC-response primitive; no C decoder execution or timing",
+        "backend": "asm",
+        "binarySha256": "faa78db19c817a51d06bbf221e7e27f07bb4d9fdca55727877948975f50e4695",
+        "sourceSha256": {
+          "src/wb_gain_div.h": "eca484b59eeba1db89398bbda50dc7486b2fe9c9524cbf851aaadad18088b51e",
+          "src/wb_gain_div.S": "b22f29c1eb3cf385e0a3be89eb22e505167a2c3eedf5a1b9fa48a24b58c510f4",
+          "tests/avr_wb_ratio.c": "aa558123c5728ad47d847c7f0f404d2dc4e26b47a11e29eb33b894c05a2bba51"
+        },
+        "deviceHeadersSha256": {
+          "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+          "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+          "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+        },
+        "cases": 824573,
+        "allPositiveDivisors": true,
+        "divisorsSwept": 270414,
+        "sweepResponses": [
+          1,
+          8192,
+          335949
+        ],
+        "boundaryCases": 3331,
+        "coefficientDerivedCases": 10000,
+        "negativeRoundedNumerators": 130103,
+        "saturatedCases": 1661,
+        "zeroQuotients": 270669,
+        "independentBigIntExact": true,
+        "signed16DivisorHalfCastPreserved": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 1649146,
+        "arbitraryCalleeSavedPatterns": true,
+        "readonlyInputs": true,
+        "stats": {
+          "asm": {
+            "calls": 1649146,
+            "minCycles": 9,
+            "maxCycles": 257
+          },
+          "c": {
+            "calls": 824573,
+            "minCycles": 660,
+            "maxCycles": 707
+          }
+        },
+        "includesInterrupts": true,
+        "completedTimerInterrupts": 2575903,
+        "timerCompareEvents": 2575903,
+        "noLostTimerInterrupts": true,
+        "peakStack": 24,
+        "physicalBoardTested": false,
+        "sourceHashMode": "UTF-8 text normalized to LF"
+      },
+      "bareReportSha256": "74b4c192f2a0f87c3951befd61150301f1ea0b422ab065a272b041cf02e0ec05",
+      "bare": {
+        "scope": "Isolated C/ASM LPC-response primitive; no C decoder execution or timing",
+        "backend": "asm",
+        "binarySha256": "faa78db19c817a51d06bbf221e7e27f07bb4d9fdca55727877948975f50e4695",
+        "sourceSha256": {
+          "src/wb_gain_div.h": "eca484b59eeba1db89398bbda50dc7486b2fe9c9524cbf851aaadad18088b51e",
+          "src/wb_gain_div.S": "b22f29c1eb3cf385e0a3be89eb22e505167a2c3eedf5a1b9fa48a24b58c510f4",
+          "tests/avr_wb_ratio.c": "aa558123c5728ad47d847c7f0f404d2dc4e26b47a11e29eb33b894c05a2bba51"
+        },
+        "deviceHeadersSha256": {
+          "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+          "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+          "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+        },
+        "cases": 824573,
+        "allPositiveDivisors": true,
+        "divisorsSwept": 270414,
+        "sweepResponses": [
+          1,
+          8192,
+          335949
+        ],
+        "boundaryCases": 3331,
+        "coefficientDerivedCases": 10000,
+        "negativeRoundedNumerators": 130103,
+        "saturatedCases": 1661,
+        "zeroQuotients": 270669,
+        "independentBigIntExact": true,
+        "signed16DivisorHalfCastPreserved": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 1649146,
+        "arbitraryCalleeSavedPatterns": true,
+        "readonlyInputs": true,
+        "stats": {
+          "asm": {
+            "calls": 1649146,
+            "minCycles": 9,
+            "maxCycles": 257
+          },
+          "c": {
+            "calls": 824573,
+            "minCycles": 660,
+            "maxCycles": 707
+          }
+        },
+        "includesInterrupts": false,
+        "completedTimerInterrupts": 0,
+        "timerCompareEvents": 0,
+        "noLostTimerInterrupts": null,
+        "peakStack": 12,
+        "physicalBoardTested": false,
+        "sourceHashMode": "UTF-8 text normalized to LF"
+      }
+    },
+    "c": {
+      "binarySha256": "fdc2a8db8e6fad1a30968d1275fe1a193e7b87baa6f67d10231bc2a31de2e32f",
+      "compilerOptions": [
+        "-std=c11",
+        "-Werror=implicit-function-declaration",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax",
+        "-DSPEEX_NB3_ENABLE_ASM=0"
+      ],
+      "irqReportSha256": "a644de0d14b745358b7b7ba9408b0023ee9450132e6245e1ee19d750f249abf0",
+      "irq": {
+        "scope": "Isolated C/ASM LPC-response primitive; no C decoder execution or timing",
+        "backend": "c",
+        "binarySha256": "fdc2a8db8e6fad1a30968d1275fe1a193e7b87baa6f67d10231bc2a31de2e32f",
+        "sourceSha256": {
+          "src/wb_gain_div.h": "eca484b59eeba1db89398bbda50dc7486b2fe9c9524cbf851aaadad18088b51e",
+          "src/wb_gain_div.S": "b22f29c1eb3cf385e0a3be89eb22e505167a2c3eedf5a1b9fa48a24b58c510f4",
+          "tests/avr_wb_ratio.c": "aa558123c5728ad47d847c7f0f404d2dc4e26b47a11e29eb33b894c05a2bba51"
+        },
+        "deviceHeadersSha256": {
+          "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+          "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+          "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+        },
+        "cases": 4403,
+        "allPositiveDivisors": false,
+        "divisorsSwept": 272,
+        "sweepResponses": [
+          1,
+          8192,
+          335949
+        ],
+        "boundaryCases": 3331,
+        "coefficientDerivedCases": 256,
+        "negativeRoundedNumerators": 182,
+        "saturatedCases": 298,
+        "zeroQuotients": 746,
+        "independentBigIntExact": true,
+        "signed16DivisorHalfCastPreserved": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 4403,
+        "arbitraryCalleeSavedPatterns": true,
+        "readonlyInputs": true,
+        "stats": {
+          "asm": {
+            "calls": 4403,
+            "minCycles": 9,
+            "maxCycles": 257
+          },
+          "c": {
+            "calls": 8806,
+            "minCycles": 660,
+            "maxCycles": 707
+          }
+        },
+        "includesInterrupts": true,
+        "completedTimerInterrupts": 18451,
+        "timerCompareEvents": 18451,
+        "noLostTimerInterrupts": true,
+        "peakStack": 24,
+        "physicalBoardTested": false,
+        "sourceHashMode": "UTF-8 text normalized to LF"
+      }
+    },
+    "generic": {
+      "binarySha256": "fdc2a8db8e6fad1a30968d1275fe1a193e7b87baa6f67d10231bc2a31de2e32f",
+      "compilerOptions": [
+        "-std=c11",
+        "-Werror=implicit-function-declaration",
+        "-Os",
+        "-flto",
+        "-fwrapv",
+        "-fno-strict-aliasing",
+        "-mmcu=atmega328p",
+        "-mcall-prologues",
+        "-mrelax",
+        "-DSPEEX_NB3_ENABLE_ASM=1",
+        "-DSPEEX_NB3_ARCH=SPEEX_NB3_ARCH_GENERIC"
+      ],
+      "irqReportSha256": "f25c222ed85fc11abaafcab9c2c09fc4cdf736d0939eea483ba3a3e835805d8a",
+      "irq": {
+        "scope": "Isolated C/ASM LPC-response primitive; no C decoder execution or timing",
+        "backend": "generic",
+        "binarySha256": "fdc2a8db8e6fad1a30968d1275fe1a193e7b87baa6f67d10231bc2a31de2e32f",
+        "sourceSha256": {
+          "src/wb_gain_div.h": "eca484b59eeba1db89398bbda50dc7486b2fe9c9524cbf851aaadad18088b51e",
+          "src/wb_gain_div.S": "b22f29c1eb3cf385e0a3be89eb22e505167a2c3eedf5a1b9fa48a24b58c510f4",
+          "tests/avr_wb_ratio.c": "aa558123c5728ad47d847c7f0f404d2dc4e26b47a11e29eb33b894c05a2bba51"
+        },
+        "deviceHeadersSha256": {
+          "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+          "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+          "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+        },
+        "cases": 4403,
+        "allPositiveDivisors": false,
+        "divisorsSwept": 272,
+        "sweepResponses": [
+          1,
+          8192,
+          335949
+        ],
+        "boundaryCases": 3331,
+        "coefficientDerivedCases": 256,
+        "negativeRoundedNumerators": 182,
+        "saturatedCases": 298,
+        "zeroQuotients": 746,
+        "independentBigIntExact": true,
+        "signed16DivisorHalfCastPreserved": true,
+        "explicitBackendSelectionVerified": true,
+        "calleeSavedAndR1Returns": 4403,
+        "arbitraryCalleeSavedPatterns": true,
+        "readonlyInputs": true,
+        "stats": {
+          "asm": {
+            "calls": 4403,
+            "minCycles": 9,
+            "maxCycles": 257
+          },
+          "c": {
+            "calls": 8806,
+            "minCycles": 660,
+            "maxCycles": 707
+          }
+        },
+        "includesInterrupts": true,
+        "completedTimerInterrupts": 18451,
+        "timerCompareEvents": 18451,
+        "noLostTimerInterrupts": true,
+        "peakStack": 24,
+        "physicalBoardTested": false,
+        "sourceHashMode": "UTF-8 text normalized to LF"
+      }
+    }
+  }
+}

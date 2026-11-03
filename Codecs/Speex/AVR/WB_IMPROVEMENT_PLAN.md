@@ -5,6 +5,16 @@ mono 16 kHz.
 The explicitly enabled AVR ASM backend is the performance target. Retain
 the portable, explicitly selectable C fallback and existing backend selection.
 
+## Current speed cycle, 2026-11-03
+
+[Bounded LPC-response division](WB_RATIO_SPEED.md) replaces the remaining
+generic gain-ratio divide for all five WB rates. Scalar domain/ABI/IRQ proofs,
+matched five-rate screens and complete raw comparisons pass; complete loaded
+output checks remain a separate running gate. The original sound is preserved.
+Exact finite pitch-root and HB interpolation candidates have isolated evidence
+and await separate integration. Speed remains the first priority; do not mark
+the broader optimization goal complete while these useful candidates remain.
+
 ## Acceptance rules
 
 - Separate exact speed changes from intentional synthesis/quality changes.

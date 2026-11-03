@@ -147,7 +147,7 @@ SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_de
     for(i=0;i<8;i+=2)rh+=(int32_t)next_den[i+1]-next_den[i];
     for(i=0;i<10;i+=2)rl+=(int32_t)low_den[i+1]-low_den[i];
     if(rh+82<=0 || rl+82<=0) {wb.error=1;return;}
-    ratio=(int16_t)SATURATE(PDIV32((rl+82)*128,82+rh),32767);
+    ratio=speex_wb_ratio_div(rl+82,rh+82);
     if(ratio<=0) {wb.error=1;return;}
     g=speex_wb_gain_div(AVR_READ_I32(exp_gain+wb.gain[wb.sub]),ratio);
     speex_wb_iir40(wb.exc,wb.den,wb.pcm+40,wb.mem);

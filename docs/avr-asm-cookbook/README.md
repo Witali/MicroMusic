@@ -3101,6 +3101,11 @@ an exact overflow correction and checking both feedback and output samples.
 a proven small high word first, then sixteen low bits with a sixteen-bit
 remainder. Retain exact rounding, explicit C selection and real-ABI checks.
 
+[Use saturation to shorten LPC-response division](speex-lpc-ratio-divide.md):
+retain the signed16 half-divisor cast, prove the zero/saturated cases, then
+compute fifteen quotient bits with a 24-bit remainder. Includes exact scalar
+C/ASM, real-ABI and Timer2 IRQ evidence; whole-player timing is separate.
+
 [Reuse dead excitation history](speex-noise-history.md): keep already generated
 classes and scaled noise words before the delayed-input boundary, eliminating
 duplicate RNG work without allocating another buffer. Assert the lifetime and
