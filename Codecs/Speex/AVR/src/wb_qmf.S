@@ -41,6 +41,47 @@
     .endif
     adc \c,r2
 .endm
+/* P=7*x fits signed24. Z and r20 are dead scratch until WB_FINISH. */
+.macro WB_PAIR_7_MINUS14 a,b,c,d,e,f
+    ldi r20,7
+    muls r20,r24
+    movw r30,r0
+    mulsu r20,r21
+    mov r20,r0
+    add r30,r1
+    adc r31,r2
+    add \a,r20
+    adc \b,r30
+    adc \c,r31
+    lsl r20
+    rol r30
+    rol r31
+    sub \d,r20
+    sbc \e,r30
+    sbc \f,r31
+.endm
+/* P=10*x is even: P+(P>>1) is exactly 15*x for both signs. */
+.macro WB_PAIR_MINUS10_15 a,b,c,d,e,f
+    ldi r20,10
+    muls r20,r24
+    movw r30,r0
+    mulsu r20,r21
+    mov r20,r0
+    add r30,r1
+    adc r31,r2
+    sub \a,r20
+    sbc \b,r30
+    sbc \c,r31
+    add \d,r20
+    adc \e,r30
+    adc \f,r31
+    asr r31
+    ror r30
+    ror r20
+    add \d,r20
+    adc \e,r30
+    adc \f,r31
+.endm
 /* r20=128 on entry and exit, so adjacent inputs share the bias constant. */
 .macro WB_INPUT
     movw r30,r16
@@ -160,8 +201,7 @@ speex_wb_qmf40_avr:
     WB_MAC r10,r11,r12,-4,1
     /* Seven history records contribute to both output pairs. */
     WB_LOAD
-    WB_MAC r7,r8,r9,-10
-    WB_MAC r13,r14,r15,15
+    WB_PAIR_MINUS10_15 r7,r8,r9,r13,r14,r15
     WB_LOAD
     WB_MAC r4,r5,r6,-4
     WB_MAC r10,r11,r12,7
@@ -169,8 +209,7 @@ speex_wb_qmf40_avr:
     WB_MAC r7,r8,r9,15
     WB_MAC r13,r14,r15,-26
     WB_LOAD
-    WB_MAC r4,r5,r6,7
-    WB_MAC r10,r11,r12,-14
+    WB_PAIR_7_MINUS14 r4,r5,r6,r10,r11,r12
     WB_LOAD
     WB_MAC r7,r8,r9,-26
     WB_MAC r13,r14,r15,123
@@ -190,8 +229,7 @@ speex_wb_qmf40_avr:
     WB_MAC r4,r5,r6,123
     WB_MAC r10,r11,r12,-26
     WB_LOAD
-    WB_MAC r7,r8,r9,-14
-    WB_MAC r13,r14,r15,7
+    WB_PAIR_7_MINUS14 r13,r14,r15,r7,r8,r9
     WB_LOAD
     WB_MAC r4,r5,r6,-26
     WB_MAC r10,r11,r12,15
@@ -199,8 +237,7 @@ speex_wb_qmf40_avr:
     WB_MAC r7,r8,r9,7
     WB_MAC r13,r14,r15,-4
     WB_LOAD
-    WB_MAC r4,r5,r6,15
-    WB_MAC r10,r11,r12,-10
+    WB_PAIR_MINUS10_15 r10,r11,r12,r4,r5,r6
     movw r30,r22
     WB_FINISH r4,r5,r6
     WB_FINISH r7,r8,r9

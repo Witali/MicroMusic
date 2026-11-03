@@ -158,7 +158,6 @@ IIR_ENTRY:
     movw r6, r24
     movw r10, r22
     movw r8, r20
-    movw r12, r18
     movw r28,r18
     movw r14, r18
     ldi r24, 4*IIR_ORDER
@@ -169,25 +168,37 @@ IIR_ENTRY:
      * in the same pair that will hold the first new steady coefficient. */
     ldd r16,Y+(6*IIR_ORDER-2)
     ldd r17,Y+(6*IIR_ORDER-1)
+    /* r12:r13 cache the second-last old age until output order-2.
+     * T records the final warm phase; no arithmetic here changes T. */
+    ldd r12,Y+(6*IIR_ORDER-4)
+    ldd r13,Y+(6*IIR_ORDER-3)
+    clt
     /* Exactly order warm samples update all coefficient ages. Y wraps
      * once after the phase, so no per-sample cursor test is needed. */
-    ldi r18,IIR_ORDER
+    ldi r18,IIR_ORDER-1
     mov r3,r18
 .Lwarm_sample:
     movw r26, r14
     movw r30, r28
     adiw r30, 2*IIR_ORDER
     IIR_MAC memory,1
-    .rept IIR_ORDER-2
+    .rept IIR_ORDER-3
     IIR_MAC memory
     .endr
+    IIR_MAC r12
     IIR_MAC r16,0,16,17
     IIR_FINISH 1
     dec r3
-    breq .Lsteady_setup
+    breq .Lwarm_phase
+    rjmp .Lwarm_sample
+.Lwarm_phase:
+    brts .Lsteady_setup
+    movw r12,r18
+    set
+    inc r3
     rjmp .Lwarm_sample
 .Lsteady_setup:
-    movw r28,r12
+    sbiw r28,2*IIR_ORDER
     /* Ages are now fixed. Immediate rounding frees r3 for the counter;
      * group-boundary Y resets free r16:r17 for a fourth cached word. The
      * first coefficient can feed MULSU directly from that high-register

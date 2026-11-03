@@ -3040,6 +3040,32 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Reuse related QMF products](speex-qmf-common-product.md): one signed24
+product updates two accumulators, reducing measured multiplication count
+and exact block time while retaining the C oracle and boundary IRQ proof.
+
+[Split bounded QMF accumulators into words](speex-qmf-split-accumulators.md):
+derive the high/low bias from coefficient bounds, compare stack and dead-mirror
+pointer spills, and measure both complete-image speed and maximum SRAM use.
+
+[Share finite HB interpolation loops](speex-hb-interpolation.md): prove the
+codebook domain before narrowing differences, share complementary quarters
+through pointer exchange, and compare isolated speed/Flash recipes. Integration
+and loaded whole-decoder admission remain separate.
+
+[Replace a finite fixed-point pitch root](speex-finite-pitch-root.md): prove
+all 128 packet pitches, retain exact byte results and selectable original C;
+measured isolated lookup/threshold/poly recipes, without a full-player claim.
+
+[Exhaust correlated LPC codebooks before narrowing](speex-finite-lpc-response.md):
+25,171,968 paired current/Xiph scalar conversions prove HB1 response 111..31849,
+with separate term/prefix bounds and exact unsigned-word reduction; no timing claim.
+
+[Specialize division for validated HB1 responses](speex-finite-hb-ratio.md):
+retain the generic API, use a positive signed16 divisor and inverted quotient,
+and compare unrolled recipes with explicit C, ABI, IRQ and matched scalar replay.
+Whole-decoder throughput remains a separate integration gate.
+
 [Compose the exact finite vocoder gain map](speex-finite-gain.md): preserve
 both quantizers in sixteen Flash bytes, compare complete caller recipes and
 retain range information where the measured compiler benefits. Also covers
@@ -3096,6 +3122,11 @@ an exact overflow correction and checking both feedback and output samples.
 [Bound the rounded numerator before division](speex-bounded-divide.md): divide
 a proven small high word first, then sixteen low bits with a sixteen-bit
 remainder. Retain exact rounding, explicit C selection and real-ABI checks.
+
+[Use saturation to shorten LPC-response division](speex-lpc-ratio-divide.md):
+retain the signed16 half-divisor cast, prove the zero/saturated cases, then
+compute fifteen quotient bits with a 24-bit remainder. Includes exact scalar
+C/ASM, real-ABI and Timer2 IRQ evidence; whole-player timing is separate.
 
 [Reuse dead excitation history](speex-noise-history.md): keep already generated
 classes and scaled noise words before the delayed-input boundary, eliminating
