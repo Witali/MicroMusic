@@ -33,11 +33,16 @@ It binds the experimental tool and its seven stdlib tests to their code hashes.
 
 ## Equivalent C reference and validation
 
-`reader.py` makes a private source tree from production `95346ea9`. It verifies
+`reader.py` makes a private source tree from Git `393b2de2`, whose decoder
+sources match the measured `95346ea9` version. It verifies
 the original core hash, applies only the v9 flag mask and delta-k selection, and
 verifies the resulting core hash. It **retains** the compact error check. C is
 the default backend; the existing architecture checks and explicit ASM-enable
 define still govern assembly. Memory access is independent of backend choice.
+The local Git history must contain that revision. A Windows-created worktree
+can use native Git through WSL; no repository paths or metadata are rewritten.
+Freezing the whole source tree keeps this experiment reproducible as the main
+decoder gains other arithmetic modes.
 
 [Native proof](native.json): all 318 streams, 15,371,791 samples and 12,084 complete
 decodes pass. Eight C variants cover standard/SRAM512 memory, ROM pointer0/1,
