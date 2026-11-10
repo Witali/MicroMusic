@@ -1,0 +1,1999 @@
+{
+  "scope": "Frozen-source exact innovation-loop and short-geometry sharing candidates; bounded ASM decoder/IRQ screens",
+  "baselineRevision": "1da660eaaa52e2c97da5aa517fbc3aa6e24813af",
+  "baselineSourceSha256": {
+    "avr_audio_output.h": "dd93e476ebfb2af8b86f7b92e8726f82fb2c0d8400c08c683eb49a4709cb84a3",
+    "avr_fixed.h": "3878d9da964234419a1b246ef5dde990b199b96a88c3476f21605f71c9049b67",
+    "avr_multiply.h": "36de5d16f5332c4c2924d45a4bc2f6cbea78607c6f1861e24800d72a9c48e81f",
+    "avr_shift.h": "92d78865eb4bbdb189a86557e22a08af88ee72cad3cf090c849fc1ae760c4a5f",
+    "avr_tables.h": "4e0e67e692b8093752cb2a02f4b359d710304341dd0d46d18e73c3b35598c3d9",
+    "bits.c": "745b06111e3ec46ec42be8bd598f7f730ffc87af2e13d474dcfaf125c2ca3b4a",
+    "compact_lsp.c.inc": "39414b9bfe0317fefe9e39fd6be44492c5f65ca0f8ae189ab768873760d0fba7",
+    "compact_lsp_rates.c.inc": "60146af14dc2b86b253e87a9411e793406c04b0f72eaf982e61240262c085d65",
+    "forced_math.h": "3b4a9b5a0f36f8531c9a79159a53688d6ab2d53a181d7588cdd8dd3ab4fd6154",
+    "forced_pitch.h": "7716de88b622942af1e38739ea40e84c4872d66d97b67bc51164e620371b4560",
+    "iir_direct.c.inc": "584cc9fb7f1cf34cf51b7c1b708df5f4981fbaf2d653b73c9c6e9e4a5634acc5",
+    "iir_kernel.inc": "193437dbc79dabc3a710ee062f0714a1896d53e16d29ec7d6674551607e7cda9",
+    "innovation.h": "b42aee7475b58fe1315b78a5ef9f346dd019b66739d1469ce19fea98933e16f8",
+    "innovation.S": "4c83663cf3edd15eae7947bdf938ba05334daa50fbb8b3a2ccf12943f4bd45fb",
+    "innovation_core.inc": "96a56a6da1e0ae6ab9ec6bdf1f4499b742615146b404f4f602d1f08878310f60",
+    "long_pitch.h": "d4c26763b5143b86d0edfd6d1b84e37d85af2940e77d636ac8574c478cc983bd",
+    "lowrate_excitation.h": "4c59f492ae57fe19c67132721b9a1fc42fd630f15a0ad33d969262dc90e15cb5",
+    "lowrate_mean.h": "53544dbd88d02cb95434b224780c2ee494368b37d9125a56002d8ca513c9d9c7",
+    "lowrate_mean.S": "7feec155fcc368c3b24dd90db57c821861e179d4f53890ea0a570edef4800f9d",
+    "lowrate_mean_kernel.inc": "44ef0fa5f324e6531e93e4af5e96a7576dbc07be96da8e1a06df8070859488ab",
+    "lowrate_noise.c": "50cfbefee37b6670be86695f75a11386ea0cf35f5ea1a04244494c77eefbd36c",
+    "lowrate_noise.h": "345dd85bc4f5983bd9826117ee87c510c230fdcc7d90f4fa9a515a9019b30893",
+    "lowrate_rng.h": "ba5d3564ad01449a68e98371d0fb2db5259f95b541d8653e0f283bff707f0689",
+    "lpc_dot.S": "8e40aaef0744c8614fe06f281874ebcf2173d94f3d585b00b5703bea2f851be5",
+    "lpc_update.S": "00bb267faac8ed005a51893c8572e48b1fa4bfc30f3cb734ac13c0a4f3d49d20",
+    "lsp_advance.S": "c7c92245b4af60827a477c7ffdcaf9847befe3ef691bfdf6a5ba0ca01d47fba9",
+    "lsp_angle.S": "a0061869a1602ea95a57aa410518b0420c524a65ed15ad7f26cf2b3ad4353391",
+    "lsp_finish.S": "c161d4417eb91e7ff6618b2fdffe4313a58e25129e6de192ee05959932abd714",
+    "lsp_first.S": "12d2128c01ec50b45159545eef412a17cf3a8a40d71b5c7e6e43226b7b44cca5",
+    "lsp_pair.S": "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22",
+    "lsp_stage.S": "eaeaf109f57853cd58bfb96a181e50941912c5f2fa4e000a327b74245d741529",
+    "lsp_stage_macros.S": "5c997aba9ec8a46bac795e34c59b65b22201c2b0aa8cd2037d85405e3078e7c5",
+    "nb1_cache_layout.h": "fecb43edff19065f13fa27e3b9b408f7902103a2c7f8f86aab69fc430ef9f9aa",
+    "nb1_gain.h": "16585b63dcdc7898d2c0d6c408822635f20e45feed188ae1eaf2be754a1082f2",
+    "nb1_pitch.h": "9c968152f6f099e60531e00582eed784d9fbfa861c17c2a80eed360b33b8e841",
+    "nb1_vocoder.c": "77e654b178497182930bc2159b89d14ce326936f99bb4b61a3f5e6bf5040982f",
+    "nb1_vocoder.h": "efbcacd025768903db8bc4d9745286be4932131fb89f5ff0934966924c28fe59",
+    "nb1_vocoder.S": "bfa8fc37f9a86f97dcd3fd640ab2a7ac48fc7644ed47803f7349ece56a6b3942",
+    "nb1_zero_gain.h": "b8efc1c740186219f5d519116d0cfafb4c772c2eb6934509b81c261b7f1ae9ec",
+    "nb3_c_math.h": "9e89d9d789d9d9b72f7c69dcf0aa3b111a75db8a2d3963426791b2e6c9932154",
+    "nb3_header.h": "8d973f6bf9657858b910362d6999c32db0dc1be8f7c10bcb1e3e11d513dccd02",
+    "nb3_indices.h": "2171ad9e73cf6adb5abe4df9d07c262a94eabbca304789830f56b8302f36a460",
+    "nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "nb3_lsp_angle.h": "1c7b6f05e01a2067e8f07c7c342fdccf8232a209861a3d28f617b9eadd75203b",
+    "nb3_lsp_finish.h": "82776b8584a84ca3e1d3c0578402e276d2f4deb40753bee0e13f665d0c19408c",
+    "nb3_lsp_first.h": "1153f8c77c5cd2df39b1eb7c44d05e5e695a155dc5bf5e95c6d1db5c2655b9b1",
+    "nb3_lsp_pair.h": "ed59efb79b7a8af17e1cd3f48ade514084d599ebdd136797ed7920107ad7ac3c",
+    "nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "nb4_excitation.h": "684e455ae43f57b16cefa227ab04a50b5825d978d41aa2388e995d897d776f51",
+    "nb4_subframe.h": "eb93b29731123939f2397888bdb9671e36979029f16d9cc304ac2a0a46346dc6",
+    "nb_decode.c.inc": "ee8374110d963982e8b308b12ff041fec2d630e1b83a3a258f16d5ce89e05294",
+    "packed24.h": "cd3d6cd54064fc9841aef7ff13abc801bff43cf79c3318b8175e52b9695dda73",
+    "packet_mode.h": "2729d18157a137eba36cac6695f92663858da309d64388c20011f062d197896d",
+    "pitch24.h": "530dbbd915a2f032067e756772eb81b29b5a8bdb429b92d22185701e09deff81",
+    "pitch_add.S": "6272ddbc09160381bb73fb86d2a8e97a60e20f37570df5d3896d28b59d5918ce",
+    "player.c": "8e960f4874f0f98c7f21f486c9c4317405a42c12bcda1330fb353658ee584454",
+    "profile_mode.h": "0052bc51ba4013ddc6e758a59a03fd3ecd1030c5ad07540008817180caa36d5b",
+    "profile_state.h": "72c6aec0f48e37bd6937a09c72dc5f97be408e7995464b711db2ec10e47af95f",
+    "q14.S": "8d93f106036746be2ec0400f78737c48ea3b7559428e9f1e41b1f0910333d839",
+    "q14_macros.S": "4913b0a3484ebf612750ea42f461ef8e17f4f95329be9dd44df6f1e3af0ec827",
+    "qmf_memory.c": "a1232858f274e30f7050334fc5b608edcd3d422fccda75de77430bc7831d08c3",
+    "qmf_memory.h": "ef340baf7353191f5c8294fb21b0f25bd46390186573a9ce8b3ef8033bc5f7e0",
+    "short_pitch.h": "a90485058cd47d9c762eea1bba4dda62f2f81a0e79457d67c51b69d39c2d300c",
+    "short_pitch_kernel.inc": "6801e39e986e600e30c0a34e240f7cb368be483d6e0d1f35ddacbf48e0e93998",
+    "speex_avr.c": "cb61c6c529f91219b32dd47491bdee8a0a95034e0206ce6b8a05d783df840262",
+    "speex_avr.h": "9ca142747c625230c30ea1cafddbf452da80bc45b25b5ee2ddeea754719e3566",
+    "speex_nb.h": "47ebf2505af9421b706a323528bc0f954e3a5c6069cae53fe6a6b13d84af13f7",
+    "speex_nb3.h": "b6aa205038d0e534991b7f0f684516dfbe4c7a8d30649550a52558c18b22f9d0",
+    "speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "speex_wb1.c": "b6eefb306b2adef8c36514a2616eb0f83dd03648b47dd0477175b87c174a0cfe",
+    "speex_wb1.h": "6d4c9bc361ccd8b5fea23793e00bcb3345accc09e67a5114fe5bc0dd6d52abdc",
+    "wb_excitation_kernel.inc": "33bc675a1840fac8cecb05fc7ec4786a13267db91166db9ef76f67b64e71a399",
+    "wb_fold.c": "283afe5869bf0f2d39b45dfcab03eb0156a62323645384ca12cdd0cb0ca3e2e2",
+    "wb_fold.h": "3950dfcdc638aecfebb7ee8309c8e5e7bba59eaeabb465aca3368963e1be040d",
+    "wb_fold.S": "ca19550d9adf11972d53586c236cb512ff379c7f905f687bdd1827eb132ced71",
+    "wb_fold_kernel.inc": "ff52c6443df47be168638773d984a0094bd93282cb8bff282a0bd7aedd2f1a99",
+    "wb_gain_div.h": "c6b6872e09d93dc8eb152396d58d5479e3984db795a9e1c77cb2929c229cf87e",
+    "wb_gain_div.S": "29b5b3392441ea3eb903c6111d94ad559e678912aa7f8e3091c3129eebd699e8",
+    "wb_iir.c": "7ce0ddaca8da575efca564660cb79337d6747e698de709b57ab74b4c5099870c",
+    "wb_iir.h": "cc268430e595b5a8edd14c47155028e0357a0830cd3cb8eb864a5b463020a4c2",
+    "wb_iir.S": "275936662303e102239afb58cb4a6d812541cd2bec68cbab7e0c03bb0ac9cd5e",
+    "wb_internal.h": "76839306b6484b3e25e44822a0c39e11b4dbabe4d3d1cbb65eaf01915fd8e1da",
+    "wb_player.c": "cd295cc8c53d603769981aa5d892c398b30487d3333769c231329b1c4a1ad8be",
+    "wb_qmf.c": "c27ff603c22ea71ac05ddd8256f13109593822c05fb34e71a7578c17d04a12f0",
+    "wb_qmf.h": "8b42180325ba8c60ee398f86ae696833f6201c580a7c68e970232e74412f6b3b",
+    "wb_qmf.S": "57fdc8545d415799a639febff21adc806567a3c21ed06c67d35072e615f4f7b0",
+    "zero_innovation.h": "dc192db47f3140e64ef11bc10c26790726ca5e1a556a99aff3a10bfbc7ce35c7",
+    "zero_shape_kernel.inc": "42c8aa44ff55935bbc27ecf5348629d3debbe28946fd72965e36f2c224736ed7"
+  },
+  "candidateChangedSourceSha256": {
+    "innovation.S": "0ad800a0eb7ac33a68bc904ad645e5e4d7aa3b6417850408fc703983e6b25ab9",
+    "short_pitch.h": "ea2b7450bd0a6c2479c105293ba76109e9a6597c1e283aba8a68f11dabe73475"
+  },
+  "baselineGitTextVerified": true,
+  "textHashNormalization": "CRLF to LF",
+  "target": "ATmega328P / AVR5 / GNU ABI /16MHz /2KB SRAM",
+  "compiler": "AVR GCC7.3.0; existing Os/O2/O3, LTO, mcall-prologues, mrelax",
+  "probeSourceSha256": {
+    "geometry.c": "e3373df109d4f533c05c65997cd4422dcef39dd7bdcff8332ac1abf4958d29d9",
+    "verify_geometry.mjs": "b6a83397ee059ebb324d59d8b348d22024ffe7d12867fac0f8461fcaf591d9b3",
+    "verify_long40.mjs": "ec44dc70ffcdc94cb46cf183b5fe87ff51248bbf3e91b854f89b3a7dac1c1db2",
+    "verify_long_pitch.mjs": "c8e4459c8b2575abeb1fa66503e79c63b2a0528502c1886853714ea630d6d273",
+    "verify_short_pitch.mjs": "03e6958e5f524ea464efc6adcbacd97bf44bb7751ec8498b7add4807833a2a94",
+    "reproduce_images.py": "a0db168d8f34cec3694a3f65b31e483a3379c6fa5c0ac0d24e91396ce150e675"
+  },
+  "units": [
+    {
+      "epoch": "before",
+      "family": "long40",
+      "report": {
+        "mcu": "ATmega328P",
+        "simulator": "avr8js 0.21.1",
+        "compiler": "AVR GCC 7.3.0 mixed Os/O2 LTO fwrapv mcall-prologues mrelax",
+        "binarySha256": "5fbf3607a3bf3483e3f4187da962a522aa3734987f0911b70496c56fb95b29a5",
+        "casesPerImplementation": 72960,
+        "samplesPerImplementation": 2918400,
+        "tableCases": 65536,
+        "boundaryCases": 3072,
+        "randomGainBlocks": 4096,
+        "scaleEdgeBlocks": 256,
+        "tableGainTriples": 32,
+        "tableScales": 64,
+        "all256Shapes": true,
+        "all32IndicesAtEachVector": true,
+        "pitchClippedSamples": 172236,
+        "outputClippedSamples": 59332,
+        "exact": true,
+        "historyGainIndicesAndGuardsPreserved": true,
+        "actualRamReadsChecked": true,
+        "exact40FlashReadsPerCall": true,
+        "newKernelHistoryBytesRead": 84,
+        "newKernelGainBytesRead": 3,
+        "newKernelIndexBytesRead": 4,
+        "calleeSavedRegistersPreserved": true,
+        "zeroRegisterRestored": true,
+        "topLevelReturnsEach": 72960,
+        "asm40Cycles": {
+          "min": 5409,
+          "max": 5609,
+          "total": 401213992,
+          "calls": 72960,
+          "mean": 5499.0953
+        },
+        "fourAsmTenCycles": {
+          "min": 5859,
+          "max": 6059,
+          "total": 434045992,
+          "calls": 72960,
+          "mean": 5949.0953
+        },
+        "c40Cycles": {
+          "min": 14765,
+          "max": 15275,
+          "total": 1097323611,
+          "calls": 72960,
+          "mean": 15040.0714
+        },
+        "cyclesSavedVsFourTen": {
+          "min": 450,
+          "max": 450,
+          "mean": 450
+        },
+        "peakStackBytes": 48,
+        "staticSramBytes": 190,
+        "includesInterrupts": false,
+        "physicalBoardTested": false
+      },
+      "reportSha256": "e87afa97b7769fae35c7a8d9c243296838c0041158a9611c51bbdcd0e731f8b3"
+    },
+    {
+      "epoch": "before",
+      "family": "long-pitch",
+      "report": {
+        "mcu": "ATmega328P",
+        "simulator": "avr8js 0.21.1",
+        "compiler": "AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv",
+        "binarySha256": "6d38ecc7fdd32cc66c312ce5da660295412db5a4464369467c409d6d117aa109",
+        "blocks": 67328,
+        "fullRun": true,
+        "fixedSamplesPerBackend": 673280,
+        "scalarSamples": 67328,
+        "tableGainTriples": 32,
+        "scales": 64,
+        "shapeMin": -128,
+        "shapeMax": 127,
+        "historyMin": -32768,
+        "historyMax": 32767,
+        "fullTableShapeScaleCases": 53248,
+        "clampBoundaryBlocks": 9984,
+        "randomGainBlocks": 4096,
+        "outputClippedSamples": 13508,
+        "pitchClippedSamples": 41722,
+        "exact": true,
+        "gainsPreserved": true,
+        "historyPreserved": true,
+        "guardsIntact": true,
+        "calleeSavedRegistersPreserved": true,
+        "zeroRegisterRestored": true,
+        "asmKernelCycles": {
+          "min": 1409,
+          "max": 1482,
+          "calls": 67328
+        },
+        "cKernelCycles": {
+          "min": 3656,
+          "max": 3945,
+          "calls": 67328
+        },
+        "packedKernelCycles": {
+          "min": 967,
+          "max": 1040,
+          "calls": 67328
+        },
+        "variableAsmKernelCycles": {
+          "min": 6,
+          "max": 1474,
+          "calls": 67328
+        },
+        "variableCKernelCycles": {
+          "min": 227,
+          "max": 3957,
+          "calls": 67328
+        },
+        "variableCounts": [
+          {
+            "count": 0,
+            "calls": 6121,
+            "samples": 0
+          },
+          {
+            "count": 1,
+            "calls": 6121,
+            "samples": 6121
+          },
+          {
+            "count": 2,
+            "calls": 6121,
+            "samples": 12242
+          },
+          {
+            "count": 3,
+            "calls": 6121,
+            "samples": 18363
+          },
+          {
+            "count": 4,
+            "calls": 6121,
+            "samples": 24484
+          },
+          {
+            "count": 5,
+            "calls": 6121,
+            "samples": 30605
+          },
+          {
+            "count": 6,
+            "calls": 6121,
+            "samples": 36726
+          },
+          {
+            "count": 7,
+            "calls": 6121,
+            "samples": 42847
+          },
+          {
+            "count": 8,
+            "calls": 6120,
+            "samples": 48960
+          },
+          {
+            "count": 9,
+            "calls": 6120,
+            "samples": 55080
+          },
+          {
+            "count": 10,
+            "calls": 6120,
+            "samples": 61200
+          }
+        ],
+        "scalarAsmKernelCycles": {
+          "min": 190,
+          "max": 205,
+          "calls": 67328
+        },
+        "scalarVsRuntimeCyclesSaved": [
+          35
+        ],
+        "variableSamplesPerBackend": 336628,
+        "includesInterrupts": false,
+        "physicalBoardTested": false
+      },
+      "reportSha256": "9bab9c91c4f08be2acd3e59ded49621846c3c5565653a1351d41f5c2a6a48b37"
+    },
+    {
+      "epoch": "before",
+      "family": "short-pitch",
+      "report": {
+        "mcu": "ATmega328P",
+        "simulator": "avr8js 0.21.1",
+        "compiler": "AVR GCC 7.3.0 mixed Os/O2/O3, LTO, fwrapv",
+        "binarySha256": "6aac8d8d95f616363eaf6dd729aa5c9ddc7e7e35dc2b089f2930086efa1e03fd",
+        "blocks": 49152,
+        "samplesPerBackend": 1966080,
+        "pitches": 24,
+        "pitchMin": 17,
+        "pitchMax": 40,
+        "gainCodes": 32,
+        "scales": 64,
+        "shapeCodes": 32,
+        "historyMin": -32768,
+        "historyMax": 32767,
+        "pitchClipped": 102116,
+        "outputClipped": 6750,
+        "exact": true,
+        "historyPreserved": true,
+        "packetPreserved": true,
+        "guardsIntact": true,
+        "bitConsumptionExact": true,
+        "indexParsingOutsideMeasuredController": true,
+        "calleeSavedRegistersPreserved": true,
+        "zeroRegisterRestored": true,
+        "asmControllerCycles": {
+          "min": 6371,
+          "max": 6982,
+          "calls": 49152
+        },
+        "cControllerCycles": {
+          "min": 14871,
+          "max": 16202,
+          "calls": 49152
+        },
+        "perPitch": [
+          {
+            "pitch": 17,
+            "asm": {
+              "min": 6607,
+              "max": 6772,
+              "total": 13672559,
+              "calls": 2048,
+              "mean": 6676.054
+            },
+            "c": {
+              "min": 14871,
+              "max": 15187,
+              "total": 30772002,
+              "calls": 2048,
+              "mean": 15025.392
+            }
+          },
+          {
+            "pitch": 18,
+            "asm": {
+              "min": 6752,
+              "max": 6903,
+              "total": 13959567,
+              "calls": 2048,
+              "mean": 6816.195
+            },
+            "c": {
+              "min": 15267,
+              "max": 15568,
+              "total": 31579457,
+              "calls": 2048,
+              "mean": 15419.657
+            }
+          },
+          {
+            "pitch": 19,
+            "asm": {
+              "min": 6802,
+              "max": 6982,
+              "total": 14073461,
+              "calls": 2048,
+              "mean": 6871.807
+            },
+            "c": {
+              "min": 15500,
+              "max": 15860,
+              "total": 32136620,
+              "calls": 2048,
+              "mean": 15691.709
+            }
+          },
+          {
+            "pitch": 20,
+            "asm": {
+              "min": 6664,
+              "max": 6838,
+              "total": 13794262,
+              "calls": 2048,
+              "mean": 6735.479
+            },
+            "c": {
+              "min": 15687,
+              "max": 16024,
+              "total": 32486476,
+              "calls": 2048,
+              "mean": 15862.537
+            }
+          },
+          {
+            "pitch": 21,
+            "asm": {
+              "min": 6531,
+              "max": 6705,
+              "total": 13530437,
+              "calls": 2048,
+              "mean": 6606.659
+            },
+            "c": {
+              "min": 15702,
+              "max": 16035,
+              "total": 32496603,
+              "calls": 2048,
+              "mean": 15867.482
+            }
+          },
+          {
+            "pitch": 22,
+            "asm": {
+              "min": 6641,
+              "max": 6840,
+              "total": 13755462,
+              "calls": 2048,
+              "mean": 6716.534
+            },
+            "c": {
+              "min": 15803,
+              "max": 16202,
+              "total": 32715672,
+              "calls": 2048,
+              "mean": 15974.449
+            }
+          },
+          {
+            "pitch": 23,
+            "asm": {
+              "min": 6682,
+              "max": 6844,
+              "total": 13824705,
+              "calls": 2048,
+              "mean": 6750.344
+            },
+            "c": {
+              "min": 15807,
+              "max": 16166,
+              "total": 32718550,
+              "calls": 2048,
+              "mean": 15975.854
+            }
+          },
+          {
+            "pitch": 24,
+            "asm": {
+              "min": 6674,
+              "max": 6843,
+              "total": 13823952,
+              "calls": 2048,
+              "mean": 6749.977
+            },
+            "c": {
+              "min": 15765,
+              "max": 16149,
+              "total": 32714685,
+              "calls": 2048,
+              "mean": 15973.967
+            }
+          },
+          {
+            "pitch": 25,
+            "asm": {
+              "min": 6674,
+              "max": 6845,
+              "total": 13823846,
+              "calls": 2048,
+              "mean": 6749.925
+            },
+            "c": {
+              "min": 15824,
+              "max": 16155,
+              "total": 32716342,
+              "calls": 2048,
+              "mean": 15974.776
+            }
+          },
+          {
+            "pitch": 26,
+            "asm": {
+              "min": 6678,
+              "max": 6841,
+              "total": 13821974,
+              "calls": 2048,
+              "mean": 6749.011
+            },
+            "c": {
+              "min": 15824,
+              "max": 16151,
+              "total": 32715711,
+              "calls": 2048,
+              "mean": 15974.468
+            }
+          },
+          {
+            "pitch": 27,
+            "asm": {
+              "min": 6674,
+              "max": 6863,
+              "total": 13824181,
+              "calls": 2048,
+              "mean": 6750.088
+            },
+            "c": {
+              "min": 15814,
+              "max": 16163,
+              "total": 32716859,
+              "calls": 2048,
+              "mean": 15975.029
+            }
+          },
+          {
+            "pitch": 28,
+            "asm": {
+              "min": 6631,
+              "max": 6805,
+              "total": 13752051,
+              "calls": 2048,
+              "mean": 6714.869
+            },
+            "c": {
+              "min": 15824,
+              "max": 16141,
+              "total": 32714721,
+              "calls": 2048,
+              "mean": 15973.985
+            }
+          },
+          {
+            "pitch": 29,
+            "asm": {
+              "min": 6521,
+              "max": 6693,
+              "total": 13502223,
+              "calls": 2048,
+              "mean": 6592.882
+            },
+            "c": {
+              "min": 15699,
+              "max": 16028,
+              "total": 32461224,
+              "calls": 2048,
+              "mean": 15850.207
+            }
+          },
+          {
+            "pitch": 30,
+            "asm": {
+              "min": 6521,
+              "max": 6692,
+              "total": 13501410,
+              "calls": 2048,
+              "mean": 6592.485
+            },
+            "c": {
+              "min": 15702,
+              "max": 16022,
+              "total": 32458277,
+              "calls": 2048,
+              "mean": 15848.768
+            }
+          },
+          {
+            "pitch": 31,
+            "asm": {
+              "min": 6519,
+              "max": 6699,
+              "total": 13507434,
+              "calls": 2048,
+              "mean": 6595.427
+            },
+            "c": {
+              "min": 15704,
+              "max": 16000,
+              "total": 32460909,
+              "calls": 2048,
+              "mean": 15850.053
+            }
+          },
+          {
+            "pitch": 32,
+            "asm": {
+              "min": 6625,
+              "max": 6810,
+              "total": 13730511,
+              "calls": 2048,
+              "mean": 6704.351
+            },
+            "c": {
+              "min": 15801,
+              "max": 16111,
+              "total": 32680586,
+              "calls": 2048,
+              "mean": 15957.317
+            }
+          },
+          {
+            "pitch": 33,
+            "asm": {
+              "min": 6666,
+              "max": 6831,
+              "total": 13799766,
+              "calls": 2048,
+              "mean": 6738.167
+            },
+            "c": {
+              "min": 15818,
+              "max": 16143,
+              "total": 32682642,
+              "calls": 2048,
+              "mean": 15958.321
+            }
+          },
+          {
+            "pitch": 34,
+            "asm": {
+              "min": 6658,
+              "max": 6824,
+              "total": 13797316,
+              "calls": 2048,
+              "mean": 6736.971
+            },
+            "c": {
+              "min": 15811,
+              "max": 16146,
+              "total": 32680218,
+              "calls": 2048,
+              "mean": 15957.138
+            }
+          },
+          {
+            "pitch": 35,
+            "asm": {
+              "min": 6658,
+              "max": 6835,
+              "total": 13800067,
+              "calls": 2048,
+              "mean": 6738.314
+            },
+            "c": {
+              "min": 15807,
+              "max": 16118,
+              "total": 32681654,
+              "calls": 2048,
+              "mean": 15957.839
+            }
+          },
+          {
+            "pitch": 36,
+            "asm": {
+              "min": 6658,
+              "max": 6841,
+              "total": 13799689,
+              "calls": 2048,
+              "mean": 6738.129
+            },
+            "c": {
+              "min": 15807,
+              "max": 16106,
+              "total": 32681426,
+              "calls": 2048,
+              "mean": 15957.728
+            }
+          },
+          {
+            "pitch": 37,
+            "asm": {
+              "min": 6658,
+              "max": 6832,
+              "total": 13800159,
+              "calls": 2048,
+              "mean": 6738.359
+            },
+            "c": {
+              "min": 15819,
+              "max": 16130,
+              "total": 32683491,
+              "calls": 2048,
+              "mean": 15958.736
+            }
+          },
+          {
+            "pitch": 38,
+            "asm": {
+              "min": 6623,
+              "max": 6805,
+              "total": 13727140,
+              "calls": 2048,
+              "mean": 6702.705
+            },
+            "c": {
+              "min": 15822,
+              "max": 16111,
+              "total": 32680336,
+              "calls": 2048,
+              "mean": 15957.195
+            }
+          },
+          {
+            "pitch": 39,
+            "asm": {
+              "min": 6501,
+              "max": 6683,
+              "total": 13478665,
+              "calls": 2048,
+              "mean": 6581.379
+            },
+            "c": {
+              "min": 15698,
+              "max": 15982,
+              "total": 32427635,
+              "calls": 2048,
+              "mean": 15833.806
+            }
+          },
+          {
+            "pitch": 40,
+            "asm": {
+              "min": 6371,
+              "max": 6531,
+              "total": 13202879,
+              "calls": 2048,
+              "mean": 6446.718
+            },
+            "c": {
+              "min": 15655,
+              "max": 15933,
+              "total": 32334050,
+              "calls": 2048,
+              "mean": 15788.11
+            }
+          }
+        ],
+        "includesInterrupts": false,
+        "physicalBoardTested": false
+      },
+      "reportSha256": "eeb52a4a3309fa41bbc9f9948a4f767c7d32367be6ce326de31e2ae4adf2f336"
+    },
+    {
+      "epoch": "combined",
+      "family": "long40",
+      "report": {
+        "mcu": "ATmega328P",
+        "simulator": "avr8js 0.21.1",
+        "compiler": "AVR GCC 7.3.0 mixed Os/O2 LTO fwrapv mcall-prologues mrelax",
+        "binarySha256": "edcf8ed0d204ecfe42e4dd5ab801dd104addf8bf048a73df4fb8ca8179610b94",
+        "casesPerImplementation": 72960,
+        "samplesPerImplementation": 2918400,
+        "tableCases": 65536,
+        "boundaryCases": 3072,
+        "randomGainBlocks": 4096,
+        "scaleEdgeBlocks": 256,
+        "tableGainTriples": 32,
+        "tableScales": 64,
+        "all256Shapes": true,
+        "all32IndicesAtEachVector": true,
+        "pitchClippedSamples": 172236,
+        "outputClippedSamples": 59332,
+        "exact": true,
+        "historyGainIndicesAndGuardsPreserved": true,
+        "actualRamReadsChecked": true,
+        "exact40FlashReadsPerCall": true,
+        "newKernelHistoryBytesRead": 84,
+        "newKernelGainBytesRead": 3,
+        "newKernelIndexBytesRead": 4,
+        "calleeSavedRegistersPreserved": true,
+        "zeroRegisterRestored": true,
+        "topLevelReturnsEach": 72960,
+        "asm40Cycles": {
+          "min": 5463,
+          "max": 5663,
+          "total": 405153832,
+          "calls": 72960,
+          "mean": 5553.0953
+        },
+        "fourAsmTenCycles": {
+          "min": 5891,
+          "max": 6091,
+          "total": 436380712,
+          "calls": 72960,
+          "mean": 5981.0953
+        },
+        "c40Cycles": {
+          "min": 14765,
+          "max": 15275,
+          "total": 1097323611,
+          "calls": 72960,
+          "mean": 15040.0714
+        },
+        "cyclesSavedVsFourTen": {
+          "min": 428,
+          "max": 428,
+          "mean": 428
+        },
+        "peakStackBytes": 48,
+        "staticSramBytes": 190,
+        "includesInterrupts": false,
+        "physicalBoardTested": false
+      },
+      "reportSha256": "3418ddfd0d7a7eabe68143fe49a7a5a199005a0acffd98a32e931e6fd79733b6"
+    },
+    {
+      "epoch": "combined",
+      "family": "long-pitch",
+      "report": {
+        "mcu": "ATmega328P",
+        "simulator": "avr8js 0.21.1",
+        "compiler": "AVR GCC 7.3.0 mixed Os/O2, LTO, fwrapv",
+        "binarySha256": "1a0c293572ddc2724cb5d5ad6b420174be5790939265c062bdcac0c1ce1dae65",
+        "blocks": 67328,
+        "fullRun": true,
+        "fixedSamplesPerBackend": 673280,
+        "scalarSamples": 67328,
+        "tableGainTriples": 32,
+        "scales": 64,
+        "shapeMin": -128,
+        "shapeMax": 127,
+        "historyMin": -32768,
+        "historyMax": 32767,
+        "fullTableShapeScaleCases": 53248,
+        "clampBoundaryBlocks": 9984,
+        "randomGainBlocks": 4096,
+        "outputClippedSamples": 13508,
+        "pitchClippedSamples": 41722,
+        "exact": true,
+        "gainsPreserved": true,
+        "historyPreserved": true,
+        "guardsIntact": true,
+        "calleeSavedRegistersPreserved": true,
+        "zeroRegisterRestored": true,
+        "asmKernelCycles": {
+          "min": 1417,
+          "max": 1490,
+          "calls": 67328
+        },
+        "cKernelCycles": {
+          "min": 3656,
+          "max": 3945,
+          "calls": 67328
+        },
+        "packedKernelCycles": {
+          "min": 975,
+          "max": 1048,
+          "calls": 67328
+        },
+        "variableAsmKernelCycles": {
+          "min": 6,
+          "max": 1482,
+          "calls": 67328
+        },
+        "variableCKernelCycles": {
+          "min": 227,
+          "max": 3957,
+          "calls": 67328
+        },
+        "variableCounts": [
+          {
+            "count": 0,
+            "calls": 6121,
+            "samples": 0
+          },
+          {
+            "count": 1,
+            "calls": 6121,
+            "samples": 6121
+          },
+          {
+            "count": 2,
+            "calls": 6121,
+            "samples": 12242
+          },
+          {
+            "count": 3,
+            "calls": 6121,
+            "samples": 18363
+          },
+          {
+            "count": 4,
+            "calls": 6121,
+            "samples": 24484
+          },
+          {
+            "count": 5,
+            "calls": 6121,
+            "samples": 30605
+          },
+          {
+            "count": 6,
+            "calls": 6121,
+            "samples": 36726
+          },
+          {
+            "count": 7,
+            "calls": 6121,
+            "samples": 42847
+          },
+          {
+            "count": 8,
+            "calls": 6120,
+            "samples": 48960
+          },
+          {
+            "count": 9,
+            "calls": 6120,
+            "samples": 55080
+          },
+          {
+            "count": 10,
+            "calls": 6120,
+            "samples": 61200
+          }
+        ],
+        "scalarAsmKernelCycles": {
+          "min": 198,
+          "max": 213,
+          "calls": 67328
+        },
+        "scalarVsRuntimeCyclesSaved": [
+          35
+        ],
+        "variableSamplesPerBackend": 336628,
+        "includesInterrupts": false,
+        "physicalBoardTested": false
+      },
+      "reportSha256": "b298d6d43b2e0bed0344ff805cb3f7d48d80399371f4ba632b6a5fab6b60ee91"
+    },
+    {
+      "epoch": "combined",
+      "family": "short-pitch",
+      "report": {
+        "mcu": "ATmega328P",
+        "simulator": "avr8js 0.21.1",
+        "compiler": "AVR GCC 7.3.0 mixed Os/O2/O3, LTO, fwrapv",
+        "binarySha256": "cf259a52364979f4605f023addb0dee47b9c475bf6a4284ee8a44653c20b206a",
+        "blocks": 49152,
+        "samplesPerBackend": 1966080,
+        "pitches": 24,
+        "pitchMin": 17,
+        "pitchMax": 40,
+        "gainCodes": 32,
+        "scales": 64,
+        "shapeCodes": 32,
+        "historyMin": -32768,
+        "historyMax": 32767,
+        "pitchClipped": 102116,
+        "outputClipped": 6750,
+        "exact": true,
+        "historyPreserved": true,
+        "packetPreserved": true,
+        "guardsIntact": true,
+        "bitConsumptionExact": true,
+        "indexParsingOutsideMeasuredController": true,
+        "calleeSavedRegistersPreserved": true,
+        "zeroRegisterRestored": true,
+        "asmControllerCycles": {
+          "min": 6497,
+          "max": 7152,
+          "calls": 49152
+        },
+        "cControllerCycles": {
+          "min": 14871,
+          "max": 16202,
+          "calls": 49152
+        },
+        "perPitch": [
+          {
+            "pitch": 17,
+            "asm": {
+              "min": 6787,
+              "max": 6952,
+              "total": 14041199,
+              "calls": 2048,
+              "mean": 6856.054
+            },
+            "c": {
+              "min": 14871,
+              "max": 15187,
+              "total": 30772002,
+              "calls": 2048,
+              "mean": 15025.392
+            }
+          },
+          {
+            "pitch": 18,
+            "asm": {
+              "min": 6932,
+              "max": 7083,
+              "total": 14328207,
+              "calls": 2048,
+              "mean": 6996.195
+            },
+            "c": {
+              "min": 15267,
+              "max": 15568,
+              "total": 31579457,
+              "calls": 2048,
+              "mean": 15419.657
+            }
+          },
+          {
+            "pitch": 19,
+            "asm": {
+              "min": 6972,
+              "max": 7152,
+              "total": 14421621,
+              "calls": 2048,
+              "mean": 7041.807
+            },
+            "c": {
+              "min": 15500,
+              "max": 15860,
+              "total": 32136620,
+              "calls": 2048,
+              "mean": 15691.709
+            }
+          },
+          {
+            "pitch": 20,
+            "asm": {
+              "min": 6818,
+              "max": 6992,
+              "total": 14109654,
+              "calls": 2048,
+              "mean": 6889.479
+            },
+            "c": {
+              "min": 15687,
+              "max": 16024,
+              "total": 32486476,
+              "calls": 2048,
+              "mean": 15862.537
+            }
+          },
+          {
+            "pitch": 21,
+            "asm": {
+              "min": 6667,
+              "max": 6841,
+              "total": 13808965,
+              "calls": 2048,
+              "mean": 6742.659
+            },
+            "c": {
+              "min": 15702,
+              "max": 16035,
+              "total": 32496603,
+              "calls": 2048,
+              "mean": 15867.482
+            }
+          },
+          {
+            "pitch": 22,
+            "asm": {
+              "min": 6789,
+              "max": 6988,
+              "total": 14058566,
+              "calls": 2048,
+              "mean": 6864.534
+            },
+            "c": {
+              "min": 15803,
+              "max": 16202,
+              "total": 32715672,
+              "calls": 2048,
+              "mean": 15974.449
+            }
+          },
+          {
+            "pitch": 23,
+            "asm": {
+              "min": 6830,
+              "max": 6992,
+              "total": 14127809,
+              "calls": 2048,
+              "mean": 6898.344
+            },
+            "c": {
+              "min": 15807,
+              "max": 16166,
+              "total": 32718550,
+              "calls": 2048,
+              "mean": 15975.854
+            }
+          },
+          {
+            "pitch": 24,
+            "asm": {
+              "min": 6822,
+              "max": 6991,
+              "total": 14127056,
+              "calls": 2048,
+              "mean": 6897.977
+            },
+            "c": {
+              "min": 15765,
+              "max": 16149,
+              "total": 32714685,
+              "calls": 2048,
+              "mean": 15973.967
+            }
+          },
+          {
+            "pitch": 25,
+            "asm": {
+              "min": 6822,
+              "max": 6993,
+              "total": 14126950,
+              "calls": 2048,
+              "mean": 6897.925
+            },
+            "c": {
+              "min": 15824,
+              "max": 16155,
+              "total": 32716342,
+              "calls": 2048,
+              "mean": 15974.776
+            }
+          },
+          {
+            "pitch": 26,
+            "asm": {
+              "min": 6826,
+              "max": 6989,
+              "total": 14125078,
+              "calls": 2048,
+              "mean": 6897.011
+            },
+            "c": {
+              "min": 15824,
+              "max": 16151,
+              "total": 32715711,
+              "calls": 2048,
+              "mean": 15974.468
+            }
+          },
+          {
+            "pitch": 27,
+            "asm": {
+              "min": 6822,
+              "max": 7011,
+              "total": 14127285,
+              "calls": 2048,
+              "mean": 6898.088
+            },
+            "c": {
+              "min": 15814,
+              "max": 16163,
+              "total": 32716859,
+              "calls": 2048,
+              "mean": 15975.029
+            }
+          },
+          {
+            "pitch": 28,
+            "asm": {
+              "min": 6779,
+              "max": 6953,
+              "total": 14055155,
+              "calls": 2048,
+              "mean": 6862.869
+            },
+            "c": {
+              "min": 15824,
+              "max": 16141,
+              "total": 32714721,
+              "calls": 2048,
+              "mean": 15973.985
+            }
+          },
+          {
+            "pitch": 29,
+            "asm": {
+              "min": 6659,
+              "max": 6831,
+              "total": 13784847,
+              "calls": 2048,
+              "mean": 6730.882
+            },
+            "c": {
+              "min": 15699,
+              "max": 16028,
+              "total": 32461224,
+              "calls": 2048,
+              "mean": 15850.207
+            }
+          },
+          {
+            "pitch": 30,
+            "asm": {
+              "min": 6659,
+              "max": 6830,
+              "total": 13784034,
+              "calls": 2048,
+              "mean": 6730.485
+            },
+            "c": {
+              "min": 15702,
+              "max": 16022,
+              "total": 32458277,
+              "calls": 2048,
+              "mean": 15848.768
+            }
+          },
+          {
+            "pitch": 31,
+            "asm": {
+              "min": 6657,
+              "max": 6837,
+              "total": 13790058,
+              "calls": 2048,
+              "mean": 6733.427
+            },
+            "c": {
+              "min": 15704,
+              "max": 16000,
+              "total": 32460909,
+              "calls": 2048,
+              "mean": 15850.053
+            }
+          },
+          {
+            "pitch": 32,
+            "asm": {
+              "min": 6775,
+              "max": 6960,
+              "total": 14037711,
+              "calls": 2048,
+              "mean": 6854.351
+            },
+            "c": {
+              "min": 15801,
+              "max": 16111,
+              "total": 32680586,
+              "calls": 2048,
+              "mean": 15957.317
+            }
+          },
+          {
+            "pitch": 33,
+            "asm": {
+              "min": 6816,
+              "max": 6981,
+              "total": 14106966,
+              "calls": 2048,
+              "mean": 6888.167
+            },
+            "c": {
+              "min": 15818,
+              "max": 16143,
+              "total": 32682642,
+              "calls": 2048,
+              "mean": 15958.321
+            }
+          },
+          {
+            "pitch": 34,
+            "asm": {
+              "min": 6808,
+              "max": 6974,
+              "total": 14104516,
+              "calls": 2048,
+              "mean": 6886.971
+            },
+            "c": {
+              "min": 15811,
+              "max": 16146,
+              "total": 32680218,
+              "calls": 2048,
+              "mean": 15957.138
+            }
+          },
+          {
+            "pitch": 35,
+            "asm": {
+              "min": 6808,
+              "max": 6985,
+              "total": 14107267,
+              "calls": 2048,
+              "mean": 6888.314
+            },
+            "c": {
+              "min": 15807,
+              "max": 16118,
+              "total": 32681654,
+              "calls": 2048,
+              "mean": 15957.839
+            }
+          },
+          {
+            "pitch": 36,
+            "asm": {
+              "min": 6808,
+              "max": 6991,
+              "total": 14106889,
+              "calls": 2048,
+              "mean": 6888.129
+            },
+            "c": {
+              "min": 15807,
+              "max": 16106,
+              "total": 32681426,
+              "calls": 2048,
+              "mean": 15957.728
+            }
+          },
+          {
+            "pitch": 37,
+            "asm": {
+              "min": 6808,
+              "max": 6982,
+              "total": 14107359,
+              "calls": 2048,
+              "mean": 6888.359
+            },
+            "c": {
+              "min": 15819,
+              "max": 16130,
+              "total": 32683491,
+              "calls": 2048,
+              "mean": 15958.736
+            }
+          },
+          {
+            "pitch": 38,
+            "asm": {
+              "min": 6773,
+              "max": 6955,
+              "total": 14034340,
+              "calls": 2048,
+              "mean": 6852.705
+            },
+            "c": {
+              "min": 15822,
+              "max": 16111,
+              "total": 32680336,
+              "calls": 2048,
+              "mean": 15957.195
+            }
+          },
+          {
+            "pitch": 39,
+            "asm": {
+              "min": 6641,
+              "max": 6823,
+              "total": 13765385,
+              "calls": 2048,
+              "mean": 6721.379
+            },
+            "c": {
+              "min": 15698,
+              "max": 15982,
+              "total": 32427635,
+              "calls": 2048,
+              "mean": 15833.806
+            }
+          },
+          {
+            "pitch": 40,
+            "asm": {
+              "min": 6497,
+              "max": 6657,
+              "total": 13460927,
+              "calls": 2048,
+              "mean": 6572.718
+            },
+            "c": {
+              "min": 15655,
+              "max": 15933,
+              "total": 32334050,
+              "calls": 2048,
+              "mean": 15788.11
+            }
+          }
+        ],
+        "includesInterrupts": false,
+        "physicalBoardTested": false
+      },
+      "reportSha256": "3f3a923e72c83531e332b471d62e6fe1fb5d01cca2fe6b874dd2220cac27d7eb"
+    }
+  ],
+  "geometry": {
+    "scope": "Isolated new shared ASM-side geometry controller versus explicit C and independent BigInt tap/quantizer equations; no C decoder",
+    "cases": 18432,
+    "returns": 36864,
+    "rows": [
+      {
+        "mode": 2,
+        "width": 10,
+        "vectors": 4,
+        "allCodebookRowsAtEachVector": true,
+        "cases": 6144
+      },
+      {
+        "mode": 3,
+        "width": 10,
+        "vectors": 4,
+        "allCodebookRowsAtEachVector": true,
+        "cases": 6144
+      },
+      {
+        "mode": 4,
+        "width": 8,
+        "vectors": 5,
+        "allCodebookRowsAtEachVector": true,
+        "cases": 6144
+      }
+    ],
+    "all24Pitches": true,
+    "all32Gains": true,
+    "scaleEdges": [
+      0,
+      1,
+      4095,
+      4096,
+      262143,
+      524288,
+      120988612,
+      121000000
+    ],
+    "wordExact": true,
+    "historyInputsAndGuardsPreserved": true,
+    "abiAndR1Exact": true,
+    "peakStackBytes": 88,
+    "includesInterrupts": false,
+    "physicalBoardTested": false,
+    "binarySha256": "3193d30dcb45e595d0c4ebaac9d43007adaa5035e551d14022b3428d291b8846"
+  },
+  "geometryReportSha256": "6b483f300922dee62793238e2ee84d62e1b08ad78fd75fe74a9e4ed774c6db16",
+  "screens": [
+    {
+      "epoch": "before",
+      "profile": "wb395",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22940,
+        "staticSramBytes": 1284,
+        "peakStack": 166,
+        "meanCycles": 218256.5625,
+        "maxCycles": 222545,
+        "deltaMeanCycles": 0.0,
+        "binarySha256": "8243c252b616ecb424838a6eeb96dcea7750bed39509b40cc1fd31f82d561400",
+        "reportSha256": "a55d63a58b8281fc35ef7283043ed39a0bac048dcdf958d6e77caa66f0931d7c"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 23374,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1425,
+        "peakStack": 179,
+        "freeSram": 444,
+        "minQueue": 30,
+        "underruns": 0,
+        "binarySha256": "02805ff16b18572b7edfa147679ac3c2b804aea75a3185f6da7f6a5f826ec13e",
+        "reportSha256": "1eff506de1d0cf47bc34aff484ea682ce6517308596c6dad794ae0866bcdb209"
+      }
+    },
+    {
+      "epoch": "long40-shared",
+      "profile": "wb395",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22636,
+        "staticSramBytes": 1284,
+        "peakStack": 166,
+        "meanCycles": 218256.5625,
+        "maxCycles": 222545,
+        "deltaMeanCycles": 0.0,
+        "binarySha256": "37bf5aec6c50f996a6a2732495d3f08a93d837c14ec092ae79a17b52a02f629b",
+        "reportSha256": "b272888f6d4d6cd51a8b0930b2774f0f0398001fa9e201e18bf50279dbfd2262"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 23070,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1425,
+        "peakStack": 179,
+        "freeSram": 444,
+        "minQueue": 30,
+        "underruns": 0,
+        "binarySha256": "f62f4884facf4527c52a8a6b9411be5db31f00e8c2912c3f8ae39c582812a4a9",
+        "reportSha256": "30cde4fbecfaa5f5733bc298d54cd79d1f77f33d4ffa30e2e5cd6a7a27fb11d0"
+      }
+    },
+    {
+      "epoch": "short-shared",
+      "profile": "wb395",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22360,
+        "staticSramBytes": 1284,
+        "peakStack": 168,
+        "meanCycles": 218252.5625,
+        "maxCycles": 222541,
+        "deltaMeanCycles": -4.0,
+        "binarySha256": "84508132a6303c627c06df6e1abf9fd848bd3abe6939f3d6d1a08eb02ce32ffd",
+        "reportSha256": "ad91f69ce8ca2b7546d4b2c031dbcb36c470af2db5daca83a1d887b79e41da73"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 22780,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1425,
+        "peakStack": 181,
+        "freeSram": 442,
+        "minQueue": 30,
+        "underruns": 0,
+        "binarySha256": "7838c5e4c421e904f1d0c47c4f0949c6da57574ee4061fc97b771b47bc11eb30",
+        "reportSha256": "d83e581d364007a55d00e09c66f50fa41f214786f6baedb3a4fe0ee2080d854c"
+      }
+    },
+    {
+      "epoch": "combined",
+      "profile": "wb395",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22056,
+        "staticSramBytes": 1284,
+        "peakStack": 168,
+        "meanCycles": 218252.5625,
+        "maxCycles": 222541,
+        "deltaMeanCycles": -4.0,
+        "binarySha256": "9500e569a37f1eadce1261000b3d4f87f5b7e1a0eb266fe6a5a8bd37e8991640",
+        "reportSha256": "3160434817fb12d57a2aa1ef4786875ad41530a9cb2011dc75784ccebdc875ff"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 22476,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1425,
+        "peakStack": 181,
+        "freeSram": 442,
+        "minQueue": 30,
+        "underruns": 0,
+        "binarySha256": "914ac51087a60b4fb7f00ce083ada8e1c372dbedee218bb0c2d68569ed1cf9df",
+        "reportSha256": "c8d856d333d427dc9ff9c424f09a8480992bf28df3094aa687e1944f07e2a7bd"
+      }
+    },
+    {
+      "epoch": "before",
+      "profile": "wb575",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22940,
+        "staticSramBytes": 1289,
+        "peakStack": 166,
+        "meanCycles": 224106.875,
+        "maxCycles": 236584,
+        "deltaMeanCycles": 0.0,
+        "binarySha256": "6cb3f16c5b7f75a9ba6ddd99474092e5694e7a5cfebbbf0ad3f61f40fd324bf8",
+        "reportSha256": "104346fcb7eeffa0932c5396f7a01796706cd7dd0b28e4560f595ce99de241ea"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 23374,
+        "extraCpuCyclesPerFrame": 9600,
+        "staticSramBytes": 1430,
+        "peakStack": 179,
+        "freeSram": 439,
+        "minQueue": 28,
+        "underruns": 0,
+        "binarySha256": "750dd7d248158a14ae482ac9cb9f8ed467b0781b716335f0f4c0292b297dba47",
+        "reportSha256": "8f7055ba7254a249e61be1304385bb7962af6012063dfdbe988b764c670b859e"
+      }
+    },
+    {
+      "epoch": "long40-shared",
+      "profile": "wb575",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22636,
+        "staticSramBytes": 1289,
+        "peakStack": 166,
+        "meanCycles": 224106.875,
+        "maxCycles": 236584,
+        "deltaMeanCycles": 0.0,
+        "binarySha256": "37d827bba085b6aa14905302785c7c628735c13a700ad216edc0a868019c07f3",
+        "reportSha256": "8f9668f2a84dd3f0a2af449a21ac533de98fc2b5a6f8b2b5b734195afb6a0c40"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 23070,
+        "extraCpuCyclesPerFrame": 9600,
+        "staticSramBytes": 1430,
+        "peakStack": 179,
+        "freeSram": 439,
+        "minQueue": 28,
+        "underruns": 0,
+        "binarySha256": "00208834e826912a6d46535eb7309a79449b03855f42c1c1180fc7555d313a36",
+        "reportSha256": "a7b9a4d5e9410858ba7dfe28f5dc606800281161f5bc3bd9f4cc3a1cb4b878e3"
+      }
+    },
+    {
+      "epoch": "short-shared",
+      "profile": "wb575",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22360,
+        "staticSramBytes": 1289,
+        "peakStack": 168,
+        "meanCycles": 224106.875,
+        "maxCycles": 236584,
+        "deltaMeanCycles": 0.0,
+        "binarySha256": "7904c699db4c6b76272751e216ef3dd500983125b950e7e227023001955d630d",
+        "reportSha256": "00768de4e43a2b7222a44e5dfcb1b5e3058a7f5f5fde82df3f6d467895a1499f"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 22780,
+        "extraCpuCyclesPerFrame": 9600,
+        "staticSramBytes": 1430,
+        "peakStack": 181,
+        "freeSram": 437,
+        "minQueue": 28,
+        "underruns": 0,
+        "binarySha256": "89f7e3e625ad9d42bc123028402e62e5a45297024f38fe5804f5b91ae2fd8e9c",
+        "reportSha256": "d642eddf5a283a26ba746f3c67cbf90e5f015c158419aab9bef8292669e4da9a"
+      }
+    },
+    {
+      "epoch": "combined",
+      "profile": "wb575",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22056,
+        "staticSramBytes": 1289,
+        "peakStack": 168,
+        "meanCycles": 224106.875,
+        "maxCycles": 236584,
+        "deltaMeanCycles": 0.0,
+        "binarySha256": "6181cf1cc838f904124d43970056c55a9051934076d1a991f894085805c90ce2",
+        "reportSha256": "1b4aa448e272d24d5af1fc4f3aa38133a0fe5120fef52e0be0bd01ce247dada5"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 22476,
+        "extraCpuCyclesPerFrame": 9600,
+        "staticSramBytes": 1430,
+        "peakStack": 181,
+        "freeSram": 437,
+        "minQueue": 28,
+        "underruns": 0,
+        "binarySha256": "d08a6bd0de8c42a90da37d15cd8dbe6ab49d2174e3c29433e3a871badc6d457c",
+        "reportSha256": "a3aaa6a9367d26d144a344c3075c227e209e850b165397eb05387c85d2092f7d"
+      }
+    },
+    {
+      "epoch": "before",
+      "profile": "wb775",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22940,
+        "staticSramBytes": 1294,
+        "peakStack": 166,
+        "meanCycles": 238633.91666666666,
+        "maxCycles": 244659,
+        "deltaMeanCycles": 0.0,
+        "binarySha256": "705f96b3b66afdae2a8dad3d2a0b242ce80b73dce39ccefa20ab630adc316a01",
+        "reportSha256": "3bdfcb356dea5dda94ca1c4c398f7d1f6e5c45dc0d7df6a1542192f0c5941b6a"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 23374,
+        "extraCpuCyclesPerFrame": 9600,
+        "staticSramBytes": 1435,
+        "peakStack": 179,
+        "freeSram": 434,
+        "minQueue": 20,
+        "underruns": 0,
+        "binarySha256": "5153915d801052dc4fec7f4e7fd42ba66f08f001613867e5ebb26588d76c1024",
+        "reportSha256": "dc114e177b373f59822a4377ae217bd50492045d422fcac808d9a99657289ff0"
+      }
+    },
+    {
+      "epoch": "long40-shared",
+      "profile": "wb775",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22636,
+        "staticSramBytes": 1294,
+        "peakStack": 166,
+        "meanCycles": 238806.91666666666,
+        "maxCycles": 244915,
+        "deltaMeanCycles": 173.0,
+        "binarySha256": "8250c02873b775abdaf9eeac13a096e7f342ec7db056421796ecbef5e492dc21",
+        "reportSha256": "06e6b3d447149837ee41ae04182220bb9d25b92840fe11d2e5c4badf44fa220d"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 23070,
+        "extraCpuCyclesPerFrame": 9600,
+        "staticSramBytes": 1435,
+        "peakStack": 179,
+        "freeSram": 434,
+        "minQueue": 20,
+        "underruns": 0,
+        "binarySha256": "ce7809bc6065427e0281f4e101b54bb23cc84321954af80ed1ee68b54a9aa275",
+        "reportSha256": "5784bbec53e83bacf2c51546fcbd247539ea7897c724d70b0fd3f618d48abb88"
+      }
+    },
+    {
+      "epoch": "short-shared",
+      "profile": "wb775",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22360,
+        "staticSramBytes": 1294,
+        "peakStack": 168,
+        "meanCycles": 238693.91666666666,
+        "maxCycles": 244757,
+        "deltaMeanCycles": 60.0,
+        "binarySha256": "abde2cdd7e0ab5ff8fb18c2e14b68f840064d74cb080f8b3e24c037edcfa1eae",
+        "reportSha256": "ef1fd8420531d39ca95b750339c7bc912c4a38f1146d18d4b4f1a5196ae0e408"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 22780,
+        "extraCpuCyclesPerFrame": 9600,
+        "staticSramBytes": 1435,
+        "peakStack": 181,
+        "freeSram": 432,
+        "minQueue": 20,
+        "underruns": 0,
+        "binarySha256": "55cf2f8c58404f15d444ff3413ded752cc294520e023e51dfa5380f73ef6d52c",
+        "reportSha256": "d1faa53a1b1f1bdc05fe7efb08347fe4746675d70a9f32a2f11ac0ad15bddb52"
+      }
+    },
+    {
+      "epoch": "combined",
+      "profile": "wb775",
+      "bare": {
+        "frames": 48,
+        "flashBytes": 22056,
+        "staticSramBytes": 1294,
+        "peakStack": 168,
+        "meanCycles": 238866.91666666666,
+        "maxCycles": 245013,
+        "deltaMeanCycles": 233.0,
+        "binarySha256": "0a38d59328632df5ea49771800226d57c01120042be265c6020a24e6618a5cbd",
+        "reportSha256": "bb9f9f96dee8a9ddc0e50d1169180a8f695617e1f67e65a37234bc269267d314"
+      },
+      "irq": {
+        "frames": 48,
+        "flashBytes": 22476,
+        "extraCpuCyclesPerFrame": 9600,
+        "staticSramBytes": 1435,
+        "peakStack": 181,
+        "freeSram": 432,
+        "minQueue": 20,
+        "underruns": 0,
+        "binarySha256": "471b25b551b96dd782e559bb319153ec85883cc8b73c40b94417061f9f0e11a9",
+        "reportSha256": "3e483824720a88334090894782ab2cf5a0098770e580fda844907f16749bd49c"
+      }
+    },
+    {
+      "epoch": "before",
+      "profile": "wb98",
+      "bare": {
+        "frames": 32,
+        "flashBytes": 22940,
+        "staticSramBytes": 1299,
+        "peakStack": 166,
+        "meanCycles": 227463.125,
+        "maxCycles": 239502,
+        "deltaMeanCycles": 0.0,
+        "binarySha256": "7de7e891c04fc33b7f798578f39f75ac35da17e78e195e7e6249d88b80d3532f",
+        "reportSha256": "1e4bc3e9bf9bae1f8b4973aa88ed8df8a29db7b802a3d95cfbc9bd6b85c1a076"
+      },
+      "irq": {
+        "frames": 32,
+        "flashBytes": 23374,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1440,
+        "peakStack": 179,
+        "freeSram": 429,
+        "minQueue": 7,
+        "underruns": 0,
+        "binarySha256": "6a811123e27640884d5f5288f331f48727d01730d15f38434e2e3e4a2d7f3ea5",
+        "reportSha256": "ed90b548a79bd3e57ed471e6fa581a7377ee7d72bb6e207904e93b1a0809beea"
+      }
+    },
+    {
+      "epoch": "long40-shared",
+      "profile": "wb98",
+      "bare": {
+        "frames": 32,
+        "flashBytes": 22636,
+        "staticSramBytes": 1299,
+        "peakStack": 166,
+        "meanCycles": 227669.1875,
+        "maxCycles": 239710,
+        "deltaMeanCycles": 206.0625,
+        "binarySha256": "0f2365e7edfd90558c136c2600646228d83fa67ea1934eaa10e2f0925f2b64c1",
+        "reportSha256": "e5400bd9612b2770d4cccad69fb82eb6c98ababd66841c0b04e4e6ccac3fea8a"
+      },
+      "irq": {
+        "frames": 32,
+        "flashBytes": 23070,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1440,
+        "peakStack": 179,
+        "freeSram": 429,
+        "minQueue": 7,
+        "underruns": 0,
+        "binarySha256": "94a5ca919723a6046a183482dc0c99131619ed74490118afcb81ecb46e233135",
+        "reportSha256": "5e2b22fa3dd3ea3a0a8f46e2e3e7cc9a96ea9c7e657166c1f835b21b8c05b483"
+      }
+    },
+    {
+      "epoch": "short-shared",
+      "profile": "wb98",
+      "bare": {
+        "frames": 32,
+        "flashBytes": 22360,
+        "staticSramBytes": 1299,
+        "peakStack": 168,
+        "meanCycles": 227548.15625,
+        "maxCycles": 239622,
+        "deltaMeanCycles": 85.03125,
+        "binarySha256": "d153d9ffdc05cbb8237553c39fadf1e70d484fde05312420e19ace60186c166d",
+        "reportSha256": "d153e9a067e93301980e87df1df64e3cfafbc590546a3c58bf4196ee04170bca"
+      },
+      "irq": {
+        "frames": 32,
+        "flashBytes": 22780,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1440,
+        "peakStack": 181,
+        "freeSram": 427,
+        "minQueue": 7,
+        "underruns": 0,
+        "binarySha256": "c4516adc0c4a0588afaf7537a439299f773430f6539543b4e8f4162783e27fa0",
+        "reportSha256": "8245cf92261d8114daa424de5d7b04d32ad5e95bae6ee23ad8e96b7ab734e520"
+      }
+    },
+    {
+      "epoch": "combined",
+      "profile": "wb98",
+      "bare": {
+        "frames": 32,
+        "flashBytes": 22056,
+        "staticSramBytes": 1299,
+        "peakStack": 168,
+        "meanCycles": 227754.21875,
+        "maxCycles": 239830,
+        "deltaMeanCycles": 291.09375,
+        "binarySha256": "60924c9541651a517e70806ef2c052509e85c91a509853d228f78a831b61c708",
+        "reportSha256": "f16bd4260119e0933a91d237827bb2b7d81e3c316ac5cbffb29ec4747a914207"
+      },
+      "irq": {
+        "frames": 32,
+        "flashBytes": 22476,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1440,
+        "peakStack": 181,
+        "freeSram": 427,
+        "minQueue": 7,
+        "underruns": 0,
+        "binarySha256": "7976ed6d5b2c99b70891af15378ebbbb913976c102a7c5b2dcdf718a64b44a36",
+        "reportSha256": "2daeb355800204419fd48b7511f9c4e1411c5d889ad2e85d8a993f74a5db2d92"
+      }
+    },
+    {
+      "epoch": "before",
+      "profile": "wb128",
+      "bare": {
+        "frames": 16,
+        "flashBytes": 22940,
+        "staticSramBytes": 1306,
+        "peakStack": 166,
+        "meanCycles": 233661.1875,
+        "maxCycles": 238303,
+        "deltaMeanCycles": 0.0,
+        "binarySha256": "c341aff5171516aa02e7aa75b53fac486dff19d73f8cbcb52a64f8190f9976e1",
+        "reportSha256": "e2dd671a1c126d93e6288c58b11282cbebae64b029292c2ff43c85ee4ec9950c"
+      },
+      "irq": {
+        "frames": 16,
+        "flashBytes": 23374,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1447,
+        "peakStack": 179,
+        "freeSram": 422,
+        "minQueue": 9,
+        "underruns": 0,
+        "binarySha256": "97994b85799c863dee272ad181e0f1469f96d64a8824db895a0db5eb74c8e467",
+        "reportSha256": "0aefae81a63e831057a0b2248a7c56faac9413cef07171e6f64715c1ee487b08"
+      }
+    },
+    {
+      "epoch": "long40-shared",
+      "profile": "wb128",
+      "bare": {
+        "frames": 16,
+        "flashBytes": 22636,
+        "staticSramBytes": 1306,
+        "peakStack": 166,
+        "meanCycles": 233817.6875,
+        "maxCycles": 238487,
+        "deltaMeanCycles": 156.5,
+        "binarySha256": "c641d8c71362a5deb04fd232983993e59498031dfb25b51e60d6d7bc66f550cd",
+        "reportSha256": "b5b8de24c6d047a1996f77acdc950aee3f3c5b14bf3624d758d2540a4f514f87"
+      },
+      "irq": {
+        "frames": 16,
+        "flashBytes": 23070,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1447,
+        "peakStack": 179,
+        "freeSram": 422,
+        "minQueue": 9,
+        "underruns": 0,
+        "binarySha256": "822134e2a554fe55d0b9d0ca8b4ffe4b14e60a33e725f73ea714e12b355d28b4",
+        "reportSha256": "cd4617e9f7aa6e6d4cc1c95b8b219c114bba38510d16a2e37ae2b7333913cedb"
+      }
+    },
+    {
+      "epoch": "short-shared",
+      "profile": "wb128",
+      "bare": {
+        "frames": 16,
+        "flashBytes": 22360,
+        "staticSramBytes": 1306,
+        "peakStack": 168,
+        "meanCycles": 233673.375,
+        "maxCycles": 238333,
+        "deltaMeanCycles": 12.1875,
+        "binarySha256": "52dc0b5a8ab14aa797a2a724d61862ec3b4588c9b22bfd0b33c2ed0e0eda0547",
+        "reportSha256": "f036b04b91410336fe78675f37840833ed52e7ee8cdd911906b0a26f95b3e4a1"
+      },
+      "irq": {
+        "frames": 16,
+        "flashBytes": 22780,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1447,
+        "peakStack": 181,
+        "freeSram": 420,
+        "minQueue": 9,
+        "underruns": 0,
+        "binarySha256": "b4b1ccc401ff39dc7e71311f45c100b9c24477aede8e802b1fa3c9e52aada497",
+        "reportSha256": "bbd0a8779590eba1bd1f85064c2626872c40bbbc1ef5351c2d9d00c38432d194"
+      }
+    },
+    {
+      "epoch": "combined",
+      "profile": "wb128",
+      "bare": {
+        "frames": 16,
+        "flashBytes": 22056,
+        "staticSramBytes": 1306,
+        "peakStack": 168,
+        "meanCycles": 233829.875,
+        "maxCycles": 238517,
+        "deltaMeanCycles": 168.6875,
+        "binarySha256": "8a8724f1d2637e966cee5aa861724b3adbe63c8c28ed350dd69087f34205ea8b",
+        "reportSha256": "3be4da3922ffbf3b48965bad08008c9c32fc5ed372c1a6bcf93d2885d16d03f9"
+      },
+      "irq": {
+        "frames": 16,
+        "flashBytes": 22476,
+        "extraCpuCyclesPerFrame": 25600,
+        "staticSramBytes": 1447,
+        "peakStack": 181,
+        "freeSram": 420,
+        "minQueue": 9,
+        "underruns": 0,
+        "binarySha256": "d77f750eea43e1c5963a64f1a6183a00f3503409ef9a32df831da10ea28e1f62",
+        "reportSha256": "546c0116bb1c29da8c3fee9f09477281a07224d455290f0c680310d253f0912b"
+      }
+    }
+  ],
+  "cFallback": {
+    "compileLinkedOnly": true,
+    "decoderExecuted": false,
+    "byteIdentical": true,
+    "flashBytes": 31244,
+    "binarySha256": "fab6596325575e7ff931a4165242583b7aa338796e73427a60e2efeab933ff4d"
+  },
+  "limits": [
+    "The frozen graph is verified against1da660ea. Other simultaneous root controller changes are not included.",
+    "Each graph checks192raw frames plus192loaded-IRQ frames across5WB profiles; this is a bounded screen, not complete-corpus admission.",
+    "Scalar C primitives execute; complete C decoders never execute or get timed.",
+    "No physical-board or external-source timing claim is made."
+  ]
+}

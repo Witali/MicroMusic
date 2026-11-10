@@ -15,8 +15,6 @@ function addr(n){assert.ok(symbols.has(n),n);return symbols.get(n)&65535;}
 const [buffer,den,gain,command,kind,status,alias]=['wb_unit_buffer','wb_unit_den','wb_unit_gain','wb_unit_command','wb_unit_kind','wb_unit_status','wb_unit_alias'].map(addr);
 const scale=addr('wb_unit_scale'),indices=addr('wb_unit_indices');
 const binary=readFileSync(join(dir,'wb.bin')),rows=[];
-const textAddresses=readFileSync(join(dir,'symbols.txt'),'utf8').split(/\r?\n/)
- .map(l=>l.match(/^([0-9a-f]+)\s+[tT]\s+/)).filter(Boolean).map(m=>parseInt(m[1],16));
 const h=[-4,-10,7,15,-14,-26,37,123,123,37,-26,-14,15,7,-10,-4];
 const clip=x=>Math.max(-32767,Math.min(32767,x)),s16=x=>(x<<16)>>16;
 // Preload physically valid low/high histories so the first output lands
@@ -31,16 +29,25 @@ for(let test=0;test<8;test++) {
  const cpu=new CPU(program,2048),family=Math.floor(test/2),isAsm=!(test&1);
  const fn=['speex_wb_qmf40_avr','speex_wb_qmf40_c','speex_wb_fold40_avr','speex_wb_fold40_c','speex_wb_iir40_avr','speex_wb_iir40_c','speex_wb_excitation40_avr','speex_wb_excitation40_c'][test];
  const start=isAsm?addr(fn):0;
- const finish=isAsm?Math.min(...textAddresses.filter(v=>v>start)):0;
- let saved=null,returns=0,minSP=2303,seed=12345678;
+ let saved=null,entrySP=0,original=null,returns=0,minSP=2303,seed=12345678;
  const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return (seed>>>16)-32768;};
  function until(predicate){const deadline=cpu.cycles+1000000;while(!predicate()) {
    assert.ok(cpu.cycles<deadline,'timeout');
-   if(isAsm&&cpu.pc*2===start)saved=callee.map(r=>cpu.data[r]);
-   if(isAsm&&cpu.pc*2>=start&&cpu.pc*2<finish&&program[cpu.pc]===0x9508){
-     assert.deepEqual(callee.map(r=>cpu.data[r]),saved,'callee-saved '+fn);assert.equal(cpu.data[1],0,'r1 '+fn);returns++;
+   if(isAsm&&cpu.pc*2===start){
+     assert.equal(saved,null,'One public kernel frame');entrySP=cpu.SP;original=callee.map(r=>cpu.data[r]);
+     // Fused excitation's gain occupies incoming r14..r17. Snapshot those
+     // argument registers; inject patterns only into non-argument saves.
+     for(const r of callee)if(family!==3||r<14||r>17)cpu.data[r]=(returns*73+r*19)&255;
+     saved=callee.map(r=>cpu.data[r]);
    }
-   avrInstruction(cpu);cpu.tick();minSP=Math.min(minSP,cpu.SP);
+   const opcode=program[cpu.pc];avrInstruction(cpu);
+   // A tail entry can return from a different symbol's body. Conversely,
+   // private RCALL helpers can RET inside that body without ending this ABI.
+   if(saved&&opcode===0x9508&&cpu.SP===entrySP+2){
+     assert.deepEqual(callee.map(r=>cpu.data[r]),saved,'callee-saved '+fn);assert.equal(cpu.data[1],0,'r1 '+fn);returns++;
+     callee.forEach((r,i)=>{cpu.data[r]=original[i];});saved=null;original=null;
+   }
+   cpu.tick();minSP=Math.min(minSP,cpu.SP);
  }}
  until(()=>cpu.data[status]===1);cpu.data[command]=2;cpu.data[status]=0;until(()=>cpu.data[status]===1);cpu.data[kind]=test;
  const lowMem=Array(8).fill(0),highMem=Array(8).fill(0),iirMem=Array(8).fill(0);

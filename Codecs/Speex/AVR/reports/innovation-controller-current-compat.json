@@ -1,0 +1,202 @@
+{
+  "schema": "micromusic-speex-primitive-observer-compat-v1",
+  "scope": "Post-observation isolated-test compatibility only; no production decoder source changes or full decoder jobs",
+  "sourceHashMode": "Text normalized to LF",
+  "currentChangedTestSourceSha256": {
+    "tests/verify_short_pitch.mjs": "64827077154c5297b735e5a5efd62e32b59e258ddc10d76419f07faff04ab3f3",
+    "tests/verify_wb_kernels.mjs": "f10e6b126f028725bf7beb5823df279f59b1d364f20154c32f7ae52271c546cb",
+    "tools/build_short_pitch_test.py": "b186f383486fb4ef8b8cf61ab75b2242cbee6267d43c7396648dc0380a2b21eb"
+  },
+  "currentProductionPrimitiveSourceSha256": {
+    "src/innovation.S": "0ad800a0eb7ac33a68bc904ad645e5e4d7aa3b6417850408fc703983e6b25ab9",
+    "src/short_pitch.h": "4e457a6e8affcf62b6cdfd04ae0be6aa8a68e988068ca15c5cb51b50ecfe9387",
+    "src/short_pitch_kernel.inc": "6801e39e986e600e30c0a34e240f7cb368be483d6e0d1f35ddacbf48e0e93998",
+    "src/long_pitch.h": "d4c26763b5143b86d0edfd6d1b84e37d85af2940e77d636ac8574c478cc983bd",
+    "src/speex_platform.h": "acdbbd536372b3137bd4a5e958df9d3349abd9c053a56d7ef21db589336f15ca",
+    "src/iir_kernel.inc": "649a950fb66eed41cbc0d0d21d9803ac154044bd21a2ee8d6278cd105e30456b",
+    "src/wb_iir.S": "275936662303e102239afb58cb4a6d812541cd2bec68cbab7e0c03bb0ac9cd5e",
+    "src/wb_iir.c": "7ce0ddaca8da575efca564660cb79337d6747e698de709b57ab74b4c5099870c",
+    "src/wb_qmf.S": "57fdc8545d415799a639febff21adc806567a3c21ed06c67d35072e615f4f7b0",
+    "src/wb_qmf.c": "c27ff603c22ea71ac05ddd8256f13109593822c05fb34e71a7578c17d04a12f0",
+    "src/wb_fold.S": "ca19550d9adf11972d53586c236cb512ff379c7f905f687bdd1827eb132ced71",
+    "src/wb_fold.c": "283afe5869bf0f2d39b45dfcab03eb0156a62323645384ca12cdd0cb0ca3e2e2",
+    "src/wb_fold.h": "3950dfcdc638aecfebb7ee8309c8e5e7bba59eaeabb465aca3368963e1be040d",
+    "src/avr_tables.h": "4e0e67e692b8093752cb2a02f4b359d710304341dd0d46d18e73c3b35598c3d9",
+    "src/zero_innovation.h": "dc192db47f3140e64ef11bc10c26790726ca5e1a556a99aff3a10bfbc7ce35c7",
+    "src/nb3_c_math.h": "9e89d9d789d9d9b72f7c69dcf0aa3b111a75db8a2d3963426791b2e6c9932154",
+    "src/innovation_core.inc": "96a56a6da1e0ae6ab9ec6bdf1f4499b742615146b404f4f602d1f08878310f60",
+    "src/zero_shape_kernel.inc": "42c8aa44ff55935bbc27ecf5348629d3debbe28946fd72965e36f2c224736ed7"
+  },
+  "unchangedFixtureSourceSha256": {
+    "tests/avr_short_pitch.c": "8988b6211f19a6a5e84f551c0e4df34cdff2b471d376d0dd80d8250110a6985a",
+    "tests/short_pitch_c.c": "dfe7e8768c3bce26f2c8b27d5a5e196945b853dd7c7bdac3c72fee9daf27864f",
+    "tests/wb_kernels.c": "675707d4d0adb0b0097f9a9484657e561e55846750840ae2e6453c09fd32e735"
+  },
+  "baselineTestBuilder": {
+    "revision": "1da660eaaa52e2c97da5aa517fbc3aa6e24813af",
+    "path": "tools/build_short_pitch_test.py",
+    "sha256": "cddec924dd6903587d0c27bd22d1dc8138ff648ccabb6a319bea5ca56a22d91f"
+  },
+  "postObservationTestBuilderSha256": "b186f383486fb4ef8b8cf61ab75b2242cbee6267d43c7396648dc0380a2b21eb",
+  "productionBuilderDependencyAudit": {
+    "entryPoints": [
+      "tools/build.py",
+      "tools/build_wb.py",
+      "tools/build_wb_stream_test.py",
+      "tools/build_spi_player.py"
+    ],
+    "localImportClosure": [
+      "tools/apply_profile.py",
+      "tools/build.py",
+      "tools/build_spi_player.py",
+      "tools/build_wb.py",
+      "tools/build_wb_stream_test.py"
+    ],
+    "shortPitchTestBuilderReferenced": false,
+    "sourceSha256": {
+      "tools/build.py": "3a5e8f99f0858510f14871ebb6beefa0c29c3cf4991d56c2cbb582cebb2cb170",
+      "tools/build_wb.py": "6bb9679425481cd29db31b35e48eef084b2fd77bdf5e07bab1ccf2918067357b",
+      "tools/build_wb_stream_test.py": "7b20273c75034bf055745dc9bcbbaa9b0c86a22d02dc64a95737ece7952b2f47",
+      "tools/apply_profile.py": "223a989b471d6a135e4e72fee56a32580ae677ef57e8cee85176e9d2da0963cf",
+      "tools/build_spi_player.py": "3134f4079f5fbe982373a0b515daabec736d22c485acf7b507b49c4930ee55a5"
+    }
+  },
+  "tests": [
+    {
+      "name": "short-default",
+      "backend": "Isolated C and ASM/controller primitives",
+      "nb4FeatureEnabled": false,
+      "geometryExercised": {
+        "vectors": 4,
+        "width": 10
+      },
+      "casesPerBackend": 49152,
+      "checkedPublicReturns": 98304,
+      "allNumericOraclesAndGuardsPassed": true,
+      "registerPatternsPreserveIncomingArguments": true,
+      "binarySha256": "d385e1bc5cc180a480ecf35c4704e7867d9d597e5fe05b21eaf3d73aa6309726",
+      "reportSha256": "2c64c9c56ed931a0e3e04b40616c6852a85990d79647dc17bc1618afca25ea07"
+    },
+    {
+      "name": "short-shared",
+      "backend": "Isolated C and ASM/controller primitives",
+      "nb4FeatureEnabled": true,
+      "geometryExercised": {
+        "vectors": 4,
+        "width": 10
+      },
+      "casesPerBackend": 49152,
+      "checkedPublicReturns": 98304,
+      "allNumericOraclesAndGuardsPassed": true,
+      "registerPatternsPreserveIncomingArguments": true,
+      "binarySha256": "ba41e2508c2f19167070db5ddf36962f32b16bc173736673758cdbdf284624cc",
+      "reportSha256": "ddc685048187b33e4e182c69aa78e49185f69ed361ae344ec09b5aa19a547d3a"
+    },
+    {
+      "name": "wb-kernels",
+      "backend": "Four isolated ASM/C primitive pairs",
+      "blocks": 17032,
+      "checkedPublicAsmReturns": 8516,
+      "allNumericOraclesAndGuardsPassed": true,
+      "tailEntriesAndPrivateReturnsHandled": true,
+      "binarySha256": "5503991a6c285c69348b163ba8a26ddf222ef78f00f7383974e0af5ac4b3c0b2",
+      "reportSha256": "d0a9e0799927620f805088ab82613300010839bc5b9f564e61613bd39cfffa03",
+      "kernels": [
+        {
+          "name": "speex_wb_qmf40_avr",
+          "blocks": 604,
+          "samples": 48320,
+          "pcmExact": true
+        },
+        {
+          "name": "speex_wb_qmf40_c",
+          "blocks": 604,
+          "samples": 48320,
+          "pcmExact": true
+        },
+        {
+          "name": "speex_wb_fold40_avr",
+          "blocks": 1640,
+          "samples": 65600,
+          "pcmExact": true
+        },
+        {
+          "name": "speex_wb_fold40_c",
+          "blocks": 1640,
+          "samples": 65600,
+          "pcmExact": true
+        },
+        {
+          "name": "speex_wb_iir40_avr",
+          "blocks": 512,
+          "samples": 20480,
+          "pcmExact": true
+        },
+        {
+          "name": "speex_wb_iir40_c",
+          "blocks": 512,
+          "samples": 20480,
+          "pcmExact": true
+        },
+        {
+          "name": "speex_wb_excitation40_avr",
+          "blocks": 5760,
+          "samples": 230400,
+          "pcmExact": true
+        },
+        {
+          "name": "speex_wb_excitation40_c",
+          "blocks": 5760,
+          "samples": 230400,
+          "pcmExact": true
+        }
+      ]
+    }
+  ],
+  "originalCControllerTemplateFallbackUnchanged": true,
+  "asmSelection": "Existing real supported AVR/MUL/GNU target plus explicit enable; C default/fallback and hardware table access unchanged",
+  "observedHistoricalEvidence": [
+    {
+      "label": "Original innovation/controller experiment",
+      "sha256": "de20b42fdf177894a08636bcaca9425dbc8820ac8bc041ba2d3ba500eee921a9",
+      "declaredCounters": {
+        "unitFamiliesPerGraph": 3,
+        "fortySampleCasesPerImplementation": 72960,
+        "longPitchBlocks": 67328,
+        "shortPitchBlocks": 49152,
+        "extraGeometryCases": 18432
+      }
+    },
+    {
+      "label": "Structural cleanup via exact image identity",
+      "sha256": "3ad51b20e309b5fcaed7e972cd0e3175aabd04d87d301fbbef543584b4504f70",
+      "declaredCounters": {
+        "cleanIdentityImages": 15,
+        "snapshotIdentityImages": 20
+      }
+    },
+    {
+      "label": "Rejected compiler policy alternatives",
+      "sha256": "b43285898c448b04d973d78bd3a0254ad8e687adfeb42d3a86914ce0aac09249",
+      "declaredCounters": {
+        "recipes": 13,
+        "freshRawAsmFrames": 1590
+      }
+    }
+  ],
+  "fullDecoderJobsStarted": false,
+  "fullCDecoderExecuted": false,
+  "existingDecoderObservationsRelabeled": false,
+  "productionObservationsPreservedByRootFinalAudit": true,
+  "commandScope": [
+    "tools/build_short_pitch_test.py --avr-gcc <compiler> --out <default-unit-dir>; repeat with --enable-nb4 and a different output directory.",
+    "tests/verify_short_pitch.mjs <unit-dir>: complete existing 49152-case numeric workload per backend in each configuration.",
+    "Standalone compile/link of tests/wb_kernels.c plus only wb_qmf/wb_iir/wb_fold C/ASM primitives and prepared codebook tables; no decoder entry points linked.",
+    "tests/verify_wb_kernels.mjs --firmware <unit-dir>: all eight existing primitive rows; independent equations and guards unchanged."
+  ],
+  "limits": [
+    "NB4-enabled legacy short fixture exercises the shared controller with NB3 geometry; the earlier separate 18432-case geometry proof covers modes2/3/4 and remains identified as historical evidence.",
+    "No new IRQ or full decoder observations are claimed here; root retains and audits the source-frozen decoder runs separately.",
+    "All modified observers still check every callee-saved register and r1; only known non-argument saved registers receive injected patterns."
+  ]
+}

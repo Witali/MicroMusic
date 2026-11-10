@@ -11,6 +11,8 @@
   exact Q14 leaf calls, descending old-value windows, 612 B saved in the WB image.
 - [Measure generated controller policies and finite repair masks](speex-controller-size.md):
   retain exact interpolation and LTO specialization, with compiler alternatives priced explicitly.
+- [Share innovation loops and short-pitch geometries](speex-innovation-sharing.md):
+  reuse rolling loops and bounded controllers, 884 B saved in the frozen complete image.
 
 ## Что менять в первую очередь
 

@@ -1,0 +1,216 @@
+{
+  "scope": "Structural cleanup of unreachable alternatives inside an already ASM-only shared helper",
+  "observedReceiptSha256": "de20b42fdf177894a08636bcaca9425dbc8820ac8bc041ba2d3ba500eee921a9",
+  "cleanCandidateChangedSourceSha256": {
+    "innovation.S": "0ad800a0eb7ac33a68bc904ad645e5e4d7aa3b6417850408fc703983e6b25ab9",
+    "short_pitch.h": "4e457a6e8affcf62b6cdfd04ae0be6aa8a68e988068ca15c5cb51b50ecfe9387"
+  },
+  "removedRedundantAsmConditionals": 4,
+  "originalOuterTemplateFallbackRetained": true,
+  "freshRuntimeObservations": false,
+  "reusedObservedImagesByByteIdentity": [
+    {
+      "image": "bare-wb395/wb.bin",
+      "bytes": 22056,
+      "sha256": "9500e569a37f1eadce1261000b3d4f87f5b7e1a0eb266fe6a5a8bd37e8991640"
+    },
+    {
+      "image": "irq-wb395/wb.bin",
+      "bytes": 22476,
+      "sha256": "914ac51087a60b4fb7f00ce083ada8e1c372dbedee218bb0c2d68569ed1cf9df"
+    },
+    {
+      "image": "bare-wb575/wb.bin",
+      "bytes": 22056,
+      "sha256": "6181cf1cc838f904124d43970056c55a9051934076d1a991f894085805c90ce2"
+    },
+    {
+      "image": "irq-wb575/wb.bin",
+      "bytes": 22476,
+      "sha256": "d08a6bd0de8c42a90da37d15cd8dbe6ab49d2174e3c29433e3a871badc6d457c"
+    },
+    {
+      "image": "bare-wb775/wb.bin",
+      "bytes": 22056,
+      "sha256": "0a38d59328632df5ea49771800226d57c01120042be265c6020a24e6618a5cbd"
+    },
+    {
+      "image": "irq-wb775/wb.bin",
+      "bytes": 22476,
+      "sha256": "471b25b551b96dd782e559bb319153ec85883cc8b73c40b94417061f9f0e11a9"
+    },
+    {
+      "image": "bare-wb98/wb.bin",
+      "bytes": 22056,
+      "sha256": "60924c9541651a517e70806ef2c052509e85c91a509853d228f78a831b61c708"
+    },
+    {
+      "image": "irq-wb98/wb.bin",
+      "bytes": 22476,
+      "sha256": "7976ed6d5b2c99b70891af15378ebbbb913976c102a7c5b2dcdf718a64b44a36"
+    },
+    {
+      "image": "bare-wb128/wb.bin",
+      "bytes": 22056,
+      "sha256": "8a8724f1d2637e966cee5aa861724b3adbe63c8c28ed350dd69087f34205ea8b"
+    },
+    {
+      "image": "irq-wb128/wb.bin",
+      "bytes": 22476,
+      "sha256": "d77f750eea43e1c5963a64f1a6183a00f3503409ef9a32df831da10ea28e1f62"
+    },
+    {
+      "image": "unit-long40/long40.bin",
+      "bytes": 2264,
+      "sha256": "edcf8ed0d204ecfe42e4dd5ab801dd104addf8bf048a73df4fb8ca8179610b94"
+    },
+    {
+      "image": "unit-long-pitch/long-pitch.bin",
+      "bytes": 3008,
+      "sha256": "1a0c293572ddc2724cb5d5ad6b420174be5790939265c062bdcac0c1ce1dae65"
+    },
+    {
+      "image": "unit-short-pitch/short-pitch.bin",
+      "bytes": 4504,
+      "sha256": "cf259a52364979f4605f023addb0dee47b9c475bf6a4284ee8a44653c20b206a"
+    },
+    {
+      "image": "unit-geometry/unit.bin",
+      "bytes": 6860,
+      "sha256": "3193d30dcb45e595d0c4ebaac9d43007adaa5035e551d14022b3428d291b8846"
+    },
+    {
+      "image": "c-control/wb.bin",
+      "bytes": 31244,
+      "sha256": "fab6596325575e7ff931a4165242583b7aa338796e73427a60e2efeab933ff4d",
+      "compileLinkedOnly": true
+    }
+  ],
+  "freshSnapshotRebuildImagesByByteIdentity": [
+    {
+      "epoch": "before",
+      "image": "bare-wb395/wb.bin",
+      "bytes": 22940,
+      "sha256": "8243c252b616ecb424838a6eeb96dcea7750bed39509b40cc1fd31f82d561400"
+    },
+    {
+      "epoch": "before",
+      "image": "irq-wb395/wb.bin",
+      "bytes": 23374,
+      "sha256": "02805ff16b18572b7edfa147679ac3c2b804aea75a3185f6da7f6a5f826ec13e"
+    },
+    {
+      "epoch": "before",
+      "image": "bare-wb575/wb.bin",
+      "bytes": 22940,
+      "sha256": "6cb3f16c5b7f75a9ba6ddd99474092e5694e7a5cfebbbf0ad3f61f40fd324bf8"
+    },
+    {
+      "epoch": "before",
+      "image": "irq-wb575/wb.bin",
+      "bytes": 23374,
+      "sha256": "750dd7d248158a14ae482ac9cb9f8ed467b0781b716335f0f4c0292b297dba47"
+    },
+    {
+      "epoch": "before",
+      "image": "bare-wb775/wb.bin",
+      "bytes": 22940,
+      "sha256": "705f96b3b66afdae2a8dad3d2a0b242ce80b73dce39ccefa20ab630adc316a01"
+    },
+    {
+      "epoch": "before",
+      "image": "irq-wb775/wb.bin",
+      "bytes": 23374,
+      "sha256": "5153915d801052dc4fec7f4e7fd42ba66f08f001613867e5ebb26588d76c1024"
+    },
+    {
+      "epoch": "before",
+      "image": "bare-wb98/wb.bin",
+      "bytes": 22940,
+      "sha256": "7de7e891c04fc33b7f798578f39f75ac35da17e78e195e7e6249d88b80d3532f"
+    },
+    {
+      "epoch": "before",
+      "image": "irq-wb98/wb.bin",
+      "bytes": 23374,
+      "sha256": "6a811123e27640884d5f5288f331f48727d01730d15f38434e2e3e4a2d7f3ea5"
+    },
+    {
+      "epoch": "before",
+      "image": "bare-wb128/wb.bin",
+      "bytes": 22940,
+      "sha256": "c341aff5171516aa02e7aa75b53fac486dff19d73f8cbcb52a64f8190f9976e1"
+    },
+    {
+      "epoch": "before",
+      "image": "irq-wb128/wb.bin",
+      "bytes": 23374,
+      "sha256": "97994b85799c863dee272ad181e0f1469f96d64a8824db895a0db5eb74c8e467"
+    },
+    {
+      "epoch": "after",
+      "image": "bare-wb395/wb.bin",
+      "bytes": 22056,
+      "sha256": "9500e569a37f1eadce1261000b3d4f87f5b7e1a0eb266fe6a5a8bd37e8991640"
+    },
+    {
+      "epoch": "after",
+      "image": "irq-wb395/wb.bin",
+      "bytes": 22476,
+      "sha256": "914ac51087a60b4fb7f00ce083ada8e1c372dbedee218bb0c2d68569ed1cf9df"
+    },
+    {
+      "epoch": "after",
+      "image": "bare-wb575/wb.bin",
+      "bytes": 22056,
+      "sha256": "6181cf1cc838f904124d43970056c55a9051934076d1a991f894085805c90ce2"
+    },
+    {
+      "epoch": "after",
+      "image": "irq-wb575/wb.bin",
+      "bytes": 22476,
+      "sha256": "d08a6bd0de8c42a90da37d15cd8dbe6ab49d2174e3c29433e3a871badc6d457c"
+    },
+    {
+      "epoch": "after",
+      "image": "bare-wb775/wb.bin",
+      "bytes": 22056,
+      "sha256": "0a38d59328632df5ea49771800226d57c01120042be265c6020a24e6618a5cbd"
+    },
+    {
+      "epoch": "after",
+      "image": "irq-wb775/wb.bin",
+      "bytes": 22476,
+      "sha256": "471b25b551b96dd782e559bb319153ec85883cc8b73c40b94417061f9f0e11a9"
+    },
+    {
+      "epoch": "after",
+      "image": "bare-wb98/wb.bin",
+      "bytes": 22056,
+      "sha256": "60924c9541651a517e70806ef2c052509e85c91a509853d228f78a831b61c708"
+    },
+    {
+      "epoch": "after",
+      "image": "irq-wb98/wb.bin",
+      "bytes": 22476,
+      "sha256": "7976ed6d5b2c99b70891af15378ebbbb913976c102a7c5b2dcdf718a64b44a36"
+    },
+    {
+      "epoch": "after",
+      "image": "bare-wb128/wb.bin",
+      "bytes": 22056,
+      "sha256": "8a8724f1d2637e966cee5aa861724b3adbe63c8c28ed350dd69087f34205ea8b"
+    },
+    {
+      "epoch": "after",
+      "image": "irq-wb128/wb.bin",
+      "bytes": 22476,
+      "sha256": "d77f750eea43e1c5963a64f1a6183a00f3503409ef9a32df831da10ea28e1f62"
+    }
+  ],
+  "cDecoderExecuted": false,
+  "limits": [
+    "Runtime reports remain the original combined graph observations; the cleaned graph is freshly built and proved byte-identical.",
+    "The portable reproduction driver freshly built both frozen graphs without reading mutable production source fragments; it did not rerun runtime observers."
+  ]
+}

@@ -5,12 +5,14 @@ import {fileURLToPath} from 'node:url';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {CPU,avrInstruction} from 'avr8js';
-const root=fileURLToPath(new URL('../',import.meta.url)),build=join(root,'build/short-pitch-unit');
+const root=fileURLToPath(new URL('../',import.meta.url)),build=process.argv[2]||join(root,'build/short-pitch-unit');
 const symbols=new Map(readFileSync(join(build,'symbols.txt'),'utf8').split(/\r?\n/)
   .map(l=>l.match(/^([0-9a-f]+)\s+\w\s+(.+)$/)).filter(Boolean).map(m=>[m[2],parseInt(m[1],16)]));
 function address(n){assert.ok(symbols.has(n),n);return symbols.get(n)&0xffff;}
 function functionAddress(re){const v=[...symbols].filter(([n])=>re.test(n));assert.equal(v.length,1);return v[0][1];}
-const entries=new Set([functionAddress(/^speex_nb3_short_innovation(?:\.|$)/),
+const sharedEntries=[...symbols].filter(([n])=>/^speex_short_innovation_shared(?:\.|$)/.test(n));
+const sharedEntry=sharedEntries.length?functionAddress(/^speex_short_innovation_shared(?:\.|$)/):null;
+const entries=new Set([sharedEntry??functionAddress(/^speex_nb3_short_innovation(?:\.|$)/),
   functionAddress(/^speex_nb3_short_innovation_c_test(?:\.|$)/)]);
 const binary=readFileSync(join(build,'short-pitch.bin')),program=new Uint16Array(16384).fill(0xffff);
 new Uint8Array(program.buffer).set(binary);
@@ -21,23 +23,30 @@ const cycles=[null,{min:Infinity,max:0,calls:0},{min:Infinity,max:0,calls:0}];
 const pitchCycles=Array.from({length:24},(_,i)=>({pitch:17+i,
   backends:[null,...Array.from({length:2},()=>({min:Infinity,max:0,total:0,calls:0}))]}));
 let currentPitch=17;
-let active=null,backend=0,seed=0x319e72b1,blocks=0,pitchClipped=0,outputClipped=0;
+let active=null,backend=0,seed=0x319e72b1,blocks=0,pitchClipped=0,outputClipped=0,returns=0;
 function random(){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return seed>>>0;}
 function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
   assert.ok(cpu.cycles<deadline,'Short-pitch mailbox timeout');
   if(entries.has(cpu.pc*2)){
-    assert.equal(active,null);active={sp:cpu.SP,ticks:cpu.cycles,regs:preserved.map(r=>cpu.data[r])};
+    assert.equal(active,null);
+    const original=preserved.map(r=>cpu.data[r]);
+    // The shared entry has two additional ABI arguments: table r10:r11
+    // and geometry r8. Scale/index occupy r12..r17 in both signatures.
+    const arguments_=new Set(cpu.pc*2===sharedEntry?[8,10,11,12,13,14,15,16,17]:[12,13,14,15,16,17]);
+    for(const r of preserved)if(!arguments_.has(r))cpu.data[r]=(returns*73+r*19)&255;
+    active={sp:cpu.SP,ticks:cpu.cycles,regs:preserved.map(r=>cpu.data[r]),original};
   }
-  avrInstruction(cpu);cpu.tick();assert.ok(cpu.SP>=address('__bss_end'),'Stack/static collision');
-  if(active && cpu.SP===active.sp+2){
+  const opcode=program[cpu.pc];avrInstruction(cpu);
+  if(active && opcode===0x9508 && cpu.SP===active.sp+2){
     assert.deepEqual(preserved.map(r=>cpu.data[r]),active.regs,'Callee-saved controller registers');
     assert.equal(cpu.data[1],0,'Zero register at controller return');
     const ticks=cpu.cycles-active.ticks;cycles[backend].min=Math.min(cycles[backend].min,ticks);
     cycles[backend].max=Math.max(cycles[backend].max,ticks);cycles[backend].calls++;
     const row=pitchCycles[currentPitch-17].backends[backend];
     row.min=Math.min(row.min,ticks);row.max=Math.max(row.max,ticks);row.total+=ticks;row.calls++;
-    active=null;
+    preserved.forEach((r,i)=>{cpu.data[r]=active.original[i];});++returns;active=null;
   }
+  cpu.tick();assert.ok(cpu.SP>=address('__bss_end'),'Stack/static collision');
 }}
 until(()=>cpu.data[status]===1);
 const upstream=readFileSync(join(root,'vendor/speex-1.2.1/libspeex/nb_celp.c'),'utf8');
@@ -101,6 +110,8 @@ const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',compiler:'AVR GCC 7.3.0
   historyPreserved:true,packetPreserved:true,guardsIntact:true,bitConsumptionExact:true,
   indexParsingOutsideMeasuredController:true,
   calleeSavedRegistersPreserved:true,zeroRegisterRestored:true,asmControllerCycles:cycles[1],
+  nonArgumentSavedRegisterPatterns:true,sharedControllerEntryObserved:sharedEntry!==null,
+  geometryAndTableArgumentsPreserved:sharedEntry!==null?true:null,actualPublicReturns:returns,
   cControllerCycles:cycles[2],perPitch:pitchCycles.map(({pitch,backends})=>({pitch,
     asm:{...backends[1],mean:Number((backends[1].total/backends[1].calls).toFixed(3))},
     c:{...backends[2],mean:Number((backends[2].total/backends[2].calls).toFixed(3))}})),

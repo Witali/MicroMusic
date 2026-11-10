@@ -80,6 +80,7 @@ speex_avr_forced_innovation_n:
 .global speex_avr_innovation10
 .type speex_avr_innovation10, @function
 speex_avr_innovation10:
+    push r9
     push r2
     push r3
     push r8
@@ -93,6 +94,7 @@ speex_avr_innovation10:
 .global speex_avr_long_innovation10
 .type speex_avr_long_innovation10, @function
 speex_avr_long_innovation10:
+    push r9
     push r2
     push r3
     push r8
@@ -110,6 +112,7 @@ speex_avr_long_innovation10:
     push r29
     set
 .Linnovation_setup:
+    clr r9
     movw r28, r24
     movw r30, r20
     clr r2
@@ -148,6 +151,12 @@ speex_avr_long_innovation10:
 .Linnovation_packed_again:
     rjmp .Linnovation_packed_sample
 .Linnovation_done:
+    tst r9
+    breq .Linnovation_finish
+    dec r9
+    breq .Linnovation_finish
+    rjmp .Llong40_shape
+.Linnovation_finish:
     clr r1
     pop r29
     pop r28
@@ -166,6 +175,7 @@ speex_avr_long_innovation10:
     pop r8
     pop r3
     pop r2
+    pop r9
     ret
 .size speex_avr_innovation10, .-speex_avr_innovation10
 .size speex_avr_long_innovation10, .-speex_avr_long_innovation10
@@ -178,6 +188,7 @@ speex_avr_long_innovation_n:
     brne .Linnovation_n_nonempty
     ret
 .Linnovation_n_nonempty:
+    push r9
     push r2
     push r3
     push r8
@@ -197,6 +208,7 @@ speex_avr_long_innovation_n:
     movw r30, r20
     clr r2
     mov r3, r12
+    clr r9
     set
     rjmp .Linnovation_bias_setup
 .size speex_avr_long_innovation_n, .-speex_avr_long_innovation_n
@@ -208,6 +220,7 @@ speex_avr_long_innovation_n:
 .global speex_avr_long_innovation1
 .type speex_avr_long_innovation1, @function
 speex_avr_long_innovation1:
+    push r9
     push r2
     push r3
     push r8
@@ -253,6 +266,7 @@ speex_avr_long_innovation1:
     ldi r20, 32
     mov r8, r20
     clt
+    clr r9
     rjmp .Linnovation_sample
 .size speex_avr_long_innovation1, .-speex_avr_long_innovation1
 
@@ -303,6 +317,7 @@ speex_avr_long_innovation40:
     ld r5,X+
     ld r6,X+
     ld r7,X+
+    set
 .Llong40_shape:
     pop r20
     ldi r21,10
@@ -314,35 +329,7 @@ speex_avr_long_innovation40:
     clr r1
     ldi r20,10
     mov r3,r20
-.Llong40_sample:
-    speex_nb3_long_dot
-    speex_nb3_innovation_transform
-    dec r3
-    breq .Llong40_vector_done
-    rjmp .Llong40_sample
-.Llong40_vector_done:
-    dec r9
-    breq .Llong40_done
-    rjmp .Llong40_shape
-.Llong40_done:
-    clr r1
-    pop r29
-    pop r28
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop r11
-    pop r10
-    pop r7
-    pop r6
-    pop r5
-    pop r4
-    pop r8
-    pop r3
-    pop r2
-    pop r9
-    ret
+    rjmp .Linnovation_long_sample
 .size speex_avr_long_innovation40,.-speex_avr_long_innovation40
 
 /* Zero adaptive sum only. ABI out r25:r24, Flash shape r23:r22,
