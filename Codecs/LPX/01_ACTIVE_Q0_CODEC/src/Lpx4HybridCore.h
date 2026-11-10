@@ -317,12 +317,18 @@ private:
     uint8_t pulseCount_,pulseIndex_;
 #endif
     Error error_;
+#if LPX4_COMPACT_VERSION == 9
+    // Two freed flag bytes fund a discarded eleventh linear-history word.
+    bool initializedFrame_:1;
+    bool lsfCached_:1,staticSpectrum_:1;
+#else
     bool initializedFrame_;
     bool lsfCached_,staticSpectrum_;
+#endif
 #if LPX4_ROTATE_LPC_ANCHORS
     uint8_t lpcAnchorOffset_;
 #endif
-    int16_t a_[10],hist_[LPX4_LPC_RING?20:10];
+    int16_t a_[10],hist_[LPX4_LPC_RING?20:LPX4_COMPACT_VERSION==9?11:10];
     int8_t ringQ_[256];
 #if LPX4_ALLOW_SPARSE
     uint8_t pulsePos_[LPX4_MAX_PULSES];

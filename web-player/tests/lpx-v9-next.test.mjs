@@ -8,7 +8,7 @@ const read=path=>readFileSync(new URL(path,root));
 const sha=data=>createHash('sha256').update(data).digest('hex');
 const folder='Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/';
 
-test('v9 word metadata shrinks program/SRAM while C reference, data, CPU time and IRQ output stay exact',()=>{
+test('v9 word metadata and exact arithmetic shrink program/SRAM while CPU time falls',()=>{
   const r=JSON.parse(read(folder+'v9-next-measurements.json'));
   const current=JSON.parse(read(folder+'v9-measurements.json'));
   assert.equal(r.schema,'lpx-v9-next-admission-v1');assert.equal(r.baseline_revision,'f7481ef9');
@@ -20,11 +20,11 @@ test('v9 word metadata shrinks program/SRAM while C reference, data, CPU time an
     core_tests:4,compact_versions:[5,9],public_count_bits:32,v9_stored_count_bits:16});
   for(const row of r.cases){
     const {before:b,after:a}=row;
-    assert.equal(b.program_excluding_audio_bytes-a.program_excluding_audio_bytes,34);
+    assert.equal(b.program_excluding_audio_bytes-a.program_excluding_audio_bytes,40);
     assert.equal(b.static_ram_bytes-a.static_ram_bytes,2);
     assert.equal(a.embedded_audio_bytes,b.embedded_audio_bytes);assert.equal(a.samples,b.samples);
     assert.equal(a.stack_bytes,b.stack_bytes);assert.equal(a.stack_margin,b.stack_margin+2);
-    assert.equal(a.decode_cpu_cycles,b.decode_cpu_cycles);assert.equal(a.decode_mean,b.decode_mean);
+    assert.ok(a.decode_cpu_cycles<b.decode_cpu_cycles);assert.ok(a.decode_mean<b.decode_mean);
     assert.equal(a.underruns,0);assert.equal(a.irq_max,42);assert.equal(row.pwm_exact,true);
     assert.ok(a.min_queue>0&&a.flash_bytes<=8192);
     assert.match(row.data_sha256,/^[a-f0-9]{64}$/);

@@ -35,13 +35,13 @@ Each v9 full playback is checked against portable C and the actual v5 output.
 
 | Quantity | V5 | V9 |
 | --- | ---: | ---: |
-| Universal program excluding verified audio | 5487..5488 B | 5390..5391 B |
-| Complete image including each test stream | 5958..7386 B | 5840..7272 B |
+| Universal program excluding verified audio | 5471..5472 B | 5384..5385 B |
+| Complete image including each test stream | 5942..7370 B | 5834..7266 B |
 | Static SRAM / peak observed stack | 447 / 60 B | 445 / 60 B |
 | Complete ISR, hardware entry through RETI | 42 cycles | 42 cycles |
 | Underruns | 0 | 0 |
 
-The program now saves 96..98 B, in addition to smaller audio files. On the four
+The program now saves 86..88 B, in addition to smaller audio files. On the four
 public phrases, compressed data shrinks as follows:
 
 | Phrase | P4 data bytes, v5 to v9 | P6 data bytes, v5 to v9 |
@@ -52,7 +52,7 @@ public phrases, compressed data shrinks as follows:
 | Bread | 1008 to 996 | 1899 to 1881 |
 
 Thus these files save 12..43 B (about 0.95..4.26%). All fourteen IRQ-active mean
-decode costs improve, by about 0.3..0.5%; exact before/after means, maxima and
+decode costs improve; exact before/after means, maxima and
 queue minima are in the receipt. PCM/PWM bytes stay identical. Observed stack and the 42-cycle ISR are preserved. V9 static SRAM is now
 445 B; the conservative margin increases from four to six bytes.
 The admission remains bounded to these standalone workloads; extra application
@@ -96,9 +96,10 @@ and both PCM/PWM output streams remain byte-identical.
 
 The [matched v9-to-v9 receipt](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/v9-next-measurements.json)
 replays the original `f7481ef9` ELFs and verifies loaded Flash bytes, compiler
-recipe, original timing and waveform before comparing the new binaries. All
-fourteen have identical CPU cycle totals and wall-time means, zero underruns,
-60-byte observed stacks, and 6-byte margins. SRAM is 445 B including FIFO44.
+recipe, original timing and waveform before comparing the new binaries. Its
+current results include later exact arithmetic work: 40 B less program Flash,
+lower CPU cycle totals, zero underruns, 60-byte observed stacks and 6-byte
+margins. The word-only result above is historical. SRAM is 445 B including FIFO44.
 These remain standalone simulator bounds, not a board/application guarantee.
 
 The [active C reference](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/C_REFERENCE.md)
@@ -129,4 +130,6 @@ and full IRQ playback. All arithmetic identities retained exact output:
 
 The 25-entry table and original pulse arithmetic remain. The accepted change
 is the count-width reduction in the shared C header, with no arithmetic ASM
-or wire-format change.
+or wire-format change at that revision. Later shared arithmetic improvements
+are recorded in the [current 1500-cycle attempt](lpx-universal-tiny88.md#exact-work-reduction-toward-1500-cyclessample-2026-11-10);
+the mean target is not yet met on public speech.

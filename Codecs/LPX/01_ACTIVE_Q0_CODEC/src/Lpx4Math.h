@@ -176,10 +176,28 @@ static inline __attribute__((always_inline)) int8_t lpx4PitchQ4(int8_t x,uint8_t
 #elif LPX4_USE_AVR_NOMUL_ASM
     // Common exact v5 gains. In particular gain14 has stable +/-3 feedback,
     // so avoiding a software product also helps dense voiced excitation.
-    if(gain==14)return (int8_t)(x+((4-(int16_t)x)>>3));
+    if(gain==14){
+        // 4-x is signed9 for the full signed8 domain. V marks its rare
+        // positive overflow; one logical shift restores the exact sign.
+        int8_t correction;
+        __asm__(
+            "ldi %1,4\n\tsub %1,%0\n\tbrvc 1f\n\t"
+            "lsr %1\n\trjmp 2f\n\t1: asr %1\n\t"
+            "2: asr %1\n\tasr %1\n\tadd %0,%1\n\t"
+            : "+r"(x),"=&d"(correction) : : "cc");
+        return x;
+    }
     if(!gain)return 0;
-    if(gain==8)return (int8_t)(((int16_t)x+1)>>1);
-    return (int8_t)(((int16_t)x*gain+8)>>4);
+    // Four low gain bits yield the rounded Q4 quotient directly in one
+    // byte. Add bit4*x, then remove the unsigned-x bias16*(gain&15).
+    uint8_t result,multiplier;
+    __asm__(
+        "ldi %0,8\n\tmov %1,%2\n\t"
+        ".rept 4\n\tlsr %1\n\tbrcc 1f\n\tadd %0,%3\n\t1: ror %0\n\t.endr\n\t"
+        "sbrc %1,0\n\tadd %0,%3\n\t"
+        "swap %2\n\tandi %2,240\n\tsbrc %3,7\n\tsub %0,%2\n\t"
+        : "=&d"(result),"=&r"(multiplier),"+&d"(gain) : "r"(x) : "cc");
+    return (int8_t)result;
 #else
     return (int8_t)(((int16_t)x*gain+8)>>4);
 #endif
@@ -290,16 +308,40 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     "10: cpi r21,128\n\tbrne 11f\n\tcpi r20,1\n\tbrne 11f\n\t" \
     "12: mov r24,r18\n\tmov r25,r19\n\tclr r23\n\t" \
     "asr r25\n\tror r24\n\tror r23\n\t" \
-    "mov r22,r19\n\tclr r20\n\tsbrc r19,7\n\tdec r20\n\t" \
-    "sub r23,r22\n\tsbc r24,r20\n\tsbc r25,r20\n\t" \
-    "sbrc r21,7\n\trjmp 13f\n\ttst r18\n\tbreq 14f\n\t" \
-    "subi r23,1\n\tsbci r24,0\n\tsbci r25,0\n\t14: rjmp 8f\n\t" \
-    "13: com r23\n\tcom r24\n\tcom r25\n\t" \
-    "subi r23,255\n\tsbci r24,255\n\tsbci r25,255\n\trjmp 8f\n\t11:\n\t" \
+    "clr r20\n\tsbrc r19,7\n\tdec r20\n\t" \
+    "cp __zero_reg__,r18\n\tsbrc r21,7\n\tclc\n\t" \
+    "sbc r23,r19\n\tsbc r24,r20\n\tsbc r25,r20\n\t" \
+    "sbrs r21,7\n\trjmp 8f\n\t" \
+    "com r25\n\tcom r24\n\tneg r23\n\tsbci r24,255\n\tsbci r25,255\n\trjmp 8f\n\t11:\n\t" \
     ""
 #else
 #define LPX4_NOMUL_SATURATED ""
 #endif
+#if LPX4_AVR25_SATURATED_PRODUCTS
+// Split h into its unsigned low byte and signed high byte. For a small
+// high byte (-8..7), a few exact 24-bit additions replace eight multiply
+// rounds. B=floor(uint16(a)*lo(h)/256), then B+uint16(a)*int8(hi(h)).
+// For negative a, subtract 256*h. Every intermediate fits signed24;
+// the existing Q4 nibble mask preserves each separate Q12 floor.
+#define LPX4_NOMUL_PRODUCT \
+    "mov r22,r20\n\ttst r22\n\tbrne 18f\n\ttst r21\n\tbrne 18f\n\trjmp 5f\n\t18:\n\t" \
+    LPX4_NOMUL_SATURATED \
+    "clr r24\n\tclr r25\n\t" \
+    ".rept 8\n\t" LPX4_NOMUL_HIGH_STEP ".endr\n\t" \
+    "mov r22,r21\n\tsubi r22,248\n\tcpi r22,16\n\tbrsh 9f\n\t" \
+    "mov r23,r24\n\tmov r24,r25\n\tclr r25\n\tmov r22,r21\n\t" \
+    "tst r22\n\tbrmi 6f\n\tbrne 18f\n\trjmp 7f\n\t" \
+    "18: add r23,r18\n\tadc r24,r19\n\tadc r25,__zero_reg__\n\t" \
+    "dec r22\n\tbrne 18b\n\trjmp 7f\n\t" \
+    "6: sub r23,r18\n\tsbc r24,r19\n\tsbc r25,__zero_reg__\n\t" \
+    "inc r22\n\tbrne 6b\n\trjmp 7f\n\t" \
+    "9: mov r22,r21\n\t" \
+    ".rept 4\n\t" LPX4_NOMUL_HIGH_STEP ".endr\n\t" \
+    ".rept 3\n\t" LPX4_NOMUL_HIGH_STEP "ror r23\n\t.endr\n\t" \
+    "lsr r22\n\tbrcc 3f\n\tsub r24,r18\n\tsbc r25,r19\n\t" \
+    "3: ror r25\n\tror r24\n\tror r23\n\t" \
+    "7: sbrs r19,7\n\trjmp 8f\n\tsub r24,r20\n\tsbc r25,r21\n\t8:\n\t"
+#else
 #define LPX4_NOMUL_PRODUCT \
     "tst r21\n\tbrne 9f\n\ttst r20\n\tbrne 7f\n\t" \
     "rjmp 5f\n\t7: rjmp 6f\n\t" \
@@ -320,6 +362,7 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     "sbrs r21,7\n\trjmp 4f\n\tsub r23,r18\n\tsbc r24,r19\n\t" \
     "4: sbrc r19,7\n\tsub r24,r20\n\t" \
     "mov r25,r24\n\tlsl r25\n\tsbc r25,r25\n\t8:\n\t"
+#endif
 #define LPX4_NOMUL_SUB \
     LPX4_NOMUL_PRODUCT \
     "andi r23,240\n\tsub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\t" \
@@ -347,7 +390,9 @@ static inline __attribute__((always_inline)) int16_t lpx4NomulAttenuate(uint16_t
     return (int16_t)result;
 }
 #endif
-template<bool excitationQ4=false>
+// spareHistory explicitly requires h[11]; h[10] is a discarded shift slot.
+// Default callers still require only h[10]. Q4 excitation is exactly integral.
+template<bool excitationQ4=false,bool spareHistory=false>
 static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16_t* h){
 #if LPX4_USE_AVR_ASM
     int32_t result=excitation;
@@ -356,6 +401,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         "clr r16\n\t"
         ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
         "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
+        ".if %4\n\tstd Z+2,r20\n\tstd Z+3,r21\n\t.endif\n\t"
         LPX4_SYNTH_MUL
 #if LPX4_AVR_DOT_UNROLL!=9
         "ldi r17," LPX4_STRING(9/LPX4_AVR_DOT_UNROLL) "\n\t1:\n\t"
@@ -371,7 +417,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
         "clr __zero_reg__\n\t"
         : "+&r" (result), "+z" (h), "+x" (a)
-        : "I"(!excitationQ4)
+        : "I"(!excitationQ4),"I"(spareHistory)
         : "r0","r1","r16","r18","r19","r20","r21",
 #if LPX4_AVR_DOT_UNROLL!=9
           "r17",
@@ -392,21 +438,24 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
         "ldi r17,10\n\t1:\n\t"
         "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
-        "cpi r17,10\n\tbreq 2f\n\tstd Z+2,r20\n\tstd Z+3,r21\n\t2:\n\t"
+        ".if !%5\n\tcpi r17,10\n\tbreq 2f\n\t.endif\n\tstd Z+2,r20\n\tstd Z+3,r21\n\t2:\n\t"
         LPX4_NOMUL_SUB
         "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
         ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
         : "+&r"(result),"+z"(h),"+x"(a) : "I"(!excitationQ4)
 #if LPX4_AVR25_SATURATED_PRODUCTS
           ,"r"(saturationHint)
+#else
+          ,"I"(0)
 #endif
+          ,"I"(spareHistory)
         : "r17","r18","r19","r20","r21","r22","r23","r24","r25","cc","memory");
     return result;
 #else
     int32_t result=excitationQ4?(excitation+(excitation<0?15:0))>>4:excitation;
     for(int8_t i=9;i>=0;i--){
         result-=lpx4Shift12(lpx4Mul16(a[i],h[i]));
-        if(i<9)h[i+1]=h[i];
+        if(spareHistory||i<9)h[i+1]=h[i];
     }
     return result;
 #endif
@@ -541,12 +590,14 @@ static inline __attribute__((always_inline)) uint8_t lpx4PwmQ14(int16_t sample,u
     if(gain==130){
         // Write sample=128*k+r, 0<=r<128. Equivalently extract the rounded
         // product65/8192 after adding the unsigned PWM offset. Only 24 bits
-        // and six shifts are needed; all signed16 inputs retain clipping.
+        // suffice. Form sample<<6 as (sample<<8)>>2, exactly in signed24;
+        // all signed16 inputs retain clipping.
         int32_t product=sample;
         const int8_t sign=sample<0?-1:0;
         uint8_t result;
         __asm__(
-            ".rept 6\n\tlsl %A1\n\trol %B1\n\trol %C1\n\t.endr\n\t"
+            "mov %C1,%B1\n\tmov %B1,%A1\n\tclr %A1\n\t"
+            ".rept 2\n\tasr %C1\n\tror %B1\n\tror %A1\n\t.endr\n\t"
             "add %A1,%A2\n\tadc %B1,%B2\n\tadc %C1,%3\n\t"
             "subi %B1,240\n\tsbci %C1,239\n\t"
             "cpi %C1,32\n\tbrlo 1f\n\tldi %0,255\n\t"

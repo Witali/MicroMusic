@@ -21,9 +21,9 @@
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/profiles/Lpx4Sram512.h": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp": "a28b1da5d57045c33eb50bba9b706c8e8d301e43410aea4989ce6cdd660eb87a",
     "Codecs/LPX/validation/attiny88/sim_player.c": "1373c73f1c6767da6cf0c703f4c9f769444363768a26db3e2f6b634a879652d9",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "8dd301659361b7b0d6c20924723e76e8e8a520ca98bdc9f17d2a44bfa1f2ed4d",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "1777e2cac72cfbe0edc4faf86087a04b1baeb0dada71181e983fdad022dc97a1",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "6420049d48b9befaafae29dfff6be712d309b32496e5f1bbe9227385cee3941c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "867375a633c42e1d550d83f3ec4e1c986301ffa269213b42a13b6a7165478803",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "1697ebad5394b8aa10c22241b9cebae83899d7599b9eb5cda25f87430a9e2f88",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "1ccb72bcc6f8f9b7166a192246e02724f714fbaa1311f032b4bad50036a60f51",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyAvr.h": "b3b13d1981f13e734e51ed4b2a9d60f3a58557512fe1d009c34b8a37c381fe99",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "f45569017cd38489198f63c14bed9a1fb501c0c2983eb5540cb9597595e2004a",
@@ -383,10 +383,10 @@
       "id": "compact",
       "clipId": "chego",
       "source": "firmware/attiny88/lpx-tiny88-chego-compact.hex",
-      "hexSha256": "a5955016fd27d0e132de2a0ba2625d7074c71900cd2c5d454b9936176dc6eb0c",
+      "hexSha256": "24e9a66cf7e3985a85775ae23706ce78b5fdcc1abc576cc1860d3aff90dada6b",
       "streamSha256": "dcc709cd0d502b04fad930c17904fd8da202c32352fdfcfa7e5c5d394bbe64b8",
-      "flashBytes": 5386,
-      "programFlashBytes": 4850,
+      "flashBytes": 5376,
+      "programFlashBytes": 4840,
       "staticSramBytes": 422,
       "peakStackBytes": 60,
       "stackMarginBytes": 29,
@@ -420,17 +420,17 @@
         "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 12
+        "minQueuedSamplesBeforeOutput": 13
       }
     },
     {
       "id": "quality",
       "clipId": "chego",
       "source": "firmware/attiny88/lpx-tiny88-chego-quality.hex",
-      "hexSha256": "46aa27e7fa76dc34dfe2db152154fee60319aae3da2e5948eb2eb6560c7235ae",
+      "hexSha256": "8b8f15f5c4a3f3670c3f1e7fe9018a3aa6a2a7b6ca1153ffb5a30674535fd753",
       "streamSha256": "97ac77212d74149a08e5ec472b59c1b02520b9b1718e5f3e4742c036d4c8ee67",
-      "flashBytes": 5802,
-      "programFlashBytes": 5011,
+      "flashBytes": 5792,
+      "programFlashBytes": 5001,
       "staticSramBytes": 422,
       "peakStackBytes": 65,
       "stackMarginBytes": 24,
@@ -460,21 +460,21 @@
       "timing": {
         "playedSamples": 9831,
         "underruns": 0,
-        "minTickCycles": 1992,
-        "maxTickCycles": 2008,
+        "minTickCycles": 1991,
+        "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 8
+        "minQueuedSamplesBeforeOutput": 12
       }
     },
     {
       "id": "compact",
       "clipId": "otvechaesh",
       "source": "firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex",
-      "hexSha256": "900121d7c787997351784feaf09674f744fbe61c34cee3cdbd1be6fdfdde4006",
+      "hexSha256": "4ecdbbb7aac82011acce910593f94e43b1294a45bdab29d2a2beac81fabc47c0",
       "streamSha256": "be9b8e74208e61b43c89510e1a2b0634cbd4c52d1f1175a5844c7d2845b2149c",
-      "flashBytes": 5320,
-      "programFlashBytes": 4850,
+      "flashBytes": 5310,
+      "programFlashBytes": 4840,
       "staticSramBytes": 422,
       "peakStackBytes": 60,
       "stackMarginBytes": 29,
@@ -505,20 +505,20 @@
         "playedSamples": 8466,
         "underruns": 0,
         "minTickCycles": 1991,
-        "maxTickCycles": 2008,
+        "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 12
+        "minQueuedSamplesBeforeOutput": 13
       }
     },
     {
       "id": "quality",
       "clipId": "otvechaesh",
       "source": "firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex",
-      "hexSha256": "0d200c46e1c3f936fc4a13497628bb0e63e3631762b9eae8974a887dc38521c4",
+      "hexSha256": "fcba1f32185b20d709e244e41e39847595950b508e66cf4530373adc8fe54599",
       "streamSha256": "5df660b88ff2a3e7764810dfb761aef664b9526c09a8b435cca2a8aa0272757c",
-      "flashBytes": 5804,
-      "programFlashBytes": 5112,
+      "flashBytes": 5794,
+      "programFlashBytes": 5102,
       "staticSramBytes": 422,
       "peakStackBytes": 65,
       "stackMarginBytes": 24,
@@ -548,21 +548,21 @@
       "timing": {
         "playedSamples": 8466,
         "underruns": 0,
-        "minTickCycles": 1991,
-        "maxTickCycles": 2009,
+        "minTickCycles": 1992,
+        "maxTickCycles": 2008,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 9
+        "minQueuedSamplesBeforeOutput": 12
       }
     },
     {
       "id": "compact",
       "clipId": "vinni",
       "source": "firmware/attiny88/lpx-tiny88-vinni-compact.hex",
-      "hexSha256": "2e5a9e10527fd9934adb4da5f3cf35327e71f6e8bac2042f4c46adad605b2f6d",
+      "hexSha256": "117a7aea587b51664ff3b03c28450006f2c85e508d9f87a44750e6bc8750deef",
       "streamSha256": "ff653ed9b127e60eea987cf9c087871db6a859f80de9d4faf3a4528a8e03d4d4",
-      "flashBytes": 6218,
-      "programFlashBytes": 4975,
+      "flashBytes": 6208,
+      "programFlashBytes": 4965,
       "staticSramBytes": 422,
       "peakStackBytes": 60,
       "stackMarginBytes": 29,
@@ -596,17 +596,17 @@
         "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 6
+        "minQueuedSamplesBeforeOutput": 11
       }
     },
     {
       "id": "quality",
       "clipId": "vinni",
       "source": "firmware/attiny88/lpx-tiny88-vinni-quality.hex",
-      "hexSha256": "7260d0b08c63c513a2a065a1d2b2b2ff66bb01d92aff66262687cc5cd9ef6c0d",
+      "hexSha256": "386e8948925b889f3653e1b5789ebf9a6bd1f4afd080690176e222f3dbfd974e",
       "streamSha256": "7331c3cb8ffcb06d5b7099ed936d225f16f16d47c81b42e7733fb681c8881412",
-      "flashBytes": 6976,
-      "programFlashBytes": 5114,
+      "flashBytes": 6966,
+      "programFlashBytes": 5104,
       "staticSramBytes": 422,
       "peakStackBytes": 65,
       "stackMarginBytes": 24,
@@ -640,17 +640,17 @@
         "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 1
+        "minQueuedSamplesBeforeOutput": 10
       }
     },
     {
       "id": "compact",
       "clipId": "bread",
       "source": "firmware/attiny88/lpx-tiny88-bread-compact.hex",
-      "hexSha256": "8cc1dfad369d2ee6f754a2ccdea0e579f99bba3a116e316b5c6f000b29c48b59",
+      "hexSha256": "78f6d0adeae15749339f01be3e7d231b7e283dbba50e6c8004957f7ffcd1fa2f",
       "streamSha256": "b2bfe6a869659735b2986e6e2636e8e0fbc290d93670c50e08cd68381894a6bb",
-      "flashBytes": 5914,
-      "programFlashBytes": 4906,
+      "flashBytes": 5904,
+      "programFlashBytes": 4896,
       "staticSramBytes": 422,
       "peakStackBytes": 60,
       "stackMarginBytes": 29,
@@ -684,17 +684,17 @@
         "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 7
+        "minQueuedSamplesBeforeOutput": 12
       }
     },
     {
       "id": "quality",
       "clipId": "bread",
       "source": "firmware/attiny88/lpx-tiny88-bread-quality.hex",
-      "hexSha256": "bd5bf594b3d0ff18f1cafb3851e78efbc74bea42e9f81510da8c1011fe638486",
+      "hexSha256": "d87beeab7a158be1376a6ecba7e3edc29cc4b1b4b3f310a49ab49307a748fada",
       "streamSha256": "6e65c2cd10356ee2eccc3fb285992919c6219d84c47a57a444262c0f240d9a39",
-      "flashBytes": 7034,
-      "programFlashBytes": 5135,
+      "flashBytes": 7024,
+      "programFlashBytes": 5125,
       "staticSramBytes": 422,
       "peakStackBytes": 66,
       "stackMarginBytes": 23,
@@ -728,17 +728,17 @@
         "maxTickCycles": 2009,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
-        "minQueuedSamplesBeforeOutput": 9
+        "minQueuedSamplesBeforeOutput": 12
       }
     },
     {
       "id": "low15",
       "clipId": "bread",
       "source": "firmware/attiny88/lpx-tiny88-bread-low15.hex",
-      "hexSha256": "48a39897bbab5dd390260d2f30e8fcc69ba569ab5ccbf9573b141af7567ace3d",
+      "hexSha256": "0e8cf3045d4d54a38917ea7a722539bb9bb897a330bf4f1441b916706358a47b",
       "streamSha256": "4ab7bceccb532676a8647e087e76dee2d1c94f46d2229e8c773b37e5f4479f89",
-      "flashBytes": 5398,
-      "programFlashBytes": 4981,
+      "flashBytes": 5388,
+      "programFlashBytes": 4971,
       "staticSramBytes": 422,
       "peakStackBytes": 66,
       "stackMarginBytes": 23,
@@ -768,8 +768,8 @@
       "timing": {
         "playedSamples": 19200,
         "underruns": 0,
-        "minTickCycles": 1991,
-        "maxTickCycles": 2009,
+        "minTickCycles": 1993,
+        "maxTickCycles": 2007,
         "irqEntryCycles": 4,
         "irqRetiComplete": true,
         "minQueuedSamplesBeforeOutput": 12

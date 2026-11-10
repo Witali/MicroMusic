@@ -2642,7 +2642,7 @@ male12 trial, 5547 B takes 1476.384 cycles/sample versus the 5570 B baseline's
 
 ### LPX: defer Q12 product shifts with an exact Q4 accumulator
 
-Follow-up on AVR5 / ATmega328P, AVR-GCC7.3 `-Os`, explicit ASM and the same
+Follow-up on AVR5 / ATmega328P, AVR-GCC 7.3 `-Os`, explicit ASM and the same
 portable C fallback: after reconstructing the signed24 high product bytes,
 clear the low nibble instead of doing four three-byte right shifts per tap.
 The value is exactly `16 * floor(signed32_product / 4096)`, also for negatives.
@@ -2936,7 +2936,7 @@ margin821 B. Golden PCM16/PWM and AVR PWM exact, zero underruns.
 
 ### LPX: tune hot AVR functions without changing global build options
 
-Keep global AVR-GCC7.3 -Os and the fixed benchmark settings. Only genuine AVR5 GCC functions next/nextCore(bit1), decodeCode(bit2), and readByte/readBits/readOne(bit4) receive optimize(O2). LPX4_FUNCTION_TUNING=7 is default;0 restores Os and1..7 select groups. Non-AVR/Clang omit the attributes. C/ASM and hardware memory selection remain independent; C fallback stays selectable on AVR. Five O2 combinations and all-group O3 were screened. O3 costs924 extra Flash bytes for about0.16% more gain on the two screening streams; choose O2.
+Keep global AVR-GCC 7.3 -Os and the fixed benchmark settings. Only genuine AVR5 GCC functions next/nextCore(bit1), decodeCode(bit2), and readByte/readBits/readOne(bit4) receive optimize(O2). LPX4_FUNCTION_TUNING=7 is default;0 restores Os and1..7 select groups. Non-AVR/Clang omit the attributes. C/ASM and hardware memory selection remain independent; C fallback stays selectable on AVR. Five O2 combinations and all-group O3 were screened. O3 costs924 extra Flash bytes for about0.16% more gain on the two screening streams; choose O2.
 
 Measured round16:2535457558 ->2499853336 wall cycles over91 active-IRQ images,
 1.404252% less time,+146 B Flash/image, SRAM1101 B, minimum stack
@@ -3175,6 +3175,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [Tighten Tiny88 RAM and Flash budgets](lpx-tiny88-budget.md): omit stored fixed-ROM constants, check FIFO24 addressing/ELF alignment, group software-product rounds and retain only reachable P4 cosine nodes; measured complete-player IRQ checks, hard 8192-byte cap and explicit 6012-byte USB loading limit.
 - [Universal Tiny88 LPX playback](lpx-universal-tiny88.md): runtime file parameters, exact general attenuation and saturation routes, FIFO44 and a measured standalone real-time profile; explicit C fallback and retained fixed-header demo recipe.
 - [LPX v9 wire decoding](lpx-v9.md): shorter headers, omitted inactive fields and multiply-free pulse coordinates; smaller data and universal reader, exact PCM/PWM and matched full-IRQ measurements.
+- [LPX toward 1500 cycles/sample](lpx-universal-tiny88.md#exact-work-reduction-toward-1500-cyclessample-2026-11-10): exact byte-split products, pitch/PWM arithmetic and padded history; 1515..1574 mean cycles including IRQ on public speech, unchanged data and a 6-byte smaller v9 program. The target remains unmet; full IRQ/output and C-reference checks are retained.
 
 - [Select LPX multiplication by real target capability](lpx-multiply-selection.md): explicit C/ASM choice, compiler-linked software fallback, and assembled AVR5/AVR25 checks without redefining CPU macros.
 

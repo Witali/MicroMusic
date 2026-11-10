@@ -61,3 +61,12 @@ format selection, cache invalidation and the original subprocess C reference.
 The second checks the complete pulse domain, both memory/cursor/count-update
 profiles, file-defined filter parameters and invalid-count metadata. Full
 AVR/IRQ checks additionally compare every PWM byte against the native C output.
+
+The 1500-cycle optimization keeps all three arithmetic selections equivalent.
+V9 packs three private flags and uses an eleventh discarded linear-history word;
+`lpx4SynthesisQ12<q4,true>` explicitly opts into that layout, while the default
+helper still accepts ten words. The C reference performs the same history shift.
+Universal SRAM512 v5/v9 builds compute only the exactly symmetric half of P.
+Q keeps its full recurrence because negative floor rounding breaks antisymmetry.
+The standard-memory C path retains the full polynomial calculation as an oracle.
+No recording parameter or compressed byte is moved into the decoder build.

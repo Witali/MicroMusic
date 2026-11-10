@@ -42,19 +42,19 @@ combinations of file-defined profile/filter settings without recompilation.
 
 | Universal player | Measured result |
 | --- | ---: |
-| Program Flash, including startup, tables and playback, excluding audio | 5487..5488 B (about 5.36 KiB) |
-| Full image for the measured recordings | 5958..7386 B |
+| Program Flash, including startup, tables and playback, excluding audio | 5471..5472 B (about 5.34 KiB) |
+| Full image for the measured recordings | 5942..7370 B |
 | Static SRAM, including FIFO44 | 447 B |
 | Largest observed stack | 60 B |
 | Minimum observed stack margin | 4 B |
-| Mean decode wall cycles/sample, public recordings | 1595..1722 |
-| Mean decode wall cycles/sample, synthetic controls | 1034..1335 |
+| Mean decode wall cycles/sample, public recordings | 1507..1565 |
+| Mean decode wall cycles/sample, synthetic controls | 957..1273 |
 | Complete ISR, including hardware entry and RETI | 42 cycles |
 
 These are standalone simulator bounds, not a guarantee for every valid spectral
 sequence or application integration. The observed four-byte stack margin does
 not cover added application/IRQ work. Thirteen of these fourteen complete
-example images need ISP; the 5958-byte image fits the 6012-byte USB region.
+example images need ISP; the 5942-byte image fits the 6012-byte USB region.
 
 The universal mode does not define `LPX4_FIXED_*` and does not specialize extra
 player gain for a recording. Existing LPX header validation and compact-reader
@@ -68,6 +68,7 @@ record the exact scope. The previously unpinned FIFO24 recipe had underruns;
 the original admission spent 30 additional program bytes and 20 static RAM
 bytes to meet real-time playback. The shared state reset now saves another
 100 program bytes (0.09765625 KiB) with identical measured playback timing.
+The later exact arithmetic work saves another 16 B and reduces decoding time.
 Parameters still come from the file; recording-specialized demos remain smaller.
 
 ## Smaller v9 wire format
@@ -78,14 +79,17 @@ the universal program. The builder recognizes its `L9` identifier and selects
 only the wire-format reader; arithmetic C/ASM selection stays independent.
 The previous v5/v8 build paths remain available.
 
-Fourteen matched full-IRQ cases use 5390..5391 program bytes (about 5.26 KiB),
-96..98 bytes below v5, with 445-byte static SRAM, a 60-byte observed stack,
+Fourteen matched full-IRQ cases use 5384..5385 program bytes (about 5.26 KiB),
+86..88 bytes below v5, with 445-byte static SRAM, a 60-byte observed stack,
 a six-byte conservative margin and a 42-cycle ISR. The eight public data files shrink by 12..43 bytes,
-with exact output and no underruns. Complete tested images use 5840..7272 B.
+with exact output and no underruns. Complete tested images use 5834..7266 B.
 [Source-bound v9 comparison](v9-measurements.json) records the workload and
 before/after timing. See the format document for conversion and verification.
-The [next v9 comparison](v9-next-measurements.json) records the 34-byte Flash /
-2-byte SRAM saving with identical decode cycle totals and unchanged sound data.
+The [next v9 comparison](v9-next-measurements.json) records the combined 40-byte Flash /
+2-byte SRAM saving relative to f7481ef9, with lower decode time and unchanged data.
+The [1500-cycle attempt](v9-1500-measurements.json) compares the latest previous
+v9 build: speech uses 1514.71..1574.41 mean decoder CPU plus IRQ cycles/sample.
+The target is not yet met; the program shrinks 6 B and sound data stays identical.
 The [C reference](../../C_REFERENCE.md) supports the same v9 format and metadata.
 
 ## Retained ROM demonstration results
@@ -98,8 +102,8 @@ sample count, stored stream bytes or source gain is changed.
 
 | Complete release image measurement | Result |
 | --- | ---: |
-| Flash, including the original audio | 5320..7034 bytes |
-| Program Flash after subtracting the verified single audio array | 4850..5135 bytes |
+| Flash, including the original audio | 5310..7024 bytes |
+| Program Flash after subtracting the verified single audio array | 4840..5125 bytes |
 | Static SRAM, including FIFO | 422 bytes |
 | Largest observed stack | 66 bytes |
 | Smallest observed stack margin | 23 bytes |
@@ -107,7 +111,7 @@ sample count, stored stream bytes or source gain is changed.
 | Images fitting standard 6012-byte USB region | 6 of 9 |
 
 The other three images fit physical Flash and require ISP loading. The full
-19,200-sample P4 example uses 5914 bytes, leaving 98 bytes below the USB limit.
+19,200-sample P4 example uses 5904 bytes, leaving 108 bytes below the USB limit.
 The stack margin uses the
 observer's conservative SP convention and is bounded evidence for these
 images. The separate paired memory runs decode every combination twice.

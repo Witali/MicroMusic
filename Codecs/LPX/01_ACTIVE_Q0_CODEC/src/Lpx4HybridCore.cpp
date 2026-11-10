@@ -171,7 +171,7 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
  inputReader_=0;inputContext_=0;
 #endif
 #ifdef __AVR__
- static_assert(offsetof(Lpx4HybridCore,staticSpectrum_)<64,"Hot state exceeds AVR short displacement");
+ static_assert(offsetof(Lpx4HybridCore,error_)+3<64,"Hot state exceeds AVR short displacement");
  static_assert(offsetof(Lpx4HybridCore,error_)<64,"Error flag must retain short displacement");
 #endif
  resetState();
@@ -962,12 +962,30 @@ static inline int32_t ringPolyGet(const int8_t* ring,uint8_t base,uint8_t index)
 static inline void ringPolyPut(int8_t* ring,uint8_t base,uint8_t index,int32_t value){
     memcpy(ring+(uint8_t)(base+(uint8_t)(index*4)),&value,sizeof(value));
 }
-static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n){
+// Universal v5/v9 builds reinvest part of the software-product size saving
+// in the exact half-P recurrence. Keep the compact fixed-header ROM recipe
+// unchanged: its images have a separate, smaller application Flash budget.
+#if defined(LPX4_FIXED_SPEECH_FLAGS)
+static const bool halfPolynomialP=false;
+#else
+static const bool halfPolynomialP=true;
+#endif
+static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
     // Same descending recurrence and separately rounded products as polyFactor.
-    const int32_t trailing=ringPolyGet(ring,base,n-1);
-    ringPolyPut(ring,base,n+1,trailing);
-    ringPolyPut(ring,base,n,ringPolyGet(ring,base,n-2)+(trailing<0?-(int32_t)c:(int32_t)c));
-    for(uint8_t j=(uint8_t)(n-1);j>=2;--j){
+    uint8_t j;
+    if(symmetric){
+        // P starts with (1+z) and remains exactly palindromic: equal inputs
+        // receive identical rounded products. Retain only its lower half.
+        // The first new middle term aliases the previous middle coefficient.
+        j=n>>1;ringPolyPut(ring,base,j,ringPolyGet(ring,base,j-1));
+    }else{
+        // Q's antisymmetry does not survive separate floor rounding.
+        const int32_t trailing=ringPolyGet(ring,base,n-1);
+        ringPolyPut(ring,base,n+1,trailing);
+        ringPolyPut(ring,base,n,ringPolyGet(ring,base,n-2)+(trailing<0?-(int32_t)c:(int32_t)c));
+        j=n-1;
+    }
+    for(;j>=2;--j){
         const int32_t value=ringPolyGet(ring,base,j-2)+polyMulQ12(ringPolyGet(ring,base,j-1),c)+ringPolyGet(ring,base,j);
         ringPolyPut(ring,base,j,value);
     }
@@ -1040,7 +1058,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
             ringPolyPut(ringQ_,base,1,unit+cc);
             ringPolyPut(ringQ_,base,2,4096+((i&1)?-cc:cc));
             ringPolyPut(ringQ_,base,3,unit);
-        }else ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2));
+        }else ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2),halfPolynomialP&&!(i&1));
 #else
         int32_t* p=(i&1)?polyQ_:polyP_;
         if(i<2){
@@ -1051,7 +1069,11 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,int16_t* out){
 #endif
     }
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
-    for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(ringPolyGet(ringQ_,pbase,i+1)+ringPolyGet(ringQ_,qbase,i+1),1),-32767,32767);
+    for(uint8_t i=0;i<10;i++){
+        // Degree11 P[k] == P[11-k]; fixed-header images retain full P storage.
+        const uint8_t pindex=halfPolynomialP?(i<5?i+1:10-i):i+1;
+        out[i]=clamp(truncShift(ringPolyGet(ringQ_,pbase,pindex)+ringPolyGet(ringQ_,qbase,i+1),1),-32767,32767);
+    }
 #else
     for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
 #endif
@@ -1233,7 +1255,7 @@ bool Lpx4HybridCore::nextCore(int16_t& postfilterQ14){
     int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,a_,history));
     history[0]=history[10]=pred;
 #else
-    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,a_,hist_));
+    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,LPX4_COMPACT_VERSION==9>(excitation,a_,hist_));
     hist_[0]=pred;
 #endif
 #ifdef LPX4_FIXED_PRE_Q14

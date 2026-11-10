@@ -20,7 +20,8 @@ def sha(data):return hashlib.sha256(data).hexdigest()
 def read(path):return json.loads(path.read_text(encoding='utf-8'))
 
 
-def run(output,baseline,wsl=None):
+def run(output,baseline,wsl=None,*,baseline_variant='v9',baseline_revision='f7481ef9',
+        schema='lpx-v9-next-admission-v1'):
     output=Path(output).resolve();baseline=Path(baseline).resolve()
     if REPO/'build' not in output.parents:raise ValueError('Use ignored build storage')
     output.mkdir(parents=True,exist_ok=True)
@@ -31,7 +32,7 @@ def run(output,baseline,wsl=None):
         if r.returncode:raise RuntimeError(r.stderr.decode(errors='replace'))
         return r.stdout
     observer=output/'observer';observer.mkdir(exist_ok=True)
-    shutil.copyfile(baseline/'bread-quality/v9/hardware.h',observer/'hardware.h')
+    shutil.copyfile(baseline/'bread-quality'/baseline_variant/'hardware.h',observer/'hardware.h')
     command('gcc','-O2','-std=c11','-I'+path(observer),'-I/usr/include/simavr',
             path(ROOT.parent/'validation/attiny88/sim_player.c'),'-lsimavr','-lelf','-o',path(observer/'sim_player'))
     original=read(baseline/'summary.json')
@@ -41,7 +42,7 @@ def run(output,baseline,wsl=None):
             'decode_cycles','decode_irq_cycles','decode_cpu_cycles','decode_cpu_mean','decode_active_cpu_mean',
             'decode_cpu_max','irq_max','output_gap_min','output_gap_max']
     for name,source in streams(output):
-        encoded,_=repack(source.read_bytes());old=baseline/name/'v9';cost=read(old/'build.json')
+        encoded,_=repack(source.read_bytes());old=baseline/name/baseline_variant;cost=read(old/'build.json')
         assert cost['universal'] and cost['compact_version']==9 and cost['queue']==44
         assert cost['input_sha256']==sha(encoded)
         assert not any(f.startswith('-DLPX4_FIXED_') for f in cost['compiler_options'])
@@ -68,6 +69,9 @@ def run(output,baseline,wsl=None):
             assert row['decode_irq_cycles']%42==0 and row['irq_max']==42 and row['underruns']==0
         row={'case':name,'data_sha256':sha(encoded),'pwm_sha256':expected,'pwm_exact':True,
              'before':{f:before[f] for f in fields},'after':{f:after[f] for f in fields}}
+        row['before_total_active_cycles_per_sample']=before['decode_active_cpu_mean']+before['irq_max']
+        row['after_total_active_cycles_per_sample']=after['decode_active_cpu_mean']+after['irq_max']
+        row['meets_1500_mean_target']=row['after_total_active_cycles_per_sample']<=1500
         rows.append(row);print(json.dumps(row),flush=True)
     sources=[*sorted((ROOT/'src').glob('Lpx4*')),ROOT/'src/native_batch_decoder.cpp',ROOT/'tools/batch_decoder.py',
              ROOT/'tools/build_attiny88_player.py',ROOT/'tools/verify_attiny88_player.py',ROOT/'tools/speech_v9.py',
@@ -75,10 +79,13 @@ def run(output,baseline,wsl=None):
              ROOT/'tests/test_sram512_profile.py',ROOT/'profiles/Lpx4Sram512.h',
              REPO/'ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h',
              ROOT.parent/'validation/attiny88/sim_player.c',ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp',Path(__file__)]
-    report={'schema':'lpx-v9-next-admission-v1','baseline_revision':'f7481ef9','cpu':'ATtiny88 / AVR25',
+    report={'schema':schema,'baseline_revision':baseline_revision,'cpu':'ATtiny88 / AVR25',
             'clock_hz':16000000,'sample_hz':8000,'queue':44,'parameters':'runtime LPX header',
             'physical_board_measured':False,'source_hash_encoding':'text-lf','cases':rows,
             'source_sha256':{p.relative_to(REPO).as_posix():sha(p.read_bytes().replace(b'\r\n',b'\n')) for p in sources}}
+    report['cycle_accounting']='active decoder CPU mean plus complete IRQ per emitted sample; queue management excluded'
+    report['target_cycles_per_sample']=1500
+    report['all_cases_meet_target']=all(row['meets_1500_mean_target'] for row in rows)
     (output/'summary.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     return report
 
@@ -86,4 +93,8 @@ def run(output,baseline,wsl=None):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('output',type=Path);parser.add_argument('baseline',type=Path);parser.add_argument('--wsl')
-    args=parser.parse_args();run(args.output,args.baseline,args.wsl)
+    parser.add_argument('--baseline-variant',choices=['v9','current'],default='v9')
+    parser.add_argument('--baseline-revision',default='f7481ef9')
+    parser.add_argument('--schema',default='lpx-v9-next-admission-v1')
+    args=parser.parse_args();run(args.output,args.baseline,args.wsl,baseline_variant=args.baseline_variant,
+        baseline_revision=args.baseline_revision,schema=args.schema)

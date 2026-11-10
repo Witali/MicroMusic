@@ -85,6 +85,9 @@ filter parameters including0/1/16383/16384. All fourteen have exact full PWM
 against portable C, matching sample/timer counts, zero underruns, drained
 queue and stopped sample timer.
 
+Historical reset-only admission values follow. The current cycle-work results
+are recorded in the final section below.
+
 | Quantity | Measured result |
 | --- | ---: |
 | Program Flash, including startup/tables/player, excluding one verified audio array | 5487..5488 B (about 5.36 KiB) |
@@ -167,3 +170,84 @@ C/ASM/generic primitive receipt above remains applicable.
 Rebuilt public fixed-header Tiny88 demos save 98 B each (5320..7034 B including
 audio), retain all existing PWM samples, and have zero underruns. Their
 recording-specific builds remain distinct from the universal measurements.
+
+## Exact work reduction toward 1500 cycles/sample (2026-11-10)
+
+Current v9 measurements compare frozen `883b54cc` ELFs with the same observer,
+AVR-GCC 7.3.0, real ATtiny88/AVR25 without MUL, GNU ABI, 16 MHz/8 kHz,
+`-Os -flto -mcall-prologues -mrelax`, multiplication unroll2 and FIFO44.
+The [source-bound receipt](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/v9-1500-measurements.json)
+records every waveform, compressed-data hash, program size, stack and IRQ result.
+
+| Measurement | Before | After |
+| --- | ---: | ---: |
+| Program excluding verified audio | 5390..5391 B | 5384..5385 B (about 5.26 KiB) |
+| Compressed audio | unchanged | identical bytes |
+| Public speech: active decoder CPU mean + complete ISR | 1613.92..1740.20 | 1514.71..1574.41 cycles/sample |
+| Six synthetic controls: same accounting | 1065.70..1362.00 | 973.70..1285.66 cycles/sample |
+| Static SRAM / largest observed stack / conservative margin | 445 / 60 / 6 B | 445 / 60 / 6 B |
+| Complete ISR, including hardware entry and RETI | 42 cycles | 42 cycles |
+| Underruns / output changes | 0 / 0 | 0 / 0 |
+
+**The 1500-cycle mean target is not achieved on the eight public speech cases.**
+The remaining excess is 14.71..74.41 cycles/sample. Their combined measured work
+is 75.74..78.72% of the 2000-cycle output period. Count all ISR work by adding
+42 cycles per emitted sample to the exclusive active decoder mean, not to its
+IRQ-inclusive wall mean. Queue publication/waiting is outside this number.
+Frame-boundary decode calls still exceed 1500 cycles; this is not a per-call
+worst-case bound. Full output timing/queue validation runs with IRQs active.
+These are standalone simulator results, not board measurements.
+
+Original project arithmetic improvements, without external copied source:
+
+* Split history h into unsigned low byte L and signed high byte H. With
+  A=uint16(a), eight carry-rotation rounds produce B=floor(A*L/256).
+  For H=-8..7, compute B+A*H by exact signed24 additions/subtractions.
+  For other H, retain the full signed16 route. If a<0, subtract 256*h.
+  The existing fractional-nibble mask still preserves every separate Q12
+  floor; no product rounding is moved across the ten-term sum.
+* Fold the saturated-history ceiling correction into SBC's initial carry.
+  Preserve both signed minima and the private SREG.T hint across interrupts.
+* Compute the five-bit pitch-gain quotient with four byte carry rotations,
+  starting from the rounding bias8; add gain bit4*x and correct unsigned x
+  by 16*(gain&15). The gain14 identity keeps a signed9 intermediate: V selects
+  a logical first shift on positive overflow. The full signed8 input domain
+  and int8 return conversion remain exact.
+* Form signed24 sample<<6 as (sample<<8)>>2 for gain130 PWM. Both shifts are
+  exact for every signed16 sample; the generic C PWM formula is unchanged.
+* Pack three private v9 flags into one byte. Spend the recovered two bytes
+  on an eleventh discarded linear-history word, eliminating the first-tap
+  branch. `lpx4SynthesisQ12<q4,true>` explicitly requires 11 words; the default
+  ten-word interface remains valid. Both C and AVR5/AVR25 paths honor it.
+* Reinvest part of the Flash saving in the exact half-P recurrence described
+  in [the polynomial entry](lpx-polynomial-units.md). Universal v5/v9 share it;
+  fixed-header ROM images retain their smaller original polynomial code.
+
+C remains the default and is explicitly selectable even on AVR25. ASM still
+requires both the real supported architecture and `LPX4_ENABLE_ASM=1`; hardware
+Flash access is independent. Runtime headers still supply all recording
+parameters. No encoder, wire-format, audio-data or quality change is involved.
+The active [C reference](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/C_REFERENCE.md)
+shares the padded history and polynomial logic, with ordinary exact C products.
+
+The direct three-backend probe covers every signed16 history value with
+minimum, maximum and random coefficients, both T hints and history layouts;
+every signed16 gain130 PWM input; all signed8/five-bit pitch combinations;
+dynamic attenuation endpoints, register sentinels, r1, stack and active IRQs.
+The native C checks compare full-polynomial and SRAM512 output, copied/reset
+state, input backends, EOF validation and PCM16/PWM domains.
+
+Rejected/superseded screens used chego P4/v9 (9831 samples), the same toolchain
+and active IRQs. A 12-bit-history shortcut saved only about17 cycles/sample
+before the later byte-split route and was superseded. Increasing general
+multiplication unroll2 to8 spent84 B for about4.41 cycles/sample and cannot be
+combined with the selected half-P code within the original program budget.
+A separate polynomial function caused a stack collision and was rejected.
+
+Reproduce the frozen-baseline comparison (paths point to ignored local builds):
+
+```sh
+python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_attiny88_v9_next.py build/target/admission BASELINE_883B54CC --wsl Ubuntu --baseline-variant current --baseline-revision 883b54cc --schema lpx-v9-1500-admission-v1
+python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/build_avr25_math.py build/target/math --mul16-unroll 2 --saturated-products
+node Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_avr25_math.mjs build/target/math --exhaustive-dynamic --exhaustive-synthesis
+```
