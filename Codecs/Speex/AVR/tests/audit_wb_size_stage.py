@@ -18,25 +18,45 @@ def load(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--out', type=Path, default=ROOT / 'build/size-next')
+    parser.add_argument('--cycle', choices=['first', 'second'], default='first')
+    parser.add_argument('--out', type=Path)
     parser.add_argument('--screen', action='store_true')
     parser.add_argument('--record', action='store_true')
     args = parser.parse_args()
-    out, kind = args.out, 'screen' if args.screen else 'full'
-    baseline_receipt = load(ROOT / 'reports/wb-finite-response-full.json')
+    second = args.cycle == 'second'
+    revision = '1da660ea' if second else 'e5350100'
+    prefix = 'wb-size2' if second else 'wb-size'
+    out = args.out or ROOT / ('build/size-second' if second else 'build/size-next')
+    kind = 'screen' if args.screen else 'full'
+    baseline_receipt = load(ROOT / ('reports/wb-size-full.json' if second else 'reports/wb-finite-response-full.json'))
     reuse = load(out / 'baseline-reuse.json')
-    assert reuse['baselineRevision'] == 'e5350100' and reuse['sourceManifestExact']
+    assert reuse['baselineRevision'] == revision and reuse['sourceManifestExact']
     assert reuse['admittedReceiptSha256'] == sha(ROOT / reuse['admittedReceipt'], True)
     before, after = [load(out / (epoch + '-source.json')) for epoch in ['before', 'after']]
     assert before == baseline_receipt['sourceSha256'] and before.keys() == after.keys()
     changes = sorted(path for path in before if before[path] != after[path])
-    assert changes == ['src/compact_lsp.c.inc', 'src/lowrate_excitation.h', 'src/lsp_finish.S', 'src/nb3_lsp_finish.h',
-                       'src/wb_fold.S', 'src/wb_gain_div.S', 'src/wb_qmf.S']
+    expected_changes = (['src/iir_kernel.inc', 'src/innovation.S', 'src/lsp_pair.S', 'src/lsp_stage.S',
+        'src/lsp_stage_macros.S', 'src/nb_decode.c.inc', 'src/short_pitch.h', 'src/speex_platform.h', 'src/speex_wb1.c']
+        if second else ['src/compact_lsp.c.inc', 'src/lowrate_excitation.h', 'src/lsp_finish.S', 'src/nb3_lsp_finish.h',
+                       'src/wb_fold.S', 'src/wb_gain_div.S', 'src/wb_qmf.S'])
+    assert changes == expected_changes
+    final_sources = dict(after)
+    test_tool_updates = {}
     for path, digest in after.items():
-        assert sha(ROOT / path, True) == digest, path
+        current = sha(ROOT / path, True)
+        if second and path == 'tools/build_short_pitch_test.py':
+            # This isolated-test builder is not a full-decoder build dependency.
+            # Its later optional NB4 fixture support has its own compatibility
+            # proof. Preserve the observed graph instead of relabelling runs.
+            assert digest == before[path]
+            test_tool_updates[path] = dict(observedSha256=digest, currentSha256=current,
+                scope='Post-observation isolated-test builder update; no production decoder dependency.')
+            final_sources[path] = current
+        else:
+            assert current == digest, path
     controls = load(out / 'c-controls.json')
     assert not controls['cDecoderExecuted'] and controls['baselineAsmRebuiltIdentically']
-    assert controls['baselineRevision'] == 'e5350100'
+    assert controls['baselineRevision'] == revision
     assert all(row['compileLinkedOnly'] for row in controls['images'])
     c_before, c_after = controls['images']
     assert c_before['binarySha256'] == reuse['cCompileOnly']['binarySha256'] == sha(out / 'c-before/wb.bin')
@@ -58,15 +78,80 @@ def main():
     components = ['wb-ratio-size-unit.json', 'lsp-finish-size-unit.json', 'wb-size-response-domain.json',
                   'wb-shared-fold-size.json', 'qmf-size-screen.json', 'nb1-pitch-size-admission.json',
                   'nb1-pitch-unit.json']
-    lsp = load(ROOT / 'reports/lsp-finish-size-unit.json')
-    assert all(after['src/' + name] == digest for name, digest in lsp['candidate'].items())
-    assert after['src/wb_qmf.S'] == load(ROOT / 'reports/qmf-size-screen.json')['kernelSha256']['both']
-    fold = load(ROOT / 'reports/wb-shared-fold-size.json')
-    assert fold['candidateChangedSourceSha256']['wb_fold.S'] == after['src/wb_fold.S']
-    pitch = load(ROOT / 'reports/nb1-pitch-size-admission.json')
-    assert pitch['callerSha256'] == after['src/lowrate_excitation.h']
-    assert pitch['helperSha256'] == after['src/nb1_pitch.h']
-    domain = load(ROOT / 'reports/wb-size-response-domain.json')
+    common_sources = None
+    historical_receipt_binding = None
+    if second:
+        components = ['iir-output-size-screen.json', 'innovation-controller-size-screen.json',
+            'innovation-controller-cleanup.json', 'innovation-controller-current-compat.json', 'lsp-polynomial-size-screen.json',
+            'lsp-polynomial-comment-identity.json', 'lsp-polynomial-current-compat.json', 'compiler-policy-size-screen.json',
+            'wb-controller-size-screen.json', 'wb-interpolation-mask-domain.json', 'wb-size2-response-domain.json']
+        assert after['src/iir_kernel.inc'] == load(ROOT / 'reports/iir-output-size-screen.json')['kernelSha256']['phase']
+        clean = load(ROOT / 'reports/innovation-controller-cleanup.json')
+        # The frozen experiment hashed its CRLF receipt bytes. Git may check out
+        # this JSON with LF; reconstruct only that newline representation, rather
+        # than replacing the historical byte hash with a normalized-text hash.
+        observed_path = ROOT / 'reports/innovation-controller-size-screen.json'
+        observed_lf = observed_path.read_bytes().replace(b'\r\n', b'\n')
+        observed_crlf_hash = hashlib.sha256(observed_lf.replace(b'\n', b'\r\n')).hexdigest()
+        assert clean['observedReceiptSha256'] == observed_crlf_hash
+        historical_receipt_binding = dict(receipt=observed_path.name,
+            originalByteSha256=observed_crlf_hash, normalizedLfSha256=sha(observed_path, True),
+            representation='Original CRLF bytes reconstructed from LF-normalized JSON; contents unchanged.')
+        assert clean['originalOuterTemplateFallbackRetained'] and not clean['freshRuntimeObservations']
+        assert all(after['src/' + name] == digest for name, digest in clean['cleanCandidateChangedSourceSha256'].items())
+        innovation_compat = load(ROOT / 'reports/innovation-controller-current-compat.json')
+        for field in ['currentChangedTestSourceSha256', 'currentProductionPrimitiveSourceSha256', 'unchangedFixtureSourceSha256']:
+            assert all(sha(ROOT / path, True) == digest for path, digest in innovation_compat[field].items())
+        tool_path = 'tools/build_short_pitch_test.py'
+        assert innovation_compat['baselineTestBuilder']['sha256'] == before[tool_path]
+        assert innovation_compat['postObservationTestBuilderSha256'] == final_sources[tool_path]
+        dependency = innovation_compat['productionBuilderDependencyAudit']
+        assert not dependency['shortPitchTestBuilderReferenced']
+        assert all(after[path] == digest == sha(ROOT / path, True) for path, digest in dependency['sourceSha256'].items())
+        assert not innovation_compat['fullDecoderJobsStarted'] and not innovation_compat['fullCDecoderExecuted']
+        assert not innovation_compat['existingDecoderObservationsRelabeled']
+        for row in innovation_compat['tests']:
+            unit = ROOT / 'build/observer-compat' / row['name']
+            assert row['allNumericOraclesAndGuardsPassed']
+            assert sha(unit / 'verification.json', True) == row['reportSha256']
+            binary = unit / ('wb.bin' if row['name'] == 'wb-kernels' else 'short-pitch.bin')
+            assert sha(binary) == row['binarySha256']
+        poly = load(ROOT / 'reports/lsp-polynomial-size-screen.json')
+        assert all(after['src/' + name] == digest for name, digest in poly['candidate']['candidate'].items())
+        compat = load(ROOT / 'reports/lsp-polynomial-current-compat.json')
+        assert compat['componentReceiptSha256'] == sha(ROOT / 'reports/lsp-polynomial-size-screen.json', True)
+        assert compat['mathematicalRecipesUnchanged'] and compat['fullScalarEvidenceReusedOnlyAfterExactBinaryIdentity']
+        assert not compat['cDecoderExecuted']
+        assert all(after['src/' + name] == digest for name, digest in compat['productionSourceSha256'].items())
+        assert all(sha(ROOT / 'tests' / name, True) == digest for name, digest in compat['verifierSha256'].items())
+        assert len(compat['rows']) == 6 and all(row['rebuiltCurrentSourcesBinaryIdentical'] for row in compat['rows'])
+        for row in compat['rows']:
+            assert sha(ROOT / 'build/lsp-poly-size' / row['currentBinary']) == row['binarySha256']
+            assert sha(ROOT / 'build/lsp-poly-size' / row['priorBinary']) == row['binarySha256']
+        assert all(row['passed'] and row['allProvenNumericalCountersMatch'] for row in compat['currentIRQChecks'])
+        controller = load(ROOT / 'reports/wb-controller-size-screen.json')
+        assert controller['currentMacroAndFormatCleanupCompiledByteIdentically']
+        assert all(after[path] == digest for path, digest in controller['currentSourceSha256'].items())
+        interpolation = load(ROOT / 'reports/wb-interpolation-mask-domain.json')
+        assert interpolation['exact'] and interpolation['quarterCases'] == 67108864
+        assert all(sha(ROOT / path, True) == digest for path, digest in interpolation['sourceSha256'].items())
+        domain = load(ROOT / 'reports/wb-size2-response-domain.json')
+        common_roots = [out / 'baseline/Codecs/common', ROOT.parents[1] / 'common']
+        snapshots = [{path.relative_to(base).as_posix(): sha(path, True)
+            for path in sorted(base.rglob('*')) if path.is_file() and '__pycache__' not in path.parts}
+            for base in common_roots]
+        assert snapshots[0] == snapshots[1] and snapshots[1]
+        common_sources = snapshots[1]
+    else:
+        lsp = load(ROOT / 'reports/lsp-finish-size-unit.json')
+        assert all(after['src/' + name] == digest for name, digest in lsp['candidate'].items())
+        assert after['src/wb_qmf.S'] == load(ROOT / 'reports/qmf-size-screen.json')['kernelSha256']['both']
+        fold = load(ROOT / 'reports/wb-shared-fold-size.json')
+        assert fold['candidateChangedSourceSha256']['wb_fold.S'] == after['src/wb_fold.S']
+        pitch = load(ROOT / 'reports/nb1-pitch-size-admission.json')
+        assert pitch['callerSha256'] == after['src/lowrate_excitation.h']
+        assert pitch['helperSha256'] == after['src/nb1_pitch.h']
+        domain = load(ROOT / 'reports/wb-size-response-domain.json')
     assert domain['currentPrimitiveMatchesSource'] and domain['untouchedXiphComparisons'] == 25171968
     assert (domain['responseMin'], domain['responseMax']) == (111, 31849)
     assert all(sha(ROOT / path, True) == digest for path, digest in domain['sourceSha256'].items())
@@ -78,7 +163,15 @@ def main():
         reports = {epoch: load(folder / 'verification.json') for epoch, folder in folders.items()}
         old, new, irq = [reports[epoch] for epoch in ['before', 'after', 'irq']]
         for epoch, folder in folders.items():
-            assert reports[epoch]['binarySha256'] == sha(folder / 'wb.bin') == load(folder / 'backend.json')['binarySha256']
+            backend = load(folder / 'backend.json')
+            assert backend['backend'] == 'asm' and backend['packetBytes'] == width and backend['lowRates'] == 7
+            assert reports[epoch]['binarySha256'] == sha(folder / 'wb.bin') == backend['binarySha256']
+            if epoch != 'before':
+                assert sha(out / epoch / profile / 'wb.bin') == reports[epoch]['binarySha256']
+        if second:
+            built_sources = load(out / 'after' / profile / 'source.json')
+            assert set(after) - set(built_sources) == {path for path in after if path.startswith('handoff/upstream/tools/')}
+            assert all(after.get(path) == digest for path, digest in built_sources.items())
         if not args.screen:
             prior = next(row for row in baseline_receipt['profiles'] if row['profile'] == profile)
             assert sha(folders['before'] / 'verification.json') == prior['reportSha256']['after']
@@ -87,6 +180,8 @@ def main():
         assert new['flashBytes'] < old['flashBytes'] and new['staticSramBytes'] == old['staticSramBytes']
         assert irq['extraCpuCyclesPerFrame'] == LOADS[profile] and not irq['underruns']
         assert irq['freeSramAtPeak'] > 300 and irq['minQueuedSamplesBeforeOutput'] > 0
+        assert irq['freeSramAtPeak'] == min(row['freeSramAtPeak'] for row in irq['streams'])
+        assert irq['minQueuedSamplesBeforeOutput'] == min(row['minQueuedSamplesBeforeOutput'] for row in irq['streams'])
         assert all(row['pcmExact'] and row['reset'] for row in old['streams'] + new['streams'])
         traces = [load(folders[epoch] / 'packet-timing.json') for epoch in ['before', 'after']]
         for trace, report in zip(traces, [old, new]):
@@ -117,6 +212,8 @@ def main():
                 assert (summary['minCycles'], summary['maxCycles']) == (min(row['cycles']), max(row['cycles']))
                 assert summary['meanCycles'] == int(sum(row['cycles'])/frames + 0.5)
             assert output['s16AndPwmExact'] and output['fullHistoryWithoutChunkReset'] and not output['underruns']
+            assert output['measuredLoads'] == frames and output['refillPublications'] == 4 * frames
+            assert irq['staticSramBytes'] + output['peakStackBytes'] + output['freeSramAtPeak'] == 2048
             assert 990 <= output['timerIntervalMinCycles'] <= output['timerIntervalMaxCycles'] <= 1010
             deltas = [y-x for x, y in zip(a['cycles'], b['cycles'])]
             # Bound a size/speed tradeoff; active PWM is the actual deadline gate.
@@ -140,14 +237,22 @@ def main():
             staticSramBytes=new['staticSramBytes'], beforePeakStack=old['peakStack'], afterPeakStack=new['peakStack'],
             irq=dict(flashBytes=irq['flashBytes'], staticSramBytes=irq['staticSramBytes'],
                 minQueue=irq['minQueuedSamplesBeforeOutput'], freeSramAtPeak=irq['freeSramAtPeak'],
+                peakStackBytes=max(row['peakStackBytes'] for row in irq['streams']),
+                timerIntervalMinCycles=min(row['timerIntervalMinCycles'] for row in irq['streams']),
+                timerIntervalMaxCycles=max(row['timerIntervalMaxCycles'] for row in irq['streams']),
                 additionalCyclesPerFrame=LOADS[profile], underruns=0),
             binarySha256={epoch: report['binarySha256'] for epoch, report in reports.items()},
             reportSha256={epoch: sha(folder / 'verification.json') for epoch, folder in folders.items()},
             packetTraceSha256={epoch: sha(folders[epoch] / 'packet-timing.json') for epoch in ['before', 'after']}))
     test_paths = ['tests/audit_wb_size_stage.py', 'tests/run_wb_ratio_stage.py', 'tests/verify_wb.mjs',
                   'tests/verify_wb_stream.mjs', 'tests/avr_tick.mjs', 'tests/wb_decode.c', 'tests/avr_wb_stream.c']
-    result = dict(scope=kind + ' Flash-first exact ASM WB comparison', baselineRevision='e5350100',
-        sourceHashMode='UTF-8 text normalized to LF', sourceSha256=after, sourceOverlay=changes,
+    if second:
+        test_paths += ['tests/prove_wb_interpolation_body.py', 'tests/verify_lsp_pair.mjs',
+            'tests/verify_lsp_stage.mjs', 'tests/verify_lsp_stage_irq.mjs',
+            'tests/verify_short_pitch.mjs', 'tests/verify_wb_kernels.mjs', 'tools/build_short_pitch_test.py',
+            'tests/screen_iir_output_size.py', 'tests/innovation-size/reproduce_images.py']
+    result = dict(scope=kind + ' Flash-first exact ASM WB comparison', baselineRevision=revision,
+        sourceHashMode='UTF-8 text normalized to LF', sourceSha256=final_sources, sourceOverlay=changes,
         testSourceSha256={path: sha(ROOT / path, True) for path in test_paths},
         baselineReuse=reuse, cControls=controls, portableExport=export, profiles=profiles,
         componentReceiptSha256={name: sha(ROOT / 'reports' / name, True) for name in components},
@@ -155,7 +260,12 @@ def main():
         limits=manifest['limits'] + ['Raw CPU excludes startup/reset and interrupts.',
             'IRQ packets ready in RAM; no physical board or external transport latency measured.',
             'C controls compile/link only; no complete project C decoder executed or timed.'], physicalBoardTested=False)
-    path = ROOT / 'reports' / ('wb-size-' + kind + '.json')
+    if second:
+        result['observedSourceSha256'] = after
+        result['postObservationTestToolChanges'] = test_tool_updates
+        result['unchangedCommonSourceSha256'] = common_sources
+        result['historicalReceiptBinding'] = historical_receipt_binding
+    path = ROOT / 'reports' / (prefix + '-' + kind + '.json')
     if args.record:
         path.write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     else:

@@ -5,7 +5,28 @@ mono 16 kHz.
 The explicitly enabled AVR ASM backend is the performance target. Retain
 the portable, explicitly selectable C fallback and existing backend selection.
 
-## Current Flash cycle, 2026-11-10
+## Second Flash cycle completed, 2026-11-10
+
+The [second bounded size admission](WB_AVR_SIZE_SECOND.md), based on `1da660ea`,
+reduces all-feature raw ASM Flash 22940 -> 19880 B and loaded Flash
+23374 -> 20286 B. All 34869 available raw frames and another 34869 complete-history
+IRQ frames preserve exact signed16 PCM/PWM with zero underruns. Mean raw CPU is
+69.856/72.643/75.814/70.532/74.447% for WB3.95/5.75/7.75/9.8/12.8; the measured
+1.40..1.60% relative decoder-time increase buys 3060 B less raw Flash.
+Static SRAM stays unchanged, maximum raw/loaded stack is 167/180 B, and loaded
+free SRAM is 421..443 B. Minimum queues are 30/25/19/5/5 samples at the established
+8/3/3/8/8% extra foreground loads. AVR C controls compile/link at 31244 -> 31062 B,
+and the 21-source ASM-disabled portable export compiles/links; no full C decoder
+is executed or timed.
+
+The admitted changes share LSP product/stage loops, innovation/short-pitch
+control and IIR output code, and use measured controller compiler policies
+with the exact finite HB repair loop. The separate LSP 11% overload fails for
+the baseline and candidates and remains explicitly unadmitted. Ready-RAM
+simulation and retained corpus/oracle limits still apply. This cycle is complete;
+further optimization or board/transport work is outside this bounded admission.
+
+## First Flash cycle completed, 2026-11-10
 
 The current user priority is smaller AVR decoder firmware while preserving
 exact sound and sufficient output throughput. [The admitted size cycle](WB_AVR_SIZE.md)
