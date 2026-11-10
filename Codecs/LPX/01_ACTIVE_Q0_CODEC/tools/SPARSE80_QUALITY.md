@@ -78,3 +78,20 @@ report speech/music/cohorts separately. Compare actual PWM waveforms: a PCM-only
 or microscopic score change is not evidence that the 8-bit hardware sounds
 better. Neither the public tuning examples nor these APIs establish a majority
 improvement on an unmeasured corpus.
+
+## Experimental pulse neighbors and upper-band guards
+
+`refine_sparse80_pulses.refine` is a separate, **experimental, not admitted**
+local-neighbor stage. It preserves spectra, pitch/scale metadata, filters and
+the seven-bit alphabet, checks the complete native C output, and rejects
+PCM-only proposals whose PWM bytes do not change. Its fixed upper-band error
+and burst bounds are enabled by default. The CLI's
+`--allow-frequency-regression` is an explicit research control.
+
+A preceding Chego prototype was rejected on listening: rasp moved upward and
+became more noticeable despite better aggregate metrics. The fixed-band checks
+catch that exact case, including partial terminal windows. They do not prove
+that an admitted candidate sounds cleaner. This stage is not automatically
+applied by the encoder, the combined search above, or any WebUI firmware build.
+[Measurements and hypotheses](../../../../docs/avr-asm-cookbook/lpx-lowrate-quality.md)
+explain the distinction and the unchanged C/ASM playback contract.
