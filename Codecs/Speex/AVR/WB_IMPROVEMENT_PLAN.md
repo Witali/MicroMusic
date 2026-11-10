@@ -5,7 +5,19 @@ mono 16 kHz.
 The explicitly enabled AVR ASM backend is the performance target. Retain
 the portable, explicitly selectable C fallback and existing backend selection.
 
-## Current speed cycle, 2026-11-03
+## Current Flash cycle, 2026-11-10
+
+The current user priority is smaller AVR decoder firmware while preserving
+exact sound and sufficient output throughput. [The admitted size cycle](WB_AVR_SIZE.md)
+reduces the all-feature ASM image 26164 -> 22940 B and loaded image 26600 -> 23374 B.
+All 34869 available raw frames and another 34869 active-IRQ output frames pass
+with exact PCM/PWM and no underruns. CPU rises 0.454..0.698 percentage point;
+peak stack falls 31..32 B. C fallbacks and the portable C11 export compile/link.
+The finite pitch map, shared LSP finish, shared excitation/fold loop and compact
+QMF/divider recipes are now integrated. Later candidates must preserve this
+measured deadline reserve; the broader optimization goal remains open.
+
+## Historical speed cycle, 2026-11-03
 
 [Bounded LPC-response division](WB_RATIO_SPEED.md) replaces the remaining
 generic gain-ratio divide for all five WB rates. Scalar domain/ABI/IRQ proofs,
