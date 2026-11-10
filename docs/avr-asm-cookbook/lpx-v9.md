@@ -198,3 +198,17 @@ Rejected measurements: retaining FIFO44 collided with the stack; outlining
 only3 bytes of margin. Packet-gap sharing and FIFO32 are retained instead.
 This is original project code, using the existing vendor-derived register
 definitions and licensing. No external assembly implementation was copied.
+
+## Experimental Rice0: smaller data, no production admission
+
+An opt-in v9 flag can change six-bit LSF delta Rice coding from k1 to k0 while
+retaining gap/repeat coding and every decoded parameter. Complete-file selection
+keeps exact original bytes on ties or growth. Across 318 saved files, 271 shrink
+and 47 fall back, saving 19,951 bytes (4.85%) with exact C PCM/PWM output.
+This is lossless entropy repacking, not an audible quality improvement.
+
+The prototype has not met the full no-regression timing/size gate and is kept
+outside production. Its private C reference retains the compact error check;
+architecture/backend selection and the C fallback are unchanged. Production
+sources, firmware images and the source-bound receipts above remain intact.
+[Protocol, reproducible reader, native matrix and limitations](../../Codecs/LPX/research/v9-rice0-2026-11-10/README.md).

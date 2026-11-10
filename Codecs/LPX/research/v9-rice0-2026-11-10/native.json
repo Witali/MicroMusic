@@ -1,0 +1,53 @@
+{
+  "schema": "lpx-private-rice0-native318-v1",
+  "files": 318,
+  "actual_flag64_files": 271,
+  "old_syntax_fallbacks": 47,
+  "total_samples": 15371791,
+  "decode_calls": 12084,
+  "private_variants": 8,
+  "memory_profiles": [
+    "standard",
+    "sram512"
+  ],
+  "rom_pointer_modes": [
+    0,
+    1
+  ],
+  "batched_remaining_modes": [
+    0,
+    1
+  ],
+  "input_modes": [
+    "rom",
+    "callback"
+  ],
+  "domains": [
+    "pcm16",
+    "pwm8"
+  ],
+  "saved_independent_c_controls_exact": 18,
+  "all_active_baselines_decode_without_error": true,
+  "private_baselines_exact": true,
+  "private_all_selected_exact": true,
+  "all_eof_error_sample_counts_exact": true,
+  "all_callback_bounds_valid": true,
+  "private_compact_guard_trim": false,
+  "private_rice0_only_mask": 191,
+  "active_sources_changed": false,
+  "elapsed_seconds": 16.272011139000824,
+  "object_sizes": {
+    "0,0,0": 520,
+    "0,0,1": 520,
+    "0,1,0": 520,
+    "0,1,1": 520,
+    "1,0,0": 424,
+    "1,0,1": 424,
+    "1,1,0": 424,
+    "1,1,1": 424
+  },
+  "limitations": [
+    "native C validation; no new AVR timing proof in this run",
+    "saved valid streams only; malformed-input guard audit is separate"
+  ]
+}
