@@ -49,6 +49,68 @@ Version 5 retains its former 32-bit field, including invalid-header metadata.
 Rebuild the core and all C++ consumers together after a class-layout change;
 the opaque native batch ABI and public output types are preserved.
 
+## Optional floating synthesis
+
+The default `LPX4_FLOAT_SYNTHESIS=0` keeps the fixed-point C reference and its
+PCM16/PWM interfaces. Select `LPX4_FLOAT_SYNTHESIS=1` consistently in every
+translation unit for floating synthesis. It requires IEEE754 `double` with
+at least 53 significant bits and `LPX4_ENABLE_ASM=0`; enabling ASM and floating
+synthesis together is a compile-time error. The parser and parameters stored
+in the sound file are shared by both numeric modes.
+
+Use the explicit floating batch API to retain its precision through output:
+
+```python
+with BatchSession('batch', speech=True, speech_compact=True,
+                  compact_only=True, compact_version=9,
+                  float_synthesis=True) as reference:
+    samples_f64 = reference.decode_one_f64(blob, samples)
+    pcm16 = reference.decode_one_s16(blob, samples)
+    pwm8 = reference.decode_one(blob, samples)
+```
+
+`decode_many_f64` returns one NumPy `float64` array per valid stream, normalized
+to `[-1,+1]`; invalid rows return `None`. It calls `nextFloat(double&)` directly,
+including the final EOF validation call. It never passes through PCM16 or PWM.
+No intermediate integer rounding is introduced by the batch bridge. Conversion
+to a playback or file sample format belongs at the final output boundary. The
+existing PCM16/PWM APIs remain available in floating mode through `nextS16()`
+and `next()`: they quantize only the final output sample and retain floating
+filter/history state. They do not switch synthesis back to fixed arithmetic.
+
+The direct C ABI is `lpx4_batch_decode_f64` with the same concatenated input,
+offset, size, count, stride, expected-count and per-row status arguments as the
+PCM16 batch entry point; its output pointer is `double*` and stride is in
+samples. `lpx4_batch_numeric_mode()` returns `0` for fixed and `1` for floating
+synthesis. All output symbols remain present. Fixed builds cannot supply
+unquantized f64: their f64 entry point returns `-5`, and Python reports a mode
+error before calling it. Both fixed and floating builds provide PCM16/PWM.
+Those output types do not identify which synthesis arithmetic was selected;
+use numeric-mode metadata to distinguish them.
+
+`build_library`, `cached_library`, `BatchDecoder` and `BatchSession` accept the
+keyword `float_synthesis=True`. The source cache includes the numeric mode and
+all `Lpx4*` helpers, and the builder explicitly defines the numeric mode.
+Prebuilt libraries must match both the requested format and numeric mode.
+Older libraries without numeric-mode metadata are treated as fixed. Unknown
+modes or missing floating entry points are rejected. A floating request in
+`mode='auto'` propagates a native build/load failure; it never falls back to an
+integer subprocess. `mode='reference'` rejects floating requests because that
+subprocess interface supplies only integer output. Default fixed-mode fallback
+behavior is preserved.
+
+The dependency-light batch controls are:
+
+```sh
+python3 -m unittest discover -s Codecs/LPX/01_ACTIVE_Q0_CODEC/tests -p test_batch_float.py
+```
+
+They compare floating-mode native `double`, PCM16 and PWM samples against
+independent `nextFloat()`, `nextS16()` and `next()` callers across profiles and
+partial tails, check off-grid PCM16 values, protect row strides and EOF
+validation, and exercise numeric-mode/cache/fallback contracts.
+They require g++ and Python's standard library, without NumPy.
+
 Run the dependency-light native checks with g++ and Python's standard library:
 
 ```sh
@@ -88,3 +150,10 @@ v5/P6 expansion in the standard-memory C reference, exercise every position
 and sign, partial tails, profile switching, malformed input, and a public
 2 kbit/s fixture with frozen PCM/PWM hashes. The22-case full-IRQ admission is
 [retained separately](examples/ATTINY88_V5_PLAYER/v9-sparse80-measurements.json).
+
+The later exact C word-extraction implementation passes real-time playback on
+ATmega328P at 16 MHz with `LPX4_ENABLE_ASM=0`, while keeping fixed PCM/PWM
+unchanged. [Current C measurements and equations](../../../docs/avr-asm-cookbook/lpx-fixed-c-realtime.md)
+are separate from those historical receipts. An explicit source transition
+preserves the old receipts and byte-identical shipped ASM images. Use
+`tests/verify_atmega328p_v9.py --current-source` for the current C/ASM check.

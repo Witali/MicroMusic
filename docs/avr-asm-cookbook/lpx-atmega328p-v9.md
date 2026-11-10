@@ -1,5 +1,9 @@
 # The same universal LPX v9 core on AVR5
 
+These are historical measurements of the sources retained at `393b2de2`.
+The [later exact C optimization](lpx-fixed-c-realtime.md) makes C real-time;
+the original rejection and its source hashes below remain unchanged.
+
 Measured in native simavr 1.6 on ATmega328P at 16 MHz, with 8 kHz output,
 FIFO32/prefill24, the SRAM512 decoder layout, two LPC segments, and runtime
 stream parameters. The core is the same one used by the frozen Tiny88 v9
@@ -87,7 +91,7 @@ the [source-bound receipt](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88
 The result compares the selectable whole arithmetic implementations under this
 recipe; it does not attribute every saved cycle solely to a single instruction.
 
-From a clean checkout with AVR-GCC, g++, simavr1.6 development files, libelf and
+From a checkout of that historical source with AVR-GCC, g++, simavr1.6 development files, libelf and
 Python standard library, use a fresh ignored output directory:
 
 ```text

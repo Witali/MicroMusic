@@ -169,6 +169,7 @@ test('published Tiny88 releases match retained HEX, streams, WAVs and optional s
   if(data.sourceSha256){
     assert.equal(data.sourceHashEncoding,'text-lf');
     for(const [path,expected] of Object.entries(data.sourceSha256))
-      assert.equal(hash(readFileSync(new URL('../../'+path,import.meta.url),'utf8').replaceAll('\r\n','\n')),expected,path);
+      assertLpxRecordedSource(path,expected);
   }
 });
+import {assertLpxRecordedSource} from './helpers/lpx-source-transition.mjs';

@@ -1,4 +1,5 @@
 import {test} from 'node:test';
+import {assertLpxRecordedSource} from './helpers/lpx-source-transition.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -23,7 +24,7 @@ test('one universal v9 decoder includes sparse80 under 5% program growth with ex
   assert.equal(r.clock_hz,16000000);assert.equal(r.sample_hz,8000);
   assert.equal(r.physical_board_measured,false);assert.equal(r.cases.length,22);
   for(const [path,digest] of Object.entries(r.source_sha256))
-    assert.equal(sha(read(path).toString('utf8').replaceAll('\r\n','\n')),digest,path);
+    assertLpxRecordedSource(path,digest);
   for(const [path,digest] of Object.entries(r.binary_sha256))assert.equal(sha(read(path)),digest,path);
   assert.ok(r.cases.some(row=>row.profile===15&&row.case==='chego-2k'));
   for(const row of r.cases){

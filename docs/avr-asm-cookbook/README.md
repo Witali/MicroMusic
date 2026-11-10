@@ -3182,6 +3182,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 
 - [Select LPX multiplication by real target capability](lpx-multiply-selection.md): explicit C/ASM choice, compiler-linked software fallback, and assembled AVR5/AVR25 checks without redefining CPU macros.
 - [The same universal LPX v9 core on AVR5](lpx-atmega328p-v9.md): matched public inputs/FIFO, actual ATmega328P hardware-MUL target, safe ordinary C ISR, four exact real-time playbacks and a throughput-rejected C control.
+- [Exact C decoding on ATmega328P](lpx-fixed-c-realtime.md): word extraction removes wide shifts; current C meets real-time on all 306 corpus segments, preserves fixed output and all 18 shipped ASM images, with a separate build-selected desktop double mode.
 
 - [Cost decoder changes using actual production work](lpx-producer-budget.md): ELF/stack producer boundaries, live IRQ/RETI exclusion, independent160/320-call window audits, default-off compatibility, and measured raw-step ramp/rejected metadata320 probes.
 

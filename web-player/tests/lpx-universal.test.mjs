@@ -1,4 +1,5 @@
 import {assertHistoricalReceipt} from './helpers/lpx-receipt-history.mjs';
+import {assertLpxRecordedSource} from './helpers/lpx-source-transition.mjs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -30,7 +31,7 @@ test('historical universal Tiny88 receipt binds playback and IRQ results to e32e
   }
 });
 
-test('C, ASM and forced-generic arithmetic receipts bind the same independent AVR cases to current source',()=>{
+test('historical C, ASM and generic arithmetic receipts retain their source binding',()=>{
   const receipt=JSON.parse(read(folder+'universal-math-measurements.json'));
   const {build,verification:v}=receipt;
   assert.equal(build.saturated_products,true);assert.equal(build.mul16_unroll,2);
@@ -44,7 +45,7 @@ test('C, ASM and forced-generic arithmetic receipts bind the same independent AV
   for(const [field,path] of [
     ['math_header_sha256','src/Lpx4Math.h'],['multiply_header_sha256','src/Lpx4MultiplyAvr.h'],
     ['probe_sha256','tests/avr25_math.cpp'],['observer_sha256','tests/verify_avr25_math.mjs'],
-  ])assert.equal(sha(read('Codecs/LPX/01_ACTIVE_Q0_CODEC/'+path)),v[field],path);
+  ])assertLpxRecordedSource('Codecs/LPX/01_ACTIVE_Q0_CODEC/'+path,v[field],'raw');
   assert.deepEqual(v.results.map(row=>row.backend),['c','asm','generic']);
   for(const row of v.results){assert.equal(row.cases,v.cases);assert.equal(row.passed,true);assert.ok(row.irqs>100);}
   assert.equal(build.backends.c.binary_sha256,build.backends.generic.binary_sha256);

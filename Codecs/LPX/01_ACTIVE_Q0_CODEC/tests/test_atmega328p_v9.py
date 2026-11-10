@@ -1,6 +1,7 @@
 """Cheap source/fixture binding for the separately run live-IRQ benchmark."""
 import json
 import unittest
+from lpx_source_history import assert_recorded_source
 from verify_atmega328p_v9 import ACTIVE, REPO, RECEIPT, CASES, sha, text_sha
 from verify_atmega328p_v9 import adapt_player, adapt_observer, adapt_builder, adapt_verifier
 
@@ -12,7 +13,7 @@ class Atmega328pV9Tests(unittest.TestCase):
     def test_measurement_binds_sources_and_private_port(self):
         r = self.receipt
         for name, digest in r['production_source_sha256'].items():
-            self.assertEqual(text_sha((REPO/name).read_bytes()), digest, name)
+            assert_recorded_source(name,digest)
         self.assertEqual(text_sha(RECEIPT.read_bytes()), r['frozen_tiny_receipt_sha256'])
         base = 'Codecs/LPX/'
         for source, transform, generated in (

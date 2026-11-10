@@ -132,7 +132,7 @@ static inline __attribute__((always_inline)) int32_t lpx4Shift12(int32_t v){
     __asm__(LPX4_SHIFT_BODY(4) : "+r"(v) : : "cc");
     return v;
 #else
-    return v>>12;
+    return (int32_t)(int16_t)(v>>16)*16+((uint16_t)v>>12);
 #endif
 }
 static inline __attribute__((always_inline)) int32_t lpx4Shift14(int32_t v){
@@ -140,7 +140,7 @@ static inline __attribute__((always_inline)) int32_t lpx4Shift14(int32_t v){
     __asm__(LPX4_SHIFT_BODY(6) : "+r"(v) : : "cc");
     return v;
 #else
-    return v>>14;
+    return (int32_t)(int16_t)(v>>16)*4+((uint16_t)v>>14);
 #endif
 }
 #undef LPX4_SHIFT_BODY
@@ -610,8 +610,10 @@ static inline __attribute__((always_inline)) uint8_t lpx4PwmQ14(int16_t sample,u
     const int32_t duty=128+lpx4Shift14(lpx4ByteWord<false,true>(gain,(uint16_t)sample)+8192);
     return duty<0?0:(duty>255?255:(uint8_t)duty);
 #else
-    const int32_t duty=128+(((int32_t)sample*gain+8192)>>14);
-    return duty<0?0:(duty>255?255:(uint8_t)duty);
+    const uint32_t biased=(uint32_t)((int32_t)sample*gain+2105344L);
+    if(biased>=4194304UL)return sample<0?0:255;
+    const uint16_t window=(uint16_t)(biased>>8);
+    return (uint8_t)(window>>6);
 #endif
 }
 
@@ -642,7 +644,8 @@ static inline int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
     if(coefficient==64)return state>>8;
     return lpx4NomulAttenuate(coefficient,state);
 #else
-    return (int16_t)(((int32_t)coefficient*state)>>14);
+    const uint32_t product=(uint32_t)((int32_t)coefficient*state);
+    return (int16_t)((product<<2)>>16);
 #endif
 }
 
@@ -689,7 +692,9 @@ static inline __attribute__((always_inline)) int32_t lpx4MulQ14(int16_t x,int16_
         : "=&r" (result) : "a" (x), "a" (y) : "r0","r1","r2","cc"
     );
     return result;
-#else
+#elif LPX4_USE_AVR_NOMUL_ASM
     return ((int32_t)x*y)>>14;
+#else
+    return lpx4Shift14((int32_t)x*y);
 #endif
 }

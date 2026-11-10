@@ -129,7 +129,7 @@ def load(name, path):
     return module
 
 
-def run(output, *, wsl=None):
+def run(output, *, wsl=None, current_source=False):
     output = Path(output).resolve()
     if not output.is_relative_to((REPO/'build').resolve()) or output == REPO/'build':
         raise ValueError('Use a fresh ignored build/ subdirectory')
@@ -160,7 +160,7 @@ def run(output, *, wsl=None):
     frozen = json.loads(RECEIPT.read_text())
     # Timing comparison is to the SAME frozen core, not a silently newer decoder.
     for name, digest in frozen['source_sha256'].items():
-        if '/src/Lpx4' in name and text_sha((REPO/name).read_bytes()) != digest:
+        if not current_source and '/src/Lpx4' in name and text_sha((REPO/name).read_bytes()) != digest:
             raise ValueError('Core differs from the frozen Tiny88 comparison')
     for part in ('src', 'profiles', 'examples/ATTINY88_V5_PLAYER'):
         shutil.copytree(ACTIVE/part, port/part, ignore=shutil.ignore_patterns('__pycache__'))
@@ -221,7 +221,7 @@ def run(output, *, wsl=None):
     generated_hashes = {name:text_sha((output/name).read_bytes()) for name in
                         ('build_mega_player.py', 'verify_mega_player.py')}
     rows = []
-    for backend, names in (('asm', CASES), ('c', CASES[:1])):
+    for backend, names in (('asm', CASES), ('c', CASES if current_source else CASES[:1])):
         for name in names:
             index = CASES.index(name)
             golden = next(r for r in frozen['cases'] if r['case'] == name)
@@ -244,16 +244,18 @@ def run(output, *, wsl=None):
                     result['samples']==len(valid)+result['underruns'] and
                     result['decode_calls']==len(expected)):
                 raise AssertionError('Playback completion / stack / IRQ preservation failed')
-            if backend=='asm' and not result['accepted']:
-                raise AssertionError('ASM playback failed its full real-time gate')
+            if (backend=='asm' or current_source) and not result['accepted']:
+                raise AssertionError('Playback failed its full real-time gate')
             cost = json.loads((folder/'build.json').read_text())
             options = [option.replace(target(output), '<output>') for option in cost['compiler_options']]
             # Verify real architecture and explicit backend using the exact build flags.
             backend_macros = command('avr-g++', *cost['compiler_options'], '-dM', '-E',
-                '-x', 'c++', '-', input=b'#include "Lpx4Math.h"\n').decode()
+                '-x', 'c++', '-', input=b'#include "Lpx4HybridCore.h"\n#include "Lpx4Math.h"\n').decode()
             backend_defines = dict(re.findall(r'^#define (\S+) (.+)$', backend_macros, re.M))
             if backend_defines['LPX4_USE_AVR_ASM'] != str(int(backend=='asm')):
                 raise AssertionError('Arithmetic backend selection differs from request')
+            if backend_defines.get('LPX4_FLOAT_SYNTHESIS','0')!='0':
+                raise AssertionError('AVR playback must use fixed-point synthesis')
             row = dict(case=name, backend=backend, samples=len(expected),
                 embedded_audio_bytes=len(blob), program_excluding_audio_bytes=result['program_excluding_audio_bytes'],
                 flash_bytes=result['flash_bytes'], static_ram_bytes=result['static_ram_bytes'],
@@ -280,7 +282,7 @@ def run(output, *, wsl=None):
     if port_hashes != {p.relative_to(private_repo).as_posix():text_sha(p.read_bytes())
                       for p in private_repo.rglob('*') if p.is_file()}:
         raise RuntimeError('Private source changed during measurement')
-    summary = dict(schema='lpx-atmega328p-v9-v1', source_hash_encoding='text-lf',
+    summary = dict(schema='lpx-atmega328p-c-realtime-v1' if current_source else 'lpx-atmega328p-v9-v1', source_hash_encoding='text-lf',
         production_source_sha256=source_hashes, generated_source_sha256=port_hashes,
         generated_tool_sha256=generated_hashes, public_input_sha256=input_hashes,
         frozen_tiny_receipt_sha256=text_sha(RECEIPT.read_bytes()),
@@ -290,7 +292,8 @@ def run(output, *, wsl=None):
         device_provenance=provenance, simavr_version=command('pkg-config','--modversion','simavr').decode().strip(),
         cycle_accounting='active decoder CPU mean plus maximum complete ISR; queue management excluded',
         scope='Private Tiny-style one-shot port with native simavr ATmega328P and ordinary C ISR; not production Nano firmware',
-        c_control='Same compiler options including -finline-small-functions; explicit C arithmetic. A throughput rejection is retained, not treated as an arithmetic failure.',
+        c_control=('Same compiler options including -finline-small-functions; explicit fixed C arithmetic; all four profiles must pass real-time.' if current_source else
+                   'Same compiler options including -finline-small-functions; explicit C arithmetic. A throughput rejection is retained, not treated as an arithmetic failure.'),
         cases=rows, complete=True)
     (output/'summary.json').write_text(json.dumps(summary, indent=2, allow_nan=False)+'\n',
                                        encoding='utf-8', newline='\n')
@@ -301,8 +304,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('output', type=Path)
     parser.add_argument('--wsl')
+    parser.add_argument('--current-source',action='store_true',
+                        help='Measure the current fixed C/ASM sources; require all four C profiles in real-time')
     args = parser.parse_args()
-    run(args.output, wsl=args.wsl)
+    run(args.output, wsl=args.wsl, current_source=args.current_source)
 
 
 if __name__ == '__main__':

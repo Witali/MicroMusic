@@ -1,0 +1,127 @@
+{
+  "schema": "lpx-floating-synthesis-validation-v1",
+  "float_decodes": 680,
+  "configs": [
+    {
+      "config": [
+        9,
+        0,
+        0,
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      "streams": 51,
+      "maximum_reference_error": 1.1324274851176597e-14,
+      "object_bytes": 680
+    },
+    {
+      "config": [
+        9,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "streams": 51,
+      "maximum_reference_error": 6.439293542825908e-15,
+      "object_bytes": 680
+    },
+    {
+      "config": [
+        9,
+        0,
+        1,
+        1,
+        0,
+        4,
+        1,
+        0
+      ],
+      "streams": 51,
+      "maximum_reference_error": 2.0539125955565396e-14,
+      "object_bytes": 752
+    },
+    {
+      "config": [
+        9,
+        1,
+        1,
+        0,
+        1,
+        2,
+        0,
+        1
+      ],
+      "streams": 51,
+      "maximum_reference_error": 1.7763568394002505e-14,
+      "object_bytes": 752
+    },
+    {
+      "config": [
+        5,
+        0,
+        0,
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      "streams": 51,
+      "maximum_reference_error": 1.1324274851176597e-14,
+      "object_bytes": 680
+    },
+    {
+      "config": [
+        5,
+        1,
+        1,
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      "streams": 51,
+      "maximum_reference_error": 2.0539125955565396e-14,
+      "object_bytes": 760
+    },
+    {
+      "config": [
+        5,
+        0,
+        0,
+        1,
+        1,
+        2,
+        1,
+        1,
+        0
+      ],
+      "streams": 34,
+      "maximum_reference_error": 0.0,
+      "object_bytes": 720
+    }
+  ],
+  "fractional_state_and_coeff_cases": 320,
+  "maximum_reference_error": 2.0539125955565396e-14,
+  "malformed_cases": 91,
+  "fixed_default_exact_streams": 0,
+  "elapsed_seconds": 8.698333686999831,
+  "quality_improvement_claim": false,
+  "test_source_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/test_float_synthesis.py": "d100c7875e1c2ad9c28746dcb0c0db55efaaf378cf6ebb3e8ada1d8432bc8b59",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/float_synthesis_native.cpp": "aac5dfc8fb8807e8b1e0871d569a4bea292728aabc545e6c128e5ee4eeadbda8",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "50384f415a353fa876742a2842a50c75f7249d809963b4e582acd614a23127b1",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "b9f17c08ee17833e4551166ed95455debee57b137e246da7e2b5e4b5ee0b488c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Float.h": "56798a887b9035d0c3c64665651357684c5431a7375a6d94546b04b33df25b93"
+  },
+  "unit_tests_passed": 4,
+  "batch_unit_tests_passed": 8
+}
