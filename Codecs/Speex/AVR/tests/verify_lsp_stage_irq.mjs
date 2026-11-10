@@ -1,4 +1,6 @@
 // Preempt every ASM instruction boundary with a compiled MUL-using ISR.
+// The private product RCALL adds 2 B above the 12 saved bytes. Preempt its
+// internal RET too; only RET at the public entry SP ends the stage ABI frame.
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
@@ -27,11 +29,11 @@ function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
   assert.equal(trace,null);assert.equal(cpu.data[1],0);trace={n:stage,sp:cpu.SP,ops:[],start:cpu.cycles};step=0;
   if(inject===-2){raise();cpu.tick();assert.equal(cpu.pc,interrupt.address);continue;}
  }
- const op=cpu.progMem[cpu.pc],ret=op===0x9508,reti=op===0x9518,inIsr=irq!==null;
+ const op=cpu.progMem[cpu.pc],ret=op===0x9508,reti=op===0x9518,inIsr=irq!==null,externalRet=ret&&trace&&cpu.SP===trace.sp;
  if(trace&&!inIsr)trace.ops.push(op);
  if(inIsr&&(op&0xfc00)===0x9c00)isrMulInstructions++;
  avrInstruction(cpu);
- if(trace&&!inIsr&&!ret){if(step===inject)raise();step++;}
+ if(trace&&!inIsr&&!externalRet){if(step===inject)raise();step++;}
  if(reti){
   assert.ok(irq);assert.deepEqual(cpu.data.slice(0,32),irq.regs,'ISR restores all registers including interrupted r1');
   assert.equal(cpu.data[sreg],irq.sreg,'ISR restores SREG and I');assert.equal(cpu.SP,irq.sp);assert.equal(cpu.pc,irq.pc);
@@ -39,6 +41,7 @@ function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
  }
  cpu.tick();
  if(ret&&trace&&!inIsr&&cpu.SP===trace.sp+2){
+  assert.ok(externalRet,'Only the public RET may finish the stage trace');
   assert.equal(cpu.data[1],0);trace.elapsed=cpu.cycles-trace.start;lastTrace=trace;trace=null;
  }
  assert.ok(cpu.SP>=address('__bss_end'),'Static/stack collision');
@@ -85,11 +88,11 @@ for(let n=2;n<=4;n++)for(const f of [-32768,-16384,-1,0,1,16384,32767])for(const
  vectors++;
 }
 assert.equal(vectors,63);assert.equal(injections,retChecks);assert.ok(nonzeroR1Interrupts>0);assert.equal(isrMulInstructions,injections);
-assert.deepEqual(Object.fromEntries(Object.entries(baselineCycles).map(([n,s])=>[n,[...s]])),{'2':[238],'3':[327],'4':[416]});
+assert.deepEqual(Object.fromEntries(Object.entries(baselineCycles).map(([n,s])=>[n,[...s]])),{'2':[245],'3':[341],'4':[437]});
 for(const n of [2,3,4])assert.equal(boundaryCounts[n],21*traces[n]);
 const report={mcu:'ATmega328P',compiler:'AVR GCC 7.3.0',simulator:'avr8js 0.21.1',
  binarySha256:createHash('sha256').update(binary).digest('hex'),deviceHeaders:JSON.parse(readFileSync(join(dir,'device-headers.json'),'utf8')),
- scope:'Synthetic Timer2 COMPA flag injected at entry and after every non-RET ASM instruction; real compiled ISR; timer-period playback tested separately',
+ scope:'Synthetic Timer2 COMPA flag injected at entry and after every nonexternal-RET ASM instruction, including private product RET; real compiled ISR; timer-period playback tested separately',
  vectors,calls,boundaryCounts,asmInstructionsIncludingRet:traces,injections,nonzeroR1Interrupts,isrMulInstructions,retChecks,
  everyInstructionBoundaryPreempted:true,all32RegistersAndSregRestoredAtReti:true,interruptReturnPcAndSpExact:true,
  selectedAndForcedCExact:true,independentBigIntProductOracle:true,guardsAndUntouchedWordsPreserved:true,externalR1Zero:true,

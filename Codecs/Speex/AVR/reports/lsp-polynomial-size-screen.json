@@ -1,0 +1,521 @@
+{
+  "scope": "Frozen 1da660ea exact ASM polynomial-stage size comparison; final combined root gate pending",
+  "target": "ATmega328P / AVR5 / GNU ABI",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "sourceHashMode": "SHA256 source/report bytes normalized to LF; external tool/header bytes unchanged",
+  "candidate": {
+    "baselineRevision": "1da660ea",
+    "sourceHashMode": "SHA256 LF-normalized source bytes",
+    "variant": "loop",
+    "baseline": {
+      "lsp_pair.S": "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22",
+      "lsp_stage.S": "eaeaf109f57853cd58bfb96a181e50941912c5f2fa4e000a327b74245d741529",
+      "lsp_stage_macros.S": "5c997aba9ec8a46bac795e34c59b65b22201c2b0aa8cd2037d85405e3078e7c5"
+    },
+    "candidate": {
+      "lsp_pair.S": "e7bc717ec3b320617ef2c66420f86911fad2a2c31c82eae7f059ea3e347e92d8",
+      "lsp_stage.S": "bdbb374782f1d084560716b3b48bd7979a73a856e07520f5ea2b1dbc5ac4c64d",
+      "lsp_stage_macros.S": "f2cefb547bd2e02b4919106c39d37d40f23a294f492cbd7a30de08c1df7064db"
+    },
+    "portableCFilesUnchanged": true
+  },
+  "onlyChangedSources": [
+    "lsp_pair.S",
+    "lsp_stage.S",
+    "lsp_stage_macros.S"
+  ],
+  "portableCSourceAndControlBinariesUnchanged": true,
+  "unitEvidence": [
+    {
+      "variant": "shared",
+      "family": "pair",
+      "irq": false,
+      "binarySha256": "3d89e0d163e8670a4f05886fc46d4867a90b57862fe367324332f11cf7799950",
+      "reportSha256": "69f9db04dc8c7b56569a1e71edd3329983df9d3ff938a369553f724e83d47be6",
+      "verifier": "verify_lsp_pair.mjs",
+      "cases": 257790,
+      "injections": null,
+      "stackBytes": 20,
+      "cycles": {
+        "2": [
+          480
+        ],
+        "3": [
+          668
+        ],
+        "4": [
+          852
+        ]
+      }
+    },
+    {
+      "variant": "shared",
+      "family": "stage",
+      "irq": false,
+      "binarySha256": "6db97590b050ad764b96b046588330ed629413793cf2676bce597ad2c876f834",
+      "reportSha256": "2ff3406bd90ea7aeb3fe25f9c654c585a538795a517d15bb8153aee33400c232",
+      "verifier": "verify_lsp_stage.mjs",
+      "cases": 256254,
+      "injections": null,
+      "stackBytes": 14,
+      "cycles": {
+        "2": [
+          245
+        ],
+        "3": [
+          341
+        ],
+        "4": [
+          437
+        ]
+      }
+    },
+    {
+      "variant": "loop",
+      "family": "pair",
+      "irq": false,
+      "binarySha256": "d05b7667424f8ce85ac470f1af58cdc05ac12c9dd8ec07b1f04b63d37de012fb",
+      "reportSha256": "784133bbe8500c14a25cc01234e01229c73b6f71fc20f26c03f60d81fbc8db5e",
+      "verifier": "verify_lsp_pair.mjs",
+      "cases": 257790,
+      "injections": null,
+      "stackBytes": 22,
+      "cycles": {
+        "2": [
+          510
+        ],
+        "3": [
+          708
+        ],
+        "4": [
+          908
+        ]
+      }
+    },
+    {
+      "variant": "baseline",
+      "family": "pair",
+      "irq": true,
+      "binarySha256": "e7f866e34d57a95930ac53864db16ec90dadf56c70a669103c03eb63098591e9",
+      "reportSha256": "0d251bc155526318c2c7a27579edf2591367ea165b8bcff5cda901d79ebe198a",
+      "verifier": "verify_lsp_pair_early.mjs",
+      "cases": 0,
+      "injections": 30828,
+      "stackBytes": 18,
+      "cycles": {
+        "2": [
+          460
+        ],
+        "3": [
+          634
+        ],
+        "4": [
+          804
+        ]
+      }
+    },
+    {
+      "variant": "baseline",
+      "family": "stage",
+      "irq": true,
+      "binarySha256": "0a619258a94bab18c88097d611eaa51afdd529f2d08aa57f6ba5ce16c95227d9",
+      "reportSha256": "243a1bff007ffa5480f208045a05fc30ef475a4da6a57d0b2444b753f714973e",
+      "verifier": "verify_lsp_stage_irq.mjs",
+      "cases": null,
+      "injections": 15687,
+      "stackBytes": null,
+      "cycles": null
+    },
+    {
+      "variant": "products",
+      "family": "pair",
+      "irq": true,
+      "binarySha256": "d3bc15b0a9cddc437613df939d4a9fdd17a6e75d620d3d6c6c6a6a8e5c07e585",
+      "reportSha256": "7670111eb9176d6dde416765882364c371a27ba2926b093df56927343c6e0ade",
+      "verifier": "verify_lsp_pair_early.mjs",
+      "cases": 0,
+      "injections": 31332,
+      "stackBytes": 20,
+      "cycles": {
+        "2": [
+          474
+        ],
+        "3": [
+          662
+        ],
+        "4": [
+          846
+        ]
+      }
+    },
+    {
+      "variant": "products",
+      "family": "stage",
+      "irq": true,
+      "binarySha256": "fbb43d86db5eb1f03707b20134e51ad7bf16f034651829cc058803a862c32ad9",
+      "reportSha256": "0e9d8038cc6d4b10abb07aebca0532a994fc4ef32e70250da94bebe9ff2eece7",
+      "verifier": "verify_lsp_stage_irq.mjs",
+      "cases": null,
+      "injections": 15939,
+      "stackBytes": null,
+      "cycles": null
+    },
+    {
+      "variant": "shared",
+      "family": "pair",
+      "irq": true,
+      "binarySha256": "4efd16e27c111a3203477094fe12efe4561f4cba0875758c1c542e6b7213f6ba",
+      "reportSha256": "d12914e752225f61dd6017460e8475957603ba9ac60907a54634cd58de35edda",
+      "verifier": "verify_lsp_pair_early.mjs",
+      "cases": 0,
+      "injections": 31584,
+      "stackBytes": 20,
+      "cycles": {
+        "2": [
+          480
+        ],
+        "3": [
+          668
+        ],
+        "4": [
+          852
+        ]
+      }
+    },
+    {
+      "variant": "shared",
+      "family": "stage",
+      "irq": true,
+      "binarySha256": "fbb43d86db5eb1f03707b20134e51ad7bf16f034651829cc058803a862c32ad9",
+      "reportSha256": "b2bd50b290d1b097b9c9472bb43aeb9e7129b906a06385d054c6c6584e9bd3be",
+      "verifier": "verify_lsp_stage_irq.mjs",
+      "cases": null,
+      "injections": 15939,
+      "stackBytes": null,
+      "cycles": null
+    },
+    {
+      "variant": "loop",
+      "family": "pair",
+      "irq": true,
+      "binarySha256": "3d0564b905263ca797477506c834cfa83fb5edc30713dcd76310b9d96734d8b9",
+      "reportSha256": "586d963c4f2a52c76745cd88d41c783226ad8d5e5888a2f5b287eacefba580cd",
+      "verifier": "verify_lsp_pair.mjs",
+      "cases": 0,
+      "injections": 33684,
+      "stackBytes": 22,
+      "cycles": {
+        "2": [
+          510
+        ],
+        "3": [
+          708
+        ],
+        "4": [
+          908
+        ]
+      }
+    }
+  ],
+  "wholeImages": [
+    {
+      "variant": "shared",
+      "profile": "wb395",
+      "frames": 384,
+      "flashBytes": 22478,
+      "staticSramBytes": 1284,
+      "peakStackBytes": 166,
+      "meanCycles": 220406.29166666666,
+      "baselineMeanCycles": 219807.76041666666,
+      "binarySha256": "a8e5e5b084b164686eb270fd230423993d1d09914e5caac8a6913cc299cb9fd8",
+      "reportSha256": "0147d2e2dbc4e3f23fe926df20854501126471bbdcaa73c59294ce6bafa4e241",
+      "packetTimingSha256": "dd3da0b17e37f775caff2c85fb6ae359904bb83cfdd0ab003c501e822cb210e0"
+    },
+    {
+      "variant": "shared",
+      "profile": "wb98",
+      "frames": 788,
+      "flashBytes": 22478,
+      "staticSramBytes": 1299,
+      "peakStackBytes": 166,
+      "meanCycles": 223020.95304568528,
+      "baselineMeanCycles": 222593.88197969543,
+      "binarySha256": "3b0cc33bbd6eacf4b1937cbb3831576c4b4d371223dda0a984d625e2751f5191",
+      "reportSha256": "a0509b7efc21671b40fd07aaac97a8acb7058ac8c0e55bed5ea8e8ba46c88fab",
+      "packetTimingSha256": "5f6ea74d88070a36446c8a1c6112ed0f7ec14a377b2e80e1ee181b0291f34b3f"
+    },
+    {
+      "variant": "shared",
+      "profile": "wb128",
+      "frames": 2200,
+      "flashBytes": 22478,
+      "staticSramBytes": 1306,
+      "peakStackBytes": 166,
+      "meanCycles": 235193.37,
+      "baselineMeanCycles": 234621.22272727272,
+      "binarySha256": "39a68f9e91733336771c1aa78c279b0dc3cf6933008787dbed2e945c9235e56d",
+      "reportSha256": "b86b1c6d751a42f464cda1fb958a4cd6e358210ebc2e514e4172a089969e44b3",
+      "packetTimingSha256": "cf10e6e69fb2e60766655e1df096b231b408f03444cd00b6a6e65aae0a6d92dc"
+    },
+    {
+      "variant": "loop",
+      "profile": "wb395",
+      "frames": 384,
+      "flashBytes": 22328,
+      "staticSramBytes": 1284,
+      "peakStackBytes": 166,
+      "meanCycles": 221128.23958333334,
+      "baselineMeanCycles": 219807.76041666666,
+      "binarySha256": "d57d9e2009ad315fba490b03ca3caf787df7bc6fd2800c58282ab2650a9cde74",
+      "reportSha256": "5b950bc807d37cb5325c8272bc66b4aa6390334450cc0b8cc23f5defee2facb9",
+      "packetTimingSha256": "3f72257a9611c288c08aa57984995fcf6e66d974a86784e22ca9b37f1d1b0876"
+    },
+    {
+      "variant": "loop",
+      "profile": "wb98",
+      "frames": 788,
+      "flashBytes": 22328,
+      "staticSramBytes": 1299,
+      "peakStackBytes": 166,
+      "meanCycles": 223529.5114213198,
+      "baselineMeanCycles": 222593.88197969543,
+      "binarySha256": "ee2cecc4f4ec5f6f5cc36467643b884e07e56d6f3ecb80cd6cc1103c2196842b",
+      "reportSha256": "431110b1624e3f586ba29fd40d2d71a0dd4858e65b3a27530a405f3d89f0fb89",
+      "packetTimingSha256": "7ac02c84dbf46fd8dcbd49eef42b116cecb29682058c1a684f3ee189c7f47b26"
+    },
+    {
+      "variant": "loop",
+      "profile": "wb128",
+      "frames": 2200,
+      "flashBytes": 22328,
+      "staticSramBytes": 1306,
+      "peakStackBytes": 166,
+      "meanCycles": 235882.77909090908,
+      "baselineMeanCycles": 234621.22272727272,
+      "binarySha256": "6d58e32d8738bf75e1e851f1aaf8fa53204f4df4674adea4ff32597b7ccd9bcc",
+      "reportSha256": "676fcdbb8f220a40ab86512f3a5c092593423337b00abc22773c2a8fc9d2705f",
+      "packetTimingSha256": "729b231f447b32fabdb3d77edd8ed11030963e5d79ac7706af3e25522f3a4b68"
+    }
+  ],
+  "comparisons": [
+    {
+      "variant": "shared",
+      "profile": "wb395",
+      "flashSavedBytes": 462,
+      "extraMeanCycles": 598.53125,
+      "extraDecoderPercent": 0.27229759716647095,
+      "extraCpuPercentagePoints": 0.187041015625
+    },
+    {
+      "variant": "shared",
+      "profile": "wb98",
+      "flashSavedBytes": 462,
+      "extraMeanCycles": 427.07106598984774,
+      "extraDecoderPercent": 0.19186109797428852,
+      "extraCpuPercentagePoints": 0.13345970812182742
+    },
+    {
+      "variant": "shared",
+      "profile": "wb128",
+      "flashSavedBytes": 462,
+      "extraMeanCycles": 572.1472727272727,
+      "extraDecoderPercent": 0.2438599825184351,
+      "extraCpuPercentagePoints": 0.1787960227272727
+    },
+    {
+      "variant": "loop",
+      "profile": "wb395",
+      "flashSavedBytes": 612,
+      "extraMeanCycles": 1320.4791666666667,
+      "extraDecoderPercent": 0.600742741822935,
+      "extraCpuPercentagePoints": 0.41264973958333334
+    },
+    {
+      "variant": "loop",
+      "profile": "wb98",
+      "flashSavedBytes": 612,
+      "extraMeanCycles": 935.6294416243654,
+      "extraDecoderPercent": 0.42033025944070435,
+      "extraCpuPercentagePoints": 0.2923842005076142
+    },
+    {
+      "variant": "loop",
+      "profile": "wb128",
+      "flashSavedBytes": 612,
+      "extraMeanCycles": 1261.5563636363636,
+      "extraDecoderPercent": 0.5376991684604926,
+      "extraCpuPercentagePoints": 0.3942363636363636
+    }
+  ],
+  "nb8FlashOnly": [
+    {
+      "variant": "baseline",
+      "profile": "nb8",
+      "packetBytes": 20,
+      "backend": "asm",
+      "lowRates": 7,
+      "nb4Enabled": true,
+      "flashBytes": 16710,
+      "staticSramBytes": 1118,
+      "binarySha256": "b09264c5191f7348f9058a5d5d2a9116094552ce6d32439534fd33db52d3b02e",
+      "scope": "Flash/static SRAM only; no NB8 PCM oracle invented"
+    },
+    {
+      "variant": "shared",
+      "profile": "nb8",
+      "packetBytes": 20,
+      "backend": "asm",
+      "lowRates": 7,
+      "nb4Enabled": true,
+      "flashBytes": 16228,
+      "staticSramBytes": 1118,
+      "binarySha256": "0fe9405ec2905c070ecaef474af22065a081b520c3ed735b67e1c7c446bac88d",
+      "scope": "Flash/static SRAM only; no NB8 PCM oracle invented"
+    },
+    {
+      "variant": "loop",
+      "profile": "nb8",
+      "packetBytes": 20,
+      "backend": "asm",
+      "lowRates": 7,
+      "nb4Enabled": true,
+      "flashBytes": 16090,
+      "staticSramBytes": 1118,
+      "binarySha256": "88d9fcf0ede50c149de3d74d124e1cc660e1f497f678bd819d1980a7fdd23804",
+      "scope": "Flash/static SRAM only; no NB8 PCM oracle invented"
+    }
+  ],
+  "rawFramesPerCandidate": 3372,
+  "productionIrq": [
+    {
+      "variant": "shared",
+      "frames": 256,
+      "extraForegroundCycles": 25600,
+      "underruns": 0,
+      "minimumQueue": 7,
+      "freeSramAtPeak": 422,
+      "binarySha256": "c0fba487bf46adf65926a4e83bc46d83c1f91057d65deb02b8ee45a899a1cfd6",
+      "reportSha256": "4e5524327725edc33c41993bd45de805c5fb5c892c0efe20d76d6af6eaa29906"
+    },
+    {
+      "variant": "loop",
+      "frames": 256,
+      "extraForegroundCycles": 25600,
+      "underruns": 0,
+      "minimumQueue": 7,
+      "freeSramAtPeak": 422,
+      "binarySha256": "241b4e392e96f59e6eba059a795a99b33e9d19c5b2d3fdfdce3e1fb10aef3d1c",
+      "reportSha256": "43cdabd57048a416d3f6878c09bf3b39f95a7ca11b6d4e9fb441a3a86e41851a"
+    }
+  ],
+  "unadmittedStress": [
+    {
+      "variant": "baseline",
+      "frames": 256,
+      "extraForegroundCycles": 35200,
+      "underruns": 319,
+      "supportedLoad": false,
+      "binarySha256": "80a38ae697a2e300e04092362638192e5af23f7d88b0218e10ebe1a917694df5",
+      "logSha256": "49732759b96492e6719a061b5b3f49a8fa5a3e5df4e56be0eba44490e129165c"
+    },
+    {
+      "variant": "shared",
+      "frames": 256,
+      "extraForegroundCycles": 35200,
+      "underruns": 415,
+      "supportedLoad": false,
+      "binarySha256": "d84d610614cd7a6664ad44691e93aa739fb64ad7d9ae01cd55d175a9a1374e58",
+      "logSha256": "0d4d1a208ab370169615b2d652bd0999149b0721e194c56dbe2d21946de0bc10"
+    },
+    {
+      "variant": "loop",
+      "frames": 256,
+      "extraForegroundCycles": 35200,
+      "underruns": 458,
+      "supportedLoad": false,
+      "binarySha256": "55db9c31469acbd6baf63e4b07a161a370105dc613cbf1ecc411fab4aeda15c0",
+      "logSha256": "c453f1777276b079d8b45bfc8843a3b21755256da1f148d77f693914cafb9026"
+    }
+  ],
+  "stressLimit": "The baseline also fails at +35,200. Signed16 loop checks precede the underrun assertion; later PWM/timer checks are not admitted for failing stress runs.",
+  "sourceSha256": {
+    "build_units.py": "61018b979f6050e098f03e40e83ef620edaf708755ff3d7e1bd68f2b5f8481b1",
+    "build_images.py": "05a72ccaa6ae1c0848e34d993d05939197759b50565d53fcc8f3f27a9e0024e6",
+    "run_images.py": "c380135a15563b106bc7e149e5170937882b2c82558b54a95c38cbf5168289a4",
+    "run_irq.py": "bfc7c5164a6d909c6d7434573ee89e1dd19ba06f362647c6ccb516401c4934d3",
+    "prepare_variants.py": "924dd00cc5b73cd73574f5d8812a2dc8fb807051c41a2fe3d4684b60edf4dd09",
+    "finalize_comments.py": "08271198478eab1c8e43cdad76e3445316ca665282a1dd1ea481134acd897981",
+    "audit.py": "b03357a62994c0e01176f2ef8a11f86d3923ac8768fb4e158d67ed1947b25d75",
+    "verify_lsp_pair.mjs": "9d081e9467e3442a258c879000c2a30f755325ef91534d729c6c15d726739f27",
+    "verify_lsp_pair_early.mjs": "88f66beaac3690720ed796c11b5ceff09866138e7e847ed44f64f5f8bbd2f8a8",
+    "verify_lsp_stage.mjs": "0d7341c79c64f1bfc4554b2bf20b729b1975a42302b1ae5e3007a587c2794978",
+    "verify_lsp_stage_irq.mjs": "b8fac602a0a82adc91e67202f63208502f620a2b6195658cda76e6cc59b929cf",
+    "verify_wb.mjs": "1133bb4820fa70cafe57e60e3bb10ea080d629f052390d2054bc354239d53197",
+    "verify_wb_stream.mjs": "2a2a8437402eea8eae0972aae9f373a70440656fc12229b8e1e85ab6b046be3e",
+    "avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f",
+    "baseline-source.json": "f37d6468c5d157bdea167361ce7ef308b66379fb5b921bcc866255a07ba12f0d",
+    "baseline-reuse.json": "da90c69ad0c36180e26a6a3e384e5ab9d8495b8977e488f7a06b2c4227b32bb5",
+    "data.json": "b3ca0beb8657f62f2314813b8dff703a88897e8ed18b2d8c0c89523de60b8e64",
+    "candidate-source.json": "7699cc63dc6176cce77174474b986341a91bc7036d69420d15e88dc0c5d5ae9f",
+    "candidate.patch": "2a016027db2f2e7ba4c762ea881bdfabb4e1e395813d2a595380d5fcdc79394b",
+    "comment-binary-identity.json": "c9db3c0fa8f98e0be8ed1c3af374911cd3790583037af477b2f3f9676ecc38db",
+    "irq-common.json": "978534535b78e3056679d6657e3b0d0626081122a451d83d40e06f2205f90265",
+    "tool-provenance.json": "e2c0687161fa39628980d16efaea0adbcd1ccd0a490a67576a53aea1ed55ebec",
+    "draft-speex-polynomial-size.md": "11e0b94a3ffc9e72f7d09413f90367d528f10388533ea1d92a8b7012bb49a826",
+    "reference-c/twin-unit-c.json": "dd7e6f3d98bc9b05cbd3ae086dd7445889b09f9239d1c743594d5f2667d21e29",
+    "reference-c/poly-stage-unit-c.json": "19e5171e3fcca22a6cf49069ba7ef9b05019d23698f7a97bbaa3cdcb4d934bd3"
+  },
+  "candidateSourceSha256": {
+    "shared": {
+      "lsp_pair.S": "57cfa460e4c32084d212a203505eeb8f626da035ca0c0668d7638dd363c586ec",
+      "lsp_stage.S": "bdbb374782f1d084560716b3b48bd7979a73a856e07520f5ea2b1dbc5ac4c64d",
+      "lsp_stage_macros.S": "f2cefb547bd2e02b4919106c39d37d40f23a294f492cbd7a30de08c1df7064db"
+    },
+    "loop": {
+      "lsp_pair.S": "e7bc717ec3b320617ef2c66420f86911fad2a2c31c82eae7f059ea3e347e92d8",
+      "lsp_stage.S": "bdbb374782f1d084560716b3b48bd7979a73a856e07520f5ea2b1dbc5ac4c64d",
+      "lsp_stage_macros.S": "f2cefb547bd2e02b4919106c39d37d40f23a294f492cbd7a30de08c1df7064db"
+    }
+  },
+  "toolsByteSha256": {
+    "avr/bin/avr-gcc.exe": "d3a9a093afbd132302e430e4c88bbacccb0490ebf730f626b74662dc2460307b",
+    "avr/bin/avr-as.exe": "f4742917d141a23f4863086e6c0a3803b4da3c444cf1935303165b6f7e7e754e",
+    "avr/bin/avr-ld.exe": "b8aa2ff51061ff713976e6db14e9adb492436e5b463679a8b9e718c8ff0f2bdf",
+    "avr/bin/avr-objcopy.exe": "5bc07336d3dc78ef13a36db73b66ca206447fc9a40035ba8f481901084f737d5",
+    "avr/bin/avr-nm.exe": "4cf4392a0c0c44144668a1d8b70144708e32fa74b6279bab4e3041cb5345b593",
+    "avr/bin/avr-objdump.exe": "6379ac8e391b100febd0be4f30461e0148cbd59435aa574c1e96ece55eac3726",
+    "avr/libexec/gcc/avr/7.3.0/cc1.exe": "d47c916ac889376a6f479a1579c05875ce56ec22b70e654ebf427911a5980653",
+    "avr/lib/gcc/avr/7.3.0/avr5/libgcc.a": "4753393354a98da210ac6e4746b5ea040dd5606da2590e3d6487c112bdae071d",
+    "avr/avr/include/avr/iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "node/node.exe": "780f44f2c53c108bae261ada21a525b4bfe733c020ac85e41bfe94479090ac9b",
+    "avr8js/package.json": "2bf3a999091fa033287c58b734cf158be4a574674a633d64005389bae985aa6e",
+    "avr8js/dist/cjs/cpu/cpu.js": "f2103091c3911989b568c0287424c1f18a71bb65a50bd784cb910b5997f00251",
+    "avr8js/dist/cjs/cpu/instruction.js": "a80cb750d6bab9b7ba64410280f9d87c2a9d70cb069a258091d74967b63a22b2",
+    "avr8js/dist/cjs/cpu/interrupt.js": "044fb4f21b1f2658c65852d2bf90b101b86aaefc6d2703fd80581e80b5096cde",
+    "avr8js/dist/cjs/index.js": "9059a0dc100b9a8eb876dc56012a7670f3afeefa82c90230862f686a5cba4fcf",
+    "avr8js/dist/cjs/peripherals/adc.js": "9f13995cfea651e8dca14dc95c227c0a5fdb632f14e9e5d03ebc92d4ff62daec",
+    "avr8js/dist/cjs/peripherals/clock.js": "dc344fb96d763d657cae4342b18d506edf6fbc939edc2ef0b45c4d53d3ee833d",
+    "avr8js/dist/cjs/peripherals/eeprom.js": "526574ff48d75835c4413721c98487a55f4930eccb6794a63041ad0af05ee3a9",
+    "avr8js/dist/cjs/peripherals/gpio.js": "34c59c337d7d8c5a6af959313d24e9fd41b7b3c1108d68a0963e4232f8ee8b29",
+    "avr8js/dist/cjs/peripherals/spi.js": "f8b3a34dfebd697d94564461e9bbf06f992e8f4669f2a8460ede4af554e67309",
+    "avr8js/dist/cjs/peripherals/timer-attiny.js": "11bc63d87d98644d4f97e9bafe681adceb7ccbd61975a931ac5500dd2ac8a8dc",
+    "avr8js/dist/cjs/peripherals/timer.js": "5a4fa66fac3b6a401678aaa3e6a4b437985a3f14c89ff152d3c39a5d9ab920d2",
+    "avr8js/dist/cjs/peripherals/twi.js": "8c9b3ff97dd10121ac8b1fcd09f98aaccc5f76068c0b2beff9a9ea945c0e6cd0",
+    "avr8js/dist/cjs/peripherals/usart.js": "54417f9cab24659351e027a64acf3b2d0560365176ecf57c37184034c0e4cc35",
+    "avr8js/dist/cjs/peripherals/usi.js": "2d5a13419a8537dc6fafa67214964158fa349f33cab4b94bd5a8eb7e6a82420c",
+    "avr8js/dist/cjs/peripherals/watchdog.js": "678c446a50283145dba396cf244142ac4ebbd1c8360a119396fc7a06dbcc1b63",
+    "avr8js/dist/cjs/types.js": "1d1464e1edadb9171bcae76e8f78fa577b955b315ee748fcb7ad55e8825b2b39",
+    "avr8js/dist/cjs/utils/assembler.js": "d95c46cb525eab5f323acf435253dfa2adc0e62ad13fdda2aae142c8dcbb83b7",
+    "avr8js/dist/cjs/utils/test-utils.js": "c875e6edec7e70c7bcfd098f6c807489218052d00769397c8a0b9fcdf48b7c4c"
+  },
+  "cDecoderExecuted": false,
+  "physicalBoardTested": false,
+  "limits": [
+    "WB3.95 uses 384 prefix frames; WB9.8/12.8 use full admitted 788/2200 recordings.",
+    "Raw timing excludes ISR and transport delays. Baseline cycles reused only after exact source/test/binary identity.",
+    "IRQ screen is 256 full-history WB12.8 frames at the established +25,600 foreground cycles; no SPI latency modeled.",
+    "Complete signed-root coverage is not exhaustive over every signed30 coefficient tuple.",
+    "Final all-five 34,869-frame combined PCM/IRQ gate belongs to root."
+  ]
+}

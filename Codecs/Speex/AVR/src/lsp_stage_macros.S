@@ -1,5 +1,7 @@
-/* Shared source for single and paired stages; same arithmetic/rounding.
- * Enhanced AVR5, private r8..17/Y windows; C equations: nb3_lsp_stage.h. */
+/* Shared source for single/paired stages, AVR5 / ATmega328P / GNU ABI.
+ * Preserve independent original Q14 floors and modulo-32 updates. General
+ * products use a private local subroutine with the original clobber/T/r1
+ * contract; aligned P1 stays inline. Explicit C: nb3_lsp_stage.h. */
 #ifndef MICROMUSIC_LSP_STAGE_MACROS
 #define MICROMUSIC_LSP_STAGE_MACROS
 #include "q14_macros.S"
@@ -51,7 +53,7 @@
     movw \current+2,r20
 .endm
 .macro STAGE_Q14
-    SPEEX_LSP_Q14_BODY 16,0
+    rcall .Lstage_q14_product
 .endm
 .macro STAGE_P1
     SPEEX_LSP_P1_BODY 16
@@ -108,5 +110,16 @@
     sbc r14,r24
     sbc r15,r25
     STAGE_STORE 12,4
+.endm
+/* Private arithmetic leaf: preserves T and r2..r19/Y; r1 remains scratch.
+ * The caller owns the ABI save window and clears r1 in its final P1 product.
+ * Isolating this exact body removes five repeated general-product copies. */
+.macro STAGE_DEFINE_PRODUCT name
+.type \name,@function
+\name:
+.Lstage_q14_product:
+    SPEEX_LSP_Q14_BODY 16,0
+    ret
+.size \name,.-\name
 .endm
 #endif

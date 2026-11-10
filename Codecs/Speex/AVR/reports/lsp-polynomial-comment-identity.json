@@ -1,0 +1,60 @@
+{
+  "scope": "Leading comments only; all instruction suffixes unchanged and all retained binaries rebuilt identically",
+  "beforeSources": {
+    "shared/lsp_pair.S": {
+      "sourceSha256": "58ac46f90ca3c0da0b802b76e2e72d41395e17841bdb8954af0e50c32e64e64c",
+      "instructionSuffixSha256": "0a6adf277334f8da260539d1cf05f2d087fd8f9c1979f76fbe41c53cf59e746f"
+    },
+    "shared/lsp_stage.S": {
+      "sourceSha256": "542fcd1136fd18b1ca3607b359c166f443c21e68ad0d073b6f067b9f8b0c6b95",
+      "instructionSuffixSha256": "029d6b324f9494662097f74eb5ff795909c564a83036aae63e94f2a320142b79"
+    },
+    "shared/lsp_stage_macros.S": {
+      "sourceSha256": "7480845ca3f0fb85c0f76b3573d74b3ed89ce3d4239944d41551a97d80b74902",
+      "instructionSuffixSha256": "e422800268fd96d19f75c4cd2950c9156ab6c07c156f9ab6f691592ab271970a"
+    },
+    "loop/lsp_pair.S": {
+      "sourceSha256": "6d9213d29f38c992245e9bb991c0842101959640163e1291c5c6c346c4cf6914",
+      "instructionSuffixSha256": "380348bf4d75184f6dbcae2555c039bfcb679300e92cdb95cc6f0b5f1d490627"
+    },
+    "loop/lsp_stage.S": {
+      "sourceSha256": "542fcd1136fd18b1ca3607b359c166f443c21e68ad0d073b6f067b9f8b0c6b95",
+      "instructionSuffixSha256": "029d6b324f9494662097f74eb5ff795909c564a83036aae63e94f2a320142b79"
+    },
+    "loop/lsp_stage_macros.S": {
+      "sourceSha256": "7480845ca3f0fb85c0f76b3573d74b3ed89ce3d4239944d41551a97d80b74902",
+      "instructionSuffixSha256": "e422800268fd96d19f75c4cd2950c9156ab6c07c156f9ab6f691592ab271970a"
+    }
+  },
+  "afterSources": {
+    "shared/lsp_pair.S": "57cfa460e4c32084d212a203505eeb8f626da035ca0c0668d7638dd363c586ec",
+    "shared/lsp_stage.S": "bdbb374782f1d084560716b3b48bd7979a73a856e07520f5ea2b1dbc5ac4c64d",
+    "shared/lsp_stage_macros.S": "f2cefb547bd2e02b4919106c39d37d40f23a294f492cbd7a30de08c1df7064db",
+    "loop/lsp_pair.S": "e7bc717ec3b320617ef2c66420f86911fad2a2c31c82eae7f059ea3e347e92d8",
+    "loop/lsp_stage.S": "bdbb374782f1d084560716b3b48bd7979a73a856e07520f5ea2b1dbc5ac4c64d",
+    "loop/lsp_stage_macros.S": "f2cefb547bd2e02b4919106c39d37d40f23a294f492cbd7a30de08c1df7064db"
+  },
+  "unchangedBinarySha256": {
+    "units/shared/pair-asm/unit.bin": "3d89e0d163e8670a4f05886fc46d4867a90b57862fe367324332f11cf7799950",
+    "units/shared/pair-asm-irq/unit.bin": "4efd16e27c111a3203477094fe12efe4561f4cba0875758c1c542e6b7213f6ba",
+    "units/shared/stage-asm/stage.bin": "6db97590b050ad764b96b046588330ed629413793cf2676bce597ad2c876f834",
+    "units/shared/stage-asm-irq/irq.bin": "fbb43d86db5eb1f03707b20134e51ad7bf16f034651829cc058803a862c32ad9",
+    "units/loop/pair-asm/unit.bin": "d05b7667424f8ce85ac470f1af58cdc05ac12c9dd8ec07b1f04b63d37de012fb",
+    "units/loop/pair-asm-irq/unit.bin": "3d0564b905263ca797477506c834cfa83fb5edc30713dcd76310b9d96734d8b9",
+    "units/loop/pair-c/unit.bin": "493ccf09530a3b590903aa363cd185ad264b947232743e6f0a2186e4a0b789c4",
+    "units/loop/stage-c/stage.bin": "ad9ccc31af8bfb938197a67c09f8b5778bd5766563e6a7d43d35128521ffa7e6",
+    "images/shared/nb8/speex-test.bin": "0fe9405ec2905c070ecaef474af22065a081b520c3ed735b67e1c7c446bac88d",
+    "images/shared/wb128/wb.bin": "39a68f9e91733336771c1aa78c279b0dc3cf6933008787dbed2e945c9235e56d",
+    "images/shared/wb395/wb.bin": "a8e5e5b084b164686eb270fd230423993d1d09914e5caac8a6913cc299cb9fd8",
+    "images/shared/wb98/wb.bin": "3b0cc33bbd6eacf4b1937cbb3831576c4b4d371223dda0a984d625e2751f5191",
+    "images/loop/nb8/speex-test.bin": "88d9fcf0ede50c149de3d74d124e1cc660e1f497f678bd819d1980a7fdd23804",
+    "images/loop/wb128/wb.bin": "6d58e32d8738bf75e1e851f1aaf8fa53204f4df4674adea4ff32597b7ccd9bcc",
+    "images/loop/wb395/wb.bin": "d57d9e2009ad315fba490b03ca3caf787df7bc6fd2800c58282ab2650a9cde74",
+    "images/loop/wb98/wb.bin": "ee2cecc4f4ec5f6f5cc36467643b884e07e56d6f3ecb80cd6cc1103c2196842b",
+    "irq/shared/wb128/wb.bin": "d84d610614cd7a6664ad44691e93aa739fb64ad7d9ae01cd55d175a9a1374e58",
+    "irq/shared/wb128-load25600/wb.bin": "c0fba487bf46adf65926a4e83bc46d83c1f91057d65deb02b8ee45a899a1cfd6",
+    "irq/loop/wb128/wb.bin": "55db9c31469acbd6baf63e4b07a161a370105dc613cbf1ecc411fab4aeda15c0",
+    "irq/loop/wb128-load25600/wb.bin": "241b4e392e96f59e6eba059a795a99b33e9d19c5b2d3fdfdce3e1fb10aef3d1c"
+  },
+  "measurementsRerun": false
+}

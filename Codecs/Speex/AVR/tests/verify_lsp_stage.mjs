@@ -1,4 +1,6 @@
 // Wide BigInt products model each original polynomial update independently.
+// Current stages save 12 B; a private product RCALL raises the peak to 14 B.
+// Nested product RETs are internal; only the public RET completes the ABI frame.
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
@@ -32,13 +34,14 @@ function until(predicate){const deadline=cpu.cycles+100000;while(!predicate()){
    trace={p:cpu.dataView.getUint16(24,true),n:Number(name.at(-1)),sp:cpu.SP,reads:[],writes:[],pushes:[],pops:[],start:cpu.cycles};
   }
  }
- const op=cpu.progMem[cpu.pc],ret=op===0x9508;
+ const op=cpu.progMem[cpu.pc],ret=op===0x9508,externalRet=ret&&trace&&cpu.SP===trace.sp;
  if(trace){if((op&0xfe0f)===0x920f)trace.pushes.push(cpu.SP);if((op&0xfe0f)===0x900f)trace.pops.push(cpu.SP+1);}
  watch=trace!==null&&!ret;avrInstruction(cpu);cpu.tick();watch=false;
  if(trace&&!ret)peakSavedStack=Math.max(peakSavedStack,trace.sp-cpu.SP);
  if(ret)while(active.length&&cpu.SP===active.at(-1).sp+2){
   const frame=active.pop();assert.deepEqual(regs.map(r=>cpu.data[r]),frame.regs);assert.equal(cpu.data[1],0);retChecks++;
   if(frame.name.startsWith('speex_avr_lsp_stage')){
+   assert.ok(externalRet,'Only the public RET may finish the stage ABI frame');
    const expectedReads=[],expectedWrites=[];
    for(let j=trace.n;j>=1;j--)for(let b=0;b<4;b++)expectedReads.push(trace.p+4*j+b);
    for(let j=trace.n+1;j>=1;j--)for(let b=0;b<4;b++)expectedWrites.push(trace.p+4*j+b);
@@ -88,8 +91,9 @@ for(let n=2;n<=4;n++)for(const f of fvalues)for(const p1 of aligned)for(let bi=0
 for(let n=2;n<=4;n++)for(const f of [-32768,0,32767])for(let low=0;low<256;low++){check(input(),f,n,low);addressCases++;}
 assert.equal(cases,256254);assert.equal(outputs,1025016);assert.equal(addressCases,2304);
 assert.deepEqual(perStage,{2:85418,3:85418,4:85418});assert.equal(asmCalls,backend==='asm'?cases:0);
-assert.equal(retChecks,cases*(backend==='asm'?3:2));assert.equal(peakSavedStack,backend==='asm'?12:0);
+assert.equal(retChecks,cases*(backend==='asm'?3:2));assert.equal(peakSavedStack,backend==='asm'?14:0);
 if(backend==='asm')for(const values of Object.values(cycles))assert.equal(values.size,1);
+if(backend==='asm')assert.deepEqual(Object.fromEntries(Object.entries(cycles).map(([n,s])=>[n,[...s]])),{'2':[245],'3':[341],'4':[437]});
 const report={mcu:'ATmega328P',simulator:'avr8js 0.21.1',backend,
  binarySha256:createHash('sha256').update(binary).digest('hex'),cases,calls:2*cases,perStage,outputsPerPath:outputs,
  all65536Signed16RootsPerStage:true,signed30CoefficientLimits:true,addressCases,all256PointerLowBytes:true,oddAndPageCrossingPointers:true,

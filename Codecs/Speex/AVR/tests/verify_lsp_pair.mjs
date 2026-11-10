@@ -1,4 +1,6 @@
 // Independent BigInt updates for two disjoint polynomials, C/ASM and IRQ ABI.
+// Current loop saves r2..r17/Y (18 B); pass/product RCALLs make a 22 B peak.
+// Private RETs may leave r1 scratch; only the public return restores the ABI.
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
@@ -25,7 +27,11 @@ cpu.writeData=function(...a){if(watch)trace.writes.push(a[0]);if(workWatch&&a[0]
 function raise(){assert.equal(irq,null);assert.ok(cpu.data[sreg]&128);irq={regs:cpu.data.slice(0,32),sreg:cpu.data[sreg],sp:cpu.SP,pc:cpu.pc};cpu.setInterruptFlag(interrupt);}
 function until(predicate){const deadline=cpu.cycles+300000;while(!predicate()){
  assert.ok(cpu.cycles<deadline,'pair mailbox timeout');const name=entries.get(cpu.pc*2);
- if(name&&!irq&&(!name.startsWith('speex_avr_lsp_pair')||!trace)){active.push({name,sp:cpu.SP,regs:regs.map(r=>cpu.data[r])});
+ if(name&&!irq&&(!name.startsWith('speex_avr_lsp_pair')||!trace)){
+  const original=regs.map(r=>cpu.data[r]),raw=name.startsWith('speex_avr_lsp_pair');
+  const expected=raw?regs.map(r=>(retChecks*73+r*29)&255):original;
+  if(raw)regs.forEach((r,i)=>{cpu.data[r]=expected[i];});
+  active.push({name,sp:cpu.SP,regs:expected,original:raw?original:null});
   if(name.startsWith('speex_avr_lsp_pair')){
    assert.equal(trace,null);assert.equal(cpu.data[1],0);
    if(!irqMode)cpu.data[sreg]=(cpu.data[sreg]&~64)|((asmCalls&1)<<6);
@@ -46,11 +52,13 @@ function until(predicate){const deadline=cpu.cycles+300000;while(!predicate()){
  if(ret&&!inIsr)while(active.length&&cpu.SP===active.at(-1).sp+2){
   const frame=active.pop();assert.deepEqual(regs.map(r=>cpu.data[r]),frame.regs);assert.equal(cpu.data[1],0);retChecks++;
   if(frame.name.startsWith('speex_avr_lsp_pair')){
+   assert.ok(externalRet,'Only the public RET may finish the paired ABI frame');
    const reads=[],writes=[];for(const p of [trace.p,trace.q]){for(let j=trace.n;j>=1;j--)for(let b=0;b<4;b++)reads.push(p+4*j+b);for(let j=trace.n+1;j>=1;j--)for(let b=0;b<4;b++)writes.push(p+4*j+b);}
    assert.deepEqual(trace.reads,reads);assert.deepEqual(trace.writes,writes);
-   assert.deepEqual(trace.pushes,Array.from({length:16},(_,i)=>trace.sp-i));assert.deepEqual(trace.pops,[...trace.pushes].reverse());
+   assert.deepEqual(trace.pushes,Array.from({length:18},(_,i)=>trace.sp-i));assert.deepEqual(trace.pops,[...trace.pushes].reverse());
    trace.elapsed=cpu.cycles-trace.start;if(inject===-1)cycles[trace.n].add(trace.elapsed);
    readBytes+=trace.reads.length;writtenBytes+=trace.writes.length;asmCalls++;lastTrace=trace;trace=null;
+   regs.forEach((r,i)=>{cpu.data[r]=frame.original[i];});
   }
  }
  assert.ok(cpu.SP>=address('__bss_end'),'Static/stack collision');
@@ -99,9 +107,10 @@ if(irqMode){
  for(let n=2;n<=4;n++)for(const f of [-32768,0,32767])for(let low=0;low<256;low++){check(input(),input(),f,(~f)<<16>>16,n,low);addressCases++;}
  for(let n=2;n<=4;n++)for(let low=0;low<256;low++)for(const layout of [1,2]){check(input(),input(),-32768,32767,n,low,layout);addressCases++;}
  assert.equal(cases,257790);assert.equal(addressCases,3840);assert.equal(outputs,2062320);
- if(backend==='asm'){assert.equal(asmCalls,cases);assert.deepEqual([...initialT].sort(),[0,1]);assert.equal(maxStack,18);}
+ if(backend==='asm'){assert.equal(asmCalls,cases);assert.deepEqual([...initialT].sort(),[0,1]);assert.equal(maxStack,22);}
 }
 for(const values of Object.values(cycles))if(backend==='asm')assert.equal(values.size,1);
+if(backend==='asm')assert.deepEqual(Object.fromEntries(Object.entries(cycles).map(([n,s])=>[n,[...s]])),{'2':[510],'3':[708],'4':[908]});
 const report={mcu:'ATmega328P',compiler:'AVR GCC 7.3.0',simulator:'avr8js 0.21.1',backend,binarySha256:createHash('sha256').update(binary).digest('hex'),
  cases,calls,perStage,outputsPerPath:outputs,addressCases,all65536Signed16RootsAtBothInputs:!irqMode,independentBigIntProductOracle:true,
  selectedAndForcedCExact:true,guardsAndUntouchedWordsPreserved:true,calleeSavedRegistersAndR1AtRet:true,retChecks,

@@ -1,14 +1,12 @@
-/* Original project kernels: constant stages 2/3/4, enhanced AVR5/GNU ABI.
- * p r25:r24, f r23:r22. p0=2^20, p1 divisible by 64; each product input
- * is signed30. Polynomial/root bounds and the selectable C implementation
- * are in nb3_lsp_stage.h. Read p[stage..1] once, write p[stage+1..1].
- * The stages share their descending tail. Twelve saved bytes (r8..17/Y),
- * no extra RAM, hardware IO or interrupt masking; preserve ABI and clear r1.
- * Private general products retain the MUL result in r1 until the final P1
- * product clears it before the p0 addition. No intervening instruction
- * treats r1 as zero or calls C; the remaining tail preserves that zero.
- * Default value kernels stay byte-identical. Independent rounding and wrap
- * occur at each original product/update. IRQs must preserve interrupted r1. */
+/* Original project constant stages 2/3/4, AVR5 / ATmega328P / GNU ABI.
+ * p r25:r24, f r23:r22; p0=2^20, p1 divisible by 64, signed30 product
+ * inputs. Read p[stage..1] once and write p[stage+1..1]. The descending
+ * tail and exact general-product body are shared. Save r8..r17/Y (12
+ * bytes); the private product return adds 2 peak bytes on this target.
+ * The private general product preserves T and leaves r1 scratch until
+ * the final aligned P1 product clears it before the p0 addition. No C
+ * call, static RAM, IO or interrupt masking; IRQs must preserve r1/SREG.
+ * Default value kernels are unchanged. Explicit C: nb3_lsp_stage.h. */
 #include "lsp_stage_macros.S"
 .section .text.speex_avr_lsp_stages,"ax",@progbits
 .macro STAGE_PROLOGUE
@@ -46,3 +44,5 @@ speex_avr_lsp_stage2:
 .endr
     ret
 .size speex_avr_lsp_stage2,.-speex_avr_lsp_stage2
+
+STAGE_DEFINE_PRODUCT speex_lsp_stage_product_private
