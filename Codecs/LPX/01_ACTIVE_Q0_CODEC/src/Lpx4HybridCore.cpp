@@ -968,6 +968,23 @@ static inline int32_t polyMulQ12(int32_t v,int16_t c){
     // Preserve the original separate floors of the two split products.
     return (lpx4Mul32x16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
 }
+// Conversion-only bound: before the fifth quadratic, each coefficient is
+// bounded by 4096*binomial(9,k), at most 516096. Earlier factors use the
+// direct path, so no split-floor error enters that bound. Consequently
+// trunc(v/16) fits signed16 (|hi|<=32256). Keep the exact 250000 threshold
+// and both separate floors; the unrestricted polynomial helper stays above.
+static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
+#if LPX4_USE_AVR_NOMUL_ASM
+    if(v<=250000L && v>=-250000L)return lpx4Shift12(lpx4Mul32x16(v,c));
+    const int16_t hi=(int16_t)truncShift(v,4);
+    int8_t rem=(uint8_t)v&15;
+    if(v<0 && rem)rem-=16;
+    return (lpx4Mul16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
+#else
+    // The same fixed-point C reference remains explicitly selectable on AVR.
+    return polyMulQ12(v,c);
+#endif
+}
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
 // The next 111 ring slots are dead: the largest v5 pitch lag is 145, and
 // every future code is stored before it can be read. Align within those slots
@@ -1005,7 +1022,7 @@ static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,ui
         j=n-1;
     }
     for(;j>=2;--j){
-        const int32_t value=ringPolyGet(ring,base,j-2)+polyMulQ12(ringPolyGet(ring,base,j-1),c)+ringPolyGet(ring,base,j);
+        const int32_t value=ringPolyGet(ring,base,j-2)+polyCosineMulQ12(ringPolyGet(ring,base,j-1),c)+ringPolyGet(ring,base,j);
         ringPolyPut(ring,base,j,value);
     }
     ringPolyPut(ring,base,1,c+ringPolyGet(ring,base,1));
@@ -1096,8 +1113,11 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
         const uint8_t base=(i&1)?qbase:pbase;
         if(i<2){
             const int16_t unit=(i&1)?-4096:4096;
-            ringPolyPut(ringQ_,base,1,unit+cc);
-            ringPolyPut(ringQ_,base,2,4096+((i&1)?-cc:cc));
+            // |cc|<=8192, so the shared first coefficient fits signed16.
+            // P2=P1 and Q2=-Q1 for these exact initial unit factors.
+            const int16_t first=unit+cc;
+            ringPolyPut(ringQ_,base,1,first);
+            ringPolyPut(ringQ_,base,2,(i&1)?-(int32_t)first:(int32_t)first);
             ringPolyPut(ringQ_,base,3,unit);
         }else ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2),halfPolynomialP&&!(i&1));
 #else

@@ -1,5 +1,9 @@
 # Exact C decoding on ATmega328P
 
+The measurements below describe revision 0320c101. The later
+[exact LSF compaction](lpx-lsf-compact.md) saves another 6 program bytes on
+Mega C/ASM with no measured slowdown; it retains these original receipts.
+
 The universal v9 fixed-point C decoder now meets the tested 8 kHz playback
 deadline on ATmega328P at 16 MHz. No compressed byte or decoded fixed-point
 sample changes. This is C source compiled for real AVR5 hardware multiplication,

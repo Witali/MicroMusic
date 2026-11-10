@@ -1,0 +1,23 @@
+{
+  "schema": "lpx-lsf-reproducer-checks-v1",
+  "checks": [
+    {
+      "target": "tiny",
+      "baseline_revision": "0320c1014618188a3121fdfef0be55b30690d977",
+      "driver_sha256": "f032ac4bebe189412b31af4b5a2f43435568ba64d51ad3fe30cc35677e74b1c2",
+      "case_filter": "chego-2k",
+      "matched_backend_pairs": 1,
+      "all_gates_passed": true,
+      "current_core_sha256": "b8644299804e86ff479be4ad363e607c3da67a79dbacaed7e223e4d15c56c368"
+    },
+    {
+      "target": "mega",
+      "baseline_revision": "0320c1014618188a3121fdfef0be55b30690d977",
+      "driver_sha256": "f032ac4bebe189412b31af4b5a2f43435568ba64d51ad3fe30cc35677e74b1c2",
+      "case_filter": "chego-2k",
+      "matched_backend_pairs": 2,
+      "all_gates_passed": true,
+      "current_core_sha256": "b8644299804e86ff479be4ad363e607c3da67a79dbacaed7e223e4d15c56c368"
+    }
+  ]
+}

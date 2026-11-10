@@ -1,0 +1,97 @@
+# Smaller exact LSF to LPC conversion
+
+Original MicroMusic work for ATtiny88 / AVR25 without MUL and ATmega328P /
+AVR5 with MUL, GNU AVR ABI, AVR-GCC 7.3.0. The measured universal v9 recipe
+uses `-Os -flto -mcall-prologues -mrelax -finline-small-functions`, SRAM512,
+LPC segments 2, FIFO32/prefill24, 16 MHz / 8 kHz. Tiny software products use
+unroll2 and the existing reserved-register ISR; Mega uses the ordinary C ISR.
+Arithmetic selection and device/Flash access remain independent.
+
+## Reuse the first polynomial coefficient
+
+After the initial factor, P has coefficients
+`[4096,4096+c,4096+c,4096]`; Q has
+`[4096,-4096+c,4096-c,-4096]`. Form `first=unit+c` once, then store
+`first` and either `first` or `-first`. Since `|c|<=8192`, the temporary is
+in `[-12288,12288]` and fits signed16. Widen before negation at the word store.
+This is shared fixed-point C++ in the SRAM512 path; it changes no product,
+floor, cosine node, final clamp, workspace lifetime or serialized parameter.
+
+## Narrow the high part only under a conversion bound
+
+Each cosine factor is `(1,c/4096,1)` with `|c|<=8192`. For integer bound B,
+`|floor(v*c/4096)|<=2B` when `|v|<=B`. Thus absolute coefficient bounds follow
+convolution by `(1,2,1)`: after r quadratics they are bounded coefficientwise
+by `4096*(1+z)^(2r+1)`. Before factors n4/n6/n8/n10 the maxima are
+12288,40960,143360,516096. The first three remain on the direct-product path.
+
+Before the last factor, `hi=trunc(v/16)` therefore has magnitude at most 32256.
+Its signed16 representation is exact. Retain the existing 250000 threshold,
+the signed remainder in [-15,15], and both separately floored products:
+
+```c
+floor(hi*c/256) + floor(rem*c/4096)
+```
+
+Use the existing signed16x16 backend for that high part on explicitly enabled
+AVR25 ASM. The generic polynomial helper keeps its wider input contract and
+the C/AVR5 fallback stays available. Selecting C on AVR still selects C.
+No handwritten assembly, fake CPU macro or new build switch is introduced.
+The floating synthesis branch excludes these fixed-point helpers entirely.
+
+## Combined measurements
+
+The first matched four universal controls give the following full linked
+program sizes, excluding only their verified unchanged audio arrays:
+
+| Target and backend | Before B | After B | Saving B | Decoder CPU plus complete IRQ |
+| --- | ---: | ---: | ---: | --- |
+| Tiny88 ASM | 5604–5605 | 5556–5557 | 48 | 4.82–5.20 fewer cycles/sample |
+| Mega328P ASM | 5094–5095 | 5088–5089 | 6 | unchanged |
+| Mega328P C | 4894–4895 | 4888–4889 | 6 | 0.023–0.025 fewer cycles/sample |
+
+Tiny's peak observed stack falls 67→64 B, margin 11→14 B; static SRAM stays 433 B.
+Mega stack/static SRAM stay unchanged. These are combined measurements:
+adding standalone size savings would predict the wrong Tiny result.
+Full playback, exact PWM, zero underruns, stack and output timing are checked
+with IRQs active. Cycle figures are mean decoder CPU plus the complete IRQ,
+excluding foreground queue work; they are not per-call worst-case bounds.
+No physical board was measured.
+
+## Independent checks and history
+
+The retained `test_ring_polynomial_exact.py` compares the actual converter
+against independent full scalar convolution and the original cosine ROM.
+It covers 368640 conversions, all 256 ring cursors, 145 live history slots,
+profiles 4/6/15 and LPC segments 1/2/4 under UBSan. Existing unrestricted
+polynomial and frozen ordered-anchor checks remain separate.
+
+The whole 181-record/306-segment corpus contains 15188029 samples: fixed native
+PCM16 and PWM stay byte-identical to 0320c101. This is a fresh host comparison,
+not another whole-corpus AVR timing run. A v9/SRAM512/LPC2 floating preprocessed
+translation unit and complete host library also remain byte-identical.
+
+Byte-offset recurrence, stage-specific guard removal, forced outlining and
+output-loop variants were screened separately. Some smaller variants slowed
+decoding; they remain rejected. In particular the combined byte-offset form
+slows Mega ASM by about 0.07 cycles/sample and is not selected.
+
+[Measurements and validation scopes](../../Codecs/LPX/research/lsf-compact-2026-11-10/README.md)
+preserve the old receipts and introduce a separate source transition. Original
+website catalogs/HEX remain bound to their released source; a current-source
+rebuild comparison is not a silent rewrite of their historical timing values.
+
+```sh
+python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_lsf_compaction.py \
+  build/lsf-tiny --target tiny
+python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_lsf_compaction.py \
+  build/lsf-mega --target mega
+python3 -m unittest discover -s Codecs/LPX/01_ACTIVE_Q0_CODEC/tests \
+  -p test_ring_polynomial_exact.py
+```
+
+Add `--wsl Ubuntu` on Windows. `--case chego-2k` reproduces one matched
+control. The verifier reconstructs the 0320c101 baseline from local Git,
+freezes current sources, uses fresh ELF/IRQ runs, and rejects size, speed,
+stack or exact-output regressions. All transformations are original project
+code; no external implementation was adapted.
