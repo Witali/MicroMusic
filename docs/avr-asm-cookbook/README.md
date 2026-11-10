@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Share order-8/order-10 coefficient finishing](speex-shared-lsp-finish.md):
+use one paired loop and a local exact rounding/saturation subroutine; compare
+Flash, stack, explicit C selection and measured scalar/IRQ tradeoffs.
+
 [Reuse related QMF products](speex-qmf-common-product.md): one signed24
 product updates two accumulators, reducing measured multiplication count
 and exact block time while retaining the C oracle and boundary IRQ proof.

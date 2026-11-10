@@ -1,118 +1,123 @@
-/* Original project code, enhanced AVR5 / ATmega328P / GNU ABI.
- * p r25:r24, q r23:r22: six int32 halves with p[0]==q[0]==2^20;
- * ak r21:r20: ten int16 coefficients, disjoint from both inputs.
- * Pair symmetric outputs using S=p[j]+p[j-1], D=q[j]-q[j-1].
- * Each S+D and S-D wraps and rounds separately before +/-32767 saturation.
- * First pair uses the known equal constants; later pairs retain the newest
- * p/q words and alternate register banks, reading each p/q[1..5] once.
- * Exactly 40 input bytes read, 20 output bytes written. Own saved registers:
- * r6..r17/Y (14 stack bytes); all other callee-saved registers stay intact.
- * No MUL, CLI, IO or extra RAM; r1 is cleared at external RET. C fallback
- * and architecture plus explicit enable selector: nb3_lsp_finish.h.
- * Polynomial equations derive from licensed Xiph lsp.c, retained in vendor;
- * this assembly implementation is original to this project. */
-.section .text.speex_avr_lsp_finish10,"ax",@progbits
+/* Original project implementation: AVR5 / ATmega328P / GNU AVR ABI.
+ * p r25:r24 and q r23:r22 address symmetric int32 half-polynomials;
+ * p[0]==q[0]==2^20. ak r21:r20 addresses disjoint int16 output.
+ * Order 8 reads p/q[1..4] once (32 bytes), writes 8 coefficients (16 bytes).
+ * Order 10 reads p/q[1..5] once (40 bytes), writes 10 coefficients (20 bytes).
+ * Each S+D and S-D wraps modulo 32, rounds separately, then clips to +/-32767.
+ * Save r2:r3, r6..r17 and Y (16 bytes); the local rounding call adds 2 bytes.
+ * X/Z track inputs, Y forward output, r2:r3 reverse output. r0:r1 holds Z
+ * only while storing a mirror pair; r1 is cleared at the external return.
+ * No MUL, CLI, IO, static RAM or external C calls. Explicit C fallback and
+ * architecture plus assembly-enable selection remain in nb3_lsp_finish.h.
+ * Polynomial equations derive from Xiph lsp.c, retained with its license
+ * under vendor/speex-1.2.1/libspeex; this assembly code is original. */
+.section .text.speex_lsp_finish_loop,"ax",@progbits
+.global speex_avr_lsp_finish8
+.type speex_avr_lsp_finish8,@function
+speex_avr_lsp_finish8:
+    ldi r18,16
+    rjmp .Lfinish_body
+.size speex_avr_lsp_finish8,.-speex_avr_lsp_finish8
 .global speex_avr_lsp_finish10
 .type speex_avr_lsp_finish10,@function
-
-/* GNU AVR register operands accept numeric expressions in macros. */
-.macro NB3_FINISH_LOAD base,ptr
-    ld \base,\ptr+
-    ld \base+1,\ptr+
-    ld \base+2,\ptr+
-    ld \base+3,\ptr+
-.endm
-
-/* r18..21 hold an unrounded sum. Its low byte is discarded only after
- * adding 128 with carry through all four bytes, including signed wrap. */
-.macro NB3_FINISH_OUTPUT sum,diff,offset,minus,first_constant=0
-    movw r18,\sum
-    movw r20,\sum+2
-.if \minus
-    sub r18,\diff
-    sbc r19,\diff+1
-    sbc r20,\diff+2
-    sbc r21,\diff+3
-.else
-    add r18,\diff
-    adc r19,\diff+1
-    adc r20,\diff+2
-    adc r21,\diff+3
-.endif
-.if \first_constant
-    subi r20,0xe0
-    sbci r21,0xff
-.endif
-    subi r18,0x80
-    sbci r19,0xff
-    sbci r20,0xff
-    sbci r21,0xff
-    tst r21
-    brmi .Lfinish_negative_\@
-    brne .Lfinish_positive_clip_\@
-    sbrs r20,7
-    rjmp .Lfinish_round_done_\@
-.Lfinish_positive_clip_\@:
-    ldi r19,0xff
-    ldi r20,0x7f
-    rjmp .Lfinish_round_done_\@
-.Lfinish_negative_\@:
-    cpi r21,0xff
-    brne .Lfinish_negative_clip_\@
-    cpi r20,0x80
-    brlo .Lfinish_negative_clip_\@
-    brne .Lfinish_round_done_\@
-    tst r19
-    brne .Lfinish_round_done_\@
-.Lfinish_negative_clip_\@:
-    ldi r19,1
-    ldi r20,0x80
-.Lfinish_round_done_\@:
-    std Y+\offset,r19
-    std Y+\offset+1,r20
-.endm
-
-/* Keep newP/newQ unchanged for the following pair. oldQ becomes -D,
- * so the forward output subtracts it and the mirrored output adds it. */
-.macro NB3_FINISH_PAIR oldP,oldQ,newP,newQ,offset
-    NB3_FINISH_LOAD \newP,X
-    NB3_FINISH_LOAD \newQ,Z
-    add \oldP,\newP
-    adc \oldP+1,\newP+1
-    adc \oldP+2,\newP+2
-    adc \oldP+3,\newP+3
-    sub \oldQ,\newQ
-    sbc \oldQ+1,\newQ+1
-    sbc \oldQ+2,\newQ+2
-    sbc \oldQ+3,\newQ+3
-    NB3_FINISH_OUTPUT \oldP,\oldQ,0,1
-    NB3_FINISH_OUTPUT \oldP,\oldQ,\offset,0
-.endm
-
 speex_avr_lsp_finish10:
-.irp reg,6,7,8,9,10,11,12,13,14,15,16,17,28,29
+    ldi r18,20
+.size speex_avr_lsp_finish10,.-speex_avr_lsp_finish10
+.type speex_lsp_finish_loop_body,@function
+speex_lsp_finish_loop_body:
+.Lfinish_body:
+.irp reg,2,3,6,7,8,9,10,11,12,13,14,15,16,17,28,29
     push \reg
 .endr
     movw r26,r24
     movw r30,r22
     movw r28,r20
+    movw r2,r20
+    add r2,r18
+    adc r3,r1
     adiw r26,4
     adiw r30,4
-    NB3_FINISH_LOAD 6,X
-    NB3_FINISH_LOAD 10,Z
-    NB3_FINISH_OUTPUT 6,10,0,0
-    NB3_FINISH_OUTPUT 6,10,18,1,1
-    adiw r28,2
-    NB3_FINISH_PAIR 6,10,14,22,14
-    adiw r28,2
-    NB3_FINISH_PAIR 14,22,6,10,10
-    adiw r28,2
-    NB3_FINISH_PAIR 6,10,14,22,6
-    adiw r28,2
-    NB3_FINISH_PAIR 14,22,6,10,2
-.irp reg,29,28,17,16,15,14,13,12,11,10,9,8,7,6
+    clr r6
+    clr r7
+    ldi r18,0x10
+    mov r8,r18
+    clr r9
+    movw r10,r6
+    movw r12,r8
+.Lfinish_pair:
+.irp reg,14,15,16,17
+    ld \reg,X+
+.endr
+.irp reg,22,23,24,25
+    ld \reg,Z+
+.endr
+    add r6,r14
+    adc r7,r15
+    adc r8,r16
+    adc r9,r17
+    sub r10,r22
+    sbc r11,r23
+    sbc r12,r24
+    sbc r13,r25
+    movw r18,r6
+    movw r20,r8
+    sub r18,r10
+    sbc r19,r11
+    sbc r20,r12
+    sbc r21,r13
+    rcall .Lfinish_round
+    st Y+,r19
+    st Y+,r20
+    movw r18,r6
+    movw r20,r8
+    add r18,r10
+    adc r19,r11
+    adc r20,r12
+    adc r21,r13
+    rcall .Lfinish_round
+    movw r0,r30
+    movw r30,r2
+    st -Z,r20
+    st -Z,r19
+    movw r2,r30
+    movw r30,r0
+    movw r6,r14
+    movw r8,r16
+    movw r10,r22
+    movw r12,r24
+    cp r28,r2
+    cpc r29,r3
+    brne .Lfinish_pair
+.irp reg,29,28,17,16,15,14,13,12,11,10,9,8,7,6,3,2
     pop \reg
 .endr
     clr r1
     ret
-.size speex_avr_lsp_finish10,.-speex_avr_lsp_finish10
+.Lfinish_round:
+    subi r18,0x80
+    sbci r19,0xff
+    sbci r20,0xff
+    sbci r21,0xff
+    tst r21
+    brmi .Lfinish_negative
+    brne .Lfinish_positive_clip
+    sbrs r20,7
+    ret
+.Lfinish_positive_clip:
+    ldi r19,0xff
+    ldi r20,0x7f
+    ret
+.Lfinish_negative:
+    cpi r21,0xff
+    brne .Lfinish_negative_clip
+    cpi r20,0x80
+    brlo .Lfinish_negative_clip
+    brne .Lfinish_round_done
+    tst r19
+    brne .Lfinish_round_done
+.Lfinish_negative_clip:
+    ldi r19,1
+    ldi r20,0x80
+.Lfinish_round_done:
+    ret
+.size speex_lsp_finish_loop_body,.-speex_lsp_finish_loop_body

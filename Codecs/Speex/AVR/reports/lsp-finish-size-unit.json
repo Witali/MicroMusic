@@ -1,0 +1,486 @@
+{
+  "scope": "Isolated exact arithmetic candidate; production integration and complete-frame PCM/IRQ timing validation pending",
+  "target": "ATmega328P / AVR5 / GNU AVR ABI",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "sourceHashConvention": "SHA256 of source/report UTF-8 bytes with CRLF normalized to LF; trailing newline preserved",
+  "externalToolHashConvention": "SHA256 of exact bytes; no newline normalization",
+  "baselineCommit": "e5350100",
+  "candidate": {
+    "lsp_finish.S": "c161d4417eb91e7ff6618b2fdffe4313a58e25129e6de192ee05959932abd714",
+    "nb3_lsp_finish.h": "82776b8584a84ca3e1d3c0578402e276d2f4deb40753bee0e13f665d0c19408c",
+    "compact_lsp.c.inc": "39414b9bfe0317fefe9e39fd6be44492c5f65ca0f8ae189ab768873760d0fba7"
+  },
+  "compilerOptions": [
+    "-std=c11",
+    "-Os",
+    "-flto",
+    "-fno-ipa-icf",
+    "-fwrapv",
+    "-fno-strict-aliasing",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-mmcu=atmega328p",
+    "-mcall-prologues",
+    "-mrelax",
+    "-I<isolated>/src",
+    "-DSPEEX_NB3_ENABLE_ASM=1"
+  ],
+  "scalarCycleBoundary": "Entry through external RET; includes local call/return, excludes caller CALL and ISR instructions/entry charges",
+  "baseline": {
+    "textBytes": 806,
+    "binarySha256": "fb42e5203a904aa102a7878a1e4b107f50075c6d2d3d313ac3eff6be761888bc",
+    "reportSha256": "191b131e8998e8cd5f94aff71665edbee4286f710cf03301ee34580cefd58b7c",
+    "rebuiltBinaryIdentical": true,
+    "structuredCycles": {
+      "total": 1655598,
+      "min": 390,
+      "max": 414,
+      "mean": 404.19873046875
+    }
+  },
+  "measurements": [
+    {
+      "fixture": "loop8-asm",
+      "binarySha256": "d6a59c158303933532ab1975a738b86de3de0409a9ec203beef88d3970149d34",
+      "inputSha256": "95e0311d8bd773d930d59e3ae2703aa3467e6534e1d4659602aa9475483e7e23",
+      "reportSha256": "f514dd89e534d49a9ff8987bd99ea5025656c0b79e7d7ebc4beaed17189ef39e",
+      "cases": 41984,
+      "coefficientsPerPath": 335872,
+      "assemblyCalls": 83968,
+      "completedTimerInterrupts": 351916,
+      "kernelTextBytes": 238,
+      "savedRegisters": 16,
+      "ownStackBytesIncludingLocalReturn": 18,
+      "scalarRawCycles": {
+        "min": 432,
+        "max": 469,
+        "total": 38252526,
+        "calls": 83968
+      },
+      "structuredRawCycles": {
+        "total": 1841917,
+        "min": 432,
+        "max": 462,
+        "mean": 449.686767578125
+      },
+      "structuredSelectedCycles": {
+        "total": 1850109,
+        "min": 434,
+        "max": 464,
+        "mean": 451.686767578125
+      },
+      "structuredSequentialOsCycles": {
+        "total": 4411392,
+        "min": 1077,
+        "max": 1077,
+        "mean": 1077
+      },
+      "structuredSequentialO3Cycles": {
+        "total": 2887680,
+        "min": 705,
+        "max": 705,
+        "mean": 705
+      }
+    },
+    {
+      "fixture": "loop10-asm",
+      "binarySha256": "1dafa0a7561a9d53d59d57e56bf87224881e3bf9799dd36d09823cb18659636b",
+      "inputSha256": "994bb73f1a99d5ac3f7efa7ae3b6324327efc364b77c6d09807fa6351c38e9e7",
+      "reportSha256": "f12f0c3bba892c830e48d8f272d8ad0c8d3320a6422b042fd390108c1ac6a89b",
+      "cases": 50688,
+      "coefficientsPerPath": 506880,
+      "assemblyCalls": 101376,
+      "completedTimerInterrupts": 515875,
+      "kernelTextBytes": 238,
+      "savedRegisters": 16,
+      "ownStackBytesIncludingLocalReturn": 18,
+      "scalarRawCycles": {
+        "min": 516,
+        "max": 562,
+        "total": 55318392,
+        "calls": 101376
+      },
+      "structuredRawCycles": {
+        "total": 2210466,
+        "min": 516,
+        "max": 556,
+        "mean": 539.66455078125
+      },
+      "structuredSelectedCycles": {
+        "total": 2218658,
+        "min": 518,
+        "max": 558,
+        "mean": 541.66455078125
+      },
+      "structuredSequentialOsCycles": {
+        "total": 5402624,
+        "min": 1319,
+        "max": 1319,
+        "mean": 1319
+      },
+      "structuredSequentialO3Cycles": {
+        "total": 3727360,
+        "min": 910,
+        "max": 910,
+        "mean": 910
+      }
+    },
+    {
+      "fixture": "inline8-asm",
+      "binarySha256": "f5fe1fea192e7e8f1613e0159ba3a4fa4a7c52a67304b6bbb2ed9ab5d4f6e03e",
+      "inputSha256": "448a48787f2df4c3d9b34be186d87001570d057e553e3892b962382bef84c700",
+      "reportSha256": "7d024f1adae0442d5b284a99703971d60389c08d51266918e6baa2b452e6ccfd",
+      "cases": 41984,
+      "coefficientsPerPath": 335872,
+      "assemblyCalls": 83968,
+      "completedTimerInterrupts": 343053,
+      "kernelTextBytes": 276,
+      "savedRegisters": 16,
+      "ownStackBytesIncludingLocalReturn": 16,
+      "scalarRawCycles": {
+        "min": 396,
+        "max": 419,
+        "total": 34574266,
+        "calls": 83968
+      },
+      "structuredRawCycles": {
+        "total": 1665483,
+        "min": 396,
+        "max": 414,
+        "mean": 406.612060546875
+      },
+      "structuredSelectedCycles": {
+        "total": 1673675,
+        "min": 398,
+        "max": 416,
+        "mean": 408.612060546875
+      },
+      "structuredSequentialOsCycles": {
+        "total": 4411392,
+        "min": 1077,
+        "max": 1077,
+        "mean": 1077
+      },
+      "structuredSequentialO3Cycles": {
+        "total": 2887680,
+        "min": 705,
+        "max": 705,
+        "mean": 705
+      }
+    },
+    {
+      "fixture": "inline10-asm",
+      "binarySha256": "0a82114947664665519ec768dacada6669e859be5616489e7be00540e34a3408",
+      "inputSha256": "40597bc9c2c729f006065ddb2460120604245f02474f60cc89adfb2602028f36",
+      "reportSha256": "8b01a1be8800a9bac04e575000ff10d1def7e99059766b54e099a6b6d0e1fb6f",
+      "cases": 50688,
+      "coefficientsPerPath": 506880,
+      "assemblyCalls": 101376,
+      "completedTimerInterrupts": 502475,
+      "kernelTextBytes": 276,
+      "savedRegisters": 16,
+      "ownStackBytesIncludingLocalReturn": 16,
+      "scalarRawCycles": {
+        "min": 471,
+        "max": 498,
+        "total": 49757480,
+        "calls": 101376
+      },
+      "structuredRawCycles": {
+        "total": 1987374,
+        "min": 471,
+        "max": 495,
+        "mean": 485.19873046875
+      },
+      "structuredSelectedCycles": {
+        "total": 1995566,
+        "min": 473,
+        "max": 497,
+        "mean": 487.19873046875
+      },
+      "structuredSequentialOsCycles": {
+        "total": 5402624,
+        "min": 1319,
+        "max": 1319,
+        "mean": 1319
+      },
+      "structuredSequentialO3Cycles": {
+        "total": 3727360,
+        "min": 910,
+        "max": 910,
+        "mean": 910
+      }
+    }
+  ],
+  "portableControls": [
+    {
+      "fixture": "loop8-c",
+      "binarySha256": "a672900e70bf5234040c2d636d7e052763a2786a97b3eb33cf74a291b2fffc3e",
+      "inputSha256": "e558e54a97a31bccc3640fbe24edf135cc6cacded43ff206ad6d16c37b22df02",
+      "reportSha256": "0366adceb7cf890a0910fd750e187c1b765d1368a94a2c48d92615535f8a9dc8",
+      "cases": 796,
+      "coefficientsPerPath": 6368,
+      "assemblyCalls": 796,
+      "completedTimerInterrupts": 6834,
+      "kernelTextBytes": 238,
+      "savedRegisters": 16,
+      "ownStackBytesIncludingLocalReturn": 18,
+      "scalarRawCycles": {
+        "min": 432,
+        "max": 466,
+        "total": 362692,
+        "calls": 796
+      },
+      "structuredRawCycles": {
+        "total": 28713,
+        "min": 437,
+        "max": 462,
+        "mean": 448.640625
+      },
+      "structuredSelectedCycles": {
+        "total": 32896,
+        "min": 514,
+        "max": 514,
+        "mean": 514
+      },
+      "structuredSequentialOsCycles": {
+        "total": 68928,
+        "min": 1077,
+        "max": 1077,
+        "mean": 1077
+      },
+      "structuredSequentialO3Cycles": {
+        "total": 45120,
+        "min": 705,
+        "max": 705,
+        "mean": 705
+      }
+    },
+    {
+      "fixture": "loop10-c",
+      "binarySha256": "80f55ec08c2e92c6abfdc75426a04f3867561c1925adbef90acb52351477ad35",
+      "inputSha256": "4f8380e4aa29d5e1f1390fb18260f57963ef7f05471ec3eed4eecd8c8ca4e60d",
+      "reportSha256": "7a303bcfc0abc6892cea8e95b532d98431dde310660f0eae10968e7702318a77",
+      "cases": 966,
+      "coefficientsPerPath": 9660,
+      "assemblyCalls": 966,
+      "completedTimerInterrupts": 10073,
+      "kernelTextBytes": 238,
+      "savedRegisters": 16,
+      "ownStackBytesIncludingLocalReturn": 18,
+      "scalarRawCycles": {
+        "min": 516,
+        "max": 558,
+        "total": 527346,
+        "calls": 966
+      },
+      "structuredRawCycles": {
+        "total": 34394,
+        "min": 521,
+        "max": 556,
+        "mean": 537.40625
+      },
+      "structuredSelectedCycles": {
+        "total": 39296,
+        "min": 614,
+        "max": 614,
+        "mean": 614
+      },
+      "structuredSequentialOsCycles": {
+        "total": 84416,
+        "min": 1319,
+        "max": 1319,
+        "mean": 1319
+      },
+      "structuredSequentialO3Cycles": {
+        "total": 58304,
+        "min": 911,
+        "max": 911,
+        "mean": 911
+      }
+    },
+    {
+      "fixture": "loop8-generic",
+      "binarySha256": "a672900e70bf5234040c2d636d7e052763a2786a97b3eb33cf74a291b2fffc3e",
+      "inputSha256": "619c0e1f41acad4350cc3de371d1463ea54a300c14d4b6e4e9d318ab850887fc",
+      "reportSha256": "1a599f9c96cc73fdc0df260608358c7d30d65fe23f1da7fcf588b305225a7ebf",
+      "cases": 796,
+      "coefficientsPerPath": 6368,
+      "assemblyCalls": 796,
+      "completedTimerInterrupts": 6834,
+      "kernelTextBytes": 238,
+      "savedRegisters": 16,
+      "ownStackBytesIncludingLocalReturn": 18,
+      "scalarRawCycles": {
+        "min": 432,
+        "max": 466,
+        "total": 362692,
+        "calls": 796
+      },
+      "structuredRawCycles": {
+        "total": 28713,
+        "min": 437,
+        "max": 462,
+        "mean": 448.640625
+      },
+      "structuredSelectedCycles": {
+        "total": 32896,
+        "min": 514,
+        "max": 514,
+        "mean": 514
+      },
+      "structuredSequentialOsCycles": {
+        "total": 68928,
+        "min": 1077,
+        "max": 1077,
+        "mean": 1077
+      },
+      "structuredSequentialO3Cycles": {
+        "total": 45120,
+        "min": 705,
+        "max": 705,
+        "mean": 705
+      }
+    },
+    {
+      "fixture": "loop10-generic",
+      "binarySha256": "80f55ec08c2e92c6abfdc75426a04f3867561c1925adbef90acb52351477ad35",
+      "inputSha256": "00fc2f13a6a8d39d584345cdd39f1e03d0eefa958ead313195f57627a5140101",
+      "reportSha256": "52409d9ea671a6427669c28b8e3542e3eac7a68c57ec1cb9e740a94c86a6d101",
+      "cases": 966,
+      "coefficientsPerPath": 9660,
+      "assemblyCalls": 966,
+      "completedTimerInterrupts": 10073,
+      "kernelTextBytes": 238,
+      "savedRegisters": 16,
+      "ownStackBytesIncludingLocalReturn": 18,
+      "scalarRawCycles": {
+        "min": 516,
+        "max": 558,
+        "total": 527346,
+        "calls": 966
+      },
+      "structuredRawCycles": {
+        "total": 34394,
+        "min": 521,
+        "max": 556,
+        "mean": 537.40625
+      },
+      "structuredSelectedCycles": {
+        "total": 39296,
+        "min": 614,
+        "max": 614,
+        "mean": 614
+      },
+      "structuredSequentialOsCycles": {
+        "total": 84416,
+        "min": 1319,
+        "max": 1319,
+        "mean": 1319
+      },
+      "structuredSequentialO3Cycles": {
+        "total": 58304,
+        "min": 911,
+        "max": 911,
+        "mean": 911
+      }
+    }
+  ],
+  "cAndUnmatchedArchitectureImagesIdentical": true,
+  "sizeComparison": {
+    "oldNb10Bytes": 806,
+    "outlinedShared8And10Bytes": 238,
+    "inlineShared8And10Bytes": 276,
+    "outlinedSavingsAgainstNb10OnlyBytes": 568,
+    "inlineSavingsAgainstNb10OnlyBytes": 530,
+    "additionalWbCallerSavingsUnmeasured": true
+  },
+  "estimates": {
+    "loop": {
+      "workload": "Structured scalar vectors only; not a complete decoder measurement",
+      "nb10MeanCyclesPerCall": 539.66455078125,
+      "nb10BaselineMeanCyclesPerCall": 404.19873046875,
+      "hypotheticalFourNb10CallsExtraCycles": 541.86328125,
+      "percentOf320000CycleFrame": 0.169332275390625,
+      "wb8MeanCyclesPerCall": 449.686767578125,
+      "wb8SequentialO3MeanCyclesPerCall": 705
+    },
+    "inline": {
+      "workload": "Structured scalar vectors only; not a complete decoder measurement",
+      "nb10MeanCyclesPerCall": 485.19873046875,
+      "nb10BaselineMeanCyclesPerCall": 404.19873046875,
+      "hypotheticalFourNb10CallsExtraCycles": 324.0,
+      "percentOf320000CycleFrame": 0.10125,
+      "wb8MeanCyclesPerCall": 406.612060546875,
+      "wb8SequentialO3MeanCyclesPerCall": 705
+    }
+  },
+  "sourceSha256": {
+    "build.py": "a491f9673bed78a641ee976616d6a7a7e47799b7c353e41c6cca9e7669d852a4",
+    "prepare_candidate.py": "c04cb8fd017f53b0da2bf62cfc2ecf594743859d1ccab46b55997dad1282e6ea",
+    "audit.py": "647e109eec025e0917176968956054b4a40fc023e8cc716e4f17fab268c013fd",
+    "verify8.mjs": "d81a07d0496ab106c82e82f6357f42124c135dc53c4417e085eb23bb57a5bd1d",
+    "verify10.mjs": "e76d7037c52f24e25c54718c74aae3c7578270514cadca5b1094b16e977fc0d6",
+    "avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f",
+    "fixture.c": "e7a253c8a8faf686dc8ee17db22a6fdf6ebbb9c5967d93b88a4a5348f5220778",
+    "fixture10.c": "c9a55b685e13bbe8106570740fa6c319e4d78d89547bfd3d4a1cede4b6080b36",
+    "candidate.patch": "a20b71400a0092f4604a563d73f2328302121f61b2dfd2f289e9a8d138f4d058",
+    "candidate-manifest.json": "d938fb381be62e6cc71005ae6efa363a514fde630734f9cdca5e5bdfb82adc9f",
+    "comment-rebind.json": "2326ecd4f37e8fbb4111a455c67ad8546d49317f37740116d24d6ac5aa5b8b8f",
+    "draft-speex-shared-lsp-finish.md": "56f155c5aeb1d999012397adaf2e8d770c33f6d85078e02153d825c17e4cf40d",
+    "src/lsp_finish10.S": "51ea78f7e5a7733d000cbfca46f7981e310c0676221385249d2a4c618262690b",
+    "src/lsp_finish8.S": "1a432671f15f88adaed2264775277b4f5c59aca9c7166fb88343a96243be0293",
+    "src/lsp_finish_inline.S": "4dc83b0709580bb6073c38a5af5e7b36d48c30f12cf21ec41a6e59833f723e02",
+    "src/lsp_finish_loop.S": "c161d4417eb91e7ff6618b2fdffe4313a58e25129e6de192ee05959932abd714",
+    "src/lsp_finish_shared.S": "0baf591ee4fe901ae2dac40c4c8aa6d121b74a080ed1f0848adbf2eb9b731766",
+    "src/nb3_lsp_finish.h": "82776b8584a84ca3e1d3c0578402e276d2f4deb40753bee0e13f665d0c19408c",
+    "src/speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "src/wb_lsp_finish8.h": "4da17d4096b76f61b34d6ec026629cf419a6acdf7d0e9d873012245703de6ce0",
+    "candidate/lsp_finish.S": "c161d4417eb91e7ff6618b2fdffe4313a58e25129e6de192ee05959932abd714",
+    "candidate/nb3_lsp_finish.h": "82776b8584a84ca3e1d3c0578402e276d2f4deb40753bee0e13f665d0c19408c",
+    "candidate/compact_lsp.c.inc": "39414b9bfe0317fefe9e39fd6be44492c5f65ca0f8ae189ab768873760d0fba7",
+    "reference10/verification-full-irq.json": "191b131e8998e8cd5f94aff71665edbee4286f710cf03301ee34580cefd58b7c",
+    "reference10/historical-verifier.mjs": "0c7e85e2ca9bfecf205db7206969f7a6402d80b36bbb7e5872df995014d9394b",
+    "reference10/avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f"
+  },
+  "toolsByteSha256": {
+    "avr/bin/avr-gcc.exe": "d3a9a093afbd132302e430e4c88bbacccb0490ebf730f626b74662dc2460307b",
+    "avr/bin/avr-as.exe": "f4742917d141a23f4863086e6c0a3803b4da3c444cf1935303165b6f7e7e754e",
+    "avr/bin/avr-ld.exe": "b8aa2ff51061ff713976e6db14e9adb492436e5b463679a8b9e718c8ff0f2bdf",
+    "avr/bin/avr-objcopy.exe": "5bc07336d3dc78ef13a36db73b66ca206447fc9a40035ba8f481901084f737d5",
+    "avr/bin/avr-nm.exe": "4cf4392a0c0c44144668a1d8b70144708e32fa74b6279bab4e3041cb5345b593",
+    "avr/bin/avr-objdump.exe": "6379ac8e391b100febd0be4f30461e0148cbd59435aa574c1e96ece55eac3726",
+    "avr/libexec/gcc/avr/7.3.0/cc1.exe": "d47c916ac889376a6f479a1579c05875ce56ec22b70e654ebf427911a5980653",
+    "avr/lib/gcc/avr/7.3.0/avr5/libgcc.a": "4753393354a98da210ac6e4746b5ea040dd5606da2590e3d6487c112bdae071d",
+    "avr/avr/include/avr/iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "node/node.exe": "780f44f2c53c108bae261ada21a525b4bfe733c020ac85e41bfe94479090ac9b",
+    "avr8js/package.json": "2bf3a999091fa033287c58b734cf158be4a574674a633d64005389bae985aa6e",
+    "avr8js/dist/cjs/cpu/cpu.js": "f2103091c3911989b568c0287424c1f18a71bb65a50bd784cb910b5997f00251",
+    "avr8js/dist/cjs/cpu/instruction.js": "a80cb750d6bab9b7ba64410280f9d87c2a9d70cb069a258091d74967b63a22b2",
+    "avr8js/dist/cjs/cpu/interrupt.js": "044fb4f21b1f2658c65852d2bf90b101b86aaefc6d2703fd80581e80b5096cde",
+    "avr8js/dist/cjs/index.js": "9059a0dc100b9a8eb876dc56012a7670f3afeefa82c90230862f686a5cba4fcf",
+    "avr8js/dist/cjs/peripherals/adc.js": "9f13995cfea651e8dca14dc95c227c0a5fdb632f14e9e5d03ebc92d4ff62daec",
+    "avr8js/dist/cjs/peripherals/clock.js": "dc344fb96d763d657cae4342b18d506edf6fbc939edc2ef0b45c4d53d3ee833d",
+    "avr8js/dist/cjs/peripherals/eeprom.js": "526574ff48d75835c4413721c98487a55f4930eccb6794a63041ad0af05ee3a9",
+    "avr8js/dist/cjs/peripherals/gpio.js": "34c59c337d7d8c5a6af959313d24e9fd41b7b3c1108d68a0963e4232f8ee8b29",
+    "avr8js/dist/cjs/peripherals/spi.js": "f8b3a34dfebd697d94564461e9bbf06f992e8f4669f2a8460ede4af554e67309",
+    "avr8js/dist/cjs/peripherals/timer-attiny.js": "11bc63d87d98644d4f97e9bafe681adceb7ccbd61975a931ac5500dd2ac8a8dc",
+    "avr8js/dist/cjs/peripherals/timer.js": "5a4fa66fac3b6a401678aaa3e6a4b437985a3f14c89ff152d3c39a5d9ab920d2",
+    "avr8js/dist/cjs/peripherals/twi.js": "8c9b3ff97dd10121ac8b1fcd09f98aaccc5f76068c0b2beff9a9ea945c0e6cd0",
+    "avr8js/dist/cjs/peripherals/usart.js": "54417f9cab24659351e027a64acf3b2d0560365176ecf57c37184034c0e4cc35",
+    "avr8js/dist/cjs/peripherals/usi.js": "2d5a13419a8537dc6fafa67214964158fa349f33cab4b94bd5a8eb7e6a82420c",
+    "avr8js/dist/cjs/peripherals/watchdog.js": "678c446a50283145dba396cf244142ac4ebbd1c8360a119396fc7a06dbcc1b63",
+    "avr8js/dist/cjs/types.js": "1d1464e1edadb9171bcae76e8f78fa577b955b315ee748fcb7ad55e8825b2b39",
+    "avr8js/dist/cjs/utils/assembler.js": "d95c46cb525eab5f323acf435253dfa2adc0e62ad13fdda2aae142c8dcbb83b7",
+    "avr8js/dist/cjs/utils/test-utils.js": "c875e6edec7e70c7bcfd098f6c807489218052d00769397c8a0b9fcdf48b7c4c"
+  },
+  "commentRebinding": "ABI/provenance comments only; nine rebuilt binaries identical to pre-edit hashes; existing evidence preserved without measurement reruns",
+  "limitations": [
+    "Specified finite vector suites, not all combinations of uint32 polynomial words",
+    "No full C decoder executed or timed",
+    "No physical board tested",
+    "Caller linking, final Flash/stack, exact PCM and active-interrupt throughput require root integration gates"
+  ],
+  "productionEdited": false
+}

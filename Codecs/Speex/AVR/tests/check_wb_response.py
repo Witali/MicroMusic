@@ -25,6 +25,8 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--cc',default='gcc')
     p.add_argument('--record',action='store_true',help='Retain a compact source-bound complete-domain report')
+    p.add_argument('--report',type=Path,default=ROOT/'reports/wb-response-domain.json',
+        help='Destination for --record; preserve historical stage receipts when sources change')
     p.add_argument('--pilot-old-count',type=int,help='Explicit incomplete cost pilot; cannot be recorded')
     args=p.parse_args()
     if args.pilot_old_count is not None and not 1<=args.pilot_old_count<=4096:p.error('Pilot count must be 1..4096')
@@ -73,7 +75,7 @@ def main():
     assert body(generated)==body(current)
     if args.record:
         sources=['tests/host_wb_response.c','tests/check_wb_response.py','tests/check_wb_interpolation.py',
-                 'src/compact_lsp.c.inc','src/nb3_lsp_first.h','src/nb3_lsp_stage.h','src/nb3_c_math.h',
+                 'src/compact_lsp.c.inc','src/nb3_lsp_finish.h','src/nb3_lsp_first.h','src/nb3_lsp_stage.h','src/nb3_c_math.h',
                  'src/avr_fixed.h','src/speex_platform.h','src/speex_wb1.c','tools/build.py',
                  'tools/apply_profile.py','handoff/upstream/tools/apply_upstream_port.py',
                  'handoff/upstream/tools/apply_tight_exc.py','vendor/speex-1.2.1/libspeex/lsp.c',
@@ -103,7 +105,8 @@ def main():
                         'AVR applicability also depends on the existing exact C/ASM LPC primitive contract; this host run does not execute assembly.',
                         'Modulo 16 storage of a proven final response alone does not establish signed16 safety of intermediate terms or prefixes; separate measured ranges are included.',
                         'No decoder cycle, continuous-output or physical-board timing is measured.'])
-        (ROOT/'reports/wb-response-domain.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+        args.report.parent.mkdir(parents=True,exist_ok=True)
+        args.report.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     print('PASS: 25,171,968 paired scalar conversions; response 111..31849; exact modulo 16 reduction')
 
 

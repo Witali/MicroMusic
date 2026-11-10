@@ -83,19 +83,13 @@ SPEEX_NB3_STAGE void speex_nb3_interpolate_lpc(
 #if SPEEX_ENABLE_WB1
 void speex_wb_lsp8(const spx_lsp_t *freq,spx_coef_t *ak)
 {
-    spx_word32_t p[5],q[5],previous_p=0,previous_q=0;
-    int j;
+    spx_word32_t p[5],q[5];
     p[0]=q[0]=1048576;
     lsp_first(p,lsp_angle(freq[0]),lsp_angle(freq[2]));
     lsp_first(q,lsp_angle(freq[1]),lsp_angle(freq[3]));
     LSP_PAIR(2,p,q,lsp_angle(freq[4]),lsp_angle(freq[5]));
     LSP_PAIR(3,p,q,lsp_angle(freq[6]),lsp_angle(freq[7]));
-    for(j=1;j<=8;j++) {
-        int index=j<=4?j:8-j;
-        spx_word32_t a=PSHR32(p[index]+previous_p+q[index]-previous_q,8);
-        previous_p=p[index];previous_q=q[index];
-        if(a< -32767)a=-32767;if(a>32767)a=32767;ak[j-1]=(int16_t)a;
-    }
+    speex_nb3_lsp_finish8(p,q,ak);
 }
 #endif
 
