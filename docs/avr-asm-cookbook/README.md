@@ -3048,6 +3048,10 @@ one exact loop; keep table references collectable and retain singleton code.
 use one paired loop and a local exact rounding/saturation subroutine; compare
 Flash, stack, explicit C selection and measured scalar/IRQ tradeoffs.
 
+[Outline QMF input and finish helpers](speex-qmf-private-helpers.md): combine
+bounded split accumulators with private fixed-register calls; measure whole
+Flash savings, extra stack and decoder timing before choosing a size recipe.
+
 [Reuse related QMF products](speex-qmf-common-product.md): one signed24
 product updates two accumulators, reducing measured multiplication count
 and exact block time while retaining the C oracle and boundary IRQ proof.

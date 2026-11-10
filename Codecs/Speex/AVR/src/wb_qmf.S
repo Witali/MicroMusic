@@ -2,8 +2,9 @@
  * Same exact signed24 arithmetic as wb_qmf.c: 236*32768+32 < 2^23.
  * Shared history loads feed four accumulators; no additional state.
  * ABI: low r24, high r22, out r20, 64-byte state r18; fixed 40 pairs.
- * E0 r4..6, O0 r7..9, E1 r10..12, O1 r13..15; low r16:17,
- * high r18:19, out r22:23, zero r2, count r3, cursor end r25.
+ * Split Llo,Lhi,Hlo,Hhi groups: E0 r4..7, O0 r8..11,
+ * E1 r12..15, O1 r16..19. Low/high pointers r16..19 spill four bytes
+ * across the MAC section; out r22:23, zero r2, count r3, cursor end r25.
  * Loading both input pairs before four output stores preserves high=out+40.
  * All callee-saved registers and r1 restored; interrupts remain enabled. */
 .text
@@ -13,74 +14,44 @@
     ld r24,-X
     ld r21,-X
 .endm
-/* first=1 initializes with separate moves; first=2 uses an aligned MOVW.
- * Initialization must ADD the middle byte: MOV of the low byte does not
- * clear the carry left by the sign correction. Later taps propagate ADC. */
-.macro WB_MAC a,b,c,coefficient,first=0
+/* Split exact accumulation: L is biased unsigned16, H is signed16-54.
+ * Llo,Lhi,Hlo,Hhi use four registers. r30 holds54 during first products. */
+.macro WB_MAC a,b,c,d,coefficient,first=0
     ldi r20,lo8(\coefficient)
     muls r20,r24
     .if \first
-    .if \first == 2
-    movw \b,r0
+    movw \c,r0
+    sub \c,r30
+    sbc \d,r2
     .else
-    mov \b,r0
-    mov \c,r1
-    .endif
-    .else
-    add \b,r0
-    adc \c,r1
+    add \c,r0
+    adc \d,r1
     .endif
     mulsu r20,r21
-    sbc \c,r2
     .if \first
-    mov \a,r0
-    add \b,r1
+    movw \a,r0
+    add \b,r30
     .else
     add \a,r0
     adc \b,r1
     .endif
-    adc \c,r2
 .endm
-/* P=7*x fits signed24. Z and r20 are dead scratch until WB_FINISH. */
-.macro WB_PAIR_7_MINUS14 a,b,c,d,e,f
+.macro WB_PAIR_7_MINUS14 a,b,c,d,e,f,g,h
     ldi r20,7
     muls r20,r24
-    movw r30,r0
+    add \c,r0
+    adc \d,r1
+    lsl r0
+    rol r1
+    sub \g,r0
+    sbc \h,r1
     mulsu r20,r21
-    mov r20,r0
-    add r30,r1
-    adc r31,r2
-    add \a,r20
-    adc \b,r30
-    adc \c,r31
-    lsl r20
-    rol r30
-    rol r31
-    sub \d,r20
-    sbc \e,r30
-    sbc \f,r31
-.endm
-/* P=10*x is even: P+(P>>1) is exactly 15*x for both signs. */
-.macro WB_PAIR_MINUS10_15 a,b,c,d,e,f
-    ldi r20,10
-    muls r20,r24
-    movw r30,r0
-    mulsu r20,r21
-    mov r20,r0
-    add r30,r1
-    adc r31,r2
-    sub \a,r20
-    sbc \b,r30
-    sbc \c,r31
-    add \d,r20
-    adc \e,r30
-    adc \f,r31
-    asr r31
-    ror r30
-    ror r20
-    add \d,r20
-    adc \e,r30
-    adc \f,r31
+    add \a,r0
+    adc \b,r1
+    lsl r0
+    rol r1
+    sub \e,r0
+    sbc \f,r1
 .endm
 /* r20=128 on entry and exit, so adjacent inputs share the bias constant. */
 .macro WB_INPUT
@@ -177,17 +148,22 @@ speex_wb_qmf40_avr:
     ldd r26,Y+6
     ldd r27,Y+7
     ldi r20,128
-    WB_INPUT
-    WB_INPUT
-    /* The first tap initializes each signed24 accumulator. Consume the
-     * saved oldest difference before MUL clobbers r0:r1, then its sum.
-     * This also avoids an intermediate copy through r10:r11. */
+    rcall qmf_input_private
+    rcall qmf_input_private
+    push r16
+    push r17
+    push r18
+    push r19
+    ldi r30,54
+    /* Consume the saved oldest difference before MUL clobbers r0:r1,
+     * then its sum. Each split accumulator starts with H bias -54
+     * and L bias +13824, using the shared r30 constant. */
     mov r21,r0
     mov r24,r1
-    WB_MAC r4,r5,r6,-10,1
+    WB_MAC r4,r5,r6,r7,-10,1
     mov r21,r26
     mov r24,r27
-    WB_MAC r7,r8,r9,-4,2
+    WB_MAC r8,r9,r10,r11,-4,2
     movw r26,r28
     adiw r26,32
     cp r28,r25
@@ -196,54 +172,78 @@ speex_wb_qmf40_avr:
 .Lcursor:
     /* Newest record belongs only to the second output pair. */
     WB_LOAD
-    WB_MAC r13,r14,r15,-10,2
+    WB_MAC r16,r17,r18,r19,-10,2
     WB_LOAD
-    WB_MAC r10,r11,r12,-4,1
+    WB_MAC r12,r13,r14,r15,-4,1
     /* Seven history records contribute to both output pairs. */
     WB_LOAD
-    WB_PAIR_MINUS10_15 r7,r8,r9,r13,r14,r15
+    WB_MAC r8,r9,r10,r11,-10
+    WB_MAC r16,r17,r18,r19,15
     WB_LOAD
-    WB_MAC r4,r5,r6,-4
-    WB_MAC r10,r11,r12,7
+    WB_MAC r4,r5,r6,r7,-4
+    WB_MAC r12,r13,r14,r15,7
     WB_LOAD
-    WB_MAC r7,r8,r9,15
-    WB_MAC r13,r14,r15,-26
+    WB_MAC r8,r9,r10,r11,15
+    WB_MAC r16,r17,r18,r19,-26
     WB_LOAD
-    WB_PAIR_7_MINUS14 r4,r5,r6,r10,r11,r12
+    WB_PAIR_7_MINUS14 r4,r5,r6,r7,r12,r13,r14,r15
     WB_LOAD
-    WB_MAC r7,r8,r9,-26
-    WB_MAC r13,r14,r15,123
+    WB_MAC r8,r9,r10,r11,-26
+    WB_MAC r16,r17,r18,r19,123
     WB_LOAD
-    WB_MAC r4,r5,r6,-14
-    WB_MAC r10,r11,r12,37
+    WB_MAC r4,r5,r6,r7,-14
+    WB_MAC r12,r13,r14,r15,37
     WB_LOAD
-    WB_MAC r7,r8,r9,123
-    WB_MAC r13,r14,r15,37
+    WB_MAC r8,r9,r10,r11,123
+    WB_MAC r16,r17,r18,r19,37
     WB_LOAD
-    WB_MAC r4,r5,r6,37
-    WB_MAC r10,r11,r12,123
+    WB_MAC r4,r5,r6,r7,37
+    WB_MAC r12,r13,r14,r15,123
     WB_LOAD
-    WB_MAC r7,r8,r9,37
-    WB_MAC r13,r14,r15,-14
+    WB_MAC r8,r9,r10,r11,37
+    WB_MAC r16,r17,r18,r19,-14
     WB_LOAD
-    WB_MAC r4,r5,r6,123
-    WB_MAC r10,r11,r12,-26
+    WB_MAC r4,r5,r6,r7,123
+    WB_MAC r12,r13,r14,r15,-26
     WB_LOAD
-    WB_PAIR_7_MINUS14 r13,r14,r15,r7,r8,r9
+    WB_PAIR_7_MINUS14 r16,r17,r18,r19,r8,r9,r10,r11
     WB_LOAD
-    WB_MAC r4,r5,r6,-26
-    WB_MAC r10,r11,r12,15
+    WB_MAC r4,r5,r6,r7,-26
+    WB_MAC r12,r13,r14,r15,15
     WB_LOAD
-    WB_MAC r7,r8,r9,7
-    WB_MAC r13,r14,r15,-4
+    WB_MAC r8,r9,r10,r11,7
+    WB_MAC r16,r17,r18,r19,-4
     WB_LOAD
-    WB_PAIR_MINUS10_15 r10,r11,r12,r4,r5,r6
+    WB_MAC r12,r13,r14,r15,-10
+    WB_MAC r4,r5,r6,r7,15
     movw r30,r22
-    WB_FINISH r4,r5,r6
-    WB_FINISH r7,r8,r9
-    WB_FINISH r10,r11,r12
-    WB_FINISH r13,r14,r15
+    mov r0,r25
+    add r6,r5
+    adc r7,r2
+    mov r20,r4
+    movw r24,r6
+    rcall qmf_finish_private
+    add r10,r9
+    adc r11,r2
+    mov r20,r8
+    movw r24,r10
+    rcall qmf_finish_private
+    add r14,r13
+    adc r15,r2
+    mov r20,r12
+    movw r24,r14
+    rcall qmf_finish_private
+    add r18,r17
+    adc r19,r2
+    mov r20,r16
+    movw r24,r18
+    rcall qmf_finish_private
+    mov r25,r0
     movw r22,r30
+    pop r19
+    pop r18
+    pop r17
+    pop r16
     dec r3
     breq .Ldone
     rjmp .Lpair
@@ -254,3 +254,49 @@ speex_wb_qmf40_avr:
     .endr
     ret
 .size speex_wb_qmf40_avr,.-speex_wb_qmf40_avr
+
+/* Private fixed-register helper: preserves r0:r1 and X, may keep dirty r1. */
+.type qmf_input_private,@function
+qmf_input_private:
+    WB_INPUT
+    ret
+.size qmf_input_private,.-qmf_input_private
+
+/* Private: signed24 input r20,r24,r25; scratch r21; output via Z.
+ * r0 retains the main loop's cursor limit across all four calls. */
+.type qmf_finish_private,@function
+qmf_finish_private:
+    ldi r21,32
+    add r20,r21
+    adc r24,r2
+    adc r25,r2
+    mov r21,r25
+    andi r21,224
+    breq .LFconvert
+    cpi r21,224
+    breq .LFconvert
+    sbrc r25,7
+    rjmp .LFclipneg
+    ldi r20,255
+    ldi r24,127
+    rjmp .LFstore
+.LFconvert:
+    .rept 2
+    lsl r20
+    rol r24
+    rol r25
+    .endr
+    mov r20,r24
+    mov r24,r25
+    cpi r24,128
+    brne .LFstore
+    tst r20
+    brne .LFstore
+.LFclipneg:
+    ldi r20,1
+    ldi r24,128
+.LFstore:
+    st Z+,r20
+    st Z+,r24
+    ret
+.size qmf_finish_private,.-qmf_finish_private

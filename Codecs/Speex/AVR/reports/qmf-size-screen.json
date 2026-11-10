@@ -1,0 +1,540 @@
+{
+  "scope": "Frozen QMF size comparison; isolated C primitives and complete ASM screens only",
+  "sourceHashNormalization": "CRLF to LF; tools/headers/images/C objects exact bytes",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js0.21.1",
+  "compilerOptions": [
+    "-Os",
+    "-mcall-prologues",
+    "-mrelax",
+    "-fwrapv",
+    "-fno-strict-aliasing",
+    "-flto"
+  ],
+  "primitiveCFallbackSeparateNonLtoObject": true,
+  "kernelSha256": {
+    "baseline": "cb6eafb62f2d9d46b4848ea9d5d6ec8dd070fa42d533cf9747d44c35f87a73e9",
+    "stack": "ceb111d259911a4cd7d82288881543390c00e9e0a97a2c507165504d36f9ac27",
+    "input": "68a00a353937f65c3b672e7368516f0a424273800974bb4c522137a395b75638",
+    "finish": "7507cd190789d48f4fad215d131309778887f6bb3be1ad53b8bbb414e0bea761",
+    "both": "57fdc8545d415799a639febff21adc806567a3c21ed06c67d35072e615f4f7b0"
+  },
+  "frozenSourceSha256": {
+    "Codecs/common/pwm-gain.mjs": "763e3f2fa638b8b1516766e971dd07d29d6cc6ce160eeb8fc9a4203c14f0f3c0",
+    "Codecs/common/pwm_gain.h": "283d4b7aace6116711300f6aad927339c48ced0008f15affc72aa294241c4f26",
+    "Codecs/Speex/AVR/src/avr_audio_output.h": "dd93e476ebfb2af8b86f7b92e8726f82fb2c0d8400c08c683eb49a4709cb84a3",
+    "Codecs/Speex/AVR/src/avr_fixed.h": "3878d9da964234419a1b246ef5dde990b199b96a88c3476f21605f71c9049b67",
+    "Codecs/Speex/AVR/src/avr_multiply.h": "36de5d16f5332c4c2924d45a4bc2f6cbea78607c6f1861e24800d72a9c48e81f",
+    "Codecs/Speex/AVR/src/avr_shift.h": "92d78865eb4bbdb189a86557e22a08af88ee72cad3cf090c849fc1ae760c4a5f",
+    "Codecs/Speex/AVR/src/avr_tables.h": "4e0e67e692b8093752cb2a02f4b359d710304341dd0d46d18e73c3b35598c3d9",
+    "Codecs/Speex/AVR/src/bits.c": "745b06111e3ec46ec42be8bd598f7f730ffc87af2e13d474dcfaf125c2ca3b4a",
+    "Codecs/Speex/AVR/src/compact_lsp.c.inc": "d902e393915c016f9fd0e351646d7f0bda00cd6a9b95c63c6ed7be56c7991811",
+    "Codecs/Speex/AVR/src/compact_lsp_rates.c.inc": "60146af14dc2b86b253e87a9411e793406c04b0f72eaf982e61240262c085d65",
+    "Codecs/Speex/AVR/src/forced_math.h": "3b4a9b5a0f36f8531c9a79159a53688d6ab2d53a181d7588cdd8dd3ab4fd6154",
+    "Codecs/Speex/AVR/src/forced_pitch.h": "7716de88b622942af1e38739ea40e84c4872d66d97b67bc51164e620371b4560",
+    "Codecs/Speex/AVR/src/iir_direct.c.inc": "584cc9fb7f1cf34cf51b7c1b708df5f4981fbaf2d653b73c9c6e9e4a5634acc5",
+    "Codecs/Speex/AVR/src/iir_kernel.inc": "193437dbc79dabc3a710ee062f0714a1896d53e16d29ec7d6674551607e7cda9",
+    "Codecs/Speex/AVR/src/innovation.h": "b42aee7475b58fe1315b78a5ef9f346dd019b66739d1469ce19fea98933e16f8",
+    "Codecs/Speex/AVR/src/innovation.S": "4c83663cf3edd15eae7947bdf938ba05334daa50fbb8b3a2ccf12943f4bd45fb",
+    "Codecs/Speex/AVR/src/innovation_core.inc": "96a56a6da1e0ae6ab9ec6bdf1f4499b742615146b404f4f602d1f08878310f60",
+    "Codecs/Speex/AVR/src/long_pitch.h": "d4c26763b5143b86d0edfd6d1b84e37d85af2940e77d636ac8574c478cc983bd",
+    "Codecs/Speex/AVR/src/lowrate_excitation.h": "36c72fb238c05768bdb0297c682c0f9ee7877f3825e3422909bca6274cce0b95",
+    "Codecs/Speex/AVR/src/lowrate_mean.h": "53544dbd88d02cb95434b224780c2ee494368b37d9125a56002d8ca513c9d9c7",
+    "Codecs/Speex/AVR/src/lowrate_mean.S": "7feec155fcc368c3b24dd90db57c821861e179d4f53890ea0a570edef4800f9d",
+    "Codecs/Speex/AVR/src/lowrate_mean_kernel.inc": "44ef0fa5f324e6531e93e4af5e96a7576dbc07be96da8e1a06df8070859488ab",
+    "Codecs/Speex/AVR/src/lowrate_noise.c": "50cfbefee37b6670be86695f75a11386ea0cf35f5ea1a04244494c77eefbd36c",
+    "Codecs/Speex/AVR/src/lowrate_noise.h": "345dd85bc4f5983bd9826117ee87c510c230fdcc7d90f4fa9a515a9019b30893",
+    "Codecs/Speex/AVR/src/lowrate_rng.h": "ba5d3564ad01449a68e98371d0fb2db5259f95b541d8653e0f283bff707f0689",
+    "Codecs/Speex/AVR/src/lpc_dot.S": "8e40aaef0744c8614fe06f281874ebcf2173d94f3d585b00b5703bea2f851be5",
+    "Codecs/Speex/AVR/src/lpc_update.S": "00bb267faac8ed005a51893c8572e48b1fa4bfc30f3cb734ac13c0a4f3d49d20",
+    "Codecs/Speex/AVR/src/lsp_advance.S": "c7c92245b4af60827a477c7ffdcaf9847befe3ef691bfdf6a5ba0ca01d47fba9",
+    "Codecs/Speex/AVR/src/lsp_angle.S": "a0061869a1602ea95a57aa410518b0420c524a65ed15ad7f26cf2b3ad4353391",
+    "Codecs/Speex/AVR/src/lsp_finish.S": "51ea78f7e5a7733d000cbfca46f7981e310c0676221385249d2a4c618262690b",
+    "Codecs/Speex/AVR/src/lsp_first.S": "12d2128c01ec50b45159545eef412a17cf3a8a40d71b5c7e6e43226b7b44cca5",
+    "Codecs/Speex/AVR/src/lsp_pair.S": "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22",
+    "Codecs/Speex/AVR/src/lsp_stage.S": "eaeaf109f57853cd58bfb96a181e50941912c5f2fa4e000a327b74245d741529",
+    "Codecs/Speex/AVR/src/lsp_stage_macros.S": "5c997aba9ec8a46bac795e34c59b65b22201c2b0aa8cd2037d85405e3078e7c5",
+    "Codecs/Speex/AVR/src/nb1_cache_layout.h": "fecb43edff19065f13fa27e3b9b408f7902103a2c7f8f86aab69fc430ef9f9aa",
+    "Codecs/Speex/AVR/src/nb1_gain.h": "16585b63dcdc7898d2c0d6c408822635f20e45feed188ae1eaf2be754a1082f2",
+    "Codecs/Speex/AVR/src/nb1_pitch.h": "9c968152f6f099e60531e00582eed784d9fbfa861c17c2a80eed360b33b8e841",
+    "Codecs/Speex/AVR/src/nb1_vocoder.c": "77e654b178497182930bc2159b89d14ce326936f99bb4b61a3f5e6bf5040982f",
+    "Codecs/Speex/AVR/src/nb1_vocoder.h": "efbcacd025768903db8bc4d9745286be4932131fb89f5ff0934966924c28fe59",
+    "Codecs/Speex/AVR/src/nb1_vocoder.S": "bfa8fc37f9a86f97dcd3fd640ab2a7ac48fc7644ed47803f7349ece56a6b3942",
+    "Codecs/Speex/AVR/src/nb1_zero_gain.h": "b8efc1c740186219f5d519116d0cfafb4c772c2eb6934509b81c261b7f1ae9ec",
+    "Codecs/Speex/AVR/src/nb3_c_math.h": "9e89d9d789d9d9b72f7c69dcf0aa3b111a75db8a2d3963426791b2e6c9932154",
+    "Codecs/Speex/AVR/src/nb3_header.h": "8d973f6bf9657858b910362d6999c32db0dc1be8f7c10bcb1e3e11d513dccd02",
+    "Codecs/Speex/AVR/src/nb3_indices.h": "2171ad9e73cf6adb5abe4df9d07c262a94eabbca304789830f56b8302f36a460",
+    "Codecs/Speex/AVR/src/nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "Codecs/Speex/AVR/src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "Codecs/Speex/AVR/src/nb3_lsp_angle.h": "1c7b6f05e01a2067e8f07c7c342fdccf8232a209861a3d28f617b9eadd75203b",
+    "Codecs/Speex/AVR/src/nb3_lsp_finish.h": "41b03398eeaeeae0d6c02da47e49ed7524b8799f25831e70d6dfe33d0ebe55c8",
+    "Codecs/Speex/AVR/src/nb3_lsp_first.h": "1153f8c77c5cd2df39b1eb7c44d05e5e695a155dc5bf5e95c6d1db5c2655b9b1",
+    "Codecs/Speex/AVR/src/nb3_lsp_pair.h": "ed59efb79b7a8af17e1cd3f48ade514084d599ebdd136797ed7920107ad7ac3c",
+    "Codecs/Speex/AVR/src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "Codecs/Speex/AVR/src/nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "Codecs/Speex/AVR/src/nb4_excitation.h": "684e455ae43f57b16cefa227ab04a50b5825d978d41aa2388e995d897d776f51",
+    "Codecs/Speex/AVR/src/nb4_subframe.h": "eb93b29731123939f2397888bdb9671e36979029f16d9cc304ac2a0a46346dc6",
+    "Codecs/Speex/AVR/src/nb_decode.c.inc": "ee8374110d963982e8b308b12ff041fec2d630e1b83a3a258f16d5ce89e05294",
+    "Codecs/Speex/AVR/src/packed24.h": "cd3d6cd54064fc9841aef7ff13abc801bff43cf79c3318b8175e52b9695dda73",
+    "Codecs/Speex/AVR/src/packet_mode.h": "2729d18157a137eba36cac6695f92663858da309d64388c20011f062d197896d",
+    "Codecs/Speex/AVR/src/pitch24.h": "530dbbd915a2f032067e756772eb81b29b5a8bdb429b92d22185701e09deff81",
+    "Codecs/Speex/AVR/src/pitch_add.S": "6272ddbc09160381bb73fb86d2a8e97a60e20f37570df5d3896d28b59d5918ce",
+    "Codecs/Speex/AVR/src/player.c": "8e960f4874f0f98c7f21f486c9c4317405a42c12bcda1330fb353658ee584454",
+    "Codecs/Speex/AVR/src/profile_mode.h": "0052bc51ba4013ddc6e758a59a03fd3ecd1030c5ad07540008817180caa36d5b",
+    "Codecs/Speex/AVR/src/profile_state.h": "72c6aec0f48e37bd6937a09c72dc5f97be408e7995464b711db2ec10e47af95f",
+    "Codecs/Speex/AVR/src/q14.S": "8d93f106036746be2ec0400f78737c48ea3b7559428e9f1e41b1f0910333d839",
+    "Codecs/Speex/AVR/src/q14_macros.S": "4913b0a3484ebf612750ea42f461ef8e17f4f95329be9dd44df6f1e3af0ec827",
+    "Codecs/Speex/AVR/src/qmf_memory.c": "a1232858f274e30f7050334fc5b608edcd3d422fccda75de77430bc7831d08c3",
+    "Codecs/Speex/AVR/src/qmf_memory.h": "ef340baf7353191f5c8294fb21b0f25bd46390186573a9ce8b3ef8033bc5f7e0",
+    "Codecs/Speex/AVR/src/short_pitch.h": "a90485058cd47d9c762eea1bba4dda62f2f81a0e79457d67c51b69d39c2d300c",
+    "Codecs/Speex/AVR/src/short_pitch_kernel.inc": "6801e39e986e600e30c0a34e240f7cb368be483d6e0d1f35ddacbf48e0e93998",
+    "Codecs/Speex/AVR/src/speex_avr.c": "cb61c6c529f91219b32dd47491bdee8a0a95034e0206ce6b8a05d783df840262",
+    "Codecs/Speex/AVR/src/speex_avr.h": "9ca142747c625230c30ea1cafddbf452da80bc45b25b5ee2ddeea754719e3566",
+    "Codecs/Speex/AVR/src/speex_nb.h": "47ebf2505af9421b706a323528bc0f954e3a5c6069cae53fe6a6b13d84af13f7",
+    "Codecs/Speex/AVR/src/speex_nb3.h": "b6aa205038d0e534991b7f0f684516dfbe4c7a8d30649550a52558c18b22f9d0",
+    "Codecs/Speex/AVR/src/speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "Codecs/Speex/AVR/src/speex_wb1.c": "b6eefb306b2adef8c36514a2616eb0f83dd03648b47dd0477175b87c174a0cfe",
+    "Codecs/Speex/AVR/src/speex_wb1.h": "6d4c9bc361ccd8b5fea23793e00bcb3345accc09e67a5114fe5bc0dd6d52abdc",
+    "Codecs/Speex/AVR/src/wb_excitation_kernel.inc": "33bc675a1840fac8cecb05fc7ec4786a13267db91166db9ef76f67b64e71a399",
+    "Codecs/Speex/AVR/src/wb_fold.c": "283afe5869bf0f2d39b45dfcab03eb0156a62323645384ca12cdd0cb0ca3e2e2",
+    "Codecs/Speex/AVR/src/wb_fold.h": "3950dfcdc638aecfebb7ee8309c8e5e7bba59eaeabb465aca3368963e1be040d",
+    "Codecs/Speex/AVR/src/wb_fold.S": "1f2d7b6f0ae346dc098fad921825fbe003d208a9dc32d5a2d34958d09c822b1f",
+    "Codecs/Speex/AVR/src/wb_fold_kernel.inc": "ff52c6443df47be168638773d984a0094bd93282cb8bff282a0bd7aedd2f1a99",
+    "Codecs/Speex/AVR/src/wb_gain_div.h": "c6b6872e09d93dc8eb152396d58d5479e3984db795a9e1c77cb2929c229cf87e",
+    "Codecs/Speex/AVR/src/wb_gain_div.S": "29b5b3392441ea3eb903c6111d94ad559e678912aa7f8e3091c3129eebd699e8",
+    "Codecs/Speex/AVR/src/wb_iir.c": "7ce0ddaca8da575efca564660cb79337d6747e698de709b57ab74b4c5099870c",
+    "Codecs/Speex/AVR/src/wb_iir.h": "cc268430e595b5a8edd14c47155028e0357a0830cd3cb8eb864a5b463020a4c2",
+    "Codecs/Speex/AVR/src/wb_iir.S": "275936662303e102239afb58cb4a6d812541cd2bec68cbab7e0c03bb0ac9cd5e",
+    "Codecs/Speex/AVR/src/wb_internal.h": "76839306b6484b3e25e44822a0c39e11b4dbabe4d3d1cbb65eaf01915fd8e1da",
+    "Codecs/Speex/AVR/src/wb_player.c": "cd295cc8c53d603769981aa5d892c398b30487d3333769c231329b1c4a1ad8be",
+    "Codecs/Speex/AVR/src/wb_qmf.c": "c27ff603c22ea71ac05ddd8256f13109593822c05fb34e71a7578c17d04a12f0",
+    "Codecs/Speex/AVR/src/wb_qmf.h": "8b42180325ba8c60ee398f86ae696833f6201c580a7c68e970232e74412f6b3b",
+    "Codecs/Speex/AVR/src/wb_qmf.S": "cb6eafb62f2d9d46b4848ea9d5d6ec8dd070fa42d533cf9747d44c35f87a73e9",
+    "Codecs/Speex/AVR/src/zero_innovation.h": "dc192db47f3140e64ef11bc10c26790726ca5e1a556a99aff3a10bfbc7ce35c7",
+    "Codecs/Speex/AVR/src/zero_shape_kernel.inc": "42c8aa44ff55935bbc27ecf5348629d3debbe28946fd72965e36f2c224736ed7",
+    "Codecs/Speex/AVR/tests/avr_wb_stream.c": "a0437cae7ab919236b7209922d1a8c55b070566d897092a2c18e9cccd4c78ca5",
+    "Codecs/Speex/AVR/tests/wb_decode.c": "312108c6c9e49e1a6c21a4f36cd5ba918dec0dbe7fbdd70d7b3c98c697cb000b"
+  },
+  "testSourceSha256": {
+    "tests/screen_qmf_size.py": "aaf590eea2ec9d663b57c7156e238a39923b0b64d1e5fdd9629a543624c220a7",
+    "tests/screen_qmf_common_product.py": "4254ee12e677b486cabf62cff6b39837055c46eae10f160b7051299fd3b40dfe",
+    "tests/screen_qmf_split_accum.py": "91b4a165ca8439007e1695b5a76d3ab0ef6b88f286e8a69e07d6ab317c59fbbd",
+    "tests/verify_wb_kernels.mjs": "310660d5aec4ce32484f0ad9807e4846722a0957d65e4fc7de8ec91da53d4d66",
+    "tests/verify_qmf_common_product_irq.mjs": "7f9576269fb55f29ee92901673013669d3bd966009dfb4764bda16e0a99fdd1d",
+    "tests/verify_wb.mjs": "838e45f88d73c7b25ecb1f6e3bfdcee18c6be868d6ad479b099e6cb2703540eb",
+    "tests/verify_wb_stream.mjs": "9bb4dc0fdc1895c7fd0081fc60ec1e120e4c51a908cb1bb850276fbbc9cfcc05",
+    "tests/avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f"
+  },
+  "primitives": {
+    "baseline": {
+      "flashBytes": 2710,
+      "flashDelta": 0,
+      "pairedCyclesSaved": 0,
+      "binarySha256": "96f678b7cc46792c73b1d1176ff2e732638a0f115ab5d3f698c0d4cd206f8703",
+      "cObjectSha256": "21001c7ee49d4a8832370c9e55bdcc73a2d12083cfc829e98d4891c5c1a02772",
+      "irq": {
+        "binarySha256": "afcb17bd0eed51cddb479c678e8bdbbb8d363f28b73d388cbc221e9eae907768",
+        "injections": 74836,
+        "nonzeroR1Interrupts": 43113,
+        "ownAsmStackBytes": 18,
+        "wholeProbePeakStackBytes": 31,
+        "deviceHeaders": {
+          "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+          "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+          "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+        }
+      }
+    },
+    "stack": {
+      "flashBytes": 2636,
+      "flashDelta": -74,
+      "pairedCyclesSaved": 500,
+      "binarySha256": "5d81171099a842bff5cf18d32496fcd70e6e37ec98a01cbfe95ae2fd09df61e3",
+      "cObjectSha256": "21001c7ee49d4a8832370c9e55bdcc73a2d12083cfc829e98d4891c5c1a02772",
+      "irq": {
+        "binarySha256": "d5b7233dce26ac92a1e34ba79eecf6d614837857db620c681d4c0fe50900f30f",
+        "injections": 68916,
+        "nonzeroR1Interrupts": 39444,
+        "ownAsmStackBytes": 22,
+        "wholeProbePeakStackBytes": 35,
+        "deviceHeaders": {
+          "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+          "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+          "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+        }
+      }
+    },
+    "input": {
+      "flashBytes": 2584,
+      "flashDelta": -126,
+      "pairedCyclesSaved": 220,
+      "binarySha256": "cfc5095707300a98286077aae7113bbbb69d2f0e6ed0afc3cd2b71c116373c20",
+      "cObjectSha256": "21001c7ee49d4a8832370c9e55bdcc73a2d12083cfc829e98d4891c5c1a02772",
+      "irq": {
+        "binarySha256": "8d53740b21f3a0ed96e6478f917df86a97f58fe9b767fd5cd60989131411becf",
+        "injections": 69556,
+        "nonzeroR1Interrupts": 39828,
+        "ownAsmStackBytes": 22,
+        "wholeProbePeakStackBytes": 35,
+        "deviceHeaders": {
+          "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+          "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+          "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+        }
+      }
+    },
+    "finish": {
+      "flashBytes": 2486,
+      "flashDelta": -224,
+      "pairedCyclesSaved": -260,
+      "binarySha256": "b2e974e776c3edd16cde7a5c45fdc02189ad2a46fcfa6a659efb34020d6bdcb2",
+      "cObjectSha256": "21001c7ee49d4a8832370c9e55bdcc73a2d12083cfc829e98d4891c5c1a02772",
+      "irq": {
+        "binarySha256": "56f1d824035175257648135445345983b77cb61fd5435c0190304e19554dabcd",
+        "injections": 71796,
+        "nonzeroR1Interrupts": 41010,
+        "ownAsmStackBytes": 24,
+        "wholeProbePeakStackBytes": 37,
+        "deviceHeaders": {
+          "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+          "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+          "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+        }
+      }
+    },
+    "both": {
+      "flashBytes": 2434,
+      "flashDelta": -276,
+      "pairedCyclesSaved": -540,
+      "binarySha256": "807729b922f09679d66395c4434563958b059ab2bbbfd4bc40d18d99d3c2e561",
+      "cObjectSha256": "21001c7ee49d4a8832370c9e55bdcc73a2d12083cfc829e98d4891c5c1a02772",
+      "irq": {
+        "binarySha256": "72ee93e17a2f937ca6ad851bd944094b8e7dc2e9187b689d4c0976b66345c043",
+        "injections": 72436,
+        "nonzeroR1Interrupts": 41394,
+        "ownAsmStackBytes": 24,
+        "wholeProbePeakStackBytes": 37,
+        "deviceHeaders": {
+          "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+          "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+          "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+        }
+      }
+    }
+  },
+  "generatedFixtureSha256": "dd52fc23f041c1c94cab58982e2f5de7bdf6eb24f26ac0171136d8dbc211c057",
+  "completeScreens": {
+    "wb395": {
+      "baseline": {
+        "raw": {
+          "binarySha256": "e85ae0ff596fd02544cb72382d1745d53b7a800b52bb7202499087e89460d816",
+          "frames": 1152,
+          "meanCycles": 217254.0625,
+          "maxCycles": 221412,
+          "flashBytes": 25916,
+          "staticSramBytes": 1284,
+          "peakStack": 198,
+          "freeSram": 566
+        },
+        "irq": {
+          "binarySha256": "e81e40599ac8c336a06f86570f587d651c9aa43a6027a18dd6403d3e86898c4f",
+          "frames": 1152,
+          "flashBytes": 26352,
+          "staticSramBytes": 1425,
+          "underruns": 0,
+          "freeSramAtPeak": 412,
+          "minQueuedSamplesBeforeOutput": 31,
+          "peakStack": 211
+        }
+      },
+      "input": {
+        "raw": {
+          "binarySha256": "1a4b6d27f16c1cd2f369216fac503dede4ffc4ee2335d0272ac9bf012dd8ff53",
+          "frames": 1152,
+          "meanCycles": 216374.0625,
+          "maxCycles": 220532,
+          "flashBytes": 25790,
+          "staticSramBytes": 1284,
+          "peakStack": 199,
+          "freeSram": 565
+        },
+        "irq": {
+          "binarySha256": "8fb6369c7215d73ea066b59243b3ab30033b9e80324e4976cefeb3c6b70c5897",
+          "frames": 1152,
+          "flashBytes": 26226,
+          "staticSramBytes": 1425,
+          "underruns": 0,
+          "freeSramAtPeak": 411,
+          "minQueuedSamplesBeforeOutput": 31,
+          "peakStack": 212
+        }
+      },
+      "both": {
+        "raw": {
+          "binarySha256": "7794eb39614c5b7184f085fc12b221af07da362b084702bfd96c557dbb57a6de",
+          "frames": 1152,
+          "meanCycles": 219414.0625,
+          "maxCycles": 223572,
+          "flashBytes": 25640,
+          "staticSramBytes": 1284,
+          "peakStack": 201,
+          "freeSram": 563
+        },
+        "irq": {
+          "binarySha256": "97444b0bf9bb15d11f79e6c14d121309f8c683e3ae64ecbf25f5ad5723e762ef",
+          "frames": 1152,
+          "flashBytes": 26076,
+          "staticSramBytes": 1425,
+          "underruns": 0,
+          "freeSramAtPeak": 409,
+          "minQueuedSamplesBeforeOutput": 30,
+          "peakStack": 214
+        }
+      }
+    },
+    "wb128": {
+      "baseline": {
+        "raw": {
+          "binarySha256": "7c800239df1308abf3796920b3413fa9b6ceacdea2ed7e4d89bbcf9abb3c2464",
+          "frames": 64,
+          "meanCycles": 232147.1875,
+          "maxCycles": 237986,
+          "flashBytes": 25916,
+          "staticSramBytes": 1306,
+          "peakStack": 197,
+          "freeSram": 545
+        },
+        "irq": {
+          "binarySha256": "028de125f34ca2e2fa2e08ea45f4de5909d902623548a502919c35f9c824c01e",
+          "frames": 64,
+          "flashBytes": 26352,
+          "staticSramBytes": 1447,
+          "underruns": 0,
+          "freeSramAtPeak": 391,
+          "minQueuedSamplesBeforeOutput": 8,
+          "peakStack": 210
+        }
+      },
+      "input": {
+        "raw": {
+          "binarySha256": "7ff306040b63b4e7c59c2f652afc3bf21d4bb1aa597e9c8f47dc9ef645723a7e",
+          "frames": 64,
+          "meanCycles": 231267.1875,
+          "maxCycles": 237106,
+          "flashBytes": 25790,
+          "staticSramBytes": 1306,
+          "peakStack": 199,
+          "freeSram": 543
+        },
+        "irq": {
+          "binarySha256": "b120d7672eca9c10bbd03d1dcdf24be2b5ac3dd2edffd67566ef824200becd72",
+          "frames": 64,
+          "flashBytes": 26226,
+          "staticSramBytes": 1447,
+          "underruns": 0,
+          "freeSramAtPeak": 389,
+          "minQueuedSamplesBeforeOutput": 8,
+          "peakStack": 212
+        }
+      },
+      "both": {
+        "raw": {
+          "binarySha256": "eb6f15dec7dcd363fdc8359c61fb8ceb6ae18fa5b7f954f67ad2b1562d699af5",
+          "frames": 64,
+          "meanCycles": 234307.1875,
+          "maxCycles": 240146,
+          "flashBytes": 25640,
+          "staticSramBytes": 1306,
+          "peakStack": 201,
+          "freeSram": 541
+        },
+        "irq": {
+          "binarySha256": "35173690b0c146d6035ad8eafb8ffd26ec12fd4e5a73de6b0fc3999081c42360",
+          "frames": 64,
+          "flashBytes": 26076,
+          "staticSramBytes": 1447,
+          "underruns": 0,
+          "freeSramAtPeak": 387,
+          "minQueuedSamplesBeforeOutput": 7,
+          "peakStack": 214
+        }
+      }
+    }
+  },
+  "screenInputs": [
+    {
+      "profile": "wb395",
+      "stream": "coverage4096.spxraw",
+      "inputSha256": "a01f1e3047d17570ffd6740419d071391ad30e2ee57669af4cda4aee7b005b27",
+      "pcmSha256": "37df216de0663e3dc7869ad4d9eead27f020101198c7c9b4c7cca02439bf1ba8",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_letter_a.spxraw",
+      "inputSha256": "d0e4cf4632d8109c80b6bd6998b1caa6c5e0e271627fb32f86f683a6806907f3",
+      "pcmSha256": "16a5a554faec0baa3303e2f3565cc55b91e11d83e89096f79f9c60d6f74d726b",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_letter_b.spxraw",
+      "inputSha256": "97e77b66c7fa4bf5d693d6c63aee19ed081e3a8005c76537e019088647f5c7ef",
+      "pcmSha256": "fcb713551bd31103f159bba99347cf8d97227d313dce3530f4c9e10e9ca11b19",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_normcore_a.spxraw",
+      "inputSha256": "f40760f197ba86011d52e8490c2d2f142984cb950516f37dbe7c0db57d55def5",
+      "pcmSha256": "b700aef9c98c2a29fc2bb32557723c38cf5dde560941ab35c9229118df60f6f5",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_normcore_b.spxraw",
+      "inputSha256": "7f2d713e5929389cc5dbaa165d55d1fb72f571082d375c6ce7a9b876ec8ee147",
+      "pcmSha256": "d7d3e79970b90a570ebff37e4a34bc2f8814b04c64af24c9a9d168adcc1ff168",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_portrait_a.spxraw",
+      "inputSha256": "f1581be2ef8a150a8f4cb9c176bf4f5e7cb42e38ddc41d8fd200eced0a1f9cd5",
+      "pcmSha256": "84e7686f4a0d91ddaa469040733622bf19ec1957cfa544ac76a15c5010eebac3",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_portrait_b.spxraw",
+      "inputSha256": "c45eb98c4d9635b98fe66c809585b527290a27079b3d82627415b1fac6547f7c",
+      "pcmSha256": "0905034c366f2b11c10ac404c934524d06fd95d441c3005bc59b0bb29c36ce62",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_sense_a.spxraw",
+      "inputSha256": "3efb0618aca62ff4c657e602630d97c2b6de2bc71bb6d645b9aa2dd7da20ef00",
+      "pcmSha256": "75984a9e265b1298ab4a20e8a6981d9139d6a51a19d0bb250cc215a5971fb8b8",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_sense_b.spxraw",
+      "inputSha256": "e744c9cc0b4f5faf988b406444e2bca9bf90fc7ee5ce8d5305dc6ede384dc3b4",
+      "pcmSha256": "dee1219de30473db363d8c21fd418ea728580d8e49c310eeff6707d2666a08ba",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "padding64.spxraw",
+      "inputSha256": "b0f23871fbde0ff20c2263b779cab78f5913e371ff0ad10fe69a85f251373ac9",
+      "pcmSha256": "37df216de0663e3dc7869ad4d9eead27f020101198c7c9b4c7cca02439bf1ba8",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_pushkin_a.spxraw",
+      "inputSha256": "2b5368eaf9efcc297616c563e37ae8c72331db184f85bf707ff940c68a578d05",
+      "pcmSha256": "56c98fda8bf65ac9aa5af3a61579dadf09cae0a7beda48012913fcf73114914b",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_pushkin_b.spxraw",
+      "inputSha256": "27dba9740aa36c47013805d56d7785ebca68c4372b91520c2cb003e1fbf4f759",
+      "pcmSha256": "445f98c9cfbe7d941dca402e36d6ec055b5bee3061bd493d3bbef270d31e822f",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_russia_a.spxraw",
+      "inputSha256": "e9b32ee550aa1312b894bb0a002a611a82d095dab7bdb5ce418abe6496ca3ed2",
+      "pcmSha256": "b4039f6302399d1c35f9a383be58bd166b648c1af21914f810a20960e5e0a523",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_russia_b.spxraw",
+      "inputSha256": "0b1e9b54795630050f7a23a369841f4fd4d75752aa6f7dfbbe72900517607f90",
+      "pcmSha256": "d4ba8accc7b0d050c9e7a966a658ab54fecaed3eb589a9e1d97d79f886ae98c5",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_slutskaya_a.spxraw",
+      "inputSha256": "b14d10fe32c24c06f12839995f348e53ad38fd1cad0e37b76c6ad5189dbd1192",
+      "pcmSha256": "03c07f3a13fc8808d0fe507d0c1e4c17f6663cc50579f09bf88adc0acb56e400",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_slutskaya_b.spxraw",
+      "inputSha256": "28701730066612789e76612da24a2e1bf863d86168aaa05fe1d93e4bbfbff75d",
+      "pcmSha256": "23810916585b20357326d2777dc6c452a9b00714851f8b4f4492ecfd39264d5c",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_square_a.spxraw",
+      "inputSha256": "4369c96f2bd4005efe4cedd8d42057412e8961ed3f02f7ddacafd85a111b7c97",
+      "pcmSha256": "09e7dd998b1a13ec042b663f0e08921a40ffcdaf64f0170ee8000b103db59b9a",
+      "frames": 64
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_square_b.spxraw",
+      "inputSha256": "58ae2802bbfafcd3d176d3191d19d71dfdfe122fb7d95e293d61dbf9ba114472",
+      "pcmSha256": "18b3ead22c55db3cb0a4b0dd9a01b6cf86d0ee2d960249355e60672b42fda6f4",
+      "frames": 64
+    },
+    {
+      "profile": "wb128",
+      "stream": "long.spxraw",
+      "inputSha256": "b7e4a3a38756f118ffa25e61c7c04e2210e4c9f8522cdd7baabb9903a5b41b26",
+      "pcmSha256": "7b855a4d84d201026d95c85b231eff6fc971d40c163b813899eb9b2b9425be49",
+      "frames": 64
+    }
+  ],
+  "fullCDecoderExecuted": false,
+  "physicalBoardTested": false,
+  "frozenBaselineRawFlashBytes": 25916,
+  "mergedMainReferenceRawFlashBytes": 26164,
+  "fullFiveRateAdmission": false,
+  "limits": [
+    "WB3.95:18 streams capped at64 frames; WB12.8:one64-frame long-recording prefix.",
+    "QMF deltas use the frozen source baseline; its separate optimizations affect total image size.",
+    "Production IRQ screens use ready RAM packets plus8% extra work, without transport latency."
+  ],
+  "externalToolSha256ExactBytes": {
+    "avr-gcc": "d3a9a093afbd132302e430e4c88bbacccb0490ebf730f626b74662dc2460307b",
+    "avr-nm": "4cf4392a0c0c44144668a1d8b70144708e32fa74b6279bab4e3041cb5345b593",
+    "avr-objcopy": "5bc07336d3dc78ef13a36db73b66ca206447fc9a40035ba8f481901084f737d5",
+    "node": "780f44f2c53c108bae261ada21a525b4bfe733c020ac85e41bfe94479090ac9b",
+    "python": "3c48fbdcc2ed5c55290e39bef50bd6b1da76f43f3069a4a2624d0b8876a605f5"
+  },
+  "avr8jsExactBytes": {
+    "version": "0.21.1",
+    "sha256": {
+      "package.json": "2bf3a999091fa033287c58b734cf158be4a574674a633d64005389bae985aa6e",
+      "dist/cjs/cpu/cpu.js": "f2103091c3911989b568c0287424c1f18a71bb65a50bd784cb910b5997f00251",
+      "dist/cjs/cpu/instruction.js": "a80cb750d6bab9b7ba64410280f9d87c2a9d70cb069a258091d74967b63a22b2",
+      "dist/cjs/cpu/interrupt.js": "044fb4f21b1f2658c65852d2bf90b101b86aaefc6d2703fd80581e80b5096cde",
+      "dist/cjs/index.js": "9059a0dc100b9a8eb876dc56012a7670f3afeefa82c90230862f686a5cba4fcf",
+      "dist/cjs/peripherals/adc.js": "9f13995cfea651e8dca14dc95c227c0a5fdb632f14e9e5d03ebc92d4ff62daec",
+      "dist/cjs/peripherals/clock.js": "dc344fb96d763d657cae4342b18d506edf6fbc939edc2ef0b45c4d53d3ee833d",
+      "dist/cjs/peripherals/eeprom.js": "526574ff48d75835c4413721c98487a55f4930eccb6794a63041ad0af05ee3a9",
+      "dist/cjs/peripherals/gpio.js": "34c59c337d7d8c5a6af959313d24e9fd41b7b3c1108d68a0963e4232f8ee8b29",
+      "dist/cjs/peripherals/spi.js": "f8b3a34dfebd697d94564461e9bbf06f992e8f4669f2a8460ede4af554e67309",
+      "dist/cjs/peripherals/timer-attiny.js": "11bc63d87d98644d4f97e9bafe681adceb7ccbd61975a931ac5500dd2ac8a8dc",
+      "dist/cjs/peripherals/timer.js": "5a4fa66fac3b6a401678aaa3e6a4b437985a3f14c89ff152d3c39a5d9ab920d2",
+      "dist/cjs/peripherals/twi.js": "8c9b3ff97dd10121ac8b1fcd09f98aaccc5f76068c0b2beff9a9ea945c0e6cd0",
+      "dist/cjs/peripherals/usart.js": "54417f9cab24659351e027a64acf3b2d0560365176ecf57c37184034c0e4cc35",
+      "dist/cjs/peripherals/usi.js": "2d5a13419a8537dc6fafa67214964158fa349f33cab4b94bd5a8eb7e6a82420c",
+      "dist/cjs/peripherals/watchdog.js": "678c446a50283145dba396cf244142ac4ebbd1c8360a119396fc7a06dbcc1b63",
+      "dist/cjs/types.js": "1d1464e1edadb9171bcae76e8f78fa577b955b315ee748fcb7ad55e8825b2b39",
+      "dist/cjs/utils/assembler.js": "d95c46cb525eab5f323acf435253dfa2adc0e62ad13fdda2aae142c8dcbb83b7",
+      "dist/cjs/utils/test-utils.js": "c875e6edec7e70c7bcfd098f6c807489218052d00769397c8a0b9fcdf48b7c4c"
+    }
+  }
+}
