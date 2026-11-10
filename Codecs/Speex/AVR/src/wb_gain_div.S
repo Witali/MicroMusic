@@ -130,12 +130,14 @@ speex_wb_ratio_hb_div_avr:
     rol r27
     cp r26,r20
     cpc r27,r21
-    brlo .Lhb_ratio_small
-    rjmp .Lhb_ratio_saturated
-.Lhb_ratio_small:
-    .rept 15
+    brsh .Lhb_ratio_saturated
+    /* DEC and BRNE preserve C, the inverse quotient bit for next ROL.
+     * A counted loop saves 248 bytes versus fifteen expanded rounds. */
+    ldi r18,15
+.Lhb_ratio_bit:
     speex_hb_ratio_inverse_bit
-    .endr
+    dec r18
+    brne .Lhb_ratio_bit
     rol r22
     rol r23
     com r22

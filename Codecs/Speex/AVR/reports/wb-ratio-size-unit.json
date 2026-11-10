@@ -1,0 +1,102 @@
+{
+  "scope": "Counted HB1 divider scalar/ABI/active-IRQ proof; whole-decoder admission is separate",
+  "baselineRevision": "e5350100",
+  "cpu": "ATmega328P AVR5",
+  "compiler": "avr-gcc.exe (GCC) 7.3.0",
+  "sourceHashMode": "UTF-8 normalized to LF",
+  "sourceSha256": {
+    "src/wb_gain_div.h": "c6b6872e09d93dc8eb152396d58d5479e3984db795a9e1c77cb2929c229cf87e",
+    "src/wb_gain_div.S": "29b5b3392441ea3eb903c6111d94ad559e678912aa7f8e3091c3129eebd699e8",
+    "src/speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "tests/avr_wb_hb_ratio.c": "b347294d91c35680ce3e3c98d492cf32d87805126519779cf31d29bc4e84433c"
+  },
+  "checkerSha256": {
+    "tests/avr_wb_hb_ratio.c": "b347294d91c35680ce3e3c98d492cf32d87805126519779cf31d29bc4e84433c",
+    "tests/build_wb_hb_ratio.py": "a382570da75ad25b356449a8f0a1f7a90bb435524efecf3715d1e466af8ab0c9",
+    "tests/verify_wb_hb_ratio.mjs": "22aaab44eded446cb6513fac2eb9dc06c92d3194b1a2168c85f014dd02475c1f",
+    "tests/avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f",
+    "tests/audit_wb_ratio_size.py": "c2530e4bce218e41ed2b7a48df3192a0c1ccd6e2429df14e41c460da7f924336"
+  },
+  "full": {
+    "cases": 106727,
+    "divisors": 31739,
+    "bounds": [
+      111,
+      31849
+    ],
+    "exact": true,
+    "asmReturns": 213454,
+    "timerEvents": 327285,
+    "lostInterrupts": 0,
+    "peakStack": 22
+  },
+  "explicitCAndGeneric": {
+    "casesPerBackend": 1862,
+    "exact": true,
+    "binariesIdentical": true
+  },
+  "widerGenericControlBinaryIdentical": true,
+  "replay": {
+    "cases": 15076,
+    "inputSha256": "c68463a07ed26a24bca7ae5bba503ba96854ccccff224b8824071f58d1591fb5",
+    "beforeBinarySha256": "e2df2c79f70b575fa5b9f756bd165c15777cf340f03fcd0778040bbc101f94dc",
+    "afterBinarySha256": "bacd5c3de23a720fccb3c7e6d20efe147e24ff33a24f1b92657d451e686df2b5",
+    "beforeTimingSha256": "88d2c36f1bc72425bc72c11339d8a49cbdb97d12ae3502df970f146457d5ec76",
+    "afterTimingSha256": "a22ea02a731e34f1b71103b3eb0ac2d923c81d2235891430a7e5a915c943ca2f",
+    "cycleDeltaHistogram": {
+      "-1": 37,
+      "44": 15039
+    }
+  },
+  "leafFlashBefore": 306,
+  "leafFlashAfter": 58,
+  "flashSaved": 248,
+  "localStackBytes": 0,
+  "addedSramBytes": 0,
+  "wholeDecoderScreen": [
+    {
+      "profile": "wb98",
+      "frames": 249,
+      "flashBefore": 26164,
+      "flashAfter": 25916,
+      "cycleDeltaMin": -4,
+      "cycleDeltaMax": 176,
+      "cycleDeltaMean": 171.48192771084337,
+      "sourceSha256": "29b5b3392441ea3eb903c6111d94ad559e678912aa7f8e3091c3129eebd699e8",
+      "binarySha256": "b97d0615963db4ff4ad0f7ecd0c1dfecf223043ae4cc8db674bceea9b1c78eb9",
+      "irqBinarySha256": "105535c9d2e00605fd9ac53a61e906c89d59bcce829ff11123fcfda6253dfff6",
+      "minQueue": 7,
+      "freeSramAtPeak": 398,
+      "underruns": 0,
+      "exact": true,
+      "reportSha256": {
+        "before": "366fe69037db8b955c1b3725d799606a0e6ac2e81e8c3e38722a9dc694c0c096",
+        "after": "d93d7fc464e9f66c37b3d5d6038a6fe2af0af85f70e472f9882e39d9bb76fcaf",
+        "irq": "b91e56f72e539e29bd9508cfc558d6463bf96c4ed9b0b91c051c9774eeb52a7c"
+      }
+    },
+    {
+      "profile": "wb128",
+      "frames": 64,
+      "flashBefore": 26164,
+      "flashAfter": 25916,
+      "cycleDeltaMin": 176,
+      "cycleDeltaMax": 176,
+      "cycleDeltaMean": 176.0,
+      "sourceSha256": "29b5b3392441ea3eb903c6111d94ad559e678912aa7f8e3091c3129eebd699e8",
+      "binarySha256": "7c800239df1308abf3796920b3413fa9b6ceacdea2ed7e4d89bbcf9abb3c2464",
+      "irqBinarySha256": "028de125f34ca2e2fa2e08ea45f4de5909d902623548a502919c35f9c824c01e",
+      "minQueue": 8,
+      "freeSramAtPeak": 391,
+      "underruns": 0,
+      "exact": true,
+      "reportSha256": {
+        "before": "861b2cb5ee9acfe6d7f488e47968118b8a1abccd60934a9c20305deca73b5e87",
+        "after": "dea894ed27e81da9e1f7cef71908b8fdaae07bc13342a660763c472d320df49c",
+        "irq": "42c03ef0c312c76e96aee3966de6eecc1849adeaf3c2fa6c54796dcd16bfd624"
+      }
+    }
+  ],
+  "cDecoderExecuted": false,
+  "physicalBoardTested": false
+}

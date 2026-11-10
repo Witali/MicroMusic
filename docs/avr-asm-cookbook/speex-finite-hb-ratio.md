@@ -109,6 +109,40 @@ For an archived isolated candidate, `--adopt-candidate PATH` first requires
 identical complete fixture binaries before copying its full scalar result and
 reference pack. It does not rerun or relabel historical results as fresh.
 
+## Count repeated rounds when Flash is the priority
+
+The 2026-11-10 size recipe replaces fifteen expanded inverse-quotient rounds
+with one round, `LDI r18,15`, `DEC r18` and `BRNE`. Both loop instructions
+preserve C, which carries the inverse quotient bit into the next `ROL`.
+The shorter function also permits a direct saturation branch. Do not insert
+an instruction that changes C between a round and the next rotation.
+
+On the same ATmega328P/GNU ABI/AVR GCC 7.3.0 target, the leaf shrinks from
+306 to 58 B. An unsaturated call costs exactly 44 more cycles; a saturated
+call saves one. Local stack and static SRAM remain zero. The separately
+selectable C equivalent and the wider generic API are unchanged.
+
+The [size receipt](../../Codecs/Speex/AVR/reports/wb-ratio-size-unit.json)
+records a fresh 106727-pair scalar sweep, all 31739 valid divisors, 213454 ASM
+returns and 327285 completed Timer2 interrupts. Explicit C and forced-generic
+selection each pass 1862 IRQ cases. A matched replay of 15076 actual calls
+checks both raw-leaf and selected-wrapper timing deltas; the complete wider
+generic control fixture remains byte-identical.
+
+A whole-image WB9.8/WB12.8 screen covers 249/64 frames respectively: decoder
+Flash is 26164 -> 25916 B, PCM/reset/PWM is exact, static SRAM and peak stack
+are unchanged, and +8% foreground-load IRQ output has no underruns. Minimum
+queues stay 7/8 and free SRAM stays 398/391 B. Added decoder work is at most
+176 cycles/frame (0.055% of the 320000-cycle frame budget). This is a bounded
+screen, not a fresh full-corpus or physical-board admission.
+
+Rebuild and run the scalar commands above in `build/ratio-size`, replay the
+retained `wb-hb-ratio-unit/replay/actual-all.json`, and use
+`tests/audit_wb_ratio_size.py --reference PATH_TO_ADMITTED_wb-hb-ratio-unit`.
+The audit also binds the whole screen under `build/ratio-size/whole` to its
+admitted `hb-finite-speed` baseline. Historical stage receipts describe their
+pinned sources; changing production later does not relabel those measurements.
+
 The finite-domain specialization, inverted quotient and measured recipes are
 original project work. Preserve the surrounding [Xiph fixed-point semantics](../../Codecs/Speex/AVR/vendor/speex-1.2.1/libspeex/fixed_generic.h)
 and [Speex 1.2.1 BSD notice](../../Codecs/Speex/AVR/vendor/speex-1.2.1/COPYING).
