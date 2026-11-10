@@ -262,7 +262,13 @@ private:
 #if !LPX4_ROM_POINTER
     uint16_t cursor_;
 #endif
+#if LPX4_COMPACT_VERSION == 9
+    // Every serialized v9 count, including rejected values, fits one word.
+    // Public metadata remains uint32_t through the existing accessors.
+    uint16_t sampleCount_;
+#else
     uint32_t sampleCount_;
+#endif
 #if LPX4_COMPACT_ONLY
     uint16_t remaining_;
 #else

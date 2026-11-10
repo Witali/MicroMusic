@@ -78,12 +78,15 @@ the universal program. The builder recognizes its `L9` identifier and selects
 only the wire-format reader; arithmetic C/ASM selection stays independent.
 The previous v5/v8 build paths remain available.
 
-Fourteen matched full-IRQ cases use 5424..5425 program bytes (about 5.30 KiB),
-62..64 bytes below v5, with the same 447-byte static SRAM, 60-byte observed
-stack and 42-cycle ISR. The eight public data files shrink by 12..43 bytes,
-with exact output and no underruns. Complete tested images use 5874..7306 B.
+Fourteen matched full-IRQ cases use 5390..5391 program bytes (about 5.26 KiB),
+96..98 bytes below v5, with 445-byte static SRAM, a 60-byte observed stack,
+a six-byte conservative margin and a 42-cycle ISR. The eight public data files shrink by 12..43 bytes,
+with exact output and no underruns. Complete tested images use 5840..7272 B.
 [Source-bound v9 comparison](v9-measurements.json) records the workload and
 before/after timing. See the format document for conversion and verification.
+The [next v9 comparison](v9-next-measurements.json) records the 34-byte Flash /
+2-byte SRAM saving with identical decode cycle totals and unchanged sound data.
+The [C reference](../../C_REFERENCE.md) supports the same v9 format and metadata.
 
 ## Retained ROM demonstration results
 

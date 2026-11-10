@@ -13,14 +13,15 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
-import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def build_library(output: Path, compiler: str = 'g++', v3_features=0, speech=False, speech_compact=False, compact_only=False) -> Path:
+def build_library(output: Path, compiler: str = 'g++', v3_features=0, speech=False, speech_compact=False, compact_only=False, compact_version=5) -> Path:
     if v3_features<0 or v3_features&~124:raise ValueError('Unknown v3 feature bits')
     if compact_only and not (speech and speech_compact):raise ValueError('Compact-only requires speech and compact speech')
+    if compact_version not in (5,9):raise ValueError('Select compact version5 or9')
+    if compact_version==9 and not compact_only:raise ValueError('Version9 requires compact_only=True')
     compiler_path = shutil.which(compiler)
     if not compiler_path:
         raise FileNotFoundError(f'Native batch build requires {compiler}')
@@ -34,6 +35,7 @@ def build_library(output: Path, compiler: str = 'g++', v3_features=0, speech=Fal
         if not speech:raise ValueError('Compact speech requires speech=True')
         cmd.insert(1,'-DLPX4_ENABLE_SPEECH_COMPACT=1')
     if compact_only:cmd.insert(1,'-DLPX4_COMPACT_ONLY=1')
+    cmd[1:1]=['-DLPX4_ENABLE_ASM=0',f'-DLPX4_COMPACT_VERSION={compact_version}']
     subprocess.run(cmd, check=True, capture_output=True, text=True)
     return output
 
@@ -53,6 +55,10 @@ class BatchDecoder:
                                 ct.POINTER(ct.c_int16), ct.c_uint32,
                                 ct.c_uint32, ct.POINTER(ct.c_int32)]
         self.fn_s16.restype = ct.c_int
+        # Old prebuilt libraries predate v9 and keep the version5 wire reader.
+        version=getattr(self.dll,'lpx4_batch_compact_version',None)
+        if version is not None:version.restype=ct.c_uint32
+        self.compact_version=version() if version is not None else 5
         self.calls = 0
         self.streams = 0
 
@@ -64,6 +70,7 @@ class BatchDecoder:
         if len(blobs) > 512:
             return [z for i in range(0, len(blobs), 512)
                     for z in self.decode_many(blobs[i:i+512], expected_samples)]
+        import numpy as np
         sizes = np.asarray([len(x) for x in blobs], dtype=np.uint32)
         offsets = np.empty(len(blobs), dtype=np.uint32)
         offsets[0] = 0
@@ -100,6 +107,7 @@ class BatchDecoder:
         if len(blobs)>512:
             return [z for i in range(0,len(blobs),512)
                     for z in self.decode_many_s16(blobs[i:i+512],expected_samples)]
+        import numpy as np
         sizes=np.asarray([len(x) for x in blobs],dtype=np.uint32)
         offsets=np.empty(len(blobs),dtype=np.uint32)
         offsets[0]=0
@@ -126,13 +134,13 @@ class BatchDecoder:
         return self.decode_many([blob], expected_samples)[0]
 
 
-def cached_library(v3_features=0, speech=False, speech_compact=False, compact_only=False) -> Path:
+def cached_library(v3_features=0, speech=False, speech_compact=False, compact_only=False, compact_version=5) -> Path:
     """Content-keyed cache: compile once per C++ source revision and platform."""
-    srcs = [ROOT/'src'/'Lpx4HybridCore.cpp', ROOT/'src'/'Lpx4HybridCore.h', ROOT/'src'/'Lpx4Math.h',
-            ROOT/'src'/'native_batch_decoder.cpp', ROOT/'src'/'cos_half_table.inc', ROOT/'src'/'cos_table.inc',
-            ROOT/'src'/'scale_table.inc']
+    srcs = [*sorted((ROOT/'src').glob('Lpx4*')),
+            ROOT/'src'/'native_batch_decoder.cpp', ROOT/'src'/'cos_half_table.inc',
+            ROOT/'src'/'cos_table.inc', ROOT/'src'/'scale_table.inc']
     h = hashlib.sha256()
-    h.update(repr((v3_features,bool(speech),bool(speech_compact),bool(compact_only))).encode())
+    h.update(repr((v3_features,bool(speech),bool(speech_compact),bool(compact_only),compact_version)).encode())
     for item in srcs:
         h.update(item.name.encode()); h.update(item.read_bytes())
     h.update(platform.machine().encode()); h.update(platform.system().encode())
@@ -144,31 +152,36 @@ def cached_library(v3_features=0, speech=False, speech_compact=False, compact_on
     if not target.is_file():
         cache_dir.mkdir(exist_ok=True, parents=True)
         intermediate = target.with_suffix('.building.so')
-        build_library(intermediate,v3_features=v3_features,speech=speech,speech_compact=speech_compact,compact_only=compact_only)
+        build_library(intermediate,v3_features=v3_features,speech=speech,speech_compact=speech_compact,compact_only=compact_only,compact_version=compact_version)
         intermediate.replace(target)
     return target
 
 
 class BatchSession:
     """One compiled decoder, cached by source fingerprint for future runs."""
-    def __init__(self, mode='auto', prebuilt=None, v3_features=0, speech=False, speech_compact=False, compact_only=False):
+    def __init__(self, mode='auto', prebuilt=None, v3_features=0, speech=False, speech_compact=False, compact_only=False, compact_version=5):
         if mode not in ('auto','batch','reference'):
             raise ValueError(mode)
         if compact_only and not (speech and speech_compact):raise ValueError('Compact-only requires speech and compact speech')
+        if compact_version not in (5,9):raise ValueError('Select compact version5 or9')
+        if compact_version==9 and not compact_only:raise ValueError('Version9 requires compact_only=True')
         self.mode = mode
         self.prebuilt = prebuilt
         self.v3_features=v3_features
         self.speech=speech
         self.speech_compact=speech_compact
         self.compact_only=compact_only
+        self.compact_version=compact_version
         self.decoder = None
 
     def __enter__(self):
         if self.mode == 'reference':
             return None
         try:
-            path = Path(self.prebuilt) if self.prebuilt else cached_library(self.v3_features,self.speech,self.speech_compact,self.compact_only)
+            path = Path(self.prebuilt) if self.prebuilt else cached_library(self.v3_features,self.speech,self.speech_compact,self.compact_only,self.compact_version)
             self.decoder = BatchDecoder(path)
+            if self.decoder.compact_version!=self.compact_version:
+                raise ValueError('Prebuilt C decoder uses a different compact version')
             return self.decoder
         except (OSError, subprocess.CalledProcessError):
             if self.mode == 'batch':

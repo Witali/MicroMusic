@@ -122,5 +122,15 @@ class SpeechV9Tests(unittest.TestCase):
         for key in self.libs:
             if key[0]==9:self.assertNotEqual(self.decode(key,blob)[1][1],0,key)
 
+    def test_word_count_preserves_wide_metadata_after_rejected_begin(self):
+        old=fixture(6,641,18,'changing',True);new,_=repack(old)
+        for count in (0,64001,65535):
+            a,b=bytearray(old),bytearray(new)
+            struct.pack_into('<I',a,8,count);struct.pack_into('<H',b,5,count)
+            expected=self.decode((5,0,1,1),a)
+            self.assertEqual(expected[1][2],count)
+            for key in self.libs:
+                if key[0]==9:self.assertEqual(self.decode(key,b),expected,key)
+
 
 if __name__=='__main__':unittest.main()

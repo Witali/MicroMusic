@@ -22,6 +22,8 @@ All multibyte words are little-endian. The header is 13 bytes; v5 uses 22.
 Frame 320, block 160 and pulse-packet 40 sample geometry is fixed by version 9.
 It is not repeated in each file. The runtime API retains wide sample metadata;
 the narrower count removes bits outside its already supported range.
+The active C and optimized v9 cores also store this count as a word internally;
+public sample/progress metadata stays 32-bit, including rejected-count values.
 
 ## Payload
 
@@ -100,3 +102,6 @@ all112 invalid codes, 60 header combinations, sample tails, the 64000-sample
 boundary, ROM/callback switching, both cursor modes, both memory profiles and
 both remaining-count strategies. The separate AVR run compares full playback
 on fourteen workloads against the v5 decoder with interrupts active.
+
+[Portable C reference and batch-library selection](C_REFERENCE.md) explains
+version9 reference builds, cache freshness and strict batch EOF validation.

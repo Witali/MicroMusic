@@ -7,6 +7,8 @@
 #include "Lpx4HybridCore.h"
 #include <stdint.h>
 
+extern "C" uint32_t lpx4_batch_compact_version(){return LPX4_COMPACT_VERSION;}
+
 extern "C" int lpx4_batch_decode(
   const uint8_t* concatenated,
   const uint32_t* offsets,
@@ -21,7 +23,7 @@ extern "C" int lpx4_batch_decode(
     return -1;
   for (uint32_t i = 0; i < count; ++i) {
     statuses[i] = 0;
-    if (sizes[i] < 20 || sizes[i] > 65535) { statuses[i] = -2; continue; }
+    if (sizes[i] < (LPX4_COMPACT_VERSION==9?13u:20u) || sizes[i] > 65535) { statuses[i] = -2; continue; }
     Lpx4HybridCore core;
     if (!core.begin(concatenated + offsets[i], (uint16_t)sizes[i]) ||
         core.samples() != expected_samples) { statuses[i] = -3; continue; }
@@ -31,7 +33,8 @@ extern "C" int lpx4_batch_decode(
       pcm[i*pcm_stride+pos] = s;
       ++pos;
     }
-    if (pos != expected_samples || !core.finished()) statuses[i] = -4;
+    // Drain once more so v9 validates EOF even at a partial sample tail.
+    if (pos != expected_samples || core.next(s) || core.error() || !core.finished()) statuses[i] = -4;
   }
   return 0;
 }
@@ -53,7 +56,7 @@ extern "C" int lpx4_batch_decode_s16(
     return -1;
   for (uint32_t i=0; i<count; ++i) {
     statuses[i]=0;
-    if (sizes[i]<20 || sizes[i]>65535) {statuses[i]=-2; continue;}
+    if (sizes[i]<(LPX4_COMPACT_VERSION==9?13u:20u) || sizes[i]>65535) {statuses[i]=-2; continue;}
     Lpx4HybridCore core;
     if(!core.begin(concatenated+offsets[i],(uint16_t)sizes[i]) ||
        core.samples()!=expected_samples){statuses[i]=-3;continue;}
@@ -63,7 +66,7 @@ extern "C" int lpx4_batch_decode_s16(
        pcm[i*pcm_stride+p]=s;
        ++p;
     }
-    if(p!=expected_samples || !core.finished())statuses[i]=-4;
+    if(p!=expected_samples || core.nextS16(s) || core.error() || !core.finished())statuses[i]=-4;
   }
   return 0;
 }

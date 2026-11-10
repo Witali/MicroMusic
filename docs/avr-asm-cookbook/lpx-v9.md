@@ -35,13 +35,13 @@ Each v9 full playback is checked against portable C and the actual v5 output.
 
 | Quantity | V5 | V9 |
 | --- | ---: | ---: |
-| Universal program excluding verified audio | 5487..5488 B | 5424..5425 B |
-| Complete image including each test stream | 5958..7386 B | 5874..7306 B |
-| Static SRAM / peak observed stack | 447 / 60 B | 447 / 60 B |
+| Universal program excluding verified audio | 5487..5488 B | 5390..5391 B |
+| Complete image including each test stream | 5958..7386 B | 5840..7272 B |
+| Static SRAM / peak observed stack | 447 / 60 B | 445 / 60 B |
 | Complete ISR, hardware entry through RETI | 42 cycles | 42 cycles |
 | Underruns | 0 | 0 |
 
-The program saves 62..64 B, in addition to smaller audio files. On the four
+The program now saves 96..98 B, in addition to smaller audio files. On the four
 public phrases, compressed data shrinks as follows:
 
 | Phrase | P4 data bytes, v5 to v9 | P6 data bytes, v5 to v9 |
@@ -53,8 +53,8 @@ public phrases, compressed data shrinks as follows:
 
 Thus these files save 12..43 B (about 0.95..4.26%). All fourteen IRQ-active mean
 decode costs improve, by about 0.3..0.5%; exact before/after means, maxima and
-queue minima are in the receipt. PCM/PWM bytes stay identical. SRAM, observed
-stack, the four-byte conservative margin and the 42-cycle ISR are preserved.
+queue minima are in the receipt. PCM/PWM bytes stay identical. Observed stack and the 42-cycle ISR are preserved. V9 static SRAM is now
+445 B; the conservative margin increases from four to six bytes.
 The admission remains bounded to these standalone workloads; extra application
 state/IRQs and other streams need their own timing/stack check.
 
@@ -85,7 +85,48 @@ Reproduce using the commands in the wire specification. Old v5/v8 data and
 published speech recipes remain on their existing paths; selecting v9 is a
 format choice, independent of CPU arithmetic and hardware memory access.
 
-An unassembled table-free follow-up is `q=(h-(h>>2)+(h>=20))>>2` for
-`0 <= h <= 24`, followed by remainder `h-5*q`. The identity was exhaustively
-checked on its 25 inputs in host Python. AVR code size, stack and cycle cost
-have not been measured; the admitted reader still uses the 25-byte table.
+## Word metadata and synchronized C reference (2026-11-10)
+
+V9 serializes a 16-bit count, and even invalid counts cannot exceed 65535.
+Store `sampleCount_` as `uint16_t` only for v9; keep the existing 32-bit public
+accessors and the version 5 field. This saves 34 program bytes and 2 static SRAM
+bytes in every matched v9 build. Frame decode instructions/timing stay exact.
+All variable recording parameters still come from the file; compressed data
+and both PCM/PWM output streams remain byte-identical.
+
+The [matched v9-to-v9 receipt](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/v9-next-measurements.json)
+replays the original `f7481ef9` ELFs and verifies loaded Flash bytes, compiler
+recipe, original timing and waveform before comparing the new binaries. All
+fourteen have identical CPU cycle totals and wall-time means, zero underruns,
+60-byte observed stacks, and 6-byte margins. SRAM is 445 B including FIFO44.
+These remain standalone simulator bounds, not a board/application guarantee.
+
+The [active C reference](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/C_REFERENCE.md)
+uses the same word metadata and explicitly selects C arithmetic. Its batch
+builder/cache now select v9, accept the 13-byte header and drain EOF for partial
+sample tails. The cache includes C arithmetic headers and the selected format.
+Tests compare PCM16/PWM and invalid-count metadata, reject trailing bytes,
+check old-format subprocess output, and invalidate a copied arithmetic header.
+Historical reference directories remain frozen.
+
+The observer now also reports `decode_cpu_cycles` and `decode_irq_cycles`.
+At each decode boundary it subtracts completed IRQ durations, including the
+calibrated four-cycle hardware entry and completed RETI, from elapsed cycles.
+Thus `decode_cycles = decode_cpu_cycles + decode_irq_cycles`. Replaying an
+unchanged ELF preserves every older timing/PWM field. This separates interrupt
+phase changes from changes to decoder work; it does not disable interrupts.
+
+Screening used the previous 447-byte state and bread P6, with the same compiler
+and full IRQ playback. All arithmetic identities retained exact output:
+
+| Rejected candidate | Measured reason |
+| --- | --- |
+| Direct bounded `/5` identity `q=(h-(h>>2)+(h>=20))>>2`,0..24 | 5429 program bytes versus 5425; mean wall time 1589.826 versus1589.430 cycles/sample |
+| Keep the quotient scaled by4 | 5415 B, but mean wall time 1589.636 cycles/sample; rejected for slower decoding |
+| Read both P6 amplitudes together / split P4/P6 bodies | Stack collision; also failed with a separate subframe function |
+| Branch-free P4 sign | Compile-only screen grew the program from 5424 to 5540 B |
+| Narrow P4 offset cast | Saves 6 B and speeds P4, but adds one CPU cycle per P6 pulse packet; not retained |
+
+The 25-entry table and original pulse arithmetic remain. The accepted change
+is the count-width reduction in the shared C header, with no arithmetic ASM
+or wire-format change.

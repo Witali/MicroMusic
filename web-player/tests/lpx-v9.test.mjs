@@ -32,10 +32,10 @@ test('v9 preserves every measured waveform while shrinking data and universal co
     assert.equal(a.embedded_audio_bytes,p.file_bytes);assert.equal(b.embedded_audio_bytes,p.input_bytes);
     assert.equal(a.flash_bytes,a.program_excluding_audio_bytes+a.embedded_audio_bytes);
     assert.ok(a.program_excluding_audio_bytes<b.program_excluding_audio_bytes);
-    assert.ok(a.program_excluding_audio_bytes>=5424&&a.program_excluding_audio_bytes<=5425);
+    assert.ok(a.program_excluding_audio_bytes>=5390&&a.program_excluding_audio_bytes<=5391);
     assert.ok(a.decode_active_irq_mean<=b.decode_active_irq_mean);
     assert.equal(a.samples,b.samples);assert.equal(a.samples,p.samples);
-    assert.equal(a.static_ram_bytes,447);assert.equal(a.stack_bytes,60);assert.equal(a.stack_margin,4);
+    assert.equal(a.static_ram_bytes,445);assert.equal(a.stack_bytes,60);assert.equal(a.stack_margin,6);
     assert.equal(a.irq_max,42);assert.equal(a.underruns,0);assert.ok(a.min_queue>0);
     assert.ok(a.flash_bytes<=8192&&a.output_gap_min>=1980&&a.output_gap_max<=2020);
   }
