@@ -1,0 +1,27 @@
+{
+  "schema": "lpx-public-sparse80-fixture-v1",
+  "source_audio": "web-player/audio/originals/chego.wav",
+  "source_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+  "samples": 9831,
+  "sample_hz": 8000,
+  "encoder": "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/encode_low_bitrate_speech.py",
+  "encoder_sha256": "4c80596a9e5b29c86fb6ce78151f8dccebee53fe283cc7fd346bd407caedb2a0",
+  "recipe": {
+    "target_kbps": 2,
+    "pre_q14": [
+      13926
+    ],
+    "bandwidths": [
+      0.97
+    ],
+    "level_policy": "preserve"
+  },
+  "v8_bytes": 307,
+  "v8_sha256": "4f865afcba2143e16e94a46178f464e9c67af3088dc38a3b1379feeff910cad0",
+  "v9_bytes": 297,
+  "v9_sha256": "00315a2e6eb7c23f23235ce6173d3a27b6f8184727512b75dd7cd40e21a6426c",
+  "v9_bitrate_bps": 1933.4757400061033,
+  "reference": "ordinary v5/P6 expansion decoded with LPX4_ENABLE_ASM=0 and the standard-memory full polynomial",
+  "s16_sha256": "799b443cc17b0e62ff97099775870cb312dbb676cc6360f163e3dba1d32b4d1e",
+  "pwm_sha256": "24aa20128092761cbc46fc2f492f67080cc3b7411582239e7c23c770c7292891"
+}

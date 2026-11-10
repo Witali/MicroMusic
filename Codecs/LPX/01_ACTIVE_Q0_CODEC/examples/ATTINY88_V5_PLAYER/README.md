@@ -1,5 +1,42 @@
 # ATtiny88 / 16 MHz LPX v5 player
 
+## Current universal v9: P4/P6 and sparse80
+
+An `L9` input selects one universal decoder for all three file-defined profiles:
+4,6 and15. Profile15 supports the existing low-rate sparse80 encoder, including
+complete streams near2 kbit/s. It shares LPC synthesis and does not bake the
+recording's filters, count or profile into the executable. The v5 default and
+recording-specialized catalog recipes described below remain available.
+
+The current v9 recipe uses FIFO32/prefill24, a38-cycle complete ISR and
+5604..5605 B of program Flash (about5.47 KiB), excluding the verified audio array.
+That is4.10% above the former production v9 baseline (5384 B, FIFO44), within
+the5% admission ceiling. With the same FIFO32 the measured baseline is5528 B:
+the increase is1.39%. Static SRAM is433 B, observed stack peaks at67 B, with
+an11-byte conservative margin. The default FIFO change is part of this recipe;
+FIFO44 is not admitted for the new three-profile decoder.
+
+All22 complete IRQ workloads reproduce the C reference exactly without
+underruns. Public sparse80 examples take1313 and1547 mean active CPU cycles
+per sample including IRQ; the heaviest synthetic sparse80 control takes1771.
+Public P4/P6 examples remain exact, but the old1500-cycle target remains unmet.
+For the measured Chego case, same-FIFO cost improves from1613 to1606 cycles;
+compared with the former FIFO44 production recipe it rises from1574 to1606.
+Means are not worst-case per-sample bounds; the queue covers frame conversion.
+These are simavr measurements with interrupts active, not physical-board tests.
+
+The real1.93 kbit/s Chego fixture uses297 audio bytes and a5902-byte full image,
+which fits the6012-byte USB region. Sparse80 v9 repacking keeps decoded audio
+exact and reduces data versus v8; it does not promise a fixed bitrate or speech
+quality. See the [current22-case receipt](v9-sparse80-measurements.json),
+[format](../../LPX9_FORMAT.md) and
+[reproduction notes](../../../../../docs/avr-asm-cookbook/lpx-v9.md).
+
+The measurements in the following sections are historical two-profile receipts,
+bound to their original source revisions rather than the current three-profile
+program. Current source and historical-receipt integrity are checked together
+by the sparse80 admission test.
+
 The builder and verifier default to a **universal runtime-header decoder** for
 LPX v5 P4/P6 at 8 kHz. Profile flags, sample metadata and filter coefficients
 come from each sound file; they are not compiled into the decoder. The existing

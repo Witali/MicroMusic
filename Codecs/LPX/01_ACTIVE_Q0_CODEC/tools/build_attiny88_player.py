@@ -64,7 +64,6 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
         raise ValueError('Output aliases input or uses a symlink')
     blob=source.read_bytes()
     if type(universal) is not bool:raise ValueError('Universal selection must be boolean')
-    if queue is None:queue=44 if universal else 32
     if mul16_unroll is None:mul16_unroll=2 if universal else 16
     if universal and (output_gain!=128 or any(flag.startswith('-DLPX4_FIXED_') for flag in extra_flags)):
         raise ValueError('Universal playback reads stream parameters without per-record specialization')
@@ -72,11 +71,11 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     version=9 if blob[:2]==b'L9' else blob[4] if len(blob)>=16 else 0
     header_bytes=13 if version==9 else 22
     flags_at=2 if version==9 else 5
-    if not header_bytes<=len(blob)<=65535 or not ((version==9 or blob[:5]==b'L4HY\x05') and blob[flags_at]&127 in (4,6) or
+    if not header_bytes<=len(blob)<=65535 or not ((version==9 or blob[:5]==b'L4HY\x05') and (blob[flags_at]&127 in (4,6) or version==9 and blob[flags_at]==15) or
             sparse80 and blob[:6]==b'L4HY\x08\x0f'):
         raise ValueError('Expected compact v5/v9, or sparse80 with its explicit enable')
-    if version==9 and sparse80:raise ValueError('Version9 has no sparse80 packets')
     compact_version=9 if version==9 else 5
+    if queue is None:queue=32 if compact_version==9 or not universal else 44
     samples=int.from_bytes(blob[5:7] if version==9 else blob[8:12],'little')
     pre_at=7 if version==9 else 12
     if queue not in (16,24,32,44) or not 1<=repeat<=255 or lpc_segments not in (1,2,4):raise ValueError('Invalid playback geometry')
@@ -142,6 +141,7 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
     report=dict(target='attiny88',cpu_hz=16000000,sample_hz=8000,queue=queue,prefill=queue*3//4,
         repeat=repeat,samples=samples*repeat,compact_version=compact_version,
+        supported_profiles=[4,6,15] if compact_version==9 or sparse80 else [4,6],
         assembly=assembly,asm_isr=asm_isr,sparse80=sparse80,lpc_segments=lpc_segments,mul16_unroll=mul16_unroll,universal=universal,
         flash_bytes=int(size[0])+int(size[1]),static_ram_bytes=int(size[1])+int(size[2]),
         compiler=run('avr-g++','--version').decode().splitlines()[0],compiler_options=flags,

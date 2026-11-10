@@ -1,3 +1,4 @@
+import {assertHistoricalReceipt} from './helpers/lpx-receipt-history.mjs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -8,14 +9,13 @@ const read=path=>readFileSync(new URL(path,root));
 const sha=data=>createHash('sha256').update(data).digest('hex');
 const folder='Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/';
 
-test('universal Tiny88 receipt binds runtime-header playback and full IRQ results to current source',()=>{
+test('historical universal Tiny88 receipt binds playback and IRQ results to e32e0c66',()=>{
   const receipt=JSON.parse(read(folder+'universal-measurements.json'));
   assert.equal(receipt.schema,'lpx-attiny88-universal-v1');
   assert.equal(receipt.parameters,'runtime LPX header');
   assert.equal(receipt.queue,44);assert.equal(receipt.prefill,33);
   assert.equal(receipt.cases.length,14);assert.equal(receipt.physical_board_measured,false);
-  for(const [path,digest] of Object.entries(receipt.source_sha256))
-    assert.equal(sha(read(path).toString('utf8').replaceAll('\r\n','\n')),digest,path);
+  assertHistoricalReceipt('universal-measurements.json',receipt);
   assert.deepEqual(receipt.cases.slice(0,8).map(row=>row.case),[
     'chego-compact','chego-quality','otvechaesh-compact','otvechaesh-quality',
     'vinni-compact','vinni-quality','bread-compact','bread-quality']);

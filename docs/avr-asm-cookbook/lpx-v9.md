@@ -133,3 +133,68 @@ is the count-width reduction in the shared C header, with no arithmetic ASM
 or wire-format change at that revision. Later shared arithmetic improvements
 are recorded in the [current 1500-cycle attempt](lpx-universal-tiny88.md#exact-work-reduction-toward-1500-cyclessample-2026-11-10);
 the mean target is not yet met on public speech.
+
+## Shared sparse80 reader and pulse gaps (2026-11-10)
+
+The universal v9 reader now accepts file profiles 4, 6 and 15. Profile 15
+losslessly repacks the existing v8 sparse80 syntax. Share spectrum conversion,
+LPC and output filtering; branch only for metadata cadence and pulse syntax.
+Keep profile15 as its raw flag byte: its low bits already select six-bit
+spectra and bit3 identifies sparse80. No additional persistent field is needed.
+
+After sorting/merging a P4/P6 packet, turn its absolute positions into gaps:
+`gap[i] = position[i] - position[i-1] - 1`, in reverse order. The first gap is
+the first position. Decrement the current pending gap on non-pulse samples;
+consume a pulse when it reaches zero. Sparse80 is the same one-entry case.
+This removes sample-phase multiplication without changing pulse times, merged
+amplitudes or pitch-history feedback. Narrow the excitation sum only after
+proving the rounded pitch term (-28..27) plus innovation (-16..16) fits int8.
+The portable C reference performs these same operations; arithmetic backend
+and hardware memory access remain separate, explicitly selectable settings.
+
+Measured target: ATtiny88 / AVR25 without MUL, 16 MHz, avr-g++ 7.3, existing
+SRAM512 profile, explicit ASM enable, software-product unroll2, and the
+standalone reserved-register player ABI. FIFO32/prefill24 admits the new
+reader and reduces the complete IRQ from42 to38 cycles. Do not carry that
+ABI into a general interrupt handler without its register contract.
+
+| Full-player measurement | Before (`e32e0c66`) | Three-profile v9 |
+| --- | ---: | ---: |
+| Default FIFO | 44 | 32 |
+| Maximum program excluding verified audio | 5385 B | 5605 B |
+| Growth vs smallest former production program (5384 B) | — | 4.105% |
+| Program with matched FIFO32 | 5528 B | 5605 B maximum (+1.393%) |
+| Static SRAM | 445 B | 433 B |
+| Peak observed stack / conservative margin | 60 / 6 B | 67 / 11 B |
+| Complete IRQ | 42 cycles | 38 cycles |
+
+Twenty-two complete workloads pass exact native-C/PWM comparison and zero
+underruns with both timers active: the former14 cases, two public sparse80
+files (including a real1.93 kbit/s file), five sparse boundary/filter controls,
+and all400 P6 pulse pairs. The slowest synthetic sparse80 mean is1771 active
+CPU cycles/sample including IRQ. Mean values do not bound individual frame
+conversion; minimum observed queue occupancy is4. Existing P4/P6 compressed
+data and output stay exact. Same-FIFO Chego mean decreases from1613 to1606
+cycles; relative to the previous FIFO44 production recipe it increases from
+1574 to1606. The1500-cycle target remains unmet. No physical board was measured.
+
+The byte-level position domain, all signs, tails, maximum count, mixed-profile
+input switching and strict EOF are independently tested by the selectable C
+paths. The old two-profile receipts remain unchanged and source-bound to their
+historical revision; the new admission verifies their exact Git contents too.
+[Current source-bound measurements](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/v9-sparse80-measurements.json).
+
+Reproduce with the two archived baseline directories (the first contains the
+old14-case `current` ELFs; the second is the former program built with FIFO32):
+
+```sh
+python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_attiny88_v9_sparse80.py \
+  build/sparse80 BASELINE_14_CASE_DIRECTORY BASELINE_FIFO32_DIRECTORY --wsl Ubuntu
+python3 -m unittest discover -s Codecs/LPX/01_ACTIVE_Q0_CODEC/tests -p test_speech_v9.py
+```
+
+Rejected measurements: retaining FIFO44 collided with the stack; outlining
+`next()` reduced Flash but slowed decoding by about54 cycles/sample and left
+only3 bytes of margin. Packet-gap sharing and FIFO32 are retained instead.
+This is original project code, using the existing vendor-derived register
+definitions and licensing. No external assembly implementation was copied.

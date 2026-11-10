@@ -73,9 +73,12 @@
 #if LPX4_COMPACT_VERSION != 5 && LPX4_COMPACT_VERSION != 9
 #error Select compact LPX version 5 or 9
 #endif
-#if LPX4_COMPACT_VERSION == 9 && (!LPX4_COMPACT_ONLY || LPX4_ENABLE_SPARSE80)
-#error Version9 requires compact-only decoding without sparse80
+#if LPX4_COMPACT_VERSION == 9 && !LPX4_COMPACT_ONLY
+#error Version9 requires compact-only decoding
 #endif
+// V9 includes all three runtime profiles. The legacy flag only enables the
+// long-header version8 reader in a version5 build; it does not select DSP.
+#define LPX4_HAS_SPARSE80 (LPX4_COMPACT_VERSION == 9 || LPX4_ENABLE_SPARSE80)
 // Mirrored LPC history avoids per-sample shifts, spending 20 B RAM.
 // The compact size profile defaults to linear; explicit 1 restores mirroring.
 // Both histories retain identical output with C and explicit supported ASM.

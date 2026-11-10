@@ -1,3 +1,4 @@
+import {assertHistoricalReceipt} from './helpers/lpx-receipt-history.mjs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -8,7 +9,7 @@ const read=path=>readFileSync(new URL(path,root));
 const sha=data=>createHash('sha256').update(data).digest('hex');
 const folder='Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/';
 
-test('v9 preserves every measured waveform while shrinking data and universal code with IRQs',()=>{
+test('historical v9 preserves every waveform while shrinking data and universal code with IRQs',()=>{
   const r=JSON.parse(read(folder+'v9-measurements.json'));
   const old=JSON.parse(read(folder+'universal-measurements.json'));
   assert.equal(r.schema,'lpx-v9-attiny88-admission-v1');
@@ -20,8 +21,7 @@ test('v9 preserves every measured waveform while shrinking data and universal co
   assert.equal(r.pulse_pair_irq_check.after.samples,16000);
   assert.equal(r.pulse_pair_irq_check.after.underruns,0);
   assert.equal(r.pulse_pair_irq_check.after.irq_max,42);
-  for(const [path,digest] of Object.entries(r.source_sha256))
-    assert.equal(sha(read(path).toString('utf8').replaceAll('\r\n','\n')),digest,path);
+  assertHistoricalReceipt('v9-measurements.json',r);
   for(const row of r.cases){
     const {before:b,after:a,repack:p}=row;
     assert.equal(row.pwm_exact,true);

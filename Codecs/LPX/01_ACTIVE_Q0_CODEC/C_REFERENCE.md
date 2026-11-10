@@ -70,3 +70,21 @@ Universal SRAM512 v5/v9 builds compute only the exactly symmetric half of P.
 Q keeps its full recurrence because negative floor rounding breaks antisymmetry.
 The standard-memory C path retains the full polynomial calculation as an oracle.
 No recording parameter or compressed byte is moved into the decoder build.
+
+V9 now accepts profiles4,6 and15 in the same C/ASM build. Profile15 carries
+the former v8 sparse80 excitation: one signed innovation per80 samples and
+scale/pitch metadata per320 samples. Both backends read the same runtime header.
+Legacy v5 selection and its optional v8 reader remain available.
+
+The v9 reader converts sorted packet positions into countdown gaps once per
+packet. The shared sample loop decrements only the pending gap; it needs no
+packet-phase multiplication. Its byte excitation accumulator is exact: the
+rounded pitch term is in -28..27 and merged innovations in -16..16. Saturation
+to the six-bit pitch history remains unchanged. These changes are in the C
+reference too; they do not change P4/P6 compressed bytes or output.
+
+The current seven native v9 tests also compare sparse80 against an ordinary
+v5/P6 expansion in the standard-memory C reference, exercise every position
+and sign, partial tails, profile switching, malformed input, and a public
+2 kbit/s fixture with frozen PCM/PWM hashes. The22-case full-IRQ admission is
+[retained separately](examples/ATTINY88_V5_PLAYER/v9-sparse80-measurements.json).

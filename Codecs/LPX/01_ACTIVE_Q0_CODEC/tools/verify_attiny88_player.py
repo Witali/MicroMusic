@@ -29,9 +29,9 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
            flash_limit=8192,lpc_segments=2,sparse80=False,mul16_unroll=None,normalize_output=False,universal=True):
     output=Path(output).resolve()
     if universal and normalize_output:raise ValueError('Universal playback must not specialize gain for a recording')
-    if queue is None:queue=44 if universal else 32
     if mul16_unroll is None:mul16_unroll=2 if universal else 16
     cost=build(source,output,assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll,universal=universal)
+    queue=cost['queue']
     prefix=['wsl','-d',wsl,'--'] if wsl else []
     path=lambda p:target_path(p,wsl)
     def run(*args):

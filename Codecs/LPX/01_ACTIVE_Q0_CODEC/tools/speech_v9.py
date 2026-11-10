@@ -1,4 +1,4 @@
-"""Lossless LPX v5 <-> v9 repacking without audio analysis or dependencies.
+"""Lossless LPX v5/v8 <-> v9 repacking without audio analysis or dependencies.
 
 V9 preserves every output sample. Its 13-byte header omits fixed geometry
 and narrows the already bounded sample count. Zero-gain lag fields and
@@ -47,23 +47,27 @@ def pulse_positions(code):
 
 def repack(blob, version=9):
     """Return a strictly validated equivalent stream and bit/size statistics."""
-    if version not in (5,9) or len(blob)<13:
-        raise ValueError('Expected LPX v5 or v9')
-    source=9 if blob[:2]==b'L9' else 5 if blob[:5]==b'L4HY\x05' else 0
-    if source==5 and len(blob)>=22:
+    if version not in (5,8,9) or len(blob)<13:
+        raise ValueError('Expected LPX v5, v8 or v9')
+    source=9 if blob[:2]==b'L9' else blob[4] if blob[:4]==b'L4HY' and blob[4] in (5,8) else 0
+    if source in (5,8) and len(blob)>=22:
         _,_,flags,rate,n,pre,bright,frame,block,payload=struct.unpack('<4sBBHIHHHHH',blob[:22])
-        if (frame,block)!=(320,160):raise ValueError('Invalid packet geometry')
+        if (frame,block)!=(320,320 if source==8 else 160):raise ValueError('Invalid packet geometry')
         header=22
     elif source==9:
         _,flags,rate,n,pre,bright,payload=struct.unpack('<2sBHHHHH',blob[:13])
         header=13
-    else:raise ValueError('Expected LPX v5 or v9')
-    if (flags&127) not in (4,6) or rate!=8000:
+    else:raise ValueError('Expected LPX v5, v8 or v9')
+    sparse80=flags==15
+    legal=sparse80 if source==8 else (flags&127) in (4,6) or (source==9 and sparse80)
+    if not legal or rate!=8000:
         raise ValueError('Unsupported LPX profile or sample rate')
     if not 1<=n<=64000 or pre>16384 or bright>11469:
         raise ValueError('Invalid LPX metadata')
     if len(blob)>65535 or len(blob)!=header+payload:
         raise ValueError('Invalid bounded payload length')
+    if sparse80 and version==5 or not sparse80 and version==8:
+        raise ValueError('Sparse80 uses legacy version8; P4/P6 use legacy version5')
     r=Bits(blob[header:]);w=Bits()
     bits=5 if flags&127==4 else 6
     old=None
@@ -89,6 +93,21 @@ def repack(blob, version=9):
                 vec.append(value)
             old=vec
         elif old is None:raise ValueError('Initial repeated spectrum')
+        if sparse80:
+            scale=r.get(5)
+            if source==8:lag,gain=r.get(7)+18,r.get(3)
+            else:
+                gain=r.get(3);lag=r.get(7)+18 if gain else 18
+            w.put(scale,5)
+            if version==8:w.put(lag-18,7);w.put(gain,3)
+            else:
+                w.put(gain,3)
+                if gain:w.put(lag-18,7)
+            for group in range(4):
+                offset=fi*320+group*80
+                raw=r.get(7) if source==8 or offset<n else 0
+                if version==8 or offset<n:w.put(raw,7)
+            continue
         for half in range(2):
             offset=fi*320+half*160
             stored=source==5 or offset<n
@@ -134,10 +153,10 @@ def repack(blob, version=9):
     used=r.at
     if (used+7)//8!=payload or r.get(payload*8-used):
         raise ValueError('Unexpected trailing LPX data')
-    if source==5 and version==9:assert w.at<=used
+    if source in (5,8) and version==9:assert w.at<=used
     payload=len(w.output)
-    if version==5:
-        result=struct.pack('<4sBBHIHHHHH',b'L4HY',5,flags,rate,n,pre,bright,320,160,payload)
+    if version in (5,8):
+        result=struct.pack('<4sBBHIHHHHH',b'L4HY',version,flags,rate,n,pre,bright,320,320 if sparse80 else 160,payload)
     else:result=struct.pack('<2sBHHHHH',b'L9',flags,rate,n,pre,bright,payload)
     result+=w.output
     if len(result)>65535:raise ValueError('Stream exceeds bounded ROM API')
@@ -150,7 +169,7 @@ def main():
     from output_paths import protect_outputs
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('input',type=Path);parser.add_argument('output',type=Path)
-    parser.add_argument('--version',type=int,choices=(5,9),default=9)
+    parser.add_argument('--version',type=int,choices=(5,8,9),default=9)
     args=parser.parse_args();protect_outputs([args.input],[args.output])
     blob,stats=repack(args.input.read_bytes(),args.version)
     args.output.parent.mkdir(parents=True,exist_ok=True)

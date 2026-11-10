@@ -1,3 +1,4 @@
+import {assertHistoricalReceipt} from './helpers/lpx-receipt-history.mjs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -8,7 +9,7 @@ const read=path=>readFileSync(new URL(path,root));
 const sha=data=>createHash('sha256').update(data).digest('hex');
 const folder='Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/';
 
-test('v9 reduces decoder plus IRQ work without growing program/data; unmet 1500 target is reported',()=>{
+test('historical v9 reduces decoder plus IRQ work without program growth; 1500 target remains unmet',()=>{
   const r=JSON.parse(read(folder+'v9-1500-measurements.json'));
   const matched=JSON.parse(read(folder+'v9-measurements.json'));
   assert.equal(r.schema,'lpx-v9-1500-admission-v1');
@@ -17,8 +18,7 @@ test('v9 reduces decoder plus IRQ work without growing program/data; unmet 1500 
   assert.equal(r.target_cycles_per_sample,1500);
   assert.equal(r.queue,44);assert.equal(r.parameters,'runtime LPX header');
   assert.equal(r.physical_board_measured,false);assert.equal(r.cases.length,14);
-  for(const [path,digest] of Object.entries(r.source_sha256))
-    assert.equal(sha(read(path).toString('utf8').replaceAll('\r\n','\n')),digest,path);
+  assertHistoricalReceipt('v9-1500-measurements.json',r);
   for(const row of r.cases){
     const {before:b,after:a}=row;
     assert.equal(b.program_excluding_audio_bytes-a.program_excluding_audio_bytes,6);
