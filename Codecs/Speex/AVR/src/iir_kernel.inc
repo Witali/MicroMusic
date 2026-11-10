@@ -54,86 +54,6 @@
     adc r24, r1
     adc r25, r2
 .endm
-.macro IIR_FINISH age
-    /* PSHR32(sum,13), preserving wrap when adding the rounding bias. */
-    subi r23,lo8(-16)
-    sbci r24,255
-    sbci r25,255
-    lsl r23
-    rol r24
-    rol r25
-    sbc r22, r22
-    .rept 2
-    lsl r23
-    rol r24
-    rol r25
-    rol r22
-    .endr
-    mov r0, r22
-    movw r22, r24
-    mov r24, r0
-    /* Rounded signed32 >>13 lies in [-262144,262143]. Adding signed16
-     * input lies in [-294912,294910], so signed24 is sufficient. */
-    /* Add sign-extended input before saturation. Read before writing y so
-     * the upstream in-place x==y case is supported. */
-    movw r30, r6
-    ld r18, Z+
-    ld r19, Z+
-    movw r6, r30
-    mov r20, r19
-    lsl r20
-    sbc r20, r20
-    add r22, r18
-    adc r23, r19
-    adc r24, r20
-    tst r24
-    brmi .Lnegative\@
-    brne .Lclip_positive\@
-    sbrs r23, 7
-    rjmp .Lstore\@
-.Lclip_positive\@:
-    ldi r22, 255
-    ldi r23, 127
-    rjmp .Lstore\@
-.Lnegative\@:
-    cpi r24, 255
-    brne .Lclip_negative\@
-    sbrs r23, 7
-    rjmp .Lclip_negative\@
-    cpi r23, 128
-    brne .Lstore\@
-    tst r22
-    brne .Lstore\@
-.Lclip_negative\@:
-    ldi r22, 1
-    ldi r23, 128
-.Lstore\@:
-    movw r30, r8
-    st Z+, r22
-    st Z+, r23
-    movw r8, r30
-    /* NEG sets C iff the original low byte was nonzero. The high-byte
-     * subtract therefore supplies the exact two's-complement carry. */
-    com r23
-    neg r22
-    sbci r23, 255
-    /* Y advances to the next sample without a separate address calculation.
-     * Mirror/age offsets compensate for the two postincrements. */
-    st Y+,r22
-    st Y+,r23
-    std Y+(2*IIR_ORDER-2),r22
-    std Y+(2*IIR_ORDER-1),r23
-    /* Sample 0 uses all previous coefficients; sample 1 uses new den[0],
-     * etc. The transposed recurrence ages coefficients in exactly this way. */
-    .if \age
-    movw r26, r10
-    ld r18, X+
-    ld r19, X+
-    movw r10, r26
-    std Y+(4*IIR_ORDER-2),r18
-    std Y+(4*IIR_ORDER-1),r19
-    .endif
-.endm
 .global IIR_ENTRY
 .type IIR_ENTRY, @function
 IIR_ENTRY:
@@ -187,7 +107,8 @@ IIR_ENTRY:
     .endr
     IIR_MAC r12
     IIR_MAC r16,0,16,17
-    IIR_FINISH 1
+    rjmp .Liir_finish
+.Lwarm_finish_return:
     dec r3
     breq .Lwarm_phase
     rjmp .Lwarm_sample
@@ -241,7 +162,7 @@ IIR_ENTRY:
 /* A group consumes exactly one mirrored-history revolution. Reusing this
  * body avoids duplicating the dot product and removes every cursor test. */
 .Liir_group:
-    ldi r18,IIR_ORDER
+    ldi r18,lo8(-IIR_ORDER)
     mov r3,r18
 .Lsteady_sample:
     sbiw r26,2*(IIR_ORDER-4)
@@ -254,10 +175,89 @@ IIR_ENTRY:
     .rept IIR_ORDER-4
     IIR_MAC memory
     .endr
-    IIR_FINISH 0
-    dec r3
+.Liir_finish:
+    /* PSHR32(sum,13), preserving wrap when adding the rounding bias. */
+    subi r23,lo8(-16)
+    sbci r24,255
+    sbci r25,255
+    lsl r23
+    rol r24
+    rol r25
+    sbc r22, r22
+    .rept 2
+    lsl r23
+    rol r24
+    rol r25
+    rol r22
+    .endr
+    mov r0, r22
+    movw r22, r24
+    mov r24, r0
+    /* Rounded signed32 >>13 lies in [-262144,262143]. Adding signed16
+     * input lies in [-294912,294910], so signed24 is sufficient. */
+    /* Add sign-extended input before saturation. Read before writing y so
+     * the upstream in-place x==y case is supported. */
+    movw r30, r6
+    ld r18, Z+
+    ld r19, Z+
+    movw r6, r30
+    mov r20, r19
+    lsl r20
+    sbc r20, r20
+    add r22, r18
+    adc r23, r19
+    adc r24, r20
+    tst r24
+    brmi .Lnegative_phase
+    brne .Lclip_positive_phase
+    sbrs r23, 7
+    rjmp .Lstore_phase
+.Lclip_positive_phase:
+    ldi r22, 255
+    ldi r23, 127
+    rjmp .Lstore_phase
+.Lnegative_phase:
+    cpi r24, 255
+    brne .Lclip_negative_phase
+    sbrs r23, 7
+    rjmp .Lclip_negative_phase
+    cpi r23, 128
+    brne .Lstore_phase
+    tst r22
+    brne .Lstore_phase
+.Lclip_negative_phase:
+    ldi r22, 1
+    ldi r23, 128
+.Lstore_phase:
+    movw r30, r8
+    st Z+, r22
+    st Z+, r23
+    movw r8, r30
+    /* NEG sets C iff the original low byte was nonzero. The high-byte
+     * subtract therefore supplies the exact two's-complement carry. */
+    com r23
+    neg r22
+    sbci r23, 255
+    /* Y advances to the next sample without a separate address calculation.
+     * Mirror/age offsets compensate for the two postincrements. */
+    st Y+,r22
+    st Y+,r23
+    std Y+(2*IIR_ORDER-2),r22
+    std Y+(2*IIR_ORDER-1),r23
+    /* Positive counters are warm; negative counters are steady groups. */
+    sbrs r3,7
+    rjmp .Lwarm_age
+    inc r3
     breq .Lgroup_done
     rjmp .Lsteady_sample
+.Lwarm_age:
+    movw r26,r10
+    ld r18,X+
+    ld r19,X+
+    movw r10,r26
+    std Y+(4*IIR_ORDER-2),r18
+    std Y+(4*IIR_ORDER-1),r19
+    rjmp .Lwarm_finish_return
 .Lgroup_done:
     sbiw r28,2*IIR_ORDER
     ret

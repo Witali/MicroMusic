@@ -1,0 +1,543 @@
+{
+  "scope": "Frozen IIR factoring, scalar C/ASM/state/IRQ and complete ASM screens",
+  "baseline": "1da660ea",
+  "sourceHashNormalization": "CRLF to LF; external tools/headers/images/objects exact bytes",
+  "compiler": "AVR GCC7.3.0",
+  "options": [
+    "-Os",
+    "-flto",
+    "-mcall-prologues",
+    "-mrelax",
+    "-fwrapv",
+    "-fno-strict-aliasing"
+  ],
+  "kernelSha256": {
+    "baseline": "193437dbc79dabc3a710ee062f0714a1896d53e16d29ec7d6674551607e7cda9",
+    "local": "f0c862140f82c918670ff00a83b5f0bb4fd2be4c93db4062b2eb2bb9dbe53118",
+    "shared": "d7382e9da1ae4accd9ef3ef3621e7f1ac6db99a645fa67a3f888c288f153180b",
+    "phase": "649a950fb66eed41cbc0d0d21d9803ac154044bd21a2ee8d6278cd105e30456b"
+  },
+  "frozenSourceSha256": {
+    "Codecs/common/pwm-gain.mjs": "763e3f2fa638b8b1516766e971dd07d29d6cc6ce160eeb8fc9a4203c14f0f3c0",
+    "Codecs/common/pwm_gain.h": "283d4b7aace6116711300f6aad927339c48ced0008f15affc72aa294241c4f26",
+    "Codecs/Speex/AVR/src/avr_audio_output.h": "dd93e476ebfb2af8b86f7b92e8726f82fb2c0d8400c08c683eb49a4709cb84a3",
+    "Codecs/Speex/AVR/src/avr_fixed.h": "3878d9da964234419a1b246ef5dde990b199b96a88c3476f21605f71c9049b67",
+    "Codecs/Speex/AVR/src/avr_multiply.h": "36de5d16f5332c4c2924d45a4bc2f6cbea78607c6f1861e24800d72a9c48e81f",
+    "Codecs/Speex/AVR/src/avr_shift.h": "92d78865eb4bbdb189a86557e22a08af88ee72cad3cf090c849fc1ae760c4a5f",
+    "Codecs/Speex/AVR/src/avr_tables.h": "4e0e67e692b8093752cb2a02f4b359d710304341dd0d46d18e73c3b35598c3d9",
+    "Codecs/Speex/AVR/src/bits.c": "745b06111e3ec46ec42be8bd598f7f730ffc87af2e13d474dcfaf125c2ca3b4a",
+    "Codecs/Speex/AVR/src/compact_lsp.c.inc": "39414b9bfe0317fefe9e39fd6be44492c5f65ca0f8ae189ab768873760d0fba7",
+    "Codecs/Speex/AVR/src/compact_lsp_rates.c.inc": "60146af14dc2b86b253e87a9411e793406c04b0f72eaf982e61240262c085d65",
+    "Codecs/Speex/AVR/src/forced_math.h": "3b4a9b5a0f36f8531c9a79159a53688d6ab2d53a181d7588cdd8dd3ab4fd6154",
+    "Codecs/Speex/AVR/src/forced_pitch.h": "7716de88b622942af1e38739ea40e84c4872d66d97b67bc51164e620371b4560",
+    "Codecs/Speex/AVR/src/iir_direct.c.inc": "584cc9fb7f1cf34cf51b7c1b708df5f4981fbaf2d653b73c9c6e9e4a5634acc5",
+    "Codecs/Speex/AVR/src/iir_kernel.inc": "193437dbc79dabc3a710ee062f0714a1896d53e16d29ec7d6674551607e7cda9",
+    "Codecs/Speex/AVR/src/innovation.h": "b42aee7475b58fe1315b78a5ef9f346dd019b66739d1469ce19fea98933e16f8",
+    "Codecs/Speex/AVR/src/innovation.S": "4c83663cf3edd15eae7947bdf938ba05334daa50fbb8b3a2ccf12943f4bd45fb",
+    "Codecs/Speex/AVR/src/innovation_core.inc": "96a56a6da1e0ae6ab9ec6bdf1f4499b742615146b404f4f602d1f08878310f60",
+    "Codecs/Speex/AVR/src/long_pitch.h": "d4c26763b5143b86d0edfd6d1b84e37d85af2940e77d636ac8574c478cc983bd",
+    "Codecs/Speex/AVR/src/lowrate_excitation.h": "4c59f492ae57fe19c67132721b9a1fc42fd630f15a0ad33d969262dc90e15cb5",
+    "Codecs/Speex/AVR/src/lowrate_mean.h": "53544dbd88d02cb95434b224780c2ee494368b37d9125a56002d8ca513c9d9c7",
+    "Codecs/Speex/AVR/src/lowrate_mean.S": "7feec155fcc368c3b24dd90db57c821861e179d4f53890ea0a570edef4800f9d",
+    "Codecs/Speex/AVR/src/lowrate_mean_kernel.inc": "44ef0fa5f324e6531e93e4af5e96a7576dbc07be96da8e1a06df8070859488ab",
+    "Codecs/Speex/AVR/src/lowrate_noise.c": "50cfbefee37b6670be86695f75a11386ea0cf35f5ea1a04244494c77eefbd36c",
+    "Codecs/Speex/AVR/src/lowrate_noise.h": "345dd85bc4f5983bd9826117ee87c510c230fdcc7d90f4fa9a515a9019b30893",
+    "Codecs/Speex/AVR/src/lowrate_rng.h": "ba5d3564ad01449a68e98371d0fb2db5259f95b541d8653e0f283bff707f0689",
+    "Codecs/Speex/AVR/src/lpc_dot.S": "8e40aaef0744c8614fe06f281874ebcf2173d94f3d585b00b5703bea2f851be5",
+    "Codecs/Speex/AVR/src/lpc_update.S": "00bb267faac8ed005a51893c8572e48b1fa4bfc30f3cb734ac13c0a4f3d49d20",
+    "Codecs/Speex/AVR/src/lsp_advance.S": "c7c92245b4af60827a477c7ffdcaf9847befe3ef691bfdf6a5ba0ca01d47fba9",
+    "Codecs/Speex/AVR/src/lsp_angle.S": "a0061869a1602ea95a57aa410518b0420c524a65ed15ad7f26cf2b3ad4353391",
+    "Codecs/Speex/AVR/src/lsp_finish.S": "c161d4417eb91e7ff6618b2fdffe4313a58e25129e6de192ee05959932abd714",
+    "Codecs/Speex/AVR/src/lsp_first.S": "12d2128c01ec50b45159545eef412a17cf3a8a40d71b5c7e6e43226b7b44cca5",
+    "Codecs/Speex/AVR/src/lsp_pair.S": "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22",
+    "Codecs/Speex/AVR/src/lsp_stage.S": "eaeaf109f57853cd58bfb96a181e50941912c5f2fa4e000a327b74245d741529",
+    "Codecs/Speex/AVR/src/lsp_stage_macros.S": "5c997aba9ec8a46bac795e34c59b65b22201c2b0aa8cd2037d85405e3078e7c5",
+    "Codecs/Speex/AVR/src/nb1_cache_layout.h": "fecb43edff19065f13fa27e3b9b408f7902103a2c7f8f86aab69fc430ef9f9aa",
+    "Codecs/Speex/AVR/src/nb1_gain.h": "16585b63dcdc7898d2c0d6c408822635f20e45feed188ae1eaf2be754a1082f2",
+    "Codecs/Speex/AVR/src/nb1_pitch.h": "9c968152f6f099e60531e00582eed784d9fbfa861c17c2a80eed360b33b8e841",
+    "Codecs/Speex/AVR/src/nb1_vocoder.c": "77e654b178497182930bc2159b89d14ce326936f99bb4b61a3f5e6bf5040982f",
+    "Codecs/Speex/AVR/src/nb1_vocoder.h": "efbcacd025768903db8bc4d9745286be4932131fb89f5ff0934966924c28fe59",
+    "Codecs/Speex/AVR/src/nb1_vocoder.S": "bfa8fc37f9a86f97dcd3fd640ab2a7ac48fc7644ed47803f7349ece56a6b3942",
+    "Codecs/Speex/AVR/src/nb1_zero_gain.h": "b8efc1c740186219f5d519116d0cfafb4c772c2eb6934509b81c261b7f1ae9ec",
+    "Codecs/Speex/AVR/src/nb3_c_math.h": "9e89d9d789d9d9b72f7c69dcf0aa3b111a75db8a2d3963426791b2e6c9932154",
+    "Codecs/Speex/AVR/src/nb3_header.h": "8d973f6bf9657858b910362d6999c32db0dc1be8f7c10bcb1e3e11d513dccd02",
+    "Codecs/Speex/AVR/src/nb3_indices.h": "2171ad9e73cf6adb5abe4df9d07c262a94eabbca304789830f56b8302f36a460",
+    "Codecs/Speex/AVR/src/nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "Codecs/Speex/AVR/src/nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "Codecs/Speex/AVR/src/nb3_lsp_angle.h": "1c7b6f05e01a2067e8f07c7c342fdccf8232a209861a3d28f617b9eadd75203b",
+    "Codecs/Speex/AVR/src/nb3_lsp_finish.h": "82776b8584a84ca3e1d3c0578402e276d2f4deb40753bee0e13f665d0c19408c",
+    "Codecs/Speex/AVR/src/nb3_lsp_first.h": "1153f8c77c5cd2df39b1eb7c44d05e5e695a155dc5bf5e95c6d1db5c2655b9b1",
+    "Codecs/Speex/AVR/src/nb3_lsp_pair.h": "ed59efb79b7a8af17e1cd3f48ade514084d599ebdd136797ed7920107ad7ac3c",
+    "Codecs/Speex/AVR/src/nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "Codecs/Speex/AVR/src/nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "Codecs/Speex/AVR/src/nb4_excitation.h": "684e455ae43f57b16cefa227ab04a50b5825d978d41aa2388e995d897d776f51",
+    "Codecs/Speex/AVR/src/nb4_subframe.h": "eb93b29731123939f2397888bdb9671e36979029f16d9cc304ac2a0a46346dc6",
+    "Codecs/Speex/AVR/src/nb_decode.c.inc": "ee8374110d963982e8b308b12ff041fec2d630e1b83a3a258f16d5ce89e05294",
+    "Codecs/Speex/AVR/src/packed24.h": "cd3d6cd54064fc9841aef7ff13abc801bff43cf79c3318b8175e52b9695dda73",
+    "Codecs/Speex/AVR/src/packet_mode.h": "2729d18157a137eba36cac6695f92663858da309d64388c20011f062d197896d",
+    "Codecs/Speex/AVR/src/pitch24.h": "530dbbd915a2f032067e756772eb81b29b5a8bdb429b92d22185701e09deff81",
+    "Codecs/Speex/AVR/src/pitch_add.S": "6272ddbc09160381bb73fb86d2a8e97a60e20f37570df5d3896d28b59d5918ce",
+    "Codecs/Speex/AVR/src/player.c": "8e960f4874f0f98c7f21f486c9c4317405a42c12bcda1330fb353658ee584454",
+    "Codecs/Speex/AVR/src/profile_mode.h": "0052bc51ba4013ddc6e758a59a03fd3ecd1030c5ad07540008817180caa36d5b",
+    "Codecs/Speex/AVR/src/profile_state.h": "72c6aec0f48e37bd6937a09c72dc5f97be408e7995464b711db2ec10e47af95f",
+    "Codecs/Speex/AVR/src/q14.S": "8d93f106036746be2ec0400f78737c48ea3b7559428e9f1e41b1f0910333d839",
+    "Codecs/Speex/AVR/src/q14_macros.S": "4913b0a3484ebf612750ea42f461ef8e17f4f95329be9dd44df6f1e3af0ec827",
+    "Codecs/Speex/AVR/src/qmf_memory.c": "a1232858f274e30f7050334fc5b608edcd3d422fccda75de77430bc7831d08c3",
+    "Codecs/Speex/AVR/src/qmf_memory.h": "ef340baf7353191f5c8294fb21b0f25bd46390186573a9ce8b3ef8033bc5f7e0",
+    "Codecs/Speex/AVR/src/short_pitch.h": "a90485058cd47d9c762eea1bba4dda62f2f81a0e79457d67c51b69d39c2d300c",
+    "Codecs/Speex/AVR/src/short_pitch_kernel.inc": "6801e39e986e600e30c0a34e240f7cb368be483d6e0d1f35ddacbf48e0e93998",
+    "Codecs/Speex/AVR/src/speex_avr.c": "cb61c6c529f91219b32dd47491bdee8a0a95034e0206ce6b8a05d783df840262",
+    "Codecs/Speex/AVR/src/speex_avr.h": "9ca142747c625230c30ea1cafddbf452da80bc45b25b5ee2ddeea754719e3566",
+    "Codecs/Speex/AVR/src/speex_nb.h": "47ebf2505af9421b706a323528bc0f954e3a5c6069cae53fe6a6b13d84af13f7",
+    "Codecs/Speex/AVR/src/speex_nb3.h": "b6aa205038d0e534991b7f0f684516dfbe4c7a8d30649550a52558c18b22f9d0",
+    "Codecs/Speex/AVR/src/speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "Codecs/Speex/AVR/src/speex_wb1.c": "b6eefb306b2adef8c36514a2616eb0f83dd03648b47dd0477175b87c174a0cfe",
+    "Codecs/Speex/AVR/src/speex_wb1.h": "6d4c9bc361ccd8b5fea23793e00bcb3345accc09e67a5114fe5bc0dd6d52abdc",
+    "Codecs/Speex/AVR/src/wb_excitation_kernel.inc": "33bc675a1840fac8cecb05fc7ec4786a13267db91166db9ef76f67b64e71a399",
+    "Codecs/Speex/AVR/src/wb_fold.c": "283afe5869bf0f2d39b45dfcab03eb0156a62323645384ca12cdd0cb0ca3e2e2",
+    "Codecs/Speex/AVR/src/wb_fold.h": "3950dfcdc638aecfebb7ee8309c8e5e7bba59eaeabb465aca3368963e1be040d",
+    "Codecs/Speex/AVR/src/wb_fold.S": "ca19550d9adf11972d53586c236cb512ff379c7f905f687bdd1827eb132ced71",
+    "Codecs/Speex/AVR/src/wb_fold_kernel.inc": "ff52c6443df47be168638773d984a0094bd93282cb8bff282a0bd7aedd2f1a99",
+    "Codecs/Speex/AVR/src/wb_gain_div.h": "c6b6872e09d93dc8eb152396d58d5479e3984db795a9e1c77cb2929c229cf87e",
+    "Codecs/Speex/AVR/src/wb_gain_div.S": "29b5b3392441ea3eb903c6111d94ad559e678912aa7f8e3091c3129eebd699e8",
+    "Codecs/Speex/AVR/src/wb_iir.c": "7ce0ddaca8da575efca564660cb79337d6747e698de709b57ab74b4c5099870c",
+    "Codecs/Speex/AVR/src/wb_iir.h": "cc268430e595b5a8edd14c47155028e0357a0830cd3cb8eb864a5b463020a4c2",
+    "Codecs/Speex/AVR/src/wb_iir.S": "275936662303e102239afb58cb4a6d812541cd2bec68cbab7e0c03bb0ac9cd5e",
+    "Codecs/Speex/AVR/src/wb_internal.h": "76839306b6484b3e25e44822a0c39e11b4dbabe4d3d1cbb65eaf01915fd8e1da",
+    "Codecs/Speex/AVR/src/wb_player.c": "cd295cc8c53d603769981aa5d892c398b30487d3333769c231329b1c4a1ad8be",
+    "Codecs/Speex/AVR/src/wb_qmf.c": "c27ff603c22ea71ac05ddd8256f13109593822c05fb34e71a7578c17d04a12f0",
+    "Codecs/Speex/AVR/src/wb_qmf.h": "8b42180325ba8c60ee398f86ae696833f6201c580a7c68e970232e74412f6b3b",
+    "Codecs/Speex/AVR/src/wb_qmf.S": "57fdc8545d415799a639febff21adc806567a3c21ed06c67d35072e615f4f7b0",
+    "Codecs/Speex/AVR/src/zero_innovation.h": "dc192db47f3140e64ef11bc10c26790726ca5e1a556a99aff3a10bfbc7ce35c7",
+    "Codecs/Speex/AVR/src/zero_shape_kernel.inc": "42c8aa44ff55935bbc27ecf5348629d3debbe28946fd72965e36f2c224736ed7"
+  },
+  "admittedBaselineImages": {
+    "raw/wb395": "8243c252b616ecb424838a6eeb96dcea7750bed39509b40cc1fd31f82d561400",
+    "raw/wb128": "c341aff5171516aa02e7aa75b53fac486dff19d73f8cbcb52a64f8190f9976e1",
+    "irq/wb395": "02805ff16b18572b7edfa147679ac3c2b804aea75a3185f6da7f6a5f826ec13e",
+    "irq/wb128": "97994b85799c863dee272ad181e0f1469f96d64a8824db895a0db5eb74c8e467"
+  },
+  "baselineRebuiltIdentically": true,
+  "testSourceSha256": {
+    "tests/screen_iir_output_size.py": "75b5853e4b880e0737383873d332ee93de0913bf6b2fe526cd4d6518a3f2496d",
+    "tools/build_iir_block_test.py": "e9e0961dca1069a68a0ae9f8dc4401af54c9c7bd8a43bd6acf9b1173c5aa4f47",
+    "tests/avr_iir_block.c": "48fdbfb9c9f8241bbf00fe0401cabf072421c716de4f5ba31b3eccb998cba534",
+    "tests/iir_nb_forced_c.c": "64ca1d710a35c987168294d8455b20ac7fd6e79aa60f6e8e9f12873e427d474d",
+    "tests/verify_iir_block.mjs": "e6287482c95a0a4ed6ad87dd40c486d99853cfe287ac3fd9d0cf28184da39367",
+    "tests/verify_wb.mjs": "838e45f88d73c7b25ecb1f6e3bfdcee18c6be868d6ad479b099e6cb2703540eb",
+    "tests/verify_wb_stream.mjs": "9bb4dc0fdc1895c7fd0081fc60ec1e120e4c51a908cb1bb850276fbbc9cfcc05",
+    "tests/avr_tick.mjs": "7fb11c61a22e00650fdc23ce4093231e574f478a9d6183423808abbfab8fda5f",
+    "tools/build.py": "3a5e8f99f0858510f14871ebb6beefa0c29c3cf4991d56c2cbb582cebb2cb170",
+    "tools/build_wb.py": "6bb9679425481cd29db31b35e48eef084b2fd77bdf5e07bab1ccf2918067357b",
+    "tools/build_wb_stream_test.py": "7b20273c75034bf055745dc9bcbbaa9b0c86a22d02dc64a95737ece7952b2f47",
+    "tools/apply_profile.py": "223a989b471d6a135e4e72fee56a32580ae677ef57e8cee85176e9d2da0963cf"
+  },
+  "isolated": {
+    "baseline": {
+      "flashBytes": 3696,
+      "flashDelta": 0,
+      "cyclesAddedOrder8": 0,
+      "cyclesAddedOrder10": 0,
+      "binarySha256": "673c7f44c94c35a34a03bb1a72ee7d2475f815771b77ba59b07a71b35a4eec94",
+      "ownStack": 20,
+      "publicAbiReturns": 7374,
+      "irqBinarySha256": "b75d6d09f92f213f51faea6f42bb1f037a80d123d96b74c9be2c0b5d9ba36527",
+      "irqInjections": 75463,
+      "dirtyR1": 50077,
+      "irqPeakStack": 33,
+      "deviceHeaders": {
+        "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+        "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+        "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+      }
+    },
+    "local": {
+      "flashBytes": 3496,
+      "flashDelta": -200,
+      "cyclesAddedOrder8": 280,
+      "cyclesAddedOrder10": 280,
+      "binarySha256": "6832696227bdc27bafcf553a612cca5a9ff746c856dc87afb7ef1a714b08f919",
+      "ownStack": 22,
+      "publicAbiReturns": 7374,
+      "irqBinarySha256": "7e0151060ddf97d88139a1736ec503fde469c65025d9f661aee77e33564beec8",
+      "irqInjections": 76103,
+      "dirtyR1": 50553,
+      "irqPeakStack": 35,
+      "deviceHeaders": {
+        "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+        "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+        "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+      }
+    },
+    "shared": {
+      "flashBytes": 3388,
+      "flashDelta": -308,
+      "cyclesAddedOrder8": 280,
+      "cyclesAddedOrder10": 280,
+      "binarySha256": "65e34afcf6dbe4cc3273250c0f5da45cf56dc35aeb9f4fe6990d1b9b4b60646a",
+      "ownStack": 22,
+      "publicAbiReturns": 7374,
+      "irqBinarySha256": "45872f8b98c590859e6d9fd83be8366b6c3bb55784c378f46354fb8b8df38f8e",
+      "irqInjections": 76103,
+      "dirtyR1": 50553,
+      "irqPeakStack": 35,
+      "deviceHeaders": {
+        "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+        "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+        "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+      }
+    },
+    "phase": {
+      "flashBytes": 3484,
+      "flashDelta": -212,
+      "cyclesAddedOrder8": 120,
+      "cyclesAddedOrder10": 130,
+      "binarySha256": "bff19e72f147ffc84c09fedf75348b387788d0b47c664a47048435542cad82e0",
+      "ownStack": 20,
+      "publicAbiReturns": 7374,
+      "irqBinarySha256": "47aba62e2f94deaef85cbc5137a084e42cb0ca5de9bad57c249c075bd35aaaf0",
+      "irqInjections": 75999,
+      "dirtyR1": 50471,
+      "irqPeakStack": 33,
+      "deviceHeaders": {
+        "io.h": "9f2e5d7f9b6251424bb0c52365bafda3a777c156479f11a4f1b44798a0c6331f",
+        "iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+        "interrupt.h": "9627582846252bf42efd6eb4d1ea6d03ae125b021b6ea630a2f08ebf0a0bf041"
+      }
+    }
+  },
+  "completeScreens": {
+    "wb395": {
+      "baseline": {
+        "raw": {
+          "binarySha256": "8243c252b616ecb424838a6eeb96dcea7750bed39509b40cc1fd31f82d561400",
+          "frames": 1152,
+          "flashBytes": 22940,
+          "staticSramBytes": 1284,
+          "meanCycles": 218603.77170138888,
+          "maxCycles": 222563,
+          "peakStack": 166,
+          "freeSram": 598
+        },
+        "irq": {
+          "binarySha256": "02805ff16b18572b7edfa147679ac3c2b804aea75a3185f6da7f6a5f826ec13e",
+          "frames": 1152,
+          "flashBytes": 23374,
+          "staticSramBytes": 1425,
+          "underruns": 0,
+          "freeSramAtPeak": 444,
+          "minQueuedSamplesBeforeOutput": 30,
+          "peakStack": 179
+        }
+      },
+      "shared": {
+        "raw": {
+          "binarySha256": "e19a9113fa3df51b981532f0d58fe3d3a0ece2c821c418c8968da5c445355b7c",
+          "frames": 1152,
+          "flashBytes": 22640,
+          "staticSramBytes": 1284,
+          "meanCycles": 221163.77170138888,
+          "maxCycles": 225123,
+          "peakStack": 166,
+          "freeSram": 598
+        },
+        "irq": {
+          "binarySha256": "9361bb640df927c6f69bf0f7dffaeb14b02f6cb07ee6850aa50c0f11e157d9a0",
+          "frames": 1152,
+          "flashBytes": 23076,
+          "staticSramBytes": 1425,
+          "underruns": 0,
+          "freeSramAtPeak": 444,
+          "minQueuedSamplesBeforeOutput": 30,
+          "peakStack": 179
+        }
+      },
+      "phase": {
+        "raw": {
+          "binarySha256": "ceb5ddcd0e2b6ac296e4dad9e3d2b25d5cd0c6311f32616bfdb531635355ee7a",
+          "frames": 1152,
+          "flashBytes": 22728,
+          "staticSramBytes": 1284,
+          "meanCycles": 219603.77170138888,
+          "maxCycles": 223563,
+          "peakStack": 166,
+          "freeSram": 598
+        },
+        "irq": {
+          "binarySha256": "d5f94e66304f450914172a9eedb88e42dc23aef4627ccff5e385b8ba22bfdd49",
+          "frames": 1152,
+          "flashBytes": 23162,
+          "staticSramBytes": 1425,
+          "underruns": 0,
+          "freeSramAtPeak": 444,
+          "minQueuedSamplesBeforeOutput": 30,
+          "peakStack": 179
+        }
+      }
+    },
+    "wb128": {
+      "baseline": {
+        "raw": {
+          "binarySha256": "c341aff5171516aa02e7aa75b53fac486dff19d73f8cbcb52a64f8190f9976e1",
+          "frames": 64,
+          "flashBytes": 22940,
+          "staticSramBytes": 1306,
+          "meanCycles": 233810.84375,
+          "maxCycles": 239517,
+          "peakStack": 166,
+          "freeSram": 576
+        },
+        "irq": {
+          "binarySha256": "97994b85799c863dee272ad181e0f1469f96d64a8824db895a0db5eb74c8e467",
+          "frames": 64,
+          "flashBytes": 23374,
+          "staticSramBytes": 1447,
+          "underruns": 0,
+          "freeSramAtPeak": 422,
+          "minQueuedSamplesBeforeOutput": 8,
+          "peakStack": 179
+        }
+      },
+      "shared": {
+        "raw": {
+          "binarySha256": "f369111976d20ff30e1e01a2172785b1c79e9dc8f79368cf889ca4ec9f1c6285",
+          "frames": 64,
+          "flashBytes": 22640,
+          "staticSramBytes": 1306,
+          "meanCycles": 236370.84375,
+          "maxCycles": 242077,
+          "peakStack": 166,
+          "freeSram": 576
+        },
+        "irq": {
+          "binarySha256": "1c99303beff6652032ff337e86b135bad00a1ce3d3ddcff0d0e7d5764bc9a083",
+          "frames": 64,
+          "flashBytes": 23076,
+          "staticSramBytes": 1447,
+          "underruns": 0,
+          "freeSramAtPeak": 422,
+          "minQueuedSamplesBeforeOutput": 7,
+          "peakStack": 179
+        }
+      },
+      "phase": {
+        "raw": {
+          "binarySha256": "f442161feae61f8a4790f386b32daf1325fe87a0444a6070579f223b74a7188b",
+          "frames": 64,
+          "flashBytes": 22728,
+          "staticSramBytes": 1306,
+          "meanCycles": 234810.84375,
+          "maxCycles": 240517,
+          "peakStack": 166,
+          "freeSram": 576
+        },
+        "irq": {
+          "binarySha256": "9d72a48b9d4edf83ca55bdf6a1225be14dfdbe5989b3b8b61000dcc87a2880f4",
+          "frames": 64,
+          "flashBytes": 23162,
+          "staticSramBytes": 1447,
+          "underruns": 0,
+          "freeSramAtPeak": 422,
+          "minQueuedSamplesBeforeOutput": 7,
+          "peakStack": 179
+        }
+      }
+    }
+  },
+  "generatedSourceFiles": 96,
+  "generatedSourceTreeSha256": "e2a3649c0061b4848e0029b021a136080e9cc348818bc1543ee515332b49b294",
+  "screenInputs": [
+    {
+      "profile": "wb395",
+      "stream": "coverage4096.spxraw",
+      "frames": 64,
+      "inputSha256": "a01f1e3047d17570ffd6740419d071391ad30e2ee57669af4cda4aee7b005b27",
+      "pcmSha256": "37df216de0663e3dc7869ad4d9eead27f020101198c7c9b4c7cca02439bf1ba8"
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_letter_a.spxraw",
+      "frames": 64,
+      "inputSha256": "d0e4cf4632d8109c80b6bd6998b1caa6c5e0e271627fb32f86f683a6806907f3",
+      "pcmSha256": "16a5a554faec0baa3303e2f3565cc55b91e11d83e89096f79f9c60d6f74d726b"
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_letter_b.spxraw",
+      "frames": 64,
+      "inputSha256": "97e77b66c7fa4bf5d693d6c63aee19ed081e3a8005c76537e019088647f5c7ef",
+      "pcmSha256": "fcb713551bd31103f159bba99347cf8d97227d313dce3530f4c9e10e9ca11b19"
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_normcore_a.spxraw",
+      "frames": 64,
+      "inputSha256": "f40760f197ba86011d52e8490c2d2f142984cb950516f37dbe7c0db57d55def5",
+      "pcmSha256": "b700aef9c98c2a29fc2bb32557723c38cf5dde560941ab35c9229118df60f6f5"
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_normcore_b.spxraw",
+      "frames": 64,
+      "inputSha256": "7f2d713e5929389cc5dbaa165d55d1fb72f571082d375c6ce7a9b876ec8ee147",
+      "pcmSha256": "d7d3e79970b90a570ebff37e4a34bc2f8814b04c64af24c9a9d168adcc1ff168"
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_portrait_a.spxraw",
+      "frames": 64,
+      "inputSha256": "f1581be2ef8a150a8f4cb9c176bf4f5e7cb42e38ddc41d8fd200eced0a1f9cd5",
+      "pcmSha256": "84e7686f4a0d91ddaa469040733622bf19ec1957cfa544ac76a15c5010eebac3"
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_portrait_b.spxraw",
+      "frames": 64,
+      "inputSha256": "c45eb98c4d9635b98fe66c809585b527290a27079b3d82627415b1fac6547f7c",
+      "pcmSha256": "0905034c366f2b11c10ac404c934524d06fd95d441c3005bc59b0bb29c36ce62"
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_sense_a.spxraw",
+      "frames": 64,
+      "inputSha256": "3efb0618aca62ff4c657e602630d97c2b6de2bc71bb6d645b9aa2dd7da20ef00",
+      "pcmSha256": "75984a9e265b1298ab4a20e8a6981d9139d6a51a19d0bb250cc215a5971fb8b8"
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_sense_b.spxraw",
+      "frames": 64,
+      "inputSha256": "e744c9cc0b4f5faf988b406444e2bca9bf90fc7ee5ce8d5305dc6ede384dc3b4",
+      "pcmSha256": "dee1219de30473db363d8c21fd418ea728580d8e49c310eeff6707d2666a08ba"
+    },
+    {
+      "profile": "wb395",
+      "stream": "padding64.spxraw",
+      "frames": 64,
+      "inputSha256": "b0f23871fbde0ff20c2263b779cab78f5913e371ff0ad10fe69a85f251373ac9",
+      "pcmSha256": "37df216de0663e3dc7869ad4d9eead27f020101198c7c9b4c7cca02439bf1ba8"
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_pushkin_a.spxraw",
+      "frames": 64,
+      "inputSha256": "2b5368eaf9efcc297616c563e37ae8c72331db184f85bf707ff940c68a578d05",
+      "pcmSha256": "56c98fda8bf65ac9aa5af3a61579dadf09cae0a7beda48012913fcf73114914b"
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_pushkin_b.spxraw",
+      "frames": 64,
+      "inputSha256": "27dba9740aa36c47013805d56d7785ebca68c4372b91520c2cb003e1fbf4f759",
+      "pcmSha256": "445f98c9cfbe7d941dca402e36d6ec055b5bee3061bd493d3bbef270d31e822f"
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_russia_a.spxraw",
+      "frames": 64,
+      "inputSha256": "e9b32ee550aa1312b894bb0a002a611a82d095dab7bdb5ce418abe6496ca3ed2",
+      "pcmSha256": "b4039f6302399d1c35f9a383be58bd166b648c1af21914f810a20960e5e0a523"
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_russia_b.spxraw",
+      "frames": 64,
+      "inputSha256": "0b1e9b54795630050f7a23a369841f4fd4d75752aa6f7dfbbe72900517607f90",
+      "pcmSha256": "d4ba8accc7b0d050c9e7a966a658ab54fecaed3eb589a9e1d97d79f886ae98c5"
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_slutskaya_a.spxraw",
+      "frames": 64,
+      "inputSha256": "b14d10fe32c24c06f12839995f348e53ad38fd1cad0e37b76c6ad5189dbd1192",
+      "pcmSha256": "03c07f3a13fc8808d0fe507d0c1e4c17f6663cc50579f09bf88adc0acb56e400"
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_slutskaya_b.spxraw",
+      "frames": 64,
+      "inputSha256": "28701730066612789e76612da24a2e1bf863d86168aaa05fe1d93e4bbfbff75d",
+      "pcmSha256": "23810916585b20357326d2777dc6c452a9b00714851f8b4f4492ecfd39264d5c"
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_square_a.spxraw",
+      "frames": 64,
+      "inputSha256": "4369c96f2bd4005efe4cedd8d42057412e8961ed3f02f7ddacafd85a111b7c97",
+      "pcmSha256": "09e7dd998b1a13ec042b663f0e08921a40ffcdaf64f0170ee8000b103db59b9a"
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_square_b.spxraw",
+      "frames": 64,
+      "inputSha256": "58ae2802bbfafcd3d176d3191d19d71dfdfe122fb7d95e293d61dbf9ba114472",
+      "pcmSha256": "18b3ead22c55db3cb0a4b0dd9a01b6cf86d0ee2d960249355e60672b42fda6f4"
+    },
+    {
+      "profile": "wb128",
+      "stream": "long.spxraw",
+      "frames": 64,
+      "inputSha256": "b7e4a3a38756f118ffa25e61c7c04e2210e4c9f8522cdd7baabb9903a5b41b26",
+      "pcmSha256": "7b855a4d84d201026d95c85b231eff6fc971d40c163b813899eb9b2b9425be49"
+    }
+  ],
+  "cObjectSha256": {
+    "nb.o": "f944898c4b2b688afed7a34b6fd9f85ba56952cb22eda5ee0e3008b298038e68",
+    "wb.o": "eeeecc11110e95452ad9e6001a98082046b621b241b2bde43c8faab153793e9c"
+  },
+  "fullCDecoderExecuted": false,
+  "fullFiveRateAdmission": false,
+  "physicalBoardTested": false,
+  "limits": [
+    "WB3.95:18 streams capped at64 frames; WB12.8:one64-frame prefix.",
+    "Production queue/timer screens use ready RAM plus8% extra work; no transport latency."
+  ],
+  "phaseUnusedMacroCleanup": {
+    "images": {
+      "phase-unit/unit.bin": "bff19e72f147ffc84c09fedf75348b387788d0b47c664a47048435542cad82e0",
+      "phase-irq/unit.bin": "47aba62e2f94deaef85cbc5137a084e42cb0ca5de9bad57c249c075bd35aaaf0",
+      "whole/phase/raw/wb395/wb.bin": "ceb5ddcd0e2b6ac296e4dad9e3d2b25d5cd0c6311f32616bfdb531635355ee7a",
+      "whole/phase/raw/wb128/wb.bin": "f442161feae61f8a4790f386b32daf1325fe87a0444a6070579f223b74a7188b",
+      "whole/phase/irq/wb395/wb.bin": "d5f94e66304f450914172a9eedb88e42dc23aef4627ccff5e385b8ba22bfdd49",
+      "whole/phase/irq/wb128/wb.bin": "9d72a48b9d4edf83ca55bdf6a1225be14dfdbe5989b3b8b61000dcc87a2880f4"
+    },
+    "allSixImagesByteIdentical": true,
+    "unusedDefinitionRemoved": true,
+    "simulationsRepeated": false,
+    "beforeKernelSha256": "2581261f199e6eef33acf76701c8372c5fee3b762bf3a7f8294a6a54008746be",
+    "afterKernelSha256": "649a950fb66eed41cbc0d0d21d9803ac154044bd21a2ee8d6278cd105e30456b",
+    "removedDefinition": "IIR_FINISH",
+    "remainingInvocations": 0
+  },
+  "externalToolSha256ExactBytes": {
+    "avr-gcc": "d3a9a093afbd132302e430e4c88bbacccb0490ebf730f626b74662dc2460307b",
+    "avr-nm": "4cf4392a0c0c44144668a1d8b70144708e32fa74b6279bab4e3041cb5345b593",
+    "avr-objcopy": "5bc07336d3dc78ef13a36db73b66ca206447fc9a40035ba8f481901084f737d5",
+    "node": "780f44f2c53c108bae261ada21a525b4bfe733c020ac85e41bfe94479090ac9b",
+    "python": "3c48fbdcc2ed5c55290e39bef50bd6b1da76f43f3069a4a2624d0b8876a605f5"
+  },
+  "avr8jsExactBytes": {
+    "version": "0.21.1",
+    "sha256": {
+      "package.json": "2bf3a999091fa033287c58b734cf158be4a574674a633d64005389bae985aa6e",
+      "dist/cjs/cpu/cpu.js": "f2103091c3911989b568c0287424c1f18a71bb65a50bd784cb910b5997f00251",
+      "dist/cjs/cpu/instruction.js": "a80cb750d6bab9b7ba64410280f9d87c2a9d70cb069a258091d74967b63a22b2",
+      "dist/cjs/cpu/interrupt.js": "044fb4f21b1f2658c65852d2bf90b101b86aaefc6d2703fd80581e80b5096cde",
+      "dist/cjs/index.js": "9059a0dc100b9a8eb876dc56012a7670f3afeefa82c90230862f686a5cba4fcf",
+      "dist/cjs/peripherals/adc.js": "9f13995cfea651e8dca14dc95c227c0a5fdb632f14e9e5d03ebc92d4ff62daec",
+      "dist/cjs/peripherals/clock.js": "dc344fb96d763d657cae4342b18d506edf6fbc939edc2ef0b45c4d53d3ee833d",
+      "dist/cjs/peripherals/eeprom.js": "526574ff48d75835c4413721c98487a55f4930eccb6794a63041ad0af05ee3a9",
+      "dist/cjs/peripherals/gpio.js": "34c59c337d7d8c5a6af959313d24e9fd41b7b3c1108d68a0963e4232f8ee8b29",
+      "dist/cjs/peripherals/spi.js": "f8b3a34dfebd697d94564461e9bbf06f992e8f4669f2a8460ede4af554e67309",
+      "dist/cjs/peripherals/timer-attiny.js": "11bc63d87d98644d4f97e9bafe681adceb7ccbd61975a931ac5500dd2ac8a8dc",
+      "dist/cjs/peripherals/timer.js": "5a4fa66fac3b6a401678aaa3e6a4b437985a3f14c89ff152d3c39a5d9ab920d2",
+      "dist/cjs/peripherals/twi.js": "8c9b3ff97dd10121ac8b1fcd09f98aaccc5f76068c0b2beff9a9ea945c0e6cd0",
+      "dist/cjs/peripherals/usart.js": "54417f9cab24659351e027a64acf3b2d0560365176ecf57c37184034c0e4cc35",
+      "dist/cjs/peripherals/usi.js": "2d5a13419a8537dc6fafa67214964158fa349f33cab4b94bd5a8eb7e6a82420c",
+      "dist/cjs/peripherals/watchdog.js": "678c446a50283145dba396cf244142ac4ebbd1c8360a119396fc7a06dbcc1b63",
+      "dist/cjs/types.js": "1d1464e1edadb9171bcae76e8f78fa577b955b315ee748fcb7ad55e8825b2b39",
+      "dist/cjs/utils/assembler.js": "d95c46cb525eab5f323acf435253dfa2adc0e62ad13fdda2aae142c8dcbb83b7",
+      "dist/cjs/utils/test-utils.js": "c875e6edec7e70c7bcfd098f6c807489218052d00769397c8a0b9fcdf48b7c4c"
+    }
+  }
+}

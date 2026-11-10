@@ -5,6 +5,9 @@
 потоковый звук и Speex. Это набор идей для измерения, а не обещание ускорения.
 Примеры ниже — фрагменты с указанными регистрами, не готовые C-функции.
 
+- [Share IIR output using the bounded counter sign](speex-iir-shared-output.md):
+  exact warm/steady factoring, 212 B saved, unchanged stack and boundary-IRQ proof.
+
 ## Что менять в первую очередь
 
 | Приём | Зачем | Где применить / ограничение |
