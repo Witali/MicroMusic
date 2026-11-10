@@ -3181,6 +3181,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [LPX toward 1500 cycles/sample](lpx-universal-tiny88.md#exact-work-reduction-toward-1500-cyclessample-2026-11-10): exact byte-split products, pitch/PWM arithmetic and padded history; 1515..1574 mean cycles including IRQ on public speech, unchanged data and a 6-byte smaller v9 program. The target remains unmet; full IRQ/output and C-reference checks are retained.
 
 - [Select LPX multiplication by real target capability](lpx-multiply-selection.md): explicit C/ASM choice, compiler-linked software fallback, and assembled AVR5/AVR25 checks without redefining CPU macros.
+- [The same universal LPX v9 core on AVR5](lpx-atmega328p-v9.md): matched public inputs/FIFO, actual ATmega328P hardware-MUL target, safe ordinary C ISR, four exact real-time playbacks and a throughput-rejected C control.
 
 - [Cost decoder changes using actual production work](lpx-producer-budget.md): ELF/stack producer boundaries, live IRQ/RETI exclusion, independent160/320-call window audits, default-off compatibility, and measured raw-step ramp/rejected metadata320 probes.
 
