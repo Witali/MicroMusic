@@ -124,18 +124,22 @@ static SPEEX_NB3_NOINLINE void wb_interpolate(int16_t *interp)
     /* Preserve sequential repairs, omitting only three proven-dead checks.
      * Keep the separate half shifts after earlier repairs. */
     if(interp[7]>25736-410)interp[7]=25736-410;
-#define WB_REPAIR_LO(i) if(interp[i]<interp[(i)-1]+410)interp[i]=interp[(i)-1]+410
-#define WB_REPAIR_HI(i) if(interp[i]>interp[(i)+1]-410)interp[i]=(interp[i]>>1)+((interp[(i)+1]-410)>>1)
-    WB_REPAIR_LO(1);WB_REPAIR_HI(1);
-    WB_REPAIR_LO(2);WB_REPAIR_HI(2);
-    WB_REPAIR_LO(3);
-    WB_REPAIR_HI(4);
-    WB_REPAIR_LO(5);WB_REPAIR_HI(5);
-    WB_REPAIR_LO(6);WB_REPAIR_HI(6);
-#undef WB_REPAIR_LO
-#undef WB_REPAIR_HI
+    /* Two flags per center 1..6: lower/upper = 3,3,1,2,3,3.
+     * Preserve repair order while sharing one finite-domain loop. */
+    uint16_t repair_mask=0x0f9f;
+    for(i=1;i<7;i++,repair_mask>>=2) {
+        if((repair_mask&1) && interp[i]<interp[i-1]+410)interp[i]=interp[i-1]+410;
+        if((repair_mask&2) && interp[i]>interp[i+1]-410)interp[i]=(interp[i]>>1)+((interp[i+1]-410)>>1);
+    }
 }
-SPEEX_NB3_STAGE void speex_wb_low_ready(const int16_t *low,const int16_t *low_den,const uint8_t *indices,int32_t scale)
+/* Only the ASM arithmetic profile uses the compact controller recipe.
+ * Portable/explicit-C builds retain their existing stage policy. */
+#if SPEEX_NB3_USE_AVR_ASM
+SPEEX_NB3_STAGE_OS
+#else
+SPEEX_NB3_STAGE
+#endif
+void speex_wb_low_ready(const int16_t *low,const int16_t *low_den,const uint8_t *indices,int32_t scale)
 {
     int16_t interp[8],ak[8],rh=8192;int32_t rl=8192,g;int16_t ratio;
     const int16_t *next_den=wb.den;

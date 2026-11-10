@@ -1,0 +1,188 @@
+{
+  "scope": "Frozen exact-ASM controller policy screen plus actual current interpolation primitive",
+  "baselineRevision": "1da660ea",
+  "target": "ATmega328P AVR5/GNU ABI; AVR GCC7.3.0",
+  "sourceHashMode": "LF-normalized text",
+  "currentSourceSha256": {
+    "src/speex_platform.h": "acdbbd536372b3137bd4a5e958df9d3349abd9c053a56d7ef21db589336f15ca",
+    "src/speex_wb1.c": "79997bc961a4bd898b323ee6b68e06a6aee39383c98ee190775fc20eb4565010",
+    "src/nb_decode.c.inc": "f56446e35259bda376b4cb40c2715592636cfce54634b85edde1a2ddcbf7ed88"
+  },
+  "recipes": [
+    {
+      "recipe": "baseline",
+      "frames": 249,
+      "flashBytes": 22940,
+      "meanCycles": 228706.3935742972,
+      "peakStack": 166,
+      "binarySha256": "7de7e891c04fc33b7f798578f39f75ac35da17e78e195e7e6249d88b80d3532f",
+      "verificationSha256": "3e38fe62e65429b309264460bb67ee82957bed718fd973103821340ac64a3c63",
+      "timingSha256": "2970d25560f63ed81e94895c5ded497af1179d6862d501c6d46f2c0dba55965c"
+    },
+    {
+      "recipe": "ready-o2",
+      "frames": 249,
+      "flashBytes": 22756,
+      "meanCycles": 229149.2329317269,
+      "peakStack": 170,
+      "binarySha256": "c7dad745961b58720c80d38308455b1404210c697efdd14c4a7e6015932b7afe",
+      "verificationSha256": "93a5416b0ab48914881bd9033b2c5cd4aceb1aba9dfdd100abf9b505b7feb31a",
+      "timingSha256": "dc1983752e492b776046920701f39c3082fda6fb6c25553e82d209a41a5f3e7a"
+    },
+    {
+      "recipe": "ready-os",
+      "frames": 249,
+      "flashBytes": 22642,
+      "meanCycles": 229222.45381526105,
+      "peakStack": 166,
+      "binarySha256": "96d639d1c5172f1ad9391da8a618e3b6c1e604cd943fdf12f7eacc0f55e9540d",
+      "verificationSha256": "76328697aeb03465ae8a0d6b3033d0e3d98889868335a2f0a57c8673f4dbfe8d",
+      "timingSha256": "c9e95e816c7b16c033854055652d09a1e36cd8163815cad8423d3c26b6e767c0"
+    },
+    {
+      "recipe": "nb-o2",
+      "frames": 249,
+      "flashBytes": 22070,
+      "meanCycles": 229010.6465863454,
+      "peakStack": 166,
+      "binarySha256": "d7c690cf465ce31443231754c10adbc37a9c6a824ddf9130fbc2c0baa0dba801",
+      "verificationSha256": "3c5134448bd39e81503b2a80189a8f6451ab3ce45f49ab66f6efdc7d84af692a",
+      "timingSha256": "5fef79f8ea4d53680c229782aac71b9e3265a7b464beaa2b5239262789572a1e"
+    },
+    {
+      "recipe": "nb-os",
+      "frames": 249,
+      "flashBytes": 22044,
+      "meanCycles": 229243.28514056225,
+      "peakStack": 166,
+      "binarySha256": "4df49573d149be936d912c1551340e4f437bc1dc8c9015ebd725d6bcb06666d2",
+      "verificationSha256": "b42cc94ebc9dea6c1186af4b369fccd5cc1e84aa305d3c106e785566cd7dc46b",
+      "timingSha256": "b89d8cbbb73ec641394b7ab0d92e8a37eb69d910daf3e1c2d204b362535bb230"
+    },
+    {
+      "recipe": "margin-loop",
+      "frames": 249,
+      "flashBytes": 22770,
+      "meanCycles": 228980.3574297189,
+      "peakStack": 166,
+      "binarySha256": "fa0dc6d1baa09ae857eda54ef2e13ca5e89f73fcee8dd7a7bea738c44c564886",
+      "verificationSha256": "22eb7f8401f3e206a3bdfa7306b622d5681618d1ab961ea40110ef8c18efa618",
+      "timingSha256": "036f240e6104815836600bba6025a863246ecea4a38ba976075945cfdf46b8d6"
+    },
+    {
+      "recipe": "margin-helper",
+      "frames": 249,
+      "flashBytes": 22816,
+      "meanCycles": 228869.86345381525,
+      "peakStack": 166,
+      "binarySha256": "3f23b87aaa9733ab27e8dc08c3a34e61d5df16fa01154753806e3276837c082f",
+      "verificationSha256": "6b1bd3e7cd89d4f5d55383aa14360214944c5627a7a7c3f93900a9a52e3e538a",
+      "timingSha256": "5158863f41b6f2225630f682fc0dcb3bff1b03d0a80c39a1fc283441e21da9a9"
+    },
+    {
+      "recipe": "margin-mask",
+      "frames": 249,
+      "flashBytes": 22758,
+      "meanCycles": 228925.95983935744,
+      "peakStack": 166,
+      "binarySha256": "ab4356dd9266dd7c7d7dc00e29ed7a830363c9d828289cca4699106ba1e08d81",
+      "verificationSha256": "1903a1adb9b2b7d04ac6706a65585e266b7ea12ba19649d37cd655437a87202a",
+      "timingSha256": "d1692041385677cd30eb6fc235be5e03fe7deb11b4911bd2785523aab68fd27e"
+    },
+    {
+      "recipe": "nb-stage-o2",
+      "frames": 249,
+      "flashBytes": 22212,
+      "meanCycles": 229305.80722891566,
+      "peakStack": 173,
+      "binarySha256": "32a5ca42093760d1a553f714ceeedde005b442782e2e67d9ad8b8ee63595d847",
+      "verificationSha256": "54c18a05a5d61923725df615f2918a315a64f03ab714cebbb995f3cecede7f74",
+      "timingSha256": "0eb8aa783ca86d6c6d90da824ec9f5d49633b1da824a1d29e61ee5c237b5334d"
+    },
+    {
+      "recipe": "combo",
+      "frames": 249,
+      "flashBytes": 21592,
+      "meanCycles": 229747.43373493975,
+      "peakStack": 166,
+      "binarySha256": "f3a39be8572cb8491bcd1049a497f7bf6fe80063ee1a434142deea710465a0fc",
+      "verificationSha256": "7fae859b778f96bd74bfe63425b0e9d4a90d0b31dcc53b36a83a67519534e9ae",
+      "timingSha256": "14e981b29b4880be4ec707a98f1b29b25f62601e17ba1e38956b9472e70771af"
+    }
+  ],
+  "currentMacroAndFormatCleanupCompiledByteIdentically": true,
+  "productionPolicyBinarySha256": "f3a39be8572cb8491bcd1049a497f7bf6fe80063ee1a434142deea710465a0fc",
+  "interpolationAvr": {
+    "scope": "Extracted actual current interpolation body only; no C decoder",
+    "compiler": "avr-gcc.exe (GCC) 7.3.0",
+    "flags": [
+      "-std=c11",
+      "-Os",
+      "-flto",
+      "-fwrapv",
+      "-fno-strict-aliasing",
+      "-mmcu=atmega328p",
+      "-mcall-prologues",
+      "-mrelax"
+    ],
+    "variant": 7,
+    "recipe": "current-mask",
+    "binarySha256": "0724ba44797bb90c475dc75e7dcd78881adda86643229b16194895af4a871276",
+    "flashBytes": 474,
+    "sourceSha256": {
+      "src/speex_wb1.c": "79997bc961a4bd898b323ee6b68e06a6aee39383c98ee190775fc20eb4565010"
+    },
+    "cases": 17044,
+    "cyclesIncludingFunctionRet": {
+      "min": 373,
+      "max": 519,
+      "mean": 465.3106665102089
+    },
+    "perQuarter": [
+      {
+        "min": 507,
+        "max": 519,
+        "mean": 507.00891809434404
+      },
+      {
+        "min": 482,
+        "max": 494,
+        "mean": 482.0098568411171
+      },
+      {
+        "min": 499,
+        "max": 511,
+        "mean": 499.02464210279277
+      },
+      {
+        "min": 373,
+        "max": 385,
+        "mean": 373.19924900258155
+      }
+    ],
+    "pairedDeltaVsOriginal": {
+      "min": -231,
+      "max": -110,
+      "mean": -180.76947899554096
+    },
+    "functionBytes": 296,
+    "staticSramBytes": 357,
+    "ownFunctionStackBytes": 4,
+    "wholeProbePeakStack": 8,
+    "calleeSavedAndR1Returns": 17044,
+    "validCorrelatedCodebookEndpoints": true,
+    "all4096NewAndOldEndpoints": true,
+    "outputAddressLowBytes": 256,
+    "exactSeparatelyRoundedXiphModel": true,
+    "guardsAndInputsIntact": true,
+    "includesInterrupts": false,
+    "physicalBoardTested": false
+  },
+  "cDecoderExecuted": false,
+  "includesInterrupts": false,
+  "limits": [
+    "Bounded249-frame WB9.8 raw/reset screen per recipe, not full-corpus or IRQ admission.",
+    "Actual interpolation body extracted with mailbox-name substitutions; host complete-domain proof retained separately.",
+    "Current macro-gated source recompiled identically to the observed policy image; no runtime observations relabeled as fresh."
+  ]
+}

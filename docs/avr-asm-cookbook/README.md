@@ -9,6 +9,8 @@
   exact warm/steady factoring, 212 B saved, unchanged stack and boundary-IRQ proof.
 - [Count paired polynomial stages and share products](speex-polynomial-size.md):
   exact Q14 leaf calls, descending old-value windows, 612 B saved in the WB image.
+- [Measure generated controller policies and finite repair masks](speex-controller-size.md):
+  retain exact interpolation and LTO specialization, with compiler alternatives priced explicitly.
 
 ## Что менять в первую очередь
 

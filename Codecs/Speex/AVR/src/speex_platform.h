@@ -95,12 +95,16 @@
 #endif
 #if defined(__AVR__) && defined(__GNUC__) && !defined(__clang__)
 #define SPEEX_NB3_HOT __attribute__((optimize("O3")))
+#define SPEEX_NB3_HOT_O2 __attribute__((optimize("O2")))
 #define SPEEX_NB3_STAGE SPEEX_NB3_NOINLINE __attribute__((noclone,optimize("O3")))
 #define SPEEX_NB3_STAGE_O2 SPEEX_NB3_NOINLINE __attribute__((noclone,optimize("O2")))
+#define SPEEX_NB3_STAGE_OS SPEEX_NB3_NOINLINE __attribute__((noclone,optimize("Os")))
 #else
 #define SPEEX_NB3_HOT
+#define SPEEX_NB3_HOT_O2
 #define SPEEX_NB3_STAGE SPEEX_NB3_NOINLINE
 #define SPEEX_NB3_STAGE_O2 SPEEX_NB3_NOINLINE
+#define SPEEX_NB3_STAGE_OS SPEEX_NB3_NOINLINE
 #endif
 
 /* Speex fixed point requires these integer representations and signed shifts.

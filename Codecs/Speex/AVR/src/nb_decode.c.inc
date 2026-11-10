@@ -55,7 +55,14 @@ _Static_assert(NB_SUBFRAME_SIZE==40 && NB_PITCH_START==17 && NB_PITCH_END==144,
                "Packed pitch is specialized for the pinned NB3 frame/pitch bounds");
 _Static_assert(NB_ORDER==10 && NB_NB_SUBFRAMES==4 && LSP_MARGIN==16,
                "Quarter-step LSP interpolation requires the pinned NB3 geometry");
-SPEEX_NB3_HOT SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packet, void *vout)
+/* With arithmetic in the selected ASM kernels, O2 avoids large controller
+ * unrolling. Retain LTO argument specialization; noclone costs Flash here. */
+#if SPEEX_NB3_USE_AVR_ASM
+SPEEX_NB3_HOT_O2
+#else
+SPEEX_NB3_HOT
+#endif
+SPEEX_NB3_NOINLINE int nb_decode(void *state, const uint8_t *packet, void *vout)
 {
    DecState *st=(DecState *)state;
    spx_word16_t *out=(spx_word16_t *)vout;

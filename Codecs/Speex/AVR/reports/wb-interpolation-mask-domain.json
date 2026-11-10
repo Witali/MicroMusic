@@ -1,0 +1,33 @@
+{
+  "scope": "Complete actual scalar interpolation bodies versus independent separately-rounded Xiph formula",
+  "baselineRevision": "1da660ea",
+  "endpointVectors": 4096,
+  "oldNewPairs": 16777216,
+  "quarterCases": 67108864,
+  "compiler": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "flags": [
+    "-std=c11",
+    "-O3",
+    "-fwrapv",
+    "-fno-strict-aliasing"
+  ],
+  "sourceHashMode": "UTF-8 text normalized to LF",
+  "sourceSha256": {
+    "src/speex_wb1.c": "79997bc961a4bd898b323ee6b68e06a6aee39383c98ee190775fc20eb4565010",
+    "src/speex_platform.h": "acdbbd536372b3137bd4a5e958df9d3349abd9c053a56d7ef21db589336f15ca",
+    "tests/prove_wb_interpolation_body.py": "57f009f7224649ba5747bc53a3e2e909c07e5cae236f917081a544a4fc9c32ef",
+    "tests/check_wb_interpolation.py": "deaa540be3d67e92ab3f39d87e7d59c0b13036668bc4815dde994a7f465fc220",
+    "vendor/speex-1.2.1/libspeex/high_lsp_tables.c": "f1c49702928f617eb61edf36527c5961eefe63eb81888294139a223cddb0c411"
+  },
+  "baselineBodySha256": "7d7abebb1676a7ddb5b07f21129d04bfab99b56a8b87823f5efe82b63865397a",
+  "currentBodySha256": "904277c6a9f142bbf751eeaa90cddcac7fea23347f6f560926385d3e90c95ce7",
+  "generatedProofSha256": "30ba90e2c7775a733e847d175c2d97258c41748eb48fe7443f74498521a05701",
+  "exact": true,
+  "outputGuards": true,
+  "cDecoderExecuted": false,
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "limitations": [
+    "Host scalar proof; actual AVR integer/range behavior and timing need target gates."
+  ]
+}
