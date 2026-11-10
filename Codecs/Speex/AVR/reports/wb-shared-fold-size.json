@@ -1,0 +1,366 @@
+{
+  "scope": "Ignored cloned-source shared WB excitation/fold screen; no production integration",
+  "compiler": "AVR GCC 7.3.0",
+  "target": "ATmega328P AVR5/GNU ABI; 16 MHz; 2 KB SRAM",
+  "flags": "Existing Os/O2/O3, -flto -mcall-prologues -mrelax",
+  "sourceHashMode": "Text normalized to LF",
+  "baselineSourceSha256": {
+    "avr_audio_output.h": "dd93e476ebfb2af8b86f7b92e8726f82fb2c0d8400c08c683eb49a4709cb84a3",
+    "avr_fixed.h": "3878d9da964234419a1b246ef5dde990b199b96a88c3476f21605f71c9049b67",
+    "avr_multiply.h": "36de5d16f5332c4c2924d45a4bc2f6cbea78607c6f1861e24800d72a9c48e81f",
+    "avr_shift.h": "92d78865eb4bbdb189a86557e22a08af88ee72cad3cf090c849fc1ae760c4a5f",
+    "avr_tables.h": "4e0e67e692b8093752cb2a02f4b359d710304341dd0d46d18e73c3b35598c3d9",
+    "bits.c": "745b06111e3ec46ec42be8bd598f7f730ffc87af2e13d474dcfaf125c2ca3b4a",
+    "compact_lsp.c.inc": "d902e393915c016f9fd0e351646d7f0bda00cd6a9b95c63c6ed7be56c7991811",
+    "compact_lsp_rates.c.inc": "60146af14dc2b86b253e87a9411e793406c04b0f72eaf982e61240262c085d65",
+    "forced_math.h": "3b4a9b5a0f36f8531c9a79159a53688d6ab2d53a181d7588cdd8dd3ab4fd6154",
+    "forced_pitch.h": "7716de88b622942af1e38739ea40e84c4872d66d97b67bc51164e620371b4560",
+    "iir_direct.c.inc": "584cc9fb7f1cf34cf51b7c1b708df5f4981fbaf2d653b73c9c6e9e4a5634acc5",
+    "iir_kernel.inc": "193437dbc79dabc3a710ee062f0714a1896d53e16d29ec7d6674551607e7cda9",
+    "innovation.h": "b42aee7475b58fe1315b78a5ef9f346dd019b66739d1469ce19fea98933e16f8",
+    "innovation.S": "4c83663cf3edd15eae7947bdf938ba05334daa50fbb8b3a2ccf12943f4bd45fb",
+    "innovation_core.inc": "96a56a6da1e0ae6ab9ec6bdf1f4499b742615146b404f4f602d1f08878310f60",
+    "long_pitch.h": "d4c26763b5143b86d0edfd6d1b84e37d85af2940e77d636ac8574c478cc983bd",
+    "lowrate_excitation.h": "36c72fb238c05768bdb0297c682c0f9ee7877f3825e3422909bca6274cce0b95",
+    "lowrate_mean.h": "53544dbd88d02cb95434b224780c2ee494368b37d9125a56002d8ca513c9d9c7",
+    "lowrate_mean.S": "7feec155fcc368c3b24dd90db57c821861e179d4f53890ea0a570edef4800f9d",
+    "lowrate_mean_kernel.inc": "44ef0fa5f324e6531e93e4af5e96a7576dbc07be96da8e1a06df8070859488ab",
+    "lowrate_noise.c": "50cfbefee37b6670be86695f75a11386ea0cf35f5ea1a04244494c77eefbd36c",
+    "lowrate_noise.h": "345dd85bc4f5983bd9826117ee87c510c230fdcc7d90f4fa9a515a9019b30893",
+    "lowrate_rng.h": "ba5d3564ad01449a68e98371d0fb2db5259f95b541d8653e0f283bff707f0689",
+    "lpc_dot.S": "8e40aaef0744c8614fe06f281874ebcf2173d94f3d585b00b5703bea2f851be5",
+    "lpc_update.S": "00bb267faac8ed005a51893c8572e48b1fa4bfc30f3cb734ac13c0a4f3d49d20",
+    "lsp_advance.S": "c7c92245b4af60827a477c7ffdcaf9847befe3ef691bfdf6a5ba0ca01d47fba9",
+    "lsp_angle.S": "a0061869a1602ea95a57aa410518b0420c524a65ed15ad7f26cf2b3ad4353391",
+    "lsp_finish.S": "51ea78f7e5a7733d000cbfca46f7981e310c0676221385249d2a4c618262690b",
+    "lsp_first.S": "12d2128c01ec50b45159545eef412a17cf3a8a40d71b5c7e6e43226b7b44cca5",
+    "lsp_pair.S": "490863a2035ab81a1e2b28079d31c6bc84fb93c40b4268bb2192f7fbc79cdd22",
+    "lsp_stage.S": "eaeaf109f57853cd58bfb96a181e50941912c5f2fa4e000a327b74245d741529",
+    "lsp_stage_macros.S": "5c997aba9ec8a46bac795e34c59b65b22201c2b0aa8cd2037d85405e3078e7c5",
+    "nb1_cache_layout.h": "fecb43edff19065f13fa27e3b9b408f7902103a2c7f8f86aab69fc430ef9f9aa",
+    "nb1_gain.h": "16585b63dcdc7898d2c0d6c408822635f20e45feed188ae1eaf2be754a1082f2",
+    "nb1_pitch.h": "9c968152f6f099e60531e00582eed784d9fbfa861c17c2a80eed360b33b8e841",
+    "nb1_vocoder.c": "77e654b178497182930bc2159b89d14ce326936f99bb4b61a3f5e6bf5040982f",
+    "nb1_vocoder.h": "efbcacd025768903db8bc4d9745286be4932131fb89f5ff0934966924c28fe59",
+    "nb1_vocoder.S": "bfa8fc37f9a86f97dcd3fd640ab2a7ac48fc7644ed47803f7349ece56a6b3942",
+    "nb1_zero_gain.h": "b8efc1c740186219f5d519116d0cfafb4c772c2eb6934509b81c261b7f1ae9ec",
+    "nb3_c_math.h": "9e89d9d789d9d9b72f7c69dcf0aa3b111a75db8a2d3963426791b2e6c9932154",
+    "nb3_header.h": "8d973f6bf9657858b910362d6999c32db0dc1be8f7c10bcb1e3e11d513dccd02",
+    "nb3_indices.h": "2171ad9e73cf6adb5abe4df9d07c262a94eabbca304789830f56b8302f36a460",
+    "nb3_interpolate.h": "9166e91a73584db2cd9da00f9a6f3fb35b24d255814d010fcd17d8f22fed069d",
+    "nb3_lsp.h": "3782d31d1c9f5b9cf84a1e7e8393c9c55d61efc7cc0adaadac2ee136668a471a",
+    "nb3_lsp_angle.h": "1c7b6f05e01a2067e8f07c7c342fdccf8232a209861a3d28f617b9eadd75203b",
+    "nb3_lsp_finish.h": "41b03398eeaeeae0d6c02da47e49ed7524b8799f25831e70d6dfe33d0ebe55c8",
+    "nb3_lsp_first.h": "1153f8c77c5cd2df39b1eb7c44d05e5e695a155dc5bf5e95c6d1db5c2655b9b1",
+    "nb3_lsp_pair.h": "ed59efb79b7a8af17e1cd3f48ade514084d599ebdd136797ed7920107ad7ac3c",
+    "nb3_lsp_stage.h": "0deaff89072a76d0126c6415eef800546824168059608419d966e238ec5e159a",
+    "nb3_subframe.h": "1d50ca1ea31231914d81756e42476c0c19c699f4a8c500514ab2952c6229ea88",
+    "nb4_excitation.h": "684e455ae43f57b16cefa227ab04a50b5825d978d41aa2388e995d897d776f51",
+    "nb4_subframe.h": "eb93b29731123939f2397888bdb9671e36979029f16d9cc304ac2a0a46346dc6",
+    "nb_decode.c.inc": "ee8374110d963982e8b308b12ff041fec2d630e1b83a3a258f16d5ce89e05294",
+    "packed24.h": "cd3d6cd54064fc9841aef7ff13abc801bff43cf79c3318b8175e52b9695dda73",
+    "packet_mode.h": "2729d18157a137eba36cac6695f92663858da309d64388c20011f062d197896d",
+    "pitch24.h": "530dbbd915a2f032067e756772eb81b29b5a8bdb429b92d22185701e09deff81",
+    "pitch_add.S": "6272ddbc09160381bb73fb86d2a8e97a60e20f37570df5d3896d28b59d5918ce",
+    "player.c": "8e960f4874f0f98c7f21f486c9c4317405a42c12bcda1330fb353658ee584454",
+    "profile_mode.h": "0052bc51ba4013ddc6e758a59a03fd3ecd1030c5ad07540008817180caa36d5b",
+    "profile_state.h": "72c6aec0f48e37bd6937a09c72dc5f97be408e7995464b711db2ec10e47af95f",
+    "q14.S": "8d93f106036746be2ec0400f78737c48ea3b7559428e9f1e41b1f0910333d839",
+    "q14_macros.S": "4913b0a3484ebf612750ea42f461ef8e17f4f95329be9dd44df6f1e3af0ec827",
+    "qmf_memory.c": "a1232858f274e30f7050334fc5b608edcd3d422fccda75de77430bc7831d08c3",
+    "qmf_memory.h": "ef340baf7353191f5c8294fb21b0f25bd46390186573a9ce8b3ef8033bc5f7e0",
+    "short_pitch.h": "a90485058cd47d9c762eea1bba4dda62f2f81a0e79457d67c51b69d39c2d300c",
+    "short_pitch_kernel.inc": "6801e39e986e600e30c0a34e240f7cb368be483d6e0d1f35ddacbf48e0e93998",
+    "speex_avr.c": "cb61c6c529f91219b32dd47491bdee8a0a95034e0206ce6b8a05d783df840262",
+    "speex_avr.h": "9ca142747c625230c30ea1cafddbf452da80bc45b25b5ee2ddeea754719e3566",
+    "speex_nb.h": "47ebf2505af9421b706a323528bc0f954e3a5c6069cae53fe6a6b13d84af13f7",
+    "speex_nb3.h": "b6aa205038d0e534991b7f0f684516dfbe4c7a8d30649550a52558c18b22f9d0",
+    "speex_platform.h": "3f70ff0abf4c10c9312c28bcd4b21cb00a445f9609b6f97232f6a73e89a298fc",
+    "speex_wb1.c": "b6eefb306b2adef8c36514a2616eb0f83dd03648b47dd0477175b87c174a0cfe",
+    "speex_wb1.h": "6d4c9bc361ccd8b5fea23793e00bcb3345accc09e67a5114fe5bc0dd6d52abdc",
+    "wb_excitation_kernel.inc": "33bc675a1840fac8cecb05fc7ec4786a13267db91166db9ef76f67b64e71a399",
+    "wb_fold.c": "283afe5869bf0f2d39b45dfcab03eb0156a62323645384ca12cdd0cb0ca3e2e2",
+    "wb_fold.h": "3950dfcdc638aecfebb7ee8309c8e5e7bba59eaeabb465aca3368963e1be040d",
+    "wb_fold.S": "1f2d7b6f0ae346dc098fad921825fbe003d208a9dc32d5a2d34958d09c822b1f",
+    "wb_fold_kernel.inc": "ff52c6443df47be168638773d984a0094bd93282cb8bff282a0bd7aedd2f1a99",
+    "wb_gain_div.h": "c6b6872e09d93dc8eb152396d58d5479e3984db795a9e1c77cb2929c229cf87e",
+    "wb_gain_div.S": "29b5b3392441ea3eb903c6111d94ad559e678912aa7f8e3091c3129eebd699e8",
+    "wb_iir.c": "7ce0ddaca8da575efca564660cb79337d6747e698de709b57ab74b4c5099870c",
+    "wb_iir.h": "cc268430e595b5a8edd14c47155028e0357a0830cd3cb8eb864a5b463020a4c2",
+    "wb_iir.S": "275936662303e102239afb58cb4a6d812541cd2bec68cbab7e0c03bb0ac9cd5e",
+    "wb_internal.h": "76839306b6484b3e25e44822a0c39e11b4dbabe4d3d1cbb65eaf01915fd8e1da",
+    "wb_player.c": "cd295cc8c53d603769981aa5d892c398b30487d3333769c231329b1c4a1ad8be",
+    "wb_qmf.c": "c27ff603c22ea71ac05ddd8256f13109593822c05fb34e71a7578c17d04a12f0",
+    "wb_qmf.h": "8b42180325ba8c60ee398f86ae696833f6201c580a7c68e970232e74412f6b3b",
+    "wb_qmf.S": "cb6eafb62f2d9d46b4848ea9d5d6ec8dd070fa42d533cf9747d44c35f87a73e9",
+    "zero_innovation.h": "dc192db47f3140e64ef11bc10c26790726ca5e1a556a99aff3a10bfbc7ce35c7",
+    "zero_shape_kernel.inc": "42c8aa44ff55935bbc27ecf5348629d3debbe28946fd72965e36f2c224736ed7"
+  },
+  "candidateChangedSourceSha256": {
+    "wb_fold.S": "ca19550d9adf11972d53586c236cb512ff379c7f905f687bdd1827eb132ced71"
+  },
+  "probeSourceSha256": {
+    "unit.c": "732e2869da5a1b0c85ffffa4c5a0ae326a22d69511e85df6cb731e2f31a0d522",
+    "verify_unit.mjs": "0c902290d47008d7aa93a5cc47f9465a3445bba3993d891319dfb65c3d8f8c38",
+    "reproduce.py": "d6922a78cd14674e378bd3ee0cd5bf04b587ae1463b8e1580ddf4339139ce4cc"
+  },
+  "changedSourceFiles": [
+    "wb_fold.S"
+  ],
+  "independentPortableCFallbackUnchanged": true,
+  "scalarCasesPerVersion": 37440,
+  "scalarCAndAsmCallsPerVersion": 74880,
+  "asmAbiReturnsPerVersion": 37440,
+  "allCodebookRowsAnd40FlashReadsExact": true,
+  "activeTimer2": true,
+  "cycleDeltas": [
+    {
+      "kernel": "speex_wb_excitation40_avr",
+      "cases": 5760,
+      "cycleIncreasePer40Samples": 30.0,
+      "cycleIncreasePerFrame": 120.0
+    },
+    {
+      "kernel": "speex_wb_excitation8_40_avr",
+      "cases": 23040,
+      "cycleIncreasePer40Samples": 33.0,
+      "cycleIncreasePerFrame": 132.0
+    },
+    {
+      "kernel": "speex_wb_excitation_nb2_40_avr",
+      "cases": 2880,
+      "cycleIncreasePer40Samples": 30.0,
+      "cycleIncreasePerFrame": 120.0
+    },
+    {
+      "kernel": "speex_wb_excitation_nb8_40_avr",
+      "cases": 5760,
+      "cycleIncreasePer40Samples": 21.0,
+      "cycleIncreasePerFrame": 84.0
+    }
+  ],
+  "featureMatrix": [
+    {
+      "features": "all",
+      "beforeBytes": 25916,
+      "afterBytes": 25024,
+      "beforeSha256": "b97d0615963db4ff4ad0f7ecd0c1dfecf223043ae4cc8db674bceea9b1c78eb9",
+      "afterSha256": "4adc48c29719d1f0c01c13a7c57654db93096b95c20cad2b2321dfa210b3380b",
+      "byteIdentical": false
+    },
+    {
+      "features": "minimal",
+      "beforeBytes": 17022,
+      "afterBytes": 17022,
+      "beforeSha256": "ee242d8c98ddf9ea8ac265aabb2d45c4654dc91b1979fd6509214bdaafe962b0",
+      "afterSha256": "ee242d8c98ddf9ea8ac265aabb2d45c4654dc91b1979fd6509214bdaafe962b0",
+      "byteIdentical": true
+    },
+    {
+      "features": "nb1",
+      "beforeBytes": 20176,
+      "afterBytes": 20176,
+      "beforeSha256": "ea91752607275a852d07512b207c507a4628142ee3b2babe64e7bc56a2d92cc7",
+      "afterSha256": "ea91752607275a852d07512b207c507a4628142ee3b2babe64e7bc56a2d92cc7",
+      "byteIdentical": true
+    },
+    {
+      "features": "nb4",
+      "beforeBytes": 19822,
+      "afterBytes": 19540,
+      "beforeSha256": "08cec46c53b45f80c564d54445aa7113326ee1900321a36c0e56cfb0bb993f58",
+      "afterSha256": "d00a811686da8295d5e35d2eed74723c931b93d38993b9b611528349b0f0fe60",
+      "byteIdentical": false
+    },
+    {
+      "features": "nb2",
+      "beforeBytes": 18440,
+      "afterBytes": 18160,
+      "beforeSha256": "7880dfb8625f4b253a751aaea810e0ce94fc5f5fe1a17932e439b5b37a04c3fb",
+      "afterSha256": "f77b418741678493592ac8099961aca5a5083444d7965a7d5e63f55e41752a50",
+      "byteIdentical": false
+    },
+    {
+      "features": "nb8",
+      "beforeBytes": 19510,
+      "afterBytes": 19230,
+      "beforeSha256": "f0f87a4fd35028edb976f36913b33b8bbfe8f5b105404e562b83d4322a6eaf90",
+      "afterSha256": "05bcf58635c217431702d69e999fcf8dd017f6a24310c449994f9cf4dd3aeffa",
+      "byteIdentical": false
+    }
+  ],
+  "images": [
+    {
+      "variant": "baseline",
+      "label": "unit",
+      "bytes": 7658,
+      "sha256": "6161cce43e32ff3450c6d44fb606a72d9f05e9ab759096d5cf10ae29700465aa"
+    },
+    {
+      "variant": "baseline",
+      "label": "irq-wb575",
+      "bytes": 26352,
+      "sha256": "da57cf93f99623bee41d13a4f515baa8cb546cc10dc01e4fe24fc53865156b7c"
+    },
+    {
+      "variant": "baseline",
+      "label": "irq-wb775",
+      "bytes": 26352,
+      "sha256": "ed120836b2a9b92f73c055f5be54e1d809d9a7b2339dcc7d77aa16c28abee663"
+    },
+    {
+      "variant": "baseline",
+      "label": "irq-wb98",
+      "bytes": 26352,
+      "sha256": "105535c9d2e00605fd9ac53a61e906c89d59bcce829ff11123fcfda6253dfff6"
+    },
+    {
+      "variant": "baseline",
+      "label": "irq-wb128",
+      "bytes": 26352,
+      "sha256": "028de125f34ca2e2fa2e08ea45f4de5909d902623548a502919c35f9c824c01e"
+    },
+    {
+      "variant": "shared",
+      "label": "unit",
+      "bytes": 6742,
+      "sha256": "8d796f0e0eea24114b316d6fba7bc1f770faacc9f715f692589f20b1c4357b51"
+    },
+    {
+      "variant": "shared",
+      "label": "irq-wb575",
+      "bytes": 25462,
+      "sha256": "21823da1b5267e67d87f82d9861918332e708914cd0558cd572a331beab7eee2"
+    },
+    {
+      "variant": "shared",
+      "label": "irq-wb775",
+      "bytes": 25462,
+      "sha256": "b932bd559fe3725a2f7503a0cb39d452a557706e0f07fc213e873847c34c39be"
+    },
+    {
+      "variant": "shared",
+      "label": "irq-wb98",
+      "bytes": 25462,
+      "sha256": "42dc4a9ed577df07ddab92daf210064ce0625671ae615b2e6245e3a5e3a92b24"
+    },
+    {
+      "variant": "shared",
+      "label": "irq-wb128",
+      "bytes": 25462,
+      "sha256": "15cc0174f59e756990d1b88953f67cf14c81a1664c7676fd17856fe0d90f2717"
+    },
+    {
+      "variant": "shared-gc",
+      "label": "unit",
+      "bytes": 6742,
+      "sha256": "8d796f0e0eea24114b316d6fba7bc1f770faacc9f715f692589f20b1c4357b51"
+    },
+    {
+      "variant": "shared-gc",
+      "label": "irq-wb575",
+      "bytes": 25462,
+      "sha256": "21823da1b5267e67d87f82d9861918332e708914cd0558cd572a331beab7eee2"
+    },
+    {
+      "variant": "shared-gc",
+      "label": "irq-wb775",
+      "bytes": 25462,
+      "sha256": "b932bd559fe3725a2f7503a0cb39d452a557706e0f07fc213e873847c34c39be"
+    },
+    {
+      "variant": "shared-gc",
+      "label": "irq-wb98",
+      "bytes": 25462,
+      "sha256": "42dc4a9ed577df07ddab92daf210064ce0625671ae615b2e6245e3a5e3a92b24"
+    },
+    {
+      "variant": "shared-gc",
+      "label": "irq-wb128",
+      "bytes": 25462,
+      "sha256": "15cc0174f59e756990d1b88953f67cf14c81a1664c7676fd17856fe0d90f2717"
+    }
+  ],
+  "irqScreens": [
+    {
+      "profile": "wb575",
+      "framesPerVersion": 96,
+      "extraCpuCyclesPerFrame": 9600,
+      "beforeBytes": 26352,
+      "afterBytes": 25462,
+      "staticSramBytes": 1430,
+      "beforeMinQueue": 28,
+      "afterMinQueue": 28,
+      "beforeFreeSram": 408,
+      "afterFreeSram": 408,
+      "beforePeakStack": 210,
+      "afterPeakStack": 210,
+      "exactS16AndPwm": true,
+      "underruns": 0,
+      "beforeReportSha256": "a1155728361c94e04bb515be510dea6afdf6c869e92ee7c12f0971402ee13008",
+      "afterReportSha256": "0683693ec133a78c104aa15b3696c6eb1b6ccae71d9f2de41ec88266dc096b93"
+    },
+    {
+      "profile": "wb775",
+      "framesPerVersion": 96,
+      "extraCpuCyclesPerFrame": 9600,
+      "beforeBytes": 26352,
+      "afterBytes": 25462,
+      "staticSramBytes": 1435,
+      "beforeMinQueue": 21,
+      "afterMinQueue": 21,
+      "beforeFreeSram": 403,
+      "afterFreeSram": 403,
+      "beforePeakStack": 210,
+      "afterPeakStack": 210,
+      "exactS16AndPwm": true,
+      "underruns": 0,
+      "beforeReportSha256": "395fa943a1c6640086edcc23e6444982dc874fd1cfebf5d960d83516537aaeec",
+      "afterReportSha256": "e0d690e179821e0ad884e20912a667bf7502e7d56d6bb738f47c715dd633e196"
+    },
+    {
+      "profile": "wb98",
+      "framesPerVersion": 96,
+      "extraCpuCyclesPerFrame": 25600,
+      "beforeBytes": 26352,
+      "afterBytes": 25462,
+      "staticSramBytes": 1440,
+      "beforeMinQueue": 8,
+      "afterMinQueue": 8,
+      "beforeFreeSram": 398,
+      "afterFreeSram": 398,
+      "beforePeakStack": 210,
+      "afterPeakStack": 210,
+      "exactS16AndPwm": true,
+      "underruns": 0,
+      "beforeReportSha256": "923968105264a018fbf66c42a4f2737b1905f316b71c80d6aaf33604939652d7",
+      "afterReportSha256": "5b0c2b29ccbf4fd640488b5290724eb1d3d6c7c66c96bb6d9db4a0ad6e733b1e"
+    },
+    {
+      "profile": "wb128",
+      "framesPerVersion": 32,
+      "extraCpuCyclesPerFrame": 25600,
+      "beforeBytes": 26352,
+      "afterBytes": 25462,
+      "staticSramBytes": 1447,
+      "beforeMinQueue": 9,
+      "afterMinQueue": 9,
+      "beforeFreeSram": 391,
+      "afterFreeSram": 391,
+      "beforePeakStack": 210,
+      "afterPeakStack": 210,
+      "exactS16AndPwm": true,
+      "underruns": 0,
+      "beforeReportSha256": "3317a044882d6b2a17d317a8498cce104acc50af28fb31e73133f87761b29b11",
+      "afterReportSha256": "b578ab03e86354c64e7379aeaf6a462493cfa2ab55b9db91475c5afa6a2f7e5a"
+    }
+  ],
+  "gcSafeImagesByteIdenticalToVerifiedShared": true,
+  "limits": [
+    "Baseline already includes root compact-divider work, before later pitch-root/shared-LSP integration.",
+    "Four bounded IRQ screens cover 320 frames per version, not the full admission corpus or physical hardware.",
+    "Singleton fallback avoids new overhead and preserves byte-identical minimal/NB1-only images.",
+    "Extra 2 callee-saved bytes in the shared routine do not increase observed whole-program peak stack.",
+    "Full C decoder never executes; isolated C primitives do execute."
+  ]
+}

@@ -3040,6 +3040,10 @@ verified against the frozen 91-stream corpus.
 
 ## Speex: share vector geometry and fuse reconstruction with folding
 
+[Share complete WB excitation loops](speex-shared-wb-excitation.md): tiny
+ABI-preserving entries carry Flash-table addresses and packed geometry into
+one exact loop; keep table references collectable and retain singleton code.
+
 [Share order-8/order-10 coefficient finishing](speex-shared-lsp-finish.md):
 use one paired loop and a local exact rounding/saturation subroutine; compare
 Flash, stack, explicit C selection and measured scalar/IRQ tradeoffs.
