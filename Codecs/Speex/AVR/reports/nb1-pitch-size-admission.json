@@ -1,0 +1,305 @@
+{
+  "scope": "Frozen whole-image decoder-mailbox ASM controls plus bounded independent PCM/reset screens; full IRQ admission remains separate",
+  "target": "ATmega328P / AVR5 / GNU ABI",
+  "compiler": "AVR GCC 7.3.0",
+  "simulator": "avr8js 0.21.1",
+  "sourceHashMode": "UTF-8 source/report bytes normalized to LF; external tool/vendor-device byte hashes unchanged",
+  "frozenSourceManifestSha256": "fafd5088b59867df6554c719a29c1943045ff30eb346932b83a51cd84b3923a6",
+  "callerSha256": "4c59f492ae57fe19c67132721b9a1fc42fd630f15a0ad33d969262dc90e15cb5",
+  "helperSha256": "9c968152f6f099e60531e00582eed784d9fbfa861c17c2a80eed360b33b8e841",
+  "priorScalarReceiptSha256": "36d632ff7dccdcc345fd22dbafd408f41c0fa753ae8413caff6c81e59485d2aa",
+  "scalarSourcesAllMatched": true,
+  "scalarRebuilds": [
+    {
+      "fixture": "asm-table1",
+      "rebuiltBinaryIdentical": true,
+      "binarySha256": "8086940eaeffb86b5fa0f27f985fdb2e0c411f481751cc33856c5f83bf655f6e",
+      "reportSha256": "14315f1062ec28c7f65e7b8261ccad897d75a6ce11ef12f319f4da505fcbbf96"
+    },
+    {
+      "fixture": "asm-table0",
+      "rebuiltBinaryIdentical": true,
+      "binarySha256": "f950b872897f4209e40efb396c804e56ca67d78253f77d19da40d7cbcfcd749e",
+      "reportSha256": "97928b142aadd7de8c3ee2da2173c33fafcbf977f9bf5140be25c6e7da8c1552"
+    },
+    {
+      "fixture": "c-table1",
+      "rebuiltBinaryIdentical": true,
+      "binarySha256": "3cfe64beadb94aeac94f23f065756674edc604bfc93d10a4b97f58c7ea8777be",
+      "reportSha256": "a395a3f14395929310e92afdfcee360177e44d7b863314011eca5c48e0397d68"
+    },
+    {
+      "fixture": "c-table0",
+      "rebuiltBinaryIdentical": true,
+      "binarySha256": "cda11228f132a08312f2d305ba592b1544287b4b8acf9deca37745f5b381656a",
+      "reportSha256": "b0aec26bd44c349586d84fd5928c8a4375537aab124ef1da32e02b80bc6f91d8"
+    }
+  ],
+  "portableExports": [
+    {
+      "export": "portable-nb",
+      "helperIncluded": true,
+      "polynomialExplicitlySelectable": true,
+      "sourcesManifestSha256": "149351a9828d9117743b64f00279f014fd4cf3de6dd06c20f591354ee6af6563",
+      "helperSha256": "9c968152f6f099e60531e00582eed784d9fbfa861c17c2a80eed360b33b8e841",
+      "cDecoderExecuted": false
+    },
+    {
+      "export": "portable-wb",
+      "helperIncluded": true,
+      "polynomialExplicitlySelectable": true,
+      "sourcesManifestSha256": "714ce039693553a5a04e6b6e0d6f8cd36a726e650c7c9bb402ae3783d14c625e",
+      "helperSha256": "9c968152f6f099e60531e00582eed784d9fbfa861c17c2a80eed360b33b8e841",
+      "cDecoderExecuted": false
+    }
+  ],
+  "measurements": [
+    {
+      "profile": "wb395",
+      "tableEnabled": false,
+      "frames": 384,
+      "binarySha256": "5dd5c1d1a80843aa9680171ff3059919b650618b01a9b9391d76b3460cca825c",
+      "flashBytes": 24344,
+      "staticSramBytes": 1284,
+      "totalFrameCycles": 83607904,
+      "meanFrameCycles": 217728.91666666666,
+      "maxFrameCycles": 220640,
+      "peakStackBytes": 163,
+      "pcmExact": true,
+      "resetExact": true,
+      "includesInterrupts": false,
+      "reportSha256": "c65dc07151fb927dbe483b48113a9a7fc01514933e11a689fe2c159b0aa078c2",
+      "packetTimingSha256": "968fee354a908800ce1c72c02bb46b74ade4ef5bc1978d417e861155f6ed188d",
+      "buildMetadataSha256": "75d82e2aa28f47511596b1ce033362ea5c3939b62f79cbeb954b1e30d314aebe"
+    },
+    {
+      "profile": "nb215-min",
+      "tableEnabled": false,
+      "frames": 384,
+      "binarySha256": "694b9c8b41368396938a9191e5fa9eac7cdbc56a84a19262eecaf5c64b0ffb64",
+      "flashBytes": 12054,
+      "staticSramBytes": 1096,
+      "totalFrameCycles": 39384510,
+      "meanFrameCycles": 102563.828125,
+      "maxFrameCycles": 103626,
+      "peakStackBytes": 111,
+      "pcmExact": true,
+      "resetExact": true,
+      "includesInterrupts": false,
+      "reportSha256": "cce8ed047fa13ee3e26c79bd68a84b9d0f11a4a1e2fdaeaafc4ca6c039369a93",
+      "packetTimingSha256": "9a0bc7005552047f9cd24d8d89c73c070a6a047e62c65ee2cf1c532d12353f72",
+      "buildMetadataSha256": "af89fe4838b08e17fb54b9c775274cbb26cbe76a1cb517a98a70f334b3b0262b"
+    },
+    {
+      "profile": "wb395",
+      "tableEnabled": true,
+      "frames": 384,
+      "binarySha256": "7a91b2decfe29404a78889bb4a874754f553bd10feaa7f6efe780f4b4cfd6951",
+      "flashBytes": 24108,
+      "staticSramBytes": 1284,
+      "totalFrameCycles": 83576740,
+      "meanFrameCycles": 217647.76041666666,
+      "maxFrameCycles": 220403,
+      "peakStackBytes": 163,
+      "pcmExact": true,
+      "resetExact": true,
+      "includesInterrupts": false,
+      "reportSha256": "c68cf9ffb846c416ff57dd1e5df104d136518aa3637a46c3cf3260af076c05da",
+      "packetTimingSha256": "18f743eef9e458f5b7857353f39f8522bce2fc76e79ddd5286cfe655dfaf5796",
+      "buildMetadataSha256": "a145ad29664cd1b9ca98ca5ec8f9549a56da143f323c62db7282d973a5bef2f0"
+    },
+    {
+      "profile": "nb215-min",
+      "tableEnabled": true,
+      "frames": 384,
+      "binarySha256": "d7415cc517d3923e2f4ab670de7a3815559bb2dbf2953c321b395024d3a6e77c",
+      "flashBytes": 11904,
+      "staticSramBytes": 1096,
+      "totalFrameCycles": 39334590,
+      "meanFrameCycles": 102433.828125,
+      "maxFrameCycles": 103372,
+      "peakStackBytes": 111,
+      "pcmExact": true,
+      "resetExact": true,
+      "includesInterrupts": false,
+      "reportSha256": "2189323ad9b89ab7e55b98ba57c8934fa7818daa46bda663a2b82e768028e360",
+      "packetTimingSha256": "e2d0152f27cdb8f8f04a059b8c1ff9a33ee998d817c0f8d836f43ab4d5090d63",
+      "buildMetadataSha256": "e5a9aea78f116514d852324d795fd542652aedfbb6dc790024881f1d1c229e80"
+    }
+  ],
+  "comparisons": [
+    {
+      "profile": "wb395",
+      "flashChangeTable1Minus0": -236,
+      "staticSramChange": 0,
+      "frameCycleSavingsTable0Minus1": {
+        "frames": 384,
+        "totalCycles": 31164,
+        "minCycles": -63,
+        "maxCycles": 237,
+        "meanCycles": 81.15625
+      },
+      "positiveGainFrameSavings": {
+        "frames": 201,
+        "totalCycles": 42693,
+        "minCycles": 189,
+        "maxCycles": 237,
+        "meanCycles": 212.40298507462686
+      },
+      "zeroGainFrameSavings": {
+        "frames": 183,
+        "totalCycles": -11529,
+        "minCycles": -63,
+        "maxCycles": -63,
+        "meanCycles": -63.0
+      }
+    },
+    {
+      "profile": "nb215-min",
+      "flashChangeTable1Minus0": -150,
+      "staticSramChange": 0,
+      "frameCycleSavingsTable0Minus1": {
+        "frames": 384,
+        "totalCycles": 49920,
+        "minCycles": -4,
+        "maxCycles": 278,
+        "meanCycles": 130.0
+      },
+      "positiveGainFrameSavings": {
+        "frames": 200,
+        "totalCycles": 50656,
+        "minCycles": 230,
+        "maxCycles": 278,
+        "meanCycles": 253.28
+      },
+      "zeroGainFrameSavings": {
+        "frames": 184,
+        "totalCycles": -736,
+        "minCycles": -4,
+        "maxCycles": -4,
+        "meanCycles": -4.0
+      }
+    }
+  ],
+  "corpus": [
+    {
+      "profile": "wb395",
+      "stream": "coverage4096",
+      "frames": 128,
+      "provenance": "Existing retained independent compact-QMF corpus",
+      "inputSha256": "1cfd50bbc0a9a69b2e8240dde5f14beef02595c46df023e382fd43167ed1357c",
+      "sourceInputSha256": "0b6a156e9753e4db3ef33be9b29ce89af42d864d912c5e951e61dc32ca012468",
+      "pcmSha256": "d788f34c7334e64c1d326d16a0ca50443d902c4d2db852a8d78ed52b147ea861",
+      "sourcePcmSha256": "470d42159a8e4d842e5f329364ae0ef2c5ea1143af7eba892ae4f02a92101286",
+      "positiveGainFrames": 0
+    },
+    {
+      "profile": "wb395",
+      "stream": "en_letter_a",
+      "frames": 128,
+      "provenance": "Existing retained independent compact-QMF corpus",
+      "inputSha256": "332090a26fe4b7f64d6da59663ce6287222d9fab8d120a5e3cc44ef6d3ca7092",
+      "sourceInputSha256": "9d1506c7493a63f00ad4d8a1f0710b042514b8a44003ad11eef3b4cbfd5e99c6",
+      "pcmSha256": "c52356d02ec66f6ae8c7d850d55e526ca331fb6e5b2a82cb0c924efc68271a8b",
+      "sourcePcmSha256": "58a1a35d5dc7bf2064d8b19815e424746edba4ba2c063f64b300db859c2328a8",
+      "positiveGainFrames": 103
+    },
+    {
+      "profile": "wb395",
+      "stream": "ru_slutskaya_a",
+      "frames": 128,
+      "provenance": "Existing retained independent compact-QMF corpus",
+      "inputSha256": "5b03675e8c09fce5821a90c58ba6a93f9cf2efae38ebbcce4bc3270193a5b462",
+      "sourceInputSha256": "278e477e61c46f733b2a3cf8ca3584ae476ef41b3e4186ea2d29ace4a59541d8",
+      "pcmSha256": "95193238adb9d7008a279a5d386690e2a4957845f80de9754fa5ae9b9275e067",
+      "sourcePcmSha256": "f91e9a7be0bf23e1e391fd5e0ed2e441d824bb010c3e2c4ced6196ad73f362f1",
+      "positiveGainFrames": 98
+    },
+    {
+      "profile": "nb215-min",
+      "stream": "coverage4096",
+      "frames": 128,
+      "provenance": "Existing retained independent low-rate NB corpus",
+      "inputSha256": "c88370855617dd46d197785e348f12749eafa8a7f8421a4a2bd93ab94d2abd91",
+      "sourceInputSha256": "853ce98c3fab1e41ca86d31f711f27385ac141a0d16108f845118a5a176eac78",
+      "pcmSha256": "47ce49961e30c8e99e2395b9fe382656ec69221fab34f249c74e5afc3991bbd5",
+      "sourcePcmSha256": "0eac8410bd2fbb469fde4291423df10ec3cba81770578e34c6adc78917e75197",
+      "positiveGainFrames": 0
+    },
+    {
+      "profile": "nb215-min",
+      "stream": "en_letter_a",
+      "frames": 128,
+      "provenance": "Existing retained independent low-rate NB corpus",
+      "inputSha256": "2828ee507c821ecd18b2d86cd5aa1894adea7259183e8aaa6c4d6844b23af913",
+      "sourceInputSha256": "02cf23ec1a94f027cfe7236bc2e5251d171c60cc2a057322f0e9fa6b28acfad9",
+      "pcmSha256": "eea8a2b2e13c80da9ef81aee5b76c0a6ab3ccb2d428104889e95b38cf916216b",
+      "sourcePcmSha256": "105e3495c56fb90625accda7ebd587f06f06fc1ef31aaccf93ae40352e2655c7",
+      "positiveGainFrames": 105
+    },
+    {
+      "profile": "nb215-min",
+      "stream": "ru_slutskaya_a",
+      "frames": 128,
+      "provenance": "Existing retained independent low-rate NB corpus",
+      "inputSha256": "843b9a6376634fed449ec8383dd111aff70f098e99796759347431c7f6e78679",
+      "sourceInputSha256": "a7fc70cef38ff7b74f615f6384d3303c76ba62f174ded2b20d63759247ddaaff",
+      "pcmSha256": "b44efe9b999635c36a29428f30c03461e086b8bb0d752d95b4ab1dc45b615aa5",
+      "sourcePcmSha256": "e484326b44df5167d476246650546c44df53344ec52c548d783054b9f66735a2",
+      "positiveGainFrames": 95
+    }
+  ],
+  "sourceSha256": {
+    "build_admission.py": "fe8dd7ad366c1b29607044e81967f9bfec6c239855f57878c33feb8bfb33c688",
+    "run_screen.py": "633a275dfd2b2a3bd46bcd4e59d07f6893f21616fca9e377f7597e7eeed912b8",
+    "audit_admission.py": "175e85065d3679764365242aa1f006c6d3cb0561064f802323ebe929d0f5f30f",
+    "verify_avr.mjs": "6176ed2ab042a0c323014cdb0af15f8652397dc871d81207734f37af9446c9dc",
+    "verify_wb.mjs": "f0c5225a0cd76f02fc118818d831e7c6289f5d83a98a2a7273073466e5873b86",
+    "source.json": "fafd5088b59867df6554c719a29c1943045ff30eb346932b83a51cd84b3923a6",
+    "build.json": "76ed7db954f91582cbc8ece9d6b36a30c5260a106223454579a43bd18ecc0f2f",
+    "screen.json": "3f9f54fdebd56e910a95b7d417ade4ae1641c510a2fa2f69480a9c3baf029b39",
+    "data.json": "0e842d66a76390201ebe3e3d29692a981e04c57fefa04f11bb0ead3d7fc2c3fd",
+    "tool-provenance.json": "e2c0687161fa39628980d16efaea0adbcd1ccd0a490a67576a53aea1ed55ebec",
+    "cookbook-addition.md": "4a37ac3ae22c550696c2447d1600b0ecd449b4f944042c691fc2fc95141b807d"
+  },
+  "toolsByteSha256": {
+    "avr/bin/avr-gcc.exe": "d3a9a093afbd132302e430e4c88bbacccb0490ebf730f626b74662dc2460307b",
+    "avr/bin/avr-as.exe": "f4742917d141a23f4863086e6c0a3803b4da3c444cf1935303165b6f7e7e754e",
+    "avr/bin/avr-ld.exe": "b8aa2ff51061ff713976e6db14e9adb492436e5b463679a8b9e718c8ff0f2bdf",
+    "avr/bin/avr-objcopy.exe": "5bc07336d3dc78ef13a36db73b66ca206447fc9a40035ba8f481901084f737d5",
+    "avr/bin/avr-nm.exe": "4cf4392a0c0c44144668a1d8b70144708e32fa74b6279bab4e3041cb5345b593",
+    "avr/bin/avr-objdump.exe": "6379ac8e391b100febd0be4f30461e0148cbd59435aa574c1e96ece55eac3726",
+    "avr/libexec/gcc/avr/7.3.0/cc1.exe": "d47c916ac889376a6f479a1579c05875ce56ec22b70e654ebf427911a5980653",
+    "avr/lib/gcc/avr/7.3.0/avr5/libgcc.a": "4753393354a98da210ac6e4746b5ea040dd5606da2590e3d6487c112bdae071d",
+    "avr/avr/include/avr/iom328p.h": "3613a1da7610c4afb1f9a774b88e066b5b555a791814ae9b89be84ec1f525837",
+    "node/node.exe": "780f44f2c53c108bae261ada21a525b4bfe733c020ac85e41bfe94479090ac9b",
+    "avr8js/package.json": "2bf3a999091fa033287c58b734cf158be4a574674a633d64005389bae985aa6e",
+    "avr8js/dist/cjs/cpu/cpu.js": "f2103091c3911989b568c0287424c1f18a71bb65a50bd784cb910b5997f00251",
+    "avr8js/dist/cjs/cpu/instruction.js": "a80cb750d6bab9b7ba64410280f9d87c2a9d70cb069a258091d74967b63a22b2",
+    "avr8js/dist/cjs/cpu/interrupt.js": "044fb4f21b1f2658c65852d2bf90b101b86aaefc6d2703fd80581e80b5096cde",
+    "avr8js/dist/cjs/index.js": "9059a0dc100b9a8eb876dc56012a7670f3afeefa82c90230862f686a5cba4fcf",
+    "avr8js/dist/cjs/peripherals/adc.js": "9f13995cfea651e8dca14dc95c227c0a5fdb632f14e9e5d03ebc92d4ff62daec",
+    "avr8js/dist/cjs/peripherals/clock.js": "dc344fb96d763d657cae4342b18d506edf6fbc939edc2ef0b45c4d53d3ee833d",
+    "avr8js/dist/cjs/peripherals/eeprom.js": "526574ff48d75835c4413721c98487a55f4930eccb6794a63041ad0af05ee3a9",
+    "avr8js/dist/cjs/peripherals/gpio.js": "34c59c337d7d8c5a6af959313d24e9fd41b7b3c1108d68a0963e4232f8ee8b29",
+    "avr8js/dist/cjs/peripherals/spi.js": "f8b3a34dfebd697d94564461e9bbf06f992e8f4669f2a8460ede4af554e67309",
+    "avr8js/dist/cjs/peripherals/timer-attiny.js": "11bc63d87d98644d4f97e9bafe681adceb7ccbd61975a931ac5500dd2ac8a8dc",
+    "avr8js/dist/cjs/peripherals/timer.js": "5a4fa66fac3b6a401678aaa3e6a4b437985a3f14c89ff152d3c39a5d9ab920d2",
+    "avr8js/dist/cjs/peripherals/twi.js": "8c9b3ff97dd10121ac8b1fcd09f98aaccc5f76068c0b2beff9a9ea945c0e6cd0",
+    "avr8js/dist/cjs/peripherals/usart.js": "54417f9cab24659351e027a64acf3b2d0560365176ecf57c37184034c0e4cc35",
+    "avr8js/dist/cjs/peripherals/usi.js": "2d5a13419a8537dc6fafa67214964158fa349f33cab4b94bd5a8eb7e6a82420c",
+    "avr8js/dist/cjs/peripherals/watchdog.js": "678c446a50283145dba396cf244142ac4ebbd1c8360a119396fc7a06dbcc1b63",
+    "avr8js/dist/cjs/types.js": "1d1464e1edadb9171bcae76e8f78fa577b955b315ee748fcb7ad55e8825b2b39",
+    "avr8js/dist/cjs/utils/assembler.js": "d95c46cb525eab5f323acf435253dfa2adc0e62ad13fdda2aae142c8dcbb83b7",
+    "avr8js/dist/cjs/utils/test-utils.js": "c875e6edec7e70c7bcfd098f6c807489218052d00769397c8a0b9fcdf48b7c4c"
+  },
+  "cDecoderExecuted": false,
+  "includesInterrupts": false,
+  "physicalBoardTested": false,
+  "limitations": [
+    "384 frames per image on coverage/English/Russian excerpts; not full-corpus admission",
+    "Mailbox-image Flash is measured; player firmware may link differently",
+    "Only the private pitch domain 17..144 is admitted",
+    "Final combined production timing/PCM/IRQ/stack gates belong to root"
+  ]
+}

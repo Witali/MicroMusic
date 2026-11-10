@@ -65,3 +65,34 @@ retains the measured recipes without absolute host paths or media data.
 [pinned Xiph 1.2.1 polynomial](../../Codecs/Speex/AVR/vendor/speex-1.2.1/libspeex/math_approx.h),
 [BSD license](../../Codecs/Speex/AVR/vendor/speex-1.2.1/COPYING).
 The finite-domain derivation, table and threshold screen are original project work.
+
+The caller integration was also measured on frozen AVR decoder-mailbox images,
+with identical sources/options except explicit `SPEEX_NB1_PITCH_ROOT_TABLE=0/1`.
+WB3.95 enabled low-rate mask 7 and NB4; the minimal-feature NB2.15 image enabled
+mask 4 and disabled NB4. These numbers include the test mailbox, not a PWM player.
+
+| Linked ASM image | Polynomial / table Flash | Flash saved | Polynomial / table mean frame cycles | Static SRAM / peak stack |
+| --- | ---: | ---: | ---: | ---: |
+| WB3.95 |24,344 / 24,108 B|236 B|217,728.917 / 217,647.760|1,284 / 163 B, unchanged|
+| NB2.15, minimal features |12,054 / 11,904 B|150 B|102,563.828 / 102,433.828|1,096 / 111 B, unchanged|
+
+Each image passed 384 frames: 128 each from retained coverage, English and Russian
+streams, with independent PCM and reset checks. Positive-gain frames saved 189..237
+cycles in WB and 230..278 in NB. Zero-gain frames skip the root, but the linked
+table images cost 63 / 4 extra cycles on those frames. The largest observed
+regression is 0.020% of a 320,000-cycle frame budget; the measured mean still
+improves. Whole-image compiler/link effects must be measured rather than inferred
+from the scalar lookup. Interrupts were excluded from this bounded comparison;
+the combined production IRQ/playback gate remains separate.
+
+All 17 sources of the earlier 128-case scalar proof matched, and all four scalar
+fixtures were rebuilt to identical binaries before reusing that proof. NB/WB
+portable exports include `nb1_pitch.h` and retain explicit polynomial selection;
+no complete C decoder was executed. The frozen snapshot, matched packet timing
+arrays, byte-pinned tools, build/export checks and source-bound receipt are retained
+in the [source-bound receipt](../../Codecs/Speex/AVR/reports/nb1-pitch-size-admission.json)
+and its ignored evidence pack. The tracked `tests/run_pitch_root_size.py`
+driver freezes sources and scalar references into a fresh output directory,
+then builds TABLE=1/0 controls and observes the supplied WB/NB corpus excerpts.
+Historical receipt checks additionally need the retained original snapshot;
+reproducing against later sources creates a new measurement.

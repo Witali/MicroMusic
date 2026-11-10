@@ -10,7 +10,7 @@
 #include "lowrate_noise.h"
 #include "lowrate_mean.h"
 #include "nb1_vocoder.h"
-#include "math_approx.h"
+#include "nb1_pitch.h"
 #endif
 extern const int8_t exc_10_16_table[160];
 static SPEEX_NB3_NOINLINE void speex_low_unpack(const uint8_t *packet,uint8_t sub,uint8_t indices[4])
@@ -150,7 +150,7 @@ static SPEEX_NB3_STAGE_O2 void speex_nb1_excitation_frame(DecState *st,int16_t *
     int16_t g=speex_nb1_gain_selected_c(speex_packet_field(packet,30,4));
     int16_t noise_gain=32767,previous_gain=0,pulse_now=0,pulse_previous=0;
     if(g) {
-        int16_t amplitude=(int16_t)((int32_t)spx_sqrt(2*(int16_t)pitch)*
+        int16_t amplitude=(int16_t)((int32_t)speex_nb1_pitch_root(pitch)*
             (int16_t)(((int32_t)g*((scale+8192)>>14)+32)>>6));
         noise_gain=32767-435*g;previous_gain=77*g;
         pulse_now=speex_low_q15(22938,amplitude);
