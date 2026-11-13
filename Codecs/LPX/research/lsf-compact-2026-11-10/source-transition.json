@@ -1,0 +1,78 @@
+{
+  "schema": "lpx-lsf-source-transition-v1",
+  "baseline_revision": "0320c1014618188a3121fdfef0be55b30690d977",
+  "complete": true,
+  "physical_board_measured": false,
+  "source_hash_encoding": "raw and normalized text-lf",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": {
+      "baseline": {
+        "raw_sha256": "50384f415a353fa876742a2842a50c75f7249d809963b4e582acd614a23127b1",
+        "text_lf_sha256": "50384f415a353fa876742a2842a50c75f7249d809963b4e582acd614a23127b1"
+      },
+      "current": {
+        "raw_sha256": "b8644299804e86ff479be4ad363e607c3da67a79dbacaed7e223e4d15c56c368",
+        "text_lf_sha256": "b8644299804e86ff479be4ad363e607c3da67a79dbacaed7e223e4d15c56c368"
+      }
+    }
+  },
+  "all_measured_no_speed_loss": true,
+  "all_measured_no_program_growth": true,
+  "all_fixed_native_exact": true,
+  "float_binary_exact": true,
+  "fresh_universal_tiny_cases": 22,
+  "fresh_mega_cases": 8,
+  "fresh_website_tiny_cases": 9,
+  "identical_nano_images": 9,
+  "fixed_native_records": 181,
+  "fixed_native_segments": 306,
+  "fixed_native_samples": 15188029,
+  "independent_convolution_conversions": 368640,
+  "full_corpus_avr_rerun": false,
+  "floating_binary_configuration": {
+    "compact_version": 9,
+    "memory_profile": "SRAM512",
+    "lpc_segments": 2
+  },
+  "published_assets_updated": false,
+  "receipts_sha256": {
+    "Codecs/LPX/research/lsf-compact-2026-11-10/address-screen.json": "8631a0a57a36e64544bce4a3b1ddc59c21fb6155ad57fb2dc2b4fddedaea4854",
+    "Codecs/LPX/research/lsf-compact-2026-11-10/combined-screen.json": "d2269c08809b6176c0339e818475b71ea0492b9b8298185918b6775f91c1f9d3",
+    "Codecs/LPX/research/lsf-compact-2026-11-10/first-factor-screen.json": "435f1f448c64686bc39d117f9064c405d4bc96e9f2303a3e0b34fa4a077e8fc7",
+    "Codecs/LPX/research/lsf-compact-2026-11-10/mega-irq.json": "753e1a6948e5864c0b50c56766d00f74b934838c5c6583b8c69eb95c99f4ef7f",
+    "Codecs/LPX/research/lsf-compact-2026-11-10/mega.json": "a537c539902bd354f3b51b9baed55b705eab46f0086b33f9fd2116bdc5e36c8c",
+    "Codecs/LPX/research/lsf-compact-2026-11-10/nano.json": "1aa1b936d9d6157bc5f2212ad04aacd4f47e03dd0bc471c6f173738670ae3eb3",
+    "Codecs/LPX/research/lsf-compact-2026-11-10/native-corpus.json": "5212cb4d1d13dac445c26f24fe5e73c18ff2274d2f374aba1da6e862f1d35719",
+    "Codecs/LPX/research/lsf-compact-2026-11-10/range-screen.json": "41529c9fc6ebed6f6af1af296d2a241f2dd880decc9bd9b38bd79f5034a3b33a",
+    "Codecs/LPX/research/lsf-compact-2026-11-10/reproducer-checks.json": "d7914a4a025d11691c0b4d304c226149bebfd7410281e6a3f7c14b8e56218bff",
+    "Codecs/LPX/research/lsf-compact-2026-11-10/tiny.json": "a94d1c1ef71081c40cbd877e649588f968f16d290117a8ed7504df93ee5f6d59"
+  },
+  "preserved_receipts_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/universal-measurements.json": "02783c56bf3f54f63593a99560ff7d4e88382961e6751919b3bbba8925f2aec0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/universal-math-measurements.json": "c1eb21540d42c6c1c907a47f5c45cf101070a25aef60169b41ca53778c55231c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/v9-measurements.json": "2bdb6d2097c3a4486f5f787afa0338ee6681273727ed1ebe9708a1bf8b86751c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/v9-next-measurements.json": "e4c7617dcf8bd3f3b052a04beae6aa70c576d38088d043bad95cc1f2016e8d29",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/v9-1500-measurements.json": "eea3f9adf90dee13943346c1d7fdd664fb46dd6c3bfca451e5085bd167f94994",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/v9-sparse80-measurements.json": "b771662983b7fb82de9c827061b45c89b0faac8917606c3cbccf5828ea0793d6",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/atmega328p-v9-measurements.json": "7193f88455d7cdf5f507806f809352b1ddcc5903d08c0680f675683a814e1424",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/compact-guard-measurements.json": "ad0fcf938468e982245321aced40a8df05ce64fb3898b3b86d5e5b6ad66808ba",
+    "web-player/firmware-atmega328p.json": "d9232ddcccecec5f3e02d008d80f2f6823e821ee00ef0fa4d00ffff9b38739d1",
+    "web-player/firmware-lpx-attiny88.json": "b3c2edafbe5d8b2b76d950bacb6f2fa8a252d7bf6ab5a12a82d00a80d9ffc33c",
+    "web-player/audio/lpx-dialogue/manifest.json": "21934245a29e0b2590b7e5954c526cbffd9f931827aaff01fef7f4f7cc89de4a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/c-realtime-measurements.json": "fced090d422981002e3f0c2eea9a8b8d23167cc771cb94c01e0c20384a9b432e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/c-realtime-math-measurements.json": "7103785cce78688e6f751dfe44c48fddee71bca357afcaddf0ac7713f5088785",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/c-asm-equivalence.json": "5f03add65c5f7f9df4f5dced31c75dc67b24054864b186ab9e00e0146fae4bd8",
+    "Codecs/LPX/research/c-fixed-realtime-2026-11-10/corpus.json": "e4c51b57738134c92e58333635e19b7625598d5576d2fa1d8e80bbc59446a38f",
+    "Codecs/LPX/research/c-fixed-realtime-2026-11-10/float-validation.json": "7cb838d014b271036c6e829a767b4c14e4788f305b94e4698b5674d92f5ecb9f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/c-numeric-transition.json": "dfc71473e412be53ff5b4af72f3868c97ffa97452dcd096d8df10b19a6ceccd7"
+  },
+  "validation_source_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/ring_polynomial_exact.cpp": "14f4628928a19d6ba12d650c994f72691140ad6f68e9e02861083fe776d00f33",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/test_ring_polynomial_exact.py": "d813ac07f4c56434dc84b3e525465d18c8e0082ce50dcf613fdbdeaac0e38e87",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_lsf_compaction.py": "f032ac4bebe189412b31af4b5a2f43435568ba64d51ad3fe30cc35677e74b1c2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/lpx_source_history.py": "2d1f6d426a6b6784855a14652b5be64b4ccd56177163f692271f030cc1afaa26",
+    "web-player/tests/helpers/lpx-source-transition.mjs": "154aad0d2cc1e700c755d73f12db85086d7368c585a8e9118a1c30fdd71e370b",
+    "web-player/tests/lpx-lsf-compact.test.mjs": "94bf96fc31dbbdb94eece746c9c0213cf8e169bb1902daa0e3074b3757e76a8a",
+    "web-player/tests/lpx-numeric-modes.test.mjs": "705d8fea9bef75e35cdbf479fafae20298dc3888869ce58a2b2c9c51f0ae3101"
+  }
+}

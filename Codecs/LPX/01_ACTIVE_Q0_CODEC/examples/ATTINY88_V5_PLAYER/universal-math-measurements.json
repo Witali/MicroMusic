@@ -1,5 +1,4 @@
 {
-  "schema": "lpx-avr25-universal-math-v1",
   "build": {
     "target": "attiny88",
     "clock_hz": 16000000,
@@ -12,8 +11,8 @@
           "-DLPX4_AVR25_MUL16_UNROLL=2",
           "-DLPX4_AVR25_SATURATED_PRODUCTS=1"
         ],
-        "binary_bytes": 1600,
-        "binary_sha256": "ddc9e6687bf7be414170bee31b62758725a80ae3f483142e9c7420d541e05576"
+        "binary_bytes": 1992,
+        "binary_sha256": "623367198dc11819dbeca6f479fff5c1d6b18c7ba6bce920be090c5cb4f3d400"
       },
       "asm": {
         "defines": [
@@ -21,8 +20,8 @@
           "-DLPX4_AVR25_MUL16_UNROLL=2",
           "-DLPX4_AVR25_SATURATED_PRODUCTS=1"
         ],
-        "binary_bytes": 3600,
-        "binary_sha256": "34357741b35a1739be4e7284ee5aff63e552b62ccb45ba7202e96ce9399c0b3a"
+        "binary_bytes": 4902,
+        "binary_sha256": "aa380899a15328e27557ae69367d56fc65e19ddc22b739cedd00bc419ef4738f"
       },
       "generic": {
         "defines": [
@@ -31,8 +30,8 @@
           "-DLPX4_AVR25_MUL16_UNROLL=2",
           "-DLPX4_AVR25_SATURATED_PRODUCTS=1"
         ],
-        "binary_bytes": 1600,
-        "binary_sha256": "ddc9e6687bf7be414170bee31b62758725a80ae3f483142e9c7420d541e05576"
+        "binary_bytes": 1992,
+        "binary_sha256": "623367198dc11819dbeca6f479fff5c1d6b18c7ba6bce920be090c5cb4f3d400"
       }
     }
   },
@@ -40,36 +39,128 @@
     "target": "attiny88",
     "clock_hz": 16000000,
     "mul16_unroll": 2,
-    "cases": 436207,
+    "cases": 600435,
     "results": [
       {
         "backend": "c",
-        "cases": 436207,
-        "irqs": 16420,
-        "cycles": 171976399,
+        "cases": 600435,
+        "irqs": 14253,
+        "cycles": 691515215,
         "passed": true
       },
       {
         "backend": "asm",
-        "cases": 436207,
-        "irqs": 58861,
-        "cycles": 82177862,
+        "cases": 600435,
+        "irqs": 4985,
+        "cycles": 236157768,
         "passed": true
       },
       {
         "backend": "generic",
-        "cases": 436207,
-        "irqs": 16420,
-        "cycles": 171976399,
+        "cases": 600435,
+        "irqs": 14253,
+        "cycles": 691515215,
         "passed": true
       }
     ],
     "physical_board_measured": false,
-    "build_sha256": "f1913e3cd2e9c90902284b50e9fd4876df2edd5196d6a2dbbe02c072aefe7633",
-    "math_header_sha256": "6420049d48b9befaafae29dfff6be712d309b32496e5f1bbe9227385cee3941c",
+    "coverage": {
+      "pwm130_signed16_exhaustive": true,
+      "pitch_signed8_gain5_exhaustive": true,
+      "history_layouts": [
+        10,
+        11
+      ],
+      "synthesis_signed16_exhaustive": true,
+      "attenuation_dynamic_exhaustive": true
+    },
+    "build_sha256": "3d622a44963d1db12e699b706e449af2a67ecaba62a6808860f3d387cf26f7a6",
+    "math_header_sha256": "1ccb72bcc6f8f9b7166a192246e02724f714fbaa1311f032b4bad50036a60f51",
     "multiply_header_sha256": "61f7bbbffde4610a3b3b38a5e3bd1b24876c2c996ec393a0654e96d0a79e4445",
-    "probe_sha256": "8e18d0a24f3ecea003ad06d47adf88b505742335e13885bd8636986bbd88e195",
-    "observer_sha256": "077bd498186952514a05be5ed89124c5fd67971fac17a6b5077df7906eb15917"
+    "probe_sha256": "7b1df712ad0c0a74b26c810082c6bc363c79e73a6f448e65c71cb77a49f0d4c5",
+    "observer_sha256": "f3d1c3a318afc05f3e6121066977d3f4a1110ddcc8c855b9abed0c6ecc6e5bc0"
   },
-  "irq_counter_scope": "16-bit counters; checked against completed CPU IRQs modulo65536; no lost IRQs"
+  "retained_default_probe": {
+    "build": {
+      "target": "attiny88",
+      "clock_hz": 16000000,
+      "mul16_unroll": 2,
+      "saturated_products": false,
+      "backends": {
+        "c": {
+          "defines": [
+            "-DLPX4_ENABLE_ASM=0",
+            "-DLPX4_AVR25_MUL16_UNROLL=2",
+            "-DLPX4_AVR25_SATURATED_PRODUCTS=0"
+          ],
+          "binary_bytes": 1992,
+          "binary_sha256": "623367198dc11819dbeca6f479fff5c1d6b18c7ba6bce920be090c5cb4f3d400"
+        },
+        "asm": {
+          "defines": [
+            "-DLPX4_ENABLE_ASM=1",
+            "-DLPX4_AVR25_MUL16_UNROLL=2",
+            "-DLPX4_AVR25_SATURATED_PRODUCTS=0"
+          ],
+          "binary_bytes": 4938,
+          "binary_sha256": "47b2380a5edad47b5d4abce8a73d4ef643fd1387f493d2842dc3487eb7cd425a"
+        },
+        "generic": {
+          "defines": [
+            "-DLPX4_ENABLE_ASM=1",
+            "-DLPX4_ARCH=LPX4_ARCH_GENERIC",
+            "-DLPX4_AVR25_MUL16_UNROLL=2",
+            "-DLPX4_AVR25_SATURATED_PRODUCTS=0"
+          ],
+          "binary_bytes": 1992,
+          "binary_sha256": "623367198dc11819dbeca6f479fff5c1d6b18c7ba6bce920be090c5cb4f3d400"
+        }
+      }
+    },
+    "verification": {
+      "target": "attiny88",
+      "clock_hz": 16000000,
+      "mul16_unroll": 2,
+      "cases": 168982,
+      "results": [
+        {
+          "backend": "c",
+          "cases": 168982,
+          "irqs": 65115,
+          "cycles": 83779048,
+          "passed": true
+        },
+        {
+          "backend": "asm",
+          "cases": 168982,
+          "irqs": 33450,
+          "cycles": 25340959,
+          "passed": true
+        },
+        {
+          "backend": "generic",
+          "cases": 168982,
+          "irqs": 65115,
+          "cycles": 83779048,
+          "passed": true
+        }
+      ],
+      "physical_board_measured": false,
+      "coverage": {
+        "pwm130_signed16_exhaustive": true,
+        "pitch_signed8_gain5_exhaustive": true,
+        "history_layouts": [
+          10,
+          11
+        ],
+        "synthesis_signed16_exhaustive": false,
+        "attenuation_dynamic_exhaustive": false
+      },
+      "build_sha256": "258226f5cf798caea5177e4cdd4724c0d459346477d3d0a2420237020915823d",
+      "math_header_sha256": "1ccb72bcc6f8f9b7166a192246e02724f714fbaa1311f032b4bad50036a60f51",
+      "multiply_header_sha256": "61f7bbbffde4610a3b3b38a5e3bd1b24876c2c996ec393a0654e96d0a79e4445",
+      "probe_sha256": "7b1df712ad0c0a74b26c810082c6bc363c79e73a6f448e65c71cb77a49f0d4c5",
+      "observer_sha256": "f3d1c3a318afc05f3e6121066977d3f4a1110ddcc8c855b9abed0c6ecc6e5bc0"
+    }
+  }
 }

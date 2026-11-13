@@ -43,6 +43,7 @@ static uint64_t ticks,writes,underruns,first,last,min_gap=UINT64_MAX,max_gap,irq
 static uint64_t event_last,event_min=UINT64_MAX,event_max,events;
 static unsigned in_irq,irq_finishing,min_queue=H_LPX25_QUEUE,minimum_sp=H_RAMEND,sp_ready;
 static uint64_t decode_start,decode_sum,decode_calls,decode_max,active_sum,active_calls;
+static uint64_t decode_irq_start,decode_irq_sum,decode_cpu_sum,decode_cpu_max,active_cpu_sum;
 static unsigned decoding,decode_active;
 static uint8_t expected;
 static unsigned symbol(elf_firmware_t *f,const char *name){
@@ -96,11 +97,15 @@ int main(int argc,char **argv){
  avr_irq_register_notify(avr_iomem_getirq(&cpu,H_OCR1AL,NULL,AVR_IOMEM_IRQ_ALL),pwm,NULL);
  uint64_t end=0;int state=cpu_Running;
  while(cpu.cycle<UINT64_C(1000000000) && state!=cpu_Crashed && state!=cpu_Done){
-  if(cpu.pc==decode_begin && !decoding){decode_start=cpu.cycle;decoding=1;decode_active=cpu.data[H_TCCR0A]!=0;}
+  if(cpu.pc==decode_begin && !decoding){decode_start=cpu.cycle;decode_irq_start=irq_total;decoding=1;decode_active=cpu.data[H_TCCR0A]!=0;}
   if(cpu.pc==decode_end && decoding){
-   uint64_t elapsed=cpu.cycle-decode_start;decode_sum+=elapsed;decode_calls++;
+   uint64_t elapsed=cpu.cycle-decode_start,interrupted=irq_total-decode_irq_start;
+   if(interrupted>elapsed){fprintf(stderr,"Invalid decode IRQ accounting\n");return 6;}
+   const uint64_t foreground=elapsed-interrupted;
+   decode_sum+=elapsed;decode_calls++;decode_irq_sum+=interrupted;decode_cpu_sum+=foreground;
+   if(foreground>decode_cpu_max)decode_cpu_max=foreground;
    if(elapsed>decode_max)decode_max=elapsed;
-   if(decode_active){active_sum+=elapsed;active_calls++;}decoding=0;
+   if(decode_active){active_sum+=elapsed;active_cpu_sum+=foreground;active_calls++;}decoding=0;
   }
   state=avr_run(&cpu);
   if(irq_finishing){
@@ -119,11 +124,16 @@ int main(int argc,char **argv){
   "\"timer_event_gap_min\":%llu,\"timer_event_gap_max\":%llu,\"irq_mean\":%.6f,\"irq_max\":%llu,"
   "\"irq_entry_cycles\":4,\"irq_reti_complete\":true,"
   "\"decode_calls\":%llu,\"decode_mean\":%.6f,\"decode_active_irq_mean\":%.6f,\"decode_max\":%llu,"
+  "\"decode_cycles\":%llu,\"decode_irq_cycles\":%llu,\"decode_cpu_cycles\":%llu,"
+  "\"decode_cpu_mean\":%.6f,\"decode_active_cpu_mean\":%.6f,\"decode_cpu_max\":%llu,"
   "\"stack_bytes\":%u,\"stack_margin\":%u,\"eof\":%u,\"error\":%u,\"stopped\":%u,\"queue_empty\":%s,\"timer_stopped\":%s}\n",
   (unsigned long long)writes,(unsigned long long)ticks,(unsigned long long)events,(unsigned long long)underruns,min_queue,
   (unsigned long long)first,(unsigned long long)last,(unsigned long long)min_gap,(unsigned long long)max_gap,
   (unsigned long long)event_min,(unsigned long long)event_max,(double)irq_total/(ticks?ticks:1),(unsigned long long)irq_max,
   (unsigned long long)decode_calls,(double)decode_sum/(decode_calls?decode_calls:1),(double)active_sum/(active_calls?active_calls:1),(unsigned long long)decode_max,
+  (unsigned long long)decode_sum,(unsigned long long)decode_irq_sum,(unsigned long long)decode_cpu_sum,
+  (double)decode_cpu_sum/(decode_calls?decode_calls:1),(double)active_cpu_sum/(active_calls?active_calls:1),
+  (unsigned long long)decode_cpu_max,
   H_RAMEND-minimum_sp,minimum_sp-bss,cpu.data[eof],cpu.data[error],cpu.data[stopped],
   cpu.data[head]==cpu.data[tail]?"true":"false",!cpu.data[H_TCCR0A]&&!cpu.data[H_TIMSK0]?"true":"false");
  fclose(report);avr_terminate(&cpu);return end?0:5;

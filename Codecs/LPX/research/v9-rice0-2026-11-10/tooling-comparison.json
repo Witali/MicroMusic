@@ -1,0 +1,33 @@
+{
+  "schema": "lpx-rice0-experimental-tooling-parity-v1",
+  "files": 318,
+  "corpus_files": 306,
+  "public_files": 12,
+  "all_private_selections_byte_exact": true,
+  "all_default_results_and_statistics_match_production": true,
+  "all_legacy_outputs_match_production": true,
+  "all_old_v9_roundtrips_byte_exact": true,
+  "idempotent": true,
+  "legacy_flags_clear64": true,
+  "selected_files": 271,
+  "saved_bytes": 19951,
+  "input_bytes": 410968,
+  "raw_candidate_bytes": 391554,
+  "selected_bytes": 391017,
+  "decisions": {
+    "fallback-byte-tie": 6,
+    "fallback-growth": 41,
+    "k0": 271
+  },
+  "selected_growing_files": 0,
+  "saved_payload_bits": 159543,
+  "saved_padding_bits": 65,
+  "production_speech_v9_restored_revision": "95346ea9",
+  "production_speech_v9_byte_exact": true,
+  "production_firmware_admitted": false,
+  "source_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v9_rice0_experiment.py": "3769ae2a7d9f273715e86a22897e393dd3f34ee2a8f07dfab95bfe01868a9c42",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/test_speech_v9_rice0.py": "bdbe4ded4802fa79642c70bdfe0ceac00604c49afa40a6b829f0d24df768a444"
+  },
+  "seconds": 35.526597399999446
+}

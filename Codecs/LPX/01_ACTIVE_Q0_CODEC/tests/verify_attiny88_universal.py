@@ -17,10 +17,8 @@ from verify_attiny88_player import verify
 from test_sram512_profile import fixture
 
 
-def run(output,wsl=None):
-    output=Path(output).resolve()
-    if REPO/'build' not in output.parents:raise ValueError('Use ignored build storage')
-    output.mkdir(parents=True,exist_ok=True)
+def streams(output):
+    output=Path(output);output.mkdir(parents=True,exist_ok=True)
     clips=json.loads((REPO/'web-player/audio/lpx-speech/manifest.json').read_text(encoding='utf-8'))['clips']
     clips.append(dict(json.loads((REPO/'web-player/audio/lpx-bread/manifest.json').read_text(encoding='utf-8')),clipId='bread'))
     streams=[(clip['clipId']+'-'+v['id'],REPO/'web-player'/v['stream'])
@@ -37,8 +35,16 @@ def run(output,wsl=None):
         blob=bytearray(fixture(profile,12800,lag,style,extras))
         struct.pack_into('<HH',blob,12,pre,bright)
         path=output/(name+'.lpx');path.write_bytes(blob);streams.append((name,path))
+    return streams
+
+
+def run(output,wsl=None):
+    output=Path(output).resolve()
+    if REPO/'build' not in output.parents:raise ValueError('Use ignored build storage')
+    output.mkdir(parents=True,exist_ok=True)
+    inputs=streams(output)
     rows=[]
-    for name,path in streams:
+    for name,path in inputs:
         result=verify(path,output/name,wsl=wsl)
         cost=json.loads((output/name/'build.json').read_text())
         assert cost['universal'] and cost['queue']==44

@@ -1,6 +1,37 @@
 #pragma once
 #include <stdint.h>
 #include "Lpx4MemoryProfiles.h"
+// Host/full-precision synthesis. Select identically in every translation unit.
+// The default fixed-point C/ASM decoder and its object layout stay unchanged.
+#ifndef LPX4_FLOAT_SYNTHESIS
+#define LPX4_FLOAT_SYNTHESIS 0
+#endif
+#if LPX4_FLOAT_SYNTHESIS != 0 && LPX4_FLOAT_SYNTHESIS != 1
+#error LPX4_FLOAT_SYNTHESIS must be 0 or 1
+#endif
+#if LPX4_FLOAT_SYNTHESIS
+#if defined(__AVR__) && !defined(LPX4_ENABLE_PCM16)
+#error Floating synthesis on AVR requires LPX4_ENABLE_PCM16=1
+#endif
+#include <float.h>
+#if DBL_MANT_DIG < 53 || DBL_MAX_EXP < 1024 || FLT_RADIX != 2
+#error Floating synthesis requires at least IEEE binary64 precision
+#else
+#include <limits>
+#endif
+#if defined(LPX4_ENABLE_ASM) && LPX4_ENABLE_ASM
+#error Floating synthesis requires C arithmetic: LPX4_ENABLE_ASM=0
+#endif
+static_assert(DBL_MANT_DIG>=53 && DBL_MAX_EXP>=1024,
+              "Floating synthesis requires at least IEEE binary64 precision");
+#if DBL_MANT_DIG >= 53 && DBL_MAX_EXP >= 1024 && FLT_RADIX == 2
+static_assert(std::numeric_limits<double>::is_iec559,
+              "Floating synthesis requires IEEE754 double");
+#endif
+typedef double Lpx4SynthesisValue;
+#else
+typedef int16_t Lpx4SynthesisValue;
+#endif
 // Opt-in sequential input source. Independent of C/ASM arithmetic and table
 // storage. Use the same setting for the core and all callers (layout differs).
 #ifndef LPX4_ENABLE_INPUT_CALLBACK
@@ -65,6 +96,20 @@
 #else
 #define LPX4_MAX_PULSES 10
 #endif
+// Select the compact wire format independently of C/ASM and memory access.
+// V9 is an explicit small-reader profile; all recording parameters stay in ROM.
+#ifndef LPX4_COMPACT_VERSION
+#define LPX4_COMPACT_VERSION 5
+#endif
+#if LPX4_COMPACT_VERSION != 5 && LPX4_COMPACT_VERSION != 9
+#error Select compact LPX version 5 or 9
+#endif
+#if LPX4_COMPACT_VERSION == 9 && !LPX4_COMPACT_ONLY
+#error Version9 requires compact-only decoding
+#endif
+// V9 includes all three runtime profiles. The legacy flag only enables the
+// long-header version8 reader in a version5 build; it does not select DSP.
+#define LPX4_HAS_SPARSE80 (LPX4_COMPACT_VERSION == 9 || LPX4_ENABLE_SPARSE80)
 // Mirrored LPC history avoids per-sample shifts, spending 20 B RAM.
 // The compact size profile defaults to linear; explicit 1 restores mirroring.
 // Both histories retain identical output with C and explicit supported ASM.
@@ -154,6 +199,10 @@ class Lpx4HybridCore {
 public:
     enum Error : uint8_t { NONE=0, BAD_HEADER, UNSUPPORTED, CORRUPT_STREAM, END_OF_ROM };
     Lpx4HybridCore();
+#if LPX4_COMPACT_VERSION == 9
+    // Keep cold header setup out of the foreground playback stack under LTO.
+    __attribute__((noinline))
+#endif
     bool begin(const uint8_t* bytesInProgmem, uint16_t size);
 #if LPX4_ENABLE_INPUT_CALLBACK
     // Return 0..255, or -1 on input failure/EOF. The source must already be
@@ -165,6 +214,10 @@ public:
 #if !defined(__AVR__) || defined(LPX4_ENABLE_PCM16)
     bool nextQ14(int16_t& out); // signed Q14 postfilter (no PWM)
     bool nextS16(int16_t& out); // signed PCM16 = saturated(2*Q14)
+#endif
+#if LPX4_FLOAT_SYNTHESIS
+    // Full-precision normalized postfilter signal, clamped to [-1,+1].
+    bool nextFloat(double& out);
 #endif
     Error error() const {return error_;}
     bool finished() const {
@@ -203,7 +256,8 @@ public:
 #endif
 private:
     // Stream lifetime and container/entropy readers.
-    void resetState();
+    // Share one clearing loop between construction and begin(), even with LTO.
+    __attribute__((noinline)) void resetState();
 #if LPX4_ENABLE_INPUT_CALLBACK
     bool beginSource(uint16_t size);
 #endif
@@ -230,12 +284,12 @@ private:
 #endif
     LPX4_TUNE_CODES bool decodeCode(int8_t& q);
 #if !defined(__AVR__) || defined(LPX4_ENABLE_PCM16)
-    LPX4_TUNE_SAMPLE bool nextCore(int16_t& postfilterQ14);
+    LPX4_TUNE_SAMPLE bool nextCore(Lpx4SynthesisValue& postfilterQ14);
 #endif
     // LPC spectrum conversion and interpolation.
     void interpolateLsf(uint8_t sub);
-    void convertLsfAt(uint8_t t,int16_t* out);
-#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_STANDARD
+    void convertLsfAt(uint8_t t,Lpx4SynthesisValue* out);
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_STANDARD && !LPX4_FLOAT_SYNTHESIS
     void polyFactor(int32_t* p,int16_t c,uint8_t n);
 #endif
     static int16_t clamp(int32_t n,int16_t low,int16_t high);
@@ -246,7 +300,13 @@ private:
 #if !LPX4_ROM_POINTER
     uint16_t cursor_;
 #endif
+#if LPX4_COMPACT_VERSION == 9
+    // Every serialized v9 count, including rejected values, fits one word.
+    // Public metadata remains uint32_t through the existing accessors.
+    uint16_t sampleCount_;
+#else
     uint32_t sampleCount_;
+#endif
 #if LPX4_COMPACT_ONLY
     uint16_t remaining_;
 #else
@@ -261,8 +321,10 @@ private:
 #if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_BRIGHT_Q14)
     uint16_t brightQ14_;
 #endif
+    // resetState() clears this scalar/array span through the end of cur_.
+    // Keep retained metadata and input ownership outside that span.
     uint16_t blockStep_;
-    int16_t prevDeemph_;
+    Lpx4SynthesisValue prevDeemph_;
     uint8_t subPos_,subIndex_; // compact: low3 subframe, bit3 post-readFrame half
 #if LPX4_BATCHED_REMAINING
     uint8_t subEnd_;
@@ -293,12 +355,18 @@ private:
     uint8_t pulseCount_,pulseIndex_;
 #endif
     Error error_;
+#if LPX4_COMPACT_VERSION == 9
+    // Two freed flag bytes fund a discarded eleventh linear-history word.
+    bool initializedFrame_:1;
+    bool lsfCached_:1,staticSpectrum_:1;
+#else
     bool initializedFrame_;
     bool lsfCached_,staticSpectrum_;
+#endif
 #if LPX4_ROTATE_LPC_ANCHORS
     uint8_t lpcAnchorOffset_;
 #endif
-    int16_t a_[10],hist_[LPX4_LPC_RING?20:10];
+    Lpx4SynthesisValue a_[10],hist_[LPX4_LPC_RING?20:LPX4_COMPACT_VERSION==9?11:10];
     int8_t ringQ_[256];
 #if LPX4_ALLOW_SPARSE
     uint8_t pulsePos_[LPX4_MAX_PULSES];
@@ -310,11 +378,11 @@ private:
     int16_t prev_[10],cur_[10];
 #endif
 #if LPX4_ROTATE_LPC_ANCHORS
-    int16_t lpcAnchors_[20];
+    Lpx4SynthesisValue lpcAnchors_[20];
 #else
-    int16_t prevLpc_[10],curLpc_[10];
+    Lpx4SynthesisValue prevLpc_[10],curLpc_[10];
 #endif
-#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_STANDARD
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_STANDARD && !LPX4_FLOAT_SYNTHESIS
     int32_t polyP_[12],polyQ_[12];
 #endif
 #ifdef LPX3_Q_DIAG

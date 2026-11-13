@@ -1,0 +1,460 @@
+{
+  "schema": "lpx-lsf-first-factor-structure-v1",
+  "baseline_core_revision": "0320c101",
+  "source_only_patch": "init-global/candidate.patch",
+  "scope": "Private original first-factor-reuse patch; two public Chego P4/P6 complete workloads per measured recipe. No combined-candidate or corpus admission claim.",
+  "source_hash_encoding": "text-lf",
+  "physical_board_measured": false,
+  "baseline_cpp_sha256": "50384f415a353fa876742a2842a50c75f7249d809963b4e582acd614a23127b1",
+  "candidate_cpp_sha256": "e60f299529e3e87ba07af0584fa912e61b2bcbe3620edcaa84cdd093e5c2e543",
+  "patch_sha256": "1802d6476806aa75b0340f29244a7aaa99a608e8180cdf464eab16637561648e",
+  "first_coefficient_range": [
+    -12288,
+    12288
+  ],
+  "all_products_rounding_and_wide_guard_unchanged": true,
+  "file_parameters_unchanged": true,
+  "float_branch_unchanged": true,
+  "native": {
+    "configurations": 14,
+    "trace_bytes": 2856960,
+    "all_coefficients_exact": true,
+    "correct_fixed_quantizer_bounds": true,
+    "float_modes_exact": true,
+    "ring_cursor_positions": 256,
+    "probe_sha256": "7e84a7fefdffbf61df08f17f22845941486324c7cc2d40cf86839b6d6453c6b8"
+  },
+  "sanitizers": [
+    {
+      "configuration": "universal2",
+      "exact": true,
+      "asan_ubsan_passed": true,
+      "trace_bytes": 46080
+    },
+    {
+      "configuration": "universal4",
+      "exact": true,
+      "asan_ubsan_passed": true,
+      "trace_bytes": 261120
+    },
+    {
+      "configuration": "fixed4",
+      "exact": true,
+      "asan_ubsan_passed": true,
+      "trace_bytes": 46080
+    },
+    {
+      "configuration": "fixed6",
+      "exact": true,
+      "asan_ubsan_passed": true,
+      "trace_bytes": 46080
+    }
+  ],
+  "live_irq_comparison": [
+    {
+      "target": "tiny-v9-asm",
+      "profile": 4,
+      "before": {
+        "variant": "baseline",
+        "target": "tiny-v9-asm",
+        "profile": 4,
+        "program": 5604,
+        "image": 6126,
+        "cpu": 1567.609769,
+        "irq": 38,
+        "total": 1605.609769,
+        "stack": 67,
+        "margin": 11,
+        "min_queue": 22,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "after": {
+        "variant": "init-global",
+        "target": "tiny-v9-asm",
+        "profile": 4,
+        "program": 5594,
+        "image": 6116,
+        "cpu": 1567.548588,
+        "irq": 38,
+        "total": 1605.548588,
+        "stack": 67,
+        "margin": 11,
+        "min_queue": 22,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "program_delta": -10,
+      "cycles_delta": -0.06118099999980586,
+      "no_speed_loss": true,
+      "no_program_growth": true
+    },
+    {
+      "target": "mega-v9-asm",
+      "profile": 4,
+      "before": {
+        "variant": "baseline",
+        "target": "mega-v9-asm",
+        "profile": 4,
+        "program": 5094,
+        "image": 5616,
+        "cpu": 723.135719,
+        "irq": 64,
+        "total": 787.135719,
+        "stack": 71,
+        "margin": 1543,
+        "min_queue": 25,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "after": {
+        "variant": "init-global",
+        "target": "mega-v9-asm",
+        "profile": 4,
+        "program": 5088,
+        "image": 5610,
+        "cpu": 723.135719,
+        "irq": 64,
+        "total": 787.135719,
+        "stack": 71,
+        "margin": 1543,
+        "min_queue": 25,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "program_delta": -6,
+      "cycles_delta": 0.0,
+      "no_speed_loss": true,
+      "no_program_growth": true
+    },
+    {
+      "target": "mega-v9-c",
+      "profile": 4,
+      "before": {
+        "variant": "baseline",
+        "target": "mega-v9-c",
+        "profile": 4,
+        "program": 4894,
+        "image": 5416,
+        "cpu": 1746.367493,
+        "irq": 64,
+        "total": 1810.367493,
+        "stack": 75,
+        "margin": 1539,
+        "min_queue": 15,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "after": {
+        "variant": "init-global",
+        "target": "mega-v9-c",
+        "profile": 4,
+        "program": 4888,
+        "image": 5410,
+        "cpu": 1746.34302,
+        "irq": 64,
+        "total": 1810.34302,
+        "stack": 75,
+        "margin": 1539,
+        "min_queue": 15,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "program_delta": -6,
+      "cycles_delta": -0.024472999999943568,
+      "no_speed_loss": true,
+      "no_program_growth": true
+    },
+    {
+      "target": "tiny-fixed-v5",
+      "profile": 4,
+      "before": {
+        "variant": "baseline",
+        "target": "tiny-fixed-v5",
+        "profile": 4,
+        "program": 4840,
+        "image": 5376,
+        "cpu": 1581.266483,
+        "irq": 44,
+        "total": 1625.266483,
+        "stack": 60,
+        "margin": 29,
+        "min_queue": 13,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "after": {
+        "variant": "init-global",
+        "target": "tiny-fixed-v5",
+        "profile": 4,
+        "program": 4834,
+        "image": 5370,
+        "cpu": 1581.223683,
+        "irq": 44,
+        "total": 1625.223683,
+        "stack": 60,
+        "margin": 29,
+        "min_queue": 13,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "program_delta": -6,
+      "cycles_delta": -0.04280000000017026,
+      "no_speed_loss": true,
+      "no_program_growth": true
+    },
+    {
+      "target": "tiny-v9-asm",
+      "profile": 6,
+      "before": {
+        "variant": "baseline",
+        "target": "tiny-v9-asm",
+        "profile": 6,
+        "program": 5604,
+        "image": 6380,
+        "cpu": 1560.127562,
+        "irq": 38,
+        "total": 1598.127562,
+        "stack": 67,
+        "margin": 11,
+        "min_queue": 21,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "after": {
+        "variant": "init-global",
+        "target": "tiny-v9-asm",
+        "profile": 6,
+        "program": 5594,
+        "image": 6370,
+        "cpu": 1560.066381,
+        "irq": 38,
+        "total": 1598.066381,
+        "stack": 67,
+        "margin": 11,
+        "min_queue": 21,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "program_delta": -10,
+      "cycles_delta": -0.06118099999980586,
+      "no_speed_loss": true,
+      "no_program_growth": true
+    },
+    {
+      "target": "mega-v9-asm",
+      "profile": 6,
+      "before": {
+        "variant": "baseline",
+        "target": "mega-v9-asm",
+        "profile": 6,
+        "program": 5094,
+        "image": 5870,
+        "cpu": 727.016927,
+        "irq": 64,
+        "total": 791.016927,
+        "stack": 71,
+        "margin": 1543,
+        "min_queue": 24,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "after": {
+        "variant": "init-global",
+        "target": "mega-v9-asm",
+        "profile": 6,
+        "program": 5088,
+        "image": 5864,
+        "cpu": 727.016927,
+        "irq": 64,
+        "total": 791.016927,
+        "stack": 71,
+        "margin": 1543,
+        "min_queue": 24,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "program_delta": -6,
+      "cycles_delta": 0.0,
+      "no_speed_loss": true,
+      "no_program_growth": true
+    },
+    {
+      "target": "mega-v9-c",
+      "profile": 6,
+      "before": {
+        "variant": "baseline",
+        "target": "mega-v9-c",
+        "profile": 6,
+        "program": 4894,
+        "image": 5670,
+        "cpu": 1751.061895,
+        "irq": 64,
+        "total": 1815.061895,
+        "stack": 75,
+        "margin": 1539,
+        "min_queue": 14,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "after": {
+        "variant": "init-global",
+        "target": "mega-v9-c",
+        "profile": 6,
+        "program": 4888,
+        "image": 5664,
+        "cpu": 1751.037422,
+        "irq": 64,
+        "total": 1815.037422,
+        "stack": 75,
+        "margin": 1539,
+        "min_queue": 14,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "program_delta": -6,
+      "cycles_delta": -0.024472999999943568,
+      "no_speed_loss": true,
+      "no_program_growth": true
+    },
+    {
+      "target": "tiny-fixed-v5",
+      "profile": 6,
+      "before": {
+        "variant": "baseline",
+        "target": "tiny-fixed-v5",
+        "profile": 6,
+        "program": 5001,
+        "image": 5792,
+        "cpu": 1587.622643,
+        "irq": 44,
+        "total": 1631.622643,
+        "stack": 65,
+        "margin": 24,
+        "min_queue": 12,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "after": {
+        "variant": "init-global",
+        "target": "tiny-fixed-v5",
+        "profile": 6,
+        "program": 4995,
+        "image": 5786,
+        "cpu": 1587.579843,
+        "irq": 44,
+        "total": 1631.579843,
+        "stack": 65,
+        "margin": 24,
+        "min_queue": 12,
+        "underruns": 0,
+        "pwm_exact": true
+      },
+      "program_delta": -6,
+      "cycles_delta": -0.042799999999942884,
+      "no_speed_loss": true,
+      "no_program_growth": true
+    }
+  ],
+  "all_measured_no_speed_loss": true,
+  "all_measured_no_program_growth": true,
+  "compile_only_ranking": [
+    {
+      "variant": "baseline",
+      "program_bytes": {
+        "tiny-v9-asm": 5604,
+        "mega-v9-asm": 5094,
+        "mega-v9-c": 4894,
+        "tiny-fixed-v5": 4840,
+        "nano-fixed-v5": 4472
+      },
+      "profile": 4,
+      "compile_only": true
+    },
+    {
+      "variant": "init-global",
+      "program_bytes": {
+        "tiny-v9-asm": 5594,
+        "mega-v9-asm": 5088,
+        "mega-v9-c": 4888,
+        "tiny-fixed-v5": 4834,
+        "nano-fixed-v5": 4472
+      },
+      "profile": 4,
+      "compile_only": true
+    },
+    {
+      "variant": "init-universal",
+      "program_bytes": {
+        "tiny-v9-asm": 5594,
+        "mega-v9-asm": 5088,
+        "mega-v9-c": 4888,
+        "tiny-fixed-v5": 4840,
+        "nano-fixed-v5": 4472
+      },
+      "profile": 4,
+      "compile_only": true
+    },
+    {
+      "variant": "out-one",
+      "program_bytes": {
+        "tiny-v9-asm": 5604,
+        "mega-v9-asm": 5094,
+        "mega-v9-c": 4894,
+        "tiny-fixed-v5": 4840,
+        "nano-fixed-v5": 4472
+      },
+      "profile": 4,
+      "compile_only": true
+    },
+    {
+      "variant": "out-down",
+      "program_bytes": {
+        "tiny-v9-asm": 5622,
+        "mega-v9-asm": 5098,
+        "mega-v9-c": 4898,
+        "tiny-fixed-v5": 4840,
+        "nano-fixed-v5": 4472
+      },
+      "profile": 4,
+      "compile_only": true
+    },
+    {
+      "variant": "init-down",
+      "program_bytes": {
+        "tiny-v9-asm": 5612,
+        "mega-v9-asm": 5090,
+        "mega-v9-c": 4890,
+        "tiny-fixed-v5": 4840,
+        "nano-fixed-v5": 4472
+      },
+      "profile": 4,
+      "compile_only": true
+    },
+    {
+      "variant": "factor-noinline",
+      "program_bytes": {
+        "tiny-v9-asm": 5652,
+        "mega-v9-asm": 5184,
+        "mega-v9-c": 4940,
+        "tiny-fixed-v5": 4840,
+        "nano-fixed-v5": 4472
+      },
+      "profile": 4,
+      "compile_only": true
+    },
+    {
+      "variant": "product-noinline",
+      "program_bytes": {
+        "tiny-v9-asm": 5598,
+        "mega-v9-asm": 5148,
+        "mega-v9-c": 4960,
+        "tiny-fixed-v5": 4836,
+        "nano-fixed-v5": 4552
+      },
+      "profile": 4,
+      "compile_only": true
+    }
+  ],
+  "retained_data_policy": "Only public workload labels, anonymous numeric measurements and code hashes; no private corpus/media fingerprints."
+}

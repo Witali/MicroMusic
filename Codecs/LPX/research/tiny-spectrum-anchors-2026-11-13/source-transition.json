@@ -1,0 +1,62 @@
+{
+  "schema": "lpx-tiny-spectrum-anchors-source-transition-v1",
+  "baseline_revision": "de98d64162368cf3b6104907076a7e1c3d3f3f17",
+  "complete": true,
+  "universal_irq_cases": 22,
+  "identical_fixed_header_images": 9,
+  "measurements_sha256": "d7e4fbbb58a8020b75ad791ec80f5b09ccd718e67323debef96d807ca5bff017",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": {
+      "baseline": {
+        "raw_sha256": "b8644299804e86ff479be4ad363e607c3da67a79dbacaed7e223e4d15c56c368",
+        "text_lf_sha256": "b8644299804e86ff479be4ad363e607c3da67a79dbacaed7e223e4d15c56c368"
+      },
+      "current": {
+        "raw_sha256": "e47d66d434fb4526fb73d7cb463fe1fe67ecfb5bff0fe9ff14088e884f37ebda",
+        "text_lf_sha256": "e47d66d434fb4526fb73d7cb463fe1fe67ecfb5bff0fe9ff14088e884f37ebda"
+      }
+    }
+  },
+  "validation_sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/lpx_source_history.py": {
+      "baseline": {
+        "raw_sha256": "edbabcc30df0110490b7b81d7179f04994891ab6e9488cb4dcb2b6c9921f0f3d",
+        "text_lf_sha256": "edbabcc30df0110490b7b81d7179f04994891ab6e9488cb4dcb2b6c9921f0f3d"
+      },
+      "current": {
+        "raw_sha256": "9b1658fd30dbd013fdd84c8636450edbc08debf72747d16598fd4f16b22084af",
+        "text_lf_sha256": "9b1658fd30dbd013fdd84c8636450edbc08debf72747d16598fd4f16b22084af"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_lsf_compaction.py": {
+      "baseline": {
+        "raw_sha256": "f032ac4bebe189412b31af4b5a2f43435568ba64d51ad3fe30cc35677e74b1c2",
+        "text_lf_sha256": "f032ac4bebe189412b31af4b5a2f43435568ba64d51ad3fe30cc35677e74b1c2"
+      },
+      "current": {
+        "raw_sha256": "5c3f2c739dc52513f19a3940bf5982883364e2621ca112953316224e2418adea",
+        "text_lf_sha256": "5c3f2c739dc52513f19a3940bf5982883364e2621ca112953316224e2418adea"
+      }
+    },
+    "web-player/tests/helpers/lpx-source-transition.mjs": {
+      "baseline": {
+        "raw_sha256": "3c78a13d19256abb6e986a3fca553234a12041f250bd66fe678f5288ef3d60a4",
+        "text_lf_sha256": "3c78a13d19256abb6e986a3fca553234a12041f250bd66fe678f5288ef3d60a4"
+      },
+      "current": {
+        "raw_sha256": "ba3b55965bb84d0ad36e592cccb3cf88ab02d8c93d9754c0cb9b04b40b5f17f8",
+        "text_lf_sha256": "ba3b55965bb84d0ad36e592cccb3cf88ab02d8c93d9754c0cb9b04b40b5f17f8"
+      }
+    },
+    "web-player/tests/lpx-lsf-compact.test.mjs": {
+      "baseline": {
+        "raw_sha256": "6e079f6da9a2fbfcbf4b19489745921b7cf2a63a8b3e7af363acbc38a8cd73eb",
+        "text_lf_sha256": "6e079f6da9a2fbfcbf4b19489745921b7cf2a63a8b3e7af363acbc38a8cd73eb"
+      },
+      "current": {
+        "raw_sha256": "19d95777473ce2ffb9d036a5322c0441566e72798416e088a42b083f1984ea12",
+        "text_lf_sha256": "19d95777473ce2ffb9d036a5322c0441566e72798416e088a42b083f1984ea12"
+      }
+    }
+  }
+}

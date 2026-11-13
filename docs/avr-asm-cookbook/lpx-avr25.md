@@ -201,3 +201,40 @@ and code hashes are retained in
 [the size admission](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/lowrate-size-measurements.json).
 Private input bindings and generated media stay ignored. Reproduction and
 physical/simulator limits remain as stated in the player guide.
+
+## LPC full-width multiplication in pairs
+
+The upper history byte can occupy the low product byte while the multiply
+consumes it. On AVR25 without MUL, the 24-bit rotate supplies the next bit
+in carry and replaces it with product bits. The last bit of the final pair
+subtracts the multiplicand for the signed high byte. Keep the coefficient
+sign correction and each individual Q12 floor. The explicitly selectable
+C backend implements the same arithmetic. With AVR-GCC 7.3.0 and the AVR
+GCC ABI at `-Os -flto`, the universal ATtiny88 image shrinks 6 bytes and
+the heaviest workload saves 11.76 cycles per sample with IRQ. All 22
+outputs match bit for bit and there are no underruns.
+[Proof, test setup and rejected variants](../../Codecs/LPX/research/tiny-lpc-pairs-2026-11-13/README.md).
+
+## Reuse the range-test register in the short LPC branch
+
+The AVR25 range test for a signed high byte in `[-8,7]` leaves the
+byte plus eight in the counter register. Undoing the bias with `subi`
+restores the count and sets the flags for zero and negative dispatch.
+The selected ASM path retains the individual Q12 floors and the
+selectable C equivalent. AVR-GCC 7.3.0 at `-Os -flto` and the AVR GCC ABI
+save 4 program bytes and up to 7.76 cycles per sample with IRQ. All 22
+universal workloads reproduce exact PWM and pass with zero underruns.
+[Source-bound measurements](../../Codecs/LPX/research/tiny-lpc-short-2026-11-13/README.md).
+
+## Bias signed input for the shared Q14 postfilter
+
+Compute the existing unsigned quotient with the state biased by 32768.
+Removing `2 * coefficient` at the end preserves each signed floor and
+eliminates the sign-dependent correction. Seed the first multiplication
+round by moving the state into the zero accumulator when its bit is set.
+The remaining rounds can shift each coefficient byte in place. The bounded
+0–16384 coefficient and signed16 state contracts retain the selectable C
+equivalent on AVR25. AVR-GCC 7.3.0 with the AVR GCC ABI at `-Os -flto` saves
+18 program bytes and up to 21 cycles per sample with the complete IRQ.
+All 22 loads preserve exact PWM and pass without underruns.
+[Measurements and proof](../../Codecs/LPX/research/tiny-q14-2026-11-13/README.md).

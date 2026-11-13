@@ -1,0 +1,92 @@
+"""Bind historical timing records without relabelling them as new measurements."""
+import hashlib
+import json
+from pathlib import Path
+
+ACTIVE=Path(__file__).resolve().parents[1]
+REPO=ACTIVE.parents[2]
+TRANSITION=ACTIVE/'examples/ATTINY88_V5_PLAYER/c-numeric-transition.json'
+POLYNOMIAL=REPO/'Codecs/LPX/research/lsf-compact-2026-11-10/source-transition.json'
+INTERPOLATION=REPO/'Codecs/LPX/research/lpc-interpolation-2026-11-13/source-transition.json'
+SPECTRUM=REPO/'Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13'
+PARSER=REPO/'Codecs/LPX/research/tiny-parser-2026-11-13'
+LPC_PAIRS=REPO/'Codecs/LPX/research/tiny-lpc-pairs-2026-11-13'
+LPC_SHORT=REPO/'Codecs/LPX/research/tiny-lpc-short-2026-11-13'
+Q14=REPO/'Codecs/LPX/research/tiny-q14-2026-11-13'
+LSF_NEIGHBORS=REPO/'Codecs/LPX/research/tiny-lsf-neighbors-2026-11-13'
+MEGA_LSF=REPO/'Codecs/LPX/research/mega-lsf-wide-2026-11-13'
+
+
+def assert_recorded_source(path,expected):
+    actual=hashlib.sha256((REPO/path).read_bytes().replace(b'\r\n',b'\n')).hexdigest()
+    if actual==expected:return
+    recorded=expected
+    numeric=json.loads(TRANSITION.read_text(encoding='utf-8'))
+    source=numeric['sources'].get(path)
+    if source and source['baseline'] and source['baseline']['text_lf_sha256']==recorded:
+        assert numeric['complete'] and numeric['baseline_revision']=='393b2de271568890d7b483f7602a2f59452d1a68'
+        assert numeric['asm_equivalence']['all_binaries_exact'] and numeric['asm_equivalence']['images']==18
+        recorded=source['current']['text_lf_sha256']
+    if recorded!=actual:
+        polynomial=json.loads(POLYNOMIAL.read_text(encoding='utf-8'))
+        change=polynomial['sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert polynomial['complete'] and polynomial['baseline_revision']=='0320c1014618188a3121fdfef0be55b30690d977'
+            assert polynomial['all_measured_no_speed_loss'] and polynomial['all_measured_no_program_growth']
+            assert polynomial['all_fixed_native_exact'] and polynomial['float_binary_exact']
+            assert polynomial['fresh_universal_tiny_cases']==22 and polynomial['fresh_mega_cases']==8
+            assert polynomial['fresh_website_tiny_cases']==9 and polynomial['identical_nano_images']==9
+            recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        interpolation=json.loads(INTERPOLATION.read_text(encoding='utf-8'))
+        change=interpolation['sources'].get(path) or interpolation['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert interpolation['complete'] and interpolation['baseline_revision']=='e0939e89d88e4d91e9e441310f504ddbfd5581aa'
+            assert interpolation['all_fixed_native_exact'] and interpolation['all_avr_corpus_exact_without_slowdown']
+            assert interpolation['identical_asm_images']==44
+            recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        spectrum=json.loads((SPECTRUM/'source-transition.json').read_text(encoding='utf-8'))
+        change=spectrum['sources'].get(path) or spectrum['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert spectrum['complete'] and spectrum['baseline_revision']=='de98d64162368cf3b6104907076a7e1c3d3f3f17'
+            assert spectrum['universal_irq_cases']==22 and spectrum['identical_fixed_header_images']==9
+            evidence=(SPECTRUM/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==spectrum['measurements_sha256']
+            recorded=change['current']['text_lf_sha256']
+    for step in ('read-bits','rice'):
+        if recorded==actual:break
+        parser=json.loads((PARSER/f'{step}-transition.json').read_text(encoding='utf-8'))
+        change=parser['sources'].get(path) or parser['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert parser['complete'] and parser['step']==step
+            assert parser['universal_irq_cases']==22 and parser['identical_fixed_header_images']==9
+            evidence=(PARSER/f'{step}.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==parser['measurements_sha256']
+            recorded=change['current']['text_lf_sha256']
+    for directory,revision in (
+        (LPC_PAIRS,'84de5ce411a1ace1b29a732f0998c10f67f3e53f'),
+        (LPC_SHORT,'26faf77221d4259eda9859b545e2ed25b12b898a'),
+        (Q14,'dc522dea665e544aebc95b550a7789186e7bec0d'),
+        (LSF_NEIGHBORS,'b4a9757364280049ec7cd2504c8fddfff3a56900'),
+    ):
+        if recorded==actual:break
+        report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
+        change=report['sources'].get(path) or report['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert report['baseline_revision']==revision
+            assert report['universal_irq_cases']==22 and report['identical_fixed_header_images']==9
+            evidence=(directory/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
+            recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        report=json.loads((MEGA_LSF/'source-transition.json').read_text(encoding='utf-8'))
+        change=report['sources'].get(path) or report['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert report['baseline_revision']=='ddefa0c4ffcc18cf16e659fa0ab3652f1f7dca84'
+            assert report['mega_asm_irq_cases']==6 and report['identical_mega_c_images']==4
+            assert report['identical_nano_images']==9
+            evidence=(MEGA_LSF/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
+            recorded=change['current']['text_lf_sha256']
+    assert recorded==actual,(path,'current source')

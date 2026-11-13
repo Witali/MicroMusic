@@ -1,5 +1,42 @@
 # ATtiny88 / 16 MHz LPX v5 player
 
+## Current universal v9: P4/P6 and sparse80
+
+An `L9` input selects one universal decoder for all three file-defined profiles:
+4,6 and15. Profile15 supports the existing low-rate sparse80 encoder, including
+complete streams near2 kbit/s. It shares LPC synthesis and does not bake the
+recording's filters, count or profile into the executable. The v5 default and
+recording-specialized catalog recipes described below remain available.
+
+The current v9 recipe uses FIFO32/prefill24, a38-cycle complete ISR and
+5604..5605 B of program Flash (about5.47 KiB), excluding the verified audio array.
+That is4.10% above the former production v9 baseline (5384 B, FIFO44), within
+the5% admission ceiling. With the same FIFO32 the measured baseline is5528 B:
+the increase is1.39%. Static SRAM is433 B, observed stack peaks at67 B, with
+an11-byte conservative margin. The default FIFO change is part of this recipe;
+FIFO44 is not admitted for the new three-profile decoder.
+
+All22 complete IRQ workloads reproduce the C reference exactly without
+underruns. Public sparse80 examples take1313 and1547 mean active CPU cycles
+per sample including IRQ; the heaviest synthetic sparse80 control takes1771.
+Public P4/P6 examples remain exact, but the old1500-cycle target remains unmet.
+For the measured Chego case, same-FIFO cost improves from1613 to1606 cycles;
+compared with the former FIFO44 production recipe it rises from1574 to1606.
+Means are not worst-case per-sample bounds; the queue covers frame conversion.
+These are simavr measurements with interrupts active, not physical-board tests.
+
+The real1.93 kbit/s Chego fixture uses297 audio bytes and a5902-byte full image,
+which fits the6012-byte USB region. Sparse80 v9 repacking keeps decoded audio
+exact and reduces data versus v8; it does not promise a fixed bitrate or speech
+quality. See the [current22-case receipt](v9-sparse80-measurements.json),
+[format](../../LPX9_FORMAT.md) and
+[reproduction notes](../../../../../docs/avr-asm-cookbook/lpx-v9.md).
+
+The measurements in the following sections are historical two-profile receipts,
+bound to their original source revisions rather than the current three-profile
+program. Current source and historical-receipt integrity are checked together
+by the sparse80 admission test.
+
 The builder and verifier default to a **universal runtime-header decoder** for
 LPX v5 P4/P6 at 8 kHz. Profile flags, sample metadata and filter coefficients
 come from each sound file; they are not compiled into the decoder. The existing
@@ -42,19 +79,19 @@ combinations of file-defined profile/filter settings without recompilation.
 
 | Universal player | Measured result |
 | --- | ---: |
-| Program Flash, including startup, tables and playback, excluding audio | 5587..5588 B (about 5.46 KiB) |
-| Full image for the measured recordings | 6058..7486 B |
+| Program Flash, including startup, tables and playback, excluding audio | 5471..5472 B (about 5.34 KiB) |
+| Full image for the measured recordings | 5942..7370 B |
 | Static SRAM, including FIFO44 | 447 B |
 | Largest observed stack | 60 B |
 | Minimum observed stack margin | 4 B |
-| Mean decode wall cycles/sample, public recordings | 1595..1722 |
-| Mean decode wall cycles/sample, synthetic controls | 1034..1335 |
+| Mean decode wall cycles/sample, public recordings | 1507..1565 |
+| Mean decode wall cycles/sample, synthetic controls | 957..1273 |
 | Complete ISR, including hardware entry and RETI | 42 cycles |
 
 These are standalone simulator bounds, not a guarantee for every valid spectral
 sequence or application integration. The observed four-byte stack margin does
-not cover added application/IRQ work. These complete example images need ISP;
-they exceed the 6012-byte USB application region.
+not cover added application/IRQ work. Thirteen of these fourteen complete
+example images need ISP; the 5942-byte image fits the 6012-byte USB region.
 
 The universal mode does not define `LPX4_FIXED_*` and does not specialize extra
 player gain for a recording. Existing LPX header validation and compact-reader
@@ -65,9 +102,32 @@ No container extension or new per-record parameter is introduced.
 [C/ASM/generic arithmetic and ABI results](universal-math-measurements.json), and
 [proofs, hardware contract and rejected candidates](../../../../../docs/avr-asm-cookbook/lpx-universal-tiny88.md)
 record the exact scope. The previously unpinned FIFO24 recipe had underruns;
-the final universal recipe spends 30 additional program bytes and 20 static RAM
-bytes to meet the measured real-time requirement. This is not a claim that it
-is smaller than the recording-specialized demo builds.
+the original admission spent 30 additional program bytes and 20 static RAM
+bytes to meet real-time playback. The shared state reset now saves another
+100 program bytes (0.09765625 KiB) with identical measured playback timing.
+The later exact arithmetic work saves another 16 B and reduces decoding time.
+Parameters still come from the file; recording-specialized demos remain smaller.
+
+## Smaller v9 wire format
+
+The optional [LPX v9 format](../../LPX9_FORMAT.md) retains file-defined recording
+parameters and exact decoded PCM/PWM while reducing both compressed data and
+the universal program. The builder recognizes its `L9` identifier and selects
+only the wire-format reader; arithmetic C/ASM selection stays independent.
+The previous v5/v8 build paths remain available.
+
+Fourteen matched full-IRQ cases use 5384..5385 program bytes (about 5.26 KiB),
+86..88 bytes below v5, with 445-byte static SRAM, a 60-byte observed stack,
+a six-byte conservative margin and a 42-cycle ISR. The eight public data files shrink by 12..43 bytes,
+with exact output and no underruns. Complete tested images use 5834..7266 B.
+[Source-bound v9 comparison](v9-measurements.json) records the workload and
+before/after timing. See the format document for conversion and verification.
+The [next v9 comparison](v9-next-measurements.json) records the combined 40-byte Flash /
+2-byte SRAM saving relative to f7481ef9, with lower decode time and unchanged data.
+The [1500-cycle attempt](v9-1500-measurements.json) compares the latest previous
+v9 build: speech uses 1514.71..1574.41 mean decoder CPU plus IRQ cycles/sample.
+The target is not yet met; the program shrinks 6 B and sound data stays identical.
+The [C reference](../../C_REFERENCE.md) supports the same v9 format and metadata.
 
 ## Retained ROM demonstration results
 
@@ -79,8 +139,8 @@ sample count, stored stream bytes or source gain is changed.
 
 | Complete release image measurement | Result |
 | --- | ---: |
-| Flash, including the original audio | 5418..7132 bytes |
-| Program Flash after subtracting the verified single audio array | 4948..5233 bytes |
+| Flash, including the original audio | 5310..7024 bytes |
+| Program Flash after subtracting the verified single audio array | 4840..5125 bytes |
 | Static SRAM, including FIFO | 422 bytes |
 | Largest observed stack | 66 bytes |
 | Smallest observed stack margin | 23 bytes |
@@ -88,18 +148,21 @@ sample count, stored stream bytes or source gain is changed.
 | Images fitting standard 6012-byte USB region | 6 of 9 |
 
 The other three images fit physical Flash and require ISP loading. The full
-19,200-sample P4 example fits exactly 6012 bytes. The stack margin uses the
+19,200-sample P4 example uses 5904 bytes, leaving 108 bytes below the USB limit.
+The stack margin uses the
 observer's conservative SP convention and is bounded evidence for these
 images. The separate paired memory runs decode every combination twice.
 [Current local catalog](../../../../../web-player/firmware-lpx-attiny88.json)
 retains per-image values; [anonymous budget measurements](budget-measurements.json)
 bind the before/after sources and the full timing/control scope.
 
-Matched before/after runs with the same complete phrases and repeat count save
-**202..272 program bytes**. The largest increase in mean IRQ-active decode
-cost stays below **0.510%**; every output sample stays exact and all nine runs have zero
-underruns. The smaller FIFO and loop arithmetic are a measured memory/Flash
-tradeoff with enough timing headroom for these workloads.
+The earlier FIFO/unroll optimization, recorded in the historical budget receipt,
+saved **202..272 program bytes**. The largest increase in mean IRQ-active
+decode cost was below **0.510%**; every output sample stayed exact and all nine
+runs had zero underruns. The smaller FIFO and loop arithmetic are a measured memory/Flash
+tradeoff with enough timing headroom for these workloads. The shared reset
+compaction saves a further 98 program bytes in each retained fixed-header demo,
+without changing its audio or per-sample decoder code.
 
 ## Build and independently verify
 

@@ -1,0 +1,43 @@
+{
+  "schema": "lpx-mega-lsf-wide-source-transition-v1",
+  "baseline_revision": "ddefa0c4ffcc18cf16e659fa0ab3652f1f7dca84",
+  "complete": true,
+  "mega_asm_irq_cases": 6,
+  "identical_mega_c_images": 4,
+  "identical_nano_images": 9,
+  "measurements_sha256": "4cbc90afa8c005e2f79b5cb20d0ecc638f5b71aede418dcdc09b0d6668875890",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": {
+      "baseline": {
+        "raw_sha256": "75a5e86c4ea31cdbcd48cdd3256f94493fa0693b99fe115fbf22a18944c7be0e",
+        "text_lf_sha256": "75a5e86c4ea31cdbcd48cdd3256f94493fa0693b99fe115fbf22a18944c7be0e"
+      },
+      "current": {
+        "raw_sha256": "1e48312e3f6579e1cff4771b7f4d75b5eb22bea01200e52fcd74af61eebeeb21",
+        "text_lf_sha256": "1e48312e3f6579e1cff4771b7f4d75b5eb22bea01200e52fcd74af61eebeeb21"
+      }
+    }
+  },
+  "validation_sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/lpx_source_history.py": {
+      "baseline": {
+        "raw_sha256": "db738a26ab8b199c20c8c18081dd9b9a9cb0f82dd3c310b3b2a5b03d4848717b",
+        "text_lf_sha256": "db738a26ab8b199c20c8c18081dd9b9a9cb0f82dd3c310b3b2a5b03d4848717b"
+      },
+      "current": {
+        "raw_sha256": "83b26ff5f3aadc445229a76abda690f1248d7e376e22956223a9ad37370aa1ba",
+        "text_lf_sha256": "83b26ff5f3aadc445229a76abda690f1248d7e376e22956223a9ad37370aa1ba"
+      }
+    },
+    "web-player/tests/helpers/lpx-source-transition.mjs": {
+      "baseline": {
+        "raw_sha256": "9890760521f0cf05b152051eab1ac2094790a4b0ef87c6c9a74c12e3efb8eebd",
+        "text_lf_sha256": "9890760521f0cf05b152051eab1ac2094790a4b0ef87c6c9a74c12e3efb8eebd"
+      },
+      "current": {
+        "raw_sha256": "329d1ec9fee2b50676c9c6ca3d5da72d893558d9d7e29422aa0b7ca0dce4631b",
+        "text_lf_sha256": "329d1ec9fee2b50676c9c6ca3d5da72d893558d9d7e29422aa0b7ca0dce4631b"
+      }
+    }
+  }
+}

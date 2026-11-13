@@ -106,10 +106,11 @@ test('normalization, exact WAV and complete active-IRQ receipts remain bound to 
   assert.ok(Math.max(...clips.map(item=>item.decoded.lufs))-Math.min(...clips.map(item=>item.decoded.lufs))<=1.1);
   for(const clip of clips)assert.equal(hash(read('web-player/'+clip.source)),clip.sourceSha256);
   for(const [path,expected]of Object.entries(manifest.sourceSha256))
-    assert.equal(hash(read(path).toString('utf8').replaceAll('\r\n','\n')),expected,path);
+    assertLpxRecordedSource(path,expected);
   const timing=manifest.timing;
   assert.equal(timing.underruns,0);assert.equal(timing.played,81254);
   assert.equal(timing.timer_ticks,timing.played);assert.equal(timing.timer_events,timing.played);
   assert.equal(timing.queued_at_stop,0);assert.equal(timing.irq_entry_cycles,4);
   assert.equal(timing.irq_reti_complete,true);assert.ok(timing.stack_margin_all_bytes>0);
 });
+import {assertLpxRecordedSource} from './helpers/lpx-source-transition.mjs';

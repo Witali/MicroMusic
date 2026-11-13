@@ -1,0 +1,417 @@
+{
+  "schema": "lpx-sram512-byte-offset-screen-v1",
+  "baseline_code_revision": "0320c101",
+  "status": "relative form rejected standalone: not all measured backends preserve speed",
+  "source_only_patch": "relative-offset.patch",
+  "all_sources_private": true,
+  "active_sources_changed": false,
+  "public_images_changed": false,
+  "data_format_or_size_changed": false,
+  "workspace_bytes": 96,
+  "new_ram_bytes": 0,
+  "retains_memcpy_byte_storage": true,
+  "pointer_casts_added": false,
+  "relative_exactness": {
+    "independent_full_convolution": true,
+    "all_256_cursors": true,
+    "live_145_slots_preserved": true,
+    "ubsan": true,
+    "universal_conversions": [
+      73728,
+      110592,
+      184320
+    ],
+    "fixed_full_p_conversions": [
+      36864,
+      36864
+    ],
+    "floating_preprocessed_translation_unit_identical": true
+  },
+  "relative_deltas": [
+    {
+      "target": "tiny",
+      "backend": "ASM",
+      "control": "chego-v9",
+      "before_program": 5605,
+      "after_program": 5581,
+      "program_delta": -24,
+      "before_cycles_with_irq": 1547.307943,
+      "after_cycles_with_irq": 1548.58703,
+      "cycle_delta": 1.2790869999998904,
+      "stack": 67,
+      "margin": 11,
+      "underruns": 0,
+      "independent_frozen_pwm_exact": true
+    },
+    {
+      "target": "tiny",
+      "backend": "ASM",
+      "control": "heavy-v9",
+      "before_program": 5605,
+      "after_program": 5581,
+      "program_delta": -24,
+      "before_cycles_with_irq": 1770.964465,
+      "after_cycles_with_irq": 1772.332029,
+      "cycle_delta": 1.367563999999902,
+      "stack": 67,
+      "margin": 11,
+      "underruns": 0,
+      "independent_frozen_pwm_exact": true
+    },
+    {
+      "target": "tiny",
+      "backend": "ASM",
+      "control": "chego-v5",
+      "before_program": 5016,
+      "after_program": 5004,
+      "program_delta": -12,
+      "before_cycles_with_irq": 1615.944733,
+      "after_cycles_with_irq": 1617.009279,
+      "cycle_delta": 1.064546000000064,
+      "stack": 60,
+      "margin": 21,
+      "underruns": 0,
+      "independent_frozen_pwm_exact": true
+    },
+    {
+      "target": "mega",
+      "backend": "ASM",
+      "control": "chego-v9",
+      "before_program": 5095,
+      "after_program": 5073,
+      "program_delta": -22,
+      "before_cycles_with_irq": 765.48965,
+      "after_cycles_with_irq": 765.581014,
+      "cycle_delta": 0.09136399999999867,
+      "stack": 71,
+      "margin": 1543,
+      "underruns": 0,
+      "independent_frozen_pwm_exact": true
+    },
+    {
+      "target": "mega",
+      "backend": "ASM",
+      "control": "heavy-v9",
+      "before_program": 5095,
+      "after_program": 5073,
+      "program_delta": -22,
+      "before_cycles_with_irq": 837.196462,
+      "after_cycles_with_irq": 837.294145,
+      "cycle_delta": 0.09768299999996088,
+      "stack": 71,
+      "margin": 1543,
+      "underruns": 0,
+      "independent_frozen_pwm_exact": true
+    },
+    {
+      "target": "mega",
+      "backend": "ASM",
+      "control": "chego-v5",
+      "before_program": 4456,
+      "after_program": 4452,
+      "program_delta": -4,
+      "before_cycles_with_irq": 878.845009,
+      "after_cycles_with_irq": 876.306006,
+      "cycle_delta": -2.5390029999999797,
+      "stack": 70,
+      "margin": 1547,
+      "underruns": 0,
+      "independent_frozen_pwm_exact": true
+    },
+    {
+      "target": "mega",
+      "backend": "C",
+      "control": "chego-v9",
+      "before_program": 4895,
+      "after_program": 4873,
+      "program_delta": -22,
+      "before_cycles_with_irq": 1779.024982,
+      "after_cycles_with_irq": 1778.96788,
+      "cycle_delta": -0.05710199999998622,
+      "stack": 75,
+      "margin": 1539,
+      "underruns": 0,
+      "independent_frozen_pwm_exact": true
+    },
+    {
+      "target": "mega",
+      "backend": "C",
+      "control": "heavy-v9",
+      "before_program": 4895,
+      "after_program": 4873,
+      "program_delta": -22,
+      "before_cycles_with_irq": 1860.555495,
+      "after_cycles_with_irq": 1860.494443,
+      "cycle_delta": -0.06105200000001787,
+      "stack": 75,
+      "margin": 1539,
+      "underruns": 0,
+      "independent_frozen_pwm_exact": true
+    }
+  ],
+  "linked_size_ranking": {
+    "baseline": [
+      {
+        "variant": "baseline",
+        "target": "tiny",
+        "control": "chego-v9",
+        "universal": true,
+        "program": 5605,
+        "flash": 5902,
+        "static_ram": 433,
+        "register_audit": true
+      },
+      {
+        "variant": "baseline",
+        "target": "tiny",
+        "control": "chego-v5",
+        "universal": false,
+        "program": 5016,
+        "flash": 5552,
+        "static_ram": 430,
+        "register_audit": true
+      },
+      {
+        "variant": "baseline",
+        "target": "mega",
+        "control": "chego-v9",
+        "universal": true,
+        "program": 5095,
+        "flash": 5392,
+        "static_ram": 433,
+        "register_audit": true
+      },
+      {
+        "variant": "baseline",
+        "target": "mega",
+        "control": "chego-v5",
+        "universal": false,
+        "program": 4456,
+        "flash": 4992,
+        "static_ram": 430,
+        "register_audit": true
+      }
+    ],
+    "absolute": [
+      {
+        "variant": "absolute",
+        "target": "tiny",
+        "control": "chego-v9",
+        "universal": true,
+        "program": 5587,
+        "flash": 5884,
+        "static_ram": 433,
+        "register_audit": true
+      },
+      {
+        "variant": "absolute",
+        "target": "tiny",
+        "control": "chego-v5",
+        "universal": false,
+        "program": 5004,
+        "flash": 5540,
+        "static_ram": 430,
+        "register_audit": true
+      },
+      {
+        "variant": "absolute",
+        "target": "mega",
+        "control": "chego-v9",
+        "universal": true,
+        "program": 5077,
+        "flash": 5374,
+        "static_ram": 433,
+        "register_audit": true
+      },
+      {
+        "variant": "absolute",
+        "target": "mega",
+        "control": "chego-v5",
+        "universal": false,
+        "program": 4462,
+        "flash": 4998,
+        "static_ram": 430,
+        "register_audit": true
+      }
+    ],
+    "relative": [
+      {
+        "variant": "relative",
+        "target": "tiny",
+        "control": "chego-v9",
+        "universal": true,
+        "program": 5581,
+        "flash": 5878,
+        "static_ram": 433,
+        "register_audit": true
+      },
+      {
+        "variant": "relative",
+        "target": "tiny",
+        "control": "chego-v5",
+        "universal": false,
+        "program": 5004,
+        "flash": 5540,
+        "static_ram": 430,
+        "register_audit": true
+      },
+      {
+        "variant": "relative",
+        "target": "mega",
+        "control": "chego-v9",
+        "universal": true,
+        "program": 5073,
+        "flash": 5370,
+        "static_ram": 433,
+        "register_audit": true
+      },
+      {
+        "variant": "relative",
+        "target": "mega",
+        "control": "chego-v5",
+        "universal": false,
+        "program": 4452,
+        "flash": 4988,
+        "static_ram": 430,
+        "register_audit": true
+      }
+    ],
+    "sliding": [
+      {
+        "variant": "sliding",
+        "target": "tiny",
+        "control": "chego-v9",
+        "universal": true,
+        "program": 5599,
+        "flash": 5896,
+        "static_ram": 433,
+        "register_audit": true
+      },
+      {
+        "variant": "sliding",
+        "target": "tiny",
+        "control": "chego-v5",
+        "universal": false,
+        "program": 5028,
+        "flash": 5564,
+        "static_ram": 430,
+        "register_audit": true
+      },
+      {
+        "variant": "sliding",
+        "target": "mega",
+        "control": "chego-v9",
+        "universal": true,
+        "program": 5117,
+        "flash": 5414,
+        "static_ram": 433,
+        "register_audit": true
+      },
+      {
+        "variant": "sliding",
+        "target": "mega",
+        "control": "chego-v5",
+        "universal": false,
+        "program": 4496,
+        "flash": 5032,
+        "static_ram": 430,
+        "register_audit": true
+      }
+    ]
+  },
+  "absolute_irq": [
+    {
+      "variant": "absolute",
+      "target": "tiny",
+      "control": "chego-v9",
+      "program": 5587,
+      "cycles_with_irq": 1548.644132,
+      "irq": 38,
+      "underruns": 0,
+      "stack": 68,
+      "margin": 10,
+      "pwm_exact": true,
+      "independent_frozen_pwm_exact": true,
+      "accepted": true
+    },
+    {
+      "variant": "absolute",
+      "target": "tiny",
+      "control": "heavy-v9",
+      "program": 5587,
+      "cycles_with_irq": 1772.393081,
+      "irq": 38,
+      "underruns": 0,
+      "stack": 68,
+      "margin": 10,
+      "pwm_exact": true,
+      "independent_frozen_pwm_exact": true,
+      "accepted": true
+    },
+    {
+      "variant": "absolute",
+      "target": "tiny",
+      "control": "chego-v5",
+      "program": 5004,
+      "cycles_with_irq": 1616.94198,
+      "irq": 40,
+      "underruns": 0,
+      "stack": 61,
+      "margin": 20,
+      "pwm_exact": true,
+      "independent_frozen_pwm_exact": true,
+      "accepted": true
+    },
+    {
+      "variant": "absolute",
+      "target": "mega",
+      "control": "chego-v9",
+      "program": 5077,
+      "cycles_with_irq": 766.928622,
+      "irq": 64,
+      "underruns": 0,
+      "stack": 73,
+      "margin": 1541,
+      "pwm_exact": true,
+      "independent_frozen_pwm_exact": true,
+      "accepted": true
+    },
+    {
+      "variant": "absolute",
+      "target": "mega",
+      "control": "heavy-v9",
+      "program": 5077,
+      "cycles_with_irq": 838.734972,
+      "irq": 64,
+      "underruns": 0,
+      "stack": 73,
+      "margin": 1541,
+      "pwm_exact": true,
+      "independent_frozen_pwm_exact": true,
+      "accepted": true
+    },
+    {
+      "variant": "absolute",
+      "target": "mega",
+      "control": "chego-v5",
+      "program": 4462,
+      "cycles_with_irq": 878.991843,
+      "irq": 64,
+      "underruns": 0,
+      "stack": 72,
+      "margin": 1545,
+      "pwm_exact": true,
+      "independent_frozen_pwm_exact": true,
+      "accepted": true
+    }
+  ],
+  "sliding_validation": "compile and linked-size ranking only; rejected for size growth",
+  "candidate_float_preprocessing_identical": true,
+  "limitations": [
+    "two universal v9 IRQ workloads per MCU/backend, plus one fixed-ROM v5 control",
+    "no physical-board measurement",
+    "combination with other changes requires fresh source-bound admission",
+    "no additive speedup assumption",
+    "no whole-corpus run in this task"
+  ]
+}

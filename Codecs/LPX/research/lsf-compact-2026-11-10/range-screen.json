@@ -1,0 +1,393 @@
+{
+  "schema": "lpx-lsf-step1-ranges-private-v1",
+  "baseline_core": "0320c101",
+  "physical_board_measured": false,
+  "source_hash_encoding": "text-lf",
+  "source_core_sha256": {
+    "baseline": "50384f415a353fa876742a2842a50c75f7249d809963b4e582acd614a23127b1",
+    "measured_narrow_wide": "bfc7d6a14f41080fbf6e50e5fbcb952c29291c6ea28efc3cce64b3c3fdbbed3f",
+    "selected_backend_gated": "7c6468d398a6db5c748b8a1bd50cc827e6af2f715f2b1b01ff7539419ca136e0"
+  },
+  "source_unchanged": true,
+  "bounds": {
+    "before_n4": 12288,
+    "before_n6": 40960,
+    "before_n8": 143360,
+    "before_n10": 516096,
+    "maximum_wide_high_abs": 32256,
+    "cosine_abs": 8192
+  },
+  "compilation": [
+    {
+      "variant": "base",
+      "arch": "tiny",
+      "backend": "asm",
+      "program_bytes": 5605,
+      "flash_bytes": 5902,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "base",
+      "arch": "mega",
+      "backend": "asm",
+      "program_bytes": 5095,
+      "flash_bytes": 5392,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "base",
+      "arch": "mega",
+      "backend": "c",
+      "program_bytes": 4895,
+      "flash_bytes": 5192,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "stage",
+      "arch": "tiny",
+      "backend": "asm",
+      "program_bytes": 5627,
+      "flash_bytes": 5924,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "stage",
+      "arch": "mega",
+      "backend": "asm",
+      "program_bytes": 5103,
+      "flash_bytes": 5400,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "stage",
+      "arch": "mega",
+      "backend": "c",
+      "program_bytes": 4905,
+      "flash_bytes": 5202,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "stage16",
+      "arch": "tiny",
+      "backend": "asm",
+      "program_bytes": 5627,
+      "flash_bytes": 5924,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "stage16",
+      "arch": "mega",
+      "backend": "asm",
+      "program_bytes": 5153,
+      "flash_bytes": 5450,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "stage16",
+      "arch": "mega",
+      "backend": "c",
+      "program_bytes": 4925,
+      "flash_bytes": 5222,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "template",
+      "arch": "tiny",
+      "backend": "asm",
+      "program_bytes": 5965,
+      "flash_bytes": 6262,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "template",
+      "arch": "mega",
+      "backend": "asm",
+      "program_bytes": 5461,
+      "flash_bytes": 5758,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "template",
+      "arch": "mega",
+      "backend": "c",
+      "program_bytes": 5235,
+      "flash_bytes": 5532,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "narrow-wide",
+      "arch": "tiny",
+      "backend": "asm",
+      "program_bytes": 5579,
+      "flash_bytes": 5876,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "narrow-wide",
+      "arch": "mega",
+      "backend": "asm",
+      "program_bytes": 5119,
+      "flash_bytes": 5416,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "narrow-wide",
+      "arch": "mega",
+      "backend": "c",
+      "program_bytes": 4901,
+      "flash_bytes": 5198,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "narrow-tiny",
+      "arch": "tiny",
+      "backend": "asm",
+      "program_bytes": 5579,
+      "flash_bytes": 5876,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "narrow-tiny",
+      "arch": "mega",
+      "backend": "asm",
+      "program_bytes": 5095,
+      "flash_bytes": 5392,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    },
+    {
+      "variant": "narrow-tiny",
+      "arch": "mega",
+      "backend": "c",
+      "program_bytes": 4895,
+      "flash_bytes": 5192,
+      "static_ram_bytes": 433,
+      "evidence": "compile-only"
+    }
+  ],
+  "tiny_irq": [
+    {
+      "case": "chego-2k",
+      "before_cycles": 1547.307943,
+      "after_cycles": 1543.982054,
+      "before_program": 5605,
+      "after_program": 5579,
+      "before_stack": 67,
+      "after_stack": 64,
+      "before_stack_margin": 11,
+      "after_stack_margin": 14,
+      "static_ram": 433,
+      "underruns": 0,
+      "old_pwm_exact": true,
+      "accepted": true,
+      "evidence": "fresh full Tiny88 simavr IRQ playback"
+    },
+    {
+      "case": "chego-compact",
+      "before_cycles": 1605.609769,
+      "after_cycles": 1602.047823,
+      "before_program": 5604,
+      "after_program": 5578,
+      "before_stack": 67,
+      "after_stack": 64,
+      "before_stack_margin": 11,
+      "after_stack_margin": 14,
+      "static_ram": 433,
+      "underruns": 0,
+      "old_pwm_exact": true,
+      "accepted": true,
+      "evidence": "fresh full Tiny88 simavr IRQ playback"
+    },
+    {
+      "case": "chego-quality",
+      "before_cycles": 1598.127562,
+      "after_cycles": 1594.566636,
+      "before_program": 5604,
+      "after_program": 5578,
+      "before_stack": 67,
+      "after_stack": 64,
+      "before_stack_margin": 11,
+      "after_stack_margin": 14,
+      "static_ram": 433,
+      "underruns": 0,
+      "old_pwm_exact": true,
+      "accepted": true,
+      "evidence": "fresh full Tiny88 simavr IRQ playback"
+    },
+    {
+      "case": "s80-changing-lag18-pre16383-bright11468",
+      "before_cycles": 1770.964465,
+      "after_cycles": 1767.368503,
+      "before_program": 5605,
+      "after_program": 5579,
+      "before_stack": 67,
+      "after_stack": 64,
+      "before_stack_margin": 11,
+      "after_stack_margin": 14,
+      "static_ram": 433,
+      "underruns": 0,
+      "old_pwm_exact": true,
+      "accepted": true,
+      "evidence": "fresh full Tiny88 simavr IRQ playback"
+    }
+  ],
+  "exact_machine_image_equivalence": [
+    {
+      "arch": "tiny",
+      "backend": "asm",
+      "case": "chego-2k",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 5579,
+      "evidence": "equal to fresh measured narrow-wide Tiny image"
+    },
+    {
+      "arch": "tiny",
+      "backend": "asm",
+      "case": "chego-compact",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 5578,
+      "evidence": "equal to fresh measured narrow-wide Tiny image"
+    },
+    {
+      "arch": "tiny",
+      "backend": "asm",
+      "case": "chego-quality",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 5578,
+      "evidence": "equal to fresh measured narrow-wide Tiny image"
+    },
+    {
+      "arch": "tiny",
+      "backend": "asm",
+      "case": "s80-changing-lag18-pre16383-bright11468",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 5579,
+      "evidence": "equal to fresh measured narrow-wide Tiny image"
+    },
+    {
+      "arch": "mega",
+      "backend": "asm",
+      "case": "chego-2k",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 5095,
+      "evidence": "equal to retained current default-0 Mega image"
+    },
+    {
+      "arch": "mega",
+      "backend": "c",
+      "case": "chego-2k",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 4895,
+      "evidence": "equal to retained current default-0 Mega image"
+    },
+    {
+      "arch": "mega",
+      "backend": "asm",
+      "case": "chego-compact",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 5094,
+      "evidence": "equal to retained current default-0 Mega image"
+    },
+    {
+      "arch": "mega",
+      "backend": "c",
+      "case": "chego-compact",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 4894,
+      "evidence": "equal to retained current default-0 Mega image"
+    },
+    {
+      "arch": "mega",
+      "backend": "asm",
+      "case": "chego-quality",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 5094,
+      "evidence": "equal to retained current default-0 Mega image"
+    },
+    {
+      "arch": "mega",
+      "backend": "c",
+      "case": "chego-quality",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 4894,
+      "evidence": "equal to retained current default-0 Mega image"
+    },
+    {
+      "arch": "mega",
+      "backend": "asm",
+      "case": "s80-changing-lag18-pre16383-bright11468",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 5095,
+      "evidence": "equal to retained current default-0 Mega image"
+    },
+    {
+      "arch": "mega",
+      "backend": "c",
+      "case": "s80-changing-lag18-pre16383-bright11468",
+      "machine_image_equal": true,
+      "program_excluding_audio_bytes": 4895,
+      "evidence": "equal to retained current default-0 Mega image"
+    }
+  ],
+  "native_range_controls": [
+    {
+      "variant": "base",
+      "result": "110240 factors exact; observed input maxima 12288 40960 143360 516096; wide-input-controls 698"
+    },
+    {
+      "variant": "stage",
+      "result": "110240 factors exact; observed input maxima 12288 40960 143360 516096; wide-input-controls 698"
+    },
+    {
+      "variant": "stage16",
+      "result": "110240 factors exact; observed input maxima 12288 40960 143360 516096; wide-input-controls 698"
+    },
+    {
+      "variant": "template",
+      "result": "110240 factors exact; observed input maxima 12288 40960 143360 516096; wide-input-controls 698"
+    },
+    {
+      "variant": "narrow-wide",
+      "result": "110240 factors exact; observed input maxima 12288 40960 143360 516096; wide-input-controls 698"
+    }
+  ],
+  "unrestricted_generic_factor_controls": 564288,
+  "standard_ordered_anchors_frozen_exact": true,
+  "independent_ring_oracle": [
+    {
+      "lpc_segments": 1,
+      "result": "73728 conversions exact; all 256 cursors preserve 145 live slots"
+    },
+    {
+      "lpc_segments": 2,
+      "result": "110592 conversions exact; all 256 cursors preserve 145 live slots"
+    },
+    {
+      "lpc_segments": 4,
+      "result": "184320 conversions exact; all 256 cursors preserve 145 live slots"
+    }
+  ],
+  "selection": "narrow-tiny: Tiny ASM only; generic C and AVR5 retain previous polyMulQ12",
+  "caveats": [
+    "No corpus or website firmware screening yet",
+    "Address-layout variant has not been combined; LTO savings cannot be added",
+    "Mega has no new IRQ run: all8 compiled C/ASM images equal current retained baseline",
+    "Selected Tiny images equal the4 freshly measured ungated Tiny images"
+  ]
+}

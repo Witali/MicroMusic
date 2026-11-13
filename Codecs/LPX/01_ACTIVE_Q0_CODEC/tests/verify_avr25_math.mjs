@@ -27,7 +27,10 @@ function check(kind,x,y,expected,{exc=0,t=0,bits=0,a=null,h=null}={}){
   c.data[s('math_kind')]=kind;c.data[s('math_t')]=t;c.data[s('math_bits')]=bits;
   w16(c,s('math_x'),x);w16(c,s('math_y'),y);w32(c,s('math_exc'),exc);
   if(a)a.forEach((v,i)=>w16(c,s('math_a')+i*2,v));
-  if(h)h.forEach((v,i)=>w16(c,s('math_h')+i*2,v));
+  if(h){
+   for(let i=0;i<20;i++)w16(c,s('math_h')+i*2,0x5aa5+i);
+   h.forEach((v,i)=>w16(c,s('math_h')+i*2,v));
+  }
   const preserved=[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,28,29];
   preserved.forEach(r=>c.r[r]=(r*7+cases)&255);
   const sp=c.sp,before=c.cyc;c.pushPC(0);c.pc=s('math_case')/2;
@@ -35,6 +38,11 @@ function check(kind,x,y,expected,{exc=0,t=0,bits=0,a=null,h=null}={}){
   assert.equal(r32(c,s('math_out')),expected|0,`${name} kind${kind} x${x} y${y} case${cases}`);
   assert.equal(c.r[1],0,`${name} zero register`);assert.equal(c.sp,sp,`${name} stack`);
   preserved.forEach(r=>assert.equal(c.r[r],(r*7+cases)&255,`${name} preserved r${r}`));
+  if(h){
+   const firstGuard=kind===25||kind===26?11:10;
+   if(firstGuard===11)assert.equal((c.data[s('math_h')+20]|c.data[s('math_h')+21]<<8)&65535,h[9]&65535,'Discarded padded history');
+   for(let i=firstGuard;i<20;i++)assert.equal((c.data[s('math_h')+i*2]|c.data[s('math_h')+i*2+1]<<8)&65535,0x5aa5+i,'History guard');
+  }
   if(h)for(let i=1;i<10;i++)assert.equal((c.data[s('math_h')+i*2]|c.data[s('math_h')+i*2+1]<<8)&65535,h[i-1]&65535,'History consumed before shift');
  }
  cases++;
@@ -98,6 +106,38 @@ for(const first of [0,32767,-32767,32512,-32512])for(const history of [32767,-32
   const a=Array(10).fill(coefficient),h=Array(10).fill(history);h[0]=first;
   check(7,0,0,123-a.reduce((sum,v,k)=>sum+Math.floor(v*h[k]/4096),0),{a,h,exc:123*16});
  }
+// Exact carry/floor boundaries of the signed high-byte addition route,
+// both history layouts, both excitation units, and both saturation hints.
+const splitHistory=[-32768,-32767,-2305,-2304,-2049,-2048,-2047,-1792,-1536,
+ -1025,-1024,-769,-768,-513,-512,-257,-256,-255,-129,-128,-1,0,1,127,128,
+ 255,256,257,511,512,767,768,1023,1024,1536,1791,1792,2047,2048,2049,32767];
+for(const coefficient of [...boundary,0x5555,-0x5555])for(const history of splitHistory){
+ const a=Array(10).fill(coefficient),h=Array(10).fill(history);
+ const expected=123-a.reduce((sum,v,k)=>sum+Math.floor(v*h[k]/4096),0);
+ for(const kind of [7,25,26,27])check(kind,0,0,expected,{a,h,exc:kind===7||kind===25?123*16:123});
+}
+// The optimized pitch quotient also preserves the former full signed8
+// input behavior, including the int8 result cast above the six-bit domain.
+for(let x=-128;x<=127;x++)for(let gain=0;gain<=31;gain++){
+ const expected=(Math.floor((x*gain+8)/16)<<24)>>24;
+ check(3,x,gain,expected);
+}
+// Byte-shuffle PWM identity covers even values outside the decoder's Q14 clip.
+for(let x=-32768;x<=32767;x++)
+ check(6,x,130,Math.max(0,Math.min(255,128+Math.floor((x*130+8192)/16384))));
+if(process.argv.includes('--exhaustive-synthesis')){
+ // Batch nine independent products per call. Every signed16 history value
+ // gets minimum/maximum/random coefficients, both T hints and both layouts.
+ for(const hint of [0,32767])for(let first=-32768;first<=32767;first+=9)
+  for(const coefficient of [-32768,32767,null]){
+   const a=Array(10).fill(0),h=Array(10).fill(0);h[0]=hint;
+   for(let i=1;i<10&&first+i-1<=32767;i++){
+    h[i]=first+i-1;a[i]=coefficient===null?signed():coefficient;
+   }
+   const expected=123-a.reduce((sum,v,k)=>sum+Math.floor(v*h[k]/4096),0);
+   for(const kind of [7,25])check(kind,0,0,expected,{a,h,exc:123*16});
+  }
+}
 if(process.argv.includes('--exhaustive-dynamic')){
  for(let c=0;c<=16384;c++)for(const x of [-32768,-32767,-1,1,32767])
   check(4,x,c,Math.floor(x*c/16384));
@@ -120,6 +160,9 @@ for(const {cpu,sym,name}of cpus){
 assert.ok(readFileSync(folder+'/c.bin').equals(readFileSync(folder+'/generic.bin')),'Explicit generic retains the C image');
 writeFileSync(folder+'/verification.json',JSON.stringify({target:'attiny88',clock_hz:16000000,
  mul16_unroll:build.mul16_unroll,cases,results,physical_board_measured:false,
+ coverage:{pwm130_signed16_exhaustive:true,pitch_signed8_gain5_exhaustive:true,history_layouts:[10,11],
+  synthesis_signed16_exhaustive:process.argv.includes('--exhaustive-synthesis'),
+  attenuation_dynamic_exhaustive:process.argv.includes('--exhaustive-dynamic')},
  build_sha256:sha(folder+'/build.json'),
  math_header_sha256:sha(new URL('../src/Lpx4Math.h',import.meta.url)),
  multiply_header_sha256:sha(new URL('../src/Lpx4MultiplyAvr.h',import.meta.url)),

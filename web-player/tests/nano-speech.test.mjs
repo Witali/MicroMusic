@@ -1,4 +1,5 @@
 import {test} from 'node:test';
+import {assertLpxRecordedSource} from './helpers/lpx-source-transition.mjs';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -33,7 +34,7 @@ test('Nano releases contain the exact public LPX streams and match sanitized tim
   }
   assert.equal(catalog.sourceHashEncoding,'text-lf');
   for(const [path,expected] of Object.entries(catalog.sourceSha256))
-    assert.equal(hash(readFileSync(new URL('../../'+path,import.meta.url),'utf8').replaceAll('\r\n','\n')),expected,path);
+    assertLpxRecordedSource(path,expected);
 });
 
 test('Nano deep links reuse the shared page at root and GitHub Pages paths',async()=>{

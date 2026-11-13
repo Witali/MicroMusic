@@ -82,7 +82,7 @@ def no_regression(candidate, baseline):
     return True
 
 
-def refine(reference, blob, decoder, *, trial_limit=256, metric_limit=16, speech=True):
+def refine(reference, blob, decoder, *, trial_limit=256, metric_limit=16, speech=True, extra_pairs=()):
     """Return (same-size v5 stream, exact PCM16, anonymous numerical report).
 
     Multi-scale coordinate/diagonal descent proposes at most trial_limit valid
@@ -123,6 +123,10 @@ def refine(reference, blob, decoder, *, trial_limit=256, metric_limit=16, speech
                      key=lambda pair:(cache[pair],pair),default=current)
             if cache[best]>=cache[current]:break
             current=best
+    for pair in extra_pairs:
+        if len(pair)!=2 or any(isinstance(v,bool) or not isinstance(v,(int,np.integer)) for v in pair):
+            raise ValueError('Expected integer filter pairs')
+        score(tuple(map(int,pair)))
     ranked=sorted((pair for pair in cache if cache[pair][0]<cache[initial][0]),
                   key=lambda pair:(cache[pair],pair))
     eligible=[pair for pair in ranked if cache[pair][1]<=cache[initial][1]]

@@ -1,0 +1,84 @@
+{
+  "schema": "lpx-fixed-c-math-current-v1",
+  "build": {
+    "target": "attiny88",
+    "clock_hz": 16000000,
+    "mul16_unroll": 2,
+    "saturated_products": true,
+    "backends": {
+      "c": {
+        "defines": [
+          "-DLPX4_ENABLE_ASM=0",
+          "-DLPX4_AVR25_MUL16_UNROLL=2",
+          "-DLPX4_AVR25_SATURATED_PRODUCTS=1"
+        ],
+        "binary_bytes": 2156,
+        "binary_sha256": "4878c3fb6944e6db0bb2429ff3517084735850b321440562d851a98ff37ba10b"
+      },
+      "asm": {
+        "defines": [
+          "-DLPX4_ENABLE_ASM=1",
+          "-DLPX4_AVR25_MUL16_UNROLL=2",
+          "-DLPX4_AVR25_SATURATED_PRODUCTS=1"
+        ],
+        "binary_bytes": 4902,
+        "binary_sha256": "aa380899a15328e27557ae69367d56fc65e19ddc22b739cedd00bc419ef4738f"
+      },
+      "generic": {
+        "defines": [
+          "-DLPX4_ENABLE_ASM=1",
+          "-DLPX4_ARCH=LPX4_ARCH_GENERIC",
+          "-DLPX4_AVR25_MUL16_UNROLL=2",
+          "-DLPX4_AVR25_SATURATED_PRODUCTS=1"
+        ],
+        "binary_bytes": 2156,
+        "binary_sha256": "4878c3fb6944e6db0bb2429ff3517084735850b321440562d851a98ff37ba10b"
+      }
+    }
+  },
+  "verification": {
+    "target": "attiny88",
+    "clock_hz": 16000000,
+    "mul16_unroll": 2,
+    "cases": 600435,
+    "results": [
+      {
+        "backend": "c",
+        "cases": 600435,
+        "irqs": 6363,
+        "cycles": 588832109,
+        "passed": true
+      },
+      {
+        "backend": "asm",
+        "cases": 600435,
+        "irqs": 4985,
+        "cycles": 236157768,
+        "passed": true
+      },
+      {
+        "backend": "generic",
+        "cases": 600435,
+        "irqs": 6363,
+        "cycles": 588832109,
+        "passed": true
+      }
+    ],
+    "physical_board_measured": false,
+    "coverage": {
+      "pwm130_signed16_exhaustive": true,
+      "pitch_signed8_gain5_exhaustive": true,
+      "history_layouts": [
+        10,
+        11
+      ],
+      "synthesis_signed16_exhaustive": true,
+      "attenuation_dynamic_exhaustive": true
+    },
+    "build_sha256": "9c06f79da0ff93cc5ef773ea3b71195013d5d09b896a0bf5ab1a89b01e4d7489",
+    "math_header_sha256": "e30c68f67c4fa4823eb7602e2168d7e41c458d924b6c178bf0e56db4ac4fd83f",
+    "multiply_header_sha256": "61f7bbbffde4610a3b3b38a5e3bd1b24876c2c996ec393a0654e96d0a79e4445",
+    "probe_sha256": "7b1df712ad0c0a74b26c810082c6bc363c79e73a6f448e65c71cb77a49f0d4c5",
+    "observer_sha256": "f3d1c3a318afc05f3e6121066977d3f4a1110ddcc8c855b9abed0c6ecc6e5bc0"
+  }
+}
