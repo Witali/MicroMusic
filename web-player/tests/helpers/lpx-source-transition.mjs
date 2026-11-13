@@ -9,6 +9,7 @@ const receipt='Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/c-numer
 const polynomialReceipt='Codecs/LPX/research/lsf-compact-2026-11-10/source-transition.json';
 const interpolationReceipt='Codecs/LPX/research/lpc-interpolation-2026-11-13/source-transition.json';
 const spectrumReport='Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13/';
+const parserReport='Codecs/LPX/research/tiny-parser-2026-11-13/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -64,6 +65,20 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       assert.equal(spectrum.complete,true);
       assert.equal(spectrum.universal_irq_cases,22);
       assert.equal(spectrum.identical_fixed_header_images,9);
+      recorded=change.current[field];
+    }
+  }
+  for(const step of ['read-bits']){
+    if(recorded===actual)break;
+    const parser=JSON.parse(read(parserReport+step+'-transition.json'));
+    const change=parser.sources[path] ?? parser.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(parser.step,step);
+      assert.equal(parser.complete,true);
+      assert.equal(parser.universal_irq_cases,22);
+      assert.equal(parser.identical_fixed_header_images,9);
+      const evidence=read(parserReport+step+'.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),parser.measurements_sha256);
       recorded=change.current[field];
     }
   }

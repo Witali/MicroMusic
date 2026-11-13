@@ -406,6 +406,27 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
 #ifdef LPX3_COST_INSTRUMENT
  ++bitCalls_;
 #endif
+
+#if LPX4_COMPACT_ONLY && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+ const uint8_t available=bitsLeft_;
+ uint8_t source, used, remaining, out;
+ if(available>=n){
+  source=bitBuffer_;
+  used=n;
+  remaining=available-n;
+  out=source&LP_READ_U8(&bitMasks[used]);
+ }else{
+  source=readByte();
+  used=n-available;
+  remaining=8-used;
+  out=bitBuffer_|((source&LP_READ_U8(&bitMasks[used]))<<available);
+ }
+ // The cache is one byte. Use one byte-wide shift loop on both paths.
+ while(used--)source>>=1;
+ bitBuffer_=source;
+ bitsLeft_=remaining;
+ return out;
+#else
  const uint8_t available=bitsLeft_;
  uint8_t out;
  if(available>=n){
@@ -417,6 +438,7 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
   bitBuffer_=extra>>need;bitsLeft_=8-need;
  }
  return out;
+#endif
 }
 #if LPX4_ENABLE_SPEECH_COMPACT
 uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){

@@ -9,6 +9,7 @@ TRANSITION=ACTIVE/'examples/ATTINY88_V5_PLAYER/c-numeric-transition.json'
 POLYNOMIAL=REPO/'Codecs/LPX/research/lsf-compact-2026-11-10/source-transition.json'
 INTERPOLATION=REPO/'Codecs/LPX/research/lpc-interpolation-2026-11-13/source-transition.json'
 SPECTRUM=REPO/'Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13'
+PARSER=REPO/'Codecs/LPX/research/tiny-parser-2026-11-13'
 
 
 def assert_recorded_source(path,expected):
@@ -47,5 +48,15 @@ def assert_recorded_source(path,expected):
             assert spectrum['universal_irq_cases']==22 and spectrum['identical_fixed_header_images']==9
             evidence=(SPECTRUM/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
             assert hashlib.sha256(evidence).hexdigest()==spectrum['measurements_sha256']
+            recorded=change['current']['text_lf_sha256']
+    for step in ('read-bits',):
+        if recorded==actual:break
+        parser=json.loads((PARSER/f'{step}-transition.json').read_text(encoding='utf-8'))
+        change=parser['sources'].get(path) or parser['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert parser['complete'] and parser['step']==step
+            assert parser['universal_irq_cases']==22 and parser['identical_fixed_header_images']==9
+            evidence=(PARSER/f'{step}.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==parser['measurements_sha256']
             recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')
