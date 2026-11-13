@@ -79,7 +79,9 @@ A separate data-only screening of globally selectable Rice parameters found
 only 0..2 bytes of potential spectral savings on these public streams. No
 runtime state/decoder machinery for that idea was added; speed/code-size
 benefits were not measured. Directly storing LPC anchors was not adopted:
-removing conversion alone is insufficient without proving smaller audio data.
+an encoder-side trial saved 1195–1197 program bytes and sped up every live-IRQ
+workload, but the exact LPC residuals tripled Sparse80 audio on the full corpus.
+[Trial and paired measurements](../../Codecs/LPX/research/tiny-v9-lpc-wire-2026-11-13/README.md).
 
 Reproduce using the commands in the wire specification. Old v5/v8 data and
 published speech recipes remain on their existing paths; selecting v9 is a
