@@ -7,6 +7,7 @@ ACTIVE=Path(__file__).resolve().parents[1]
 REPO=ACTIVE.parents[2]
 TRANSITION=ACTIVE/'examples/ATTINY88_V5_PLAYER/c-numeric-transition.json'
 POLYNOMIAL=REPO/'Codecs/LPX/research/lsf-compact-2026-11-10/source-transition.json'
+INTERPOLATION=REPO/'Codecs/LPX/research/lpc-interpolation-2026-11-13/source-transition.json'
 
 
 def assert_recorded_source(path,expected):
@@ -21,12 +22,20 @@ def assert_recorded_source(path,expected):
         recorded=source['current']['text_lf_sha256']
     if recorded!=actual:
         polynomial=json.loads(POLYNOMIAL.read_text(encoding='utf-8'))
-        assert polynomial['complete'] and polynomial['baseline_revision']=='0320c1014618188a3121fdfef0be55b30690d977'
-        assert polynomial['all_measured_no_speed_loss'] and polynomial['all_measured_no_program_growth']
-        assert polynomial['all_fixed_native_exact'] and polynomial['float_binary_exact']
-        assert polynomial['fresh_universal_tiny_cases']==22 and polynomial['fresh_mega_cases']==8
-        assert polynomial['fresh_website_tiny_cases']==9 and polynomial['identical_nano_images']==9
-        current=polynomial['sources'][path]
-        assert current['baseline']['text_lf_sha256']==recorded,(path,'polynomial baseline')
-        recorded=current['current']['text_lf_sha256']
+        change=polynomial['sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert polynomial['complete'] and polynomial['baseline_revision']=='0320c1014618188a3121fdfef0be55b30690d977'
+            assert polynomial['all_measured_no_speed_loss'] and polynomial['all_measured_no_program_growth']
+            assert polynomial['all_fixed_native_exact'] and polynomial['float_binary_exact']
+            assert polynomial['fresh_universal_tiny_cases']==22 and polynomial['fresh_mega_cases']==8
+            assert polynomial['fresh_website_tiny_cases']==9 and polynomial['identical_nano_images']==9
+            recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        interpolation=json.loads(INTERPOLATION.read_text(encoding='utf-8'))
+        assert interpolation['complete'] and interpolation['baseline_revision']=='e0939e89d88e4d91e9e441310f504ddbfd5581aa'
+        assert interpolation['all_fixed_native_exact'] and interpolation['all_avr_corpus_exact_without_slowdown']
+        assert interpolation['identical_asm_images']==44
+        change=interpolation['sources'][path]
+        assert change['baseline']['text_lf_sha256']==recorded,(path,'interpolation baseline')
+        recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

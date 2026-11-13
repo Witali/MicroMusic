@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {parseHex} from '../lib/hex.js';
+import {assertLpxRecordedSource} from './helpers/lpx-source-transition.mjs';
 
 const root=new URL('../../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root));
@@ -20,7 +21,7 @@ test('LSF compaction binds new evidence and preserves the historical receipts',(
   for(const [path,digest] of Object.entries(transition.preserved_receipts_sha256))
     assert.equal(textSha(path),digest,path+' historical receipt');
   for(const [path,digest] of Object.entries(transition.validation_source_sha256))
-    assert.equal(textSha(path),digest,path+' validation source');
+    assertLpxRecordedSource(path,digest);
   for(const [path,row] of Object.entries(transition.sources))
     assert.equal(textSha(path),row.current.text_lf_sha256,path);
 });
@@ -48,11 +49,11 @@ test('all 22 universal and nine catalog Tiny profiles shrink without slowing ful
   }
 });
 
-test('the eight current Mega C and ASM controls retain exact real-time output with smaller programs',()=>{
+test('the eight Mega C and ASM controls at e0939e89 retain exact real-time output with smaller programs',()=>{
   const r=json(folder+'mega.json');
   assert.equal(r.mega_cases.length,8);
   for(const [path,digest] of Object.entries(r.production_source_sha256))
-    assert.equal(textSha(path),digest,path);
+    assertLpxRecordedSource(path,digest);
   for(const row of r.mega_cases){
     assert.equal(row.accepted_real_time,true);
     assert.equal(row.full_baseline_pwm_exact,true);
@@ -64,7 +65,7 @@ test('the eight current Mega C and ASM controls retain exact real-time output wi
   }
 });
 
-test('the whole native corpus and floating mode stay exact, and Nano shipped images remain identical',()=>{
+test('LSF compaction preserved the whole native corpus, floating mode, and shipped Nano images',()=>{
   const host=json(folder+'native-corpus.json');
   assert.equal(host.records_verified,181);assert.equal(host.segments_verified,306);
   assert.equal(host.verified_samples,15188029);assert.equal(host.complete,true);
@@ -75,7 +76,7 @@ test('the whole native corpus and floating mode stay exact, and Nano shipped ima
   assert.equal(nano.nano_images,8);assert.equal(nano.dialogue_images,1);
   assert.equal(nano.no_new_irq_measurement,true);assert.equal(nano.images.length,9);
   for(const [path,digest] of Object.entries(nano.current_source_sha256))
-    assert.equal(textSha(path),digest,path);
+    assertLpxRecordedSource(path,digest);
   for(const row of nano.images){
     assert.equal(row.binary_exact,true);assert.equal(row.no_float_runtime_symbols,true);
     const bytes=read(row.source);

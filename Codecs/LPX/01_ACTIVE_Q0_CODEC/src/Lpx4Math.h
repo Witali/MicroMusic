@@ -117,7 +117,10 @@ static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t 
         : "r"(prev),"I"(bits),"M"((1U<<bits)-1) : "cc");
     return (int16_t)product;
 #else
-    return (int16_t)(prev+((int32_t)cur-prev)*t/(1L<<bits));
+    const int32_t product=((int32_t)cur-prev)*t;
+    // Bias negative products so the arithmetic shift truncates toward zero.
+    const int32_t bias=product<0?(1L<<bits)-1:0;
+    return (int16_t)(prev+((product+bias)>>bits));
 #endif
 }
 

@@ -34,8 +34,8 @@ return (int16_t)(prev + ((product + bias) >> bits));
 
 The divider symbol disappears. Stack falls from 75 to 68 bytes. All four
 outputs match baseline PWM and complete playback with zero underruns.
-This screen applies to the measured C recipe. Check the full reference
-matrix, including `test_math_backend.py`, before adopting it in shared code.
+The C fallback now uses this expression. The full reference and paired
+interrupt runs are recorded in the [LPC interpolation report](../../Codecs/LPX/research/lpc-interpolation-2026-11-13/README.md).
 
 ## Select spectrum addresses before the loop
 

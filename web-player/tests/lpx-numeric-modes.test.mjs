@@ -72,12 +72,40 @@ test('numeric mode integration rebuilt eighteen fixed ASM images equal to shippe
 test('arithmetic and historical whole-corpus evidence retain independent exact comparisons',()=>{
   const math=json(folder+'c-realtime-math-measurements.json');
   assert.equal(math.verification.cases,600435);
-  assert.equal(math.verification.math_header_sha256,sha(read('Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h')));
+  assertLpxRecordedSource('Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h',math.verification.math_header_sha256,'raw');
   assert.ok(math.verification.results.every(row=>row.passed&&row.irqs>100));
   const r=json('Codecs/LPX/research/c-fixed-realtime-2026-11-10/corpus.json');
   assert.equal(r.complete,true);assert.equal(r.records_complete,181);assert.equal(r.segments_verified,306);
   assert.equal(r.verification_samples,15188029);assert.equal(r.total_underruns,0);
   assert.equal(r.all_old_native_pwm_exact,true);assert.equal(r.all_irq_r0_r1_preserved,true);
   assert.ok(r.maximum_mean_cpu_with_complete_irq<2000);
-  assert.equal(r.candidate_math_sha256,textSha('Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h'));
+  assertLpxRecordedSource('Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h',r.candidate_math_sha256);
+});
+
+test('fixed LPC interpolation preserves all corpus samples and removes AVR division',()=>{
+  const directory='Codecs/LPX/research/lpc-interpolation-2026-11-13/';
+  const change=json(directory+'source-transition.json');
+  const measurements=directory+'measurements.json';
+  assert.equal(textSha(measurements),change.measurements_sha256);
+  const {native, avr, controls, asm}=json(measurements);
+  const math='Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h';
+  assert.equal(textSha(math),change.sources[math].current.text_lf_sha256);
+  assert.equal(avr.source_sha256['after/src/Lpx4Math.h'],sha(read(math)));
+  assert.deepEqual([native.records_verified,native.segments_verified,native.verified_samples],[181,306,15188029]);
+  assert.equal(native.fixed_native_pcm16_exact && native.fixed_native_pwm_exact,true);
+  assert.equal(native.float_complete_library_byte_exact,true);
+  assert.deepEqual([avr.records,avr.segments,avr.samples],[181,306,15188029]);
+  assert.equal(avr.complete && avr.all_pwm_exact && avr.all_segments_no_slowdown,true);
+  assert.equal(avr.underruns,0);
+  assert.equal(avr.all_candidate_images_have_no_division,true);
+  assert.equal(avr.all_irq_registers_preserved,true);
+  assert.equal(controls.length,4);
+  for(const row of controls){
+    assert.equal(row.before_program-row.after_program,270);
+    assert.ok(row.after_cycles<row.before_cycles);
+    assert.equal(row.pwm_exact && row.division_removed,true);
+    assert.equal(row.underruns,0);
+  }
+  assert.equal(asm.all_binaries_exact,true);
+  assert.equal(asm.cases.length,44);
 });
