@@ -1374,6 +1374,53 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 
 }
 
+#if LPX4_AVR25_V9_RUNTIME
+// Keep frame parsing and LPC interpolation out of the sample loop.
+__attribute__((noinline))
+#else
+inline __attribute__((always_inline))
+#endif
+bool Lpx4HybridCore::prepareSubframe(){
+    // All frame/block/excitation headers coincide with a 20-sample boundary.
+#if LPX4_COMPACT_ONLY
+    if(!(subIndex_&7)&&!readFrame())return false;
+#else
+    if(subIndex_==0&&!readFrame())return false;
+#endif
+#if !LPX4_COMPACT_ONLY
+    if(!(subIndex_&3)&&!readBlock())return false;
+#endif
+#if LPX4_HAS_SPARSE80
+    if(!(subIndex_&((LPX4_SPEECH_FLAGS&8)?3:1))&&!readSubframe())return false;
+#else
+    if(!(subIndex_&1)&&!readSubframe())return false;
+#endif
+    interpolateLsf(
+#if LPX4_COMPACT_ONLY
+        subIndex_&7
+#else
+        subIndex_
+#endif
+    );
+#ifdef LPX3_BANDWIDTH_EXPAND_Q14
+    // Bandwidth expansion a[k] *= gamma^(k+1), once per 20 samples.
+#if LPX4_FLOAT_SYNTHESIS
+    double weight=1.0;
+    for(uint8_t k=0;k<10;++k){
+        weight*=static_cast<double>(LPX3_BANDWIDTH_EXPAND_Q14)/16384.0;
+        a_[k]=lpx4FloatClamp(a_[k]*weight,-32767.0/4096.0,32767.0/4096.0);
+    }
+#else
+    uint16_t weight=16384;
+    for(uint8_t k=0;k<10;k++){
+        weight=(uint16_t)(((int32_t)weight*LPX3_BANDWIDTH_EXPAND_Q14+8192)>>14);
+        a_[k]=clamp(((int32_t)a_[k]*weight+8192)>>14,-32767,32767);
+    }
+#endif
+#endif
+    return true;
+}
+
 // AVR PWM firmware uses the direct sample path. The optional signed-output
 // interface shares the same arithmetic, selected independently of memory I/O.
 #if defined(__AVR__) && !defined(LPX4_ENABLE_PCM16)
@@ -1408,45 +1455,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
         return false;
     }
 #endif
-    if(subPos_==0){
-        // All frame/block/excitation headers coincide with a 20-sample boundary.
-#if LPX4_COMPACT_ONLY
-        if(!(subIndex_&7)&&!readFrame())return false;
-#else
-        if(subIndex_==0&&!readFrame())return false;
-#endif
-#if !LPX4_COMPACT_ONLY
-        if(!(subIndex_&3)&&!readBlock())return false;
-#endif
-#if LPX4_HAS_SPARSE80
-        if(!(subIndex_&((LPX4_SPEECH_FLAGS&8)?3:1))&&!readSubframe())return false;
-#else
-        if(!(subIndex_&1)&&!readSubframe())return false;
-#endif
-        interpolateLsf(
-#if LPX4_COMPACT_ONLY
-            subIndex_&7
-#else
-            subIndex_
-#endif
-        );
-#ifdef LPX3_BANDWIDTH_EXPAND_Q14
-        // Bandwidth expansion a[k] *= gamma^(k+1), once per 20 samples.
-#if LPX4_FLOAT_SYNTHESIS
-        double weight=1.0;
-        for(uint8_t k=0;k<10;++k){
-            weight*=static_cast<double>(LPX3_BANDWIDTH_EXPAND_Q14)/16384.0;
-            a_[k]=lpx4FloatClamp(a_[k]*weight,-32767.0/4096.0,32767.0/4096.0);
-        }
-#else
-        uint16_t weight=16384;
-        for(uint8_t k=0;k<10;k++){
-            weight=(uint16_t)(((int32_t)weight*LPX3_BANDWIDTH_EXPAND_Q14+8192)>>14);
-            a_[k]=clamp(((int32_t)a_[k]*weight+8192)>>14,-32767,32767);
-        }
-#endif
-#endif
-    }
+    if(subPos_==0 && !prepareSubframe())return false;
     int8_t q=0;
 #if LPX4_COMPACT_ONLY
 #if (LPX4_FAST_EXCITATION&2) && !LPX4_AVR25_V9_RUNTIME

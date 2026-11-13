@@ -145,3 +145,19 @@ the converter and linked program each shrink by 90 B. The 22 v9 loads
 preserve exact PWM and do not slow down in simavr with active IRQs.
 Peak stack grows from 56 to 60 B with a measured minimum margin of 18 B.
 [Measurements and reproduction](../../Codecs/LPX/research/tiny-v9-shared-pq-2026-11-13/README.md).
+
+## Outline subframe preparation within the existing stack budget
+
+The ATtiny88 standalone player enters `main` with IRQs masked and never
+returns. Under the GNU AVR ABI, AVR-GCC's `OS_main` attribute omits saving
+the caller's registers in this entry point. Ordinary decoder functions
+and the ISR keep their existing register preservation.
+See the [GCC AVR function attributes](https://gcc.gnu.org/onlinedocs/gcc-8.5.0/gcc/AVR-Function-Attributes.html).
+
+With AVR-GCC 7.3.0 and `-Os -flto`, this recovers the stack needed to
+outline parsing and interpolation at the 20-sample boundary. The
+explicit AVR25 ASM universal v9 selection uses the outlined helper.
+The C backend inlines the equivalent C++ implementation. On 22 simavr
+loads with active IRQs, Flash drops by 32 B and peak stack by 6 B.
+Every load speeds up and produces the same PWM bytes.
+[Measurements and reproduction](../../Codecs/LPX/research/tiny-v9-subframe-2026-11-13/README.md).

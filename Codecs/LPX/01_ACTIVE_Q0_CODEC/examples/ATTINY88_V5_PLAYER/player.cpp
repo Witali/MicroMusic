@@ -4,6 +4,7 @@
 #include <avr/pgmspace.h>
 #include <util/atomic.h>
 #include "Lpx4HybridCore.h"
+#include "Lpx4Math.h"
 #include "../../../../common/pwm_gain.h"
 #ifndef __AVR_ATtiny88__
 #error This hardware driver requires the real ATtiny88 target
@@ -92,6 +93,11 @@ ISR(TIMER0_COMPA_vect){
 }
 #endif
 static bool begin(){return decoder.begin(voice,sizeof(voice));}
+// Startup enters main with IRQs masked. This player never returns, so no
+// caller registers need to remain saved under the foreground stack.
+#if LPX4_USE_AVR_NOMUL_ASM && LPX4_COMPACT_ONLY && LPX4_COMPACT_VERSION == 9 && !defined(LPX4_FIXED_SPEECH_FLAGS)
+__attribute__((OS_main))
+#endif
 int main(){
     // Reset starts with interrupts masked. Keep the actual compiler CPU macros.
     CLKPR=_BV(CLKPCE);CLKPR=0;
