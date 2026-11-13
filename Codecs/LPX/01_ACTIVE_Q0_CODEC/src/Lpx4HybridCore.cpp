@@ -34,6 +34,11 @@
 #if LPX4_FAST_EXCITATION < 0 || (LPX4_FAST_EXCITATION & ~7)
 #error Unsupported LPX4_FAST_EXCITATION
 #endif
+#if LPX4_COMPACT_ONLY && LPX4_COMPACT_VERSION == 9 && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#define LPX4_AVR25_V9_PULSES 1
+#else
+#define LPX4_AVR25_V9_PULSES 0
+#endif
 
 #ifdef __AVR__
 #include <avr/pgmspace.h>
@@ -855,7 +860,7 @@ int16_t Lpx4HybridCore::pitchPredict() const{
 #if LPX4_FAST_PITCH&4
  if(!gain_)return 0;
 #endif
- int8_t v=lpx4PitchQ4(x,gain_);
+ int8_t v=lpx4PitchQ4(x,gain_,LPX4_AVR25_V9_PULSES);
 // v5 gain is0..14 and history is-32..31: prediction is already-28..27.
 #if !LPX4_COMPACT_ONLY
  const int8_t low=-(int8_t)quantLimit_,high=(int8_t)(quantLimit_-1);
@@ -915,6 +920,23 @@ bool Lpx4HybridCore::readUnary8(uint8_t& high){
 #endif
 bool Lpx4HybridCore::decodeCode(int8_t& q){
 #if LPX4_COMPACT_ONLY
+#if LPX4_AVR25_V9_PULSES
+ // The caller has already checked parser errors. Pitch alone is -28..27,
+ // so only a sample with an innovation can need saturation to -32..31.
+ int8_t decoded=(int8_t)pitchPredict();
+ if(pulseIndex_<pulseCount_){
+  if(pulsePos_[pulseIndex_]){
+   --pulsePos_[pulseIndex_];
+  }else{
+   decoded+=pulseAmp_[pulseIndex_++];
+   if(decoded < -32)decoded=-32;
+   if(decoded > 31)decoded=31;
+  }
+ }
+ q=decoded;
+ ringQ_[ringCursor_++]=decoded;
+ return true;
+#else
 #if LPX4_COMPACT_VERSION == 9
  // Pitch is -28..27; one merged innovation is -16..16. The unclipped
  // sum fits signed8 for every P4/P6/sparse80 packet, including extras.
@@ -941,6 +963,7 @@ bool Lpx4HybridCore::decodeCode(int8_t& q){
  if(decoded > 31)decoded=31;
  q=(int8_t)decoded;ringQ_[ringCursor_++]=q;
  return true;
+#endif
 #else
  int16_t decoded=0;
  if(subType_==0){
@@ -1392,7 +1415,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     }
     int8_t q=0;
 #if LPX4_COMPACT_ONLY
-#if LPX4_FAST_EXCITATION&2
+#if (LPX4_FAST_EXCITATION&2) && !LPX4_AVR25_V9_PULSES
     if(pulseIndex_>=pulseCount_){q=(int8_t)pitchPredict();ringQ_[ringCursor_++]=q;}
     else
 #endif

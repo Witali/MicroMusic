@@ -43,6 +43,7 @@ __attribute__((noinline,used)) void math_case(){
     case 25:math_out=lpx4SynthesisQ12<true,true>(math_exc,math_a,math_h);break;
     case 26:math_out=lpx4SynthesisQ12<false,true>(math_exc,math_a,math_h);break;
     case 27:math_out=lpx4SynthesisQ12<false>(math_exc,math_a,math_h);break;
+    case 28:math_out=lpx4PitchQ4((int8_t)math_x,(uint8_t)math_y,true);break;
     }
 }
 }

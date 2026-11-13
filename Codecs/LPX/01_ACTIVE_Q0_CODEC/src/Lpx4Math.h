@@ -167,7 +167,7 @@ static LPX4_MUL_INLINE int32_t lpx4Mul16(int16_t x,int16_t y);
 
 // Pitch gain0..31, history code -32..31: rounded Q4 lies in -62..60.
 // Extract product bits4..11 with two nibble swaps instead of 16-bit shifts.
-static inline __attribute__((always_inline)) int8_t lpx4PitchQ4(int8_t x,uint8_t gain){
+static inline __attribute__((always_inline)) int8_t lpx4PitchQ4(int8_t x,uint8_t gain,bool evenGain=false){
 #if LPX4_USE_AVR_ASM
     int16_t product;
     __asm__(
@@ -191,15 +191,18 @@ static inline __attribute__((always_inline)) int8_t lpx4PitchQ4(int8_t x,uint8_t
         return x;
     }
     if(!gain)return 0;
-    // Four low gain bits yield the rounded Q4 quotient directly in one
-    // byte. Add bit4*x, then remove the unsigned-x bias16*(gain&15).
+    // Four rounds give the Q4 quotient directly in one byte. Compact speech
+    // gain is even and <=14, so its equivalent Q3 quotient takes three rounds.
+    // Remove the unsigned-history bias using the original gain in both cases.
     uint8_t result,multiplier;
     __asm__(
-        "ldi %0,8\n\tmov %1,%2\n\t"
-        ".rept 4\n\tlsr %1\n\tbrcc 1f\n\tadd %0,%3\n\t1: ror %0\n\t.endr\n\t"
-        "sbrc %1,0\n\tadd %0,%3\n\t"
+        "ldi %0,%5\n\tmov %1,%2\n\t"
+        ".if %4\n\tlsr %1\n\t.endif\n\t"
+        ".rept 4-%4\n\tlsr %1\n\tbrcc 1f\n\tadd %0,%3\n\t1: ror %0\n\t.endr\n\t"
+        ".if !%4\n\tsbrc %1,0\n\tadd %0,%3\n\t.endif\n\t"
         "swap %2\n\tandi %2,240\n\tsbrc %3,7\n\tsub %0,%2\n\t"
-        : "=&d"(result),"=&r"(multiplier),"+&d"(gain) : "r"(x) : "cc");
+        : "=&d"(result),"=&r"(multiplier),"+&d"(gain)
+        : "r"(x),"I"(evenGain),"I"(evenGain?4:8) : "cc");
     return (int8_t)result;
 #else
     return (int8_t)(((int16_t)x*gain+8)>>4);

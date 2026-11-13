@@ -121,6 +121,7 @@ for(const coefficient of [...boundary,0x5555,-0x5555])for(const history of split
 for(let x=-128;x<=127;x++)for(let gain=0;gain<=31;gain++){
  const expected=(Math.floor((x*gain+8)/16)<<24)>>24;
  check(3,x,gain,expected);
+ if(gain<=14 && (gain&1)===0)check(28,x,gain,expected);
 }
 // Byte-shuffle PWM identity covers even values outside the decoder's Q14 clip.
 for(let x=-32768;x<=32767;x++)
@@ -160,7 +161,8 @@ for(const {cpu,sym,name}of cpus){
 assert.ok(readFileSync(folder+'/c.bin').equals(readFileSync(folder+'/generic.bin')),'Explicit generic retains the C image');
 writeFileSync(folder+'/verification.json',JSON.stringify({target:'attiny88',clock_hz:16000000,
  mul16_unroll:build.mul16_unroll,cases,results,physical_board_measured:false,
- coverage:{pwm130_signed16_exhaustive:true,pitch_signed8_gain5_exhaustive:true,history_layouts:[10,11],
+ coverage:{pwm130_signed16_exhaustive:true,pitch_signed8_gain5_exhaustive:true,
+  pitch_signed8_even_gain_exhaustive:true,history_layouts:[10,11],
   synthesis_signed16_exhaustive:process.argv.includes('--exhaustive-synthesis'),
   attenuation_dynamic_exhaustive:process.argv.includes('--exhaustive-dynamic')},
  build_sha256:sha(folder+'/build.json'),

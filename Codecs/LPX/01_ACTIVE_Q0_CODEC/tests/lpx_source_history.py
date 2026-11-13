@@ -15,6 +15,7 @@ LPC_SHORT=REPO/'Codecs/LPX/research/tiny-lpc-short-2026-11-13'
 Q14=REPO/'Codecs/LPX/research/tiny-q14-2026-11-13'
 LSF_NEIGHBORS=REPO/'Codecs/LPX/research/tiny-lsf-neighbors-2026-11-13'
 MEGA_LSF=REPO/'Codecs/LPX/research/mega-lsf-wide-2026-11-13'
+TINY_PITCH=REPO/'Codecs/LPX/research/tiny-v9-pulse-pitch-2026-11-13'
 
 
 def assert_recorded_source(path,expected):
@@ -87,6 +88,15 @@ def assert_recorded_source(path,expected):
             assert report['mega_asm_irq_cases']==6 and report['identical_mega_c_images']==4
             assert report['identical_nano_images']==9
             evidence=(MEGA_LSF/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
+            recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        report=json.loads((TINY_PITCH/'source-transition.json').read_text(encoding='utf-8'))
+        change=report['sources'].get(path) or report['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert report['complete'] and report['baseline_revision']=='65c3073e354b9956d252c7d118e40ddaae19dd83'
+            assert report['universal_irq_cases']==22 and report['identical_web_images']==18
+            evidence=(TINY_PITCH/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
             assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
             recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')
