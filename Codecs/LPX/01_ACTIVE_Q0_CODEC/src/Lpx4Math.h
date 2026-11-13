@@ -81,6 +81,7 @@ static inline __attribute__((always_inline)) int16_t lpx4CosineInterpolate(int16
 // Convex signed16 LPC anchors, t=0..2^bits, bits=2/3/4.
 // Preserve prev + trunc((cur-prev)*t / 2^bits), including a signed17
 // difference. The convex result already fits signed16; no clamp is needed.
+template<bool oddPhase=false>
 static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t prev,int16_t cur,uint8_t t,uint8_t bits){
 #if LPX4_USE_AVR_ASM
     int32_t product;
@@ -104,6 +105,25 @@ static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t 
 #elif LPX4_USE_AVR_NOMUL_ASM
     int32_t delta=(int32_t)cur-prev,product;
     uint8_t bias;
+    if(oddPhase){
+        // The subframe midpoint is odd and below 2^bits. Seed the low
+        // product bit with delta and visit only the remaining set-bit span.
+        // Delta is signed17. Its third byte is 0 or -1, and the biased
+        // product fits signed24. The final shift still truncates toward zero.
+        __asm__(
+            "mov %3,%C1\n\tandi %3,%6\n\t"
+            "mov %A0,%A1\n\tmov %B0,%B1\n\tmov %C0,%C1\n\t"
+            "add %A0,%3\n\tadc %B0,__zero_reg__\n\tadc %C0,__zero_reg__\n\t"
+            "lsr %2\n\tbreq 3f\n\t2:\n\t"
+            "lsl %A1\n\trol %B1\n\trol %C1\n\t"
+            "lsr %2\n\tbrcc 1f\n\tadd %A0,%A1\n\tadc %B0,%B1\n\tadc %C0,%C1\n\t"
+            "1: tst %2\n\tbrne 2b\n\t3:\n\t"
+            ".rept %5\n\tasr %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
+            "add %A0,%A4\n\tadc %B0,%B4\n\t"
+            : "=&r"(product),"+&r"(delta),"+&r"(t),"=&d"(bias)
+            : "r"(prev),"I"(bits),"M"((1U<<bits)-1) : "cc");
+        return (int16_t)product;
+    }
     __asm__(
         "clr %A0\n\tclr %B0\n\tclr %C0\n\t"
         "mov %3,%C1\n\tandi %3,%6\n\t"

@@ -1367,7 +1367,7 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #if LPX4_FLOAT_SYNTHESIS
         a_[i]=prevLpc[i]+(curLpc[i]-prevLpc[i])*(static_cast<double>(localT)/width);
 #else
-        a_[i]=lpx4LpcInterpolate(prevLpc[i],curLpc[i],localT,
+        a_[i]=lpx4LpcInterpolate<LPX4_AVR25_V9_RUNTIME>(prevLpc[i],curLpc[i],localT,
             LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2);
 #endif
     }

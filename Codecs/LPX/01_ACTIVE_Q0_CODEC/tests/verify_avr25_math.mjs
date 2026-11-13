@@ -52,6 +52,9 @@ const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed;};
 const signed=()=>((random()>>>8)&65535)-32768;
 const boundary=[-32768,-32767,-16384,-4096,-256,-129,-128,-1,0,1,127,128,255,256,4096,16384,32767];
 for(const x of boundary)for(const y of boundary)check(0,x,y,x*y);
+for(const x of boundary)for(const y of boundary)for(const bits of [2,3,4])
+ for(let t=1;t<(1<<bits);t+=2)
+  check(29,x,y,x+Math.trunc((y-x)*t/(1<<bits)),{bits,t});
 // Exercise carries and signed corrections around every bit, including the
 // loop-group boundaries for compact 1/2/4/8-round multiplication bodies.
 const carryPatterns=new Set([0x5555,0xaaaa,0x7fff,0x8000,0xffff]);
@@ -68,6 +71,8 @@ for(let i=0;i<1200;i++){
  check(4,x,coef,Math.floor(x*coef/16384));
  const bits=2+random()%3,t=random()%((1<<bits)+1);
  check(5,x,y,x+Math.trunc((y-x)*t/(1<<bits)),{bits,t});
+ const oddPhase=t%(1<<bits)|1;
+ check(29,x,y,x+Math.trunc((y-x)*oddPhase/(1<<bits)),{bits,t:oddPhase});
  const pwmGain=i&1?130:random()%256;
  check(6,x,pwmGain,Math.max(0,Math.min(255,128+Math.floor((x*pwmGain+8192)/16384))));
  for(const [kind,c]of [[9,13094],[10,64],[11,7800],[19,13926],[20,11469],

@@ -161,3 +161,18 @@ The C backend inlines the equivalent C++ implementation. On 22 simavr
 loads with active IRQs, Flash drops by 32 B and peak stack by 6 B.
 Every load speeds up and produces the same PWM bytes.
 [Measurements and reproduction](../../Codecs/LPX/research/tiny-v9-subframe-2026-11-13/README.md).
+
+## Seed odd-phase interpolation with the first product term
+
+For ATtiny88 / AVR25 with the GNU AVR ABI and AVR-GCC 7.3.0, LPX v9
+interpolation at a subframe midpoint has a multiplier in the range
+1 through `width-1` and its low bit is always set. Load the signed17
+delta as the initial sum, add the sign-dependent truncation bias,
+and shift and add only the remaining multiplier bits. The bounded
+sum fits signed24. The ordinary C formula remains selectable, and
+the wide-product floors of the separate LSF converter are preserved.
+
+With `-Os -flto` on the 22 simavr IRQ workloads, the complete player
+saves 40 B and maintains stack depth. PWM is exact; all loads finish
+without underruns. Peak decoding cycles fall by 230 in 21 workloads,
+and one ties. [Measurements and arithmetic coverage](../../Codecs/LPX/research/tiny-v9-odd-phase-2026-11-13/README.md).
