@@ -49,7 +49,7 @@ def assert_recorded_source(path,expected):
             evidence=(SPECTRUM/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
             assert hashlib.sha256(evidence).hexdigest()==spectrum['measurements_sha256']
             recorded=change['current']['text_lf_sha256']
-    for step in ('read-bits',):
+    for step in ('read-bits','rice'):
         if recorded==actual:break
         parser=json.loads((PARSER/f'{step}-transition.json').read_text(encoding='utf-8'))
         change=parser['sources'].get(path) or parser['validation_sources'].get(path)

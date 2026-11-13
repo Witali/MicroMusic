@@ -88,6 +88,15 @@ PWM comparisons are exact with zero underruns. The shared writeback lowers
 minimum queue occupancy from six to five on the heavy sparse80 workload.
 The observed costs rule out those three implementations as standalone changes.
 
+Two later changes passed all 22 universal Tiny88 AVR25 loads with IRQ.
+With the AVR GCC ABI and AVR-GCC 7.3.0 at `-Os -flto`, sharing the byte-wide
+cache shift saves 30 B. Accumulating the shifted Rice quotient while
+reading unary zeros saves a further 32 B and 2 B of peak stack. Both are
+C++ transformations selected in the compact AVR25 ASM runtime-profile
+build. They preserve the refill and error order and the eighth-zero escape.
+The explicit C backend retains the original readers.
+[Independent before/after measurements and reproducible commands](../../Codecs/LPX/research/tiny-parser-2026-11-13/README.md).
+
 For reproduction, use the matched player and observers from
 [the LSF compaction measurements](../../Codecs/LPX/research/lsf-compact-2026-11-10/README.md)
 with an `e0939e89` baseline. Apply one source change in a fresh ignored copy.

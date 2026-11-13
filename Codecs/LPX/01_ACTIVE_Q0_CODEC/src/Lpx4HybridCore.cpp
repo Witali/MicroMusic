@@ -442,6 +442,17 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
 }
 #if LPX4_ENABLE_SPEECH_COMPACT
 uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
+#if LPX4_COMPACT_ONLY && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+ // Accumulate high << k as zeros arrive. The eighth zero still selects escape.
+ const uint8_t step=1<<k;
+ uint8_t upper=0;
+ for(uint8_t high=0;high<8;++high){
+  if(readOne())return upper|(k?readBits(k):0);
+  if(error_)return 0;
+  upper+=step;
+ }
+ return readBits(width);
+#else
  uint8_t high=0;
  while(high<8 && !readOne()){
   if(error_)return 0;
@@ -449,6 +460,7 @@ uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
  }
  if(high==8)return readBits(width);
  return (high<<k)|(k?readBits(k):0);
+#endif
 }
 #endif
 // Container parsing: frame, block, and subframe headers.

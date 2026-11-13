@@ -68,7 +68,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       recorded=change.current[field];
     }
   }
-  for(const step of ['read-bits']){
+  for(const step of ['read-bits','rice']){
     if(recorded===actual)break;
     const parser=JSON.parse(read(parserReport+step+'-transition.json'));
     const change=parser.sources[path] ?? parser.validation_sources[path];
