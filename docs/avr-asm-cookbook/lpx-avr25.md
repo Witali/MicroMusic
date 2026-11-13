@@ -225,3 +225,16 @@ selectable C equivalent. AVR-GCC 7.3.0 at `-Os -flto` and the AVR GCC ABI
 save 4 program bytes and up to 7.76 cycles per sample with IRQ. All 22
 universal workloads reproduce exact PWM and pass with zero underruns.
 [Source-bound measurements](../../Codecs/LPX/research/tiny-lpc-short-2026-11-13/README.md).
+
+## Bias signed input for the shared Q14 postfilter
+
+Compute the existing unsigned quotient with the state biased by 32768.
+Removing `2 * coefficient` at the end preserves each signed floor and
+eliminates the sign-dependent correction. Seed the first multiplication
+round by moving the state into the zero accumulator when its bit is set.
+The remaining rounds can shift each coefficient byte in place. The bounded
+0–16384 coefficient and signed16 state contracts retain the selectable C
+equivalent on AVR25. AVR-GCC 7.3.0 with the AVR GCC ABI at `-Os -flto` saves
+18 program bytes and up to 21 cycles per sample with the complete IRQ.
+All 22 loads preserve exact PWM and pass without underruns.
+[Measurements and proof](../../Codecs/LPX/research/tiny-q14-2026-11-13/README.md).

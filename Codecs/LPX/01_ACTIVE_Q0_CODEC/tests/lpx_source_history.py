@@ -12,6 +12,7 @@ SPECTRUM=REPO/'Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13'
 PARSER=REPO/'Codecs/LPX/research/tiny-parser-2026-11-13'
 LPC_PAIRS=REPO/'Codecs/LPX/research/tiny-lpc-pairs-2026-11-13'
 LPC_SHORT=REPO/'Codecs/LPX/research/tiny-lpc-short-2026-11-13'
+Q14=REPO/'Codecs/LPX/research/tiny-q14-2026-11-13'
 
 
 def assert_recorded_source(path,expected):
@@ -64,6 +65,7 @@ def assert_recorded_source(path,expected):
     for directory,revision in (
         (LPC_PAIRS,'84de5ce411a1ace1b29a732f0998c10f67f3e53f'),
         (LPC_SHORT,'26faf77221d4259eda9859b545e2ed25b12b898a'),
+        (Q14,'dc522dea665e544aebc95b550a7789186e7bec0d'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

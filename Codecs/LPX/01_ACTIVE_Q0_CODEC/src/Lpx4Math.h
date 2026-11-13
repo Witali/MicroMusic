@@ -381,24 +381,25 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     "sbc %D0,__zero_reg__\n\tsbrc r25,7\n\tinc %D0\n\t5:\n\t"
 #if LPX4_USE_AVR_NOMUL_ASM
 // coefficient is below 16384; the endpoint is handled by AttenuateQ14.
-// Retain only floor(coefficient*uint16(state)/16384), then correct the sign.
+// Bias the signed state by 32768, then subtract 2*coefficient after the
+// Q14 shift. The bias contributes an integer, preserving the exact floor.
 // One shared runtime-coefficient kernel serves both stream-defined filters.
 static inline __attribute__((always_inline)) int16_t lpx4NomulAttenuate(uint16_t coefficient,int16_t state){
     uint16_t result,original=coefficient;
     __asm__(
+        "subi %B3,128\n\t"
         "clr %A0\n\tclr %B0\n\t"
-        ".rept 8\n\tlsr %A1\n\tbrcc 2f\n\t"
+        // Seed the first round with zero or half of the biased state.
+        "lsr %A1\n\tbrcc 4f\n\tmovw %A0,%A3\n\tlsr %B0\n\tror %A0\n\t4:\n\t"
+        ".rept 7\n\tlsr %A1\n\tbrcc 2f\n\t"
         "add %A0,%A3\n\tadc %B0,%B3\n\t"
         "2: ror %B0\n\tror %A0\n\t.endr\n\t"
-        "mov %A1,%B1\n\t"
-        ".rept 6\n\tlsr %A1\n\tbrcc 2f\n\t"
+        ".rept 6\n\tlsr %B1\n\tbrcc 2f\n\t"
         "add %A0,%A3\n\tadc %B0,%B3\n\t"
         "2: ror %B0\n\tror %A0\n\t.endr\n\t"
-        "sbrs %B3,7\n\trjmp 3f\n\t"
-        "lsl %A2\n\trol %B2\n\tlsl %A2\n\trol %B2\n\t"
-        "sub %A0,%A2\n\tsbc %B0,%B2\n\t3:\n\t"
-        : "=&r"(result),"+&r"(coefficient),"+&r"(original)
-        : "r"(state) : "cc");
+        "lsl %A2\n\trol %B2\n\tsub %A0,%A2\n\tsbc %B0,%B2\n\t"
+        : "=&r"(result),"+&r"(coefficient),"+&r"(original),"+&d"(state)
+        : : "cc");
     return (int16_t)result;
 }
 #endif
@@ -653,8 +654,9 @@ static inline int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
         : "=&r"(result),"=&r"(wide) : "a"(coefficient),"a"(state) : "r0","r1","cc");
     return result;
 #elif LPX4_USE_AVR_NOMUL_ASM
-    if(coefficient==16384)return state;
-    if(coefficient==8192)return state>>1;
+    // Only the unity endpoint has bit 14 set in the bounded domain.
+    if(coefficient&16384)return state;
+    if((uint8_t)coefficient==0 && (uint8_t)(coefficient>>8)==32)return state>>1;
     if(coefficient==64)return state>>8;
     return lpx4NomulAttenuate(coefficient,state);
 #else
