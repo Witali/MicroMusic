@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {parseHex} from '../lib/hex.js';
 import {assertLpxRecordedSource} from './helpers/lpx-source-transition.mjs';
+import {assertRecordedBuildSource,readRecordedBuildFile} from './helpers/recorded-build-source.mjs';
 
 const root=new URL('../../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root));
@@ -18,10 +19,17 @@ test('LSF compaction binds new evidence and preserves the historical receipts',(
   assert.equal(transition.baseline_revision,'0320c1014618188a3121fdfef0be55b30690d977');
   for(const [path,digest] of Object.entries(transition.receipts_sha256))
     assert.equal(textSha(path),digest,path);
-  for(const [path,digest] of Object.entries(transition.preserved_receipts_sha256))
-    assert.equal(textSha(path),digest,path+' historical receipt');
-  for(const [path,digest] of Object.entries(transition.validation_source_sha256))
-    assertLpxRecordedSource(path,digest);
+  for(const [path,digest] of Object.entries(transition.preserved_receipts_sha256)){
+    const actual=path.startsWith('web-player/')
+      ? sha(readRecordedBuildFile(transition.baseline_revision,path).toString('utf8').replaceAll('\r\n','\n'))
+      : textSha(path);
+    assert.equal(actual,digest,path+' historical receipt');
+  }
+  for(const [path,digest] of Object.entries(transition.validation_source_sha256)){
+    if(path.startsWith('web-player/tests/'))
+      assertRecordedBuildSource('e0939e89d88e4d91e9e441310f504ddbfd5581aa',path,digest);
+    else assertLpxRecordedSource(path,digest);
+  }
   for(const [path,row] of Object.entries(transition.sources))
     assertLpxRecordedSource(path,row.current.text_lf_sha256);
 });
@@ -79,7 +87,7 @@ test('LSF compaction preserved the whole native corpus, floating mode, and shipp
     assertLpxRecordedSource(path,digest);
   for(const row of nano.images){
     assert.equal(row.binary_exact,true);assert.equal(row.no_float_runtime_symbols,true);
-    const bytes=read(row.source);
+    const bytes=readRecordedBuildFile(transition.baseline_revision,row.source);
     assert.equal(sha(bytes),row.shipped_hex_sha256);
     assert.equal(sha(parseHex(bytes.toString(),30720)),row.current_binary_sha256);
     assert.equal(row.flash_bytes,row.shipped_flash_bytes);

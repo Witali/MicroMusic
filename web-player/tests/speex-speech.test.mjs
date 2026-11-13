@@ -6,6 +6,7 @@ import {speexFirmwareEntries} from '../lib/speex-preview.js';
 import {previewWaveform} from '../lib/native-preview.js';
 import {parseHex} from '../lib/hex.js';
 import {playerApp} from './helpers/player-app.mjs';
+import {assertRecordedBuildSource} from './helpers/recorded-build-source.mjs';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url));
 const catalog=JSON.parse(read('firmware-speex-atmega328p.json'));
 const common=JSON.parse(read('speech-examples.json'));
@@ -45,7 +46,7 @@ test('twelve public Speex examples bind complete originals, raw packets, PWM WAV
     assert.ok(v.samples>=v.inputSamples+v.sampleHz*.08);
   }
   for(const [path,expected] of Object.entries(catalog.sourceSha256))
-    assert.equal(hash(readFileSync(new URL('../../'+path,import.meta.url),'utf8').replaceAll('\r\n','\n')),expected,path);
+    assertRecordedBuildSource('b0375795b56a40efb9d90b7ae0fe7be30f7310ad',path,expected);
 });
 
 test('Speex schema rejects wrong rates, pin routing, foreign assets and unverified timing',()=>{

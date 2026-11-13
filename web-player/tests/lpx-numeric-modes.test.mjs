@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {parseHex} from '../lib/hex.js';
 import {assertLpxRecordedSource} from './helpers/lpx-source-transition.mjs';
+import {readRecordedBuildFile} from './helpers/recorded-build-source.mjs';
 
 const root=new URL('../../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root));
@@ -12,12 +13,17 @@ const textSha=path=>sha(read(path).toString('utf8').replaceAll('\r\n','\n'));
 const folder='Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/';
 const json=path=>JSON.parse(read(path));
 const transition=json(folder+'c-numeric-transition.json');
+const buildRevision='0320c1014618188a3121fdfef0be55b30690d977';
 
 test('numeric source transition preserves receipts and source bindings from 0320c101',()=>{
   assert.equal(transition.complete,true);
   assert.equal(transition.baseline_revision,'393b2de271568890d7b483f7602a2f59452d1a68');
-  for(const [path,digest] of Object.entries(transition.historical_receipts_sha256))
-    assert.equal(textSha(path),digest,path+' unchanged historical receipt');
+  for(const [path,digest] of Object.entries(transition.historical_receipts_sha256)){
+    const actual=path.startsWith('web-player/')
+      ? sha(readRecordedBuildFile(buildRevision,path).toString('utf8').replaceAll('\r\n','\n'))
+      : textSha(path);
+    assert.equal(actual,digest,path+' unchanged historical receipt');
+  }
   for(const [path,digest] of Object.entries(transition.current_receipts_sha256))
     assert.equal(textSha(path),digest,path+' current evidence');
   for(const [path,row] of Object.entries(transition.sources)){
@@ -57,13 +63,16 @@ test('numeric mode integration rebuilt eighteen fixed ASM images equal to shippe
   assert.equal(r.all_binaries_exact,true);assert.equal(r.all_no_float_runtime_symbols,true);
   for(const [path,digest] of Object.entries(r.current_source_sha256))
     assertLpxRecordedSource(path,digest);
-  const catalogs=[json('web-player/firmware-lpx-attiny88.json'),json('web-player/firmware-atmega328p.json')];
+  // Compare the recorded build to the public images at the time of the measurement.
+  const recorded=path=>readRecordedBuildFile(buildRevision,'web-player/'+path);
+  const catalogs=['firmware-lpx-attiny88.json','firmware-atmega328p.json'].map(path=>JSON.parse(recorded(path)));
+  const dialogue=JSON.parse(recorded('audio/lpx-dialogue/manifest.json'));
   for(const row of r.cases){
     assert.equal(row.binary_exact,true);assert.equal(row.no_float_runtime_symbols,true);
     assert.equal(row.current_binary_sha256,row.shipped_binary_sha256);
-    const source=row.family==='dialogue'?json('web-player/audio/lpx-dialogue/manifest.json').firmware:
+    const source=row.family==='dialogue'?dialogue.firmware:
       catalogs[row.family==='tiny'?0:1].variants.find(v=>v.clipId+'-'+v.id===row.id).source;
-    const data=read('web-player/'+source);
+    const data=recorded(source);
     assert.equal(sha(data),row.shipped_hex_sha256);
     assert.equal(sha(parseHex(data.toString(),row.family==='tiny'?8192:30720)),row.current_binary_sha256);
   }

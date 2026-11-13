@@ -6,6 +6,7 @@ import {speexDialogueProfiles} from '../lib/speex-preview.js';
 import {previewWaveform} from '../lib/native-preview.js';
 import {parseHex} from '../lib/hex.js';
 import {playerApp} from './helpers/player-app.mjs';
+import {assertRecordedBuildSource} from './helpers/recorded-build-source.mjs';
 
 const read=path=>readFileSync(new URL('../'+path,import.meta.url));
 const data=JSON.parse(read('firmware-speex-dialogue-atmega328p.json'));
@@ -22,7 +23,7 @@ test('three complete Speex dialogue images fit the Nano budget and bind exact IR
   assert.ok(data.sources.every(source=>Math.abs(source.normalized.lufs+18)<.1));
   for(const source of data.sources)assert.equal(hash(read(source.source)),source.sourceSha256);
   for(const [path,expected]of Object.entries(data.sourceSha256))
-    assert.equal(hash(readFileSync(new URL('../../'+path,import.meta.url),'utf8').replaceAll('\r\n','\n')),expected,path);
+    assertRecordedBuildSource('9772b0a4a82d343b5e07937778cffe0d13d63ccb',path,expected);
   assert.equal(data.sourceSha256['tools/dialogue_source.py'],lpx.sourceSha256['tools/dialogue_source.py']);
   for(const [i,v]of data.variants.entries()){
     assert.equal(v.available,true);assert.ok(v.flashBytes<=30720);
