@@ -1,0 +1,935 @@
+{
+  "schema": "lpx-tiny-v9-lpc-half-v1",
+  "baseline_revision": "c415ab84c5e00a77c36eb10a5c4b6384c172c068",
+  "target": "ATtiny88 / AVR25",
+  "compiler": "avr-g++ 7.3.0",
+  "compiler_options": [
+    "-Os",
+    "-flto",
+    "-mcall-prologues",
+    "-mrelax"
+  ],
+  "simulator": "simavr 1.6",
+  "clock_hz": 16000000,
+  "sample_hz": 8000,
+  "queue": 32,
+  "prefill": 24,
+  "lpc_segments": 2,
+  "memory": "SRAM512",
+  "mul16_unroll": 2,
+  "physical_board_measured": false,
+  "complete": true,
+  "matched_c_reference": true,
+  "metric": "Mean active decoder CPU cycles per sample plus complete IRQ",
+  "cases": [
+    {
+      "case": "all-pairs",
+      "samples": 16000,
+      "input_sha256": "bbf9df22972bdeff5e1cea8966fa4aebecddf4871dde4967cdbe70d4e421607b",
+      "audio_bytes": 1017,
+      "pwm_sha256": "d4ad121774c78b2f53ed057181fd1fc9072877a63342f593cb705c33ff1fbf80",
+      "before": {
+        "flash_bytes": 6216,
+        "program_bytes": 5199,
+        "binary_sha256": "9d4a70c6ef4f94316550e497094fb25406630b2588c11cce5531fd6dc08cfe79",
+        "mean_cycles_with_irq": 904.499061,
+        "decode_cpu_max": 14950,
+        "stack_bytes": 50,
+        "stack_margin": 28,
+        "min_queue": 27,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1998,
+        "output_gap_max": 2001
+      },
+      "after": {
+        "flash_bytes": 6208,
+        "program_bytes": 5191,
+        "binary_sha256": "7af3973b3e04ed43b2d38cbd55a8f82e40b07f1177c995a72b189f7e24f3a826",
+        "mean_cycles_with_irq": 904.499061,
+        "decode_cpu_max": 14860,
+        "stack_bytes": 50,
+        "stack_margin": 28,
+        "min_queue": 27,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1998,
+        "output_gap_max": 2001
+      }
+    },
+    {
+      "case": "bread-compact",
+      "samples": 19200,
+      "input_sha256": "41d2b0164474ce73cfecbd14be4c15c34f6e3a0135f99b8362d6b53566ef9188",
+      "audio_bytes": 996,
+      "pwm_sha256": "5496c43e512e6630e158e30c0bc0ff8d697f9ca4bb869f6e19d5f1b22b562030",
+      "before": {
+        "flash_bytes": 6194,
+        "program_bytes": 5198,
+        "binary_sha256": "df4246a15ef1207109d5d85a51818d0890a12941481ed9e59f006af450409fcb",
+        "mean_cycles_with_irq": 1492.666927,
+        "decode_cpu_max": 15732,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 6186,
+        "program_bytes": 5190,
+        "binary_sha256": "71a1f5d456f5408b3f026db4625d8e602d0778aa0581178291e4548ce33ff6cc",
+        "mean_cycles_with_irq": 1492.137203,
+        "decode_cpu_max": 15647,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2008
+      }
+    },
+    {
+      "case": "bread-low15",
+      "samples": 19200,
+      "input_sha256": "c7e2d6132864ba5b1969727dc2ab634211167121ff6139c5952340bd5daef519",
+      "audio_bytes": 393,
+      "pwm_sha256": "6ee37f5fff6409cc04f531e27e78db69a9ffc1b4ea5b06ed474453bf97c784b4",
+      "before": {
+        "flash_bytes": 5592,
+        "program_bytes": 5199,
+        "binary_sha256": "a3a83e7c66aef0e0b7bbed167166bcb2254d36225dd222659fbfe9883fcb46bb",
+        "mean_cycles_with_irq": 1247.754172,
+        "decode_cpu_max": 15546,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 5584,
+        "program_bytes": 5191,
+        "binary_sha256": "c36773160125149e8ed4478ca78ce24a04e3cc598f6f8031f830973f9178c755",
+        "mean_cycles_with_irq": 1247.625782,
+        "decode_cpu_max": 15459,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1995,
+        "output_gap_max": 2005
+      }
+    },
+    {
+      "case": "bread-quality",
+      "samples": 19200,
+      "input_sha256": "791170e329f6634db98a18acf1d881749b937761a715d556ff64f5e3fe00b58c",
+      "audio_bytes": 1881,
+      "pwm_sha256": "de5e8e3a27ce8bc7e2e43c6a7e2158974101d20b854adb337e45ee3062fad4fe",
+      "before": {
+        "flash_bytes": 7080,
+        "program_bytes": 5199,
+        "binary_sha256": "67a33bdaff7435865eb6785e3329d3ad59e1f923a7d51d307b7924e224ae2ae2",
+        "mean_cycles_with_irq": 1450.204631,
+        "decode_cpu_max": 16452,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 7072,
+        "program_bytes": 5191,
+        "binary_sha256": "94eac77f311a979aec7d78a6a616b5451a6927fc819b17701cd292a4a43a8ddd",
+        "mean_cycles_with_irq": 1449.673446,
+        "decode_cpu_max": 16369,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "chego-2k",
+      "samples": 9831,
+      "input_sha256": "00315a2e6eb7c23f23235ce6173d3a27b6f8184727512b75dd7cd40e21a6426c",
+      "audio_bytes": 297,
+      "pwm_sha256": "24aa20128092761cbc46fc2f492f67080cc3b7411582239e7c23c770c7292891",
+      "before": {
+        "flash_bytes": 5496,
+        "program_bytes": 5199,
+        "binary_sha256": "2b6f6759cb1c79f492adbb2bbae567014aef559a3bc213cde39240888222d16b",
+        "mean_cycles_with_irq": 1459.80208,
+        "decode_cpu_max": 15793,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 5488,
+        "program_bytes": 5191,
+        "binary_sha256": "054772c376dadeadd512f1996606459bbaa9eaa7a3b4782ea6c5433be2fd75e3",
+        "mean_cycles_with_irq": 1459.309575,
+        "decode_cpu_max": 15700,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2008
+      }
+    },
+    {
+      "case": "chego-compact",
+      "samples": 9831,
+      "input_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+      "audio_bytes": 522,
+      "pwm_sha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf",
+      "before": {
+        "flash_bytes": 5720,
+        "program_bytes": 5198,
+        "binary_sha256": "953e9c635a98da954e506108d1eaf4a8b799c2569c81f537aea7beffb204f8fa",
+        "mean_cycles_with_irq": 1510.736617,
+        "decode_cpu_max": 15579,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 5712,
+        "program_bytes": 5190,
+        "binary_sha256": "5a53f4db7607fad8b9d18d330e8b1c6d669dea0beefd5a302f9661fa8ea9fd41",
+        "mean_cycles_with_irq": 1510.206383,
+        "decode_cpu_max": 15494,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2008
+      }
+    },
+    {
+      "case": "chego-quality",
+      "samples": 9831,
+      "input_sha256": "e811e60295c6245519dcd497ea8ed597dcaa5d996ce995b35e0966b92db78f65",
+      "audio_bytes": 776,
+      "pwm_sha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea",
+      "before": {
+        "flash_bytes": 5974,
+        "program_bytes": 5198,
+        "binary_sha256": "5795f9fad78562fc43932451e705670a5f4448539b1cc113f7edc0e42d3621d1",
+        "mean_cycles_with_irq": 1504.751198,
+        "decode_cpu_max": 16278,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1993,
+        "output_gap_max": 2007
+      },
+      "after": {
+        "flash_bytes": 5966,
+        "program_bytes": 5190,
+        "binary_sha256": "880bcf12061fc7ff133f3f08ea654c085f0274846b8fdb8000689d9f8c4481c5",
+        "mean_cycles_with_irq": 1504.222596,
+        "decode_cpu_max": 16185,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "otvechaesh-compact",
+      "samples": 8466,
+      "input_sha256": "8d6c86fe7be247d948a168d188af2fb0652b12fb6769b20955691b470f69cf16",
+      "audio_bytes": 450,
+      "pwm_sha256": "70bcb3b622b39bb4499ce8dc586aae4b6a909172853e11f99299af466f011c02",
+      "before": {
+        "flash_bytes": 5648,
+        "program_bytes": 5198,
+        "binary_sha256": "8a2405d2f5b56065c9aac3679539b7d84e7201bec88de97700ab3c2080ae30b3",
+        "mean_cycles_with_irq": 1506.625326,
+        "decode_cpu_max": 15415,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1994,
+        "output_gap_max": 2006
+      },
+      "after": {
+        "flash_bytes": 5640,
+        "program_bytes": 5190,
+        "binary_sha256": "0927eca251f096d676395bb90ccff01fe614e74cad12e0f5bd08ad05c92a404f",
+        "mean_cycles_with_irq": 1506.088012,
+        "decode_cpu_max": 15330,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1993,
+        "output_gap_max": 2006
+      }
+    },
+    {
+      "case": "otvechaesh-quality",
+      "samples": 8466,
+      "input_sha256": "abbb18c4b1da77990b049caab94a94cf51a16e8ee39cbd3e01642fe9b5659880",
+      "audio_bytes": 671,
+      "pwm_sha256": "77f447114a2a2f1734339eabf7537b24ebde914389830bb76fc232ed21d3df91",
+      "before": {
+        "flash_bytes": 5870,
+        "program_bytes": 5199,
+        "binary_sha256": "0bcb6f3f947e7ea40e9b378af711fe8ac6152a575d42baaa479841e68a28a43f",
+        "mean_cycles_with_irq": 1500.830964,
+        "decode_cpu_max": 16066,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2008
+      },
+      "after": {
+        "flash_bytes": 5862,
+        "program_bytes": 5191,
+        "binary_sha256": "bb7dbb5d25fb805cf41e612e5cd5865976122b3a199b402bfae923856ea4b553",
+        "mean_cycles_with_irq": 1500.291756,
+        "decode_cpu_max": 15979,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1993,
+        "output_gap_max": 2007
+      }
+    },
+    {
+      "case": "p4-changing-lag145-pre0-bright0",
+      "samples": 12800,
+      "input_sha256": "293f4a8132153b275e9acff9841f56c3fb10932b1ac30a1314b56170a751948c",
+      "audio_bytes": 678,
+      "pwm_sha256": "1d25166f3a8cc979897be60ed7bfce313956ad52f8bf280571ae09411bac7768",
+      "before": {
+        "flash_bytes": 5876,
+        "program_bytes": 5198,
+        "binary_sha256": "dbf1659ceb4bc760c505560f7b004c981ff9cc89b0bc24d902f2a01b5c8b719f",
+        "mean_cycles_with_irq": 927.913745,
+        "decode_cpu_max": 14343,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1997,
+        "output_gap_max": 2003
+      },
+      "after": {
+        "flash_bytes": 5868,
+        "program_bytes": 5190,
+        "binary_sha256": "adaf36d3dfcfa9c2acf3b9340063c57935664d2ed0a3848295f89679a1deca35",
+        "mean_cycles_with_irq": 927.373513,
+        "decode_cpu_max": 14254,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1993,
+        "output_gap_max": 2008
+      }
+    },
+    {
+      "case": "p4-clusters-lag18-pre16384-bright11469",
+      "samples": 12800,
+      "input_sha256": "39feb5869bf50774e6d1270b09ffad5820ca243da856ef0b3ce2f00e74b68d55",
+      "audio_bytes": 1141,
+      "pwm_sha256": "fbf39ec4022b19379e015f78268adb5ec7d00fe6517505e7bb90189248d2974b",
+      "before": {
+        "flash_bytes": 6340,
+        "program_bytes": 5199,
+        "binary_sha256": "9370e628a710e9d645cbbcc7a398156e2da58af7226ccae09beb8de48b552185",
+        "mean_cycles_with_irq": 1124.419302,
+        "decode_cpu_max": 15190,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2008
+      },
+      "after": {
+        "flash_bytes": 6332,
+        "program_bytes": 5191,
+        "binary_sha256": "7cc1c433ce62459453380308b70e6fabdc8f69acd72f2374005baba0401533aa",
+        "mean_cycles_with_irq": 1123.804086,
+        "decode_cpu_max": 15103,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1993,
+        "output_gap_max": 2007
+      }
+    },
+    {
+      "case": "p6-changing-lag145-pre8192-bright11469",
+      "samples": 12800,
+      "input_sha256": "b892b96fa182caf9f56f65b057d00ed711ac3563883fad2681b76e4a77f91272",
+      "audio_bytes": 1443,
+      "pwm_sha256": "d9eec147f4cfc92246a764aa627dd6bf82c10cc1266a1de8f3d070c66b570284",
+      "before": {
+        "flash_bytes": 6642,
+        "program_bytes": 5199,
+        "binary_sha256": "a6ff1db5d2ad6840d702e43956860005ba516090f5defc0a752cb89e1d3db207",
+        "mean_cycles_with_irq": 1130.38588,
+        "decode_cpu_max": 16020,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 6634,
+        "program_bytes": 5191,
+        "binary_sha256": "ca94f1426b4c931ca5960083b7fa9f0c887feccec9260ddf0600132adc0a71f5",
+        "mean_cycles_with_irq": 1129.810348,
+        "decode_cpu_max": 15926,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "p6-changing-lag18-pre16383-bright11468",
+      "samples": 12800,
+      "input_sha256": "b4e886eb33a990d8059946349c42a99f0581b0181d606040882971a6cc2d75d9",
+      "audio_bytes": 1003,
+      "pwm_sha256": "e0dd9036549d4f79db1a794a0addd4d60898c7b77e2fcf50292405c20b24738e",
+      "before": {
+        "flash_bytes": 6202,
+        "program_bytes": 5199,
+        "binary_sha256": "3734cbe71b1e511f16adf7d5ab50869f50503f78d2f2f81c9820ac27b5979214",
+        "mean_cycles_with_irq": 1216.901534,
+        "decode_cpu_max": 15778,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 6194,
+        "program_bytes": 5191,
+        "binary_sha256": "278cf744e170a7534effb0691d521f371bdf67874a759cbfc942f8af1279b8bc",
+        "mean_cycles_with_irq": 1216.326002,
+        "decode_cpu_max": 15684,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "p6-clusters-lag145-pre1-bright1",
+      "samples": 12800,
+      "input_sha256": "afb8732c68ec4d7123efc32eff483ca3f62721263dd14173ba1e35b633c737f6",
+      "audio_bytes": 1471,
+      "pwm_sha256": "8f5908823dde16964cfad461981a125da4e83d4cf96c55481d67cfed0651a726",
+      "before": {
+        "flash_bytes": 6670,
+        "program_bytes": 5199,
+        "binary_sha256": "2e2e1b89b4711771073f46867aeb5782c55cd9b654ba1b931ebd351876ebfc4f",
+        "mean_cycles_with_irq": 1204.248904,
+        "decode_cpu_max": 15494,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 6662,
+        "program_bytes": 5191,
+        "binary_sha256": "3d348b8333358a93cd693510f837acb539e29eee74e8483527203431c0af4267",
+        "mean_cycles_with_irq": 1203.599796,
+        "decode_cpu_max": 15397,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "p6-clusters-lag18-pre8192-bright11469",
+      "samples": 12800,
+      "input_sha256": "82584a683837bd01ce2eccfc1d1a7cab2f3cf0dab861ef58adeb4d4da3bc36d0",
+      "audio_bytes": 1471,
+      "pwm_sha256": "19aa0b4e2aa1306c23562adf46f89e37020a409270f7c5569f04f5aae30309ec",
+      "before": {
+        "flash_bytes": 6670,
+        "program_bytes": 5199,
+        "binary_sha256": "51e7484ceb5c7d60a3f416dc15596c7496ee15548e704edadcc56f5028f02467",
+        "mean_cycles_with_irq": 1144.865373,
+        "decode_cpu_max": 15440,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2007
+      },
+      "after": {
+        "flash_bytes": 6662,
+        "program_bytes": 5191,
+        "binary_sha256": "b2769054f747dfde9402b1f5cca2173130397b8986f9cc1e16e3ddb43d89345c",
+        "mean_cycles_with_irq": 1144.216265,
+        "decode_cpu_max": 15343,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2008
+      }
+    },
+    {
+      "case": "s80-changing-lag145-pre0-bright0",
+      "samples": 12800,
+      "input_sha256": "1a54317290d0a1e12bb0ec8bd3851d0a2cae7b1c5104dea952987e3060286486",
+      "audio_bytes": 361,
+      "pwm_sha256": "16923e1174d352a0d3cf61d79fe73fef0a5c7cc1265ba3bd0e743976de90b08a",
+      "before": {
+        "flash_bytes": 5560,
+        "program_bytes": 5199,
+        "binary_sha256": "bd7de440bd2fe1d696085f76649cc7d4733e062408b3364ea6920156f95270f8",
+        "mean_cycles_with_irq": 1374.32381,
+        "decode_cpu_max": 15527,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 5552,
+        "program_bytes": 5191,
+        "binary_sha256": "bfb6264db1c8a302d71a84a2c8673726dece06f97e336123ab93dbdff1005088",
+        "mean_cycles_with_irq": 1373.804869,
+        "decode_cpu_max": 15442,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "s80-changing-lag145-pre8192-bright11469",
+      "samples": 12800,
+      "input_sha256": "7d3a168216dd3de135e14e9fcb7ba5d7c947d7cec2dd0650275f7615cf59d0c7",
+      "audio_bytes": 361,
+      "pwm_sha256": "e785cb81ab2b827aa7baec82b842f63b167828c73c1213a1804d77b0c2a2f233",
+      "before": {
+        "flash_bytes": 5560,
+        "program_bytes": 5199,
+        "binary_sha256": "e5a36aa6d5bf5294b067b72a45563707ae341fc64a035e5e856e60022f007dbe",
+        "mean_cycles_with_irq": 1507.662727,
+        "decode_cpu_max": 15664,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1993,
+        "output_gap_max": 2008
+      },
+      "after": {
+        "flash_bytes": 5552,
+        "program_bytes": 5191,
+        "binary_sha256": "145969f6e991057079e4e8062fc51235f2df44dc02eeb3e1cbddd8758af8c449",
+        "mean_cycles_with_irq": 1507.143785,
+        "decode_cpu_max": 15579,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1993,
+        "output_gap_max": 2008
+      }
+    },
+    {
+      "case": "s80-changing-lag18-pre16383-bright11468",
+      "samples": 12800,
+      "input_sha256": "c0ac38c4331cfb141b9dabcef4be408a8a00466310bcea71974d7ba4e71c1650",
+      "audio_bytes": 361,
+      "pwm_sha256": "d71b6d2e1f97044516bdc7d992e55f4a5a59507ce45e6736e7fbf1c95a1b21d4",
+      "before": {
+        "flash_bytes": 5560,
+        "program_bytes": 5199,
+        "binary_sha256": "9af7a116eadfc5dc2bdd62fafd10d8b434067543d6daa2495aa54fc2c2b84005",
+        "mean_cycles_with_irq": 1656.296807,
+        "decode_cpu_max": 15752,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 5552,
+        "program_bytes": 5191,
+        "binary_sha256": "e185694ff6e866cc50c3ef6fd2c37243a2ae3d7ae459ec48808c253fc651e20b",
+        "mean_cycles_with_irq": 1655.777865,
+        "decode_cpu_max": 15667,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "s80-clusters-lag145-pre1-bright1",
+      "samples": 12800,
+      "input_sha256": "68628c8c0b5f7a9be164d0f249d5237d1ee41fc379ff8271e5af1e6412defc1c",
+      "audio_bytes": 412,
+      "pwm_sha256": "7e63a13a308b30ae6dd9de99d70237f2a56564aa03b94fd0dc275a56389b33eb",
+      "before": {
+        "flash_bytes": 5610,
+        "program_bytes": 5198,
+        "binary_sha256": "d5cad1cb3dbf771fe3761440e646a9b22deb0b3a9d9ffca1e32a222f2628d7a7",
+        "mean_cycles_with_irq": 1128.942314,
+        "decode_cpu_max": 14820,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2007
+      },
+      "after": {
+        "flash_bytes": 5602,
+        "program_bytes": 5190,
+        "binary_sha256": "b310ea296d258045173cd7ac364682d597d02fbe7ca8a6b14db11138758c7cf7",
+        "mean_cycles_with_irq": 1128.293206,
+        "decode_cpu_max": 14723,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "s80-clusters-lag18-pre16384-bright11469",
+      "samples": 12800,
+      "input_sha256": "b2f863053df19c9d93475a2dac12e3e94e78db9cfc7f8aaee23f3bc67552ca63",
+      "audio_bytes": 412,
+      "pwm_sha256": "ba0a711337d8e1201120e54d15fa1cf7eff82f7751c58b0a339a89c8fc62b0b2",
+      "before": {
+        "flash_bytes": 5610,
+        "program_bytes": 5198,
+        "binary_sha256": "e73671ffdff07a9d987f1fe135fa401a5f126f2046224d2767311adc87bd812b",
+        "mean_cycles_with_irq": 1051.502505,
+        "decode_cpu_max": 14731,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2007
+      },
+      "after": {
+        "flash_bytes": 5602,
+        "program_bytes": 5190,
+        "binary_sha256": "b75b8b70b74bf32b4ef4623b2d5ceb1eaade1694f8d73184e67750e36e9d2862",
+        "mean_cycles_with_irq": 1050.853397,
+        "decode_cpu_max": 14634,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "vinni-compact",
+      "samples": 23757,
+      "input_sha256": "1b9d60dde416b0d8e4f7d7c7da98d80a0022865894f6795bf07161e30a0a6de0",
+      "audio_bytes": 1200,
+      "pwm_sha256": "a7ea4cfc5c316bae12ef371966f2fd6cc3ea77c6a6b760036a021e450218a2a8",
+      "before": {
+        "flash_bytes": 6398,
+        "program_bytes": 5198,
+        "binary_sha256": "bd8050aff62d537978f9b9a0ee344136d08e39393a9f727f661d1015750dd071",
+        "mean_cycles_with_irq": 1461.799646,
+        "decode_cpu_max": 15318,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 6390,
+        "program_bytes": 5190,
+        "binary_sha256": "ebebbdba0b353de662fea3feeb3e92d8cfe9f7b8c18e70c04e65590ddb7f4a4f",
+        "mean_cycles_with_irq": 1461.292209,
+        "decode_cpu_max": 15233,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 24,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    },
+    {
+      "case": "vinni-quality",
+      "samples": 23757,
+      "input_sha256": "cbd74ad3e52c62c44e41a21937426d5ed5eed8ac10766aae2aea59aff00d4d19",
+      "audio_bytes": 1820,
+      "pwm_sha256": "d7749a8d25359d85474163c5e083c01acb0920fbf66a205ce3288a33244bb9d9",
+      "before": {
+        "flash_bytes": 7018,
+        "program_bytes": 5198,
+        "binary_sha256": "8782775659899b3ae62bb65836f8462a46f0c8590a5ac05f1581cd0333295420",
+        "mean_cycles_with_irq": 1463.747398,
+        "decode_cpu_max": 15958,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1992,
+        "output_gap_max": 2009
+      },
+      "after": {
+        "flash_bytes": 7010,
+        "program_bytes": 5190,
+        "binary_sha256": "83a57781e2f7a2d871b4d9561a6e25f821a5b6341c99b3047705e1dd245edc4d",
+        "mean_cycles_with_irq": 1463.217292,
+        "decode_cpu_max": 15875,
+        "stack_bytes": 54,
+        "stack_margin": 24,
+        "min_queue": 23,
+        "underruns": 0,
+        "irq_max": 38,
+        "output_gap_min": 1991,
+        "output_gap_max": 2009
+      }
+    }
+  ],
+  "arithmetic_probe": {
+    "target": "attiny88",
+    "clock_hz": 16000000,
+    "mul16_unroll": 2,
+    "cases": 177357,
+    "results": [
+      {
+        "backend": "c",
+        "cases": 177357,
+        "irqs": 37537,
+        "cycles": 59941850,
+        "passed": true
+      },
+      {
+        "backend": "asm",
+        "cases": 177357,
+        "irqs": 34234,
+        "cycles": 25541748,
+        "passed": true
+      },
+      {
+        "backend": "generic",
+        "cases": 177357,
+        "irqs": 37537,
+        "cycles": 59941850,
+        "passed": true
+      }
+    ],
+    "physical_board_measured": false,
+    "coverage": {
+      "pwm130_signed16_exhaustive": true,
+      "pitch_signed8_gain5_exhaustive": true,
+      "pitch_signed8_even_gain_exhaustive": true,
+      "history_layouts": [
+        10,
+        11
+      ],
+      "synthesis_signed16_exhaustive": false,
+      "attenuation_dynamic_exhaustive": false
+    },
+    "build_sha256": "b08035f3d3c8b7aa23383cdf4f9562ad060be17e94070493d55bafd857d34e34",
+    "math_header_sha256": "3e56e9485eecfe3d50618ebae017cae50f90a63def88a5e0a0cafe2ff5b5c5e6",
+    "multiply_header_sha256": "61f7bbbffde4610a3b3b38a5e3bd1b24876c2c996ec393a0654e96d0a79e4445",
+    "probe_sha256": "81c2ffcf6a87b800e2056c9305671aedb59229c3507fbef7deb3465e2e262a98",
+    "observer_sha256": "3dfea12b9cb6d9ce29bb67164335ced4928a7f2264a555990c50d617e99362af"
+  },
+  "half_clip_probe_cases": 1081,
+  "web_images": [
+    {
+      "family": "tiny",
+      "case": "chego-compact",
+      "binary_sha256": "9d27bf4d61561943054dd371579b91d48dfdcb20f1a25d74250985a2e715adff"
+    },
+    {
+      "family": "tiny",
+      "case": "chego-quality",
+      "binary_sha256": "51dfc45228890b0509b16fb575b33b2ffb622b35093128aa1837e40a2819c8f6"
+    },
+    {
+      "family": "tiny",
+      "case": "otvechaesh-compact",
+      "binary_sha256": "4c5749a84ad89a7e2f35738d79561f9fc19ed439f01869ee8b6e0ac780531641"
+    },
+    {
+      "family": "tiny",
+      "case": "otvechaesh-quality",
+      "binary_sha256": "d9f02eaec54d820628757043405fd12b66e6a182d54a94ffad1a5299316ceb05"
+    },
+    {
+      "family": "tiny",
+      "case": "vinni-compact",
+      "binary_sha256": "3b7024217575f247ce5d8a899d8051cb2053ecf76faa2405f7a66b6babba8538"
+    },
+    {
+      "family": "tiny",
+      "case": "vinni-quality",
+      "binary_sha256": "233a77de6a8292a268a9d89e673c41484b47724c6a4d66f867eabc1743bfc361"
+    },
+    {
+      "family": "tiny",
+      "case": "bread-compact",
+      "binary_sha256": "8b4074af893ed8bc47d956249d7d05358579ebd8dad866eeb39de46d8f1c4e4e"
+    },
+    {
+      "family": "tiny",
+      "case": "bread-quality",
+      "binary_sha256": "976db9a2d81806638ba6d571419c0a39ea959cb1584d46714dc558fad2698133"
+    },
+    {
+      "family": "tiny",
+      "case": "bread-low15",
+      "binary_sha256": "76f343e55cfc56d0e1c8b16f0603a262557dc1c5ac9df3b997a50d91e4289fc2"
+    },
+    {
+      "family": "nano",
+      "case": "chego-compact",
+      "binary_sha256": "4c87a861ad69ca4fa9abbd9676c74df5bfca92273cd01dcfaa16323f8f858a30"
+    },
+    {
+      "family": "nano",
+      "case": "chego-quality",
+      "binary_sha256": "7701894eda3c801b004060d1f5de7ccef8edb663677461b4a8d56f6dcd048feb"
+    },
+    {
+      "family": "nano",
+      "case": "otvechaesh-compact",
+      "binary_sha256": "31385413d06e0087cec4f5c37008369ed7086fa3899df2c6b1bef954c30a8e14"
+    },
+    {
+      "family": "nano",
+      "case": "otvechaesh-quality",
+      "binary_sha256": "007f20f64a38320c3793902a453f204ec38959f68feb9870c7c7435ec87e4578"
+    },
+    {
+      "family": "nano",
+      "case": "vinni-compact",
+      "binary_sha256": "bc22b7b75b5b23e3dca8d292f6789a0daeabff42c988c5611ca70331f14ac72e"
+    },
+    {
+      "family": "nano",
+      "case": "vinni-quality",
+      "binary_sha256": "663aadb9b4db4d313091e1374209bee88700f86f0c4ff11969eba7ae5b1fb255"
+    },
+    {
+      "family": "nano",
+      "case": "bread-compact",
+      "binary_sha256": "3f1fed4d223250cd873fd76e02a8f3d55d38e6aed727d2ef758b5b8eb72c5a29"
+    },
+    {
+      "family": "nano",
+      "case": "bread-quality",
+      "binary_sha256": "9fe14992d3214617869a1bb6bbd3d29b0bc366c42def664aa8b195d7f69fa05b"
+    },
+    {
+      "family": "dialogue",
+      "case": "dialogue-quality",
+      "binary_sha256": "28e37c30efae4258d1c77dda1c8a87c96029bc3042bae40811da4f64a04bc466"
+    }
+  ]
+}

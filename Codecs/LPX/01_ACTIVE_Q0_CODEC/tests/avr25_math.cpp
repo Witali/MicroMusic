@@ -49,6 +49,7 @@ __attribute__((noinline,used)) void math_case(){
         else if(math_bits==3)math_out=lpx4LpcInterpolate<true>(math_x,math_y,math_t,3);
         else math_out=lpx4LpcInterpolate<true>(math_x,math_y,math_t,4);
         break;
+    case 30:math_out=lpx4HalfClip15From24(math_exc);break;
     }
 }
 }

@@ -551,7 +551,8 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
 #undef LPX4_STRING_
 
 // Saturate a signed24 value to the synthesis range -32767..32767.
-// Synthesis is bounded by +/-3145728, so its upper byte is sign extension.
+// Synthesis is bounded by +/-3145728. AVR inspects the low 24 bits;
+// the C fallback takes a signed24 value sign-extended to int32_t.
 static inline __attribute__((always_inline)) int16_t lpx4Clip15From24(int32_t value){
 #if LPX4_USE_AVR_ASM || LPX4_USE_AVR_NOMUL_ASM
     int16_t result;
@@ -568,6 +569,22 @@ static inline __attribute__((always_inline)) int16_t lpx4Clip15From24(int32_t va
     return result;
 #else
     return value<-32767?-32767:(value>32767?32767:(int16_t)value);
+#endif
+}
+
+// Halve a signed24 polynomial sum toward zero and clamp to the LPC range.
+static inline __attribute__((always_inline)) int16_t lpx4HalfClip15From24(int32_t value){
+#if LPX4_USE_AVR_NOMUL_ASM
+    // Bias negative sums by one before the arithmetic shift. The clip
+    // consumes only the resulting low 24 bits, including their sign bit.
+    __asm__(
+        "sbrs %C0,7\n\trjmp 1f\n\t"
+        "subi %A0,255\n\tsbci %B0,255\n\tsbci %C0,255\n\t"
+        "1: asr %C0\n\tror %B0\n\tror %A0\n\t"
+        : "+d"(value) : : "cc");
+    return lpx4Clip15From24(value);
+#else
+    return lpx4Clip15From24(value/2);
 #endif
 }
 

@@ -1302,7 +1302,14 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
     for(uint8_t i=0;i<10;i++){
         // Degree11 P[k] == P[11-k]; fixed-header images retain full P storage.
         const uint8_t pindex=halfPolynomialP?(i<5?i+1:10-i):i+1;
-        out[i]=clamp(truncShift(ringPolyGet(ringQ_,pbase,pindex)+ringPolyGet(ringQ_,qbase,i+1),1),-32767,32767);
+        const int32_t sum=ringPolyGet(ringQ_,pbase,pindex)+ringPolyGet(ringQ_,qbase,i+1);
+#if LPX4_AVR25_V9_RUNTIME
+        // Each degree-11 polynomial is bounded by 4096*binomial(11,5)
+        // plus one unit for the final split-floor product. The sum is signed24.
+        out[i]=lpx4HalfClip15From24(sum);
+#else
+        out[i]=clamp(truncShift(sum,1),-32767,32767);
+#endif
     }
 #else
     for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);

@@ -19,6 +19,7 @@ const tinyPitchReport='Codecs/LPX/research/tiny-v9-pulse-pitch-2026-11-13/';
 const tinySharedPqReport='Codecs/LPX/research/tiny-v9-shared-pq-2026-11-13/';
 const tinySubframeReport='Codecs/LPX/research/tiny-v9-subframe-2026-11-13/';
 const tinyOddPhaseReport='Codecs/LPX/research/tiny-v9-odd-phase-2026-11-13/';
+const tinyLpcHalfReport='Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -170,6 +171,19 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       assert.equal(report.universal_irq_cases,22);
       assert.equal(report.identical_web_images,18);
       const evidence=read(tinyOddPhaseReport+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const report=JSON.parse(read(tinyLpcHalfReport+'source-transition.json'));
+    const change=report.sources[path] ?? report.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(report.complete,true);
+      assert.equal(report.baseline_revision,'c415ab84c5e00a77c36eb10a5c4b6384c172c068');
+      assert.equal(report.universal_irq_cases,22);
+      assert.equal(report.identical_web_images,18);
+      const evidence=read(tinyLpcHalfReport+'measurements.json');
       assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
       recorded=change.current[field];
     }

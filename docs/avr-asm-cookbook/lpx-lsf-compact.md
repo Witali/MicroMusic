@@ -176,3 +176,16 @@ With `-Os -flto` on the 22 simavr IRQ workloads, the complete player
 saves 40 B and maintains stack depth. PWM is exact; all loads finish
 without underruns. Peak decoding cycles fall by 230 in 21 workloads,
 and one ties. [Measurements and arithmetic coverage](../../Codecs/LPX/research/tiny-v9-odd-phase-2026-11-13/README.md).
+
+## Halve a bounded polynomial sum before saturation
+
+On ATtiny88 / AVR25, the sum of two final Q12 polynomial coefficients
+fits signed24. Bias a negative sum by one and shift three bytes
+arithmetically to divide toward zero. Reuse the signed24 saturation
+routine for the LPC output range. The selectable C backend performs
+signed division by two and applies the same clamp.
+
+AVR-GCC 7.3.0 with the GNU AVR ABI and `-Os -flto` saves 8 B of
+program Flash without increasing the stack. On 22 simavr loads with
+IRQ, PWM matches and peak active decoder cycles drop by 83–97.
+[Measurements and bounds](../../Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13/README.md).

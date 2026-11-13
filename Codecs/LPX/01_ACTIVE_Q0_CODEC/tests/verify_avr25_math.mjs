@@ -101,6 +101,14 @@ for(const x of boundary){
 }
 for(const value of [-3145728,-32769,-32768,-32767,-1,0,1,32767,32768,3145728])
  check(8,0,0,Math.max(-32767,Math.min(32767,value)),{exc:value});
+// Cover all transitions in signed24 halving, including both clipping edges.
+for(const edge of [-8388608,-4194304,-65536,-32768,0,32768,65534,4194304,8388607])
+ for(let value=Math.max(-8388608,edge-3);value<=Math.min(8388607,edge+3);value++)
+  check(30,0,0,Math.max(-32767,Math.min(32767,Math.trunc(value/2))),{exc:value});
+for(let i=0;i<1024;i++){
+ const value=(random()>>>8)-8388608;
+ check(30,0,0,Math.max(-32767,Math.min(32767,Math.trunc(value/2))),{exc:value});
+}
 for(let x=-32768;x<=32767;x++)check(24,x,0,Math.max(-16384,Math.min(16384,x)));
 for(const x of boundary)for(const c of [0,1,63,64,65,8191,8192,8193,16383,16384])
  check(4,x,c,Math.floor(x*c/16384));
