@@ -3184,6 +3184,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [The same universal LPX v9 core on AVR5](lpx-atmega328p-v9.md): matched public inputs/FIFO, actual ATmega328P hardware-MUL target, safe ordinary C ISR, four exact real-time playbacks and a throughput-rejected C control.
 - [Exact C decoding on ATmega328P](lpx-fixed-c-realtime.md): the 0320c101 word-extraction improvement meets real-time on all 306 corpus segments and retains a separate build-selected desktop double mode.
 - [Smaller exact LSF to LPC conversion](lpx-lsf-compact.md): reuse the first coefficient and a proven signed16 split high part; measured smaller universal Tiny/Mega images, unchanged fixed output, and rejected addressing/outline alternatives.
+- Exact power-of-two division, spectrum address selection, and measured parser tradeoffs on the `e0939e89` universal LPX baseline. [AVR size candidates](lpx-avr-size-screen.md).
 
 - [Cost decoder changes using actual production work](lpx-producer-budget.md): ELF/stack producer boundaries, live IRQ/RETI exclusion, independent160/320-call window audits, default-off compatibility, and measured raw-step ramp/rejected metadata320 probes.
 
