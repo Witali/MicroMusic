@@ -1,0 +1,42 @@
+{
+  "schema": "lpx-tiny88-lsf-neighbors-source-transition-v1",
+  "baseline_revision": "b4a9757364280049ec7cd2504c8fddfff3a56900",
+  "complete": true,
+  "universal_irq_cases": 22,
+  "identical_fixed_header_images": 9,
+  "measurements_sha256": "ccd437837389aef4a657e3bf449b4cafc7f1a6ad4c0722725941f066484d11ef",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": {
+      "baseline": {
+        "raw_sha256": "2f787843b0a8337bdcbd32b44973c8b509b11a45c2db97bc331a5056f58f08e8",
+        "text_lf_sha256": "2f787843b0a8337bdcbd32b44973c8b509b11a45c2db97bc331a5056f58f08e8"
+      },
+      "current": {
+        "raw_sha256": "75a5e86c4ea31cdbcd48cdd3256f94493fa0693b99fe115fbf22a18944c7be0e",
+        "text_lf_sha256": "75a5e86c4ea31cdbcd48cdd3256f94493fa0693b99fe115fbf22a18944c7be0e"
+      }
+    }
+  },
+  "validation_sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/lpx_source_history.py": {
+      "baseline": {
+        "raw_sha256": "d589bfd427fc4ad14658ad43377bc48270cbb1c31dab5b296c4d385e5a550e10",
+        "text_lf_sha256": "d589bfd427fc4ad14658ad43377bc48270cbb1c31dab5b296c4d385e5a550e10"
+      },
+      "current": {
+        "raw_sha256": "db738a26ab8b199c20c8c18081dd9b9a9cb0f82dd3c310b3b2a5b03d4848717b",
+        "text_lf_sha256": "db738a26ab8b199c20c8c18081dd9b9a9cb0f82dd3c310b3b2a5b03d4848717b"
+      }
+    },
+    "web-player/tests/helpers/lpx-source-transition.mjs": {
+      "baseline": {
+        "raw_sha256": "3b073d3eab3da7e4f5db4af24f4b98ab257aeeb91b0c71e0a72fcca92132290c",
+        "text_lf_sha256": "3b073d3eab3da7e4f5db4af24f4b98ab257aeeb91b0c71e0a72fcca92132290c"
+      },
+      "current": {
+        "raw_sha256": "9890760521f0cf05b152051eab1ac2094790a4b0ef87c6c9a74c12e3efb8eebd",
+        "text_lf_sha256": "9890760521f0cf05b152051eab1ac2094790a4b0ef87c6c9a74c12e3efb8eebd"
+      }
+    }
+  }
+}

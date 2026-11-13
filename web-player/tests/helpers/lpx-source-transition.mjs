@@ -13,6 +13,7 @@ const parserReport='Codecs/LPX/research/tiny-parser-2026-11-13/';
 const lpcPairsReport='Codecs/LPX/research/tiny-lpc-pairs-2026-11-13/';
 const lpcShortReport='Codecs/LPX/research/tiny-lpc-short-2026-11-13/';
 const q14Report='Codecs/LPX/research/tiny-q14-2026-11-13/';
+const lsfNeighborsReport='Codecs/LPX/research/tiny-lsf-neighbors-2026-11-13/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -89,6 +90,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [lpcPairsReport,'84de5ce411a1ace1b29a732f0998c10f67f3e53f'],
     [lpcShortReport,'26faf77221d4259eda9859b545e2ed25b12b898a'],
     [q14Report,'dc522dea665e544aebc95b550a7789186e7bec0d'],
+    [lsfNeighborsReport,'b4a9757364280049ec7cd2504c8fddfff3a56900'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

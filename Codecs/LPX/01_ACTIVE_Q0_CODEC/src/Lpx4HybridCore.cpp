@@ -1024,13 +1024,19 @@ static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
 // every future code is stored before it can be read. Align within those slots
 // so each memcpy stays inside the physical ring even when the workspace wraps.
 // memcpy retains byte-storage object lifetimes, alignment and aliasing rules.
-static inline int32_t ringPolyGet(const int8_t* ring,uint8_t base,uint8_t index){
+static inline int32_t ringPolyGetAt(const int8_t* ring,uint8_t offset){
     int32_t value;
-    memcpy(&value,ring+(uint8_t)(base+(uint8_t)(index*4)),sizeof(value));
+    memcpy(&value,ring+offset,sizeof(value));
     return value;
 }
+static inline void ringPolyPutAt(int8_t* ring,uint8_t offset,int32_t value){
+    memcpy(ring+offset,&value,sizeof(value));
+}
+static inline int32_t ringPolyGet(const int8_t* ring,uint8_t base,uint8_t index){
+    return ringPolyGetAt(ring,base+index*4);
+}
 static inline void ringPolyPut(int8_t* ring,uint8_t base,uint8_t index,int32_t value){
-    memcpy(ring+(uint8_t)(base+(uint8_t)(index*4)),&value,sizeof(value));
+    ringPolyPutAt(ring,base+index*4,value);
 }
 // Universal v5/v9 builds reinvest part of the software-product size saving
 // in the exact half-P recurrence. Keep the compact fixed-header ROM recipe
@@ -1040,6 +1046,37 @@ static const bool halfPolynomialP=false;
 #else
 static const bool halfPolynomialP=true;
 #endif
+#if LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
+    uint8_t j;
+    int32_t previous;
+    if(symmetric){
+        // P retains only its lower half. Seed the new middle from P[j-1].
+        j=n>>1;
+        previous=ringPolyGet(ring,base,j-1);
+        ringPolyPut(ring,base,j,previous);
+    }else{
+        // Q retains both halves and its exact signed trailing unit.
+        const int32_t trailing=ringPolyGet(ring,base,n-1);
+        ringPolyPut(ring,base,n+1,trailing);
+        previous=ringPolyGet(ring,base,n-2);
+        ringPolyPut(ring,base,n,previous+(trailing<0?-(int32_t)c:(int32_t)c));
+        j=n-1;
+    }
+    // n>=4 here. Before each update, previous holds the old p[j-1].
+    // The old p[j-2] becomes the multiply operand for the next word.
+    uint8_t at=base+j*4;
+    do{
+        const int32_t product=polyCosineMulQ12(previous,c);
+        const int32_t earlier=ringPolyGetAt(ring,at-8);
+        const int32_t value=earlier+product+ringPolyGetAt(ring,at);
+        ringPolyPutAt(ring,at,value);
+        previous=earlier;
+        at-=4;
+    }while(at!=(uint8_t)(base+4));
+    ringPolyPut(ring,base,1,c+ringPolyGet(ring,base,1));
+}
+#else
 static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
     // Same descending recurrence and separately rounded products as polyFactor.
     uint8_t j;
@@ -1061,6 +1098,7 @@ static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,ui
     }
     ringPolyPut(ring,base,1,c+ringPolyGet(ring,base,1));
 }
+#endif
 static_assert(sizeof(int32_t)==4,"The sram512 workspace uses four-byte words");
 #else
 // LSF->LPC polynomial. Independent Q12 multiplication (no floats/trig in AVR).

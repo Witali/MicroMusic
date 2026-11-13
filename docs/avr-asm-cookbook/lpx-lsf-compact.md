@@ -95,3 +95,16 @@ control. The verifier reconstructs the 0320c101 baseline from local Git,
 freezes current sources, uses fresh ELF/IRQ runs, and rejects size, speed,
 stack or exact-output regressions. All transformations are original project
 code; no external implementation was adapted.
+
+## Carry one old coefficient between iterations on AVR25
+
+In the descending SRAM512 recurrence, the old coefficient at index
+`j-2` becomes the multiply operand on the next iteration. Keep that
+coefficient live across iterations and compute the product before loading
+the other two terms. A byte offset advances by four with modulo-256 wrap
+and aligned `memcpy` accesses. The AVR25 ASM selection uses this portable
+C++ loop and the selectable C backend retains the original recurrence.
+On ATtiny88 with AVR-GCC 7.3.0, AVR GCC ABI and `-Os -flto`, this saves
+48 B of program Flash and 5 B of peak stack. All 22 loads preserve exact
+PWM with IRQ, with up to 6.76 cycles saved per sample and no underruns.
+[Measurements and verification](../../Codecs/LPX/research/tiny-lsf-neighbors-2026-11-13/README.md).
