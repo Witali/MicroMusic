@@ -35,9 +35,9 @@
 #error Unsupported LPX4_FAST_EXCITATION
 #endif
 #if LPX4_COMPACT_ONLY && LPX4_COMPACT_VERSION == 9 && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
-#define LPX4_AVR25_V9_PULSES 1
+#define LPX4_AVR25_V9_RUNTIME 1
 #else
-#define LPX4_AVR25_V9_PULSES 0
+#define LPX4_AVR25_V9_RUNTIME 0
 #endif
 
 #ifdef __AVR__
@@ -860,7 +860,7 @@ int16_t Lpx4HybridCore::pitchPredict() const{
 #if LPX4_FAST_PITCH&4
  if(!gain_)return 0;
 #endif
- int8_t v=lpx4PitchQ4(x,gain_,LPX4_AVR25_V9_PULSES);
+ int8_t v=lpx4PitchQ4(x,gain_,LPX4_AVR25_V9_RUNTIME);
 // v5 gain is0..14 and history is-32..31: prediction is already-28..27.
 #if !LPX4_COMPACT_ONLY
  const int8_t low=-(int8_t)quantLimit_,high=(int8_t)(quantLimit_-1);
@@ -920,7 +920,7 @@ bool Lpx4HybridCore::readUnary8(uint8_t& high){
 #endif
 bool Lpx4HybridCore::decodeCode(int8_t& q){
 #if LPX4_COMPACT_ONLY
-#if LPX4_AVR25_V9_PULSES
+#if LPX4_AVR25_V9_RUNTIME
  // The caller has already checked parser errors. Pitch alone is -28..27,
  // so only a sample with an innovation can need saturation to -32..31.
  int8_t decoded=(int8_t)pitchPredict();
@@ -1099,7 +1099,34 @@ static const bool halfPolynomialP=false;
 #else
 static const bool halfPolynomialP=true;
 #endif
-#if LPX4_USE_AVR5_POLYNOMIAL_MUL || (LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS))
+#if LPX4_AVR25_V9_RUNTIME
+static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
+    uint8_t offset;
+    int32_t previous,current;
+    if(symmetric){
+        // P's new middle starts with a copy of the old middle.
+        offset=base+2*n;
+        previous=current=ringPolyGetAt(ring,offset-4);
+    }else{
+        // Q's trailing unit is always -4096. Supply it in the loop's
+        // first iteration and omit its store in the new polynomial.
+        offset=base+4*(n-1);
+        previous=ringPolyGetAt(ring,offset-4);
+        ringPolyPutAt(ring,offset+4,previous-c);
+        current=-4096;
+    }
+    // Both polynomials use the same descending recurrence and Q12 floors.
+    do{
+        const int32_t product=polyCosineMulQ12(previous,c);
+        const int32_t earlier=ringPolyGetAt(ring,offset-8);
+        ringPolyPutAt(ring,offset,earlier+product+current);
+        previous=earlier;
+        offset-=4;
+        current=ringPolyGetAt(ring,offset);
+    }while(offset!=(uint8_t)(base+4));
+    ringPolyPutAt(ring,offset,c+current);
+}
+#elif LPX4_USE_AVR5_POLYNOMIAL_MUL || (LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS))
 static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
     uint8_t j;
     int32_t previous;
@@ -1213,9 +1240,14 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
         out[i]=lpx4FloatClamp((p[i+1]+q[i+1])*0.5,-32767.0/4096.0,32767.0/4096.0);
 #else
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
-    // Lead-in <=3 plus 96 workspace bytes fits in the 111 dead future slots.
+    // Lead-in <=3 plus the workspace fits in the 111 dead future slots.
     const uint8_t pbase=(uint8_t)((ringCursor_+3)&252);
+#if LPX4_AVR25_V9_RUNTIME
+    // P stores coefficients 0..5. Q stores 0..10 with the trailing unit implicit.
+    const uint8_t qbase=(uint8_t)(pbase+24);
+#else
     const uint8_t qbase=(uint8_t)(pbase+48);
+#endif
     ringPolyPut(ringQ_,pbase,0,4096);ringPolyPut(ringQ_,qbase,0,4096);
 #else
     polyP_[0]=polyQ_[0]=4096;
@@ -1253,7 +1285,9 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
             const int16_t first=unit+cc;
             ringPolyPut(ringQ_,base,1,first);
             ringPolyPut(ringQ_,base,2,(i&1)?-(int32_t)first:(int32_t)first);
+#if !LPX4_AVR25_V9_RUNTIME
             ringPolyPut(ringQ_,base,3,unit);
+#endif
         }else ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2),halfPolynomialP&&!(i&1));
 #else
         int32_t* p=(i&1)?polyQ_:polyP_;
@@ -1415,7 +1449,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     }
     int8_t q=0;
 #if LPX4_COMPACT_ONLY
-#if (LPX4_FAST_EXCITATION&2) && !LPX4_AVR25_V9_PULSES
+#if (LPX4_FAST_EXCITATION&2) && !LPX4_AVR25_V9_RUNTIME
     if(pulseIndex_>=pulseCount_){q=(int8_t)pitchPredict();ringQ_[ringCursor_++]=q;}
     else
 #endif

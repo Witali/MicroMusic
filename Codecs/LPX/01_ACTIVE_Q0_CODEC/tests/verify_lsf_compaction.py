@@ -29,7 +29,9 @@ def git(*arguments):
     if result.returncode:raise RuntimeError('Local baseline Git read failed')
     return result.stdout
 
-def run(output,target,*,baseline=BASELINE,wsl=None,case=None):
+def run(output,target,*,baseline=BASELINE,wsl=None,case=None,max_stack_growth=0):
+    if max_stack_growth<0:
+        raise ValueError('Maximum stack growth must be nonnegative')
     output=Path(output).resolve()
     if not output.is_relative_to((REPO/'build').resolve()) or output==REPO/'build':
         raise ValueError('Use an ignored build subdirectory')
@@ -147,7 +149,8 @@ def run(output,target,*,baseline=BASELINE,wsl=None,case=None):
                         no_program_growth=row['program_excluding_audio_bytes']<=old['program_excluding_audio_bytes'],
                         no_speed_loss=row['total_cycles']<=old['total_cycles'],
                         no_stack_growth=row['stack_bytes']<=old['stack_bytes'])
-                    assert all(row[key] for key in ('old_pwm_exact','no_program_growth','no_speed_loss','no_stack_growth')),row
+                    assert all(row[key] for key in ('old_pwm_exact','no_program_growth','no_speed_loss')),row
+                    assert row['stack_bytes']<=old['stack_bytes']+max_stack_growth,row
                 rows.append(row)
                 (output/'progress.json').write_text(json.dumps(rows,indent=2)+'\n')
                 print(json.dumps({key:row[key] for key in ('variant','target','backend','case','program_excluding_audio_bytes','total_cycles')}),flush=True)
@@ -162,7 +165,7 @@ def run(output,target,*,baseline=BASELINE,wsl=None,case=None):
         physical_board_measured=False,clock_hz=16000000,sample_hz=8000,
         queue=32,prefill=24,lpc_segments=2,memory_profile='SRAM512',
         cycle_accounting='active decoder CPU mean plus complete IRQ; foreground queue work excluded',
-        complete=True,cases=rows)
+        max_stack_growth_bytes=max_stack_growth,complete=True,cases=rows)
     (output/'summary.json').write_text(json.dumps(report,indent=2)+'\n')
     return report
 
@@ -172,5 +175,8 @@ if __name__=='__main__':
     parser.add_argument('--target',choices=('tiny','mega'),required=True)
     parser.add_argument('--baseline',default=BASELINE,help='Local Git revision to compare')
     parser.add_argument('--wsl');parser.add_argument('--case')
+    parser.add_argument('--max-stack-growth',type=int,default=0,
+                        help='Allow this many extra stack bytes within the existing SRAM limit')
     arguments=parser.parse_args()
-    run(arguments.output,arguments.target,baseline=arguments.baseline,wsl=arguments.wsl,case=arguments.case)
+    run(arguments.output,arguments.target,baseline=arguments.baseline,wsl=arguments.wsl,case=arguments.case,
+        max_stack_growth=arguments.max_stack_growth)

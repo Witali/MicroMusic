@@ -124,3 +124,24 @@ and bounded product together save 40 B on all six universal ATmega328P
 loads with IRQ. PWM matches exactly, the complete IRQ timing improves by
 7.64–8.49 cycles per sample, and no queue underruns occur.
 [Proof and measurements](../../Codecs/LPX/research/mega-lsf-wide-2026-11-13/README.md).
+
+## Seed a shared descending loop for P and Q on AVR25
+
+The SRAM512 universal v9 build on the no-MUL AVR25 backend prepares
+two edge cases before the same descending loop. P reuses its old middle
+for the new middle coefficient and the first multiply operand. Q retains
+its fixed trailing unit as the first current coefficient in a register
+and writes the new adjacent coefficient before entering the loop. The
+trailing unit never needs a ring slot. Both paths use the same Q12
+products and separately rounded wide-product terms.
+
+P uses words 0 through 5 and Q uses 0 through 10. At four bytes per word
+plus up to three bytes for alignment, the workspace fits inside 111
+dead pitch-history bytes. Byte offsets wrap before aligned accesses.
+The selectable C backend keeps its equivalent recurrence.
+
+On ATtiny88 with AVR-GCC 7.3.0, the GNU AVR ABI and `-Os -flto`,
+the converter and linked program each shrink by 90 B. The 22 v9 loads
+preserve exact PWM and do not slow down in simavr with active IRQs.
+Peak stack grows from 56 to 60 B with a measured minimum margin of 18 B.
+[Measurements and reproduction](../../Codecs/LPX/research/tiny-v9-shared-pq-2026-11-13/README.md).
