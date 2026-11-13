@@ -89,8 +89,8 @@ test('fixed LPC interpolation preserves all corpus samples and removes AVR divis
   assert.equal(textSha(measurements),change.measurements_sha256);
   const {native, avr, controls, asm}=json(measurements);
   const math='Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h';
-  assert.equal(textSha(math),change.sources[math].current.text_lf_sha256);
-  assert.equal(avr.source_sha256['after/src/Lpx4Math.h'],sha(read(math)));
+  assertLpxRecordedSource(math,change.sources[math].current.text_lf_sha256);
+  assertLpxRecordedSource(math,avr.source_sha256['after/src/Lpx4Math.h'],'raw');
   assert.deepEqual([native.records_verified,native.segments_verified,native.verified_samples],[181,306,15188029]);
   assert.equal(native.fixed_native_pcm16_exact && native.fixed_native_pwm_exact,true);
   assert.equal(native.float_complete_library_byte_exact,true);

@@ -1,0 +1,117 @@
+{
+  "schema": "lpx-tiny88-lpc-pairs-v1",
+  "baseline_revision": "84de5ce411a1ace1b29a732f0998c10f67f3e53f",
+  "all_passed": true,
+  "cpu_hz": 16000000,
+  "sample_hz": 8000,
+  "avr_gcc": "7.3.0",
+  "simavr": "1.6",
+  "lpc_segments": 2,
+  "mul16_unroll": 2,
+  "flags": "-Os -flto -mcall-prologues -mrelax -fno-jump-tables -finline-small-functions",
+  "queue": 32,
+  "prefill": 24,
+  "irq_cycles": 38,
+  "physical_board_measured": false,
+  "mean_cycles_metric": "active decoder CPU plus whole Timer1 IRQ, excludes foreground queue work",
+  "source": {
+    "baseline": {
+      "raw_sha256": "c7fb794ced88ab31d45bcd447c9a48c77c92f8dc3b31d0df8bb2013e8339daca",
+      "text_lf_sha256": "c7fb794ced88ab31d45bcd447c9a48c77c92f8dc3b31d0df8bb2013e8339daca"
+    },
+    "current": {
+      "raw_sha256": "9438948a6e5dfe285a06da09dcfd626e914ecea48e12b4456bd1c13967921cdb",
+      "text_lf_sha256": "9438948a6e5dfe285a06da09dcfd626e914ecea48e12b4456bd1c13967921cdb"
+    }
+  },
+  "arithmetic_probe": {
+    "target": "attiny88",
+    "clock_hz": 16000000,
+    "mul16_unroll": 2,
+    "cases": 256366,
+    "results": [
+      {
+        "backend": "c",
+        "cases": 256366,
+        "irqs": 8018,
+        "cycles": 471815334,
+        "passed": true
+      },
+      {
+        "backend": "asm",
+        "cases": 256366,
+        "irqs": 45929,
+        "cycles": 162753381,
+        "passed": true
+      },
+      {
+        "backend": "generic",
+        "cases": 256366,
+        "irqs": 8018,
+        "cycles": 471815334,
+        "passed": true
+      }
+    ],
+    "physical_board_measured": false,
+    "coverage": {
+      "pwm130_signed16_exhaustive": true,
+      "pitch_signed8_gain5_exhaustive": true,
+      "history_layouts": [
+        10,
+        11
+      ],
+      "synthesis_signed16_exhaustive": true,
+      "attenuation_dynamic_exhaustive": false
+    },
+    "build_sha256": "4d7ef8bf72e5016aa5b6f90fabbb55cebf7e52c4c2805d3e39d73b440b88265b",
+    "math_header_sha256": "9438948a6e5dfe285a06da09dcfd626e914ecea48e12b4456bd1c13967921cdb",
+    "multiply_header_sha256": "61f7bbbffde4610a3b3b38a5e3bd1b24876c2c996ec393a0654e96d0a79e4445",
+    "probe_sha256": "7b1df712ad0c0a74b26c810082c6bc363c79e73a6f448e65c71cb77a49f0d4c5",
+    "observer_sha256": "f3d1c3a318afc05f3e6121066977d3f4a1110ddcc8c855b9abed0c6ecc6e5bc0"
+  },
+  "simavr_signed16_probe": {
+    "cases": 524288,
+    "timer1_irqs": 7973,
+    "passed": true
+  },
+  "universal_cases": 22,
+  "samples": 308339,
+  "cases_faster": 19,
+  "minimum_program_bytes": 5478,
+  "maximum_program_bytes": 5479,
+  "cases": [
+    {"case": "all-pairs", "samples": 16000, "input_sha256": "bbf9df22972bdeff5e1cea8966fa4aebecddf4871dde4967cdbe70d4e421607b", "pwm_sha256": "d4ad121774c78b2f53ed057181fd1fc9072877a63342f593cb705c33ff1fbf80", "baseline": {"program_bytes": 5485, "flash_bytes": 6502, "audio_bytes": 1017, "static_ram_bytes": 433, "stack_bytes": 58, "stack_margin": 20, "min_queue": 27, "underruns": 0, "decode_cpu_cycles": 14977390, "mean_cycles_with_irq": 973.564534, "binary_sha256": "577231e4eca80508d24f7a064e1386d76f546c35802d4a3a03eef9b394bd3015"}, "final": {"program_bytes": 5479, "flash_bytes": 6496, "audio_bytes": 1017, "static_ram_bytes": 433, "stack_bytes": 58, "stack_margin": 20, "min_queue": 27, "underruns": 0, "decode_cpu_cycles": 14977360, "mean_cycles_with_irq": 973.562656, "binary_sha256": "7ab553b3e97b62e8f4320d00d01a7e060071e771ba5758feeed7602c3de2feab"}},
+    {"case": "bread-compact", "samples": 19200, "input_sha256": "41d2b0164474ce73cfecbd14be4c15c34f6e3a0135f99b8362d6b53566ef9188", "pwm_sha256": "5496c43e512e6630e158e30c0bc0ff8d697f9ca4bb869f6e19d5f1b22b562030", "baseline": {"program_bytes": 5484, "flash_bytes": 6480, "audio_bytes": 996, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 21, "underruns": 0, "decode_cpu_cycles": 29826998, "mean_cycles_with_irq": 1591.825407, "binary_sha256": "704cbe94957c1e4b1b1fd6d4378a6269d759f18f18f88d68defcf9e3c386b71f"}, "final": {"program_bytes": 5478, "flash_bytes": 6474, "audio_bytes": 996, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 22, "underruns": 0, "decode_cpu_cycles": 29732828, "mean_cycles_with_irq": 1586.914581, "binary_sha256": "a3742035d2cabd85ebd1eac56162f78ef620854eff66b91065a438140cc8a726"}},
+    {"case": "bread-low15", "samples": 19200, "input_sha256": "c7e2d6132864ba5b1969727dc2ab634211167121ff6139c5952340bd5daef519", "pwm_sha256": "6ee37f5fff6409cc04f531e27e78db69a9ffc1b4ea5b06ed474453bf97c784b4", "baseline": {"program_bytes": 5485, "flash_bytes": 5878, "audio_bytes": 393, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 24429283, "mean_cycles_with_irq": 1310.548498, "binary_sha256": "3dcdf90214e092957e71c0deb92983af26d8bc3026f5d305a55f57f0259b7146"}, "final": {"program_bytes": 5479, "flash_bytes": 5872, "audio_bytes": 393, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 24366223, "mean_cycles_with_irq": 1307.260013, "binary_sha256": "437328668c037a2650227beb34f0b60b5eef1933fdcdfbfccc50ade8802549eb"}},
+    {"case": "bread-quality", "samples": 19200, "input_sha256": "791170e329f6634db98a18acf1d881749b937761a715d556ff64f5e3fe00b58c", "pwm_sha256": "de5e8e3a27ce8bc7e2e43c6a7e2158974101d20b854adb337e45ee3062fad4fe", "baseline": {"program_bytes": 5485, "flash_bytes": 7366, "audio_bytes": 1881, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 22, "underruns": 0, "decode_cpu_cycles": 28732065, "mean_cycles_with_irq": 1534.799228, "binary_sha256": "d53f3bc91e9198bd937e9c26718cf4f0776d5458e3e1430e44a12722eaae265c"}, "final": {"program_bytes": 5479, "flash_bytes": 7360, "audio_bytes": 1881, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 22, "underruns": 0, "decode_cpu_cycles": 28628565, "mean_cycles_with_irq": 1529.401856, "binary_sha256": "5d93e5ea0400ed38183614590408e5325192b36122b17fbd12a74a7311806189"}},
+    {"case": "chego-2k", "samples": 9831, "input_sha256": "00315a2e6eb7c23f23235ce6173d3a27b6f8184727512b75dd7cd40e21a6426c", "pwm_sha256": "24aa20128092761cbc46fc2f492f67080cc3b7411582239e7c23c770c7292891", "baseline": {"program_bytes": 5485, "flash_bytes": 5782, "audio_bytes": 297, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 14730804, "mean_cycles_with_irq": 1537.107474, "binary_sha256": "0a5dfbe525b7dece2aeb47a18960ba28646cbc3b6b3c1ff7c2c47b2d08cc19a9"}, "final": {"program_bytes": 5479, "flash_bytes": 5776, "audio_bytes": 297, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 14716434, "mean_cycles_with_irq": 1535.642194, "binary_sha256": "a4a985388edbff1795190cf548f90a963ea63abd3b2f144ad20153c948c980bd"}},
+    {"case": "chego-compact", "samples": 9831, "input_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1", "pwm_sha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf", "baseline": {"program_bytes": 5484, "flash_bytes": 6006, "audio_bytes": 522, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 15295330, "mean_cycles_with_irq": 1594.576119, "binary_sha256": "975383ba1f39d58f7a11b4a8a47a1d59517d5aec1e83ec8836fec2c1d0cad224"}, "final": {"program_bytes": 5478, "flash_bytes": 6000, "audio_bytes": 522, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 15271750, "mean_cycles_with_irq": 1592.171714, "binary_sha256": "738bacbec85d86e137e38974e79325b696fee6ed40b4ed023fdd7f6ae98c0292"}},
+    {"case": "chego-quality", "samples": 9831, "input_sha256": "e811e60295c6245519dcd497ea8ed597dcaa5d996ce995b35e0966b92db78f65", "pwm_sha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea", "baseline": {"program_bytes": 5484, "flash_bytes": 6260, "audio_bytes": 776, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 22, "underruns": 0, "decode_cpu_cycles": 15226151, "mean_cycles_with_irq": 1586.781992, "binary_sha256": "aa580681a66e52a6f2878bd73dfaf1f7bcceb28f4252dde33c2a052a4a589214"}, "final": {"program_bytes": 5478, "flash_bytes": 6254, "audio_bytes": 776, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 22, "underruns": 0, "decode_cpu_cycles": 15207431, "mean_cycles_with_irq": 1584.873152, "binary_sha256": "df7da2bd808f07edd0cada96bb1a5fcb03c68e4ca6b1394a141c2bb133bb4de2"}},
+    {"case": "otvechaesh-compact", "samples": 8466, "input_sha256": "8d6c86fe7be247d948a168d188af2fb0652b12fb6769b20955691b470f69cf16", "pwm_sha256": "70bcb3b622b39bb4499ce8dc586aae4b6a909172853e11f99299af466f011c02", "baseline": {"program_bytes": 5484, "flash_bytes": 5934, "audio_bytes": 450, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 13148411, "mean_cycles_with_irq": 1591.728382, "binary_sha256": "7a1a0524fc293f0120e970325560e21a2bde872590a5b3817e90ec6434eaffb9"}, "final": {"program_bytes": 5478, "flash_bytes": 5928, "audio_bytes": 450, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 13114091, "mean_cycles_with_irq": 1587.662995, "binary_sha256": "8b5f42fc67a815a6a79cbdb97cb53903705cdf8ee064ba823339144aaf0b2e4e"}},
+    {"case": "otvechaesh-quality", "samples": 8466, "input_sha256": "abbb18c4b1da77990b049caab94a94cf51a16e8ee39cbd3e01642fe9b5659880", "pwm_sha256": "77f447114a2a2f1734339eabf7537b24ebde914389830bb76fc232ed21d3df91", "baseline": {"program_bytes": 5485, "flash_bytes": 6156, "audio_bytes": 671, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 22, "underruns": 0, "decode_cpu_cycles": 13098765, "mean_cycles_with_irq": 1585.145463, "binary_sha256": "6eff44c98973288a4979f220c17793cd919e8326b5a28ffdeae8948453e982fe"}, "final": {"program_bytes": 5479, "flash_bytes": 6150, "audio_bytes": 671, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 22, "underruns": 0, "decode_cpu_cycles": 13066215, "mean_cycles_with_irq": 1581.289742, "binary_sha256": "ab987e6833e4d56be6460911860eb8fabeb821a0793a2aac30401d2977f0f6c5"}},
+    {"case": "p4-changing-lag145-pre0-bright0", "samples": 12800, "input_sha256": "293f4a8132153b275e9acff9841f56c3fb10932b1ac30a1314b56170a751948c", "pwm_sha256": "1d25166f3a8cc979897be60ed7bfce313956ad52f8bf280571ae09411bac7768", "baseline": {"program_bytes": 5484, "flash_bytes": 6162, "audio_bytes": 678, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 12133843, "mean_cycles_with_irq": 984.755714, "binary_sha256": "b58f1dbbd526a0a39c6741a226fc405e57a95d7e534a791e6bdf9124f7c184fd"}, "final": {"program_bytes": 5478, "flash_bytes": 6156, "audio_bytes": 678, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 12133693, "mean_cycles_with_irq": 984.755714, "binary_sha256": "04e65386a4934759ed98e9e9e26e5c688335ee6d0e2ffbc5d2fe868cd1815238"}},
+    {"case": "p4-clusters-lag18-pre16384-bright11469", "samples": 12800, "input_sha256": "39feb5869bf50774e6d1270b09ffad5820ca243da856ef0b3ce2f00e74b68d55", "pwm_sha256": "fbf39ec4022b19379e015f78268adb5ec7d00fe6517505e7bb90189248d2974b", "baseline": {"program_bytes": 5485, "flash_bytes": 6626, "audio_bytes": 1141, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 15002942, "mean_cycles_with_irq": 1209.171493, "binary_sha256": "d86613b2eeb91ea08702892b36624137217432634c00527a95ec74f62260894a"}, "final": {"program_bytes": 5479, "flash_bytes": 6620, "audio_bytes": 1141, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 14985560, "mean_cycles_with_irq": 1207.81567, "binary_sha256": "0393f12c595d848bd759cbc278613486decbcdae7111518124f39085ad7f6ec6"}},
+    {"case": "p6-changing-lag145-pre8192-bright11469", "samples": 12800, "input_sha256": "b892b96fa182caf9f56f65b057d00ed711ac3563883fad2681b76e4a77f91272", "pwm_sha256": "d9eec147f4cfc92246a764aa627dd6bf82c10cc1266a1de8f3d070c66b570284", "baseline": {"program_bytes": 5485, "flash_bytes": 6928, "audio_bytes": 1443, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 22, "underruns": 0, "decode_cpu_cycles": 15103823, "mean_cycles_with_irq": 1217.025204, "binary_sha256": "080181053a2acd7cf977c81dadd849b7d992ccfc3e5d7f2a3b71ce096ec2b6ac"}, "final": {"program_bytes": 5479, "flash_bytes": 6922, "audio_bytes": 1443, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 22, "underruns": 0, "decode_cpu_cycles": 15103763, "mean_cycles_with_irq": 1217.025204, "binary_sha256": "34324facdedf85c7ee2b3c009b1c8c226fab2847d378601b0650f5d4720b7991"}},
+    {"case": "p6-changing-lag18-pre16383-bright11468", "samples": 12800, "input_sha256": "b4e886eb33a990d8059946349c42a99f0581b0181d606040882971a6cc2d75d9", "pwm_sha256": "e0dd9036549d4f79db1a794a0addd4d60898c7b77e2fcf50292405c20b24738e", "baseline": {"program_bytes": 5485, "flash_bytes": 6488, "audio_bytes": 1003, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 16304820, "mean_cycles_with_irq": 1310.892455, "binary_sha256": "658e61deaaf7a13d7538cd52d9d2699c864a485bdeda4b6ad5ee1d14e886747c"}, "final": {"program_bytes": 5479, "flash_bytes": 6482, "audio_bytes": 1003, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 16304760, "mean_cycles_with_irq": 1310.892455, "binary_sha256": "45d05d29edfedcc9ad688bc86fba4fa649e2943cf9871b728dd41b5792e2e3b2"}},
+    {"case": "p6-clusters-lag145-pre1-bright1", "samples": 12800, "input_sha256": "afb8732c68ec4d7123efc32eff483ca3f62721263dd14173ba1e35b633c737f6", "pwm_sha256": "8f5908823dde16964cfad461981a125da4e83d4cf96c55481d67cfed0651a726", "baseline": {"program_bytes": 5485, "flash_bytes": 6956, "audio_bytes": 1471, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 16100179, "mean_cycles_with_irq": 1294.859346, "binary_sha256": "d7a832287766e865bbe43223a0f15f84b8ab2bd8d9c05615ec05d9a6bfab805a"}, "final": {"program_bytes": 5479, "flash_bytes": 6950, "audio_bytes": 1471, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 16078420, "mean_cycles_with_irq": 1293.160927, "binary_sha256": "1375bf9bb28c6eeff51e3de29dffb9ed9474843cc875ecccea753ed6ebd455df"}},
+    {"case": "p6-clusters-lag18-pre8192-bright11469", "samples": 12800, "input_sha256": "82584a683837bd01ce2eccfc1d1a7cab2f3cf0dab861ef58adeb4d4da3bc36d0", "pwm_sha256": "19aa0b4e2aa1306c23562adf46f89e37020a409270f7c5569f04f5aae30309ec", "baseline": {"program_bytes": 5485, "flash_bytes": 6956, "audio_bytes": 1471, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 15278751, "mean_cycles_with_irq": 1230.70742, "binary_sha256": "81012596c0997ff09c8452c06109d7d7ee155e838d3267455a62e6b736b20a0f"}, "final": {"program_bytes": 5479, "flash_bytes": 6950, "audio_bytes": 1471, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 15255213, "mean_cycles_with_irq": 1228.869756, "binary_sha256": "04cc9e4b8252ba44e607d7c79cfbe7741442ccc8c49af7e30e489d4ee2e2b393"}},
+    {"case": "s80-changing-lag145-pre0-bright0", "samples": 12800, "input_sha256": "1a54317290d0a1e12bb0ec8bd3851d0a2cae7b1c5104dea952987e3060286486", "pwm_sha256": "16923e1174d352a0d3cf61d79fe73fef0a5c7cc1265ba3bd0e743976de90b08a", "baseline": {"program_bytes": 5485, "flash_bytes": 5846, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 17990316, "mean_cycles_with_irq": 1442.898638, "binary_sha256": "7b933c9f0e736201f629b41b955a2528575a278c9d1a1982827481027b6e8866"}, "final": {"program_bytes": 5479, "flash_bytes": 5840, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 17902827, "mean_cycles_with_irq": 1436.055416, "binary_sha256": "e9bda1edd71493f44a10d370e5e54dfc4455541cc5969b7766f23fb25a5a9967"}},
+    {"case": "s80-changing-lag145-pre8192-bright11469", "samples": 12800, "input_sha256": "7d3a168216dd3de135e14e9fcb7ba5d7c947d7cec2dd0650275f7615cf59d0c7", "pwm_sha256": "e785cb81ab2b827aa7baec82b842f63b167828c73c1213a1804d77b0c2a2f233", "baseline": {"program_bytes": 5485, "flash_bytes": 5846, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 20033811, "mean_cycles_with_irq": 1602.549781, "binary_sha256": "6ed3eb833dcc39fedc391357cfe2f3a34a8dbf386f8e4963e9d3661074146574"}, "final": {"program_bytes": 5479, "flash_bytes": 5840, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 19946322, "mean_cycles_with_irq": 1595.706559, "binary_sha256": "c27b53f2a11d5a57fe164c4aab9eb391601b7fde0d05f9b0cfdf21eb633c813c"}},
+    {"case": "s80-changing-lag18-pre16383-bright11468", "samples": 12800, "input_sha256": "c0ac38c4331cfb141b9dabcef4be408a8a00466310bcea71974d7ba4e71c1650", "pwm_sha256": "d71b6d2e1f97044516bdc7d992e55f4a5a59507ce45e6736e7fbf1c95a1b21d4", "baseline": {"program_bytes": 5485, "flash_bytes": 5846, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 8, "underruns": 0, "decode_cpu_cycles": 22049588, "mean_cycles_with_irq": 1760.145272, "binary_sha256": "46daea73e98ba1cb11c5dde8388aa8311e8e426bf2a2433bfdb3bb3cebe59ef9"}, "final": {"program_bytes": 5479, "flash_bytes": 5840, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 16, "underruns": 0, "decode_cpu_cycles": 21899309, "mean_cycles_with_irq": 1748.387367, "binary_sha256": "b98268dd80c752a5d12e3ff8a3a18f308183a38c1b724d2ee1f68b40bb23e515"}},
+    {"case": "s80-clusters-lag145-pre1-bright1", "samples": 12800, "input_sha256": "68628c8c0b5f7a9be164d0f249d5237d1ee41fc379ff8271e5af1e6412defc1c", "pwm_sha256": "7e63a13a308b30ae6dd9de99d70237f2a56564aa03b94fd0dc275a56389b33eb", "baseline": {"program_bytes": 5484, "flash_bytes": 5896, "audio_bytes": 412, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 15084067, "mean_cycles_with_irq": 1215.640028, "binary_sha256": "ac926374816a0443fb5716e898c2a5340e2be7859a2b37272c20133c0ab794a5"}, "final": {"program_bytes": 5478, "flash_bytes": 5890, "audio_bytes": 412, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 15062155, "mean_cycles_with_irq": 1213.927286, "binary_sha256": "4cfc1d6fbfbd1b51e7887dd805f7a17500a1abbb529c407c0b4507e78f7ffc61"}},
+    {"case": "s80-clusters-lag18-pre16384-bright11469", "samples": 12800, "input_sha256": "b2f863053df19c9d93475a2dac12e3e94e78db9cfc7f8aaee23f3bc67552ca63", "pwm_sha256": "ba0a711337d8e1201120e54d15fa1cf7eff82f7751c58b0a339a89c8fc62b0b2", "baseline": {"program_bytes": 5484, "flash_bytes": 5896, "audio_bytes": 412, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 14025526, "mean_cycles_with_irq": 1132.930886, "binary_sha256": "d279f8f6219c078a25e720c6e2baa12ac0f707c6fe9110e85ea9fcc77bde4ba6"}, "final": {"program_bytes": 5478, "flash_bytes": 5890, "audio_bytes": 412, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 14005201, "mean_cycles_with_irq": 1131.342361, "binary_sha256": "e3897c6f24f5caf9f64cd0c32b82c26f368070943f2cb66f570cacb365495691"}},
+    {"case": "vinni-compact", "samples": 23757, "input_sha256": "1b9d60dde416b0d8e4f7d7c7da98d80a0022865894f6795bf07161e30a0a6de0", "pwm_sha256": "a7ea4cfc5c316bae12ef371966f2fd6cc3ea77c6a6b760036a021e450218a2a8", "baseline": {"program_bytes": 5484, "flash_bytes": 6684, "audio_bytes": 1200, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 35794800, "mean_cycles_with_irq": 1544.622172, "binary_sha256": "1267b96b6faf05eb85313383371b14fa3721e96f355e8fce4a4275825f0adaa4"}, "final": {"program_bytes": 5478, "flash_bytes": 6678, "audio_bytes": 1200, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 35732490, "mean_cycles_with_irq": 1541.996713, "binary_sha256": "114a07f23a191e8c03f6116c476b7d774ce6b740cdb3f0ec6cff48437103a610"}},
+    {"case": "vinni-quality", "samples": 23757, "input_sha256": "cbd74ad3e52c62c44e41a21937426d5ed5eed8ac10766aae2aea59aff00d4d19", "pwm_sha256": "d7749a8d25359d85474163c5e083c01acb0920fbf66a205ce3288a33244bb9d9", "baseline": {"program_bytes": 5484, "flash_bytes": 7304, "audio_bytes": 1820, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 35847619, "mean_cycles_with_irq": 1546.713985, "binary_sha256": "ec2441295c4e9f786c9f8a3962275b052ddf15bc955c938de97ce3b5abde481e"}, "final": {"program_bytes": 5478, "flash_bytes": 7298, "audio_bytes": 1820, "static_ram_bytes": 433, "stack_bytes": 62, "stack_margin": 16, "min_queue": 23, "underruns": 0, "decode_cpu_cycles": 35785909, "mean_cycles_with_irq": 1544.113808, "binary_sha256": "1ce73a6a2852efdec770e7762331d451eec8baca2b691ffaab6586a76feb8f04"}}
+  ],
+  "identical_fixed_images": [
+    {"case": "bread-compact", "bytes": 5878, "binary_sha256": "8b4074af893ed8bc47d956249d7d05358579ebd8dad866eeb39de46d8f1c4e4e"},
+    {"case": "bread-low15", "bytes": 5356, "binary_sha256": "76f343e55cfc56d0e1c8b16f0603a262557dc1c5ac9df3b997a50d91e4289fc2"},
+    {"case": "bread-quality", "bytes": 6998, "binary_sha256": "976db9a2d81806638ba6d571419c0a39ea959cb1584d46714dc558fad2698133"},
+    {"case": "chego-compact", "bytes": 5350, "binary_sha256": "9d27bf4d61561943054dd371579b91d48dfdcb20f1a25d74250985a2e715adff"},
+    {"case": "chego-quality", "bytes": 5766, "binary_sha256": "51dfc45228890b0509b16fb575b33b2ffb622b35093128aa1837e40a2819c8f6"},
+    {"case": "otvechaesh-compact", "bytes": 5284, "binary_sha256": "4c5749a84ad89a7e2f35738d79561f9fc19ed439f01869ee8b6e0ac780531641"},
+    {"case": "otvechaesh-quality", "bytes": 5768, "binary_sha256": "d9f02eaec54d820628757043405fd12b66e6a182d54a94ffad1a5299316ceb05"},
+    {"case": "vinni-compact", "bytes": 6182, "binary_sha256": "3b7024217575f247ce5d8a899d8051cb2053ecf76faa2405f7a66b6babba8538"},
+    {"case": "vinni-quality", "bytes": 6940, "binary_sha256": "233a77de6a8292a268a9d89e673c41484b47724c6a4d66f867eabc1743bfc361"}
+  ]
+}

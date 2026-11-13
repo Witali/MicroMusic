@@ -10,6 +10,7 @@ POLYNOMIAL=REPO/'Codecs/LPX/research/lsf-compact-2026-11-10/source-transition.js
 INTERPOLATION=REPO/'Codecs/LPX/research/lpc-interpolation-2026-11-13/source-transition.json'
 SPECTRUM=REPO/'Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13'
 PARSER=REPO/'Codecs/LPX/research/tiny-parser-2026-11-13'
+LPC_PAIRS=REPO/'Codecs/LPX/research/tiny-lpc-pairs-2026-11-13'
 
 
 def assert_recorded_source(path,expected):
@@ -58,5 +59,14 @@ def assert_recorded_source(path,expected):
             assert parser['universal_irq_cases']==22 and parser['identical_fixed_header_images']==9
             evidence=(PARSER/f'{step}.json').read_bytes().replace(b'\r\n',b'\n')
             assert hashlib.sha256(evidence).hexdigest()==parser['measurements_sha256']
+            recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        pairs=json.loads((LPC_PAIRS/'source-transition.json').read_text(encoding='utf-8'))
+        change=pairs['sources'].get(path) or pairs['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert pairs['baseline_revision']=='84de5ce411a1ace1b29a732f0998c10f67f3e53f'
+            assert pairs['universal_irq_cases']==22 and pairs['identical_fixed_header_images']==9
+            evidence=(LPC_PAIRS/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==pairs['measurements_sha256']
             recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

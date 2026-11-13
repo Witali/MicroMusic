@@ -321,6 +321,14 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 #define LPX4_NOMUL_SATURATED ""
 #endif
 #if LPX4_AVR25_SATURATED_PRODUCTS
+// In the full-width path, r23 starts as the history high byte. Each
+// rotation supplies the next multiplier bit through carry and replaces the
+// consumed bit with product bits. A pair needs no separate multiplier shift.
+#define LPX4_NOMUL_LPC_BIT \
+    "brcc 3f\n\tadd r24,r18\n\tadc r25,r19\n\t" \
+    "3: ror r25\n\tror r24\n\tror r23\n\t"
+#define LPX4_NOMUL_LPC_PAIR \
+    LPX4_NOMUL_LPC_BIT LPX4_NOMUL_LPC_BIT
 // Split h into its unsigned low byte and signed high byte. For a small
 // high byte (-8..7), a few exact 24-bit additions replace eight multiply
 // rounds. B=floor(uint16(a)*lo(h)/256), then B+uint16(a)*int8(hi(h)).
@@ -338,10 +346,10 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     "dec r22\n\tbrne 18b\n\trjmp 7f\n\t" \
     "6: sub r23,r18\n\tsbc r24,r19\n\tsbc r25,__zero_reg__\n\t" \
     "inc r22\n\tbrne 6b\n\trjmp 7f\n\t" \
-    "9: mov r22,r21\n\t" \
-    ".rept 4\n\t" LPX4_NOMUL_HIGH_STEP ".endr\n\t" \
-    ".rept 3\n\t" LPX4_NOMUL_HIGH_STEP "ror r23\n\t.endr\n\t" \
-    "lsr r22\n\tbrcc 3f\n\tsub r24,r18\n\tsbc r25,r19\n\t" \
+    "9: mov r23,r21\n\tlsr r23\n\t" \
+    ".rept 3\n\t" LPX4_NOMUL_LPC_PAIR ".endr\n\t" \
+    LPX4_NOMUL_LPC_BIT \
+    "brcc 3f\n\tsub r24,r18\n\tsbc r25,r19\n\t" \
     "3: ror r25\n\tror r24\n\tror r23\n\t" \
     "7: sbrs r19,7\n\trjmp 8f\n\tsub r24,r20\n\tsbc r25,r21\n\t8:\n\t"
 #else
@@ -508,6 +516,8 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
 #undef LPX4_NOMUL_PRODUCT
 #undef LPX4_NOMUL_SATURATED
 #undef LPX4_NOMUL_HIGH_STEP
+#undef LPX4_NOMUL_LPC_PAIR
+#undef LPX4_NOMUL_LPC_BIT
 #undef LPX4_NOMUL_SUB
 #undef LPX4_DOT_PRODUCT
 #undef LPX4_DOT_PRODUCT_BYTES

@@ -201,3 +201,16 @@ and code hashes are retained in
 [the size admission](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/lowrate-size-measurements.json).
 Private input bindings and generated media stay ignored. Reproduction and
 physical/simulator limits remain as stated in the player guide.
+
+## LPC full-width multiplication in pairs
+
+The upper history byte can occupy the low product byte while the multiply
+consumes it. On AVR25 without MUL, the 24-bit rotate supplies the next bit
+in carry and replaces it with product bits. The last bit of the final pair
+subtracts the multiplicand for the signed high byte. Keep the coefficient
+sign correction and each individual Q12 floor. The explicitly selectable
+C backend implements the same arithmetic. With AVR-GCC 7.3.0 and the AVR
+GCC ABI at `-Os -flto`, the universal ATtiny88 image shrinks 6 bytes and
+the heaviest workload saves 11.76 cycles per sample with IRQ. All 22
+outputs match bit for bit and there are no underruns.
+[Proof, test setup and rejected variants](../../Codecs/LPX/research/tiny-lpc-pairs-2026-11-13/README.md).

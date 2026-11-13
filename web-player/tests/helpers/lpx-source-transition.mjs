@@ -10,6 +10,7 @@ const polynomialReceipt='Codecs/LPX/research/lsf-compact-2026-11-10/source-trans
 const interpolationReceipt='Codecs/LPX/research/lpc-interpolation-2026-11-13/source-transition.json';
 const spectrumReport='Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13/';
 const parserReport='Codecs/LPX/research/tiny-parser-2026-11-13/';
+const lpcPairsReport='Codecs/LPX/research/tiny-lpc-pairs-2026-11-13/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -79,6 +80,18 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       assert.equal(parser.identical_fixed_header_images,9);
       const evidence=read(parserReport+step+'.json');
       assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),parser.measurements_sha256);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const pairs=JSON.parse(read(lpcPairsReport+'source-transition.json'));
+    const change=pairs.sources[path] ?? pairs.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(pairs.baseline_revision,'84de5ce411a1ace1b29a732f0998c10f67f3e53f');
+      assert.equal(pairs.universal_irq_cases,22);
+      assert.equal(pairs.identical_fixed_header_images,9);
+      const evidence=read(lpcPairsReport+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),pairs.measurements_sha256);
       recorded=change.current[field];
     }
   }
