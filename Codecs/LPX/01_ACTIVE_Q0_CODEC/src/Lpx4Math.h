@@ -340,10 +340,11 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     "clr r24\n\tclr r25\n\t" \
     ".rept 8\n\t" LPX4_NOMUL_HIGH_STEP ".endr\n\t" \
     "mov r22,r21\n\tsubi r22,248\n\tcpi r22,16\n\tbrsh 9f\n\t" \
-    "mov r23,r24\n\tmov r24,r25\n\tclr r25\n\tmov r22,r21\n\t" \
-    "tst r22\n\tbrmi 6f\n\tbrne 18f\n\trjmp 7f\n\t" \
+    "mov r23,r24\n\tmov r24,r25\n\tclr r25\n\t" \
+    /* Recover the signed counter from the range test and set Z and N. */ \
+    "subi r22,8\n\tbreq 19f\n\tbrmi 6f\n\t" \
     "18: add r23,r18\n\tadc r24,r19\n\tadc r25,__zero_reg__\n\t" \
-    "dec r22\n\tbrne 18b\n\trjmp 7f\n\t" \
+    "dec r22\n\tbrne 18b\n\t19: rjmp 7f\n\t" \
     "6: sub r23,r18\n\tsbc r24,r19\n\tsbc r25,__zero_reg__\n\t" \
     "inc r22\n\tbrne 6b\n\trjmp 7f\n\t" \
     "9: mov r23,r21\n\tlsr r23\n\t" \

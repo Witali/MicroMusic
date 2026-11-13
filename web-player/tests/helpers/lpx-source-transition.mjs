@@ -11,6 +11,7 @@ const interpolationReceipt='Codecs/LPX/research/lpc-interpolation-2026-11-13/sou
 const spectrumReport='Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13/';
 const parserReport='Codecs/LPX/research/tiny-parser-2026-11-13/';
 const lpcPairsReport='Codecs/LPX/research/tiny-lpc-pairs-2026-11-13/';
+const lpcShortReport='Codecs/LPX/research/tiny-lpc-short-2026-11-13/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -83,15 +84,19 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       recorded=change.current[field];
     }
   }
-  if(recorded!==actual){
-    const pairs=JSON.parse(read(lpcPairsReport+'source-transition.json'));
-    const change=pairs.sources[path] ?? pairs.validation_sources[path];
+  for(const [directory,revision] of [
+    [lpcPairsReport,'84de5ce411a1ace1b29a732f0998c10f67f3e53f'],
+    [lpcShortReport,'26faf77221d4259eda9859b545e2ed25b12b898a'],
+  ]){
+    if(recorded===actual)break;
+    const report=JSON.parse(read(directory+'source-transition.json'));
+    const change=report.sources[path] ?? report.validation_sources[path];
     if(change?.baseline[field]===recorded){
-      assert.equal(pairs.baseline_revision,'84de5ce411a1ace1b29a732f0998c10f67f3e53f');
-      assert.equal(pairs.universal_irq_cases,22);
-      assert.equal(pairs.identical_fixed_header_images,9);
-      const evidence=read(lpcPairsReport+'measurements.json');
-      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),pairs.measurements_sha256);
+      assert.equal(report.baseline_revision,revision);
+      assert.equal(report.universal_irq_cases,22);
+      assert.equal(report.identical_fixed_header_images,9);
+      const evidence=read(directory+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
       recorded=change.current[field];
     }
   }

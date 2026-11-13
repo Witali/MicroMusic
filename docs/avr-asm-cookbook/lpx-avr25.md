@@ -214,3 +214,14 @@ GCC ABI at `-Os -flto`, the universal ATtiny88 image shrinks 6 bytes and
 the heaviest workload saves 11.76 cycles per sample with IRQ. All 22
 outputs match bit for bit and there are no underruns.
 [Proof, test setup and rejected variants](../../Codecs/LPX/research/tiny-lpc-pairs-2026-11-13/README.md).
+
+## Reuse the range-test register in the short LPC branch
+
+The AVR25 range test for a signed high byte in `[-8,7]` leaves the
+byte plus eight in the counter register. Undoing the bias with `subi`
+restores the count and sets the flags for zero and negative dispatch.
+The selected ASM path retains the individual Q12 floors and the
+selectable C equivalent. AVR-GCC 7.3.0 at `-Os -flto` and the AVR GCC ABI
+save 4 program bytes and up to 7.76 cycles per sample with IRQ. All 22
+universal workloads reproduce exact PWM and pass with zero underruns.
+[Source-bound measurements](../../Codecs/LPX/research/tiny-lpc-short-2026-11-13/README.md).
