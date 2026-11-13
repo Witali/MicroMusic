@@ -8,6 +8,7 @@ REPO=ACTIVE.parents[2]
 TRANSITION=ACTIVE/'examples/ATTINY88_V5_PLAYER/c-numeric-transition.json'
 POLYNOMIAL=REPO/'Codecs/LPX/research/lsf-compact-2026-11-10/source-transition.json'
 INTERPOLATION=REPO/'Codecs/LPX/research/lpc-interpolation-2026-11-13/source-transition.json'
+SPECTRUM=REPO/'Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13'
 
 
 def assert_recorded_source(path,expected):
@@ -32,10 +33,19 @@ def assert_recorded_source(path,expected):
             recorded=change['current']['text_lf_sha256']
     if recorded!=actual:
         interpolation=json.loads(INTERPOLATION.read_text(encoding='utf-8'))
-        assert interpolation['complete'] and interpolation['baseline_revision']=='e0939e89d88e4d91e9e441310f504ddbfd5581aa'
-        assert interpolation['all_fixed_native_exact'] and interpolation['all_avr_corpus_exact_without_slowdown']
-        assert interpolation['identical_asm_images']==44
-        change=interpolation['sources'][path]
-        assert change['baseline']['text_lf_sha256']==recorded,(path,'interpolation baseline')
-        recorded=change['current']['text_lf_sha256']
+        change=interpolation['sources'].get(path) or interpolation['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert interpolation['complete'] and interpolation['baseline_revision']=='e0939e89d88e4d91e9e441310f504ddbfd5581aa'
+            assert interpolation['all_fixed_native_exact'] and interpolation['all_avr_corpus_exact_without_slowdown']
+            assert interpolation['identical_asm_images']==44
+            recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        spectrum=json.loads((SPECTRUM/'source-transition.json').read_text(encoding='utf-8'))
+        change=spectrum['sources'].get(path) or spectrum['validation_sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert spectrum['complete'] and spectrum['baseline_revision']=='de98d64162368cf3b6104907076a7e1c3d3f3f17'
+            assert spectrum['universal_irq_cases']==22 and spectrum['identical_fixed_header_images']==9
+            evidence=(SPECTRUM/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==spectrum['measurements_sha256']
+            recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

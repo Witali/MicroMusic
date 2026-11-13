@@ -64,9 +64,16 @@ if (doubleNode) node += node;
 | Changing sparse80, lag18, boundary filters | 5557 → 5551 | 1765.769 → 1762.518 |
 
 All four outputs match baseline PWM with zero underruns. Stack grows from
-64 to 65 bytes, so this candidate needs work under the existing stack gate.
+64 to 65 bytes in this prototype.
 Selecting the weighted value inside the loop instead grows program Flash by
 4 bytes despite speeding all four cases.
+
+The admitted AVR25 ASM runtime-profile build tests `LPX4_SPEECH_FLAGS & 2`
+at use. AVR-GCC 7.3.0 at `-Os -flto` returns the local frame to 15 bytes
+under the AVR GCC ABI. This version saves 10 program bytes with a 64-byte
+peak stack, exact PWM, and no slowdown or underruns on all 22 loads with
+IRQ. The independently selectable C expression is the original weighted
+sum. See the [matched build and IRQ report](../../Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13/README.md).
 
 ## Parser screens
 

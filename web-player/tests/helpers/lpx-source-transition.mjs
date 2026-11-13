@@ -8,11 +8,9 @@ const sha=data=>createHash('sha256').update(data).digest('hex');
 const receipt='Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/c-numeric-transition.json';
 const polynomialReceipt='Codecs/LPX/research/lsf-compact-2026-11-10/source-transition.json';
 const interpolationReceipt='Codecs/LPX/research/lpc-interpolation-2026-11-13/source-transition.json';
+const spectrumReport='Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13/';
 
-// Old timing receipts remain bound to their original source. A separate,
-// numeric transition proves identical fixed ASM images at 0320c101. The later
-// polynomial transition has its own size/timing/output evidence. Neither
-// transition relabels an old timing value as a measurement of current code.
+// Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
   const bytes=read(path);
   const actual=sha(encoding==='raw'?bytes:bytes.toString('utf8').replaceAll('\r\n','\n'));
@@ -46,15 +44,28 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
   }
   if(recorded!==actual){
     const interpolation=JSON.parse(read(interpolationReceipt));
-    assert.equal(interpolation.baseline_revision,'e0939e89d88e4d91e9e441310f504ddbfd5581aa');
-    assert.equal(interpolation.complete,true);
-    assert.equal(interpolation.all_fixed_native_exact,true);
-    assert.equal(interpolation.all_avr_corpus_exact_without_slowdown,true);
-    assert.equal(interpolation.identical_asm_images,44);
     const change=interpolation.sources[path] ?? interpolation.validation_sources[path];
-    assert.ok(change,path);
-    assert.equal(change.baseline[field],recorded,path+' interpolation baseline');
-    recorded=change.current[field];
+    if(change?.baseline[field]===recorded){
+      assert.equal(interpolation.baseline_revision,'e0939e89d88e4d91e9e441310f504ddbfd5581aa');
+      assert.equal(interpolation.complete,true);
+      assert.equal(interpolation.all_fixed_native_exact,true);
+      assert.equal(interpolation.all_avr_corpus_exact_without_slowdown,true);
+      assert.equal(interpolation.identical_asm_images,44);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const spectrum=JSON.parse(read(spectrumReport+'source-transition.json'));
+    const change=spectrum.sources[path] ?? spectrum.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(spectrum.baseline_revision,'de98d64162368cf3b6104907076a7e1c3d3f3f17');
+      const evidence=read(spectrumReport+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),spectrum.measurements_sha256);
+      assert.equal(spectrum.complete,true);
+      assert.equal(spectrum.universal_irq_cases,22);
+      assert.equal(spectrum.identical_fixed_header_images,9);
+      recorded=change.current[field];
+    }
   }
   assert.equal(recorded,actual,path+' current source');
 }

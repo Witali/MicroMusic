@@ -23,7 +23,7 @@ test('LSF compaction binds new evidence and preserves the historical receipts',(
   for(const [path,digest] of Object.entries(transition.validation_source_sha256))
     assertLpxRecordedSource(path,digest);
   for(const [path,row] of Object.entries(transition.sources))
-    assert.equal(textSha(path),row.current.text_lf_sha256,path);
+    assertLpxRecordedSource(path,row.current.text_lf_sha256);
 });
 
 test('all 22 universal and nine catalog Tiny profiles shrink without slowing full IRQ playback',()=>{
@@ -83,5 +83,30 @@ test('LSF compaction preserved the whole native corpus, floating mode, and shipp
     assert.equal(sha(bytes),row.shipped_hex_sha256);
     assert.equal(sha(parseHex(bytes.toString(),30720)),row.current_binary_sha256);
     assert.equal(row.flash_bytes,row.shipped_flash_bytes);
+  }
+});
+
+test('Tiny88 spectral anchor selection retains exact playback with IRQ and saves 10 program bytes',()=>{
+  const directory='Codecs/LPX/research/tiny-spectrum-anchors-2026-11-13/';
+  const receipt=json(directory+'source-transition.json');
+  const report=json(directory+'measurements.json');
+  assert.equal(textSha(directory+'measurements.json'),receipt.measurements_sha256);
+  assert.equal(report.baseline_revision,receipt.baseline_revision);
+  for(const [path,digest] of Object.entries(report.source_sha256))
+    assertLpxRecordedSource(path,digest);
+  assert.equal(report.cases.length,31);
+  assert.equal(report.cases.filter(row=>row.scope==='universal').length,22);
+  assert.equal(report.cases.filter(row=>row.scope==='website').length,9);
+  for(const {case:name,scope,baseline,final,checks} of report.cases){
+    for(const [check,value] of Object.entries(checks))assert.equal(value,true,name+' '+check);
+    assert.equal(final.pwm_sha256,baseline.pwm_sha256,name);
+    assert.equal(final.underruns,0,name);
+    assert.equal(final.irq_max,baseline.irq_max,name);
+    assert.equal(final.irq_max,scope==='universal'?38:44,name);
+    assert.ok(final.cycles_with_irq<=baseline.cycles_with_irq,name);
+    assert.ok(final.stack_bytes<=baseline.stack_bytes,name);
+    assert.equal(final.program_excluding_audio_bytes-baseline.program_excluding_audio_bytes,
+      scope==='universal'?-10:0,name);
+    if(scope==='website')assert.equal(final.binary_sha256,baseline.binary_sha256,name);
   }
 });

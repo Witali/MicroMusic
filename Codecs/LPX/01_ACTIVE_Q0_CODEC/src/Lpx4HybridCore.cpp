@@ -1095,8 +1095,18 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #else
     polyP_[0]=polyQ_[0]=4096;
 #endif
+#if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4 && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+    // LPC segments 1/2 use t=0, 8, 16. Select the endpoints once so
+    // both endpoints and the midpoint use the same centered-grid sum.
+    const uint8_t* left=t==16?cur_:prev_;
+    const uint8_t* right=t==0?prev_:cur_;
+#endif
     for(uint8_t i=0;i<10;i++){
-#if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
+#if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4 && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+        uint8_t node=left[i]+right[i]-1;
+        if(!(LPX4_SPEECH_FLAGS&2))node+=node;
+        const int16_t cc=(int16_t)-cosineEvenNode(node);
+#elif LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
         // For segments1/2, u is 0/1/2. Factoring centered q+1 values
         // gives the even-grid index directly, without widening and shifting back.
         const uint8_t u=t>>3;

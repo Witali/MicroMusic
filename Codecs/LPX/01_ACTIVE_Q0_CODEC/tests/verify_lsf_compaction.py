@@ -1,4 +1,4 @@
-"""Fresh matched 0320c101/current LSF-compaction IRQ measurements.
+"""Fresh matched baseline/current LSF-compaction IRQ measurements.
 
 Stdlib Python; AVR-GCC, g++, simavr1.6 and libelf. Run on Windows with
 --wsl Ubuntu, or on Linux without --wsl. Use a fresh ignored build directory.
@@ -29,11 +29,12 @@ def git(*arguments):
     if result.returncode:raise RuntimeError('Local baseline Git read failed')
     return result.stdout
 
-def run(output,target,*,wsl=None,case=None):
+def run(output,target,*,baseline=BASELINE,wsl=None,case=None):
     output=Path(output).resolve()
     if not output.is_relative_to((REPO/'build').resolve()) or output==REPO/'build':
         raise ValueError('Use an ignored build subdirectory')
     if output.exists() and any(output.iterdir()):raise ValueError('Use a fresh directory')
+    revision=git('rev-parse','--verify',baseline+'^{commit}').decode().strip()
     output.mkdir(parents=True,exist_ok=True)
     prefix=['wsl','-d',wsl,'--'] if wsl else []
     def path(value):
@@ -63,7 +64,7 @@ def run(output,target,*,wsl=None,case=None):
         for source in paths:
             relative=source.relative_to(REPO);destination=root/relative
             destination.parent.mkdir(parents=True,exist_ok=True)
-            data=git('show',BASELINE+':'+relative.as_posix()) if variant=='before' else source.read_bytes()
+            data=git('show',revision+':'+relative.as_posix()) if variant=='before' else source.read_bytes()
             destination.write_bytes(data)
         port=root/REL
         tools=output/variant/'tools';tools.mkdir(parents=True)
@@ -155,7 +156,7 @@ def run(output,target,*,wsl=None,case=None):
     for variant,recorded in source_binding.items():
         for relative,digest in recorded.items():
             assert textsha((output/variant/'source'/relative).read_bytes())==digest,'Frozen source changed'
-    report=dict(schema='lpx-lsf-compaction-admission-v1',baseline_revision=BASELINE,
+    report=dict(schema='lpx-lsf-compaction-admission-v1',baseline_revision=revision,
         current_source_sha256=binding,snapshot_source_sha256=source_binding,
         driver_sha256=textsha(Path(__file__).read_bytes()),target=target,
         physical_board_measured=False,clock_hz=16000000,sample_hz=8000,
@@ -169,6 +170,7 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('output',type=Path)
     parser.add_argument('--target',choices=('tiny','mega'),required=True)
+    parser.add_argument('--baseline',default=BASELINE,help='Local Git revision to compare')
     parser.add_argument('--wsl');parser.add_argument('--case')
     arguments=parser.parse_args()
-    run(arguments.output,arguments.target,wsl=arguments.wsl,case=arguments.case)
+    run(arguments.output,arguments.target,baseline=arguments.baseline,wsl=arguments.wsl,case=arguments.case)
