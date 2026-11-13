@@ -14,6 +14,7 @@ const lpcPairsReport='Codecs/LPX/research/tiny-lpc-pairs-2026-11-13/';
 const lpcShortReport='Codecs/LPX/research/tiny-lpc-short-2026-11-13/';
 const q14Report='Codecs/LPX/research/tiny-q14-2026-11-13/';
 const lsfNeighborsReport='Codecs/LPX/research/tiny-lsf-neighbors-2026-11-13/';
+const megaLsfReport='Codecs/LPX/research/mega-lsf-wide-2026-11-13/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -100,6 +101,19 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       assert.equal(report.universal_irq_cases,22);
       assert.equal(report.identical_fixed_header_images,9);
       const evidence=read(directory+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const report=JSON.parse(read(megaLsfReport+'source-transition.json'));
+    const change=report.sources[path] ?? report.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(report.baseline_revision,'ddefa0c4ffcc18cf16e659fa0ab3652f1f7dca84');
+      assert.equal(report.mega_asm_irq_cases,6);
+      assert.equal(report.identical_mega_c_images,4);
+      assert.equal(report.identical_nano_images,9);
+      const evidence=read(megaLsfReport+'measurements.json');
       assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
       recorded=change.current[field];
     }

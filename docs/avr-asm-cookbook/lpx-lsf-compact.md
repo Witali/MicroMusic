@@ -108,3 +108,19 @@ On ATtiny88 with AVR-GCC 7.3.0, AVR GCC ABI and `-Os -flto`, this saves
 48 B of program Flash and 5 B of peak stack. All 22 loads preserve exact
 PWM with IRQ, with up to 6.76 cycles saved per sample and no underruns.
 [Measurements and verification](../../Codecs/LPX/research/tiny-lsf-neighbors-2026-11-13/README.md).
+
+## Bounded hardware partial products on AVR5
+
+For the direct polynomial branch, bounded signed24 times signed16
+needs six byte products to produce the low 32 bits. Use the AVR5
+`MUL` and `MULSU` instructions and restore `r1` before returning
+through the AVR GCC ABI. In the split branch, the high part fits signed16
+and both Q12-related floors stay independent. Select the assembly through
+the supported AVR5 architecture and explicit ASM enable. The selectable
+C backend provides the independent reference.
+
+With AVR-GCC 7.3.0 at `-Os -flto`, the shared SRAM512 ring recurrence
+and bounded product together save 40 B on all six universal ATmega328P
+loads with IRQ. PWM matches exactly, the complete IRQ timing improves by
+7.64–8.49 cycles per sample, and no queue underruns occur.
+[Proof and measurements](../../Codecs/LPX/research/mega-lsf-wide-2026-11-13/README.md).

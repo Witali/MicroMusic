@@ -1002,13 +1002,43 @@ static inline int32_t polyMulQ12(int32_t v,int16_t c){
     // Preserve the original separate floors of the two split products.
     return (lpx4Mul32x16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
 }
+#if LPX4_USE_AVR_ASM && LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#define LPX4_USE_AVR5_POLYNOMIAL_MUL 1
+// The direct branch bounds x to signed24 and the product to signed32.
+// Treat the low two bytes of x as unsigned and the third as signed.
+// Six byte products suffice modulo 2^32. Restore r1 before returning to C++.
+static __attribute__((noinline)) int32_t polyDirectProduct(int32_t x,int16_t y){
+    uint32_t result;
+    uint8_t zero;
+    __asm__(
+        "clr %1\n\t"
+        "mul %A2,%A3\n\tmovw %A0,r0\n\t"
+        "mulsu %B3,%B2\n\tmovw %C0,r0\n\t"
+        "mul %A3,%B2\n\tadd %B0,r0\n\tadc %C0,r1\n\tadc %D0,%1\n\t"
+        "mulsu %B3,%A2\n\tsbc %D0,%1\n\tadd %B0,r0\n\tadc %C0,r1\n\tadc %D0,%1\n\t"
+        "mulsu %C2,%A3\n\tadd %C0,r0\n\tadc %D0,r1\n\t"
+        "mul %C2,%B3\n\tadd %D0,r0\n\t"
+        "clr __zero_reg__\n\t"
+        : "=&r"(result),"=&r"(zero) : "a"(x),"a"(y) : "r0","r1","cc");
+    return (int32_t)result;
+}
+#else
+#define LPX4_USE_AVR5_POLYNOMIAL_MUL 0
+#endif
 // Conversion-only bound: before the fifth quadratic, each coefficient is
 // bounded by 4096*binomial(9,k), at most 516096. Earlier factors use the
 // direct path, so no split-floor error enters that bound. Consequently
 // trunc(v/16) fits signed16 (|hi|<=32256). Keep the exact 250000 threshold
 // and both separate floors; the unrestricted polynomial helper stays above.
 static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
-#if LPX4_USE_AVR_NOMUL_ASM
+#if LPX4_USE_AVR5_POLYNOMIAL_MUL
+    if(v<=250000L && v>=-250000L)return lpx4Shift12(polyDirectProduct(v,c));
+    int16_t hi=(int16_t)(v>>4);
+    int8_t rem=(uint8_t)v&15;
+    // Turn the floor and nonnegative remainder into the truncating split.
+    if(v<0 && rem){++hi;rem-=16;}
+    return (lpx4Mul16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
+#elif LPX4_USE_AVR_NOMUL_ASM
     if(v<=250000L && v>=-250000L)return lpx4Shift12(lpx4Mul32x16(v,c));
     const int16_t hi=(int16_t)truncShift(v,4);
     int8_t rem=(uint8_t)v&15;
@@ -1046,7 +1076,7 @@ static const bool halfPolynomialP=false;
 #else
 static const bool halfPolynomialP=true;
 #endif
-#if LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#if LPX4_USE_AVR5_POLYNOMIAL_MUL || (LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS))
 static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
     uint8_t j;
     int32_t previous;

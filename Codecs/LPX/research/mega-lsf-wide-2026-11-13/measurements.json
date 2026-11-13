@@ -1,0 +1,70 @@
+{
+  "schema": "lpx-mega-lsf-wide-v1",
+  "baseline_revision": "ddefa0c4ffcc18cf16e659fa0ab3652f1f7dca84",
+  "all_passed": true,
+  "clock_hz": 16000000,
+  "sample_hz": 8000,
+  "avr_gcc": "7.3.0",
+  "simavr": "1.6",
+  "lpc_segments": 2,
+  "queue": 32,
+  "prefill": 24,
+  "irq_cycles": 64,
+  "physical_board_measured": false,
+  "flags": "-mmcu=atmega328p -Os -flto -mcall-prologues -mrelax -fno-jump-tables -finline-small-functions",
+  "mean_cycles_metric": "active decoder CPU plus complete IRQ, excludes foreground queue work",
+  "source": {
+    "baseline": {
+      "raw_sha256": "75a5e86c4ea31cdbcd48cdd3256f94493fa0693b99fe115fbf22a18944c7be0e",
+      "text_lf_sha256": "75a5e86c4ea31cdbcd48cdd3256f94493fa0693b99fe115fbf22a18944c7be0e"
+    },
+    "current": {
+      "raw_sha256": "1e48312e3f6579e1cff4771b7f4d75b5eb22bea01200e52fcd74af61eebeeb21",
+      "text_lf_sha256": "1e48312e3f6579e1cff4771b7f4d75b5eb22bea01200e52fcd74af61eebeeb21"
+    }
+  },
+  "arithmetic_probe": {
+    "cases": 501460,
+    "split_cases": 194306,
+    "irq_count": 3612,
+    "zero_register_checked": true,
+    "passed": true
+  },
+  "asm_cases": 6,
+  "asm_samples": 74293,
+  "c_cases": 4,
+  "cases": [
+    {"case": "chego-2k", "backend": "asm", "samples": 9831, "input_sha256": "00315a2e6eb7c23f23235ce6173d3a27b6f8184727512b75dd7cd40e21a6426c", "pwm_sha256": "24aa20128092761cbc46fc2f492f67080cc3b7411582239e7c23c770c7292891", "baseline": {"program_bytes": 5089, "flash_bytes": 5386, "audio_bytes": 297, "static_ram_bytes": 433, "stack_bytes": 71, "stack_margin": 1543, "min_queue": 25, "underruns": 0, "irq_r0_nonzero": 9496, "irq_r1_nonzero": 86, "decode_cpu_cycles": 6906306, "mean_cycles_with_irq": 765.48965, "binary_sha256": "875bfc39a178af34f13f484e023217878eae8335b5ee0e0d0f5b8eeecf1ddf65"}, "final": {"program_bytes": 5049, "flash_bytes": 5346, "audio_bytes": 297, "static_ram_bytes": 433, "stack_bytes": 66, "stack_margin": 1548, "min_queue": 25, "underruns": 0, "irq_r0_nonzero": 9558, "irq_r1_nonzero": 102, "decode_cpu_cycles": 6830045, "mean_cycles_with_irq": 757.849393, "binary_sha256": "44da14ede5c44e715a7f69ce1338e0a859a548d9eca273546197aea7111a55a5"}},
+    {"case": "chego-compact", "backend": "asm", "samples": 9831, "input_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1", "pwm_sha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf", "baseline": {"program_bytes": 5088, "flash_bytes": 5610, "audio_bytes": 522, "static_ram_bytes": 433, "stack_bytes": 71, "stack_margin": 1543, "min_queue": 25, "underruns": 0, "irq_r0_nonzero": 9579, "irq_r1_nonzero": 86, "decode_cpu_cycles": 7118300, "mean_cycles_with_irq": 787.135719, "binary_sha256": "78c2eafb026e659626214681775964ed6500c3296904f6f7dafde9fe97f0b852"}, "final": {"program_bytes": 5048, "flash_bytes": 5570, "audio_bytes": 522, "static_ram_bytes": 433, "stack_bytes": 66, "stack_margin": 1548, "min_queue": 26, "underruns": 0, "irq_r0_nonzero": 9658, "irq_r1_nonzero": 83, "decode_cpu_cycles": 7036457, "mean_cycles_with_irq": 778.926277, "binary_sha256": "4f4d23a7eb8b202794692b1f930b490b6cdde7d39ef6c25363110d8c0b390eff"}},
+    {"case": "chego-quality", "backend": "asm", "samples": 9831, "input_sha256": "e811e60295c6245519dcd497ea8ed597dcaa5d996ce995b35e0966b92db78f65", "pwm_sha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea", "baseline": {"program_bytes": 5088, "flash_bytes": 5864, "audio_bytes": 776, "static_ram_bytes": 433, "stack_bytes": 71, "stack_margin": 1543, "min_queue": 24, "underruns": 0, "irq_r0_nonzero": 9547, "irq_r1_nonzero": 155, "decode_cpu_cycles": 7156929, "mean_cycles_with_irq": 791.016927, "binary_sha256": "66a95a14ae4b308c5671787c4c4210d7ef1bb2cc4f47c1aba7c1ef5401ec45e8"}, "final": {"program_bytes": 5048, "flash_bytes": 5824, "audio_bytes": 776, "static_ram_bytes": 433, "stack_bytes": 66, "stack_margin": 1548, "min_queue": 25, "underruns": 0, "irq_r0_nonzero": 9586, "irq_r1_nonzero": 115, "decode_cpu_cycles": 7075316, "mean_cycles_with_irq": 782.830937, "binary_sha256": "b31a58a03067ab0bdf8b3df21064bd2abd5da44c47b57975aa74ea2839a5e8ff"}},
+    {"case": "s80-changing-lag18-pre16383-bright11468", "backend": "asm", "samples": 12800, "input_sha256": "c0ac38c4331cfb141b9dabcef4be408a8a00466310bcea71974d7ba4e71c1650", "pwm_sha256": "d71b6d2e1f97044516bdc7d992e55f4a5a59507ce45e6736e7fbf1c95a1b21d4", "baseline": {"program_bytes": 5089, "flash_bytes": 5450, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 71, "stack_margin": 1543, "min_queue": 25, "underruns": 0, "irq_r0_nonzero": 12634, "irq_r1_nonzero": 160, "decode_cpu_cycles": 9906017, "mean_cycles_with_irq": 837.196462, "binary_sha256": "f78f9d232845456d8e10dc5e0ddb9c4475395a053a4dc4b58e74b7390d556fb5"}, "final": {"program_bytes": 5049, "flash_bytes": 5410, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 66, "stack_margin": 1548, "min_queue": 26, "underruns": 0, "irq_r0_nonzero": 12688, "irq_r1_nonzero": 140, "decode_cpu_cycles": 9800320, "mean_cycles_with_irq": 829.027708, "binary_sha256": "a9f073399c2465117737fb9c77f3a1c89cf4d3061c5774f945a6139a4068c005"}},
+    {"case": "chego-2k", "backend": "c", "samples": 9831, "input_sha256": "00315a2e6eb7c23f23235ce6173d3a27b6f8184727512b75dd7cd40e21a6426c", "pwm_sha256": "24aa20128092761cbc46fc2f492f67080cc3b7411582239e7c23c770c7292891", "baseline": {"program_bytes": 4619, "flash_bytes": 4916, "audio_bytes": 297, "static_ram_bytes": 433, "stack_bytes": 68, "stack_margin": 1546, "min_queue": 23, "underruns": 0, "irq_r0_nonzero": 7944, "irq_r1_nonzero": 154, "decode_cpu_cycles": 15307257, "mean_cycles_with_irq": 1620.056082, "binary_sha256": "581cc75e4cc36a5620cbd601858967a7002e87f669f33dd6e0b194b584766c19"}, "final": {"program_bytes": 4619, "flash_bytes": 4916, "audio_bytes": 297, "static_ram_bytes": 433, "stack_bytes": 68, "stack_margin": 1546, "min_queue": 23, "underruns": 0, "irq_r0_nonzero": 7944, "irq_r1_nonzero": 154, "decode_cpu_cycles": 15307257, "mean_cycles_with_irq": 1620.056082, "binary_sha256": "581cc75e4cc36a5620cbd601858967a7002e87f669f33dd6e0b194b584766c19"}},
+    {"case": "chego-compact", "backend": "c", "samples": 9831, "input_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1", "pwm_sha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf", "baseline": {"program_bytes": 4618, "flash_bytes": 5140, "audio_bytes": 522, "static_ram_bytes": 433, "stack_bytes": 68, "stack_margin": 1546, "min_queue": 24, "underruns": 0, "irq_r0_nonzero": 8246, "irq_r1_nonzero": 191, "decode_cpu_cycles": 15513835, "mean_cycles_with_irq": 1641.148669, "binary_sha256": "101b6443580f1a5d24902b2ee3989393ab7b6f6f6794df5cfc8d4c7a6387b7ee"}, "final": {"program_bytes": 4618, "flash_bytes": 5140, "audio_bytes": 522, "static_ram_bytes": 433, "stack_bytes": 68, "stack_margin": 1546, "min_queue": 24, "underruns": 0, "irq_r0_nonzero": 8246, "irq_r1_nonzero": 191, "decode_cpu_cycles": 15513835, "mean_cycles_with_irq": 1641.148669, "binary_sha256": "101b6443580f1a5d24902b2ee3989393ab7b6f6f6794df5cfc8d4c7a6387b7ee"}},
+    {"case": "chego-quality", "backend": "c", "samples": 9831, "input_sha256": "e811e60295c6245519dcd497ea8ed597dcaa5d996ce995b35e0966b92db78f65", "pwm_sha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea", "baseline": {"program_bytes": 4618, "flash_bytes": 5394, "audio_bytes": 776, "static_ram_bytes": 433, "stack_bytes": 68, "stack_margin": 1546, "min_queue": 23, "underruns": 0, "irq_r0_nonzero": 8152, "irq_r1_nonzero": 212, "decode_cpu_cycles": 15557252, "mean_cycles_with_irq": 1645.513613, "binary_sha256": "ea84e393e222448009de9b24459cfe628d5246533c2888d6370b4881db983b7e"}, "final": {"program_bytes": 4618, "flash_bytes": 5394, "audio_bytes": 776, "static_ram_bytes": 433, "stack_bytes": 68, "stack_margin": 1546, "min_queue": 23, "underruns": 0, "irq_r0_nonzero": 8152, "irq_r1_nonzero": 212, "decode_cpu_cycles": 15557252, "mean_cycles_with_irq": 1645.513613, "binary_sha256": "ea84e393e222448009de9b24459cfe628d5246533c2888d6370b4881db983b7e"}},
+    {"case": "s80-changing-lag18-pre16383-bright11468", "backend": "c", "samples": 12800, "input_sha256": "c0ac38c4331cfb141b9dabcef4be408a8a00466310bcea71974d7ba4e71c1650", "pwm_sha256": "d71b6d2e1f97044516bdc7d992e55f4a5a59507ce45e6736e7fbf1c95a1b21d4", "baseline": {"program_bytes": 4619, "flash_bytes": 4980, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 68, "stack_margin": 1546, "min_queue": 24, "underruns": 0, "irq_r0_nonzero": 12122, "irq_r1_nonzero": 312, "decode_cpu_cycles": 20786652, "mean_cycles_with_irq": 1687.221979, "binary_sha256": "02596468c5b195c8a445da3d814539d8aa5ad72b97bf5afe77ac13987691001e"}, "final": {"program_bytes": 4619, "flash_bytes": 4980, "audio_bytes": 361, "static_ram_bytes": 433, "stack_bytes": 68, "stack_margin": 1546, "min_queue": 24, "underruns": 0, "irq_r0_nonzero": 12122, "irq_r1_nonzero": 312, "decode_cpu_cycles": 20786652, "mean_cycles_with_irq": 1687.221979, "binary_sha256": "02596468c5b195c8a445da3d814539d8aa5ad72b97bf5afe77ac13987691001e"}},
+    {"case": "wide-dense", "backend": "asm", "samples": 16000, "input_sha256": "480e9a47f9e22f6a0050c06f802b87da15c615ad46b43514d957b73ccba4179a", "pwm_sha256": "12727196155937e3adae9d5d281aea6fd7b2c2ca96bcd067ac13500e70b86605", "baseline": {"program_bytes": 5089, "flash_bytes": 6362, "audio_bytes": 1273, "static_ram_bytes": 433, "stack_bytes": 71, "stack_margin": 1543, "min_queue": 25, "underruns": 0, "irq_r0_nonzero": 11546, "irq_r1_nonzero": 245, "decode_cpu_cycles": 12619731, "mean_cycles_with_irq": 852.139397, "binary_sha256": "073a3282a644ee8e426dca0bc37510e8bed207292a2825940a86313f1965cd73"}, "final": {"program_bytes": 5049, "flash_bytes": 6322, "audio_bytes": 1273, "static_ram_bytes": 433, "stack_bytes": 66, "stack_margin": 1548, "min_queue": 25, "underruns": 0, "irq_r0_nonzero": 11646, "irq_r1_nonzero": 208, "decode_cpu_cycles": 12482599, "mean_cycles_with_irq": 843.64697, "binary_sha256": "3ce30f69ed7a673cf0ea1fea6ecd9bb2611554b542e7bf8d3cd224c3033787ed"}, "split_path_entries": 150},
+    {"case": "wide-sparse80", "backend": "asm", "samples": 16000, "input_sha256": "6d552a7c8eefe147625737e3b2a420bcf42aea6e1462a4dcfd8990e8b6fe05c0", "pwm_sha256": "12727196155937e3adae9d5d281aea6fd7b2c2ca96bcd067ac13500e70b86605", "baseline": {"program_bytes": 5088, "flash_bytes": 5598, "audio_bytes": 510, "static_ram_bytes": 433, "stack_bytes": 71, "stack_margin": 1543, "min_queue": 25, "underruns": 0, "irq_r0_nonzero": 11526, "irq_r1_nonzero": 189, "decode_cpu_cycles": 12382591, "mean_cycles_with_irq": 837.359852, "binary_sha256": "bd5b0e2b2d14b621a2edcfcdb52cfcd496ae3b32c9057dcfbd1753f65d466617"}, "final": {"program_bytes": 5048, "flash_bytes": 5558, "audio_bytes": 510, "static_ram_bytes": 433, "stack_bytes": 66, "stack_margin": 1548, "min_queue": 26, "underruns": 0, "irq_r0_nonzero": 11645, "irq_r1_nonzero": 196, "decode_cpu_cycles": 12245459, "mean_cycles_with_irq": 828.867426, "binary_sha256": "e99f6b9792a6a99de38749d58db5e1a89eece55cfa7168e03dfe5bdedd5cbbd6"}, "split_path_entries": 150}
+  ],
+  "identical_nano_images": [
+    {"family": "nano", "id": "chego-compact", "flash_bytes": 5008, "current_binary_sha256": "4c87a861ad69ca4fa9abbd9676c74df5bfca92273cd01dcfaa16323f8f858a30"},
+    {"family": "nano", "id": "chego-quality", "flash_bytes": 5262, "current_binary_sha256": "7701894eda3c801b004060d1f5de7ccef8edb663677461b4a8d56f6dcd048feb"},
+    {"family": "nano", "id": "otvechaesh-compact", "flash_bytes": 4942, "current_binary_sha256": "31385413d06e0087cec4f5c37008369ed7086fa3899df2c6b1bef954c30a8e14"},
+    {"family": "nano", "id": "otvechaesh-quality", "flash_bytes": 5246, "current_binary_sha256": "007f20f64a38320c3793902a453f204ec38959f68feb9870c7c7435ec87e4578"},
+    {"family": "nano", "id": "vinni-compact", "flash_bytes": 5824, "current_binary_sha256": "bc22b7b75b5b23e3dca8d292f6789a0daeabff42c988c5611ca70331f14ac72e"},
+    {"family": "nano", "id": "vinni-quality", "flash_bytes": 6418, "current_binary_sha256": "663aadb9b4db4d313091e1374209bee88700f86f0c4ff11969eba7ae5b1fb255"},
+    {"family": "nano", "id": "bread-compact", "flash_bytes": 5480, "current_binary_sha256": "3f1fed4d223250cd873fd76e02a8f3d55d38e6aed727d2ef758b5b8eb72c5a29"},
+    {"family": "nano", "id": "bread-quality", "flash_bytes": 6370, "current_binary_sha256": "9fe14992d3214617869a1bb6bbd3d29b0bc366c42def664aa8b195d7f69fa05b"},
+    {"family": "dialogue", "id": "dialogue-quality", "flash_bytes": 10386, "current_binary_sha256": "28e37c30efae4258d1c77dda1c8a87c96029bc3042bae40811da4f64a04bc466"}
+  ],
+  "identical_tiny_fixed_images": [
+    {"case": "chego-compact", "flash_bytes": 5350, "binary_sha256": "9d27bf4d61561943054dd371579b91d48dfdcb20f1a25d74250985a2e715adff"},
+    {"case": "chego-quality", "flash_bytes": 5766, "binary_sha256": "51dfc45228890b0509b16fb575b33b2ffb622b35093128aa1837e40a2819c8f6"},
+    {"case": "otvechaesh-compact", "flash_bytes": 5284, "binary_sha256": "4c5749a84ad89a7e2f35738d79561f9fc19ed439f01869ee8b6e0ac780531641"},
+    {"case": "otvechaesh-quality", "flash_bytes": 5768, "binary_sha256": "d9f02eaec54d820628757043405fd12b66e6a182d54a94ffad1a5299316ceb05"},
+    {"case": "vinni-compact", "flash_bytes": 6182, "binary_sha256": "3b7024217575f247ce5d8a899d8051cb2053ecf76faa2405f7a66b6babba8538"},
+    {"case": "vinni-quality", "flash_bytes": 6940, "binary_sha256": "233a77de6a8292a268a9d89e673c41484b47724c6a4d66f867eabc1743bfc361"},
+    {"case": "bread-compact", "flash_bytes": 5878, "binary_sha256": "8b4074af893ed8bc47d956249d7d05358579ebd8dad866eeb39de46d8f1c4e4e"},
+    {"case": "bread-quality", "flash_bytes": 6998, "binary_sha256": "976db9a2d81806638ba6d571419c0a39ea959cb1584d46714dc558fad2698133"},
+    {"case": "bread-low15", "flash_bytes": 5356, "binary_sha256": "76f343e55cfc56d0e1c8b16f0603a262557dc1c5ac9df3b997a50d91e4289fc2"}
+  ]
+}
