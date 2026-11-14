@@ -210,3 +210,9 @@ is exact. This replaces a full signed byte-by-word product and shift.
 AVR-GCC 7.3.0 with GNU AVR ABI and `-Os -flto` saves 80 B on the universal
 ATtiny88 v9 build. All 22 live-IRQ loads retain exact PWM without slowdown.
 [Arithmetic coverage and paired measurements](../../Codecs/LPX/research/tiny-v9-polynomial-nibble-2026-11-14/README.md).
+
+The quotient and low remainder can use the same negative-remainder test
+to recover truncation toward zero from an arithmetic right shift. The same
+ATtiny88 toolchain and IRQ matrix confirm another 20 B saving and exact
+PWM. Peak decode CPU cycles decrease by 5–35 on each workload.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-polynomial-quotient-2026-11-14/README.md).
