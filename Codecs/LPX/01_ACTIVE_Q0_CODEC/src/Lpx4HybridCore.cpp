@@ -485,7 +485,7 @@ bool Lpx4HybridCore::readFrame(){
 #else
   if(!speechHalf_){
 #endif
-#if LPX4_COMPACT_ONLY
+#if LPX4_COMPACT_ONLY && !LPX4_AVR25_V9_RUNTIME
    // The second half uses cached LPC; the next first half refreshes prev.
    for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
 #endif
@@ -505,12 +505,25 @@ bool Lpx4HybridCore::readFrame(){
      const bool delta=readOne()!=0;
      if(delta&&!initializedFrame_){error_=CORRUPT_STREAM;return false;}
      const uint8_t k=bits-4-(uint8_t)delta;
-     // Gap max:63+1+63=127. Delta range:-64..126. Reject before widening.
-     int8_t last=-1;
+     // AVR25 keeps the same one-based indices in the parser and workspace.
+     // Converting a negative delta result to uint8_t puts it above the limit.
+     int8_t last=LPX4_AVR25_V9_RUNTIME?0:-1;
      const uint8_t limit=((LPX4_SPEECH_FLAGS&2)+2)<<4;
      for(uint8_t i=0;i<10;i++){
       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
       // Compact Rice codes use at most seven bits: delta is -64..63.
+#if LPX4_AVR25_V9_RUNTIME
+      const int8_t difference=(code>>1)^-(code&1);
+      const uint8_t previous=cur_[i];
+      const uint8_t value=delta?previous+difference:last+1+code;
+      if(error_)return false;
+      if(value<=last || value>limit){error_=CORRUPT_STREAM;return false;}
+      // A repeat uses the cached LPC. Save the old LSF only when decoding a
+      // new vector, immediately before replacing the corresponding index.
+      prev_[i]=previous;
+      if(value!=previous)staticSpectrum_=false;
+      cur_[i]=value;last=value;
+#else
       const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
 #if LPX4_COMPACT_ONLY
       const int8_t value=delta?(prev_[i]-1+difference):last+1+code;
@@ -526,6 +539,7 @@ bool Lpx4HybridCore::readFrame(){
 #endif
       if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
       cur_[i]=v;last=value;
+#endif
      }
     }
    }
@@ -545,7 +559,11 @@ bool Lpx4HybridCore::readFrame(){
    }
 #endif
   }
+#if LPX4_AVR25_V9_RUNTIME
+  if(!initializedFrame_)staticSpectrum_=true;
+#else
   if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+#endif
   initializedFrame_=true;
 #if LPX4_COMPACT_ONLY
   subIndex_^=8;
@@ -1326,7 +1344,11 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     // An unchanged LSF vector has identical polynomial anchors and no LPC
     // interpolation. The cached endpoint is valid across repeated frames.
     if(staticSpectrum_){
-        if(!lsfCached_){convertLsfAt(0,curLpc);lsfCached_=true;}
+        if(!lsfCached_){
+            // Use the first frame's current spectrum directly on AVR25.
+            convertLsfAt(LPX4_AVR25_V9_RUNTIME?16:0,curLpc);
+            lsfCached_=true;
+        }
         // The endpoint is unchanged for the whole frame. Refresh a_ at its
         // first subframe, because the previous dynamic frame ended at a midpoint.
 #if !LPX4_ROTATE_LPC_ANCHORS

@@ -189,3 +189,13 @@ AVR-GCC 7.3.0 with the GNU AVR ABI and `-Os -flto` saves 8 B of
 program Flash without increasing the stack. On 22 simavr loads with
 IRQ, PWM matches and peak active decoder cycles drop by 83–97.
 [Measurements and bounds](../../Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13/README.md).
+
+## Save the old spectrum during the update
+
+An explicit ASM universal LPX v9 build on AVR25 can keep one-based indices
+through validation and save each old index as it reads the replacement. An
+unchanged spectrum uses its cached LPC endpoint. The first conversion reads
+the new spectrum directly. Other targets retain the equivalent C parser.
+AVR-GCC 7.3.0 at `-Os -flto` saves 44 B with the GNU AVR ABI. All 22
+simavr IRQ workloads speed up, maintain peak stack and produce exact PWM.
+[Measurements and corpus coverage](../../Codecs/LPX/research/tiny-v9-spectrum-fold-2026-11-14/README.md).
