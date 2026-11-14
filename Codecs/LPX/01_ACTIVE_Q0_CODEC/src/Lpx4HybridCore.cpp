@@ -1399,11 +1399,17 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     const uint8_t subframesPerSegment=(uint8_t)(8/LPX3_LPC_SEGMENTS);
     if(sub%subframesPerSegment==0){
 #if LPX4_ROTATE_LPC_ANCHORS
+#if !LPX4_AVR25_V9_RUNTIME
         if(sub==0&&!lsfCached_)convertLsfAt(0,prevLpc);
         else{
+#endif
+            // The compact AVR25 parser forces the first frame to be static.
+            // Its initial endpoint is valid before dynamic interpolation.
             Lpx4SynthesisValue* scratch=prevLpc;prevLpc=curLpc;curLpc=scratch;
             lpcAnchorOffset_^=10;
+#if !LPX4_AVR25_V9_RUNTIME
         }
+#endif
 #else
         if(sub==0){
             if(lsfCached_){
@@ -1416,7 +1422,9 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #endif
         const uint8_t anchor=(uint8_t)(((sub/subframesPerSegment)+1)*width);
         convertLsfAt(anchor,curLpc);
+#if !LPX4_AVR25_V9_RUNTIME || !LPX4_ROTATE_LPC_ANCHORS
         lsfCached_=true;
+#endif
     }
     const uint8_t t=(uint8_t)(sub*2+1);
     const uint8_t localT=(uint8_t)(t%width);

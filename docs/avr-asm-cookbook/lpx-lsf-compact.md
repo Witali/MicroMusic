@@ -223,3 +223,13 @@ corrections modulo 65536 with a short signed shift-and-add loop. The same
 ATtiny88 toolchain saves 12 B with the GNU AVR ABI. Across 22 active IRQ
 loads, peak stack falls by 1 B, PWM is exact and no decoder slows.
 [Arithmetic probe and paired measurements](../../Codecs/LPX/research/tiny-v9-polynomial-direct-2026-11-14/README.md).
+
+## Rotate only after the first static frame
+
+The AVR25 v9 parser guarantees an initial static frame. Once that frame
+has produced an LPC endpoint, dynamic segments can unconditionally rotate
+the two anchors. The cache flag only needs initialization on the static
+path. The selectable C decoder retains its general lifecycle. In the
+GNU AVR ABI build with AVR-GCC 7.3.0 and `-Os -flto`, 22 interrupt-active
+simavr loads verify 26 B less Flash, identical PWM and unchanged stack.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-anchor-rotation-2026-11-14/README.md).
