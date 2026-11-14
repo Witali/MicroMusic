@@ -254,6 +254,11 @@ the same. The GNU AVR ABI and AVR-GCC 7.3.0 at `-Os -flto` save 66 B on
 all 22 live-IRQ workloads with exact PWM and the same decoder time.
 [Paired playback and error controls](../../Codecs/LPX/research/tiny-v9-player-drain-2026-11-14/README.md).
 
+Single-playback builds reach the same drain through the published EOF flag
+and can omit the stream restart branch. With the same compiler and IRQ
+matrix this saves another 34 B. The two- and four-playback configurations
+retain the verified restart path. [Paired measurements](../../Codecs/LPX/research/tiny-v9-one-shot-2026-11-14/README.md).
+
 Reproduce the frozen-baseline comparison (paths point to ignored local builds):
 
 ```sh

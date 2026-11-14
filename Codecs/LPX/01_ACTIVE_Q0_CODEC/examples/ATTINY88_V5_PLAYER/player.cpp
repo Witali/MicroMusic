@@ -124,7 +124,9 @@ int main(){
         }
         const uint8_t head=lpx25_head,next=advance(head);
         if(next==lpx25_tail)continue;
-        if(decoder.finished()){
+        // Single playback publishes EOF on its last sample and goes directly
+        // to the drain. A restart is reachable only for a repeat build.
+        if((!LPX25_V9_RUNTIME || LPX25_REPEAT>1) && decoder.finished()){
             --repeats;
             if(!begin()){lpx25_error=decoder.error();break;}
         }
