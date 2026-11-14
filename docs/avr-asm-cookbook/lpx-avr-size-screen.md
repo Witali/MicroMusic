@@ -88,6 +88,33 @@ PWM comparisons are exact with zero underruns. The shared writeback lowers
 minimum queue occupancy from six to five on the heavy sparse80 workload.
 The observed costs rule out those three implementations as standalone changes.
 
+On the later AVR25 v9 build, one eight-bit scale/gain read and a direct Q4
+scale table together save 10 B. The Q4 table stores the exact previous
+values times sixteen. The AVR-GCC 7.3.0 build retains the GNU AVR ABI and
+the original selectable C implementation. All 22 active IRQ workloads
+speed up with bit-exact PWM and the same stack and SRAM use.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-block-header-2026-11-14/README.md).
+
+The P4 and Sparse80 position mapping shares one function. In the AVR25 v9
+ASM build, two `LSR`s extract the quotient and leave the rounding bit in
+carry. `ADC` combines both with the original index. The ordinary C mapping
+stays selectable. AVR-GCC 7.3.0 at `-Os -flto` gains 24 B and maintains
+speed and exact PWM across 22 interrupt-active loads.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-shared-pulse-position-2026-11-14/README.md).
+
+Base P6 and extra pulses also share their signed four-bit amplitude decoder.
+Flipping bit 3 and subtracting eight yields the same amplitude on AVR25.
+The same toolchain saves 4 B, with a maximum increase of 0.0441 cycles per
+sample on six workloads. Together the two pulse parser extractions reduce
+decoder time on all 22 workloads with identical PWM.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-shared-pulse-amplitude-2026-11-14/README.md).
+
+Dense packets need a clear low phase bit; Sparse80 additionally tests the
+next phase bit. Test both bits directly before parsing instead of building a
+variable mask. In the same AVR-GCC 7.3.0 GNU AVR ABI build this saves another
+20 B. All 22 IRQ-active workloads speed up with exact PWM and the same stack.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-pulse-schedule-2026-11-14/README.md).
+
 Two later changes passed all 22 universal Tiny88 AVR25 loads with IRQ.
 With the AVR GCC ABI and AVR-GCC 7.3.0 at `-Os -flto`, sharing the byte-wide
 cache shift saves 30 B. Accumulating the shifted Rice quotient while

@@ -43,6 +43,15 @@ __attribute__((noinline,used)) void math_case(){
     case 25:math_out=lpx4SynthesisQ12<true,true>(math_exc,math_a,math_h);break;
     case 26:math_out=lpx4SynthesisQ12<false,true>(math_exc,math_a,math_h);break;
     case 27:math_out=lpx4SynthesisQ12<false>(math_exc,math_a,math_h);break;
+    case 28:math_out=lpx4PitchQ4((int8_t)math_x,(uint8_t)math_y,true);break;
+    case 29:
+        if(math_bits==2)math_out=lpx4LpcInterpolate<true>(math_x,math_y,math_t,2);
+        else if(math_bits==3)math_out=lpx4LpcInterpolate<true>(math_x,math_y,math_t,3);
+        else math_out=lpx4LpcInterpolate<true>(math_x,math_y,math_t,4);
+        break;
+    case 30:math_out=lpx4HalfClip15From24(math_exc);break;
+    case 31:math_out=lpx4NibbleMulQ12((int8_t)math_x,math_y);break;
+    case 32:math_out=lpx4BoundedPolyQ12(math_exc,math_y);break;
     }
 }
 }

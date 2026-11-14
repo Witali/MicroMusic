@@ -4,6 +4,10 @@ import unittest
 from lpx_source_history import assert_recorded_source
 from verify_atmega328p_v9 import ACTIVE, REPO, RECEIPT, CASES, sha, text_sha
 from verify_atmega328p_v9 import adapt_player, adapt_observer, adapt_builder, adapt_verifier
+from verify_lsf_compaction import git
+
+
+MEASURED_REVISION = '393b2de271568890d7b483f7602a2f59452d1a68'
 
 
 class Atmega328pV9Tests(unittest.TestCase):
@@ -21,7 +25,10 @@ class Atmega328pV9Tests(unittest.TestCase):
              base+'01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp'),
             (ACTIVE.parent/'validation/attiny88/sim_player.c', adapt_observer,
              base+'validation/attiny88/sim_player.c')):
-            self.assertEqual(text_sha(transform(source.read_text()).encode()), r['generated_source_sha256'][generated])
+            path = source.relative_to(REPO).as_posix()
+            measured = git('show', f'{MEASURED_REVISION}:{path}').decode('utf-8')
+            self.assertEqual(text_sha(measured.encode()), r['production_source_sha256'][path])
+            self.assertEqual(text_sha(transform(measured).encode()), r['generated_source_sha256'][generated])
         for source, transform, generated in (
             ('build_attiny88_player', adapt_builder, 'build_mega_player.py'),
             ('verify_attiny88_player', adapt_verifier, 'verify_mega_player.py')):

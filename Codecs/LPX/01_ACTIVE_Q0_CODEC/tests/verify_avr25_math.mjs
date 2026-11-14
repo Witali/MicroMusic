@@ -52,6 +52,24 @@ const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed;};
 const signed=()=>((random()>>>8)&65535)-32768;
 const boundary=[-32768,-32767,-16384,-4096,-256,-129,-128,-1,0,1,127,128,255,256,4096,16384,32767];
 for(const x of boundary)for(const y of boundary)check(0,x,y,x*y);
+// Four-bit signed corrections, including both cosine endpoints and the
+// products immediately on either side of powers-of-two rounding edges.
+const cosineFactors=new Set([-8192,0,8192]);
+for(let bit=0;bit<=13;bit++)for(const offset of [-1,0,1]){
+ const factor=(1<<bit)+offset;
+ if(factor<=8192){cosineFactors.add(factor);cosineFactors.add(-factor);}
+}
+for(let x=-15;x<=15;x++)for(const y of cosineFactors)check(31,x,y,Math.floor(x*y/4096));
+const directOperands=new Set([-250000,-249999,249999,250000]);
+for(let high=-4;high<=4;high++)for(const low of [-32769,-32768,-32767,-1,0,1,32766,32767,32768]){
+ const operand=high*65536+low;
+ if(Math.abs(operand)<=250000)directOperands.add(operand);
+}
+for(const exc of directOperands)for(const y of cosineFactors)
+ check(32,0,y,Math.floor(exc*y/4096),{exc});
+for(const x of boundary)for(const y of boundary)for(const bits of [2,3,4])
+ for(let t=1;t<(1<<bits);t+=2)
+  check(29,x,y,x+Math.trunc((y-x)*t/(1<<bits)),{bits,t});
 // Exercise carries and signed corrections around every bit, including the
 // loop-group boundaries for compact 1/2/4/8-round multiplication bodies.
 const carryPatterns=new Set([0x5555,0xaaaa,0x7fff,0x8000,0xffff]);
@@ -68,6 +86,8 @@ for(let i=0;i<1200;i++){
  check(4,x,coef,Math.floor(x*coef/16384));
  const bits=2+random()%3,t=random()%((1<<bits)+1);
  check(5,x,y,x+Math.trunc((y-x)*t/(1<<bits)),{bits,t});
+ const oddPhase=t%(1<<bits)|1;
+ check(29,x,y,x+Math.trunc((y-x)*oddPhase/(1<<bits)),{bits,t:oddPhase});
  const pwmGain=i&1?130:random()%256;
  check(6,x,pwmGain,Math.max(0,Math.min(255,128+Math.floor((x*pwmGain+8192)/16384))));
  for(const [kind,c]of [[9,13094],[10,64],[11,7800],[19,13926],[20,11469],
@@ -96,6 +116,14 @@ for(const x of boundary){
 }
 for(const value of [-3145728,-32769,-32768,-32767,-1,0,1,32767,32768,3145728])
  check(8,0,0,Math.max(-32767,Math.min(32767,value)),{exc:value});
+// Cover all transitions in signed24 halving, including both clipping edges.
+for(const edge of [-8388608,-4194304,-65536,-32768,0,32768,65534,4194304,8388607])
+ for(let value=Math.max(-8388608,edge-3);value<=Math.min(8388607,edge+3);value++)
+  check(30,0,0,Math.max(-32767,Math.min(32767,Math.trunc(value/2))),{exc:value});
+for(let i=0;i<1024;i++){
+ const value=(random()>>>8)-8388608;
+ check(30,0,0,Math.max(-32767,Math.min(32767,Math.trunc(value/2))),{exc:value});
+}
 for(let x=-32768;x<=32767;x++)check(24,x,0,Math.max(-16384,Math.min(16384,x)));
 for(const x of boundary)for(const c of [0,1,63,64,65,8191,8192,8193,16383,16384])
  check(4,x,c,Math.floor(x*c/16384));
@@ -121,6 +149,7 @@ for(const coefficient of [...boundary,0x5555,-0x5555])for(const history of split
 for(let x=-128;x<=127;x++)for(let gain=0;gain<=31;gain++){
  const expected=(Math.floor((x*gain+8)/16)<<24)>>24;
  check(3,x,gain,expected);
+ if(gain<=14 && (gain&1)===0)check(28,x,gain,expected);
 }
 // Byte-shuffle PWM identity covers even values outside the decoder's Q14 clip.
 for(let x=-32768;x<=32767;x++)
@@ -160,7 +189,8 @@ for(const {cpu,sym,name}of cpus){
 assert.ok(readFileSync(folder+'/c.bin').equals(readFileSync(folder+'/generic.bin')),'Explicit generic retains the C image');
 writeFileSync(folder+'/verification.json',JSON.stringify({target:'attiny88',clock_hz:16000000,
  mul16_unroll:build.mul16_unroll,cases,results,physical_board_measured:false,
- coverage:{pwm130_signed16_exhaustive:true,pitch_signed8_gain5_exhaustive:true,history_layouts:[10,11],
+ coverage:{pwm130_signed16_exhaustive:true,pitch_signed8_gain5_exhaustive:true,
+  pitch_signed8_even_gain_exhaustive:true,history_layouts:[10,11],
   synthesis_signed16_exhaustive:process.argv.includes('--exhaustive-synthesis'),
   attenuation_dynamic_exhaustive:process.argv.includes('--exhaustive-dynamic')},
  build_sha256:sha(folder+'/build.json'),

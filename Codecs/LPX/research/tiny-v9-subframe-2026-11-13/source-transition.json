@@ -1,0 +1,62 @@
+{
+  "schema": "lpx-tiny-v9-subframe-source-transition-v1",
+  "baseline_revision": "9760ff7f76e66ff6325752fd15278e144bbf0598",
+  "complete": true,
+  "universal_irq_cases": 22,
+  "identical_web_images": 18,
+  "measurements_sha256": "9c3987c4fff802a77e9caa4cd688c2d5a8d72d27a46d3b7dfa6bdcd9620dda54",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": {
+      "baseline": {
+        "raw_sha256": "36119aa36d08b9e732c70688a19e2f60ed87a6975082823de2b555cd9c4f554c",
+        "text_lf_sha256": "36119aa36d08b9e732c70688a19e2f60ed87a6975082823de2b555cd9c4f554c"
+      },
+      "current": {
+        "raw_sha256": "6e19e3fd0867abf281a8f1915077d3cd53f1e7904eb19a387f6e9703a55d5398",
+        "text_lf_sha256": "6e19e3fd0867abf281a8f1915077d3cd53f1e7904eb19a387f6e9703a55d5398"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": {
+      "baseline": {
+        "raw_sha256": "b9f17c08ee17833e4551166ed95455debee57b137e246da7e2b5e4b5ee0b488c",
+        "text_lf_sha256": "b9f17c08ee17833e4551166ed95455debee57b137e246da7e2b5e4b5ee0b488c"
+      },
+      "current": {
+        "raw_sha256": "ed73a44dc456b498cdbb0a8f67b3801250ad1c076bbcb167f38a25e8be720dea",
+        "text_lf_sha256": "ed73a44dc456b498cdbb0a8f67b3801250ad1c076bbcb167f38a25e8be720dea"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp": {
+      "baseline": {
+        "raw_sha256": "a28b1da5d57045c33eb50bba9b706c8e8d301e43410aea4989ce6cdd660eb87a",
+        "text_lf_sha256": "a28b1da5d57045c33eb50bba9b706c8e8d301e43410aea4989ce6cdd660eb87a"
+      },
+      "current": {
+        "raw_sha256": "dfffd095f4fff3cf5494c580a737137e6561680e192f680857457f4fa01e8587",
+        "text_lf_sha256": "dfffd095f4fff3cf5494c580a737137e6561680e192f680857457f4fa01e8587"
+      }
+    }
+  },
+  "validation_sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/lpx_source_history.py": {
+      "baseline": {
+        "raw_sha256": "def683ec71a843c6a88292b8a2e1bbd183d04edc9e9d29850ceaacd03870144a",
+        "text_lf_sha256": "def683ec71a843c6a88292b8a2e1bbd183d04edc9e9d29850ceaacd03870144a"
+      },
+      "current": {
+        "raw_sha256": "9f6307bd1d2a036c2c463e972378e3de81a00e34d361332a19dc053abf7b1529",
+        "text_lf_sha256": "9f6307bd1d2a036c2c463e972378e3de81a00e34d361332a19dc053abf7b1529"
+      }
+    },
+    "web-player/tests/helpers/lpx-source-transition.mjs": {
+      "baseline": {
+        "raw_sha256": "ac73ca108691eef9ecba1ad720362057076448cdf1e018ea926a6c0a024e9290",
+        "text_lf_sha256": "ac73ca108691eef9ecba1ad720362057076448cdf1e018ea926a6c0a024e9290"
+      },
+      "current": {
+        "raw_sha256": "da55d826d5e4f603964190c1492cef765df1f34be085ebbfa7077d3881e7f729",
+        "text_lf_sha256": "7d76e5b068e23dd8b12db04377536bcc5986987d5b59cbe4ef9a089077b483fa"
+      }
+    }
+  }
+}

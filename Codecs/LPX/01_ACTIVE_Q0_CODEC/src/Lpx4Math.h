@@ -81,6 +81,7 @@ static inline __attribute__((always_inline)) int16_t lpx4CosineInterpolate(int16
 // Convex signed16 LPC anchors, t=0..2^bits, bits=2/3/4.
 // Preserve prev + trunc((cur-prev)*t / 2^bits), including a signed17
 // difference. The convex result already fits signed16; no clamp is needed.
+template<bool oddPhase=false>
 static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t prev,int16_t cur,uint8_t t,uint8_t bits){
 #if LPX4_USE_AVR_ASM
     int32_t product;
@@ -104,6 +105,25 @@ static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t 
 #elif LPX4_USE_AVR_NOMUL_ASM
     int32_t delta=(int32_t)cur-prev,product;
     uint8_t bias;
+    if(oddPhase){
+        // The subframe midpoint is odd and below 2^bits. Seed the low
+        // product bit with delta and visit only the remaining set-bit span.
+        // Delta is signed17. Its third byte is 0 or -1, and the biased
+        // product fits signed24. The final shift still truncates toward zero.
+        __asm__(
+            "mov %3,%C1\n\tandi %3,%6\n\t"
+            "mov %A0,%A1\n\tmov %B0,%B1\n\tmov %C0,%C1\n\t"
+            "add %A0,%3\n\tadc %B0,__zero_reg__\n\tadc %C0,__zero_reg__\n\t"
+            "lsr %2\n\tbreq 3f\n\t2:\n\t"
+            "lsl %A1\n\trol %B1\n\trol %C1\n\t"
+            "lsr %2\n\tbrcc 1f\n\tadd %A0,%A1\n\tadc %B0,%B1\n\tadc %C0,%C1\n\t"
+            "1: tst %2\n\tbrne 2b\n\t3:\n\t"
+            ".rept %5\n\tasr %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
+            "add %A0,%A4\n\tadc %B0,%B4\n\t"
+            : "=&r"(product),"+&r"(delta),"+&r"(t),"=&d"(bias)
+            : "r"(prev),"I"(bits),"M"((1U<<bits)-1) : "cc");
+        return (int16_t)product;
+    }
     __asm__(
         "clr %A0\n\tclr %B0\n\tclr %C0\n\t"
         "mov %3,%C1\n\tandi %3,%6\n\t"
@@ -148,6 +168,33 @@ static inline __attribute__((always_inline)) int32_t lpx4Shift14(int32_t v){
 }
 #undef LPX4_SHIFT_BODY
 
+// Exact floor of remainder*coefficient/4096 for remainder in -15..15
+// and a Q12 cosine factor in -8192..8192.
+static inline __attribute__((always_inline)) int8_t lpx4NibbleMulQ12(int8_t remainder,int16_t coefficient){
+#if LPX4_USE_AVR_NOMUL_ASM
+    uint16_t accum;
+    uint8_t bits=(uint8_t)remainder;
+    uint8_t correction=bits;
+    // Four rounds give floor(unsigned nibble * uint16(coefficient) / 16).
+    // If the coefficient is negative, subtract 4096*nibble. If the
+    // remainder is negative, subtract the coefficient for its implicit -16.
+    // Both corrections are integers at this scale. Extract the high byte
+    // after both corrections to finish the arithmetic floor shift by 12.
+    __asm__(
+        "clr %A0\n\tclr %B0\n\t"
+        ".rept 4\n\tlsr %1\n\tbrcc 1f\n\tadd %A0,%A3\n\tadc %B0,%B3\n\t"
+        "1: ror %B0\n\tror %A0\n\t.endr\n\t"
+        "swap %2\n\tandi %2,240\n\t"
+        "sbrc %B3,7\n\tsub %B0,%2\n\t"
+        "sbrs %1,3\n\trjmp 2f\n\tsub %A0,%A3\n\tsbc %B0,%B3\n\t2:\n\t"
+        : "=&r"(accum),"+&r"(bits),"+&d"(correction)
+        : "r"(coefficient) : "cc");
+    return (int8_t)(accum>>8);
+#else
+    return (int8_t)(((int32_t)remainder*coefficient)>>12);
+#endif
+}
+
 #if LPX4_USE_AVR_NOMUL_ASM
 #define LPX4_MUL_INLINE __attribute__((noinline))
 #else
@@ -167,7 +214,7 @@ static LPX4_MUL_INLINE int32_t lpx4Mul16(int16_t x,int16_t y);
 
 // Pitch gain0..31, history code -32..31: rounded Q4 lies in -62..60.
 // Extract product bits4..11 with two nibble swaps instead of 16-bit shifts.
-static inline __attribute__((always_inline)) int8_t lpx4PitchQ4(int8_t x,uint8_t gain){
+static inline __attribute__((always_inline)) int8_t lpx4PitchQ4(int8_t x,uint8_t gain,bool evenGain=false){
 #if LPX4_USE_AVR_ASM
     int16_t product;
     __asm__(
@@ -191,15 +238,18 @@ static inline __attribute__((always_inline)) int8_t lpx4PitchQ4(int8_t x,uint8_t
         return x;
     }
     if(!gain)return 0;
-    // Four low gain bits yield the rounded Q4 quotient directly in one
-    // byte. Add bit4*x, then remove the unsigned-x bias16*(gain&15).
+    // Four rounds give the Q4 quotient directly in one byte. Compact speech
+    // gain is even and <=14, so its equivalent Q3 quotient takes three rounds.
+    // Remove the unsigned-history bias using the original gain in both cases.
     uint8_t result,multiplier;
     __asm__(
-        "ldi %0,8\n\tmov %1,%2\n\t"
-        ".rept 4\n\tlsr %1\n\tbrcc 1f\n\tadd %0,%3\n\t1: ror %0\n\t.endr\n\t"
-        "sbrc %1,0\n\tadd %0,%3\n\t"
+        "ldi %0,%5\n\tmov %1,%2\n\t"
+        ".if %4\n\tlsr %1\n\t.endif\n\t"
+        ".rept 4-%4\n\tlsr %1\n\tbrcc 1f\n\tadd %0,%3\n\t1: ror %0\n\t.endr\n\t"
+        ".if !%4\n\tsbrc %1,0\n\tadd %0,%3\n\t.endif\n\t"
         "swap %2\n\tandi %2,240\n\tsbrc %3,7\n\tsub %0,%2\n\t"
-        : "=&d"(result),"=&r"(multiplier),"+&d"(gain) : "r"(x) : "cc");
+        : "=&d"(result),"=&r"(multiplier),"+&d"(gain)
+        : "r"(x),"I"(evenGain),"I"(evenGain?4:8) : "cc");
     return (int8_t)result;
 #else
     return (int8_t)(((int16_t)x*gain+8)>>4);
@@ -224,6 +274,33 @@ static inline int32_t lpx4Mul32x16(int32_t x,int16_t y){
     return (int32_t)((uint32_t)lpx4Mul16(low,y)+((uint32_t)(uint16_t)upper<<16));
 #else
     return (int32_t)((uint32_t)x*(uint32_t)(int32_t)y);
+#endif
+}
+
+// The direct LPC polynomial product has |value| <= 250000 and
+// |coefficient| <= 8192. The signed low word leaves only -4..4 in the
+// upper part. A zero upper part needs no correction to the low product.
+static inline __attribute__((always_inline)) int32_t lpx4BoundedPolyQ12(int32_t value,int16_t coefficient){
+#if LPX4_USE_AVR_NOMUL_ASM
+    const int16_t low=(int16_t)value;
+    const int8_t high=(int8_t)((value>>16)+(low<0));
+    const int32_t product=lpx4Mul16(low,coefficient);
+    if(!high)return lpx4Shift12(product);
+
+    uint16_t correction;
+    uint8_t multiplier=(uint8_t)high;
+    uint16_t operand=(uint16_t)coefficient;
+    __asm__(
+        "clr %A0\n\tclr %B0\n\t"
+        "sbrs %1,7\n\trjmp 1f\n\t"
+        "neg %1\n\tcom %B2\n\tneg %A2\n\tsbci %B2,255\n\t"
+        "1: lsr %1\n\tbrcc 2f\n\tmovw %A0,%A2\n\t"
+        "2: breq 3f\n\tlsl %A2\n\trol %B2\n\tlsr %1\n\tbrcc 2b\n\t"
+        "add %A0,%A2\n\tadc %B0,%B2\n\ttst %1\n\tbrne 2b\n\t3:\n\t"
+        : "=&w"(correction),"+&r"(multiplier),"+&d"(operand) : : "cc");
+    return lpx4Shift12((int32_t)((uint32_t)product+((uint32_t)correction<<16)));
+#else
+    return lpx4Shift12(value*coefficient);
 #endif
 }
 
@@ -528,7 +605,8 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
 #undef LPX4_STRING_
 
 // Saturate a signed24 value to the synthesis range -32767..32767.
-// Synthesis is bounded by +/-3145728, so its upper byte is sign extension.
+// Synthesis is bounded by +/-3145728. AVR inspects the low 24 bits;
+// the C fallback takes a signed24 value sign-extended to int32_t.
 static inline __attribute__((always_inline)) int16_t lpx4Clip15From24(int32_t value){
 #if LPX4_USE_AVR_ASM || LPX4_USE_AVR_NOMUL_ASM
     int16_t result;
@@ -545,6 +623,22 @@ static inline __attribute__((always_inline)) int16_t lpx4Clip15From24(int32_t va
     return result;
 #else
     return value<-32767?-32767:(value>32767?32767:(int16_t)value);
+#endif
+}
+
+// Halve a signed24 polynomial sum toward zero and clamp to the LPC range.
+static inline __attribute__((always_inline)) int16_t lpx4HalfClip15From24(int32_t value){
+#if LPX4_USE_AVR_NOMUL_ASM
+    // Bias negative sums by one before the arithmetic shift. The clip
+    // consumes only the resulting low 24 bits, including their sign bit.
+    __asm__(
+        "sbrs %C0,7\n\trjmp 1f\n\t"
+        "subi %A0,255\n\tsbci %B0,255\n\tsbci %C0,255\n\t"
+        "1: asr %C0\n\tror %B0\n\tror %A0\n\t"
+        : "+d"(value) : : "cc");
+    return lpx4Clip15From24(value);
+#else
+    return lpx4Clip15From24(value/2);
 #endif
 }
 

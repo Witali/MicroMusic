@@ -277,6 +277,7 @@ private:
     bool readBlock();
 #endif
     bool readSubframe();
+    bool prepareSubframe();
     // Excitation reconstruction.
     int16_t pitchPredict() const;
 #if !LPX4_COMPACT_ONLY

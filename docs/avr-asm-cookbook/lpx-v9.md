@@ -79,7 +79,9 @@ A separate data-only screening of globally selectable Rice parameters found
 only 0..2 bytes of potential spectral savings on these public streams. No
 runtime state/decoder machinery for that idea was added; speed/code-size
 benefits were not measured. Directly storing LPC anchors was not adopted:
-removing conversion alone is insufficient without proving smaller audio data.
+an encoder-side trial saved 1195–1197 program bytes and sped up every live-IRQ
+workload, but the exact LPC residuals tripled Sparse80 audio on the full corpus.
+[Trial and paired measurements](../../Codecs/LPX/research/tiny-v9-lpc-wire-2026-11-13/README.md).
 
 Reproduce using the commands in the wire specification. Old v5/v8 data and
 published speech recipes remain on their existing paths; selecting v9 is a
@@ -198,6 +200,28 @@ Rejected measurements: retaining FIFO44 collided with the stack; outlining
 only3 bytes of margin. Packet-gap sharing and FIFO32 are retained instead.
 This is original project code, using the existing vendor-derived register
 definitions and licensing. No external assembly implementation was copied.
+
+## Clamp excitation only when adding a pulse
+
+On ATtiny88 / AVR25 with the GNU AVR ABI and AVR-GCC 7.3.0, the universal
+compact v9 build selects this path with `LPX4_ENABLE_ASM=1`. A prediction
+alone is in −28..27. The code tests the pending pulse once and clamps to
+−32..31 only after adding its amplitude. It stores the decoded history code
+once. The caller checks parser errors before synthesis.
+
+For the eight legal gains, let the stored Q4 gain be `2*g`. The fixed
+floor is `floor((history*g+4)/8)`. Three LSR/conditional ADD/ROR rounds
+produce the unsigned quotient; subtract `32*g` for a negative history
+byte. The existing gain-14 shortcut and the selectable C arithmetic are
+retained. Testing all 2048 combinations of signed-byte history and legal
+gain covers the handwritten AVR path.
+
+On the same 22 IRQ-driven P4/P6/sparse80 workloads, the linked application
+shrinks from 5408–5409 to 5360–5361 bytes excluding embedded audio. With
+FIFO32/prefill24 at 16 MHz and 8 kHz, the largest decode CPU mean plus IRQ
+falls from 1720.77 to 1664.87 cycles per sample. All PWM matches and there
+are zero underruns in simavr.
+[Toolchain, per-workload measurements and rejected variants](../../Codecs/LPX/research/tiny-v9-pulse-pitch-2026-11-13/README.md).
 
 ## Experimental Rice0: smaller data, no production admission
 

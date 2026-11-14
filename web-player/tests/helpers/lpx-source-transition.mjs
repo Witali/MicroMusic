@@ -15,6 +15,11 @@ const lpcShortReport='Codecs/LPX/research/tiny-lpc-short-2026-11-13/';
 const q14Report='Codecs/LPX/research/tiny-q14-2026-11-13/';
 const lsfNeighborsReport='Codecs/LPX/research/tiny-lsf-neighbors-2026-11-13/';
 const megaLsfReport='Codecs/LPX/research/mega-lsf-wide-2026-11-13/';
+const tinyPitchReport='Codecs/LPX/research/tiny-v9-pulse-pitch-2026-11-13/';
+const tinySharedPqReport='Codecs/LPX/research/tiny-v9-shared-pq-2026-11-13/';
+const tinySubframeReport='Codecs/LPX/research/tiny-v9-subframe-2026-11-13/';
+const tinyOddPhaseReport='Codecs/LPX/research/tiny-v9-odd-phase-2026-11-13/';
+const tinyLpcHalfReport='Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -114,6 +119,71 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       assert.equal(report.identical_mega_c_images,4);
       assert.equal(report.identical_nano_images,9);
       const evidence=read(megaLsfReport+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const report=JSON.parse(read(tinyPitchReport+'source-transition.json'));
+    const change=report.sources[path] ?? report.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(report.complete,true);
+      assert.equal(report.baseline_revision,'65c3073e354b9956d252c7d118e40ddaae19dd83');
+      assert.equal(report.universal_irq_cases,22);
+      assert.equal(report.identical_web_images,18);
+      const evidence=read(tinyPitchReport+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const report=JSON.parse(read(tinySharedPqReport+'source-transition.json'));
+    const change=report.sources[path] ?? report.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(report.complete,true);
+      assert.equal(report.baseline_revision,'c391ad095b5ca6c79ef27add0471029a33a6c88c');
+      assert.equal(report.universal_irq_cases,22);
+      assert.equal(report.identical_web_images,18);
+      const evidence=read(tinySharedPqReport+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const report=JSON.parse(read(tinySubframeReport+'source-transition.json'));
+    const change=report.sources[path] ?? report.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(report.complete,true);
+      assert.equal(report.baseline_revision,'9760ff7f76e66ff6325752fd15278e144bbf0598');
+      assert.equal(report.universal_irq_cases,22);
+      assert.equal(report.identical_web_images,18);
+      const evidence=read(tinySubframeReport+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const report=JSON.parse(read(tinyOddPhaseReport+'source-transition.json'));
+    const change=report.sources[path] ?? report.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(report.complete,true);
+      assert.equal(report.baseline_revision,'703174249a5dba87cc796174edc2598bcbd24652');
+      assert.equal(report.universal_irq_cases,22);
+      assert.equal(report.identical_web_images,18);
+      const evidence=read(tinyOddPhaseReport+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const report=JSON.parse(read(tinyLpcHalfReport+'source-transition.json'));
+    const change=report.sources[path] ?? report.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(report.complete,true);
+      assert.equal(report.baseline_revision,'c415ab84c5e00a77c36eb10a5c4b6384c172c068');
+      assert.equal(report.universal_irq_cases,22);
+      assert.equal(report.identical_web_images,18);
+      const evidence=read(tinyLpcHalfReport+'measurements.json');
       assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
       recorded=change.current[field];
     }
