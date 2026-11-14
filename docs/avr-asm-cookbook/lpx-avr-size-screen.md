@@ -109,6 +109,12 @@ sample on six workloads. Together the two pulse parser extractions reduce
 decoder time on all 22 workloads with identical PWM.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-shared-pulse-amplitude-2026-11-14/README.md).
 
+Dense packets need a clear low phase bit; Sparse80 additionally tests the
+next phase bit. Test both bits directly before parsing instead of building a
+variable mask. In the same AVR-GCC 7.3.0 GNU AVR ABI build this saves another
+20 B. All 22 IRQ-active workloads speed up with exact PWM and the same stack.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-pulse-schedule-2026-11-14/README.md).
+
 Two later changes passed all 22 universal Tiny88 AVR25 loads with IRQ.
 With the AVR GCC ABI and AVR-GCC 7.3.0 at `-Os -flto`, sharing the byte-wide
 cache shift saves 30 B. Accumulating the shifted Rice quotient while

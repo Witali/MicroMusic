@@ -1496,7 +1496,11 @@ bool Lpx4HybridCore::prepareSubframe(){
 #if !LPX4_COMPACT_ONLY
     if(!(subIndex_&3)&&!readBlock())return false;
 #endif
-#if LPX4_HAS_SPARSE80
+#if LPX4_AVR25_V9_RUNTIME
+    // Dense pulse packets occur every other subframe. Sparse80 uses
+    // every fourth, so test the second phase bit only for that profile.
+    if(!(subIndex_&1) && (!(LPX4_SPEECH_FLAGS&8) || !(subIndex_&2)) && !readSubframe())return false;
+#elif LPX4_HAS_SPARSE80
     if(!(subIndex_&((LPX4_SPEECH_FLAGS&8)?3:1))&&!readSubframe())return false;
 #else
     if(!(subIndex_&1)&&!readSubframe())return false;
