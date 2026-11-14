@@ -60,6 +60,13 @@ for(let bit=0;bit<=13;bit++)for(const offset of [-1,0,1]){
  if(factor<=8192){cosineFactors.add(factor);cosineFactors.add(-factor);}
 }
 for(let x=-15;x<=15;x++)for(const y of cosineFactors)check(31,x,y,Math.floor(x*y/4096));
+const directOperands=new Set([-250000,-249999,249999,250000]);
+for(let high=-4;high<=4;high++)for(const low of [-32769,-32768,-32767,-1,0,1,32766,32767,32768]){
+ const operand=high*65536+low;
+ if(Math.abs(operand)<=250000)directOperands.add(operand);
+}
+for(const exc of directOperands)for(const y of cosineFactors)
+ check(32,0,y,Math.floor(exc*y/4096),{exc});
 for(const x of boundary)for(const y of boundary)for(const bits of [2,3,4])
  for(let t=1;t<(1<<bits);t+=2)
   check(29,x,y,x+Math.trunc((y-x)*t/(1<<bits)),{bits,t});

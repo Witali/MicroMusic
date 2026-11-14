@@ -216,3 +216,10 @@ to recover truncation toward zero from an arithmetic right shift. The same
 ATtiny88 toolchain and IRQ matrix confirm another 20 B saving and exact
 PWM. Peak decode CPU cycles decrease by 5–35 on each workload.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-polynomial-quotient-2026-11-14/README.md).
+
+For the direct product use the signed low word of the polynomial operand
+and an upper correction in −4..4. Handle zero directly and form nonzero
+corrections modulo 65536 with a short signed shift-and-add loop. The same
+ATtiny88 toolchain saves 12 B with the GNU AVR ABI. Across 22 active IRQ
+loads, peak stack falls by 1 B, PWM is exact and no decoder slows.
+[Arithmetic probe and paired measurements](../../Codecs/LPX/research/tiny-v9-polynomial-direct-2026-11-14/README.md).

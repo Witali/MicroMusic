@@ -277,6 +277,33 @@ static inline int32_t lpx4Mul32x16(int32_t x,int16_t y){
 #endif
 }
 
+// The direct LPC polynomial product has |value| <= 250000 and
+// |coefficient| <= 8192. The signed low word leaves only -4..4 in the
+// upper part. A zero upper part needs no correction to the low product.
+static inline __attribute__((always_inline)) int32_t lpx4BoundedPolyQ12(int32_t value,int16_t coefficient){
+#if LPX4_USE_AVR_NOMUL_ASM
+    const int16_t low=(int16_t)value;
+    const int8_t high=(int8_t)((value>>16)+(low<0));
+    const int32_t product=lpx4Mul16(low,coefficient);
+    if(!high)return lpx4Shift12(product);
+
+    uint16_t correction;
+    uint8_t multiplier=(uint8_t)high;
+    uint16_t operand=(uint16_t)coefficient;
+    __asm__(
+        "clr %A0\n\tclr %B0\n\t"
+        "sbrs %1,7\n\trjmp 1f\n\t"
+        "neg %1\n\tcom %B2\n\tneg %A2\n\tsbci %B2,255\n\t"
+        "1: lsr %1\n\tbrcc 2f\n\tmovw %A0,%A2\n\t"
+        "2: breq 3f\n\tlsl %A2\n\trol %B2\n\tlsr %1\n\tbrcc 2b\n\t"
+        "add %A0,%A2\n\tadc %B0,%B2\n\ttst %1\n\tbrne 2b\n\t3:\n\t"
+        : "=&w"(correction),"+&r"(multiplier),"+&d"(operand) : : "cc");
+    return lpx4Shift12((int32_t)((uint32_t)product+((uint32_t)correction<<16)));
+#else
+    return lpx4Shift12(value*coefficient);
+#endif
+}
+
 // Exact per-product floor is part of Q0. The reverse traversal also shifts
 // history in place: each old sample is consumed before its successor is written.
 // Ten signed 20-bit products fit a signed 24-bit accumulator. The multiply's

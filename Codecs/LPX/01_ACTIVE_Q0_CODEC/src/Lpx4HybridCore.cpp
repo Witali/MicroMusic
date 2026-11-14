@@ -1080,8 +1080,8 @@ static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
     if(v<0 && rem){++hi;rem-=16;}
     return (lpx4Mul16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
 #elif LPX4_USE_AVR_NOMUL_ASM
-    if(v<=250000L && v>=-250000L)return lpx4Shift12(lpx4Mul32x16(v,c));
 #if LPX4_AVR25_V9_RUNTIME
+    if(v<=250000L && v>=-250000L)return lpx4BoundedPolyQ12(v,c);
     // Start with the floor quotient and unsigned low nibble. One adjustment
     // recovers both parts of truncating division and leaves each floor intact.
     int16_t hi=(int16_t)(v>>4);
@@ -1089,6 +1089,7 @@ static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
     if(v<0 && rem){++hi;rem-=16;}
     return (lpx4Mul16(hi,c)>>8)+lpx4NibbleMulQ12(rem,c);
 #else
+    if(v<=250000L && v>=-250000L)return lpx4Shift12(lpx4Mul32x16(v,c));
     const int16_t hi=(int16_t)truncShift(v,4);
     int8_t rem=(uint8_t)v&15;
     if(v<0 && rem)rem-=16;

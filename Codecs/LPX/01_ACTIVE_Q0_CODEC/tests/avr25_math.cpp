@@ -51,6 +51,7 @@ __attribute__((noinline,used)) void math_case(){
         break;
     case 30:math_out=lpx4HalfClip15From24(math_exc);break;
     case 31:math_out=lpx4NibbleMulQ12((int8_t)math_x,math_y);break;
+    case 32:math_out=lpx4BoundedPolyQ12(math_exc,math_y);break;
     }
 }
 }
