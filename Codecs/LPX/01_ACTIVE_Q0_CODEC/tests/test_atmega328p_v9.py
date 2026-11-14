@@ -17,7 +17,10 @@ class Atmega328pV9Tests(unittest.TestCase):
     def test_measurement_binds_sources_and_private_port(self):
         r = self.receipt
         for name, digest in r['production_source_sha256'].items():
-            assert_recorded_source(name,digest)
+            if name.endswith(('/player.cpp','/build_attiny88_player.py','/verify_attiny88_player.py')):
+                self.assertEqual(text_sha(git('show',f'{MEASURED_REVISION}:{name}')),digest)
+            else:
+                assert_recorded_source(name,digest)
         self.assertEqual(text_sha(RECEIPT.read_bytes()), r['frozen_tiny_receipt_sha256'])
         base = 'Codecs/LPX/'
         for source, transform, generated in (
@@ -32,7 +35,9 @@ class Atmega328pV9Tests(unittest.TestCase):
         for source, transform, generated in (
             ('build_attiny88_player', adapt_builder, 'build_mega_player.py'),
             ('verify_attiny88_player', adapt_verifier, 'verify_mega_player.py')):
-            self.assertEqual(text_sha(transform((ACTIVE/'tools'/(source+'.py')).read_text()).encode()),
+            path=(ACTIVE/'tools'/(source+'.py')).relative_to(REPO).as_posix()
+            measured=git('show',f'{MEASURED_REVISION}:{path}').decode('utf-8')
+            self.assertEqual(text_sha(transform(measured).encode()),
                              r['generated_tool_sha256'][generated])
 
     def test_public_fixture_streams_match_frozen_oracles(self):

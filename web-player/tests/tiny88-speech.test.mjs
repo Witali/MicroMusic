@@ -6,6 +6,7 @@ import {lpxTiny88FirmwareEntries} from '../lib/tiny88-preview.js';
 import {lpxPreviewEntries,previewWaveform} from '../lib/native-preview.js';
 import {parseHex} from '../lib/hex.js';
 import {playerApp} from './helpers/player-app.mjs';
+import {readRecordedBuildFile} from './helpers/recorded-build-source.mjs';
 
 const load=path=>JSON.parse(readFileSync(new URL('../'+path,import.meta.url)));
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -153,6 +154,11 @@ test('unavailable or invalid Tiny88 release retains the existing complete WAV-on
 
 test('published Tiny88 releases match retained HEX, streams, WAVs and optional source provenance',()=>{
   const data=load('firmware-lpx-attiny88.json'),entries=lpxTiny88FirmwareEntries(data,base);
+  const baseline='1fe7048d7b29e0eb8c76700c4917a3d6f5d57bca';
+  const prior=JSON.parse(readRecordedBuildFile(baseline,'web-player/firmware-lpx-attiny88.json'));
+  assert.equal(data.compactVersion,9);
+  assert.equal(data.universalDecoder,true);
+  assert.equal(data.releaseFlashLimitBytes,6656);
   assert.equal(entries.length,9);
   for(const variant of data.variants){
     const hex=readFileSync(new URL('../'+variant.source,import.meta.url)),bytes=Buffer.from(parseHex(hex.toString(),8192));
@@ -162,9 +168,22 @@ test('published Tiny88 releases match retained HEX, streams, WAVs and optional s
     assert.equal(hash(stream),variant.streamSha256);
     const start=bytes.indexOf(stream);assert.ok(start>=0);assert.equal(bytes.indexOf(stream,start+1),-1);
     assert.equal(variant.programFlashBytes+stream.length,variant.flashBytes);
+    assert.equal(stream.subarray(0,2).toString(),'L9');
+    assert.equal(bytes[start+stream.length],variant.outputLevel.numerator);
+    assert.ok(variant.flashBytes<=data.releaseFlashLimitBytes);
+    const old=prior.variants.find(v=>v.clipId===variant.clipId&&v.id===variant.id);
+    assert.equal(variant.legacy.hexSha256,old.hexSha256);
+    assert.equal(variant.legacy.flashBytes,old.flashBytes);
+    assert.ok(variant.flashBytes<old.flashBytes);
+    assert.ok(stream.length<old.flashBytes-old.programFlashBytes);
+    assert.equal(variant.outputLevel.after.pcmSha256,old.outputLevel.after.pcmSha256);
     const entry=entries.find(item=>item.id===`lpx-${variant.clipId}-${variant.id}`);
+    assert.equal(entry.formatVersion,9);
+    assert.equal(entry.formatNotice,'');
     const wav=readFileSync(new URL('../'+preview.audio,import.meta.url));
-    assert.equal(previewWaveform(wav.buffer.slice(wav.byteOffset,wav.byteOffset+wav.byteLength),entry).length,clip.samples);
+    const waveform=previewWaveform(wav.buffer.slice(wav.byteOffset,wav.byteOffset+wav.byteLength),entry);
+    assert.equal(waveform.length,clip.samples);
+    assert.equal(hash(Buffer.from(waveform.map(sample=>128+sample*128))),variant.outputLevel.after.pcmSha256);
   }
   if(data.sourceSha256){
     assert.equal(data.sourceHashEncoding,'text-lf');

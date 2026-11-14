@@ -51,6 +51,11 @@ def plan():
    if 'outputLevel' in preview:assert gain==preview['outputLevel']['numerator']
    jobs.append(dict(family=family,id=variant['clipId']+'-'+variant['id'],hex=source,streams=[stream],
     gain=gain,low15=variant['id']=='low15',flash=variant['flashBytes'],program=variant['programFlashBytes'],catalog=WEB/name))
+   if family=='tiny':
+    jobs[-1]['tiny_v9']=catalog.get('compactVersion')==9
+    jobs[-1]['tiny_queue']=catalog['queueBytes']
+    jobs[-1]['tiny_unroll']=catalog['mul16Unroll']
+    jobs[-1]['tiny_flags']=catalog.get('compilerOptions',[])
  dialogue=read(WEB/'audio/lpx-dialogue/manifest.json');hexfile=WEB/dialogue['firmware']
  assert sha(hexfile.read_bytes())==dialogue['hexSha256']
  streams=[WEB/s['stream'] for s in dialogue['segments']]
@@ -95,7 +100,10 @@ def main():
  for job in jobs:
   folder=out/job['family']/job['id'];folder.mkdir(parents=True,exist_ok=True);blobs=[p.read_bytes() for p in job['streams']]
   if job['family']=='tiny':
-   cost=tiny.build(job['streams'][0],folder,wsl=args.wsl,assembly=True,asm_isr=True,queue=24,mul16_unroll=2,output_gain=job['gain'],sparse80=job['low15'],universal=False)
+   v9=job['tiny_v9']
+   cost=tiny.build(job['streams'][0],folder,wsl=args.wsl,assembly=True,asm_isr=True,
+    queue=job['tiny_queue'],mul16_unroll=job['tiny_unroll'],output_gain=job['gain'],
+    sparse80=job['low15'] and not v9,universal=v9,rom_output_gain=v9,extra_flags=job['tiny_flags'])
    binary=(folder/'player.bin').read_bytes();flags=cost['compiler_options']
   else:
    settings={**recipe['BASE'],'queue':256,'prefill':192};env=dict(settings=settings,compact_only=True,retained_profile_symbols=[])

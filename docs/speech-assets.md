@@ -39,37 +39,37 @@ WAV в этой таблице — точные 8-битные PWM-отсчёт�
 
 | HEX | LPX | Код / полный Flash, Б | Static SRAM, Б | Отсчётов / пропусков |
 | --- | --- | ---: | ---: | --- |
-| [web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex) | chego / compact | 4574 / 5110 | 756 | 9831 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex) | chego / quality | 4573 / 5364 | 756 | 9831 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex) | otvechaesh / compact | 4574 / 5044 | 756 | 8466 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex) | otvechaesh / quality | 4654 / 5346 | 756 | 8466 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex) | vinni / compact | 4681 / 5924 | 756 | 23757 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex) | vinni / quality | 4656 / 6518 | 756 | 23757 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex) | bread / compact | 4574 / 5582 | 756 | 19200 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex) | bread / quality | 4573 / 6472 | 756 | 19200 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex) | chego / compact | 4472 / 5008 | 756 | 9831 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex) | chego / quality | 4471 / 5262 | 756 | 9831 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex) | otvechaesh / compact | 4472 / 4942 | 756 | 8466 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex) | otvechaesh / quality | 4554 / 5246 | 756 | 8466 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex) | vinni / compact | 4581 / 5824 | 756 | 23757 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex) | vinni / quality | 4556 / 6418 | 756 | 23757 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex) | bread / compact | 4472 / 5480 | 756 | 19200 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex) | bread / quality | 4471 / 6370 | 756 | 19200 / 0 |
 
 ## ATtiny88: LPX в 512 байтах RAM
 
-Сборщик [tools/build-tiny88-speech-catalog.py](../tools/build-tiny88-speech-catalog.py) переиспользует полные LPX-потоки и WAV без перекодирования. Выбран существующий AVR25 ASM без аппаратного MUL, профиль SRAM512, FIFO 24 / prefill 18 и `--mul16-unroll 2`. Для каждой полной прошивки проверены все PWM-отсчёты против независимого C-декодера и уже сохранённого WAV, активные таймеры/IRQ, ноль underruns и положительный запас стека. Переключаемые C-арифметика и C-ISR сохранены; C-арифметика не заявлена как режим реального времени. Физическая плата не измерялась.
+Сборщик [tools/build-tiny88-speech-catalog.py](../tools/build-tiny88-speech-catalog.py) перепаковывает LPX в v9 без потерь. Общий декодер читает P4, P6 и Sparse80. Коэффициент усиления хранится одним байтом после потока в ROM. Сборка использует AVR25 ASM без аппаратного MUL, SRAM512, FIFO 32 / prefill 24 и `--mul16-unroll 1`. Все PWM-отсчёты совпадают с предыдущими HEX, C-декодером и опубликованным WAV. В simavr с активным IRQ пропусков нет. Переключаемые C-арифметика и C-ISR сохранены.
 
-Полный HEX ограничен **8192 байтами Flash**, включая звук. USB-загрузчик MH-ET LIVE допускает только **6012 байт** приложения: при превышении страница показывает предупреждение, а скачивание остаётся доступным для загрузки через ISP. Образы больше 6 КБ также требуют ISP; превышение 8 КБ отклоняется сборщиком. Выход этого плеера — **D9 / PB1 / OC1A**, 62,5 кГц PWM и 8 кГц PCM при 16 МГц. Speex для ATtiny88 не добавлен.
+Выпуск ограничен **6656 байтами Flash (6,5 КиБ)**, включая звук. USB-загрузчик MH-ET LIVE допускает **6012 байт** приложения. Для более крупных образов WebUI показывает предупреждение и оставляет скачивание для загрузки через ISP. Выход плеера **D9 / PB1 / OC1A**, 62,5 кГц PWM и 8 кГц PCM при 16 МГц.
 
 | Фраза / профиль | HEX | Код / звук / полный Flash, Б | Static / пик стека / запас, Б | USB-загрузчик |
 | --- | --- | ---: | ---: | --- |
-| chego / compact | [web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex) | 4948 / 536 / 5484 | 422 / 60 / 29 | Помещается |
-| chego / quality | [web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex) | 5109 / 791 / 5900 | 422 / 65 / 24 | Помещается |
-| otvechaesh / compact | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex) | 4948 / 470 / 5418 | 422 / 60 / 29 | Помещается |
-| otvechaesh / quality | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex) | 5210 / 692 / 5902 | 422 / 65 / 24 | Помещается |
-| vinni / compact | [web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex) | 5073 / 1243 / 6316 | 422 / 60 / 29 | Нужен ISP |
-| vinni / quality | [web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex) | 5212 / 1862 / 7074 | 422 / 65 / 24 | Нужен ISP |
-| bread / compact | [web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex) | 5004 / 1008 / 6012 | 422 / 60 / 29 | Помещается |
-| bread / quality | [web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex) | 5233 / 1899 / 7132 | 422 / 66 / 23 | Нужен ISP |
-| bread / low15 | [web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex) | 5079 / 417 / 5496 | 422 / 66 / 23 | Помещается |
+| chego / compact | [web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex) | 4776 / 522 / 5298 | 433 / 47 / 31 | Помещается |
+| chego / quality | [web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex) | 4776 / 776 / 5552 | 433 / 47 / 31 | Помещается |
+| otvechaesh / compact | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex) | 4776 / 450 / 5226 | 433 / 47 / 31 | Помещается |
+| otvechaesh / quality | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex) | 4775 / 671 / 5446 | 433 / 47 / 31 | Помещается |
+| vinni / compact | [web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex) | 4776 / 1200 / 5976 | 433 / 47 / 31 | Помещается |
+| vinni / quality | [web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex) | 4776 / 1820 / 6596 | 433 / 47 / 31 | Нужен ISP |
+| bread / compact | [web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex) | 4776 / 996 / 5772 | 433 / 47 / 31 | Помещается |
+| bread / quality | [web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex) | 4775 / 1881 / 6656 | 433 / 47 / 31 | Нужен ISP |
+| bread / low15 | [web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex) | 4775 / 393 / 5168 | 433 / 47 / 31 | Помещается |
 
 Ограничения и воспроизведение проверок: [Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/README.md](../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/README.md). Численные сравнения памяти, Flash и времени: [Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/budget-measurements.json](../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/budget-measurements.json). Измеряемый запас использует соглашение наблюдателя: `static + peakStack + margin = 511`.
 
 ```text
-python tools/build-tiny88-speech-catalog.py --retain --queue 24 --mul16-unroll 2
+python tools/build-tiny88-speech-catalog.py --retain --jobs 4
 ```
 
 На Windows добавьте `--wsl Ubuntu`, используя установленные в WSL AVR-GCC 7.3.0, g++, simavr 1.6 и libelf. `--retain` сохраняет проверенные HEX и каталог локально; команда не выполняет push, публикацию или прошивку платы.

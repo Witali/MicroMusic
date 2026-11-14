@@ -53,11 +53,11 @@ def target_path(path,wsl):
         return '/mnt/'+p.drive[0].lower()+'/'+ '/'.join(p.parts[1:])
     return str(p)
 
-def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=None,output_gain=128,universal=True):
+def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=None,output_gain=128,universal=True,rom_output_gain=False):
     source,output=Path(source).resolve(),Path(output).resolve()
     if output==REPO/'build' or REPO/'build' not in output.parents or source==output or output.is_symlink():
         raise ValueError('Use an output subdirectory under ignored repository build/')
-    names=('audio.inc','player.elf','player.bin','player.hex','player.nm','player.lss','build.json',
+    names=('audio.inc','output_gain.inc','player.elf','player.bin','player.hex','player.nm','player.lss','build.json',
            'hardware.cpp','hardware.o','hardware.bin','hardware.h')
     if any((output/n).is_symlink() or (output/n).resolve()==source or
            ((output/n).exists() and (output/n).stat().st_nlink>1) for n in names):
@@ -65,7 +65,7 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     blob=source.read_bytes()
     if type(universal) is not bool:raise ValueError('Universal selection must be boolean')
     if mul16_unroll is None:mul16_unroll=2 if universal else 16
-    if universal and (output_gain!=128 or any(flag.startswith('-DLPX4_FIXED_') for flag in extra_flags)):
+    if universal and ((output_gain!=128 and not rom_output_gain) or any(flag.startswith('-DLPX4_FIXED_') for flag in extra_flags)):
         raise ValueError('Universal playback reads stream parameters without per-record specialization')
     if not isinstance(sparse80,bool):raise ValueError('Sparse80 selection must be boolean')
     version=9 if blob[:2]==b'L9' else blob[4] if len(blob)>=16 else 0
@@ -75,6 +75,8 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
             sparse80 and blob[:6]==b'L4HY\x08\x0f'):
         raise ValueError('Expected compact v5/v9, or sparse80 with its explicit enable')
     compact_version=9 if version==9 else 5
+    if rom_output_gain and (not universal or compact_version!=9):
+        raise ValueError('ROM output gain requires universal LPX v9')
     if queue is None:queue=32 if compact_version==9 or not universal else 44
     samples=int.from_bytes(blob[5:7] if version==9 else blob[8:12],'little')
     pre_at=7 if version==9 else 12
@@ -90,15 +92,19 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
         result=subprocess.run([*prefix,executable,*args],capture_output=True)
         if result.returncode:raise RuntimeError(result.stderr.decode(errors='replace'))
         return result.stdout
+    voice=blob+bytes([output_gain]) if rom_output_gain else blob
     (output/'audio.inc').write_text(','.join(map(str,blob))+'\n',encoding='ascii')
+    if rom_output_gain:
+        (output/'output_gain.inc').write_text(f',{output_gain}\n',encoding='ascii')
     flags=['-mmcu=attiny88','-DF_CPU=16000000UL','-Os','-flto','-mcall-prologues','-mrelax',
            '-fno-jump-tables','-fno-exceptions','-fno-rtti','-ffunction-sections','-fdata-sections',
            '-std=gnu++11','-DLPX4_FUNCTION_TUNING=0',f'-DLPX4_ENABLE_ASM={int(assembly)}',f'-DLPX3_LPC_SEGMENTS={lpc_segments}',
-           f'-DLPX25_QUEUE={queue}',f'-DLPX25_REPEAT={repeat}',f'-DPWM_GAIN_Q7={output_gain}',
+           f'-DLPX25_QUEUE={queue}',f'-DLPX25_REPEAT={repeat}',f'-DPWM_GAIN_Q7={128 if rom_output_gain else output_gain}',
            f'-DLPX4_AVR25_MUL16_UNROLL={mul16_unroll}',
            '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(DFP),
            '-I'+path(ROOT/'src'),'-I'+path(output)]
     if asm_isr:flags+=['-DLPX25_ENABLE_ASM_ISR=1','-DLPX25_ISR_FIXED_REGS=1','-ffixed-r2','-ffixed-r3']
+    if rom_output_gain:flags+=['-DLPX25_ROM_OUTPUT_GAIN=1']
     if sparse80:flags+=['-DLPX4_ENABLE_SPARSE80=1']
     if compact_version==9:flags+=['-DLPX4_COMPACT_VERSION=9']
     if universal:
@@ -136,7 +142,7 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
            if line.split() and re.fullmatch(r'_ZL5voice(?:\..*)?',line.split()[-1])]
     if len(audio)!=1 or len(audio[0])!=4:raise ValueError('Ambiguous embedded audio array')
     start,length=int(audio[0][0],16),int(audio[0][1],16)
-    if length!=len(blob) or image[start:start+length]!=blob:raise ValueError('Embedded audio differs from input')
+    if length!=len(voice) or image[start:start+length]!=voice:raise ValueError('Embedded audio differs from input')
     if len(image)!=int(size[0])+int(size[1]):raise ValueError('Unexpected Flash image gaps')
     def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
     report=dict(target='attiny88',cpu_hz=16000000,sample_hz=8000,queue=queue,prefill=queue*3//4,
@@ -149,7 +155,7 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
             *sorted((ROOT/'src').glob('Lpx4*')),ROOT/'profiles/Lpx4Sram512.h',DFP/'avr/iotn88.h']},
         image_sha256=sha(output/'player.bin'),input_sha256=sha(source),physical_board_measured=False,
         register_audit_passed=audited,flash_limit=flash_limit,
-        embedded_audio_bytes=length,program_excluding_audio_bytes=len(image)-length,
+        embedded_audio_bytes=len(blob),program_excluding_audio_bytes=len(image)-len(blob),
         bootloader_application_bytes=6012,fits_standard_bootloader=len(image)<=6012,
         requires_isp=len(image)>6012,timing_verified=False)
     (output/'build.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

@@ -21,6 +21,12 @@
 #ifndef LPX25_REUSE_TIMER1_HIGH
 #define LPX25_REUSE_TIMER1_HIGH 0
 #endif
+#ifndef LPX25_ROM_OUTPUT_GAIN
+#define LPX25_ROM_OUTPUT_GAIN 0
+#endif
+#if LPX25_ROM_OUTPUT_GAIN != 0 && LPX25_ROM_OUTPUT_GAIN != 1
+#error LPX25_ROM_OUTPUT_GAIN must be 0 or 1
+#endif
 #if LPX25_REUSE_TIMER1_HIGH != 0 && LPX25_REUSE_TIMER1_HIGH != 1
 #error LPX25_REUSE_TIMER1_HIGH must be 0 or 1
 #endif
@@ -37,7 +43,37 @@
 #endif
 static const uint8_t voice[] PROGMEM={
 #include "audio.inc"
+#if LPX25_ROM_OUTPUT_GAIN
+#include "output_gain.inc"
+#endif
 };
+#if LPX25_ROM_OUTPUT_GAIN
+// The byte after the LPX file belongs to the ROM playback configuration.
+// Keep the LPX stream length and wire format unchanged for other decoders.
+static uint8_t playbackGain(uint8_t sample){
+    const uint8_t gain=pgm_read_byte(voice+sizeof(voice)-1);
+#if LPX4_USE_AVR_NOMUL_ASM
+    // Unity is the centered duty itself. Multiply by twice the remaining
+    // Q7 numerator, then use the high byte and the low byte's sign bit for
+    // the signed correction and rounding. Saturate on signed addition overflow.
+    uint8_t centered=sample^128, productLow, productHigh, count;
+    const uint8_t fraction=(uint8_t)(gain<<1);
+    __asm__(
+        "mov %1,%4\n\tclr %2\n\tldi %3,8\n\tlsr %1\n\t"
+        "1: brcc 2f\n\tadd %2,%0\n\t"
+        "2: ror %2\n\tror %1\n\tdec %3\n\tbrne 1b\n\t"
+        "sbrc %0,7\n\tsub %2,%4\n\tlsl %1\n\tadc %2,__zero_reg__\n\t"
+        "add %0,%2\n\tbrvc 4f\n\tldi %2,127\n\tsbrs %0,7\n\tinc %2\n\tmov %0,%2\n\t4:"
+        : "+&r"(centered),"=&r"(productLow),"=&d"(productHigh),"=&d"(count)
+        : "r"(fraction) : "cc");
+    return centered^128;
+#else
+    const uint16_t scaled=((uint16_t)sample*gain+64)>>7;
+    const int16_t duty=(int16_t)scaled+128-gain;
+    return duty<0 ? 0 : duty>255 ? 255 : (uint8_t)duty;
+#endif
+}
+#endif
 static Lpx4HybridCore decoder;
 extern "C" {
 // Retain OR addressing for power-of-two rings. A 24-byte array needs only
@@ -97,7 +133,7 @@ ISR(TIMER0_COMPA_vect){
     OCR1A=sample;
 }
 #endif
-static bool begin(){return decoder.begin(voice,sizeof(voice));}
+static bool begin(){return decoder.begin(voice,sizeof(voice)-LPX25_ROM_OUTPUT_GAIN);}
 // Startup enters main with IRQs masked. This player never returns, so no
 // caller registers need to remain saved under the foreground stack.
 #if LPX25_V9_RUNTIME
@@ -138,7 +174,12 @@ int main(){
         __asm__ __volatile__(".global lpx25_decode_end\nlpx25_decode_end:" ::: "memory");
         if(!decoded){lpx25_error=decoder.error();break;}
         const bool last=decoder.finished() && repeats==1;
-        lpx25_queue[head]=micromusic_pwm_gain(sample);barrier();
+#if LPX25_ROM_OUTPUT_GAIN
+        lpx25_queue[head]=playbackGain(sample);
+#else
+        lpx25_queue[head]=micromusic_pwm_gain(sample);
+#endif
+        barrier();
         // Final head and EOF are one publication, even with byte indices.
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE){lpx25_head=next;if(last)lpx25_eof=1;}
         if(!started && (next==LPX25_QUEUE*3/4 || last)){

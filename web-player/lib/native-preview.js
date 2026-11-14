@@ -39,13 +39,14 @@ export function lpxPreviewEntries(data,baseURL) {
     const variant=variants.get(id),definition=definitions[id],experimental=id==='low15';
     const codec=variant.codec===undefined?(experimental?null:'lpx-v5'):variant.codec;
     const formatVersion=variant.formatVersion===undefined?(experimental?null:5):variant.formatVersion;
-    if(variant.profile!==definition.profile||codec!==definition.codec||formatVersion!==definition.version||typeof variant.label!=='string'
+    const v9=codec==='lpx-v9'&&formatVersion===9;
+    if(variant.profile!==definition.profile||(!v9&&(codec!==definition.codec||formatVersion!==definition.version))||typeof variant.label!=='string'
       ||!Number.isInteger(variant.bytes)||variant.bytes<=0||!Number.isFinite(variant.bitrateBps)
       ||Math.abs(variant.bitrateBps-variant.bytes*8*data.sampleRate/data.samples)>1e-6)
       throw Error('Неверная стоимость LPX-потока.');
     return {id:'lpx-'+clipId+'-'+id,audioReferenceId:clipId,profileLabel:variant.label,order:String(index+1).padStart(2,'0'),title:(experimental?'LPX-S15':'LPX')+' · '+variant.label,
       description:data.title,kind:'speech',codec,formatVersion,playback:'native-pwm8',device:'attiny88',
-      formatNotice:experimental?'LPX-S15 · экспериментальный формат; нужен отдельный декодер.':'',
+      formatNotice:experimental&&!v9?'LPX-S15 · экспериментальный формат; нужен отдельный декодер.':'',
       intendedBoard:'mh-et-live-16mhz',profile:definition.profile,sampleHz:data.sampleRate,phraseSamples:data.samples,
       playOnce:true,audioChannels:1,streamBytes:variant.bytes,bitrateBps:variant.bitrateBps,
       flashMeasurement:readFlashMeasurement(variant.flashMeasurement,variant.bytes),outputLevel:variant.outputLevel,

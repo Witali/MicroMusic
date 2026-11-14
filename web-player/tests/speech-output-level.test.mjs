@@ -27,8 +27,14 @@ test('LPX and Speex public PWM spans use calibrated firmware gain without satura
     }
   }
   for(const v of tiny.variants){
+    assert.equal(v.outputLevel.implementation,'producer-rom-q7');
     if(v.id==='low15')assert.equal(v.outputLevel.numerator,128);
-    else assert.deepEqual(v.outputLevel,nano.variants.find(n=>n.clipId===v.clipId&&n.id===v.id).outputLevel);
+    else {
+      const {implementation,gainDb,...level}=v.outputLevel;
+      const {gainDb:nanoGainDb,...legacyLevel}=nano.variants.find(n=>n.clipId===v.clipId&&n.id===v.id).outputLevel;
+      assert.ok(Math.abs(gainDb-nanoGainDb)<1e-12);
+      assert.deepEqual({...level,implementation:'producer-constant-q7'},legacyLevel);
+    }
   }
 });
 
