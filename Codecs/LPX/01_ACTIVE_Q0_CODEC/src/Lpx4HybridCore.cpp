@@ -1173,31 +1173,44 @@ static const bool halfPolynomialP=false;
 static const bool halfPolynomialP=true;
 #endif
 #if LPX4_AVR25_V9_RUNTIME
+// Degree-11 coefficients fit signed24: 4096*binomial(11,5)+1 is
+// below 2^21, and twice that bound also fits signed24. Keep the
+// four-byte slot stride so a word never straddles the ring boundary.
+typedef int PolyCoefficient __attribute__((mode(PSI)));
+static inline PolyCoefficient ringPolyLoad24(const int8_t* ring,uint8_t offset){
+    PolyCoefficient value;
+    memcpy(&value,ring+offset,sizeof(value));
+    return value;
+}
+static inline void ringPolyStore24(int8_t* ring,uint8_t offset,PolyCoefficient value){
+    memcpy(ring+offset,&value,sizeof(value));
+}
 static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
     uint8_t offset;
-    int32_t previous,current;
+    PolyCoefficient previous,current;
     if(symmetric){
         // P's new middle starts with a copy of the old middle.
         offset=base+2*n;
-        previous=current=ringPolyGetAt(ring,offset-4);
+        previous=current=ringPolyLoad24(ring,offset-4);
     }else{
         // Q's trailing unit is always -4096. Supply it in the loop's
         // first iteration and omit its store in the new polynomial.
         offset=base+4*(n-1);
-        previous=ringPolyGetAt(ring,offset-4);
-        ringPolyPutAt(ring,offset+4,previous-c);
+        previous=ringPolyLoad24(ring,offset-4);
+        ringPolyStore24(ring,offset+4,previous-c);
         current=-4096;
     }
     // Both polynomials use the same descending recurrence and Q12 floors.
     do{
-        const int32_t product=polyCosineMulQ12(previous,c);
-        const int32_t earlier=ringPolyGetAt(ring,offset-8);
-        ringPolyPutAt(ring,offset,earlier+product+current);
+        const PolyCoefficient product=polyCosineMulQ12(previous,c);
+        const PolyCoefficient earlier=ringPolyLoad24(ring,offset-8);
+        ringPolyStore24(ring,offset,earlier+product+current);
+        // The previous operand becomes the current coefficient after stepping back.
+        current=previous;
         previous=earlier;
         offset-=4;
-        current=ringPolyGetAt(ring,offset);
     }while(offset!=(uint8_t)(base+4));
-    ringPolyPutAt(ring,offset,c+current);
+    ringPolyStore24(ring,offset,c+current);
 }
 #elif LPX4_USE_AVR5_POLYNOMIAL_MUL || (LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS))
 static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
@@ -1375,12 +1388,11 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
     for(uint8_t i=0;i<10;i++){
         // Degree11 P[k] == P[11-k]; fixed-header images retain full P storage.
         const uint8_t pindex=halfPolynomialP?(i<5?i+1:10-i):i+1;
-        const int32_t sum=ringPolyGet(ringQ_,pbase,pindex)+ringPolyGet(ringQ_,qbase,i+1);
 #if LPX4_AVR25_V9_RUNTIME
-        // Each degree-11 polynomial is bounded by 4096*binomial(11,5)
-        // plus one unit for the final split-floor product. The sum is signed24.
+        const PolyCoefficient sum=ringPolyLoad24(ringQ_,pbase+4*pindex)+ringPolyLoad24(ringQ_,qbase+4*(i+1));
         out[i]=lpx4HalfClip15From24(sum);
 #else
+        const int32_t sum=ringPolyGet(ringQ_,pbase,pindex)+ringPolyGet(ringQ_,qbase,i+1);
         out[i]=clamp(truncShift(sum,1),-32767,32767);
 #endif
     }

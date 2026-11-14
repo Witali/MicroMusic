@@ -233,3 +233,13 @@ path. The selectable C decoder retains its general lifecycle. In the
 GNU AVR ABI build with AVR-GCC 7.3.0 and `-Os -flto`, 22 interrupt-active
 simavr loads verify 26 B less Flash, identical PWM and unchanged stack.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-anchor-rotation-2026-11-14/README.md).
+
+## Keep the P/Q recurrence in signed24
+
+The bound for each degree-11 coefficient is `4096*binomial(11,5)+1`.
+Retain the four-byte ring stride and load only three bytes. The descending
+loop carries an old coefficient forward as the next current term. The
+AVR-GCC 7.3.0 GNU ABI build saves 12 B with no stack growth after combining
+these changes. All 22 interrupt-active simavr loads preserve exact PWM
+and lower peak decode time. The selectable C path still uses signed32.
+[Independent recurrence and IRQ checks](../../Codecs/LPX/research/tiny-v9-polynomial24-2026-11-14/README.md).
