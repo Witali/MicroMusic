@@ -95,6 +95,13 @@ the original selectable C implementation. All 22 active IRQ workloads
 speed up with bit-exact PWM and the same stack and SRAM use.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-block-header-2026-11-14/README.md).
 
+The P4 and Sparse80 position mapping shares one function. In the AVR25 v9
+ASM build, two `LSR`s extract the quotient and leave the rounding bit in
+carry. `ADC` combines both with the original index. The ordinary C mapping
+stays selectable. AVR-GCC 7.3.0 at `-Os -flto` gains 24 B and maintains
+speed and exact PWM across 22 interrupt-active loads.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-shared-pulse-position-2026-11-14/README.md).
+
 Two later changes passed all 22 universal Tiny88 AVR25 loads with IRQ.
 With the AVR GCC ABI and AVR-GCC 7.3.0 at `-Os -flto`, sharing the byte-wide
 cache shift saves 30 B. Accumulating the shifted Rice quotient while

@@ -710,15 +710,31 @@ bool Lpx4HybridCore::readBlock(){
  return !error_;
 }
 #endif
+#if LPX4_ENABLE_SPEECH
+// Four encoded positions occupy five sample slots, skipping the middle slot.
+// P4 and Sparse80 use the same mapping over different numbers of groups.
+static inline uint8_t compactPulsePosition(uint8_t code){
+#if LPX4_AVR25_V9_RUNTIME
+    // floor((code+2)/4) is code>>2 plus its original bit 1. The second
+    // shift leaves that bit in carry, so one ADC adds both terms.
+    uint8_t quotient;
+    __asm__("mov %1,%0\n\tlsr %1\n\tlsr %1\n\tadc %0,%1"
+            : "+r"(code),"=&r"(quotient) : : "cc");
+    return code;
+#else
+    return code+((code+2)>>2);
+#endif
+}
+#endif
 bool Lpx4HybridCore::readSubframe(){
 #if LPX4_HAS_SPARSE80
  if(LPX4_SPEECH_FLAGS&8){
 #if LPX4_COMPACT_VERSION == 9
   const uint8_t raw=readBits(7),code=raw&63;
-  pulsePos_[0]=code+((code+2)>>2);pulseAmp_[0]=(raw&64)?7:-8;
+  pulsePos_[0]=compactPulsePosition(code);pulseAmp_[0]=(raw&64)?7:-8;
 #else
   const uint8_t code=readBits(6);
-  pulsePos_[0]=code+((code+2)>>2);pulseAmp_[0]=readOne()?7:-8;
+  pulsePos_[0]=compactPulsePosition(code);pulseAmp_[0]=readOne()?7:-8;
 #endif
   pulseIndex_=0;pulseCount_=1;return !error_;
  }
@@ -760,10 +776,10 @@ bool Lpx4HybridCore::readSubframe(){
    if(!(LPX4_SPEECH_FLAGS&2)){
 #if LPX4_COMPACT_VERSION == 9
     const uint8_t raw=readBits(5);
-    pos=raw&15;pos+=(pos+2)>>2;
+    pos=compactPulsePosition(raw&15);
     amp=(raw&16)?8:-8;
 #else
-    pos=readBits(4);pos+=(pos+2)>>2;
+    pos=compactPulsePosition(readBits(4));
     amp=readOne()?8:-8;
 #endif
    }else{
