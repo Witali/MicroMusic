@@ -102,6 +102,13 @@ stays selectable. AVR-GCC 7.3.0 at `-Os -flto` gains 24 B and maintains
 speed and exact PWM across 22 interrupt-active loads.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-shared-pulse-position-2026-11-14/README.md).
 
+Base P6 and extra pulses also share their signed four-bit amplitude decoder.
+Flipping bit 3 and subtracting eight yields the same amplitude on AVR25.
+The same toolchain saves 4 B, with a maximum increase of 0.0441 cycles per
+sample on six workloads. Together the two pulse parser extractions reduce
+decoder time on all 22 workloads with identical PWM.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-shared-pulse-amplitude-2026-11-14/README.md).
+
 Two later changes passed all 22 universal Tiny88 AVR25 loads with IRQ.
 With the AVR GCC ABI and AVR-GCC 7.3.0 at `-Os -flto`, sharing the byte-wide
 cache shift saves 30 B. Accumulating the shifted Rice quotient while

@@ -726,6 +726,17 @@ static inline uint8_t compactPulsePosition(uint8_t code){
 #endif
 }
 #endif
+#if LPX4_ENABLE_SPEECH
+// Decode the signed four-bit amplitude shared by base and extra pulses.
+static inline int8_t signedPulseAmplitude(uint8_t raw){
+#if LPX4_AVR25_V9_RUNTIME
+    // Flip the sign bit before subtracting eight to sign-extend the nibble.
+    return (int8_t)((raw^8u)-8u);
+#else
+    return raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
+#endif
+}
+#endif
 bool Lpx4HybridCore::readSubframe(){
 #if LPX4_HAS_SPARSE80
  if(LPX4_SPEECH_FLAGS&8){
@@ -799,7 +810,7 @@ bool Lpx4HybridCore::readSubframe(){
     pos=readBits(5);
 #endif
     const uint8_t raw=readBits(4);
-    amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
+    amp=signedPulseAmplitude(raw);
     if(pos>=20){error_=CORRUPT_STREAM;return false;}
    }
    pulsePos_[i]=pos+i*20;pulseAmp_[i]=amp;
@@ -811,7 +822,7 @@ bool Lpx4HybridCore::readSubframe(){
   if((speechCompact_&128) && readOne()){
 #endif
    const uint8_t pos=readBits(6),raw=readBits(4);
-   const int8_t amp=raw<8?(int8_t)raw:(int8_t)((int16_t)raw-16);
+   const int8_t amp=signedPulseAmplitude(raw);
    if(pos>=40){error_=CORRUPT_STREAM;return false;}
    uint8_t at=0;
    while(at<2 && pulsePos_[at]<pos)++at;
