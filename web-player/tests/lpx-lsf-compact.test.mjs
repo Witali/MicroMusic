@@ -14,6 +14,20 @@ const textSha=path=>sha(read(path).toString('utf8').replaceAll('\r\n','\n'));
 const folder='Codecs/LPX/research/lsf-compact-2026-11-10/';
 const transition=json(folder+'source-transition.json');
 
+test('merged LPX WebUI builds match all eighteen recorded release images',()=>{
+  const r=json('Codecs/LPX/research/webui-rebuild-2026-11-14/source-transition.json');
+  const recorded=path=>readRecordedBuildFile(r.merged_revision,'web-player/'+path);
+  const catalogs=['firmware-lpx-attiny88.json','firmware-atmega328p.json'].map(path=>JSON.parse(recorded(path)));
+  const dialogue=JSON.parse(recorded('audio/lpx-dialogue/manifest.json'));
+  const images=[...catalogs.flatMap(c=>c.variants),{source:dialogue.firmware,hexSha256:dialogue.hexSha256}];
+  assert.equal(images.length,18);
+  assert.equal(r.identical_web_images,images.length);
+  assert.deepEqual(r.web_hex_sha256,Object.fromEntries(images.map(({source,hexSha256})=>{
+    assert.equal(sha(recorded(source)),hexSha256,source);
+    return ['web-player/'+source,hexSha256];
+  })));
+});
+
 test('LSF compaction binds new evidence and preserves the historical receipts',()=>{
   assert.equal(transition.complete,true);
   assert.equal(transition.baseline_revision,'0320c1014618188a3121fdfef0be55b30690d977');
@@ -26,7 +40,7 @@ test('LSF compaction binds new evidence and preserves the historical receipts',(
     assert.equal(actual,digest,path+' historical receipt');
   }
   for(const [path,digest] of Object.entries(transition.validation_source_sha256)){
-    if(path.startsWith('web-player/tests/'))
+    if(path.startsWith('web-player/tests/')||path.endsWith('/lpx_source_history.py'))
       assertRecordedBuildSource('e0939e89d88e4d91e9e441310f504ddbfd5581aa',path,digest);
     else assertLpxRecordedSource(path,digest);
   }

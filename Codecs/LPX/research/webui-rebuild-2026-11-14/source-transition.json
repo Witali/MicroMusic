@@ -1,0 +1,674 @@
+{
+  "schema": "lpx-webui-rebuild-source-transition-v1",
+  "complete": true,
+  "baseline_revision": "3ff5dc0f43db10f0c19a11283694d69bd11e211d",
+  "merged_revision": "95f861cf0bafd7e14d4c42839d55c15a8ee0b1b9",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": {
+      "baseline": {
+        "raw_sha256": "a2b5615419b97e7f090eadc6a89ca67112487c14b6b1f38f458b3bddac5a77a0",
+        "text_lf_sha256": "a2b5615419b97e7f090eadc6a89ca67112487c14b6b1f38f458b3bddac5a77a0"
+      },
+      "current": {
+        "raw_sha256": "44dbd4aee66767ebffc02d51c32e82775d2e7b7abcd08ad4d4be7e1b8b97338b",
+        "text_lf_sha256": "44dbd4aee66767ebffc02d51c32e82775d2e7b7abcd08ad4d4be7e1b8b97338b"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": {
+      "baseline": {
+        "raw_sha256": "3e56e9485eecfe3d50618ebae017cae50f90a63def88a5e0a0cafe2ff5b5c5e6",
+        "text_lf_sha256": "3e56e9485eecfe3d50618ebae017cae50f90a63def88a5e0a0cafe2ff5b5c5e6"
+      },
+      "current": {
+        "raw_sha256": "97858436b32dccdefbf74fffa7f9859bc4b88ef3a6fddfbb4d98747b8357b2ba",
+        "text_lf_sha256": "97858436b32dccdefbf74fffa7f9859bc4b88ef3a6fddfbb4d98747b8357b2ba"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp": {
+      "baseline": {
+        "raw_sha256": "dfffd095f4fff3cf5494c580a737137e6561680e192f680857457f4fa01e8587",
+        "text_lf_sha256": "dfffd095f4fff3cf5494c580a737137e6561680e192f680857457f4fa01e8587"
+      },
+      "current": {
+        "raw_sha256": "58d76933bba1a650b9b22b9c8224d9fdef83101b6e5a115594e6320ff9374eda",
+        "text_lf_sha256": "58d76933bba1a650b9b22b9c8224d9fdef83101b6e5a115594e6320ff9374eda"
+      }
+    }
+  },
+  "validation_sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/avr25_math.cpp": {
+      "baseline": {
+        "raw_sha256": "81c2ffcf6a87b800e2056c9305671aedb59229c3507fbef7deb3465e2e262a98",
+        "text_lf_sha256": "81c2ffcf6a87b800e2056c9305671aedb59229c3507fbef7deb3465e2e262a98"
+      },
+      "current": {
+        "raw_sha256": "d043af8aa4ba9a53ebb20e2ab062db2bf7b9706344af2e2b8f69be4477619e40",
+        "text_lf_sha256": "d043af8aa4ba9a53ebb20e2ab062db2bf7b9706344af2e2b8f69be4477619e40"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_avr25_math.mjs": {
+      "baseline": {
+        "raw_sha256": "3dfea12b9cb6d9ce29bb67164335ced4928a7f2264a555990c50d617e99362af",
+        "text_lf_sha256": "3dfea12b9cb6d9ce29bb67164335ced4928a7f2264a555990c50d617e99362af"
+      },
+      "current": {
+        "raw_sha256": "cd9b3c9258348176463d12faed0a40983a336ed584e308f8a44fcfe6b90420ca",
+        "text_lf_sha256": "cd9b3c9258348176463d12faed0a40983a336ed584e308f8a44fcfe6b90420ca"
+      }
+    }
+  },
+  "compiler": "avr-g++ (GCC) 7.3.0",
+  "physical_board_measured": false,
+  "identical_web_images": 18,
+  "web_hex_sha256": {
+    "web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex": "7dc9a756412b359e4485344cacc4998b939c35193ddc2127d7bd8e79be1079a2",
+    "web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex": "35ccb759878e6010e12cc994e7b25403eeaa4bc9ddbd912962240aa5dec1261a",
+    "web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex": "2e5111723ceba8ea81a41c3f849884ae5a413513b7ee5c855c48d17ea00883dc",
+    "web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex": "ae3430568c933f1ec8fcee4f5a23386ee5e358f2163531a558f8af0adb4c4f2e",
+    "web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex": "24edcff7e0d876460a5a4368b33c483295bd79f41618654308807a62dd8d4ca6",
+    "web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex": "975b04b5174e8c95f7517781f8753284234f5a960875563cdd36d45147405d6b",
+    "web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex": "c608a963e174d0e8e5bdef187dbfaed6b9e015510f1e29fee4e4545d58ad217d",
+    "web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex": "495bbf330a75a174a2f2bb4027d8d248f611e2c91c6f0fca5742d3c7633b39be",
+    "web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex": "54a51b22972bea3e76549c17f9a5a6f56debc50527e07b67b2af5eb59a405d71",
+    "web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex": "f91a95456de41d47f627f6a652c46bb0ff871a8178a766e051618bc41d8cb183",
+    "web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex": "cd08020dc43399ce2e4672a8515fa03253578c86239ef9264aa11d43376ac910",
+    "web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex": "cc2131e9252cf5048572c872e58971badf0ce3b237368d39716631817fdf55ba",
+    "web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex": "9cb7307c716ec2b07d1e6d25f06b030fdb69742399887f5e025ae853ca2d9f19",
+    "web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex": "82b91631c7a20079690216c2cfde68f2562cab528a83a27b489ccf47847e277d",
+    "web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex": "fe290418f9387a2c9e5d9cf43f772b5fa84f959f467297df30ac2751519d501b",
+    "web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex": "7612b20314596e6f49fa9b79a91938f7a069b8356444323c6f3a2ae9c54e72dd",
+    "web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex": "86eaf017d5349009d675c4fc5487ec3a16d1bb208e8a4e19aae17547018ffd20",
+    "web-player/firmware/arduino-nano/lpx-nano-dialogue-quality.hex": "54eeeda734527dad552782e42b433e512dcbe49b40e75315463b56ca3fc0fb68"
+  },
+  "universal_irq_cases": 22,
+  "tiny88_irq_cycles": 38,
+  "tiny88_clock_hz": 16000000,
+  "tiny88_sample_hz": 8000,
+  "tiny88_simulator": "simavr 1.6",
+  "tiny88_queue_samples": 32,
+  "tiny88_prefill_samples": 24,
+  "tiny88_lpc_segments": 2,
+  "tiny88_irq_measurements": [
+    {
+      "case": "chego-compact",
+      "samples": 9831,
+      "input_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+      "pwm_sha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf",
+      "before": {
+        "program_excluding_audio_bytes": 5190,
+        "total_cycles": 1510.206383,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4822,
+        "total_cycles": 1502.830733,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "chego-quality",
+      "samples": 9831,
+      "input_sha256": "e811e60295c6245519dcd497ea8ed597dcaa5d996ce995b35e0966b92db78f65",
+      "pwm_sha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea",
+      "before": {
+        "program_excluding_audio_bytes": 5190,
+        "total_cycles": 1504.222596,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4822,
+        "total_cycles": 1496.995819,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "otvechaesh-compact",
+      "samples": 8466,
+      "input_sha256": "8d6c86fe7be247d948a168d188af2fb0652b12fb6769b20955691b470f69cf16",
+      "pwm_sha256": "70bcb3b622b39bb4499ce8dc586aae4b6a909172853e11f99299af466f011c02",
+      "before": {
+        "program_excluding_audio_bytes": 5190,
+        "total_cycles": 1506.088012,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4822,
+        "total_cycles": 1498.368041,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "otvechaesh-quality",
+      "samples": 8466,
+      "input_sha256": "abbb18c4b1da77990b049caab94a94cf51a16e8ee39cbd3e01642fe9b5659880",
+      "pwm_sha256": "77f447114a2a2f1734339eabf7537b24ebde914389830bb76fc232ed21d3df91",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1500.291756,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1492.713101,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "vinni-compact",
+      "samples": 23757,
+      "input_sha256": "1b9d60dde416b0d8e4f7d7c7da98d80a0022865894f6795bf07161e30a0a6de0",
+      "pwm_sha256": "a7ea4cfc5c316bae12ef371966f2fd6cc3ea77c6a6b760036a021e450218a2a8",
+      "before": {
+        "program_excluding_audio_bytes": 5190,
+        "total_cycles": 1461.292209,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4822,
+        "total_cycles": 1453.839885,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "vinni-quality",
+      "samples": 23757,
+      "input_sha256": "cbd74ad3e52c62c44e41a21937426d5ed5eed8ac10766aae2aea59aff00d4d19",
+      "pwm_sha256": "d7749a8d25359d85474163c5e083c01acb0920fbf66a205ce3288a33244bb9d9",
+      "before": {
+        "program_excluding_audio_bytes": 5190,
+        "total_cycles": 1463.217292,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4822,
+        "total_cycles": 1455.70383,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "bread-compact",
+      "samples": 19200,
+      "input_sha256": "41d2b0164474ce73cfecbd14be4c15c34f6e3a0135f99b8362d6b53566ef9188",
+      "pwm_sha256": "5496c43e512e6630e158e30c0bc0ff8d697f9ca4bb869f6e19d5f1b22b562030",
+      "before": {
+        "program_excluding_audio_bytes": 5190,
+        "total_cycles": 1492.137203,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4822,
+        "total_cycles": 1484.624166,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "bread-quality",
+      "samples": 19200,
+      "input_sha256": "791170e329f6634db98a18acf1d881749b937761a715d556ff64f5e3fe00b58c",
+      "pwm_sha256": "de5e8e3a27ce8bc7e2e43c6a7e2158974101d20b854adb337e45ee3062fad4fe",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1449.673446,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1442.172299,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "p4-changing-lag145-pre0-bright0",
+      "samples": 12800,
+      "input_sha256": "293f4a8132153b275e9acff9841f56c3fb10932b1ac30a1314b56170a751948c",
+      "pwm_sha256": "1d25166f3a8cc979897be60ed7bfce313956ad52f8bf280571ae09411bac7768",
+      "before": {
+        "program_excluding_audio_bytes": 5190,
+        "total_cycles": 927.373513,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4822,
+        "total_cycles": 920.61866,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "p4-clusters-lag18-pre16384-bright11469",
+      "samples": 12800,
+      "input_sha256": "39feb5869bf50774e6d1270b09ffad5820ca243da856ef0b3ce2f00e74b68d55",
+      "pwm_sha256": "fbf39ec4022b19379e015f78268adb5ec7d00fe6517505e7bb90189248d2974b",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1123.804086,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1116.002818,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "p6-changing-lag145-pre8192-bright11469",
+      "samples": 12800,
+      "input_sha256": "b892b96fa182caf9f56f65b057d00ed711ac3563883fad2681b76e4a77f91272",
+      "pwm_sha256": "d9eec147f4cfc92246a764aa627dd6bf82c10cc1266a1de8f3d070c66b570284",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1129.810348,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1119.611694,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "p6-clusters-lag18-pre8192-bright11469",
+      "samples": 12800,
+      "input_sha256": "82584a683837bd01ce2eccfc1d1a7cab2f3cf0dab861ef58adeb4d4da3bc36d0",
+      "pwm_sha256": "19aa0b4e2aa1306c23562adf46f89e37020a409270f7c5569f04f5aae30309ec",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1144.216265,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1135.925877,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "p6-changing-lag18-pre16383-bright11468",
+      "samples": 12800,
+      "input_sha256": "b4e886eb33a990d8059946349c42a99f0581b0181d606040882971a6cc2d75d9",
+      "pwm_sha256": "e0dd9036549d4f79db1a794a0addd4d60898c7b77e2fcf50292405c20b24738e",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1216.326002,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1206.174937,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "p6-clusters-lag145-pre1-bright1",
+      "samples": 12800,
+      "input_sha256": "afb8732c68ec4d7123efc32eff483ca3f62721263dd14173ba1e35b633c737f6",
+      "pwm_sha256": "8f5908823dde16964cfad461981a125da4e83d4cf96c55481d67cfed0651a726",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1203.599796,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1195.309408,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "bread-low15",
+      "samples": 19200,
+      "input_sha256": "c7e2d6132864ba5b1969727dc2ab634211167121ff6139c5952340bd5daef519",
+      "pwm_sha256": "6ee37f5fff6409cc04f531e27e78db69a9ffc1b4ea5b06ed474453bf97c784b4",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1247.625782,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1244.199677,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "chego-2k",
+      "samples": 9831,
+      "input_sha256": "00315a2e6eb7c23f23235ce6173d3a27b6f8184727512b75dd7cd40e21a6426c",
+      "pwm_sha256": "24aa20128092761cbc46fc2f492f67080cc3b7411582239e7c23c770c7292891",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1459.309575,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1452.768533,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "s80-changing-lag145-pre0-bright0",
+      "samples": 12800,
+      "input_sha256": "1a54317290d0a1e12bb0ec8bd3851d0a2cae7b1c5104dea952987e3060286486",
+      "pwm_sha256": "16923e1174d352a0d3cf61d79fe73fef0a5c7cc1265ba3bd0e743976de90b08a",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1373.804869,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1367.451785,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "s80-clusters-lag18-pre16384-bright11469",
+      "samples": 12800,
+      "input_sha256": "b2f863053df19c9d93475a2dac12e3e94e78db9cfc7f8aaee23f3bc67552ca63",
+      "pwm_sha256": "ba0a711337d8e1201120e54d15fa1cf7eff82f7751c58b0a339a89c8fc62b0b2",
+      "before": {
+        "program_excluding_audio_bytes": 5190,
+        "total_cycles": 1050.8533969999999,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4822,
+        "total_cycles": 1042.9496709999999,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "s80-changing-lag145-pre8192-bright11469",
+      "samples": 12800,
+      "input_sha256": "7d3a168216dd3de135e14e9fcb7ba5d7c947d7cec2dd0650275f7615cf59d0c7",
+      "pwm_sha256": "e785cb81ab2b827aa7baec82b842f63b167828c73c1213a1804d77b0c2a2f233",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1507.143785,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1500.790701,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "s80-changing-lag18-pre16383-bright11468",
+      "samples": 12800,
+      "input_sha256": "c0ac38c4331cfb141b9dabcef4be408a8a00466310bcea71974d7ba4e71c1650",
+      "pwm_sha256": "d71b6d2e1f97044516bdc7d992e55f4a5a59507ce45e6736e7fbf1c95a1b21d4",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 1655.777865,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 1649.424781,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "s80-clusters-lag145-pre1-bright1",
+      "samples": 12800,
+      "input_sha256": "68628c8c0b5f7a9be164d0f249d5237d1ee41fc379ff8271e5af1e6412defc1c",
+      "pwm_sha256": "7e63a13a308b30ae6dd9de99d70237f2a56564aa03b94fd0dc275a56389b33eb",
+      "before": {
+        "program_excluding_audio_bytes": 5190,
+        "total_cycles": 1128.293206,
+        "stack_bytes": 54,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4822,
+        "total_cycles": 1120.38948,
+        "stack_bytes": 53,
+        "underruns": 0
+      }
+    },
+    {
+      "case": "all-pairs",
+      "samples": 16000,
+      "input_sha256": "bbf9df22972bdeff5e1cea8966fa4aebecddf4871dde4967cdbe70d4e421607b",
+      "pwm_sha256": "d4ad121774c78b2f53ed057181fd1fc9072877a63342f593cb705c33ff1fbf80",
+      "before": {
+        "program_excluding_audio_bytes": 5191,
+        "total_cycles": 904.499061,
+        "stack_bytes": 50,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4823,
+        "total_cycles": 901.899099,
+        "stack_bytes": 49,
+        "underruns": 0
+      }
+    }
+  ],
+  "avr25_math_cases": 183957,
+  "avr25_math_results": [
+    {
+      "backend": "c",
+      "cases": 183957,
+      "irqs": 50937,
+      "cycles": 63372073,
+      "passed": true
+    },
+    {
+      "backend": "asm",
+      "cases": 183957,
+      "irqs": 44164,
+      "cycles": 28083816,
+      "passed": true
+    },
+    {
+      "backend": "generic",
+      "cases": 183957,
+      "irqs": 50937,
+      "cycles": 63372073,
+      "passed": true
+    }
+  ],
+  "atmega328p_irq_cycles": 64,
+  "atmega328p_clock_hz": 16000000,
+  "atmega328p_sample_hz": 8000,
+  "atmega328p_simulator": "simavr 1.6",
+  "atmega328p_queue_samples": 32,
+  "atmega328p_prefill_samples": 24,
+  "atmega328p_lpc_segments": 2,
+  "atmega328p_irq_measurements": [
+    {
+      "backend": "asm",
+      "case": "chego-2k",
+      "samples": 9831,
+      "input_sha256": "00315a2e6eb7c23f23235ce6173d3a27b6f8184727512b75dd7cd40e21a6426c",
+      "pwm_sha256": "24aa20128092761cbc46fc2f492f67080cc3b7411582239e7c23c770c7292891",
+      "before": {
+        "program_excluding_audio_bytes": 5049,
+        "total_cycles": 757.849393,
+        "stack_bytes": 66,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 5067,
+        "total_cycles": 759.414806,
+        "stack_bytes": 69,
+        "underruns": 0
+      }
+    },
+    {
+      "backend": "asm",
+      "case": "chego-compact",
+      "samples": 9831,
+      "input_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+      "pwm_sha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf",
+      "before": {
+        "program_excluding_audio_bytes": 5048,
+        "total_cycles": 778.926277,
+        "stack_bytes": 66,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 5066,
+        "total_cycles": 780.35546,
+        "stack_bytes": 69,
+        "underruns": 0
+      }
+    },
+    {
+      "backend": "asm",
+      "case": "chego-quality",
+      "samples": 9831,
+      "input_sha256": "e811e60295c6245519dcd497ea8ed597dcaa5d996ce995b35e0966b92db78f65",
+      "pwm_sha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea",
+      "before": {
+        "program_excluding_audio_bytes": 5048,
+        "total_cycles": 782.830937,
+        "stack_bytes": 66,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 5066,
+        "total_cycles": 784.26012,
+        "stack_bytes": 69,
+        "underruns": 0
+      }
+    },
+    {
+      "backend": "asm",
+      "case": "s80-changing-lag18-pre16383-bright11468",
+      "samples": 12800,
+      "input_sha256": "c0ac38c4331cfb141b9dabcef4be408a8a00466310bcea71974d7ba4e71c1650",
+      "pwm_sha256": "d71b6d2e1f97044516bdc7d992e55f4a5a59507ce45e6736e7fbf1c95a1b21d4",
+      "before": {
+        "program_excluding_audio_bytes": 5049,
+        "total_cycles": 829.027708,
+        "stack_bytes": 66,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 5067,
+        "total_cycles": 830.557765,
+        "stack_bytes": 69,
+        "underruns": 0
+      }
+    },
+    {
+      "backend": "c",
+      "case": "chego-2k",
+      "samples": 9831,
+      "input_sha256": "00315a2e6eb7c23f23235ce6173d3a27b6f8184727512b75dd7cd40e21a6426c",
+      "pwm_sha256": "24aa20128092761cbc46fc2f492f67080cc3b7411582239e7c23c770c7292891",
+      "before": {
+        "program_excluding_audio_bytes": 4619,
+        "total_cycles": 1620.056082,
+        "stack_bytes": 68,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4623,
+        "total_cycles": 1620.068522,
+        "stack_bytes": 68,
+        "underruns": 0
+      }
+    },
+    {
+      "backend": "c",
+      "case": "chego-compact",
+      "samples": 9831,
+      "input_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+      "pwm_sha256": "b833e80b05dfda38ea91ecbdc73d8ffaa840a85ea2f6db6daba42c04b24d9fcf",
+      "before": {
+        "program_excluding_audio_bytes": 4618,
+        "total_cycles": 1641.148669,
+        "stack_bytes": 68,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4622,
+        "total_cycles": 1641.161109,
+        "stack_bytes": 68,
+        "underruns": 0
+      }
+    },
+    {
+      "backend": "c",
+      "case": "chego-quality",
+      "samples": 9831,
+      "input_sha256": "e811e60295c6245519dcd497ea8ed597dcaa5d996ce995b35e0966b92db78f65",
+      "pwm_sha256": "13b71c28224e7705a30f21d237f2a9e6af322c132c04af12c40ea653a34a1bea",
+      "before": {
+        "program_excluding_audio_bytes": 4618,
+        "total_cycles": 1645.513613,
+        "stack_bytes": 68,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4622,
+        "total_cycles": 1645.526053,
+        "stack_bytes": 68,
+        "underruns": 0
+      }
+    },
+    {
+      "backend": "c",
+      "case": "s80-changing-lag18-pre16383-bright11468",
+      "samples": 12800,
+      "input_sha256": "c0ac38c4331cfb141b9dabcef4be408a8a00466310bcea71974d7ba4e71c1650",
+      "pwm_sha256": "d71b6d2e1f97044516bdc7d992e55f4a5a59507ce45e6736e7fbf1c95a1b21d4",
+      "before": {
+        "program_excluding_audio_bytes": 4619,
+        "total_cycles": 1687.221979,
+        "stack_bytes": 68,
+        "underruns": 0
+      },
+      "after": {
+        "program_excluding_audio_bytes": 4623,
+        "total_cycles": 1687.234346,
+        "stack_bytes": 68,
+        "underruns": 0
+      }
+    }
+  ]
+}

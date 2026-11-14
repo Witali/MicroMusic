@@ -20,6 +20,7 @@ TINY_SHARED_PQ=REPO/'Codecs/LPX/research/tiny-v9-shared-pq-2026-11-13'
 TINY_SUBFRAME=REPO/'Codecs/LPX/research/tiny-v9-subframe-2026-11-13'
 TINY_ODD_PHASE=REPO/'Codecs/LPX/research/tiny-v9-odd-phase-2026-11-13'
 TINY_LPC_HALF=REPO/'Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13'
+WEBUI_REBUILD=REPO/'Codecs/LPX/research/webui-rebuild-2026-11-14/source-transition.json'
 
 
 def assert_recorded_source(path,expected):
@@ -138,5 +139,12 @@ def assert_recorded_source(path,expected):
             assert report['universal_irq_cases']==22 and report['identical_web_images']==18
             evidence=(TINY_LPC_HALF/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
             assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
+            recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        rebuild=json.loads(WEBUI_REBUILD.read_text(encoding='utf-8'))
+        change=rebuild['sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert rebuild['complete'] and rebuild['baseline_revision']=='3ff5dc0f43db10f0c19a11283694d69bd11e211d'
+            assert rebuild['universal_irq_cases']==22 and rebuild['identical_web_images']==18
             recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

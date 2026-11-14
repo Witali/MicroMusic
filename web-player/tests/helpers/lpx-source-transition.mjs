@@ -20,6 +20,7 @@ const tinySharedPqReport='Codecs/LPX/research/tiny-v9-shared-pq-2026-11-13/';
 const tinySubframeReport='Codecs/LPX/research/tiny-v9-subframe-2026-11-13/';
 const tinyOddPhaseReport='Codecs/LPX/research/tiny-v9-odd-phase-2026-11-13/';
 const tinyLpcHalfReport='Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13/';
+const webuiRebuildReceipt='Codecs/LPX/research/webui-rebuild-2026-11-14/source-transition.json';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -185,6 +186,17 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       assert.equal(report.identical_web_images,18);
       const evidence=read(tinyLpcHalfReport+'measurements.json');
       assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const rebuild=JSON.parse(read(webuiRebuildReceipt));
+    const change=rebuild.sources[path] ?? rebuild.validation_sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(rebuild.complete,true);
+      assert.equal(rebuild.baseline_revision,'3ff5dc0f43db10f0c19a11283694d69bd11e211d');
+      assert.equal(rebuild.universal_irq_cases,22);
+      assert.equal(rebuild.identical_web_images,18);
       recorded=change.current[field];
     }
   }
