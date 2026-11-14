@@ -199,3 +199,14 @@ the new spectrum directly. Other targets retain the equivalent C parser.
 AVR-GCC 7.3.0 at `-Os -flto` saves 44 B with the GNU AVR ABI. All 22
 simavr IRQ workloads speed up, maintain peak stack and produce exact PWM.
 [Measurements and corpus coverage](../../Codecs/LPX/research/tiny-v9-spectrum-fold-2026-11-14/README.md).
+
+## Multiply only the four remainder bits in the split Q12 product
+
+The signed remainder of truncating division by 16 is in −15..15. Compute
+the unsigned nibble product shifted by four with four AVR25 carry rounds.
+Correct the signed operands before extracting the final high byte. Both
+corrections at the intermediate scale are integers, so the separate floor
+is exact. This replaces a full signed byte-by-word product and shift.
+AVR-GCC 7.3.0 with GNU AVR ABI and `-Os -flto` saves 80 B on the universal
+ATtiny88 v9 build. All 22 live-IRQ loads retain exact PWM without slowdown.
+[Arithmetic coverage and paired measurements](../../Codecs/LPX/research/tiny-v9-polynomial-nibble-2026-11-14/README.md).

@@ -52,6 +52,14 @@ const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed;};
 const signed=()=>((random()>>>8)&65535)-32768;
 const boundary=[-32768,-32767,-16384,-4096,-256,-129,-128,-1,0,1,127,128,255,256,4096,16384,32767];
 for(const x of boundary)for(const y of boundary)check(0,x,y,x*y);
+// Four-bit signed corrections, including both cosine endpoints and the
+// products immediately on either side of powers-of-two rounding edges.
+const cosineFactors=new Set([-8192,0,8192]);
+for(let bit=0;bit<=13;bit++)for(const offset of [-1,0,1]){
+ const factor=(1<<bit)+offset;
+ if(factor<=8192){cosineFactors.add(factor);cosineFactors.add(-factor);}
+}
+for(let x=-15;x<=15;x++)for(const y of cosineFactors)check(31,x,y,Math.floor(x*y/4096));
 for(const x of boundary)for(const y of boundary)for(const bits of [2,3,4])
  for(let t=1;t<(1<<bits);t+=2)
   check(29,x,y,x+Math.trunc((y-x)*t/(1<<bits)),{bits,t});

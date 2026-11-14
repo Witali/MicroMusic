@@ -50,6 +50,7 @@ __attribute__((noinline,used)) void math_case(){
         else math_out=lpx4LpcInterpolate<true>(math_x,math_y,math_t,4);
         break;
     case 30:math_out=lpx4HalfClip15From24(math_exc);break;
+    case 31:math_out=lpx4NibbleMulQ12((int8_t)math_x,math_y);break;
     }
 }
 }

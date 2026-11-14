@@ -168,6 +168,33 @@ static inline __attribute__((always_inline)) int32_t lpx4Shift14(int32_t v){
 }
 #undef LPX4_SHIFT_BODY
 
+// Exact floor of remainder*coefficient/4096 for remainder in -15..15
+// and a Q12 cosine factor in -8192..8192.
+static inline __attribute__((always_inline)) int8_t lpx4NibbleMulQ12(int8_t remainder,int16_t coefficient){
+#if LPX4_USE_AVR_NOMUL_ASM
+    uint16_t accum;
+    uint8_t bits=(uint8_t)remainder;
+    uint8_t correction=bits;
+    // Four rounds give floor(unsigned nibble * uint16(coefficient) / 16).
+    // If the coefficient is negative, subtract 4096*nibble. If the
+    // remainder is negative, subtract the coefficient for its implicit -16.
+    // Both corrections are integers at this scale. Extract the high byte
+    // after both corrections to finish the arithmetic floor shift by 12.
+    __asm__(
+        "clr %A0\n\tclr %B0\n\t"
+        ".rept 4\n\tlsr %1\n\tbrcc 1f\n\tadd %A0,%A3\n\tadc %B0,%B3\n\t"
+        "1: ror %B0\n\tror %A0\n\t.endr\n\t"
+        "swap %2\n\tandi %2,240\n\t"
+        "sbrc %B3,7\n\tsub %B0,%2\n\t"
+        "sbrs %1,3\n\trjmp 2f\n\tsub %A0,%A3\n\tsbc %B0,%B3\n\t2:\n\t"
+        : "=&r"(accum),"+&r"(bits),"+&d"(correction)
+        : "r"(coefficient) : "cc");
+    return (int8_t)(accum>>8);
+#else
+    return (int8_t)(((int32_t)remainder*coefficient)>>12);
+#endif
+}
+
 #if LPX4_USE_AVR_NOMUL_ASM
 #define LPX4_MUL_INLINE __attribute__((noinline))
 #else

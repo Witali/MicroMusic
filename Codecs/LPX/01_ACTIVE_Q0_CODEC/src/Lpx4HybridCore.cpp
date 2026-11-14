@@ -1084,7 +1084,11 @@ static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
     const int16_t hi=(int16_t)truncShift(v,4);
     int8_t rem=(uint8_t)v&15;
     if(v<0 && rem)rem-=16;
+#if LPX4_AVR25_V9_RUNTIME
+    return (lpx4Mul16(hi,c)>>8)+lpx4NibbleMulQ12(rem,c);
+#else
     return (lpx4Mul16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
+#endif
 #else
     // The same fixed-point C reference remains explicitly selectable on AVR.
     return polyMulQ12(v,c);
