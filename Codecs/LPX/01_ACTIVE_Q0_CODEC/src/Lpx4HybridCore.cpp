@@ -84,10 +84,18 @@ static const uint8_t LP_PROGMEM cosineBend[64]={
 #if LPX4_COMPACT_ONLY
 // v5 transmits a5-bit scale; these are exactly originalStep[index*8].
 // Its small direct table removes the generic variable-shift reconstruction.
+#if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
+// Store the same steps in the units consumed by synthesis and save the shift.
+static const uint16_t LP_PROGMEM scaleValues[32]={
+ 0,0,0,0,0,0,16,16,16,16,32,48,64,96,128,192,
+ 256,368,528,736,1056,1488,2096,2960,4192,5936,8384,11856,16784,23728,33552,47456
+};
+#else
 static const uint16_t LP_PROGMEM scaleValues[32]={
  0,0,0,0,0,0,1,1,1,1,2,3,4,6,8,12,
  16,23,33,46,66,93,131,185,262,371,524,741,1049,1483,2097,2966
 };
+#endif
 static uint16_t scaleStep(uint8_t index){return LP_READ_U16(&scaleValues[index]);}
 #else
 static const uint16_t LP_PROGMEM scaleMantissa[16]={
@@ -575,13 +583,23 @@ bool Lpx4HybridCore::readFrame(){
   // readFrame toggled bit3: only the first160 half reads320 metadata.
   if((LPX4_SPEECH_FLAGS&8) && !(subIndex_&8))return !error_;
 #endif
+#if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
+  // The v9 scale and gain are adjacent LSB-first fields, eight bits total.
+  const uint8_t blockHeader=readBits(8);
+  const uint8_t blockScale=blockHeader&31;
+#else
   const uint8_t blockScale=readBits(5);
+#endif
 #else
   mode_=6;quantLimit_=32;
   blockScale_=readBits(5)<<3;
 #endif
 #if LPX4_COMPACT_VERSION == 9
+#if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
+  gain_=(blockHeader>>4)&14;
+#else
   gain_=readBits(3)<<1;
+#endif
   // At zero gain the lag contributes exactly zero for every history value.
   lag_=gain_?18+readBits(7):18;
 #else
@@ -592,7 +610,7 @@ bool Lpx4HybridCore::readFrame(){
 #else
   blockStep_=scaleStep(blockScale_);
 #endif
-#if LPX4_EXCITATION_Q4
+#if LPX4_EXCITATION_Q4 && !LPX4_AVR25_V9_RUNTIME
   blockStep_<<=4;
 #endif
   return !error_;
