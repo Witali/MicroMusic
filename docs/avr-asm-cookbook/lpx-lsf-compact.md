@@ -243,3 +243,12 @@ AVR-GCC 7.3.0 GNU ABI build saves 12 B with no stack growth after combining
 these changes. All 22 interrupt-active simavr loads preserve exact PWM
 and lower peak decode time. The selectable C path still uses signed32.
 [Independent recurrence and IRQ checks](../../Codecs/LPX/research/tiny-v9-polynomial24-2026-11-14/README.md).
+
+## Keep the subframe phase in one rolling byte
+
+The universal AVR25 v9 reader increments one byte after each 20-sample
+subframe. The low three bits preserve position within a half, and bit 3
+tracks the half with no parser-side update. The AVR-GCC 7.3.0 GNU ABI build
+saves 16 B at `-Os -flto`. All 22 active-IRQ loads preserve exact PWM and
+get faster. Additional long playbacks test multiple unsigned wraps.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-subframe-counter-2026-11-14/README.md).

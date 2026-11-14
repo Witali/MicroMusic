@@ -573,15 +573,17 @@ bool Lpx4HybridCore::readFrame(){
   if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
 #endif
   initializedFrame_=true;
-#if LPX4_COMPACT_ONLY
+#if LPX4_COMPACT_ONLY && !LPX4_AVR25_V9_RUNTIME
   subIndex_^=8;
-#else
+#elif !LPX4_COMPACT_ONLY
   speechHalf_^=1;
 #endif
 #if LPX4_COMPACT_ONLY
 #if LPX4_HAS_SPARSE80
-  // readFrame toggled bit3: only the first160 half reads320 metadata.
-  if((LPX4_SPEECH_FLAGS&8) && !(subIndex_&8))return !error_;
+  // AVR25 v9 increments a free-running subframe counter. Its bit 3
+  // marks the second half before and after reading the frame header.
+  const bool secondHalf=LPX4_AVR25_V9_RUNTIME?(subIndex_&8):!(subIndex_&8);
+  if((LPX4_SPEECH_FLAGS&8) && secondHalf)return !error_;
 #endif
 #if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
   // The v9 scale and gain are adjacent LSB-first fields, eight bits total.
@@ -1708,7 +1710,10 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
         remaining_-=20;
         subEnd_=remaining_<20?(uint8_t)remaining_:20;
 #endif
-#if LPX4_COMPACT_ONLY
+#if LPX4_AVR25_V9_RUNTIME
+        // Consumers use only the low four bits. Unsigned wrap is harmless.
+        ++subIndex_;
+#elif LPX4_COMPACT_ONLY
         subIndex_=(subIndex_&8)|((subIndex_+1)&7);
 #else
         if(++subIndex_==8)subIndex_=0;
