@@ -30,6 +30,11 @@
 #if LPX25_REPEAT < 1 || LPX25_REPEAT > 255
 #error Repeat count must be 1..255
 #endif
+#if LPX4_USE_AVR_NOMUL_ASM && LPX4_COMPACT_ONLY && LPX4_COMPACT_VERSION == 9 && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#define LPX25_V9_RUNTIME 1
+#else
+#define LPX25_V9_RUNTIME 0
+#endif
 static const uint8_t voice[] PROGMEM={
 #include "audio.inc"
 };
@@ -95,7 +100,7 @@ ISR(TIMER0_COMPA_vect){
 static bool begin(){return decoder.begin(voice,sizeof(voice));}
 // Startup enters main with IRQs masked. This player never returns, so no
 // caller registers need to remain saved under the foreground stack.
-#if LPX4_USE_AVR_NOMUL_ASM && LPX4_COMPACT_ONLY && LPX4_COMPACT_VERSION == 9 && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#if LPX25_V9_RUNTIME
 __attribute__((OS_main))
 #endif
 int main(){
@@ -106,12 +111,16 @@ int main(){
     bool started=false;
     for(;;){
         if(lpx25_eof){
+#if LPX25_V9_RUNTIME
+            break;
+#else
             // The foreground has no decoding left. Drain, then stop within a
             // few cycles of the final ISR return, before the next 2000-cycle
             // deadline. This keeps terminal bookkeeping out of every ISR.
             while(lpx25_head!=lpx25_tail){}
             ATOMIC_BLOCK(ATOMIC_RESTORESTATE){stop();}
             for(;;){}
+#endif
         }
         const uint8_t head=lpx25_head,next=advance(head);
         if(next==lpx25_tail)continue;
@@ -138,11 +147,19 @@ int main(){
             TCCR0A=_BV(CTC0)|_BV(CS01);started=true;sei();
         }
     }
+#if LPX25_V9_RUNTIME
+    // Stop after the queued prefix, whether decoding ended or failed. Only
+    // the foreground consumes EOF; the ISR uses head and tail exclusively.
+    lpx25_eof=1;
+    if(started){while(lpx25_head!=lpx25_tail){}}
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){stop();}
+#else
     // Reject a prefill error; drain an already running valid prefix.
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
         lpx25_eof=1;
         if(!started || lpx25_head==lpx25_tail)stop();
     }
     if(started){while(lpx25_head!=lpx25_tail){};ATOMIC_BLOCK(ATOMIC_RESTORESTATE){stop();}}
+#endif
     for(;;){}
 }
