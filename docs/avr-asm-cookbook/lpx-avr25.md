@@ -398,3 +398,18 @@ ATtiny88 with AVR-GCC 7.3.0 saves another six program bytes. The
 22 simavr 1.6 workloads use 2.07–9.47 fewer mean cycles per sample
 including IRQ and preserve exact PWM.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-q4-synthesis-clip-2026-11-16/README.md).
+
+## Mask an LSB-first field after refill
+
+In the bounded AVR25 v9 reader, the cache holds 0–7 unconsumed bits
+and the request consumes 0–8. The signed difference tells whether it
+needs another byte. A refill adds eight to that difference, so the
+new cache count is always its low three bits. Join the refill with
+the cached bits before applying one mask to the result. An upfront
+zero test also shortens each nonempty byte-shift loop.
+
+The AVR-GCC 7.3.0 ATtiny88 player saves eight program bytes and 0.07–0.39
+mean cycles per sample including IRQ across 22 simavr 1.6 workloads.
+An exhaustive probe compared cached values, refills and error states
+with a 16-bit lookahead oracle in three AVR25 arithmetic configurations.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-joined-bitfield-2026-11-16/README.md).

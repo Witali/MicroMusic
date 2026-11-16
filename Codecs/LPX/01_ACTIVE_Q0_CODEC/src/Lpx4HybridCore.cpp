@@ -483,12 +483,12 @@ int8_t Lpx4HybridCore::readHuffman3(){
 }
 #endif
 #if LPX4_AVR25_V9_RUNTIME
-// The count is 0..8. DEC and BRPL share the loop latch for both directions.
+// The count is 0..8. Check zero before entering the byte-wide shift loop.
 template<bool left>
 static inline __attribute__((always_inline)) uint8_t shiftPacketByte(uint8_t value,uint8_t count){
  __asm__(
-     "rjmp 2f\n\t1:\n\t.if %2\n\tlsl %0\n\t.else\n\tlsr %0\n\t.endif\n\t"
-     "2: dec %1\n\tbrpl 1b"
+     "tst %1\n\tbreq 2f\n\t1:\n\t.if %2\n\tlsl %0\n\t.else\n\tlsr %0\n\t.endif\n\t"
+     "dec %1\n\tbrne 1b\n\t2:"
      : "+&r"(value),"+r"(count) : "I"(left) : "cc");
  return value;
 }
@@ -498,7 +498,21 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
  ++bitCalls_;
 #endif
 
-#if LPX4_COMPACT_ONLY && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#if LPX4_AVR25_V9_RUNTIME
+ const uint8_t available=bitsLeft_;
+ const int8_t remaining=available-n;
+ uint8_t out=bitBuffer_,source=out,used=n;
+ if(remaining<0){
+  source=readByte();
+  used=(uint8_t)-remaining;
+  out|=shiftPacketByte<true>(source,available);
+ }
+ // A refill supplies eight more bits. The low three bits give the
+ // remaining count on both paths; mask the field after joining both bytes.
+ bitBuffer_=shiftPacketByte<false>(source,used);
+ bitsLeft_=remaining&7;
+ return out&LP_READ_U8(&bitMasks[n]);
+#elif LPX4_COMPACT_ONLY && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
  const uint8_t available=bitsLeft_;
  uint8_t source, used, remaining, out;
  if(available>=n){
@@ -510,19 +524,10 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
   source=readByte();
   used=n-available;
   remaining=8-used;
-#if LPX4_AVR25_V9_RUNTIME
-  out=shiftPacketByte<true>(source&LP_READ_U8(&bitMasks[used]),available);
-  out|=bitBuffer_;
-#else
   out=bitBuffer_|((source&LP_READ_U8(&bitMasks[used]))<<available);
-#endif
  }
  // The cache is one byte. Use one byte-wide shift loop on both paths.
-#if LPX4_AVR25_V9_RUNTIME
- source=shiftPacketByte<false>(source,used);
-#else
  while(used--)source>>=1;
-#endif
  bitBuffer_=source;
  bitsLeft_=remaining;
  return out;
