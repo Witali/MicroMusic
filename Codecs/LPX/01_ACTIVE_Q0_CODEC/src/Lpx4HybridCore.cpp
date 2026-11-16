@@ -97,16 +97,17 @@ static const uint8_t LP_PROGMEM cosineBend[64]={
 #if LPX4_COMPACT_ONLY
 // Compact speech transmits a five-bit scale, originalStep[index*8].
 #if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
-static uint16_t scaleStep(uint8_t index){
+static uint16_t scaleStep(uint8_t header){
+ // The scale is in the low five bits of the scale/gain byte.
  // The two mantissas are entries 0 and 8 of the original scale grid.
  // Shift into Q4, then round the step to an integer in those units.
- uint16_t scaled=(index&1)?5931:4194;
- int8_t shift=12-(index>>1);
+ uint16_t scaled=(header&1)?5931:4194;
+ uint8_t group=header;
  __asm__(
-     "tst %1\n\tbrmi 3f\n\trjmp 2f\n\t"
-     "1: lsr %B0\n\tror %A0\n\t2: dec %1\n\tbrpl 1b\n\trjmp 4f\n\t"
-     "3: lsl %A0\n\trol %B0\n\tinc %1\n\tbrmi 3b\n\t4:"
-     : "+&w"(scaled),"+r"(shift) : : "cc");
+     "lsr %1\n\tandi %1,15\n\tsubi %1,12\n\tbreq 4f\n\tbrpl 3f\n\t"
+     "1: lsr %B0\n\tror %A0\n\tinc %1\n\tbrne 1b\n\trjmp 4f\n\t"
+     "3: lsl %A0\n\trol %B0\n\tdec %1\n\tbrne 3b\n\t4:"
+     : "+&w"(scaled),"+d"(group) : : "cc");
  return (scaled+8)&0xfff0;
 }
 #else
@@ -542,11 +543,13 @@ int8_t Lpx4HybridCore::readHuffman3(){
 }
 #endif
 #if LPX4_AVR25_V9_RUNTIME
-// The count is 0..8. Check zero before entering the byte-wide shift loop.
+// The left shift may use zero cached bits; readBits always consumes at
+// least one bit from the source byte on the right shift path.
 template<bool left>
 static inline __attribute__((always_inline)) uint8_t shiftPacketByte(uint8_t value,uint8_t count){
  __asm__(
-     "tst %1\n\tbreq 2f\n\t1:\n\t.if %2\n\tlsl %0\n\t.else\n\tlsr %0\n\t.endif\n\t"
+     ".if %2\n\ttst %1\n\tbreq 2f\n\t.endif\n\t"
+     "1:\n\t.if %2\n\tlsl %0\n\t.else\n\tlsr %0\n\t.endif\n\t"
      "dec %1\n\tbrne 1b\n\t2:"
      : "+&r"(value),"+r"(count) : "I"(left) : "cc");
  return value;
@@ -652,7 +655,12 @@ bool Lpx4HybridCore::readFrame(){
    // The second half uses cached LPC; the next first half refreshes prev.
    for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
 #endif
+#if LPX4_AVR25_V9_RUNTIME
+   const uint8_t wide=(LPX4_SPEECH_FLAGS>>1)&1;
+   const uint8_t bits=wide+5;
+#else
    const uint8_t bits=(LPX4_SPEECH_FLAGS&2)?6:5;
+#endif
 #if !LPX4_COMPACT_ONLY
    const uint8_t shift=10-bits;
 #endif
@@ -676,7 +684,11 @@ bool Lpx4HybridCore::readFrame(){
 #else
      int8_t last=-1;
 #endif
+#if LPX4_AVR25_V9_RUNTIME
+     const uint8_t limit=wide?64:32;
+#else
      const uint8_t limit=((LPX4_SPEECH_FLAGS&2)+2)<<4;
+#endif
      for(uint8_t i=0;i<10;i++){
 #if LPX4_AVR25_V9_RUNTIME
       const uint8_t code=readSpeechRice(k,width);
@@ -753,7 +765,6 @@ bool Lpx4HybridCore::readFrame(){
 #if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
   // The v9 scale and gain are adjacent LSB-first fields, eight bits total.
   const uint8_t blockHeader=readBits(8);
-  const uint8_t blockScale=blockHeader&31;
 #else
   const uint8_t blockScale=readBits(5);
 #endif
@@ -763,6 +774,7 @@ bool Lpx4HybridCore::readFrame(){
 #endif
 #if LPX4_COMPACT_VERSION == 9
 #if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
+  blockStep_=scaleStep(blockHeader);
   gain_=(blockHeader>>4)&14;
 #else
   gain_=readBits(3)<<1;
@@ -772,10 +784,12 @@ bool Lpx4HybridCore::readFrame(){
 #else
   lag_=18+readBits(7);gain_=readBits(3)<<1;
 #endif
+#if !(LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4)
 #if LPX4_COMPACT_ONLY
   blockStep_=scaleStep(blockScale);
 #else
   blockStep_=scaleStep(blockScale_);
+#endif
 #endif
 #if LPX4_EXCITATION_Q4 && !LPX4_AVR25_V9_RUNTIME
   blockStep_<<=4;
