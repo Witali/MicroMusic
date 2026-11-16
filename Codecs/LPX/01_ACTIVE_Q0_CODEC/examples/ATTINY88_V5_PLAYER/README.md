@@ -1,6 +1,25 @@
-# ATtiny88 / 16 MHz LPX v5 player
+# AVR / 16 MHz LPX ROM player
 
-## Current universal v9: P4/P6 and sparse80
+The same [player.cpp](player.cpp) builds for ATtiny88, ATmega328 and
+ATmega328P. The vendor device header selects Timer0 setup. The specific
+ISR pair is selected by AVR architecture when the build opts into the
+assembly ISR with matching `-ffixed` flags. The decoder selects
+software or hardware multiply when built with `LPX4_ENABLE_ASM=1`;
+`LPX4_ENABLE_ASM=0` selects the C reference.
+
+To build and verify current v9 images for ATmega using the common source,
+run from the repository root with AVR-GCC and simavr available.
+
+```sh
+python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_atmega328p_v9.py \
+    build/mega328-v9 --current-source --target atmega328 --fixed-isr
+```
+
+Select `--target atmega328p` and a fresh output directory for ATmega328P.
+Verified HEX files are under `asm/<case>/`. See the
+[shared-player measurements](../../../research/shared-avr-v9-player-2026-11-16/README.md).
+
+## Universal v9: original sparse80 admission
 
 An `L9` input selects one universal decoder for all three file-defined profiles:
 4,6 and15. Profile15 supports the existing low-rate sparse80 encoder, including
@@ -8,7 +27,7 @@ complete streams near2 kbit/s. It shares LPC synthesis and does not bake the
 recording's filters, count or profile into the executable. The v5 default and
 recording-specialized catalog recipes described below remain available.
 
-The current v9 recipe uses FIFO32/prefill24, a38-cycle complete ISR and
+The original sparse80 admission recipe used FIFO32/prefill24, a38-cycle complete ISR and
 5604..5605 B of program Flash (about5.47 KiB), excluding the verified audio array.
 That is4.10% above the former production v9 baseline (5384 B, FIFO44), within
 the5% admission ceiling. With the same FIFO32 the measured baseline is5528 B:

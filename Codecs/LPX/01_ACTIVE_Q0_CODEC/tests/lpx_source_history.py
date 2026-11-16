@@ -44,6 +44,7 @@ PREPARED_ATTENUATION=REPO/'Codecs/LPX/research/tiny-v9-prepared-attenuation-2026
 ALIGNED_PITCH_PAGE=REPO/'Codecs/LPX/research/tiny-v9-aligned-pitch-page-2026-11-16'
 LPC_ZERO_SEED=REPO/'Codecs/LPX/research/tiny-v9-lpc-zero-seed-2026-11-16'
 LPC_ODD_PHASE=REPO/'Codecs/LPX/research/tiny-v9-lpc-odd-phase-2026-11-16'
+SHARED_AVR_PLAYER=REPO/'Codecs/LPX/research/shared-avr-v9-player-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -194,10 +195,11 @@ def assert_recorded_source(path,expected):
         (ALIGNED_PITCH_PAGE,'cf013a74d477564d106a8e4f25de0061b8b8a812'),
         (LPC_ZERO_SEED,'ce0b1c93cee257e2e2899bb9502d67f2b0bce899'),
         (LPC_ODD_PHASE,'b5f59cfc1cec5a1d55fafd709a6f2b655d40985a'),
+        (SHARED_AVR_PLAYER,'2e141dcc17f3620042fdfba3610349651921cd18'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
-        change=report['sources'].get(path)
+        change=report['sources'].get(path) or report.get('validation_sources',{}).get(path)
         if change and change['baseline']['text_lf_sha256']==recorded:
             assert report['complete'] and report['baseline_revision']==baseline
             assert report['universal_irq_cases']==22 and report['identical_web_images']==18

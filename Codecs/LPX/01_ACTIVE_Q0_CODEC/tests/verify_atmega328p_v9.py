@@ -7,6 +7,7 @@ simavr prototype measurement, not admission of the production Nano player.
 """
 from __future__ import annotations
 import argparse
+from functools import partial
 import hashlib
 import importlib.util
 import json
@@ -38,22 +39,34 @@ def replace(text, old, new, count=1):
     return text.replace(old, new)
 
 
-def adapt_player(text):
-    text = replace(text, '__AVR_ATtiny88__', '__AVR_ATmega328P__')
-    text = replace(text, 'real ATtiny88 target', 'real ATmega328P target')
+def device_name(target):
+    return 'ATmega'+target.removeprefix('atmega').upper()
+
+
+def device_header(target):
+    return 'avr/iom'+target.removeprefix('atmega')+'.h'
+
+
+def adapt_player(text, target='atmega328p'):
+    # Historical revisions predate the common player and retain their port.
+    if '#error Select ATtiny88, ATmega328 or ATmega328P with -mmcu' in text:
+        return text
+    device = device_name(target)
+    text = replace(text, '__AVR_ATtiny88__', f'__AVR_{device}__')
+    text = replace(text, 'real ATtiny88 target', f'real {device} target')
     text = replace(text, 'static void stop(){TCCR0A=0;TIMSK0=0;',
                    'static void stop(){TCCR0A=0;TCCR0B=0;TIMSK0=0;')
     return replace(text, 'TCCR0A=_BV(CTC0)|_BV(CS01);',
                    'TCCR0A=_BV(WGM01);TCCR0B=_BV(CS01);')
 
 
-def adapt_observer(text):
+def adapt_observer(text, target='atmega328p'):
     start = text.index('#define BIT(r,b)')
     end = text.index('static unsigned head,tail', start)
     text = text[:start]+'static avr_t *cpu;\n'+text[end:]
     text = text.replace('cpu.', 'cpu->').replace('&cpu', 'cpu')
     text = replace(text, 'if(avr_init(cpu)<0)return 2;',
-        'cpu=avr_make_mcu_by_name("atmega328p");if(!cpu || avr_init(cpu)<0)return 2;')
+        f'cpu=avr_make_mcu_by_name("{target}");if(!cpu || avr_init(cpu)<0)return 2;')
     text = replace(text, 'decode_active=cpu->data[H_TCCR0A]!=0;',
                    'decode_active=cpu->data[H_TCCR0B]!=0;')
     text = replace(text, '!cpu->data[H_TCCR0A]&&!cpu->data[H_TIMSK0]',
@@ -91,24 +104,32 @@ def adapt_observer(text):
         '(unsigned long long)irq_r1_nonzero,(unsigned long long)irq_r0_nonzero);')
 
 
-def adapt_builder(text):
+def adapt_builder(text, target='atmega328p', *, fixed_isr=False):
     for old, new, count in (
-        ("'-mmcu=attiny88'", "'-mmcu=atmega328p'", 1),
+        ("'-mmcu=attiny88'", f"'-mmcu={target}'", 1),
         ("raise ValueError('Hardware multiply in an AVR25 function')",
          "if reserved:raise ValueError('This port requires the ordinary C ISR')", 1),
         ('flash_limit=8192', 'flash_limit=32768', 1),
         ('flash_limit<=8192', 'flash_limit<=32768', 1),
         ("registers='TCCR0A TCNT0", "registers='TCCR0A TCCR0B TCNT0", 1),
         ("constants='CTC0 ", "constants='WGM01 ", 1),
-        ("DFP/'avr/iotn88.h'", "DFP/'avr/iom328p.h'", 1),
-        ("target='attiny88'", "target='atmega328p'", 1),
+        ("DFP/'avr/iotn88.h'", f"DFP/'{device_header(target)}'", 1),
+        ("target='attiny88'", f"target='{target}'", 1),
         ('bootloader_application_bytes=6012,fits_standard_bootloader=len(image)<=6012,',
          'bootloader_application_bytes=None,fits_standard_bootloader=None,', 1),
         ('requires_isp=len(image)>6012,', 'requires_isp=None,', 1),
         ('// Generated from the pinned vendor ATtiny88 header; observer only.',
-         '// Generated from the compiler-selected ATmega328P header; observer only.', 1),
+         f'// Generated from the compiler-selected {device_name(target)} header; observer only.', 1),
     ):
         text = replace(text, old, new, count)
+    if fixed_isr:
+        text = replace(text, "'-ffixed-r2','-ffixed-r3'", "'-ffixed-r4','-ffixed-r5'")
+        text = replace(text, 'def audit_registers(elf,listing,reserved):',
+                       'def audit_registers(elf,listing,reserved,*,sample_irq):')
+        text = replace(text, "owner!='__vector_12'", 'owner!=sample_irq')
+        text = replace(text, r'\br[23]\b', r'\br[45]\b')
+        text = replace(text, "if reserved:raise ValueError('This port requires the ordinary C ISR')",
+            "if reserved and owner==sample_irq:raise ValueError('MUL inside the reserved ISR')")
     return text
 
 
@@ -129,7 +150,11 @@ def load(name, path):
     return module
 
 
-def run(output, *, wsl=None, current_source=False):
+def run(output, *, wsl=None, current_source=False, target='atmega328p', fixed_isr=False):
+    if target not in ('atmega328', 'atmega328p'):
+        raise ValueError('Select a real ATmega328 or ATmega328P target')
+    if fixed_isr and not current_source:
+        raise ValueError('The reserved-register ISR requires the current player')
     output = Path(output).resolve()
     if not output.is_relative_to((REPO/'build').resolve()) or output == REPO/'build':
         raise ValueError('Use a fresh ignored build/ subdirectory')
@@ -142,7 +167,7 @@ def run(output, *, wsl=None, current_source=False):
         if r.returncode:
             raise RuntimeError(r.stderr.decode(errors='replace'))
         return r.stdout
-    def target(path):
+    def tool_path(path):
         path = Path(path).resolve()
         if wsl and path.drive:
             return '/mnt/'+path.drive[0].lower()+'/'+'/'.join(path.parts[1:])
@@ -167,33 +192,38 @@ def run(output, *, wsl=None, current_source=False):
     shutil.copytree(REPO/'Codecs/common', private_repo/'Codecs/common')
     observer = port.parent/'validation/attiny88/sim_player.c'
     observer.parent.mkdir(parents=True)
-    observer.write_text(adapt_observer((ACTIVE.parent/'validation/attiny88/sim_player.c').read_text()),
+    observer.write_text(adapt_observer((ACTIVE.parent/'validation/attiny88/sim_player.c').read_text(), target),
                         encoding='utf-8', newline='\n')
     player = port/'examples/ATTINY88_V5_PLAYER/player.cpp'
-    player.write_text(adapt_player(player.read_text()), encoding='utf-8', newline='\n')
+    player.write_text(adapt_player(player.read_text(), target), encoding='utf-8', newline='\n')
     # Compiler-selected avr-libc header: keep original license, no address copies.
-    probe = subprocess.run([*prefix, 'avr-g++', '-mmcu=atmega328p', '-E', '-H', '-x', 'c++', '-'],
+    header_name = device_header(target)
+    probe = subprocess.run([*prefix, 'avr-g++', '-mmcu='+target, '-E', '-H', '-x', 'c++', '-'],
                            input=b'#include <avr/io.h>\n', capture_output=True)
     if probe.returncode:
         raise RuntimeError('Device header probe failed')
     header = next(line.split()[-1] for line in probe.stderr.decode().splitlines()
-                  if line.strip().endswith('/avr/iom328p.h'))
+                  if line.strip().endswith('/'+header_name))
     data = command('cat', header)
     (device/'avr').mkdir(parents=True)
-    (device/'avr/iom328p.h').write_bytes(data)
-    macros = command('avr-g++', '-mmcu=atmega328p', '-dM', '-E', '-x', 'c++', '-',
+    (device/header_name).write_bytes(data)
+    if target == 'atmega328':
+        included = next(line.split()[-1] for line in probe.stderr.decode().splitlines()
+                        if line.strip().endswith('/avr/iom328p.h'))
+        (device/'avr/iom328p.h').write_bytes(command('cat', included))
+    macros = command('avr-g++', '-mmcu='+target, '-dM', '-E', '-x', 'c++', '-',
                      input=b'#include <avr/io.h>\n#include <avr/version.h>\n').decode()
     definitions = dict(re.findall(r'^#define (\S+) (.+)$', macros, re.M))
     if definitions['__AVR_ARCH__'] != '5' or '__AVR_HAVE_MUL__' not in definitions:
         raise ValueError('Expected real AVR5 hardware multiplication target')
-    provenance = dict(header='avr/iom328p.h', header_sha256=sha(data),
+    provenance = dict(header=header_name, header_sha256=sha(data),
         origin='Compiler-selected avr-libc header; original license retained in generated copy',
         upstream='https://avrdudes.github.io/avr-libc/',
         avr_libc_version=definitions.get('__AVR_LIBC_VERSION_STRING__'),
         architecture=definitions['__AVR_ARCH__'], hardware_mul_defined=True,
         sample_vector=int(definitions['TIMER0_COMPA_vect_num']))
     for name, transform, source in (
-        ('build_mega_player', adapt_builder, 'build_attiny88_player'),
+        ('build_mega_player', partial(adapt_builder,target=target,fixed_isr=fixed_isr), 'build_attiny88_player'),
         ('verify_mega_player', adapt_verifier, 'verify_attiny88_player')):
         (output/(name+'.py')).write_text(transform((ACTIVE/'tools'/ (source+'.py')).read_text()),
                                          encoding='utf-8', newline='\n')
@@ -208,6 +238,9 @@ def run(output, *, wsl=None, current_source=False):
     input_hashes = {p.relative_to(REPO).as_posix():sha(p.read_bytes()) for p in public}
     builder = load('build_mega_player', output/'build_mega_player.py')
     builder.ROOT, builder.REPO, builder.DFP = port, REPO, device
+    if fixed_isr:
+        builder.audit_registers = partial(builder.audit_registers,
+                                          sample_irq=f"__vector_{provenance['sample_vector']}")
     verifier = load('verify_mega_player', output/'verify_mega_player.py')
     build_original = verifier.build
     # Match the ASM recipe's inlining option for the explicitly selected C control.
@@ -232,8 +265,9 @@ def run(output, *, wsl=None, current_source=False):
             folder.mkdir(parents=True)
             source = folder/'stream.lpx'
             source.write_bytes(blob)
+            use_fixed_isr = fixed_isr and backend=='asm'
             result = verifier.verify(source, folder, wsl=wsl, assembly=backend=='asm',
-                                     asm_isr=False, queue=32)
+                                     asm_isr=use_fixed_isr, queue=32)
             expected = (folder/'expected.pwm').read_bytes()
             valid = (folder/'actual.pwm.valid').read_bytes()
             if sha(expected) != golden['pwm_sha256'] or valid != expected:
@@ -247,7 +281,9 @@ def run(output, *, wsl=None, current_source=False):
             if (backend=='asm' or current_source) and not result['accepted']:
                 raise AssertionError('Playback failed its full real-time gate')
             cost = json.loads((folder/'build.json').read_text())
-            options = [option.replace(target(output), '<output>') for option in cost['compiler_options']]
+            options = [option.replace(tool_path(output), '<output>') for option in cost['compiler_options']]
+            if use_fixed_isr and not (result['irq_max']<64 and result['irq_r1_nonzero']>0):
+                raise AssertionError('Expected the compact ISR and live interrupts during MUL')
             # Verify real architecture and explicit backend using the exact build flags.
             backend_macros = command('avr-g++', *cost['compiler_options'], '-dM', '-E',
                 '-x', 'c++', '-', input=b'#include "Lpx4HybridCore.h"\n#include "Lpx4Math.h"\n').decode()
@@ -287,11 +323,11 @@ def run(output, *, wsl=None, current_source=False):
         generated_tool_sha256=generated_hashes, public_input_sha256=input_hashes,
         frozen_tiny_receipt_sha256=text_sha(RECEIPT.read_bytes()),
         production_source_unchanged=True, physical_board_measured=False, private_port=True,
-        target='atmega328p', clock_hz=16000000, sample_hz=8000, queue=32, prefill=24,
+        target=target, fixed_isr=fixed_isr, clock_hz=16000000, sample_hz=8000, queue=32, prefill=24,
         lpc_segments=2, memory_profile='SRAM512', physical_ram_bytes=2048,
         device_provenance=provenance, simavr_version=command('pkg-config','--modversion','simavr').decode().strip(),
         cycle_accounting='active decoder CPU mean plus maximum complete ISR; queue management excluded',
-        scope='Private Tiny-style one-shot port with native simavr ATmega328P and ordinary C ISR; not production Nano firmware',
+        scope='One-shot universal ROM player on the selected native simavr core',
         c_control=('Same compiler options including -finline-small-functions; explicit fixed C arithmetic; all four profiles must pass real-time.' if current_source else
                    'Same compiler options including -finline-small-functions; explicit C arithmetic. A throughput rejection is retained, not treated as an arithmetic failure.'),
         cases=rows, complete=True)
@@ -306,8 +342,12 @@ def main():
     parser.add_argument('--wsl')
     parser.add_argument('--current-source',action='store_true',
                         help='Measure the current fixed C/ASM sources; require all four C profiles in real-time')
+    parser.add_argument('--target', choices=('atmega328', 'atmega328p'), default='atmega328p')
+    parser.add_argument('--fixed-isr', action='store_true',
+                        help='Select the reserved-register sample ISR for the current ASM builds')
     args = parser.parse_args()
-    run(args.output, wsl=args.wsl, current_source=args.current_source)
+    run(args.output, wsl=args.wsl, current_source=args.current_source,
+        target=args.target, fixed_isr=args.fixed_isr)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-// One-shot ATtiny88 player. Device registers come from the pinned vendor DFP.
+// One-shot AVR player. Device registers come from the selected vendor header.
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
@@ -6,8 +6,8 @@
 #include "Lpx4HybridCore.h"
 #include "Lpx4Math.h"
 #include "../../../../common/pwm_gain.h"
-#ifndef __AVR_ATtiny88__
-#error This hardware driver requires the real ATtiny88 target
+#if !defined(__AVR_ATtiny88__) && !defined(__AVR_ATmega328__) && !defined(__AVR_ATmega328P__)
+#error Select ATtiny88, ATmega328 or ATmega328P with -mmcu
 #endif
 #if F_CPU != 16000000UL
 #error This playback clock requires 16 MHz
@@ -64,39 +64,59 @@ static inline uint8_t advance(uint8_t at){
     return (at+1)&(LPX25_QUEUE-1);
 #endif
 }
-static void stop(){TCCR0A=0;TIMSK0=0;lpx25_stopped=1;}
+static void stop(){
+    TCCR0A=0;
+#if defined(TCCR0B)
+    TCCR0B=0;
+#endif
+    TIMSK0=0;
+    lpx25_stopped=1;
+}
 #ifndef LPX25_ENABLE_ASM_ISR
 #define LPX25_ENABLE_ASM_ISR 0
 #endif
-#if LPX25_ENABLE_ASM_ISR && defined(__AVR_ARCH__) && __AVR_ARCH__==25
+#if LPX25_ENABLE_ASM_ISR && defined(__AVR_ARCH__) && \
+    (__AVR_ARCH__==25 || (__AVR_ARCH__==5 && LPX25_REUSE_TIMER1_HIGH))
 #ifndef LPX25_ISR_FIXED_REGS
-#error The reserved-register ISR requires whole-program -ffixed-r2 -ffixed-r3
+#error The reserved-register ISR requires the matching whole-program -ffixed flags
+#endif
+#if __AVR_ARCH__==5
+// The AVR5 arithmetic backend uses r2 explicitly in signed products.
+#define LPX25_IRQ_SAMPLE "r4"
+#define LPX25_IRQ_SREG "r5"
+#else
+#define LPX25_IRQ_SAMPLE "r2"
+#define LPX25_IRQ_SREG "r3"
 #endif
 ISR(TIMER0_COMPA_vect,ISR_NAKED){
-    // r2/r3 are excluded from every foreground compilation. Z remains a
-    // normal foreground pointer and is preserved. r1 is untouched throughout.
+    // The scratch pair is excluded from every foreground compilation. Z is a
+    // normal foreground pointer and is preserved. The AVR5 path writes only
+    // OCR1AL so it can preserve r0/r1 without using the MUL scratch registers.
     __asm__ __volatile__(
-        "in r3,%0\n\tpush r30\n\tpush r31\n\t"
-        "lds r2,lpx25_head\n\tlds r30,lpx25_tail\n\tcp r2,r30\n\tbreq 2f\n\t"
+        "in " LPX25_IRQ_SREG ",%0\n\tpush r30\n\tpush r31\n\t"
+        "lds " LPX25_IRQ_SAMPLE ",lpx25_head\n\tlds r30,lpx25_tail\n\t"
+        "cp " LPX25_IRQ_SAMPLE ",r30\n\tbreq 2f\n\t"
 #if LPX25_QUEUE == 24 || LPX25_QUEUE == 44
         "ldi r31,0\n\tsubi r30,lo8(-(lpx25_queue))\n\tsbci r31,hi8(-(lpx25_queue))\n\t"
-        "ld r2,Z\n\tsubi r30,lo8(lpx25_queue)\n\tinc r30\n\t"
+        "ld " LPX25_IRQ_SAMPLE ",Z\n\tsubi r30,lo8(lpx25_queue)\n\tinc r30\n\t"
         "cpi r30,%4\n\tbrlo 4f\n\tclr r30\n\t4:\n\t"
 #else
         "ldi r31,hi8(lpx25_queue)\n\tori r30,lo8(lpx25_queue)\n\t"
-        "ld r2,Z\n\tinc r30\n\tandi r30,%3\n\t"
+        "ld " LPX25_IRQ_SAMPLE ",Z\n\tinc r30\n\tandi r30,%3\n\t"
 #endif
         "sts lpx25_tail,r30\n\trjmp 3f\n\t"
-        "2: ldi r30,128\n\tmov r2,r30\n\t"
+        "2: ldi r30,128\n\tmov " LPX25_IRQ_SAMPLE ",r30\n\t"
         "3:\n\t"
 #if !LPX25_REUSE_TIMER1_HIGH
         "sts %1,__zero_reg__\n\t"
 #endif
-        "sts %2,r2\n\t"
-        "pop r31\n\tpop r30\n\tout %0,r3\n\treti\n\t"
+        "sts %2," LPX25_IRQ_SAMPLE "\n\t"
+        "pop r31\n\tpop r30\n\tout %0," LPX25_IRQ_SREG "\n\treti\n\t"
         : : "I"(_SFR_IO_ADDR(SREG)),"n"(_SFR_MEM_ADDR(OCR1AH)),"n"(_SFR_MEM_ADDR(OCR1AL)),
             "M"(LPX25_QUEUE==24||LPX25_QUEUE==44?31:LPX25_QUEUE-1),"M"(LPX25_QUEUE));
 }
+#undef LPX25_IRQ_SAMPLE
+#undef LPX25_IRQ_SREG
 #else
 ISR(TIMER0_COMPA_vect){
     uint8_t sample=128;
@@ -161,7 +181,12 @@ int main(){
             DDRB|=_BV(PB1);OCR1A=128;
             TCCR1A=_BV(COM1A1)|_BV(WGM10);TCCR1B=_BV(WGM12)|_BV(CS10);
             OCR0A=249;TCNT0=0;TIFR0=_BV(OCF0A);TIMSK0=_BV(OCIE0A);
-            TCCR0A=_BV(CTC0)|_BV(CS01);started=true;sei();
+#if defined(TCCR0B)
+            TCCR0A=_BV(WGM01);TCCR0B=_BV(CS01);
+#else
+            TCCR0A=_BV(CTC0)|_BV(CS01);
+#endif
+            started=true;sei();
         }
     }
 #if LPX25_V9_RUNTIME

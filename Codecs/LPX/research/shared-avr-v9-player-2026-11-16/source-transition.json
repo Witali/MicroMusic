@@ -1,0 +1,32 @@
+{
+  "schema": "lpx-tiny-v9-source-transition-v1",
+  "complete": true,
+  "baseline_revision": "2e141dcc17f3620042fdfba3610349651921cd18",
+  "universal_irq_cases": 22,
+  "identical_web_images": 18,
+  "measurements_sha256": "c5133e39913b35239b0ed8d177059ba7413c083aa92ce4db27795da8a550fb4e",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp": {
+      "baseline": {
+        "raw_sha256": "463ae12a8342eb722d5bd10f080ec52a867d27ec9af645c3bae52b45e95c8be0",
+        "text_lf_sha256": "463ae12a8342eb722d5bd10f080ec52a867d27ec9af645c3bae52b45e95c8be0"
+      },
+      "current": {
+        "raw_sha256": "a067623d8d01b30a50403f28da11d71fe02e1e774448a9a58f55329ebe7547d0",
+        "text_lf_sha256": "a067623d8d01b30a50403f28da11d71fe02e1e774448a9a58f55329ebe7547d0"
+      }
+    }
+  },
+  "validation_sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_atmega328p_v9.py": {
+      "baseline": {
+        "raw_sha256": "f25d980275aca37de4e27f3fcea673b7fd9db7c18d4d4088497821d10aa9a327",
+        "text_lf_sha256": "f25d980275aca37de4e27f3fcea673b7fd9db7c18d4d4088497821d10aa9a327"
+      },
+      "current": {
+        "raw_sha256": "544aeccaae63a3fba64323a0cf0b12e86bbfb1378e45e5102645cecbef2bd5c4",
+        "text_lf_sha256": "544aeccaae63a3fba64323a0cf0b12e86bbfb1378e45e5102645cecbef2bd5c4"
+      }
+    }
+  }
+}

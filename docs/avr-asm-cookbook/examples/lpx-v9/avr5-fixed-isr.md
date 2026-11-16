@@ -1,5 +1,10 @@
 # LPX v9 fixed-register sample IRQ on ATmega328 and ATmega328P
 
+This prototype used `r2:r3`. The linked-code audit found explicit `r2`
+use in the AVR5 signed product, so reserving that pair for IRQ was unsafe.
+The shared player uses `r4:r5` with a whole-program register audit.
+[Verified player and measurements](../../../../Codecs/LPX/research/shared-avr-v9-player-2026-11-16/README.md)
+
 Measured prototype for the single-playback 16 MHz AVR5 player at 8 kHz.
 For the reserved-register trial, the adapted ROM player selected the
 existing AVR25 naked ISR on AVR5. The build reserved `r2` and `r3` in
