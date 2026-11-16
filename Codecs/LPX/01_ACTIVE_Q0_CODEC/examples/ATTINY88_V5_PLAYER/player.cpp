@@ -80,7 +80,10 @@ static void stop(){
 #ifndef LPX25_ISR_FIXED_REGS
 #error The reserved-register ISR requires the matching whole-program -ffixed flags
 #endif
-#if __AVR_ARCH__==5
+#if defined(LPX25_IRQ_REGISTER_MAP)
+#define LPX25_IRQ_SAMPLE "lpx25_irq_sample"
+#define LPX25_IRQ_SREG "lpx25_irq_sreg"
+#elif __AVR_ARCH__==5
 // The AVR5 arithmetic backend uses r2 explicitly in signed products.
 #define LPX25_IRQ_SAMPLE "r4"
 #define LPX25_IRQ_SREG "r5"
@@ -93,6 +96,9 @@ ISR(TIMER0_COMPA_vect,ISR_NAKED){
     // normal foreground pointer and is preserved. The AVR5 path writes only
     // OCR1AL so it can preserve r0/r1 without using the MUL scratch registers.
     __asm__ __volatile__(
+#if defined(LPX25_IRQ_REGISTER_MAP)
+        ".include \"" LPX25_IRQ_REGISTER_MAP "\"\n\t"
+#endif
         "in " LPX25_IRQ_SREG ",%0\n\tpush r30\n\tpush r31\n\t"
         "lds " LPX25_IRQ_SAMPLE ",lpx25_head\n\tlds r30,lpx25_tail\n\t"
         "cp " LPX25_IRQ_SAMPLE ",r30\n\tbreq 2f\n\t"

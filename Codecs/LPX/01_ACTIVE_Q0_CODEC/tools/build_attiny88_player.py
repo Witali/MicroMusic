@@ -16,7 +16,19 @@ ROOT=Path(__file__).resolve().parents[1]
 REPO=ROOT.parents[2]
 DFP=REPO/'ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/include'
 
-def audit_registers(elf,listing,reserved):
+def read_irq_registers(register_map):
+    names=('sample','sreg')
+    bindings=re.findall(r'^\.equ lpx25_irq_(sample|sreg),\s*(\d+)\s*$',
+                        register_map.read_text(encoding='ascii'),re.M)
+    values={name:int(number) for name,number in bindings}
+    if len(bindings)!=2 or values.keys()!=set(names):
+        raise ValueError('Expected one numeric .equ for each IRQ register')
+    sample,status=(values[name] for name in names)
+    if sample not in range(2,16,2) or status!=sample+1:
+        raise ValueError('IRQ registers must form an even callee-saved register pair')
+    return sample,status
+
+def audit_registers(elf,listing,reserved,*,irq_registers,sample_irq,allow_hardware_mul):
     """Inspect ELF function bodies, excluding ROM media marked STT_OBJECT."""
     data=Path(elf).read_bytes()
     if data[:6]!=b'\x7fELF\x01\x01':raise ValueError('Expected little-endian ELF32')
@@ -33,6 +45,8 @@ def audit_registers(elf,listing,reserved):
                 text=names[name:names.index(0,name)].decode()
                 functions.append((value,value+length,text))
     if not functions:raise ValueError('ELF has no function ranges')
+    pattern=re.compile(r'\br(?:'+'|'.join(map(str,irq_registers))+r')\b')
+    irq_operands=set()
     for line in Path(listing).read_text().splitlines():
         match=re.match(r'^\s*([0-9a-f]+):\s+(?:[0-9a-f]{2}\s+)+(.+)$',line)
         if not match:continue
@@ -40,11 +54,17 @@ def audit_registers(elf,listing,reserved):
         owner=next((name for a,b,name in functions if a<=pc<b),None)
         if owner is None:continue
         if instruction.split()[0] in ('mul','muls','mulsu','fmul','fmuls','fmulsu'):
-            raise ValueError('Hardware multiply in an AVR25 function')
-        if reserved and re.search(r'\br[23]\b',instruction) and owner!='__vector_12':
+            if not allow_hardware_mul or (reserved and owner==sample_irq):
+                raise ValueError('Hardware multiply in an unsupported function')
+        fixed=pattern.findall(instruction)
+        if reserved and owner==sample_irq:
+            irq_operands.update(fixed)
+        elif reserved and fixed:
             abi=(owner=='__prologue_saves__' and instruction.startswith('push')) or (
                  owner=='__epilogue_restores__' and instruction.startswith('ldd'))
             if not abi:raise ValueError('Foreground function uses ISR-reserved registers: '+owner)
+    if reserved and irq_operands!={f'r{reg}' for reg in irq_registers}:
+        raise ValueError('Sample IRQ does not use the reserved register pair')
     return True
 
 def target_path(path,wsl):
@@ -98,7 +118,17 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
            f'-DLPX4_AVR25_MUL16_UNROLL={mul16_unroll}',
            '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(DFP),
            '-I'+path(ROOT/'src'),'-I'+path(output)]
-    if asm_isr:flags+=['-DLPX25_ENABLE_ASM_ISR=1','-DLPX25_ISR_FIXED_REGS=1','-ffixed-r2','-ffixed-r3']
+    player=ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp'
+    register_map=player.with_name('irq_registers.inc')
+    shared_irq=asm_isr and universal and compact_version==9
+    irq_registers=read_irq_registers(register_map) if shared_irq else (2,3)
+    if asm_isr:
+        flags+=['-DLPX25_ENABLE_ASM_ISR=1','-DLPX25_ISR_FIXED_REGS=1',*(f'-ffixed-r{r}' for r in irq_registers)]
+    if shared_irq:
+        # LTO assembles the IRQ from a temporary file. Give GAS the map's
+        # full path so it does not need the original assembler search path.
+        map_path=path(register_map).replace('\\','/')
+        flags+=[f'-DLPX25_IRQ_REGISTER_MAP={json.dumps(map_path)}']
     if sparse80:flags+=['-DLPX4_ENABLE_SPARSE80=1']
     if compact_version==9:flags+=['-DLPX4_COMPACT_VERSION=9']
     if universal:
@@ -111,13 +141,12 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     # foreground register pressure. The explicitly selected C recipe stays C.
     if assembly:flags+=['-finline-small-functions' if universal else '-fno-inline-small-functions']
     flags+=list(extra_flags)
-    run('avr-g++',*flags,path(ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp'),
+    run('avr-g++',*flags,path(player),
         path(ROOT/'src/Lpx4HybridCore.cpp'),'-Wl,--gc-sections','-o',path(output/'player.elf'))
     for fmt,name in [('binary','player.bin'),('ihex','player.hex')]:
         run('avr-objcopy','-O',fmt,'-R','.eeprom',path(output/'player.elf'),path(output/name))
     (output/'player.nm').write_bytes(run('avr-nm','-S',path(output/'player.elf')))
     (output/'player.lss').write_bytes(run('avr-objdump','-d','-C',path(output/'player.elf')))
-    audited=audit_registers(output/'player.elf',output/'player.lss',asm_isr)
     registers='TCCR0A TCNT0 OCR0A OCR0B TIMSK0 TIFR0 TCCR1A TCCR1B TCNT1L TCNT1H OCR1AL OCR1AH OCR1BL OCR1BH ICR1L ICR1H TIMSK1 TIFR1 PORTB DDRB PINB SPL SPH CLKPR'.split()
     constants='CTC0 CS00 CS01 CS02 OCIE0A OCF0A TOIE0 TOV0 OCIE1A OCF1A TOIE1 TOV1 WGM10 WGM11 WGM12 WGM13 CS10 CS11 CS12 COM1A0 PB1 TIMER0_COMPA_vect_num TIMER0_OVF_vect_num TIMER1_COMPA_vect_num TIMER1_COMPB_vect_num TIMER1_OVF_vect_num RAMSTART RAMEND FLASHEND E2END LPX25_QUEUE'.split()
     values=[(name,'_SFR_MEM_ADDR('+name+')') for name in registers]+[(name,name) for name in constants]
@@ -127,9 +156,12 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     run('avr-objcopy','-O','binary','-j','.lpx_meta',path(output/'hardware.o'),path(output/'hardware.bin'))
     hardware=(output/'hardware.bin').read_bytes()
     if len(hardware)!=2*len(values):raise ValueError('Invalid vendor metadata object')
+    definitions={name:int.from_bytes(hardware[2*i:2*i+2],'little') for i,(name,_) in enumerate(values)}
     (output/'hardware.h').write_text('// Generated from the pinned vendor ATtiny88 header; observer only.\n'+''.join(
-        '#define H_'+name+' '+str(int.from_bytes(hardware[2*i:2*i+2],'little'))+'\n'
-        for i,(name,_) in enumerate(values)),encoding='ascii')
+        f'#define H_{name} {value}\n' for name,value in definitions.items()),encoding='ascii')
+    audited=audit_registers(output/'player.elf',output/'player.lss',asm_isr,irq_registers=irq_registers,
+                            sample_irq=f"__vector_{definitions['TIMER0_COMPA_vect_num']}",
+                            allow_hardware_mul=False)
     size=run('avr-size',path(output/'player.elf')).decode().splitlines()[1].split()
     image=(output/'player.bin').read_bytes()
     audio=[line.split() for line in (output/'player.nm').read_text().splitlines()
@@ -145,10 +177,11 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
         assembly=assembly,asm_isr=asm_isr,sparse80=sparse80,lpc_segments=lpc_segments,mul16_unroll=mul16_unroll,universal=universal,
         flash_bytes=int(size[0])+int(size[1]),static_ram_bytes=int(size[1])+int(size[2]),
         compiler=run('avr-g++','--version').decode().splitlines()[0],compiler_options=flags,
-        source_sha256={str(p.relative_to(REPO)):sha(p) for p in [ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp',
+        source_sha256={str(p.relative_to(REPO)):sha(p) for p in [player,*([register_map] if shared_irq else []),
             *sorted((ROOT/'src').glob('Lpx4*')),ROOT/'profiles/Lpx4Sram512.h',DFP/'avr/iotn88.h']},
         image_sha256=sha(output/'player.bin'),input_sha256=sha(source),physical_board_measured=False,
-        register_audit_passed=audited,flash_limit=flash_limit,
+        register_audit_passed=audited,irq_registers=[f'r{r}' for r in irq_registers] if asm_isr else [],
+        flash_limit=flash_limit,
         embedded_audio_bytes=length,program_excluding_audio_bytes=len(image)-length,
         bootloader_application_bytes=6012,fits_standard_bootloader=len(image)<=6012,
         requires_isp=len(image)>6012,timing_verified=False)

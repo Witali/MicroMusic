@@ -49,6 +49,7 @@ AVR5_PITCH_PAGE=REPO/'Codecs/LPX/research/avr5-v9-pitch-page-2026-11-16'
 AVR5_LPC_BIAS=REPO/'Codecs/LPX/research/avr5-v9-lpc-bias-2026-11-16'
 AVR5_POLY24=REPO/'Codecs/LPX/research/avr5-v9-poly24-2026-11-16'
 AVR_LSF_PRODUCT=REPO/'Codecs/LPX/research/avr-v9-lsf-product-2026-11-16'
+AVR_IRQ_REGISTER_MAP=REPO/'Codecs/LPX/research/avr-v9-irq-register-map-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -204,6 +205,7 @@ def assert_recorded_source(path,expected):
         (AVR5_LPC_BIAS,'95bc776c7fc823601c298a23236a0ab14269d849'),
         (AVR5_POLY24,'b0ea2e27aff3b4807a22ab730bdcc535ef8881ab'),
         (AVR_LSF_PRODUCT,'98be1f43cb282a7ff0e5a362a22f1f5138b9926d'),
+        (AVR_IRQ_REGISTER_MAP,'fe76b6f2cdea4f023f4d046c7af1138419a89b38'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

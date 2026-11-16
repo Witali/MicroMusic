@@ -8,6 +8,8 @@ from verify_lsf_compaction import git
 
 
 MEASURED_REVISION = '393b2de271568890d7b483f7602a2f59452d1a68'
+# This revision still has the builder input used by the frozen port receipt.
+MEASURED_TOOL_REVISION = '98be1f43cb282a7ff0e5a362a22f1f5138b9926d'
 
 
 class Atmega328pV9Tests(unittest.TestCase):
@@ -32,7 +34,9 @@ class Atmega328pV9Tests(unittest.TestCase):
         for source, transform, generated in (
             ('build_attiny88_player', adapt_builder, 'build_mega_player.py'),
             ('verify_attiny88_player', adapt_verifier, 'verify_mega_player.py')):
-            self.assertEqual(text_sha(transform((ACTIVE/'tools'/(source+'.py')).read_text()).encode()),
+            path = (ACTIVE/'tools'/(source+'.py')).relative_to(REPO).as_posix()
+            measured = git('show', f'{MEASURED_TOOL_REVISION}:{path}').decode('utf-8')
+            self.assertEqual(text_sha(transform(measured).encode()),
                              r['generated_tool_sha256'][generated])
 
     def test_public_fixture_streams_match_frozen_oracles(self):

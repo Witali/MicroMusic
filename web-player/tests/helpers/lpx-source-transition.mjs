@@ -49,6 +49,7 @@ const avr5PitchPageReport='Codecs/LPX/research/avr5-v9-pitch-page-2026-11-16/';
 const avr5LpcBiasReport='Codecs/LPX/research/avr5-v9-lpc-bias-2026-11-16/';
 const avr5Poly24Report='Codecs/LPX/research/avr5-v9-poly24-2026-11-16/';
 const avrLsfProductReport='Codecs/LPX/research/avr-v9-lsf-product-2026-11-16/';
+const avrIrqRegisterMapReport='Codecs/LPX/research/avr-v9-irq-register-map-2026-11-16/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -257,6 +258,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avr5LpcBiasReport,'95bc776c7fc823601c298a23236a0ab14269d849'],
     [avr5Poly24Report,'b0ea2e27aff3b4807a22ab730bdcc535ef8881ab'],
     [avrLsfProductReport,'98be1f43cb282a7ff0e5a362a22f1f5138b9926d'],
+    [avrIrqRegisterMapReport,'fe76b6f2cdea4f023f4d046c7af1138419a89b38'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

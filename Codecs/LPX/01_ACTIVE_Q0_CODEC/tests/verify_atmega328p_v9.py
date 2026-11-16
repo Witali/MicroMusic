@@ -105,10 +105,14 @@ def adapt_observer(text, target='atmega328p'):
 
 
 def adapt_builder(text, target='atmega328p', *, fixed_isr=False):
+    shared_irq_map='def read_irq_registers(' in text
+    if shared_irq_map:
+        text = replace(text, 'allow_hardware_mul=False)', 'allow_hardware_mul=True)')
+    else:
+        text = replace(text, "raise ValueError('Hardware multiply in an AVR25 function')",
+                       "if reserved:raise ValueError('This port requires the ordinary C ISR')")
     for old, new, count in (
         ("'-mmcu=attiny88'", f"'-mmcu={target}'", 1),
-        ("raise ValueError('Hardware multiply in an AVR25 function')",
-         "if reserved:raise ValueError('This port requires the ordinary C ISR')", 1),
         ('flash_limit=8192', 'flash_limit=32768', 1),
         ('flash_limit<=8192', 'flash_limit<=32768', 1),
         ("registers='TCCR0A TCNT0", "registers='TCCR0A TCCR0B TCNT0", 1),
@@ -122,7 +126,7 @@ def adapt_builder(text, target='atmega328p', *, fixed_isr=False):
          f'// Generated from the compiler-selected {device_name(target)} header; observer only.', 1),
     ):
         text = replace(text, old, new, count)
-    if fixed_isr:
+    if fixed_isr and not shared_irq_map:
         text = replace(text, "'-ffixed-r2','-ffixed-r3'", "'-ffixed-r4','-ffixed-r5'")
         text = replace(text, 'def audit_registers(elf,listing,reserved):',
                        'def audit_registers(elf,listing,reserved,*,sample_irq):')
@@ -179,6 +183,7 @@ def run(output, *, wsl=None, current_source=False, target='atmega328p', fixed_is
         ACTIVE/'tools/verify_attiny88_player.py', ACTIVE/'tools/speech_v9.py',
         ACTIVE/'tests/test_speech_v9.py', ACTIVE/'tests/test_sram512_profile.py',
         ACTIVE/'examples/ATTINY88_V5_PLAYER/player.cpp', ACTIVE/'profiles/Lpx4Sram512.h',
+        *sorted((ACTIVE/'examples/ATTINY88_V5_PLAYER').glob('*.inc')),
         ACTIVE.parent/'validation/attiny88/sim_player.c',
         *sorted((ACTIVE/'src').glob('Lpx4*')), *sorted((REPO/'Codecs/common').rglob('*.h'))]
     source_hashes = {p.relative_to(REPO).as_posix():text_sha(p.read_bytes()) for p in source_paths}
@@ -238,7 +243,7 @@ def run(output, *, wsl=None, current_source=False, target='atmega328p', fixed_is
     input_hashes = {p.relative_to(REPO).as_posix():sha(p.read_bytes()) for p in public}
     builder = load('build_mega_player', output/'build_mega_player.py')
     builder.ROOT, builder.REPO, builder.DFP = port, REPO, device
-    if fixed_isr:
+    if fixed_isr and not hasattr(builder,'read_irq_registers'):
         builder.audit_registers = partial(builder.audit_registers,
                                           sample_irq=f"__vector_{provenance['sample_vector']}")
     verifier = load('verify_mega_player', output/'verify_mega_player.py')

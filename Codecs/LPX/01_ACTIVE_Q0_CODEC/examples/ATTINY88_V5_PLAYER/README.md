@@ -1,9 +1,11 @@
 # AVR / 16 MHz LPX ROM player
 
 The same [player.cpp](player.cpp) builds for ATtiny88, ATmega328 and
-ATmega328P. The vendor device header selects Timer0 setup. The specific
-ISR pair is selected by AVR architecture when the build opts into the
-assembly ISR with matching `-ffixed` flags. The decoder selects
+ATmega328P. The vendor device header selects Timer0 setup. In universal
+v9 builds with the assembly ISR, [irq_registers.inc](irq_registers.inc)
+assigns the same `r10:r11` pair through GNU AVR `.equ`. The builder
+derives the `-ffixed` flags from that file and checks the linked ELF.
+The decoder selects
 software or hardware multiply when built with `LPX4_ENABLE_ASM=1`;
 `LPX4_ENABLE_ASM=0` selects the C reference.
 
