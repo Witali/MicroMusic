@@ -54,6 +54,7 @@ TINY_PULSE_REGISTERS=REPO/'Codecs/LPX/research/tiny-v9-pulse-registers-2026-11-1
 TINY_HEADER_SHORTCUTS=REPO/'Codecs/LPX/research/tiny-v9-header-shortcuts-2026-11-16'
 AVR_PWM130=REPO/'Codecs/LPX/research/avr-v9-pwm130-2026-11-16'
 AVR_ROM_CURSOR=REPO/'Codecs/LPX/research/avr-v9-rom-cursor-2026-11-16'
+AVR_PACKET_READER=REPO/'Codecs/LPX/research/avr-v9-packet-reader-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -214,6 +215,7 @@ def assert_recorded_source(path,expected):
         (TINY_HEADER_SHORTCUTS,'67e41ea9da0cf31764ff7d311e78c2e9c458ff16'),
         (AVR_PWM130,'6037f1527f0df94932b90236796c9c0ff4c18bc6'),
         (AVR_ROM_CURSOR,'58d83da3045b3d958132909aef41c239baa9e333'),
+        (AVR_PACKET_READER,'8bd91924b78ae510bc4b04137fe2baf93ec62345'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

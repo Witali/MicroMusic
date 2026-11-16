@@ -550,7 +550,7 @@ int8_t Lpx4HybridCore::readHuffman3(){
  return readOne()?-3:-4;
 }
 #endif
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_AVR_V9_PACKETS
 // The left shift may use zero cached bits; readBits always consumes at
 // least one bit from the source byte on the right shift path.
 template<bool left>
@@ -568,12 +568,24 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
  ++bitCalls_;
 #endif
 
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_AVR_V9_PACKETS
+#if LPX4_USE_AVR_ASM
+ uint8_t available=bitsLeft_;
+ int8_t remaining=available-n;
+#else
  const uint8_t available=bitsLeft_;
  const int8_t remaining=available-n;
+#endif
  uint8_t out=bitBuffer_,source=out,used=n;
  if(remaining<0){
   source=readByte();
+#if LPX4_USE_AVR_ASM
+  // Reload the cache after the AVR5 refill call so its registers need
+  // not be saved across the call. The AVR25 refill normally inlines.
+  available=bitsLeft_;
+  remaining=available-n;
+  out=bitBuffer_;
+#endif
   used=(uint8_t)-remaining;
   out|=shiftPacketByte<true>(source,available);
  }
