@@ -491,3 +491,7 @@ bounded multiply with the original coefficients.
 AVR-GCC 7.3.0 with SRAM512, LPC2 and FIFO32 saves 20 program bytes.
 The 22 simavr 1.6 workloads retain exact PWM, with a gain of 0–8 cycles
 per sample including IRQ. [Paired measurements](../../Codecs/LPX/research/tiny-v9-prepared-attenuation-2026-11-16/README.md).
+
+The [standalone LPX v9 example](examples/lpx-v9/README.md) assembles the
+same measured player in modules and selects AVR25 or AVR5 from the
+compiler's device and instruction-set macros.

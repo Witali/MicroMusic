@@ -1,0 +1,13 @@
+#include "layout.inc"
+#include "bitstream.inc"
+#include "pitch.inc"
+#include "lpc-spectrum.inc"
+#include "attenuation.inc"
+#include "startup.inc"
+#include "header.inc"
+#include "player.inc"
+#include "pwm-irq.inc"
+#include "../common/audio.inc"
+#include "decoder-data.inc"
+	.ident	"GCC: (GNU) 7.3.0"
+.global __do_clear_bss

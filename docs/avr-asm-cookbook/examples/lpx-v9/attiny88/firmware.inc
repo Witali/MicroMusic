@@ -1,0 +1,10 @@
+#include "lpc-spectrum.inc"
+#include "bitstream.inc"
+#include "subframes.inc"
+#include "attenuation.inc"
+#include "player.inc"
+#include "pwm-irq.inc"
+#include "../common/audio.inc"
+#include "decoder-data.inc"
+	.ident	"GCC: (GNU) 7.3.0"
+.global __do_clear_bss
