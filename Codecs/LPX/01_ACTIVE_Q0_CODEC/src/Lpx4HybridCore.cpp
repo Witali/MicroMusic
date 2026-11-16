@@ -944,23 +944,26 @@ bool Lpx4HybridCore::readSubframe(){
 #endif
 #endif
 #if LPX4_AVR25_V9_RUNTIME
+  // Keep the base pair in registers until the optional third pulse is known.
+  uint8_t firstPos,secondPos;
+  int8_t firstAmp,secondAmp;
   if(LPX4_SPEECH_FLAGS&2){
    const uint8_t low=readBits(4),high=readBits(5);
    if(high>=25){error_=CORRUPT_STREAM;return false;}
    const uint8_t coordinates=LP_READ_U8(&pulseHigh[high]);
-   pulsePos_[0]=(low&3)|(coordinates&28);
-   pulsePos_[1]=20+((low>>2)|((coordinates>>3)&28));
+   firstPos=(low&3)|(coordinates&28);
+   secondPos=20+((low>>2)|((coordinates>>3)&28));
    // The table bounds both positions, and the two signed nibbles are adjacent.
    const uint8_t amp=readBits(8);
-   pulseAmp_[0]=signedPulseAmplitude(amp&15);
-   pulseAmp_[1]=signedPulseAmplitude(amp>>4);
+   firstAmp=signedPulseAmplitude(amp&15);
+   secondAmp=signedPulseAmplitude(amp>>4);
   }else{
    const uint8_t first=readBits(5),second=readBits(5);
-   pulsePos_[0]=compactPulsePosition(first&15);
-   pulsePos_[1]=20+compactPulsePosition(second&15);
+   firstPos=compactPulsePosition(first&15);
+   secondPos=20+compactPulsePosition(second&15);
    // Bit 4 contributes either 0 or 16 to the amplitude biased by -8.
-   pulseAmp_[0]=(int8_t)((first&16)-8);
-   pulseAmp_[1]=(int8_t)((second&16)-8);
+   firstAmp=(int8_t)((first&16)-8);
+   secondAmp=(int8_t)((second&16)-8);
   }
 #else
 #if LPX4_ENABLE_SPEECH_COMPACT
@@ -1030,7 +1033,18 @@ bool Lpx4HybridCore::readSubframe(){
    const uint8_t pos=readBits(6),raw=readBits(4);
    const int8_t amp=signedPulseAmplitude(raw);
    if(pos>=40){error_=CORRUPT_STREAM;return false;}
-#if LPX4_AVR25_V9_RUNTIME || LPX4_AVR25_V9_ROM_LAYOUT
+#if LPX4_AVR25_V9_RUNTIME
+   if(pos==firstPos)firstAmp+=amp;
+   else if(pos==secondPos)secondAmp+=amp;
+   else{
+    pulseCount=3;
+    if(pos<secondPos){
+     pulsePos_[2]=secondPos;pulseAmp_[2]=secondAmp;
+     if(pos<firstPos){secondPos=firstPos;secondAmp=firstAmp;firstPos=pos;firstAmp=amp;}
+     else {secondPos=pos;secondAmp=amp;}
+    }else {pulsePos_[2]=pos;pulseAmp_[2]=amp;}
+   }
+#elif LPX4_AVR25_V9_ROM_LAYOUT
    // Insert the extra in one forward pass. A displaced base pulse becomes
    // the next insertion, and a collision merges the amplitude in place.
    uint8_t insertPos=pos;
@@ -1058,8 +1072,15 @@ bool Lpx4HybridCore::readSubframe(){
 #endif
 #if LPX4_COMPACT_VERSION == 9
 #if LPX4_AVR25_V9_RUNTIME || LPX4_AVR25_V9_ROM_LAYOUT
+#if LPX4_AVR25_V9_RUNTIME
+  // Store positions as gaps once the pulses are ordered.
+  if(pulseCount==3)pulsePos_[2]-=secondPos+1;
+  pulsePos_[0]=firstPos;pulsePos_[1]=secondPos-firstPos-1;
+  pulseAmp_[0]=firstAmp;pulseAmp_[1]=secondAmp;
+#else
   if(pulseCount==3)pulsePos_[2]-=pulsePos_[1]+1;
   pulsePos_[1]-=pulsePos_[0]+1;
+#endif
 #if LPX4_AVR25_V9_ROM_LAYOUT
   pulsePos_[pulseCount]=idleGap;
 #endif
