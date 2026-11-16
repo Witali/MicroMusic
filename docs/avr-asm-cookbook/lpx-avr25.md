@@ -293,3 +293,14 @@ On ATtiny88 with AVR-GCC 7.3.0 and GNU AVR ABI this saves 66 program
 bytes on the universal v9 build. All 22 simavr 1.6 IRQ workloads reproduce
 exact PWM with lower decoder CPU time and zero underruns.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-rom-header-2026-11-16/README.md).
+
+## Seed the LPC polynomials with signed 24-bit stores
+
+On AVR25 v9, write the initial P and Q coefficients with the same
+three-byte store used by the recurrence. The fourth byte of each slot
+is padding and the four-byte stride keeps each load within the ring.
+The initial values fit in signed16 and have the same signed24
+representation as the recurrence expects. AVR-GCC 7.3.0 with the GNU AVR
+ABI emits 14 fewer program bytes. The 22 paired simavr 1.6 cases retain
+exact PWM and zero underruns with active IRQ.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-poly-seed-2026-11-16/README.md).

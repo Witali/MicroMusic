@@ -1426,10 +1426,12 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #if LPX4_AVR25_V9_RUNTIME
     // P stores coefficients 0..5. Q stores 0..10 with the trailing unit implicit.
     const uint8_t qbase=(uint8_t)(pbase+24);
+    ringPolyStore24(ringQ_,pbase,4096);
+    ringPolyStore24(ringQ_,qbase,4096);
 #else
     const uint8_t qbase=(uint8_t)(pbase+48);
-#endif
     ringPolyPut(ringQ_,pbase,0,4096);ringPolyPut(ringQ_,qbase,0,4096);
+#endif
 #else
     polyP_[0]=polyQ_[0]=4096;
 #endif
@@ -1464,9 +1466,13 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
             // |cc|<=8192, so the shared first coefficient fits signed16.
             // P2=P1 and Q2=-Q1 for these exact initial unit factors.
             const int16_t first=unit+cc;
+#if LPX4_AVR25_V9_RUNTIME
+            const PolyCoefficient initial=first;
+            ringPolyStore24(ringQ_,base+4,initial);
+            ringPolyStore24(ringQ_,base+8,(i&1)?-initial:initial);
+#else
             ringPolyPut(ringQ_,base,1,first);
             ringPolyPut(ringQ_,base,2,(i&1)?-(int32_t)first:(int32_t)first);
-#if !LPX4_AVR25_V9_RUNTIME
             ringPolyPut(ringQ_,base,3,unit);
 #endif
         }else ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2),halfPolynomialP&&!(i&1));
