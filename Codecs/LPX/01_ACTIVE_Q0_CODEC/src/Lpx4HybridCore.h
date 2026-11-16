@@ -255,6 +255,12 @@ public:
     uint32_t romByteCalls() const {return romByteCalls_;}
 #endif
 private:
+    // The ROM player owns a static instance whose storage is zeroed by
+    // startup. Keep automatic instances on the normal constructor.
+    friend struct Lpx4TinyRomPlayer;
+    struct StaticZeroInit {};
+    explicit Lpx4HybridCore(StaticZeroInit) {}
+
     // Stream lifetime and container/entropy readers.
     // Share one clearing loop between construction and begin(), even with LTO.
     __attribute__((noinline)) void resetState();

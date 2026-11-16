@@ -268,3 +268,13 @@ after subframe zero. Both changes together save 32 B on ATtiny88 with
 AVR-GCC 7.3.0 and GNU AVR ABI. The selectable C interpolation is equivalent.
 The 22 simavr 1.6 IRQ workloads retain exact PWM and run without underruns.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-unsigned-interp-2026-11-16/README.md).
+
+## Static zero initialization in the v9 ROM player
+
+A decoder in static storage can rely on the AVR C runtime's BSS clear.
+Limit the no-op constructor to the one static instance that the player
+owns. Keep the regular constructor for other storage durations and the
+per-stream reset for all entry points. AVR-GCC 7.3.0 with GNU AVR ABI and
+LTO can then omit the constructor table and its call sequence. This reduces
+startup code on ATtiny88.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-static-rom-2026-11-16/README.md).

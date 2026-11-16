@@ -25,6 +25,7 @@ PULSE_PACKET=REPO/'Codecs/LPX/research/tiny-v9-pulse-packet-2026-11-16'
 FLASH_READ=REPO/'Codecs/LPX/research/tiny-v9-flash-read-2026-11-16'
 BOUNDED_PWM=REPO/'Codecs/LPX/research/tiny-v9-bounded-pwm-2026-11-16'
 UNSIGNED_INTERP=REPO/'Codecs/LPX/research/tiny-v9-unsigned-interp-2026-11-16'
+STATIC_ROM=REPO/'Codecs/LPX/research/tiny-v9-static-rom-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -156,6 +157,7 @@ def assert_recorded_source(path,expected):
         (FLASH_READ,'bd3ec1ce42b430dbb2663ddf3ff73996dbb57383'),
         (BOUNDED_PWM,'31d8aa578098ae3d597735420b2db6c30cd25cf6'),
         (UNSIGNED_INTERP,'62cbe8834061d270bddcd4c6042f1f3f08c69e7d'),
+        (STATIC_ROM,'424d611147f0e96547913b5aa73db55b7c17521c'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
