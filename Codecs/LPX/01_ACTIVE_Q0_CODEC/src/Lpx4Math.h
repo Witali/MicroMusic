@@ -369,10 +369,20 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 // Clear each product's Q4 fractional nibble before subtraction. This keeps
 // every original per-product floor, but defers the accumulator's /16 until
 // after all ten products. Its low nibble remains zero throughout the sum.
+#if LPX4_COMPACT_VERSION==9
+// Toggle bit 23 to represent each signed term as unsigned with a bias of
+// 2^23. Add the ten biases once (10 * 2^23 == 0x05000000) to compensate.
+#define LPX4_SYNTH_INIT "ldi r25,5\n\tadd %D0,r25\n\t"
+#define LPX4_SYNTH_MUL LPX4_DOT_PRODUCT_BYTES \
+    "andi r23,0xf0\n\tsubi r25,128\n\t" \
+    "sub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\tsbc %D0,r16\n\t"
+#else
+#define LPX4_SYNTH_INIT ""
 #define LPX4_SYNTH_MUL LPX4_DOT_PRODUCT_BYTES \
     "andi r23,0xf0\n\t" \
     "sub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\tsbc %D0,r16\n\t" \
     "sbrc r25,7\n\tinc %D0\n\t"
+#endif
 #define LPX4_NOMUL_HIGH_STEP \
     "lsr r22\n\tbrcc 3f\n\tadd r24,r18\n\tadc r25,r19\n\t" \
     "3: ror r25\n\tror r24\n\t"
@@ -496,6 +506,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
     __asm__ (
         "clr r16\n\t"
         ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
+        LPX4_SYNTH_INIT
         "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
         ".if %4\n\tstd Z+2,r20\n\tstd Z+3,r21\n\t.endif\n\t"
         LPX4_SYNTH_MUL
@@ -570,6 +581,7 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
     __asm__ (
         "clr r16\n\t"
         ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
+        LPX4_SYNTH_INIT
         "ld r18,X+\n\tld r19,X+\n\tld r21,-Z\n\tld r20,-Z\n\t"
         LPX4_SYNTH_MUL
 #if LPX4_AVR_DOT_UNROLL!=9
@@ -601,6 +613,7 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
 #endif
 }
 #undef LPX4_SYNTH_MUL
+#undef LPX4_SYNTH_INIT
 #undef LPX4_NOMUL_PRODUCT
 #undef LPX4_NOMUL_SATURATED
 #undef LPX4_NOMUL_HIGH_STEP

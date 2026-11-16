@@ -98,6 +98,22 @@ __attribute__((noinline)) static void ringCase(int32_t excitation,const int16_t*
     for(uint8_t i=0;i<20;i++)if(mirrored[i]!=beforeRing[i])math_error=25;
     ++math_cases;
 }
+#if LPX4_COMPACT_VERSION==9
+template<bool keepQ4>
+__attribute__((noinline)) static void paddedSynthesisCase(int32_t excitation,const int16_t* a,
+                                                         const int16_t* original,int32_t expected){
+    int16_t history[11];
+    for(uint8_t i=0;i<10;i++)history[i]=original[i];
+    history[10]=12345;
+    int16_t* base=nullptr;
+    const int32_t actual=lpx4SynthesisQ12<true,true,keepQ4>(excitation*16,a,history,&base);
+    checkZero(actual);
+    if(base!=history || actual!=(excitation-expected)*(keepQ4?16:1))math_error=26;
+    if(history[0]!=original[0])math_error=27;
+    for(uint8_t i=1;i<11;i++)if(history[i]!=original[i-1])math_error=27;
+    ++math_cases;
+}
+#endif
 template<uint8_t bits> __attribute__((noinline)) static void lpcCase(int16_t prev,int16_t cur,uint8_t t){
     const int16_t actual=lpx4LpcInterpolate(prev,cur,t,bits);checkZero(actual);
     const int32_t expected=prev+((int32_t)cur-prev)*t/(1L<<bits);
@@ -213,6 +229,10 @@ int main(){
         for(uint8_t i=1;i<10;i++)if(h[i]!=original[i-1])math_error=11;
         ++math_cases;
         ringCase(excitation,a,original,expected,n%10);
+#if LPX4_COMPACT_VERSION==9
+        paddedSynthesisCase<false>(excitation,a,original,expected);
+        paddedSynthesisCase<true>(excitation,a,original,expected);
+#endif
     }
 #ifdef __AVR__
     cli();TCCR1B=0;
