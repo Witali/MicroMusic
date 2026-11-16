@@ -83,21 +83,27 @@ static const uint8_t LP_PROGMEM cosineBend[64]={
  18,33,33,17,18,2,18,18,48,32,32,17,33,16,2,18
 };
 #if LPX4_COMPACT_ONLY
-// v5 transmits a5-bit scale; these are exactly originalStep[index*8].
-// Its small direct table removes the generic variable-shift reconstruction.
+// Compact speech transmits a five-bit scale, originalStep[index*8].
 #if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
-// Store the same steps in the units consumed by synthesis and save the shift.
-static const uint16_t LP_PROGMEM scaleValues[32]={
- 0,0,0,0,0,0,16,16,16,16,32,48,64,96,128,192,
- 256,368,528,736,1056,1488,2096,2960,4192,5936,8384,11856,16784,23728,33552,47456
-};
+static uint16_t scaleStep(uint8_t index){
+ // The two mantissas are entries 0 and 8 of the original scale grid.
+ // Shift into Q4, then round the step to an integer in those units.
+ uint16_t scaled=(index&1)?5931:4194;
+ int8_t shift=12-(index>>1);
+ __asm__(
+     "tst %1\n\tbrmi 3f\n\trjmp 2f\n\t"
+     "1: lsr %B0\n\tror %A0\n\t2: dec %1\n\tbrpl 1b\n\trjmp 4f\n\t"
+     "3: lsl %A0\n\trol %B0\n\tinc %1\n\tbrmi 3b\n\t4:"
+     : "+&w"(scaled),"+r"(shift) : : "cc");
+ return (scaled+8)&0xfff0;
+}
 #else
 static const uint16_t LP_PROGMEM scaleValues[32]={
  0,0,0,0,0,0,1,1,1,1,2,3,4,6,8,12,
  16,23,33,46,66,93,131,185,262,371,524,741,1049,1483,2097,2966
 };
-#endif
 static uint16_t scaleStep(uint8_t index){return LP_READ_U16(&scaleValues[index]);}
+#endif
 #else
 static const uint16_t LP_PROGMEM scaleMantissa[16]={
  4194,4380,4573,4776,4987,5208,5439,5680,
@@ -476,6 +482,17 @@ int8_t Lpx4HybridCore::readHuffman3(){
  return readOne()?-3:-4;
 }
 #endif
+#if LPX4_AVR25_V9_RUNTIME
+// The count is 0..8. DEC and BRPL share the loop latch for both directions.
+template<bool left>
+static inline __attribute__((always_inline)) uint8_t shiftPacketByte(uint8_t value,uint8_t count){
+ __asm__(
+     "rjmp 2f\n\t1:\n\t.if %2\n\tlsl %0\n\t.else\n\tlsr %0\n\t.endif\n\t"
+     "2: dec %1\n\tbrpl 1b"
+     : "+&r"(value),"+r"(count) : "I"(left) : "cc");
+ return value;
+}
+#endif
 uint8_t Lpx4HybridCore::readBits(uint8_t n){
 #ifdef LPX3_COST_INSTRUMENT
  ++bitCalls_;
@@ -493,10 +510,19 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
   source=readByte();
   used=n-available;
   remaining=8-used;
+#if LPX4_AVR25_V9_RUNTIME
+  out=shiftPacketByte<true>(source&LP_READ_U8(&bitMasks[used]),available);
+  out|=bitBuffer_;
+#else
   out=bitBuffer_|((source&LP_READ_U8(&bitMasks[used]))<<available);
+#endif
  }
  // The cache is one byte. Use one byte-wide shift loop on both paths.
+#if LPX4_AVR25_V9_RUNTIME
+ source=shiftPacketByte<false>(source,used);
+#else
  while(used--)source>>=1;
+#endif
  bitBuffer_=source;
  bitsLeft_=remaining;
  return out;
@@ -549,6 +575,10 @@ bool Lpx4HybridCore::readFrame(){
  {
 #endif
   staticSpectrum_=true;
+#if LPX4_AVR25_V9_RUNTIME
+  // The second Sparse80 half reuses the spectrum and consumes no header.
+  if((LPX4_SPEECH_FLAGS&8) && (subIndex_&8))return true;
+#endif
 #if LPX4_COMPACT_ONLY
   if(!(subIndex_&8)){
 #else
@@ -652,10 +682,8 @@ bool Lpx4HybridCore::readFrame(){
   speechHalf_^=1;
 #endif
 #if LPX4_COMPACT_ONLY
-#if LPX4_HAS_SPARSE80
-  // AVR25 v9 increments a free-running subframe counter. Its bit 3
-  // marks the second half before and after reading the frame header.
-  const bool secondHalf=LPX4_AVR25_V9_RUNTIME?(subIndex_&8):!(subIndex_&8);
+#if LPX4_HAS_SPARSE80 && !LPX4_AVR25_V9_RUNTIME
+  const bool secondHalf=!(subIndex_&8);
   if((LPX4_SPEECH_FLAGS&8) && secondHalf)return !error_;
 #endif
 #if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4

@@ -349,3 +349,17 @@ word with LPM. The same sign determines the negated cosine factor.
 This uses the original table and preserves every value in the range
 0–128. With AVR-GCC 7.3.0 and GNU AVR ABI it saves 12 program bytes.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-cos-edge-2026-11-16/README.md).
+
+## Reconstruct 32 Q4 steps with two mantissas
+
+The compact five-bit scale picks one of two mantissas with bit zero.
+The remaining bits give an exponent. Shift the mantissa into Q4 units,
+add eight and clear the low nibble to preserve the original integer
+rounding. The selectable C backend retains its table.
+
+The AVR25 bit reader uses a signed `DEC` and `BRPL` loop for counts
+0–8 in either direction. Sparse80 exits early from the second half of
+the frame, which has no header. These changes cover the reconstruction
+cost on all 22 IRQ workloads and save a further 36 program bytes in
+the combined AVR-GCC 7.3.0 build with GNU AVR ABI.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-q4-scale-runtime-2026-11-16/README.md).
