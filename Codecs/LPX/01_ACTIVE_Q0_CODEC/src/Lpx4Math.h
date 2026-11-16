@@ -606,19 +606,23 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
 // Saturate a signed24 value to the synthesis range -32767..32767.
 // Synthesis is bounded by +/-3145728. AVR inspects the low 24 bits;
 // the C fallback takes a signed24 value sign-extended to int32_t.
+template<bool compactAvr25=false>
 static inline __attribute__((always_inline)) int16_t lpx4Clip15From24(int32_t value){
 #if LPX4_USE_AVR_ASM || LPX4_USE_AVR_NOMUL_ASM
     int16_t result;
     __asm__(
-        // Compare byte C to the sign of the low word, then restore byte B.
-        "lsl %B1\n\tsbc %A0,%A0\n\tcp %C1,%A0\n\tbrne 1f\n\t"
-        "lsl %A0\n\tror %B1\n\tmovw %A0,%A1\n\t"
+        // EOR tests the sign byte without losing the carry needed to restore B.
+        "lsl %B1\n\tsbc %A0,%A0\n\t"
+        ".if %2\n\teor %A0,%C1\n\tbrne 1f\n\t.else\n\t"
+        "cp %C1,%A0\n\tbrne 1f\n\tlsl %A0\n\t.endif\n\t"
+        "ror %B1\n\tmovw %A0,%A1\n\t"
         // The exact signed16 minimum is excluded from the synthesis range.
-        "cpi %B0,128\n\tbrne 2f\n\ttst %A0\n\tbrne 2f\n\t"
-        "inc %A0\n\trjmp 2f\n\t"
+        "cpi %B0,128\n\tbrne 2f\n\t.if %2\n\t"
+        "cpi %A0,1\n\tadc %A0,__zero_reg__\n\t.else\n\t"
+        "tst %A0\n\tbrne 2f\n\tinc %A0\n\t.endif\n\trjmp 2f\n\t"
         "1:\n\tldi %A0,255\n\tldi %B0,127\n\tsbrs %C1,7\n\trjmp 2f\n\t"
         "ldi %A0,1\n\tldi %B0,128\n\t2:\n\t"
-        : "=&d"(result),"+r"(value) : : "cc");
+        : "=&d"(result),"+r"(value) : "I"(compactAvr25 && LPX4_USE_AVR_NOMUL_ASM) : "cc");
     return result;
 #else
     return value<-32767?-32767:(value>32767?32767:(int16_t)value);
@@ -628,20 +632,26 @@ static inline __attribute__((always_inline)) int16_t lpx4Clip15From24(int32_t va
 // Halve a signed24 polynomial sum toward zero and clamp to the LPC range.
 static inline __attribute__((always_inline)) int16_t lpx4HalfClip15From24(int32_t value){
 #if LPX4_USE_AVR_NOMUL_ASM
-    // Bias negative sums by one before the arithmetic shift. The clip
-    // consumes only the resulting low 24 bits, including their sign bit.
+    // After biasing negative sums by one, only high bytes 0 and 255 can
+    // fit after halving. INC maps them to 1 and 0, respectively. On the
+    // narrow path CPI restores the sign to carry for the two-byte shift.
     __asm__(
         "sbrs %C0,7\n\trjmp 1f\n\t"
         "subi %A0,255\n\tsbci %B0,255\n\tsbci %C0,255\n\t"
-        "1: asr %C0\n\tror %B0\n\tror %A0\n\t"
+        "1: inc %C0\n\tcpi %C0,2\n\tbrlo 3f\n\t"
+        "ldi %A0,255\n\tldi %B0,127\n\tcpi %C0,129\n\tbrlo 2f\n\t"
+        "ldi %A0,1\n\tldi %B0,128\n\trjmp 2f\n\t"
+        "3: cpi %C0,1\n\tror %B0\n\tror %A0\n\t"
+        "cpi %B0,128\n\tbrne 2f\n\tcpi %A0,1\n\tadc %A0,__zero_reg__\n\t2:"
         : "+d"(value) : : "cc");
-    return lpx4Clip15From24(value);
+    return (int16_t)value;
 #else
     return lpx4Clip15From24(value/2);
 #endif
 }
 
 // Full signed16 addition with the same non-minimum saturation range.
+template<bool compactAvr25=false>
 static inline __attribute__((always_inline)) int16_t lpx4AddClip15(int16_t a,int16_t b){
 #if LPX4_USE_AVR_ASM || LPX4_USE_AVR_NOMUL_ASM
     __asm__(
@@ -649,9 +659,10 @@ static inline __attribute__((always_inline)) int16_t lpx4AddClip15(int16_t a,int
         // Negative overflow has a nonnegative wrapped sum; positive reverses it.
         "ldi %A0,1\n\tldi %B0,128\n\trjmp 3f\n\t"
         "2:\n\tldi %A0,255\n\tldi %B0,127\n\trjmp 3f\n\t"
-        "1:\n\tcpi %B0,128\n\tbrne 3f\n\ttst %A0\n\tbrne 3f\n\t"
-        "inc %A0\n\t3:\n\t"
-        : "+&d"(a) : "r"(b) : "cc");
+        "1: cpi %B0,128\n\tbrne 3f\n\t.if %2\n\t"
+        "cpi %A0,1\n\tadc %A0,__zero_reg__\n\t.else\n\t"
+        "tst %A0\n\tbrne 3f\n\tinc %A0\n\t.endif\n\t3:"
+        : "+&d"(a) : "r"(b),"I"(compactAvr25 && LPX4_USE_AVR_NOMUL_ASM) : "cc");
     return a;
 #else
     const int32_t sum=(int32_t)a+b;

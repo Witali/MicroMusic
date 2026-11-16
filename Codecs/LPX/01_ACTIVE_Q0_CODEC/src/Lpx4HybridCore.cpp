@@ -1852,16 +1852,16 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #if LPX4_LPC_RING
     // subPos already repeats every20 samples; no separate ring cursor is needed.
     int16_t* history=hist_+(subPos_<10?subPos_:subPos_-10)+10;
-    int16_t pred=lpx4Clip15From24(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,a_,history));
+    int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,a_,history));
     history[0]=history[10]=pred;
 #else
-    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,LPX4_COMPACT_VERSION==9>(excitation,a_,hist_));
+    int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,LPX4_COMPACT_VERSION==9>(excitation,a_,hist_));
     hist_[0]=pred;
 #endif
 #ifdef LPX4_FIXED_PRE_Q14
-    int16_t deemph=LPX4_FIXED_PRE_Q14?lpx4AddClip15(pred,lpx4AttenuateFixedQ14<LPX4_FIXED_PRE_Q14>(prevDeemph_)):pred;
+    int16_t deemph=LPX4_FIXED_PRE_Q14?lpx4AddClip15<LPX4_AVR25_V9_RUNTIME>(pred,lpx4AttenuateFixedQ14<LPX4_FIXED_PRE_Q14>(prevDeemph_)):pred;
 #else
-    int16_t deemph=preQ14_?lpx4AddClip15(pred,lpx4AttenuateQ14(preQ14_,prevDeemph_)):pred;
+    int16_t deemph=preQ14_?lpx4AddClip15<LPX4_AVR25_V9_RUNTIME>(pred,lpx4AttenuateQ14(preQ14_,prevDeemph_)):pred;
 #endif
     // Between samples, brightness history is exactly clipQ14(prevDeemph_).
     // Derive it before publishing the new deemphasis state.

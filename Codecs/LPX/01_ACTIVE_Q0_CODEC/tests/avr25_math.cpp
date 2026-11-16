@@ -23,14 +23,14 @@ __attribute__((noinline,used)) void math_case(){
         break;
     case 6:math_out=lpx4PwmQ14(math_x,(uint8_t)math_y);break;
     case 7:math_out=lpx4SynthesisQ12<true>(math_exc,math_a,math_h);break;
-    case 8:math_out=lpx4Clip15From24(math_exc);break;
+    case 8:math_out=lpx4Clip15From24<true>(math_exc);break;
     case 9:math_out=lpx4AttenuateFixedQ14<13094>(math_x);break;
     case 10:math_out=lpx4AttenuateFixedQ14<64>(math_x);break;
     case 11:math_out=lpx4AttenuateFixedQ14<7800>(math_x);break;
     case 12:math_out=lpx4Shift12(math_exc);break;
     case 13:math_out=lpx4Shift14(math_exc);break;
     case 14:math_out=lpx4Mul32x16(math_exc,math_y);break;
-    case 15:math_out=lpx4AddClip15(math_x,math_y);break;
+    case 15:math_out=lpx4AddClip15<true>(math_x,math_y);break;
     case 16:math_out=lpx4AttenuateFixedQ14<8192>(math_x);break;
     case 17:math_out=lpx4AttenuateFixedQ14<0>(math_x);break;
     case 18:math_out=lpx4AttenuateFixedQ14<16384>(math_x);break;

@@ -363,3 +363,23 @@ the frame, which has no header. These changes cover the reconstruction
 cost on all 22 IRQ workloads and save a further 36 program bytes in
 the combined AVR-GCC 7.3.0 build with GNU AVR ABI.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-q4-scale-runtime-2026-11-16/README.md).
+
+## Preserve carry while testing signed24 saturation
+
+On AVR25, `LSL B; SBC mask,mask` forms the sign extension of a
+16-bit word and leaves the original sign bit in C. Use `EOR mask,Cbyte`
+to test whether the upper byte is that sign extension, then `ROR B`
+restores the low word on a match. Within the high-byte `0x80` case,
+`CPI A,1; ADC A,r1` raises `0x8000` to `0x8001` with the AVR ABI zero
+register. The same two instructions exclude this endpoint after addition.
+
+When halving a signed24 sum toward zero, bias negative inputs by one.
+Only high bytes 0 and 255 can enter a signed16 word after halving.
+Incrementing that byte makes the narrow range contiguous. `CPI Cbyte,1`
+restores the sign bit to carry before rotating the bottom two bytes.
+The portable C backend retains the same arithmetic.
+
+The universal ATtiny88 v9 player built with AVR-GCC 7.3.0 saves 16
+program bytes. All 22 simavr 1.6 workloads ran with IRQ active and exact
+PWM. Each workload's longest decoder call used 30–39 fewer CPU cycles.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-lpc-saturation-2026-11-16/README.md).
