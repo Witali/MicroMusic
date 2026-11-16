@@ -147,6 +147,17 @@ typedef int16_t Lpx4SynthesisValue;
 #error LPX4_ROM_POINTER must be 0 or 1
 #endif
 
+// Use the AVR25 layout for universal v9 Flash input. Both arithmetic
+// backends share the layout so it stays independent of ASM selection.
+#if LPX4_COMPACT_VERSION == 9 && LPX4_ROM_POINTER && !LPX4_ENABLE_INPUT_CALLBACK && \
+    defined(__AVR__) && defined(__AVR_ARCH__) && __AVR_ARCH__ == 25 && \
+    !defined(LPX3_COST_INSTRUMENT) && !defined(LPX4_FIXED_SPEECH_FLAGS) && \
+    !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14)
+#define LPX4_AVR25_V9_ROM_LAYOUT 1
+#else
+#define LPX4_AVR25_V9_ROM_LAYOUT 0
+#endif
+
 // Rotate two LPC anchor halves by an offset0/10, avoiding vector copies.
 // No self-referencing pointers: ordinary value copies of the object stay valid.
 #ifndef LPX4_ROTATE_LPC_ANCHORS
@@ -303,6 +314,10 @@ private:
     // Keep per-sample state within AVR's short displacement range. Arrays
     // are addressed through pointers; frame-only polynomial workspace follows.
     const uint8_t* data_;
+#if LPX4_AVR25_V9_ROM_LAYOUT
+    uint16_t sampleRate_,sampleCount_,preQ14_,brightQ14_,bytes_;
+    uint16_t remaining_;
+#else
     uint16_t bytes_;
 #if !LPX4_ROM_POINTER
     uint16_t cursor_;
@@ -327,6 +342,7 @@ private:
 #endif
 #if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_BRIGHT_Q14)
     uint16_t brightQ14_;
+#endif
 #endif
     // resetState() clears this scalar/array span through the end of cur_.
     // Keep retained metadata and input ownership outside that span.
@@ -359,7 +375,10 @@ private:
     uint8_t formatFeatures_;
 #endif
 #if LPX4_ALLOW_SPARSE
-    uint8_t pulseCount_,pulseIndex_;
+#if !LPX4_AVR25_V9_ROM_LAYOUT
+    uint8_t pulseCount_;
+#endif
+    uint8_t pulseIndex_;
 #endif
     Error error_;
 #if LPX4_COMPACT_VERSION == 9
@@ -376,7 +395,7 @@ private:
     Lpx4SynthesisValue a_[10],hist_[LPX4_LPC_RING?20:LPX4_COMPACT_VERSION==9?11:10];
     int8_t ringQ_[256];
 #if LPX4_ALLOW_SPARSE
-    uint8_t pulsePos_[LPX4_MAX_PULSES];
+    uint8_t pulsePos_[LPX4_MAX_PULSES+LPX4_AVR25_V9_ROM_LAYOUT];
     int8_t pulseAmp_[LPX4_MAX_PULSES];
 #endif
 #if LPX4_COMPACT_ONLY

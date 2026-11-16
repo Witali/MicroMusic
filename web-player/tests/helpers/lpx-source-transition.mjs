@@ -27,7 +27,14 @@ const flashReadReport='Codecs/LPX/research/tiny-v9-flash-read-2026-11-16/';
 const boundedPwmReport='Codecs/LPX/research/tiny-v9-bounded-pwm-2026-11-16/';
 const unsignedInterpReport='Codecs/LPX/research/tiny-v9-unsigned-interp-2026-11-16/';
 const staticRomReport='Codecs/LPX/research/tiny-v9-static-rom-2026-11-16/';
-const v9ReleaseBase='cef91038b7d98478ff1c5b14d9b3b0a22bc17f4b';
+const romHeaderReport='Codecs/LPX/research/tiny-v9-rom-header-2026-11-16/';
+const polySeedReport='Codecs/LPX/research/tiny-v9-poly-seed-2026-11-16/';
+const p4AmplitudeReport='Codecs/LPX/research/tiny-v9-p4-amplitude-2026-11-16/';
+const pulseSentinelReport='Codecs/LPX/research/tiny-v9-pulse-sentinel-2026-11-16/';
+const lsfInvariantsReport='Codecs/LPX/research/tiny-v9-lsf-invariants-2026-11-16/';
+const cosEdgeReport='Codecs/LPX/research/tiny-v9-cos-edge-2026-11-16/';
+const q4ScaleRuntimeReport='Codecs/LPX/research/tiny-v9-q4-scale-runtime-2026-11-16/';
+const v9ReleaseBase='bd8121a5987a670e11426b73abff9a5db213b93e';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -213,6 +220,13 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [boundedPwmReport,'31d8aa578098ae3d597735420b2db6c30cd25cf6'],
     [unsignedInterpReport,'62cbe8834061d270bddcd4c6042f1f3f08c69e7d'],
     [staticRomReport,'424d611147f0e96547913b5aa73db55b7c17521c'],
+    [romHeaderReport,'cef91038b7d98478ff1c5b14d9b3b0a22bc17f4b'],
+    [polySeedReport,'b0ac206459cadf39ed8a9beb6eaae5bb3282f88c'],
+    [p4AmplitudeReport,'e13909a07dc475b18e32a37bfc39ff60f77f56f8'],
+    [pulseSentinelReport,'e1583321d2186ca3c198d949097a4ebdcda9420b'],
+    [lsfInvariantsReport,'85972e200de63745ee77cec6be0081ba7db53be1'],
+    [cosEdgeReport,'833a2ad05cc18b77160b1c773a90e5a2cf3af28b'],
+    [q4ScaleRuntimeReport,'0f746634fb1b61690bfab0d5c64a8219d291015d'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

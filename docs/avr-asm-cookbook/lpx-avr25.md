@@ -278,3 +278,88 @@ per-stream reset for all entry points. AVR-GCC 7.3.0 with GNU AVR ABI and
 LTO can then omit the constructor table and its call sequence. This reduces
 startup code on ATtiny88.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-static-rom-2026-11-16/README.md).
+
+## Copy bounded v9 header words directly from Flash
+
+Keep fields in the same order and endianness as their serialized words.
+Verify field offsets at compile time. Once the caller's length, magic
+and flags pass their checks, copy the five words with `LPM Rd,Z+` and
+`ST X+,Rd`. The advanced Flash pointer addresses the first payload
+byte. Use the copied length as the remaining byte count after verifying
+it against the input size minus the header length. Use the regular
+per-word C reader for callbacks, generic builds and fixed metadata.
+
+On ATtiny88 with AVR-GCC 7.3.0 and GNU AVR ABI this saves 66 program
+bytes on the universal v9 build. All 22 simavr 1.6 IRQ workloads reproduce
+exact PWM with lower decoder CPU time and zero underruns.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-rom-header-2026-11-16/README.md).
+
+## Seed the LPC polynomials with signed 24-bit stores
+
+On AVR25 v9, write the initial P and Q coefficients with the same
+three-byte store used by the recurrence. The fourth byte of each slot
+is padding and the four-byte stride keeps each load within the ring.
+The initial values fit in signed16 and have the same signed24
+representation as the recurrence expects. AVR-GCC 7.3.0 with the GNU AVR
+ABI emits 14 fewer program bytes. The 22 paired simavr 1.6 cases retain
+exact PWM and zero underruns with active IRQ.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-poly-seed-2026-11-16/README.md).
+
+## Decode P4 pulse amplitude with a mask and bias
+
+The P4 amplitude bit has weight 16 in the packed pulse. Mask that bit
+and subtract 8 to recover exactly −8 or +8. The resulting code avoids
+two conditional branches and keeps both signed pulse values available
+for optional extra-pulse merging. On ATtiny88, AVR-GCC 7.3.0 with GNU
+AVR ABI saves 10 program bytes. All 22 simavr 1.6 IRQ cases retain exact
+PWM and real-time playback.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-p4-amplitude-2026-11-16/README.md).
+
+## End a pulse packet with a countdown beyond the packet length
+
+The maximum v9 pulse packet spans 80 samples. Append a nonnegative
+countdown of 127 after the last real pulse. It replaces the stored count
+byte and cannot expire within a packet. AVR25 `DEC` maps zero to 255
+with N set, and `ST` preserves N for the following `BRPL`. All other
+reachable pre-decrement values leave N clear. The selected C backend
+checks the same wrap to 255.
+
+On ATtiny88 with AVR-GCC 7.3.0 and GNU AVR ABI this saves 44 program bytes
+and 1.64–7.60 mean cycles/sample including IRQ in simavr 1.6. The 22
+workloads keep exact PWM and zero underruns.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-pulse-sentinel-2026-11-16/README.md).
+
+## Hoist Rice width and use an unsigned LSF cursor
+
+A v9 P4 or P6 vector uses one coding mode and width for all ten
+indices. Compute the width once. The one-based monotonic cursor starts
+at zero and advances to a validated index at most 64. Unsigned
+comparison suffices, including the rejection of wrapped negative
+deltas. Set the frame initialization flag at the first frame only.
+On AVR25 with AVR-GCC 7.3.0 and GNU AVR ABI this saves 24 program bytes.
+All 22 simavr 1.6 workloads retain exact PWM with IRQ.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-lsf-invariants-2026-11-16/README.md).
+
+## Reflect a cosine lookup from the zero node
+
+On the AVR25 v9 half-grid, the absolute distance from node 64 gives a
+backward offset in words from the last table entry. Preserve the sign
+of that distance in T while calculating Z and reading the little-endian
+word with LPM. The same sign determines the negated cosine factor.
+This uses the original table and preserves every value in the range
+0–128. With AVR-GCC 7.3.0 and GNU AVR ABI it saves 12 program bytes.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-cos-edge-2026-11-16/README.md).
+
+## Reconstruct 32 Q4 steps with two mantissas
+
+The compact five-bit scale picks one of two mantissas with bit zero.
+The remaining bits give an exponent. Shift the mantissa into Q4 units,
+add eight and clear the low nibble to preserve the original integer
+rounding. The selectable C backend retains its table.
+
+The AVR25 bit reader uses a signed `DEC` and `BRPL` loop for counts
+0–8 in either direction. Sparse80 exits early from the second half of
+the frame, which has no header. These changes cover the reconstruction
+cost on all 22 IRQ workloads and save a further 36 program bytes in
+the combined AVR-GCC 7.3.0 build with GNU AVR ABI.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-q4-scale-runtime-2026-11-16/README.md).

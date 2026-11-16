@@ -26,6 +26,13 @@ FLASH_READ=REPO/'Codecs/LPX/research/tiny-v9-flash-read-2026-11-16'
 BOUNDED_PWM=REPO/'Codecs/LPX/research/tiny-v9-bounded-pwm-2026-11-16'
 UNSIGNED_INTERP=REPO/'Codecs/LPX/research/tiny-v9-unsigned-interp-2026-11-16'
 STATIC_ROM=REPO/'Codecs/LPX/research/tiny-v9-static-rom-2026-11-16'
+ROM_HEADER=REPO/'Codecs/LPX/research/tiny-v9-rom-header-2026-11-16'
+POLY_SEED=REPO/'Codecs/LPX/research/tiny-v9-poly-seed-2026-11-16'
+P4_AMPLITUDE=REPO/'Codecs/LPX/research/tiny-v9-p4-amplitude-2026-11-16'
+PULSE_SENTINEL=REPO/'Codecs/LPX/research/tiny-v9-pulse-sentinel-2026-11-16'
+LSF_INVARIANTS=REPO/'Codecs/LPX/research/tiny-v9-lsf-invariants-2026-11-16'
+COS_EDGE=REPO/'Codecs/LPX/research/tiny-v9-cos-edge-2026-11-16'
+Q4_SCALE_RUNTIME=REPO/'Codecs/LPX/research/tiny-v9-q4-scale-runtime-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -158,6 +165,13 @@ def assert_recorded_source(path,expected):
         (BOUNDED_PWM,'31d8aa578098ae3d597735420b2db6c30cd25cf6'),
         (UNSIGNED_INTERP,'62cbe8834061d270bddcd4c6042f1f3f08c69e7d'),
         (STATIC_ROM,'424d611147f0e96547913b5aa73db55b7c17521c'),
+        (ROM_HEADER,'cef91038b7d98478ff1c5b14d9b3b0a22bc17f4b'),
+        (POLY_SEED,'b0ac206459cadf39ed8a9beb6eaae5bb3282f88c'),
+        (P4_AMPLITUDE,'e13909a07dc475b18e32a37bfc39ff60f77f56f8'),
+        (PULSE_SENTINEL,'e1583321d2186ca3c198d949097a4ebdcda9420b'),
+        (LSF_INVARIANTS,'85972e200de63745ee77cec6be0081ba7db53be1'),
+        (COS_EDGE,'833a2ad05cc18b77160b1c773a90e5a2cf3af28b'),
+        (Q4_SCALE_RUNTIME,'0f746634fb1b61690bfab0d5c64a8219d291015d'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
