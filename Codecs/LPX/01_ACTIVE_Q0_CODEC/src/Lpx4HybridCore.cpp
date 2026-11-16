@@ -61,6 +61,16 @@
 #define LPX4_AVR25_V9_PREPARED_ATTENUATION 0
 #endif
 
+static inline __attribute__((always_inline)) int16_t limitBrightnessOutput(int16_t value){
+#if (LPX4_AVR25_V9_RUNTIME || (LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9)) && \
+    !defined(LPX4_ENABLE_PCM16) && LPX4_PWM_ROUND && LPX4_PWM_GAIN>=128 && LPX4_PWM_GAIN<=255
+    // The rounded PWM rails are reached at or before the Q14 limits.
+    return value;
+#else
+    return lpx4ClipQ14(value);
+#endif
+}
+
 #ifdef __AVR__
 #include <avr/pgmspace.h>
 #define LP_READ_U16(ptr) pgm_read_word((ptr))
@@ -2100,11 +2110,11 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     // Header validation limits brightness to11469; both clipped values are
     // +/-16384. The un-clipped difference is within +/-27853, signed16-safe.
 #if LPX4_AVR25_V9_PREPARED_ATTENUATION
-    int16_t b=brightQ14_?lpx4ClipQ14((int16_t)(clipped-lpx4PreparedAttenuationQ14(lpx4ClipQ14(previous),brightQ14_))):clipped;
+    int16_t b=brightQ14_?limitBrightnessOutput((int16_t)(clipped-lpx4PreparedAttenuationQ14(lpx4ClipQ14(previous),brightQ14_))):clipped;
 #elif defined(LPX4_FIXED_BRIGHT_Q14)
     int16_t b=LPX4_FIXED_BRIGHT_Q14?lpx4ClipQ14((int16_t)(clipped-lpx4AttenuateFixedQ14<LPX4_FIXED_BRIGHT_Q14>(prevBright))):clipped;
 #else
-    int16_t b=brightQ14_?lpx4ClipQ14((int16_t)(clipped-lpx4AttenuateQ14(brightQ14_,prevBright))):clipped;
+    int16_t b=brightQ14_?limitBrightnessOutput((int16_t)(clipped-lpx4AttenuateQ14(brightQ14_,prevBright))):clipped;
 #endif
 #endif
     // Preserve the postfilter signal before final output conversion. Floating
