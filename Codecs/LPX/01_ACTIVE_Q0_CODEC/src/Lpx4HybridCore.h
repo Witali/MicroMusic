@@ -158,13 +158,18 @@ typedef int16_t Lpx4SynthesisValue;
 #define LPX4_AVR25_V9_ROM_LAYOUT 0
 #endif
 
-// The fixed-register ROM player owns one decoder. Place its pitch history
-// in a separate SRAM page so the queue and decoder state follow without padding.
-#if LPX4_AVR25_V9_ROM_LAYOUT && LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && \
-    defined(__AVR_ATtiny88__) && defined(LPX25_ISR_FIXED_REGS) && LPX25_ISR_FIXED_REGS
-#define LPX4_AVR25_PLAYER_PITCH_PAGE 1
+// The fixed-register ROM player owns one decoder. Its static pitch history
+// uses an aligned SRAM page independently of the arithmetic backend.
+#if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && \
+    defined(LPX25_ISR_FIXED_REGS) && LPX25_ISR_FIXED_REGS && \
+    ((defined(__AVR_ATtiny88__) && LPX4_AVR25_V9_ROM_LAYOUT) || \
+     ((defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)) && \
+      LPX4_COMPACT_VERSION == 9 && LPX4_ROM_POINTER && !LPX4_ENABLE_INPUT_CALLBACK && \
+      !defined(LPX3_COST_INSTRUMENT) && !defined(LPX4_FIXED_SPEECH_FLAGS) && \
+      !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14)))
+#define LPX4_PLAYER_PITCH_PAGE 1
 #else
-#define LPX4_AVR25_PLAYER_PITCH_PAGE 0
+#define LPX4_PLAYER_PITCH_PAGE 0
 #endif
 
 // Rotate two LPC anchor halves by an offset0/10, avoiding vector copies.
@@ -406,7 +411,7 @@ private:
     uint8_t lpcAnchorOffset_;
 #endif
     Lpx4SynthesisValue a_[10],hist_[LPX4_LPC_RING?20:LPX4_COMPACT_VERSION==9?11:10];
-#if LPX4_AVR25_PLAYER_PITCH_PAGE
+#if LPX4_PLAYER_PITCH_PAGE
     static int8_t ringQ_[256];
 #else
     int8_t ringQ_[256];

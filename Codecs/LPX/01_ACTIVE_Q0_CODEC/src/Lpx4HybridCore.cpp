@@ -196,17 +196,23 @@ static inline __attribute__((always_inline)) int16_t lpcCosineFactor(uint8_t nod
 
 
 
-#if LPX4_AVR25_PLAYER_PITCH_PAGE
+#if LPX4_PLAYER_PITCH_PAGE
 int8_t Lpx4HybridCore::ringQ_[256] __attribute__((section(".bss"),aligned(256),used));
 #endif
 
-#if LPX4_AVR25_PLAYER_PITCH_PAGE && LPX4_USE_AVR_NOMUL_ASM
+#if LPX4_PLAYER_PITCH_PAGE && (LPX4_USE_AVR_NOMUL_ASM || LPX4_USE_AVR_ASM)
 template<class Byte>
 static inline Byte* pitchRingAddress(Byte* ring,uint8_t offset){
     // The offset replaces the zero low address byte. Keep a relocation for
     // the aligned array so link-time garbage collection retains its storage.
     Byte* address;
-    __asm__("mov %A0,%1\n\tldi %B0,hi8(%2)" : "=&z"(address) : "r"(offset),"i"(ring));
+    __asm__("mov %A0,%1\n\tldi %B0,hi8(%2)"
+#if LPX4_USE_AVR_NOMUL_ASM
+            : "=&z"(address)
+#else
+            : "=&d"(address)
+#endif
+            : "r"(offset),"i"(ring));
     return address;
 }
 #define LPX4_PITCH_RING_ADDRESS(ring,offset) pitchRingAddress((ring),(offset))
@@ -251,7 +257,7 @@ void Lpx4HybridCore::resetState(){
  const size_t first=offsetof(Lpx4HybridCore,blockStep_);
  const size_t end=offsetof(Lpx4HybridCore,cur_)+sizeof(cur_);
  memset(reinterpret_cast<uint8_t*>(this)+first,0,end-first);
-#if LPX4_AVR25_PLAYER_PITCH_PAGE
+#if LPX4_PLAYER_PITCH_PAGE
  memset(ringQ_,0,sizeof(ringQ_));
 #endif
 #ifdef LPX3_COST_INSTRUMENT

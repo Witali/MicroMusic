@@ -45,6 +45,7 @@ ALIGNED_PITCH_PAGE=REPO/'Codecs/LPX/research/tiny-v9-aligned-pitch-page-2026-11-
 LPC_ZERO_SEED=REPO/'Codecs/LPX/research/tiny-v9-lpc-zero-seed-2026-11-16'
 LPC_ODD_PHASE=REPO/'Codecs/LPX/research/tiny-v9-lpc-odd-phase-2026-11-16'
 SHARED_AVR_PLAYER=REPO/'Codecs/LPX/research/shared-avr-v9-player-2026-11-16'
+AVR5_PITCH_PAGE=REPO/'Codecs/LPX/research/avr5-v9-pitch-page-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -196,6 +197,7 @@ def assert_recorded_source(path,expected):
         (LPC_ZERO_SEED,'ce0b1c93cee257e2e2899bb9502d67f2b0bce899'),
         (LPC_ODD_PHASE,'b5f59cfc1cec5a1d55fafd709a6f2b655d40985a'),
         (SHARED_AVR_PLAYER,'2e141dcc17f3620042fdfba3610349651921cd18'),
+        (AVR5_PITCH_PAGE,'799f7b5764e4d4eef88a3475e4354e77158bb7a3'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
