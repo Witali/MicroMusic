@@ -107,19 +107,20 @@ static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t 
         // The signed comparison after SBC handles a 17-bit difference.
         // Its magnitude fits uint16_t. Start with the implicit low phase
         // bit, then rotate each unsigned addition's carry into the result.
-        // Restoring the sign after the division truncates toward zero.
-        uint16_t part,mag;
+        // Add or subtract the truncated magnitude from the previous anchor.
+        uint16_t part,mag=(uint16_t)cur;
+        t>>=1;
         __asm__(
-            "clt\n\tmovw %A1,%A3\n\tsub %A1,%A4\n\tsbc %B1,%B4\n\t"
+            "clt\n\tsub %A1,%A3\n\tsbc %B1,%B3\n\t"
             "brge 1f\n\tset\n\tcom %B1\n\tneg %A1\n\tsbci %B1,255\n\t"
-            "1: movw %A0,%A1\n\tlsr %B0\n\tror %A0\n\tlsr %2\n\t"
-            ".rept %5-1\n\tlsr %2\n\tbrcc 2f\n\t"
+            "1: movw %A0,%A1\n\tlsr %B0\n\tror %A0\n\t"
+            ".rept %4-1\n\tlsr %2\n\tbrcc 2f\n\t"
             "add %A0,%A1\n\tadc %B0,%B1\n\t"
             "2: ror %B0\n\tror %A0\n\t.endr\n\t"
-            "brtc 3f\n\tcom %B0\n\tneg %A0\n\tsbci %B0,255\n\t"
-            "3: add %A0,%A4\n\tadc %B0,%B4\n\t"
-            : "=&d"(part),"=&d"(mag),"+&r"(t) : "r"(cur),"r"(prev),"I"(bits) : "cc");
-        return (int16_t)part;
+            "brtc 3f\n\tsub %A3,%A0\n\tsbc %B3,%B0\n\trjmp 4f\n\t"
+            "3: add %A3,%A0\n\tadc %B3,%B0\n\t4:\n\t"
+            : "=&d"(part),"+&d"(mag),"+&r"(t),"+&r"(prev) : "I"(bits) : "cc");
+        return prev;
     }
     int32_t delta=(int32_t)cur-prev,product;
     uint8_t bias;
