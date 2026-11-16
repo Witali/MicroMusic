@@ -7,6 +7,7 @@ static inline __attribute__((always_inline)) int32_t lpx4Mul8x16(int8_t x,int16_
     return (int32_t)x*y;
 }
 
+template<bool scaledSixBit=false>
 static inline __attribute__((always_inline)) int32_t lpx4Mul8xU16(int8_t x,uint16_t y){
     return (int32_t)x*y;
 }

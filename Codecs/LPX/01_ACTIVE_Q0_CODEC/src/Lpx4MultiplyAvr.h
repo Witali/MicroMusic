@@ -3,17 +3,20 @@
 
 // Real AVR ISA and explicit ASM enable are checked by Lpx4Math.h.
 #if LPX4_USE_AVR_NOMUL_ASM
-template<bool signedByte,bool signedWord>
+template<bool signedByte,bool signedWord,bool scaledSixBit=false>
 static inline __attribute__((always_inline)) int32_t lpx4ByteWord(uint8_t x,uint16_t y){
+    static_assert(!scaledSixBit || (signedByte && !signedWord),"Six-bit excitation needs a signed code and an unsigned scale");
     int32_t result;
     __asm__(
         "mov %A0,%1\n\tclr %B0\n\tclr %C0\n\tlsr %A0\n\t"
-        ".rept 8\n\tbrcc 1f\n\tadd %B0,%A2\n\tadc %C0,%B2\n\t"
+        ".rept %5\n\tbrcc 1f\n\tadd %B0,%A2\n\tadc %C0,%B2\n\t"
         "1: ror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
-        ".if %3\n\tsbrs %1,7\n\trjmp 2f\n\tsub %B0,%A2\n\tsbc %C0,%B2\n\t2:\n\t.endif\n\t"
+        ".if %3\n\tsbrs %1,7\n\trjmp 2f\n\t"
+        ".if %5 == 6\n\tdec %A0\n\t.endif\n\t"
+        "sub %B0,%A2\n\tsbc %C0,%B2\n\t2:\n\t.endif\n\t"
         ".if %4\n\tsbrc %B2,7\n\tsub %C0,%1\n\t.endif\n\t"
         "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\t"
-        : "=&r"(result) : "r"(x),"r"(y),"I"(signedByte),"I"(signedWord) : "cc");
+        : "=&r"(result) : "r"(x),"r"(y),"I"(signedByte),"I"(signedWord),"I"(scaledSixBit?6:8) : "cc");
     return result;
 }
 #endif
@@ -35,6 +38,7 @@ static inline __attribute__((always_inline)) int32_t lpx4Mul8x16(int8_t x,int16_
 #endif
 }
 
+template<bool scaledSixBit=false>
 static inline __attribute__((always_inline)) int32_t lpx4Mul8xU16(int8_t x,uint16_t y){
 #if LPX4_USE_AVR_ASM
     int32_t result;
@@ -56,7 +60,10 @@ static inline __attribute__((always_inline)) int32_t lpx4Mul8xU16(int8_t x,uint1
                 : "+&r"(triple) : "r"(y) : "cc");
         return x<0?-(int32_t)triple:(int32_t)triple;
     }
-    return lpx4ByteWord<true,false>((uint8_t)x,y);
+    // Six rounds leave the partial product scaled by four. A Q4 scale
+    // is divisible by four, so shrink it before multiplying. The one
+    // surviving sign bit is removed from the low byte by DEC above.
+    return lpx4ByteWord<true,false,scaledSixBit>((uint8_t)x,scaledSixBit?y>>2:y);
 #endif
 }
 

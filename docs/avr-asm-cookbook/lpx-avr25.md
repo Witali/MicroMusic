@@ -441,3 +441,17 @@ reverses at the middle pair while Q stays forward.
 With AVR-GCC 7.3.0 on ATtiny88, this saves 76 program bytes. The 22
 simavr 1.6 workloads retain exact PWM and sustained IRQ playback.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-poly-seeded-q8-2026-11-16/README.md).
+
+## Use a divisible scale to shorten signed excitation multiplication
+
+The v9 excitation code fits signed6 and the Q4 scale is a multiple
+of 16. Six steps of the byte-by-word carry rotation leave the product
+scaled by four. Divide the scale by four before the loop. For a
+negative code, decrement the residual sign bit in the low byte and
+apply the usual correction to the high word. The selectable C
+backend uses the full signed product.
+
+With AVR-GCC 7.3.0 on ATtiny88 this saves 14 program bytes. All 64
+codes and 32 scale entries agree across AVR25 C, ASM and forced
+generic builds. The 22 simavr 1.6 IRQ workloads retain exact PWM.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-signed6-excitation-2026-11-16/README.md).

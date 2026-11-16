@@ -51,6 +51,9 @@ let seed=0x9a7711;
 const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed;};
 const signed=()=>((random()>>>8)&65535)-32768;
 const boundary=[-32768,-32767,-16384,-4096,-256,-129,-128,-1,0,1,127,128,255,256,4096,16384,32767];
+const q4Scales=[0,0,0,0,0,0,16,16,16,16,32,48,64,96,128,192,
+ 256,368,528,736,1056,1488,2096,2960,4192,5936,8384,11856,16784,23728,33552,47456];
+for(let code=-32;code<32;++code)for(const scale of q4Scales)check(36,code,scale,code*scale);
 for(const x of boundary)for(const y of boundary)check(0,x,y,x*y);
 // Four-bit signed corrections, including both cosine endpoints and the
 // products immediately on either side of powers-of-two rounding edges.

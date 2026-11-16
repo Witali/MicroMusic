@@ -1922,7 +1922,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #else
     const uint16_t step=blockStep_;
 #if LPX4_EXCITATION_Q4
-    const int32_t excitation=lpx4Mul8xU16(q,step);
+    const int32_t excitation=lpx4Mul8xU16<LPX4_AVR25_V9_RUNTIME>(q,step);
 #else
     // q is signed8 and the exact reconstructed step is 0..4016.
     const int32_t excitation=lpx4Excitation(q,step);
