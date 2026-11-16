@@ -166,6 +166,21 @@ static inline __attribute__((always_inline)) int16_t cosineEvenNode(uint8_t inde
  int16_t value=LP_READ_U16(&cosineEven[index]);
  return negative?-value:value;
 }
+#if LPX4_AVR25_V9_RUNTIME
+static inline __attribute__((always_inline)) int16_t lpcCosineFactor(uint8_t node){
+ // The factor is -cos(node). Count backwards from the zero at node 64.
+ // T holds the sign of node-64 while Z reads the reflected magnitude.
+ const uint16_t* cursor=&cosineEven[64];
+ int16_t value;
+ __asm__(
+     "subi %1,64\n\tbst %1,7\n\tbrtc 1f\n\tneg %1\n\t"
+     "1: lsl %1\n\tsub %A2,%1\n\tsbc %B2,__zero_reg__\n\t"
+     "lpm %A0,Z+\n\tlpm %B0,Z\n\t"
+     "brtc 2f\n\tcom %B0\n\tneg %A0\n\tsbci %B0,255\n\t2:"
+     : "=&d"(value),"+&d"(node),"+z"(cursor) : : "cc","memory");
+ return value;
+}
+#endif
 #endif
 
 
@@ -1499,7 +1514,11 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4 && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
         uint8_t node=left[i]+right[i]-1;
         if(!(LPX4_SPEECH_FLAGS&2))node+=node;
+#if LPX4_AVR25_V9_RUNTIME
+        const int16_t cc=lpcCosineFactor(node);
+#else
         const int16_t cc=(int16_t)-cosineEvenNode(node);
+#endif
 #elif LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
         // For segments1/2, u is 0/1/2. Factoring centered q+1 values
         // gives the even-grid index directly, without widening and shifting back.

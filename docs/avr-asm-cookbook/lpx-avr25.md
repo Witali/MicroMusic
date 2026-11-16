@@ -339,3 +339,13 @@ deltas. Set the frame initialization flag at the first frame only.
 On AVR25 with AVR-GCC 7.3.0 and GNU AVR ABI this saves 24 program bytes.
 All 22 simavr 1.6 workloads retain exact PWM with IRQ.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-lsf-invariants-2026-11-16/README.md).
+
+## Reflect a cosine lookup from the zero node
+
+On the AVR25 v9 half-grid, the absolute distance from node 64 gives a
+backward offset in words from the last table entry. Preserve the sign
+of that distance in T while calculating Z and reading the little-endian
+word with LPM. The same sign determines the negated cosine factor.
+This uses the original table and preserves every value in the range
+0–128. With AVR-GCC 7.3.0 and GNU AVR ABI it saves 12 program bytes.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-cos-edge-2026-11-16/README.md).
