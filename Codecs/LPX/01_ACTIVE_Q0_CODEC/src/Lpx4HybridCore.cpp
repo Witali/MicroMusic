@@ -561,10 +561,19 @@ bool Lpx4HybridCore::readFrame(){
      const uint8_t k=bits-4-(uint8_t)delta;
      // AVR25 keeps the same one-based indices in the parser and workspace.
      // Converting a negative delta result to uint8_t puts it above the limit.
-     int8_t last=LPX4_AVR25_V9_RUNTIME?0:-1;
+#if LPX4_AVR25_V9_RUNTIME
+     const uint8_t width=bits+(uint8_t)delta;
+     uint8_t last=0;
+#else
+     int8_t last=-1;
+#endif
      const uint8_t limit=((LPX4_SPEECH_FLAGS&2)+2)<<4;
      for(uint8_t i=0;i<10;i++){
+#if LPX4_AVR25_V9_RUNTIME
+      const uint8_t code=readSpeechRice(k,width);
+#else
       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
+#endif
       // Compact Rice codes use at most seven bits: delta is -64..63.
 #if LPX4_AVR25_V9_RUNTIME
       const int8_t difference=(code>>1)^-(code&1);
@@ -614,11 +623,14 @@ bool Lpx4HybridCore::readFrame(){
 #endif
   }
 #if LPX4_AVR25_V9_RUNTIME
-  if(!initializedFrame_)staticSpectrum_=true;
+  if(!initializedFrame_){
+   staticSpectrum_=true;
+   initializedFrame_=true;
+  }
 #else
   if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
-#endif
   initializedFrame_=true;
+#endif
 #if LPX4_COMPACT_ONLY && !LPX4_AVR25_V9_RUNTIME
   subIndex_^=8;
 #elif !LPX4_COMPACT_ONLY

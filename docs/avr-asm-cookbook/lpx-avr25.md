@@ -328,3 +328,14 @@ On ATtiny88 with AVR-GCC 7.3.0 and GNU AVR ABI this saves 44 program bytes
 and 1.64–7.60 mean cycles/sample including IRQ in simavr 1.6. The 22
 workloads keep exact PWM and zero underruns.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-pulse-sentinel-2026-11-16/README.md).
+
+## Hoist Rice width and use an unsigned LSF cursor
+
+A v9 P4 or P6 vector uses one coding mode and width for all ten
+indices. Compute the width once. The one-based monotonic cursor starts
+at zero and advances to a validated index at most 64. Unsigned
+comparison suffices, including the rejection of wrapped negative
+deltas. Set the frame initialization flag at the first frame only.
+On AVR25 with AVR-GCC 7.3.0 and GNU AVR ABI this saves 24 program bytes.
+All 22 simavr 1.6 workloads retain exact PWM with IRQ.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-lsf-invariants-2026-11-16/README.md).
