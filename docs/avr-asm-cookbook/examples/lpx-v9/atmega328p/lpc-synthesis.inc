@@ -12,14 +12,7 @@
 	rol r7
 	.endr
 	.endif
-	ld r19,-X
-	ld r18,-X
-	ld r21,-Z
-	ld r20,-Z
-	.if 1
-	std Z+2,r20
-	std Z+3,r21
-	.endif
+	LPX_LOAD_LPC_TAP
 	muls r19,r21
 	movw r24,r0
 	mul r18,r20
@@ -42,12 +35,7 @@
 	sbrc r25,7
 	inc r7
 	.rept 9
-	ld r19,-X
-	ld r18,-X
-	ld r21,-Z
-	ld r20,-Z
-	std Z+2,r20
-	std Z+3,r21
+	LPX_LOAD_LPC_TAP
 	muls r19,r21
 	movw r24,r0
 	mul r18,r20

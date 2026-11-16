@@ -14,16 +14,7 @@
 	.endif
 	ldi r17,10
 	1:
-	ld r19,-X
-	ld r18,-X
-	ld r21,-Z
-	ld r20,-Z
-	.if !1
-	cpi r17,10
-	breq 2f
-	.endif
-	std Z+2,r20
-	std Z+3,r21
+	LPX_LOAD_LPC_TAP
 	2:
 	mov r22,r20
 	tst r22
