@@ -760,6 +760,25 @@ bool Lpx4HybridCore::readSubframe(){
  {
   pulseIndex_=0;pulseCount_=2;
 #endif
+#if LPX4_AVR25_V9_RUNTIME
+  if(LPX4_SPEECH_FLAGS&2){
+   const uint8_t low=readBits(4),high=readBits(5);
+   if(high>=25){error_=CORRUPT_STREAM;return false;}
+   const uint8_t coordinates=LP_READ_U8(&pulseHigh[high]);
+   pulsePos_[0]=(low&3)|(coordinates&28);
+   pulsePos_[1]=20+((low>>2)|((coordinates>>3)&28));
+   // The table bounds both positions, and the two signed nibbles are adjacent.
+   const uint8_t amp=readBits(8);
+   pulseAmp_[0]=signedPulseAmplitude(amp&15);
+   pulseAmp_[1]=signedPulseAmplitude(amp>>4);
+  }else{
+   const uint8_t first=readBits(5),second=readBits(5);
+   pulsePos_[0]=compactPulsePosition(first&15);
+   pulsePos_[1]=20+compactPulsePosition(second&15);
+   pulseAmp_[0]=(first&16)?8:-8;
+   pulseAmp_[1]=(second&16)?8:-8;
+  }
+#else
 #if LPX4_ENABLE_SPEECH_COMPACT
   uint16_t pair=0;
   uint8_t second=0;
@@ -817,6 +836,7 @@ bool Lpx4HybridCore::readSubframe(){
    }
    pulsePos_[i]=pos+i*20;pulseAmp_[i]=amp;
   }
+#endif
 #if LPX4_ENABLE_SPEECH_COMPACT
 #if LPX4_COMPACT_ONLY
   if((LPX4_SPEECH_FLAGS&128) && readOne()){
@@ -826,6 +846,22 @@ bool Lpx4HybridCore::readSubframe(){
    const uint8_t pos=readBits(6),raw=readBits(4);
    const int8_t amp=signedPulseAmplitude(raw);
    if(pos>=40){error_=CORRUPT_STREAM;return false;}
+#if LPX4_AVR25_V9_RUNTIME
+   // Insert the extra in one forward pass. A displaced base pulse becomes
+   // the next insertion, and a collision merges the amplitude in place.
+   uint8_t insertPos=pos;
+   int8_t insertAmp=amp;
+   for(uint8_t i=0;i<2;++i){
+    const uint8_t next=pulsePos_[i];
+    if(insertPos==next){pulseAmp_[i]+=insertAmp;break;}
+    if(insertPos<next){
+     pulsePos_[i]=insertPos;insertPos=next;
+     const int8_t nextAmp=pulseAmp_[i];
+     pulseAmp_[i]=insertAmp;insertAmp=nextAmp;
+    }
+    if(i==1){pulsePos_[2]=insertPos;pulseAmp_[2]=insertAmp;pulseCount_=3;}
+   }
+#else
    uint8_t at=0;
    while(at<2 && pulsePos_[at]<pos)++at;
    if(at<2 && pulsePos_[at]==pos)pulseAmp_[at]+=amp;
@@ -833,10 +869,16 @@ bool Lpx4HybridCore::readSubframe(){
     for(uint8_t j=2;j>at;--j){pulsePos_[j]=pulsePos_[j-1];pulseAmp_[j]=pulseAmp_[j-1];}
     pulsePos_[at]=pos;pulseAmp_[at]=amp;pulseCount_=3;
    }
+#endif
   }
 #endif
 #if LPX4_COMPACT_VERSION == 9
+#if LPX4_AVR25_V9_RUNTIME
+  if(pulseCount_==3)pulsePos_[2]-=pulsePos_[1]+1;
+  pulsePos_[1]-=pulsePos_[0]+1;
+#else
   for(uint8_t i=pulseCount_-1;i;--i)pulsePos_[i]-=pulsePos_[i-1]+1;
+#endif
 #endif
   return !error_;
  }
@@ -1302,6 +1344,11 @@ void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
 static inline __attribute__((always_inline)) int16_t centeredLsf(uint8_t q,uint8_t profile){
  return q ? (int16_t)((uint16_t)(q*2-1)<<((profile&2)?3:4)) : 0;
 }
+#endif
+#if LPX4_AVR25_V9_RUNTIME
+// AVR-GCC 7.3.0 emits a smaller recurrence with the address operations
+// left inside their branches. Keep this choice local to the converter.
+__attribute__((optimize("no-code-hoisting")))
 #endif
 void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #ifdef LPX3_COST_INSTRUMENT
