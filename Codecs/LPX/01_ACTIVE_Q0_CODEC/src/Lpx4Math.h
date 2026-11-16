@@ -482,8 +482,10 @@ static inline __attribute__((always_inline)) int16_t lpx4NomulAttenuate(uint16_t
 // spareHistory explicitly requires h[11]; h[10] is a discarded shift slot.
 // Default callers still require only h[10]. Q4 excitation is exactly integral.
 // keepQ4 leaves the accumulated integer in Q4 units for a combined final clip.
+// finalHistory exposes the history base from the completed reverse walk so the
+// caller can store the clipped sample through the same address register.
 template<bool excitationQ4=false,bool spareHistory=false,bool keepQ4=false>
-static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16_t* h){
+static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16_t* h,int16_t** finalHistory=nullptr){
 #if LPX4_USE_AVR_ASM
     int32_t result=excitation;
     a+=10;h+=10;
@@ -514,6 +516,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 #endif
           "r22","r23","r24","r25","cc","memory"
     );
+    if(finalHistory)*finalHistory=h;
     return result;
 #elif LPX4_USE_AVR_NOMUL_ASM
     int32_t result=excitation;
@@ -540,6 +543,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 #endif
           ,"I"(spareHistory),"I"(keepQ4)
         : "r17","r18","r19","r20","r21","r22","r23","r24","r25","cc","memory");
+    if(finalHistory)*finalHistory=h;
     return result;
 #else
     int32_t result=excitationQ4?(excitation+(excitation<0?15:0))>>4:excitation;
@@ -547,6 +551,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         result-=lpx4Shift12(lpx4Mul16(a[i],h[i]));
         if(spareHistory||i<9)h[i+1]=h[i];
     }
+    if(finalHistory)*finalHistory=h;
     return keepQ4?result*16:result;
 #endif
 }

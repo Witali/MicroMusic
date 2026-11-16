@@ -1934,11 +1934,14 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     history[0]=history[10]=pred;
 #else
 #if LPX4_AVR25_V9_RUNTIME
-    int16_t pred=lpx4ClipSynthesisQ4(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,true,true>(excitation,a_,hist_));
+    int16_t* history;
+    const int32_t synthesis=lpx4SynthesisQ12<LPX4_EXCITATION_Q4,true,true>(excitation,a_,hist_,&history);
+    const int16_t pred=lpx4ClipSynthesisQ4(synthesis);
+    *history=pred;
 #else
     int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,LPX4_COMPACT_VERSION==9>(excitation,a_,hist_));
-#endif
     hist_[0]=pred;
+#endif
 #endif
 #ifdef LPX4_FIXED_PRE_Q14
     int16_t deemph=LPX4_FIXED_PRE_Q14?lpx4AddClip15<LPX4_AVR25_V9_RUNTIME>(pred,lpx4AttenuateFixedQ14<LPX4_FIXED_PRE_Q14>(prevDeemph_)):pred;

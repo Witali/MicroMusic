@@ -39,6 +39,7 @@ JOINED_BITFIELD=REPO/'Codecs/LPX/research/tiny-v9-joined-bitfield-2026-11-16'
 ONE_SHOT_BSS=REPO/'Codecs/LPX/research/tiny-v9-one-shot-bss-2026-11-16'
 SEEDED_POLY_Q8=REPO/'Codecs/LPX/research/tiny-v9-poly-seeded-q8-2026-11-16'
 SIGNED6_EXCITATION=REPO/'Codecs/LPX/research/tiny-v9-signed6-excitation-2026-11-16'
+SYNTHESIS_HISTORY_Z=REPO/'Codecs/LPX/research/tiny-v9-synthesis-history-z-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -184,6 +185,7 @@ def assert_recorded_source(path,expected):
         (ONE_SHOT_BSS,'970616ecd82805ee6bc16f620c0b3ead46f561b6'),
         (SEEDED_POLY_Q8,'667360f57425cb9d1045df7ee293624a39ece6d0'),
         (SIGNED6_EXCITATION,'8a1a0310fda1165a2d083bbd2f820904f34c1041'),
+        (SYNTHESIS_HISTORY_Z,'f37f1b818669a0335c50a411e03e9760011052fe'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

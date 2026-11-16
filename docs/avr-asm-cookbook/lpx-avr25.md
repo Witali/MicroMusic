@@ -455,3 +455,19 @@ With AVR-GCC 7.3.0 on ATtiny88 this saves 14 program bytes. All 64
 codes and 32 scale entries agree across AVR25 C, ASM and forced
 generic builds. The 22 simavr 1.6 IRQ workloads retain exact PWM.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-signed6-excitation-2026-11-16/README.md).
+
+## Keep the history cursor live through the synthesis clip
+
+The AVR25 LPC loop reads coefficients with `-X` and walks the history
+with `-Z`. After ten taps, Z points to the first history word. Preserve
+that pointer through the Q4 clip and store the result with `STD Z+1` and
+`ST Z`. Each store takes two cycles on ATtiny88 and occupies one program
+word. The two absolute `STS` instructions also take two cycles each
+and occupy two words each. The RAM pointer remains within the history
+array and the ISR preserves Z. The C backend returns the history base
+from the same interface and performs the same update.
+
+AVR-GCC 7.3.0 with SRAM512, LPC2 and FIFO32 saves four program bytes.
+All 22 simavr 1.6 workloads retain exact PWM and the same mean decode
+time with IRQ. [Paired measurements](../../Codecs/LPX/research/tiny-v9-synthesis-history-z-2026-11-16/README.md).
+[AVR instruction set summary](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-BA59618D-4850-490B-B176-0BCC3D9438A1.html).
