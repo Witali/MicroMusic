@@ -52,6 +52,7 @@ AVR_LSF_PRODUCT=REPO/'Codecs/LPX/research/avr-v9-lsf-product-2026-11-16'
 AVR_IRQ_REGISTER_MAP=REPO/'Codecs/LPX/research/avr-v9-irq-register-map-2026-11-16'
 TINY_PULSE_REGISTERS=REPO/'Codecs/LPX/research/tiny-v9-pulse-registers-2026-11-16'
 TINY_HEADER_SHORTCUTS=REPO/'Codecs/LPX/research/tiny-v9-header-shortcuts-2026-11-16'
+AVR_PWM130=REPO/'Codecs/LPX/research/avr-v9-pwm130-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -210,6 +211,7 @@ def assert_recorded_source(path,expected):
         (AVR_IRQ_REGISTER_MAP,'fe76b6f2cdea4f023f4d046c7af1138419a89b38'),
         (TINY_PULSE_REGISTERS,'c8a24c9a1203e73cc5aa936cbdb9e4bc9d598214'),
         (TINY_HEADER_SHORTCUTS,'67e41ea9da0cf31764ff7d311e78c2e9c458ff16'),
+        (AVR_PWM130,'6037f1527f0df94932b90236796c9c0ff4c18bc6'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

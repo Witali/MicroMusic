@@ -780,21 +780,23 @@ static inline __attribute__((always_inline)) uint8_t lpx4PwmQ14(int16_t sample,u
 #endif
 }
 
-// The postfilter clamps sample to [-16384,16384]. For x=sample+16384,
-// the rounded duty at gain 130 is floor((x+floor(x/64)-192)/128).
-// The numerator lies in [-192,33088], so overflow of the unsigned
-// extraction identifies either rail and bit 14 tells the rails apart.
+// For |sample| <= 27853, gain 130 gives the rounded duty
+// floor((sample+floor(sample/64)+16448)/128) before saturation.
+// The numerator lies in [-11841,44736]. Bit 15 of its wrapped value
+// signals either rail, and bit 14 distinguishes the lower rail.
 static inline __attribute__((always_inline)) uint8_t lpx4PwmBounded130(int16_t sample){
-#if LPX4_USE_AVR_NOMUL_ASM
-    uint16_t total=sample,shifted;
-    uint8_t high;
+#if LPX4_USE_AVR_ASM || LPX4_USE_AVR_NOMUL_ASM
+    uint16_t total=(uint16_t)sample,shifted;
+    uint8_t sign;
     __asm__(
-        "subi %B0,192\n\tmovw %A1,%A0\n\tclr %2\n\t"
-        ".rept 2\n\tlsl %A1\n\trol %B1\n\trol %2\n\t.endr\n\t"
+        "movw %A1,%A0\n\t"
+        "lsl %A1\n\trol %B1\n\tsbc %2,%2\n\t"
+        "lsl %A1\n\trol %B1\n\trol %2\n\t"
         "add %A0,%B1\n\tadc %B0,%2\n\t"
-        "subi %A0,192\n\tsbci %B0,0\n\tlsl %A0\n\trol %B0\n\t"
-        "brcc 1f\n\tlsl %B0\n\tsbc %B0,%B0\n\tcom %B0\n\t1:"
-        : "+&d"(total),"=&w"(shifted),"=&r"(high) : : "cc");
+        "subi %A0,192\n\tsbci %B0,191\n\t"
+        "lsl %A0\n\trol %B0\n\tbrcc 1f\n\t"
+        "cpi %B0,128\n\tsbc %B0,%B0\n\t1:"
+        : "+&d"(total),"=&w"(shifted),"=&r"(sign) : : "cc");
     return (uint8_t)(total>>8);
 #else
     return lpx4PwmQ14(sample,130);
