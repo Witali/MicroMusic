@@ -39,6 +39,7 @@
 #else
 #define LPX4_AVR25_V9_RUNTIME 0
 #endif
+#define LPX4_AVR25_V9_HEADER_COPY (LPX4_AVR25_V9_ROM_FIELDS && LPX4_AVR25_V9_RUNTIME)
 
 #ifdef __AVR__
 #include <avr/pgmspace.h>
@@ -169,7 +170,11 @@ static inline __attribute__((always_inline)) int16_t cosineEvenNode(uint8_t inde
 
 
 
-Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
+Lpx4HybridCore::Lpx4HybridCore(): data_(0),
+#if LPX4_AVR25_V9_ROM_FIELDS
+ sampleRate_(0),sampleCount_(0),preQ14_(0),brightQ14_(0),bytes_(0),remaining_(0)
+#else
+ bytes_(0),
 #if !LPX4_ROM_POINTER
  cursor_(0),
 #endif
@@ -179,6 +184,7 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),bytes_(0),
 #endif
 #if LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_SRAM512 || !defined(LPX4_FIXED_BRIGHT_Q14)
  ,brightQ14_(0)
+#endif
 #endif
  {
 #if LPX4_ENABLE_INPUT_CALLBACK
@@ -263,7 +269,9 @@ bool Lpx4HybridCore::beginSource(uint16_t size){
  bytes_=size;
 #else
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
+#if !LPX4_AVR25_V9_HEADER_COPY
  data_=input;bytes_=size;
+#endif
 #endif
 #if !LPX4_ROM_POINTER
  cursor_=0;
@@ -275,9 +283,12 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #else
  if(!input||size<(LPX4_COMPACT_VERSION==9?13:20)){error_=BAD_HEADER;return false;}
 #endif
-#if LPX4_COMPACT_VERSION == 9
+#if LPX4_AVR25_V9_HEADER_COPY
+ if(LP_READ_U16(input)!=0x394c){error_=BAD_HEADER;return false;}
+ const uint8_t flags=LP_READ_U8(input+2);
+#elif LPX4_COMPACT_VERSION == 9
  if(read16()!=0x394c){error_=BAD_HEADER;return false;}
- const uint8_t version=9,flags=readByte();
+ const uint8_t flags=readByte();
 #else
  if(readByte()!='L'||readByte()!='4'||readByte()!='H'||readByte()!='Y'){
   error_=BAD_HEADER;return false;
@@ -288,13 +299,18 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  if(flags!=LPX4_FIXED_SPEECH_FLAGS){error_=UNSUPPORTED;return false;}
 #endif
 #if LPX4_COMPACT_ONLY
+#if LPX4_COMPACT_VERSION == 9
+ // Dense profiles differ by bit 1 and have optional extras in bit 7.
+ if(flags!=15 && (flags&0x7d)!=4){
+#else
 #if LPX4_HAS_SPARSE80
- const bool sparse80=version==(LPX4_COMPACT_VERSION==9?9:8) && flags==15;
+ const bool sparse80=version==8 && flags==15;
  if(!sparse80 &&
 #else
  if(
 #endif
     (version!=LPX4_COMPACT_VERSION || ((flags&127)!=4 && (flags&127)!=6))){
+#endif
   error_=UNSUPPORTED;return false;
  }
  // Raw profile15 keeps bit1 for the six-bit spectrum and bit3 for sparse80.
@@ -320,6 +336,22 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
  }
 #endif
+#if LPX4_AVR25_V9_HEADER_COPY
+ // The complete header is in bounds. Copy the five little-endian words,
+ // including the payload length, and keep the advanced Flash pointer.
+ constexpr size_t first=offsetof(Lpx4HybridCore,sampleRate_);
+ static_assert(offsetof(Lpx4HybridCore,sampleCount_)==first+2 &&
+               offsetof(Lpx4HybridCore,preQ14_)==first+4 &&
+               offsetof(Lpx4HybridCore,brightQ14_)==first+6 &&
+               offsetof(Lpx4HybridCore,bytes_)==first+8,
+               "AVR25 v9 fields must match the wire order");
+ uint8_t* destination=reinterpret_cast<uint8_t*>(this)+first;
+ const uint8_t* cursor=input+3;
+ uint8_t count=10,value;
+ __asm__ volatile("1: lpm %3,Z+\n\tst %a0+,%3\n\tdec %2\n\tbrne 1b"
+    : "+&x"(destination),"+&z"(cursor),"+&r"(count),"=&r"(value) : : "cc","memory");
+ data_=cursor;
+#else
  sampleRate_=read16();
 #if LPX4_COMPACT_VERSION == 9
  sampleCount_=read16();
@@ -335,6 +367,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  const uint16_t brightQ14_=read16();
 #else
  brightQ14_=read16();
+#endif
 #endif
  remaining_=sampleCount_;
 #if LPX4_BATCHED_REMAINING
@@ -354,7 +387,11 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  160;
 #endif
 #endif
+#if LPX4_AVR25_V9_HEADER_COPY
+ const uint16_t payload=bytes_;
+#else
  const uint16_t payload=read16();
+#endif
  const uint8_t headerBytes=LPX4_COMPACT_VERSION==9?13:22;
  // Subtract the header from the bounded input span; no untrusted wide sum.
  if(sampleCount_>64000 || !sampleCount_ || (size<headerBytes || payload!=(uint16_t)(size-headerBytes))){
@@ -387,7 +424,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #ifdef LPX4_FIXED_BRIGHT_Q14
  if(brightQ14_!=LPX4_FIXED_BRIGHT_Q14){error_=UNSUPPORTED;return false;}
 #endif
- if(error_||sampleRate_!=8000||!sampleCount_||!geometry||
+ if((!LPX4_AVR25_V9_HEADER_COPY && error_)||sampleRate_!=8000||!sampleCount_||!geometry||
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
  return true;
 }

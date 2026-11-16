@@ -278,3 +278,18 @@ per-stream reset for all entry points. AVR-GCC 7.3.0 with GNU AVR ABI and
 LTO can then omit the constructor table and its call sequence. This reduces
 startup code on ATtiny88.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-static-rom-2026-11-16/README.md).
+
+## Copy bounded v9 header words directly from Flash
+
+Keep fields in the same order and endianness as their serialized words.
+Verify field offsets at compile time. Once the caller's length, magic
+and flags pass their checks, copy the five words with `LPM Rd,Z+` and
+`ST X+,Rd`. The advanced Flash pointer addresses the first payload
+byte. Use the copied length as the remaining byte count after verifying
+it against the input size minus the header length. Use the regular
+per-word C reader for callbacks, generic builds and fixed metadata.
+
+On ATtiny88 with AVR-GCC 7.3.0 and GNU AVR ABI this saves 66 program
+bytes on the universal v9 build. All 22 simavr 1.6 IRQ workloads reproduce
+exact PWM with lower decoder CPU time and zero underruns.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-rom-header-2026-11-16/README.md).
