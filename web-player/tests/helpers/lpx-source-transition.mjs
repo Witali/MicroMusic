@@ -23,6 +23,7 @@ const tinyLpcHalfReport='Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13/';
 const webuiRebuildReceipt='Codecs/LPX/research/webui-rebuild-2026-11-14/source-transition.json';
 const pulsePacketReport='Codecs/LPX/research/tiny-v9-pulse-packet-2026-11-16/';
 const flashReadReport='Codecs/LPX/research/tiny-v9-flash-read-2026-11-16/';
+const boundedPwmReport='Codecs/LPX/research/tiny-v9-bounded-pwm-2026-11-16/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -205,10 +206,11 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
   for(const [directory,baseline] of [
     [pulsePacketReport,'1fe7048d7b29e0eb8c76700c4917a3d6f5d57bca'],
     [flashReadReport,'bd3ec1ce42b430dbb2663ddf3ff73996dbb57383'],
+    [boundedPwmReport,'31d8aa578098ae3d597735420b2db6c30cd25cf6'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));
-    const change=report.sources[path];
+    const change=report.sources[path] ?? report.validation_sources?.[path];
     if(change?.baseline[field]===recorded){
       assert.equal(report.baseline_revision,baseline);
       assert.equal(report.complete,true);

@@ -23,6 +23,7 @@ TINY_LPC_HALF=REPO/'Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13'
 WEBUI_REBUILD=REPO/'Codecs/LPX/research/webui-rebuild-2026-11-14/source-transition.json'
 PULSE_PACKET=REPO/'Codecs/LPX/research/tiny-v9-pulse-packet-2026-11-16'
 FLASH_READ=REPO/'Codecs/LPX/research/tiny-v9-flash-read-2026-11-16'
+BOUNDED_PWM=REPO/'Codecs/LPX/research/tiny-v9-bounded-pwm-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -152,6 +153,7 @@ def assert_recorded_source(path,expected):
     for directory,baseline in (
         (PULSE_PACKET,'1fe7048d7b29e0eb8c76700c4917a3d6f5d57bca'),
         (FLASH_READ,'bd3ec1ce42b430dbb2663ddf3ff73996dbb57383'),
+        (BOUNDED_PWM,'31d8aa578098ae3d597735420b2db6c30cd25cf6'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

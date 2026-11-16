@@ -125,6 +125,8 @@ for(let i=0;i<1024;i++){
  check(30,0,0,Math.max(-32767,Math.min(32767,Math.trunc(value/2))),{exc:value});
 }
 for(let x=-32768;x<=32767;x++)check(24,x,0,Math.max(-16384,Math.min(16384,x)));
+for(let x=-16384;x<=16384;x++)
+ check(33,x,0,Math.max(0,Math.min(255,128+Math.floor((x*130+8192)/16384))));
 for(const x of boundary)for(const c of [0,1,63,64,65,8191,8192,8193,16383,16384])
  check(4,x,c,Math.floor(x*c/16384));
 // Both hint states and all saturated-history signs, with nonzero coefficient

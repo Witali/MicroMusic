@@ -726,6 +726,27 @@ static inline __attribute__((always_inline)) uint8_t lpx4PwmQ14(int16_t sample,u
 #endif
 }
 
+// The postfilter clamps sample to [-16384,16384]. For x=sample+16384,
+// the rounded duty at gain 130 is floor((x+floor(x/64)-192)/128).
+// The numerator lies in [-192,33088], so overflow of the unsigned
+// extraction identifies either rail and bit 14 tells the rails apart.
+static inline __attribute__((always_inline)) uint8_t lpx4PwmBounded130(int16_t sample){
+#if LPX4_USE_AVR_NOMUL_ASM
+    uint16_t total=sample,shifted;
+    uint8_t high;
+    __asm__(
+        "subi %B0,192\n\tmovw %A1,%A0\n\tclr %2\n\t"
+        ".rept 2\n\tlsl %A1\n\trol %B1\n\trol %2\n\t.endr\n\t"
+        "add %A0,%B1\n\tadc %B0,%2\n\t"
+        "subi %A0,192\n\tsbci %B0,0\n\tlsl %A0\n\trol %B0\n\t"
+        "brcc 1f\n\tlsl %B0\n\tsbc %B0,%B0\n\tcom %B0\n\t1:"
+        : "+&d"(total),"=&w"(shifted),"=&r"(high) : : "cc");
+    return (uint8_t)(total>>8);
+#else
+    return lpx4PwmQ14(sample,130);
+#endif
+}
+
 // Bounded attenuation: coefficient 0..16384, signed16 state, exact floor Q14.
 // The result fits signed16. Keep the generic full-range MulQ14 below.
 static inline int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){

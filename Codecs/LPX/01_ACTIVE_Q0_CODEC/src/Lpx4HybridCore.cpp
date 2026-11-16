@@ -1732,7 +1732,11 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #if defined(__AVR__) && !defined(LPX4_ENABLE_PCM16)
     // Original PWM transfer function for the existing ATmega328P firmware.
 #if LPX4_PWM_ROUND
+#if LPX4_AVR25_V9_RUNTIME && LPX4_PWM_GAIN==130
+    pcm=lpx4PwmBounded130(b);
+#else
     pcm=lpx4PwmQ14(b,LPX4_PWM_GAIN);
+#endif
 #else
     int16_t duty=(int16_t)(128+((int32_t)b*LPX4_PWM_GAIN)/16384);
     pcm=(uint8_t)clamp(duty,0,255);

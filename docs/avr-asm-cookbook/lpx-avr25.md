@@ -238,3 +238,18 @@ equivalent on AVR25. AVR-GCC 7.3.0 with the AVR GCC ABI at `-Os -flto` saves
 18 program bytes and up to 21 cycles per sample with the complete IRQ.
 All 22 loads preserve exact PWM and pass without underruns.
 [Measurements and proof](../../Codecs/LPX/research/tiny-q14-2026-11-13/README.md).
+
+## Exact bounded PWM gain 130
+
+On the universal v9 AVR25 player, the last Q14 clip gives a bound of
+−16384…16384. Lift it by 16384 to get `x`. The unsigned duty is
+`floor((x+floor(x/64)-192)/128)` saturated to 0…255. The numerator fits
+an unsigned word with wrap for negative values. The output shift leaves
+overflow in carry. Bit 14 selects the rail in that case. The ordinary
+C and other gain configurations use the existing general converter.
+
+ATtiny88, GNU AVR ABI and AVR-GCC 7.3.0, 16 MHz and 8 kHz. The recipe
+with SRAM512, LPC2 and FIFO32/prefill24 saves 32 program bytes and
+10–15 cycles/sample including IRQ across all 22 loads in simavr 1.6.
+The direct probe covers all 32,769 inputs with active IRQ.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-bounded-pwm-2026-11-16/README.md).
