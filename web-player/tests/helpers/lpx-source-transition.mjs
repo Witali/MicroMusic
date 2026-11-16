@@ -53,6 +53,7 @@ const avrIrqRegisterMapReport='Codecs/LPX/research/avr-v9-irq-register-map-2026-
 const tinyPulseRegistersReport='Codecs/LPX/research/tiny-v9-pulse-registers-2026-11-16/';
 const tinyHeaderShortcutsReport='Codecs/LPX/research/tiny-v9-header-shortcuts-2026-11-16/';
 const avrPwm130Report='Codecs/LPX/research/avr-v9-pwm130-2026-11-16/';
+const avrRomCursorReport='Codecs/LPX/research/avr-v9-rom-cursor-2026-11-16/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -265,6 +266,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [tinyPulseRegistersReport,'c8a24c9a1203e73cc5aa936cbdb9e4bc9d598214'],
     [tinyHeaderShortcutsReport,'67e41ea9da0cf31764ff7d311e78c2e9c458ff16'],
     [avrPwm130Report,'6037f1527f0df94932b90236796c9c0ff4c18bc6'],
+    [avrRomCursorReport,'58d83da3045b3d958132909aef41c239baa9e333'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

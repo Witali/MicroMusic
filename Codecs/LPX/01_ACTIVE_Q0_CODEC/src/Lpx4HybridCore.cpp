@@ -39,6 +39,14 @@
 #else
 #define LPX4_AVR25_V9_RUNTIME 0
 #endif
+// Both AVR backends can use the universal v9 ROM player's packet reader.
+#if LPX4_AVR25_V9_RUNTIME || (LPX4_COMPACT_ONLY && LPX4_COMPACT_VERSION == 9 && \
+    LPX4_USE_AVR_ASM && LPX4_ROM_POINTER && !LPX4_ENABLE_INPUT_CALLBACK && \
+    !defined(LPX4_ENABLE_PCM16) && !defined(LPX4_FIXED_SPEECH_FLAGS))
+#define LPX4_AVR_V9_PACKETS 1
+#else
+#define LPX4_AVR_V9_PACKETS 0
+#endif
 #define LPX4_AVR25_V9_HEADER_COPY (LPX4_AVR25_V9_ROM_LAYOUT && LPX4_AVR25_V9_RUNTIME)
 #if LPX4_USE_AVR_ASM && LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && !defined(LPX4_FIXED_SPEECH_FLAGS)
 #define LPX4_USE_AVR5_POLYNOMIAL_MUL 1
@@ -298,7 +306,7 @@ uint8_t Lpx4HybridCore::readByte(){
 #if LPX4_ROM_POINTER
  if(!bytes_){error_=END_OF_ROM;return 0;}
  --bytes_;
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_AVR_V9_PACKETS
  // Advance the bounded ROM cursor with the byte read.
  const uint8_t* next=data_;
  uint8_t value;
