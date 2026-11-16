@@ -196,6 +196,26 @@ static inline __attribute__((always_inline)) int16_t lpcCosineFactor(uint8_t nod
 
 
 
+#if LPX4_AVR25_PLAYER_PITCH_PAGE
+int8_t Lpx4HybridCore::ringQ_[256] __attribute__((section(".bss"),aligned(256),used));
+#endif
+
+#if LPX4_AVR25_PLAYER_PITCH_PAGE && LPX4_USE_AVR_NOMUL_ASM
+template<class Byte>
+static inline Byte* pitchRingAddress(Byte* ring,uint8_t offset){
+    // The offset replaces the zero low address byte. Keep a relocation for
+    // the aligned array so link-time garbage collection retains its storage.
+    Byte* address;
+    __asm__("mov %A0,%1\n\tldi %B0,hi8(%2)" : "=&z"(address) : "r"(offset),"i"(ring));
+    return address;
+}
+#define LPX4_PITCH_RING_ADDRESS(ring,offset) pitchRingAddress((ring),(offset))
+#define LPX4_PITCH_RING_SAMPLE(ring,offset) (*LPX4_PITCH_RING_ADDRESS((ring),(offset)))
+#else
+#define LPX4_PITCH_RING_ADDRESS(ring,offset) ((ring)+(offset))
+#define LPX4_PITCH_RING_SAMPLE(ring,offset) ((ring)[(offset)])
+#endif
+
 Lpx4HybridCore::Lpx4HybridCore(): data_(0),
 #if LPX4_AVR25_V9_ROM_LAYOUT
  sampleRate_(0),sampleCount_(0),preQ14_(0),brightQ14_(0),bytes_(0),remaining_(0)
@@ -231,6 +251,9 @@ void Lpx4HybridCore::resetState(){
  const size_t first=offsetof(Lpx4HybridCore,blockStep_);
  const size_t end=offsetof(Lpx4HybridCore,cur_)+sizeof(cur_);
  memset(reinterpret_cast<uint8_t*>(this)+first,0,end-first);
+#if LPX4_AVR25_PLAYER_PITCH_PAGE
+ memset(ringQ_,0,sizeof(ringQ_));
+#endif
 #ifdef LPX3_COST_INSTRUMENT
  lsfConverts_=bitCalls_=romByteCalls_=0;
 #endif
@@ -1111,7 +1134,7 @@ int16_t Lpx4HybridCore::pitchPredict() const{
 #if !LPX4_COMPACT_ONLY
  if(!mode_)return 0;
 #endif
- const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
+ const int8_t x=LPX4_PITCH_RING_SAMPLE(ringQ_,(uint8_t)(ringCursor_-lag_));
 #if LPX4_FAST_PITCH&2
  if(!x)return 0;
 #endif
@@ -1127,7 +1150,7 @@ int16_t Lpx4HybridCore::pitchPredict() const{
 #endif
  return v;
 #else
- const int8_t x=ringQ_[(uint8_t)(ringCursor_-lag_)];
+ const int8_t x=LPX4_PITCH_RING_SAMPLE(ringQ_,(uint8_t)(ringCursor_-lag_));
  int16_t v=(int16_t)(((int8_t)gain_*x+8)>>4);
 #if !LPX4_COMPACT_ONLY
  if(!mode_)return 0;
@@ -1212,7 +1235,7 @@ noPulse:
  }
 #endif
  q=decoded;
- ringQ_[ringCursor_++]=decoded;
+ LPX4_PITCH_RING_SAMPLE(ringQ_,ringCursor_++)=decoded;
  return true;
 #else
 #if LPX4_COMPACT_VERSION == 9
@@ -1239,7 +1262,7 @@ noPulse:
  if(error_)return false;
  if(decoded < -32)decoded=-32;
  if(decoded > 31)decoded=31;
- q=(int8_t)decoded;ringQ_[ringCursor_++]=q;
+ q=(int8_t)decoded;LPX4_PITCH_RING_SAMPLE(ringQ_,ringCursor_++)=q;
  return true;
 #endif
 #else
@@ -1287,7 +1310,7 @@ noPulse:
    if(decoded < -lim || decoded >= lim){error_=CORRUPT_STREAM;return false;}
  }else if(decoded){error_=CORRUPT_STREAM;return false;}
  q=(int8_t)decoded;
- ringQ_[ringCursor_++]=q;
+ LPX4_PITCH_RING_SAMPLE(ringQ_,ringCursor_++)=q;
  return true;
 #endif
 }
@@ -1420,11 +1443,11 @@ static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
 // memcpy retains byte-storage object lifetimes, alignment and aliasing rules.
 static inline int32_t ringPolyGetAt(const int8_t* ring,uint8_t offset){
     int32_t value;
-    memcpy(&value,ring+offset,sizeof(value));
+    memcpy(&value,LPX4_PITCH_RING_ADDRESS(ring,offset),sizeof(value));
     return value;
 }
 static inline void ringPolyPutAt(int8_t* ring,uint8_t offset,int32_t value){
-    memcpy(ring+offset,&value,sizeof(value));
+    memcpy(LPX4_PITCH_RING_ADDRESS(ring,offset),&value,sizeof(value));
 }
 static inline int32_t ringPolyGet(const int8_t* ring,uint8_t base,uint8_t index){
     return ringPolyGetAt(ring,base+index*4);
@@ -1446,11 +1469,11 @@ static const bool halfPolynomialP=true;
 // four-byte slot stride so a word never straddles the ring boundary.
 static inline PolyCoefficient ringPolyLoad24(const int8_t* ring,uint8_t offset){
     PolyCoefficient value;
-    memcpy(&value,ring+offset,sizeof(value));
+    memcpy(&value,LPX4_PITCH_RING_ADDRESS(ring,offset),sizeof(value));
     return value;
 }
 static inline void ringPolyStore24(int8_t* ring,uint8_t offset,PolyCoefficient value){
-    memcpy(ring+offset,&value,sizeof(value));
+    memcpy(LPX4_PITCH_RING_ADDRESS(ring,offset),&value,sizeof(value));
 }
 static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
     uint8_t offset;
@@ -1861,7 +1884,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     int8_t q=0;
 #if LPX4_COMPACT_ONLY
 #if (LPX4_FAST_EXCITATION&2) && !LPX4_AVR25_V9_RUNTIME && !LPX4_AVR25_V9_ROM_LAYOUT
-    if(pulseIndex_>=pulseCount_){q=(int8_t)pitchPredict();ringQ_[ringCursor_++]=q;}
+    if(pulseIndex_>=pulseCount_){q=(int8_t)pitchPredict();LPX4_PITCH_RING_SAMPLE(ringQ_,ringCursor_++)=q;}
     else
 #endif
     if(!decodeCode(q))return false;
@@ -1888,7 +1911,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #endif
         q=(int8_t)pitchPredict();simple=true;
     }
-    if(simple)ringQ_[ringCursor_++]=q;
+    if(simple)LPX4_PITCH_RING_SAMPLE(ringQ_,ringCursor_++)=q;
     else
 #endif
     if(!decodeCode(q))return false;

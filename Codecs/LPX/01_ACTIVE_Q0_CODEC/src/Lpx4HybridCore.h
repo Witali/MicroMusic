@@ -158,6 +158,15 @@ typedef int16_t Lpx4SynthesisValue;
 #define LPX4_AVR25_V9_ROM_LAYOUT 0
 #endif
 
+// The fixed-register ROM player owns one decoder. Place its pitch history
+// in a separate SRAM page so the queue and decoder state follow without padding.
+#if LPX4_AVR25_V9_ROM_LAYOUT && LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && \
+    defined(__AVR_ATtiny88__) && defined(LPX25_ISR_FIXED_REGS) && LPX25_ISR_FIXED_REGS
+#define LPX4_AVR25_PLAYER_PITCH_PAGE 1
+#else
+#define LPX4_AVR25_PLAYER_PITCH_PAGE 0
+#endif
+
 // Rotate two LPC anchor halves by an offset0/10, avoiding vector copies.
 // No self-referencing pointers: ordinary value copies of the object stay valid.
 #ifndef LPX4_ROTATE_LPC_ANCHORS
@@ -397,7 +406,11 @@ private:
     uint8_t lpcAnchorOffset_;
 #endif
     Lpx4SynthesisValue a_[10],hist_[LPX4_LPC_RING?20:LPX4_COMPACT_VERSION==9?11:10];
+#if LPX4_AVR25_PLAYER_PITCH_PAGE
+    static int8_t ringQ_[256];
+#else
     int8_t ringQ_[256];
+#endif
 #if LPX4_ALLOW_SPARSE
     uint8_t pulsePos_[LPX4_MAX_PULSES+LPX4_AVR25_V9_ROM_LAYOUT];
     int8_t pulseAmp_[LPX4_MAX_PULSES];

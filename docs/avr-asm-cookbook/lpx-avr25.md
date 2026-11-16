@@ -495,3 +495,18 @@ per sample including IRQ. [Paired measurements](../../Codecs/LPX/research/tiny-v
 The [standalone LPX v9 example](examples/lpx-v9/README.md) assembles the
 same measured player in modules and selects AVR25 or AVR5 from the
 compiler's device and instruction-set macros.
+
+## Address a 256-byte circular buffer with the low byte of Z
+
+The single-decoder ATtiny88 ROM player places its 256-byte excitation
+history in a separately aligned `.bss` array. The array occupies one
+page and the aligned PWM queue follows it without padding. Set ZL to
+the logical byte index and load ZH with `hi8` of the array symbol. The
+linker relocation also keeps the array live. This address calculation
+works for pitch reads, writes and the aligned LPC polynomial workspace.
+
+The fixed-register player ISR preserves Z according to the established
+calling convention. The repeat path explicitly clears the separately
+stored ring. The C build uses regular array indexing. AVR-GCC 7.3.0
+with SRAM512, LPC2 and FIFO32 saves 48 program bytes and roughly 4–7
+cycles per sample in 22 simavr 1.6 workloads with active IRQ. [Paired measurements](../../Codecs/LPX/research/tiny-v9-aligned-pitch-page-2026-11-16/README.md).
