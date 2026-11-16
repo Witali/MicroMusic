@@ -1339,7 +1339,7 @@ static inline int32_t polyMulQ12(int32_t v,int16_t c){
     // Preserve the original separate floors of the two split products.
     return (lpx4Mul32x16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
 }
-#if LPX4_USE_AVR5_POLYNOMIAL_MUL
+#if LPX4_USE_AVR5_POLYNOMIAL_MUL && LPX4_COMPACT_VERSION!=9
 // The direct branch bounds x to signed24 and the product to signed32.
 // Treat the low two bytes of x as unsigned and the third as signed.
 // Six byte products suffice modulo 2^32. Restore r1 before returning to C++.
@@ -1366,6 +1366,20 @@ static __attribute__((noinline)) int32_t polyDirectProduct(int32_t x,int16_t y){
 // and both separate floors; the unrestricted polynomial helper stays above.
 #if LPX4_POLY24_WORKSPACE
 typedef int PolyCoefficient __attribute__((mode(PSI)));
+
+// Within the polynomial workspace bound, floor(v / 16) fits signed16.
+template<class Coefficient>
+static inline __attribute__((always_inline)) int16_t polyHighWord(Coefficient v){
+    int16_t hi;
+    uint8_t temp;
+    __asm__(
+        "mov %A0,%A2\n\tswap %A0\n\tandi %A0,15\n\t"
+        "mov %1,%B2\n\tswap %1\n\tandi %1,240\n\tor %A0,%1\n\t"
+        "mov %B0,%B2\n\tswap %B0\n\tandi %B0,15\n\t"
+        "mov %1,%C2\n\tswap %1\n\tandi %1,240\n\tor %B0,%1"
+        : "=&d"(hi),"=&d"(temp) : "r"(v) : "cc");
+    return hi;
+}
 #endif
 
 #if LPX4_AVR25_V9_RUNTIME
@@ -1404,14 +1418,7 @@ static inline PolyCoefficient polyWordQ8(int16_t seed,int16_t word,int16_t facto
 }
 
 static inline PolyCoefficient polyCosineMulQ12(PolyCoefficient v,int16_t c){
-    int16_t hi;
-    uint8_t temp;
-    __asm__(
-        "mov %A0,%A2\n\tswap %A0\n\tandi %A0,15\n\t"
-        "mov %1,%B2\n\tswap %1\n\tandi %1,240\n\tor %A0,%1\n\t"
-        "mov %B0,%B2\n\tswap %B0\n\tandi %B0,15\n\t"
-        "mov %1,%C2\n\tswap %1\n\tandi %1,240\n\tor %B0,%1"
-        : "=&d"(hi),"=&d"(temp) : "r"(v) : "cc");
+    int16_t hi=polyHighWord(v);
     // A whole-product floor is needed for -250000 <= v < 250000.
     // At +250000 the residue is zero, so both rounding rules agree.
     const uint16_t biased=(uint16_t)hi+15625u;
@@ -1429,7 +1436,26 @@ static inline PolyCoefficient polyCosineMulQ12(PolyCoefficient v,int16_t c){
 }
 #else
 static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
-#if LPX4_USE_AVR5_POLYNOMIAL_MUL
+#if LPX4_POLY24_WORKSPACE
+    int16_t hi=polyHighWord(v);
+    const bool direct=(uint16_t)(hi+15625U)<31250U;
+    int8_t residue=(uint8_t)v&15;
+    // Restore truncating division for the independently rounded split path.
+    if(!direct && hi<0 && residue){++hi;residue-=16;}
+    // Multiply the signed low nibble by c, then keep bits 4..19.
+    int16_t nibble;
+    uint8_t high;
+    __asm__(
+        "mulsu %2,%A3\n\tmovw %A0,r0\n\tsbc %1,%1\n\t"
+        "muls %2,%B3\n\tadd %B0,r0\n\tadc %1,r1\n\t"
+        "swap %A0\n\tandi %A0,15\n\tswap %B0\n\t"
+        "eor %A0,%B0\n\tandi %B0,15\n\teor %A0,%B0\n\t"
+        "swap %1\n\tandi %1,240\n\tor %B0,%1\n\tclr __zero_reg__"
+        : "=&d"(nibble),"=&d"(high) : "a"(residue),"a"(c) : "r0","r1","cc");
+    const int32_t word=lpx4Mul16(hi,c);
+    // At +250000 residue is zero, so either rounding rule is exact there.
+    return direct?(word+nibble)>>8:(word>>8)+(nibble>>8);
+#elif LPX4_USE_AVR5_POLYNOMIAL_MUL
     if(v<=250000L && v>=-250000L)return lpx4Shift12(polyDirectProduct(v,c));
     int16_t hi=(int16_t)(v>>4);
     int8_t rem=(uint8_t)v&15;
@@ -1592,6 +1618,9 @@ void Lpx4HybridCore::polyFactor(int32_t* p,int16_t c,uint8_t n){
 #if LPX3_LPC_SEGMENTS!=1 && LPX3_LPC_SEGMENTS!=2 && LPX3_LPC_SEGMENTS!=4
 #error LPX3_LPC_SEGMENTS must be 1,2,4
 #endif
+#define LPX4_SELECT_LSF_ENDPOINTS \
+    (LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS!=4 && \
+     (LPX4_USE_AVR_NOMUL_ASM || (LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9)))
 // LSF->LPC only on predicted polynomial anchors, not every subframe.
 // Fixed anchors retain the reference integer polynomial at t=0..16.
 // Floating anchors share those locations with unrounded double polynomials.
@@ -1647,14 +1676,24 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #else
     polyP_[0]=polyQ_[0]=4096;
 #endif
-#if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4 && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#if LPX4_SELECT_LSF_ENDPOINTS && !defined(LPX4_FIXED_SPEECH_FLAGS)
     // LPC segments 1/2 use t=0, 8, 16. Select the endpoints once so
     // both endpoints and the midpoint use the same centered-grid sum.
+#if LPX4_COMPACT_VERSION==9
+    const uint8_t* left=prev_;
+    const uint8_t* right=cur_;
+    // Bit 4 selects the current endpoint. Zero selects the previous one.
+    // The midpoint uses both pointers, so neither needs changing.
+    __asm__("sbrc %2,4\n\tmovw %A0,%A1\n\t"
+            "tst %2\n\tbrne 1f\n\tmovw %A1,%A0\n\t1:"
+            : "+&w"(left),"+&w"(right) : "r"(t) : "cc");
+#else
     const uint8_t* left=t==16?cur_:prev_;
     const uint8_t* right=t==0?prev_:cur_;
 #endif
+#endif
     for(uint8_t i=0;i<10;i++){
-#if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4 && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#if LPX4_SELECT_LSF_ENDPOINTS && !defined(LPX4_FIXED_SPEECH_FLAGS)
         uint8_t node=left[i]+right[i]-1;
         if(!(LPX4_SPEECH_FLAGS&2))node+=node;
 #if LPX4_AVR25_V9_RUNTIME
