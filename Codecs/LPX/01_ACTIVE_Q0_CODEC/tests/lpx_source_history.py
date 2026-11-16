@@ -29,6 +29,7 @@ STATIC_ROM=REPO/'Codecs/LPX/research/tiny-v9-static-rom-2026-11-16'
 ROM_HEADER=REPO/'Codecs/LPX/research/tiny-v9-rom-header-2026-11-16'
 POLY_SEED=REPO/'Codecs/LPX/research/tiny-v9-poly-seed-2026-11-16'
 P4_AMPLITUDE=REPO/'Codecs/LPX/research/tiny-v9-p4-amplitude-2026-11-16'
+PULSE_SENTINEL=REPO/'Codecs/LPX/research/tiny-v9-pulse-sentinel-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -164,6 +165,7 @@ def assert_recorded_source(path,expected):
         (ROM_HEADER,'cef91038b7d98478ff1c5b14d9b3b0a22bc17f4b'),
         (POLY_SEED,'b0ac206459cadf39ed8a9beb6eaae5bb3282f88c'),
         (P4_AMPLITUDE,'e13909a07dc475b18e32a37bfc39ff60f77f56f8'),
+        (PULSE_SENTINEL,'e1583321d2186ca3c198d949097a4ebdcda9420b'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

@@ -314,3 +314,17 @@ for optional extra-pulse merging. On ATtiny88, AVR-GCC 7.3.0 with GNU
 AVR ABI saves 10 program bytes. All 22 simavr 1.6 IRQ cases retain exact
 PWM and real-time playback.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-p4-amplitude-2026-11-16/README.md).
+
+## End a pulse packet with a countdown beyond the packet length
+
+The maximum v9 pulse packet spans 80 samples. Append a nonnegative
+countdown of 127 after the last real pulse. It replaces the stored count
+byte and cannot expire within a packet. AVR25 `DEC` maps zero to 255
+with N set, and `ST` preserves N for the following `BRPL`. All other
+reachable pre-decrement values leave N clear. The selected C backend
+checks the same wrap to 255.
+
+On ATtiny88 with AVR-GCC 7.3.0 and GNU AVR ABI this saves 44 program bytes
+and 1.64–7.60 mean cycles/sample including IRQ in simavr 1.6. The 22
+workloads keep exact PWM and zero underruns.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-pulse-sentinel-2026-11-16/README.md).

@@ -29,6 +29,7 @@ const staticRomReport='Codecs/LPX/research/tiny-v9-static-rom-2026-11-16/';
 const romHeaderReport='Codecs/LPX/research/tiny-v9-rom-header-2026-11-16/';
 const polySeedReport='Codecs/LPX/research/tiny-v9-poly-seed-2026-11-16/';
 const p4AmplitudeReport='Codecs/LPX/research/tiny-v9-p4-amplitude-2026-11-16/';
+const pulseSentinelReport='Codecs/LPX/research/tiny-v9-pulse-sentinel-2026-11-16/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -217,6 +218,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [romHeaderReport,'cef91038b7d98478ff1c5b14d9b3b0a22bc17f4b'],
     [polySeedReport,'b0ac206459cadf39ed8a9beb6eaae5bb3282f88c'],
     [p4AmplitudeReport,'e13909a07dc475b18e32a37bfc39ff60f77f56f8'],
+    [pulseSentinelReport,'e1583321d2186ca3c198d949097a4ebdcda9420b'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));
