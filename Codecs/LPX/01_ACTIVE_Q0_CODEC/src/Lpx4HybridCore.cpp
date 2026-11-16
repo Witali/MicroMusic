@@ -229,7 +229,16 @@ uint8_t Lpx4HybridCore::readByte(){
 #if LPX4_ROM_POINTER
  if(!bytes_){error_=END_OF_ROM;return 0;}
  --bytes_;
+#if LPX4_AVR25_V9_RUNTIME
+ // Advance the bounded ROM cursor with the byte read.
+ const uint8_t* next=data_;
+ uint8_t value;
+ __asm__("lpm %0,Z+" : "=&r"(value),"+z"(next) :: "memory");
+ data_=next;
+ return value;
+#else
  return LP_READ_U8(data_++);
+#endif
 #else
  if(cursor_>=bytes_){error_=END_OF_ROM;return 0;}
  return LP_READ_U8(data_+cursor_++);

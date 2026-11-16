@@ -22,6 +22,7 @@ TINY_ODD_PHASE=REPO/'Codecs/LPX/research/tiny-v9-odd-phase-2026-11-13'
 TINY_LPC_HALF=REPO/'Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13'
 WEBUI_REBUILD=REPO/'Codecs/LPX/research/webui-rebuild-2026-11-14/source-transition.json'
 PULSE_PACKET=REPO/'Codecs/LPX/research/tiny-v9-pulse-packet-2026-11-16'
+FLASH_READ=REPO/'Codecs/LPX/research/tiny-v9-flash-read-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -148,13 +149,17 @@ def assert_recorded_source(path,expected):
             assert rebuild['complete'] and rebuild['baseline_revision']=='3ff5dc0f43db10f0c19a11283694d69bd11e211d'
             assert rebuild['universal_irq_cases']==22 and rebuild['identical_web_images']==18
             recorded=change['current']['text_lf_sha256']
-    if recorded!=actual:
-        report=json.loads((PULSE_PACKET/'source-transition.json').read_text(encoding='utf-8'))
+    for directory,baseline in (
+        (PULSE_PACKET,'1fe7048d7b29e0eb8c76700c4917a3d6f5d57bca'),
+        (FLASH_READ,'bd3ec1ce42b430dbb2663ddf3ff73996dbb57383'),
+    ):
+        if recorded==actual:break
+        report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
         change=report['sources'].get(path)
         if change and change['baseline']['text_lf_sha256']==recorded:
-            assert report['complete'] and report['baseline_revision']=='1fe7048d7b29e0eb8c76700c4917a3d6f5d57bca'
+            assert report['complete'] and report['baseline_revision']==baseline
             assert report['universal_irq_cases']==22 and report['identical_web_images']==18
-            evidence=(PULSE_PACKET/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
+            evidence=(directory/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
             assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
             recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

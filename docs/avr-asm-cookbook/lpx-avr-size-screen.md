@@ -124,6 +124,13 @@ lower peak stack and lower mean and peak decode time on all 22 AVR25 IRQ
 workloads. The generic C parser remains selectable.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-pulse-packet-2026-11-16/README.md).
 
+The AVR25 v9 bounded ROM reader combines an LPM load and pointer advance
+with `LPM Rd,Z+`. Keep the destination disjoint from the Z pair. The
+operation follows the existing bounds check and the C reader still uses
+the vendor access macro. AVR-GCC 7.3.0 saves 4 B and each of the 22 IRQ
+workloads completes faster with exact PWM.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-flash-read-2026-11-16/README.md).
+
 Two later changes passed all 22 universal Tiny88 AVR25 loads with IRQ.
 With the AVR GCC ABI and AVR-GCC 7.3.0 at `-Os -flto`, sharing the byte-wide
 cache shift saves 30 B. Accumulating the shifted Rice quotient while

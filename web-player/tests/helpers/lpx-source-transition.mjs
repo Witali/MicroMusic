@@ -22,6 +22,7 @@ const tinyOddPhaseReport='Codecs/LPX/research/tiny-v9-odd-phase-2026-11-13/';
 const tinyLpcHalfReport='Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13/';
 const webuiRebuildReceipt='Codecs/LPX/research/webui-rebuild-2026-11-14/source-transition.json';
 const pulsePacketReport='Codecs/LPX/research/tiny-v9-pulse-packet-2026-11-16/';
+const flashReadReport='Codecs/LPX/research/tiny-v9-flash-read-2026-11-16/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -201,15 +202,19 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       recorded=change.current[field];
     }
   }
-  if(recorded!==actual){
-    const report=JSON.parse(read(pulsePacketReport+'source-transition.json'));
+  for(const [directory,baseline] of [
+    [pulsePacketReport,'1fe7048d7b29e0eb8c76700c4917a3d6f5d57bca'],
+    [flashReadReport,'bd3ec1ce42b430dbb2663ddf3ff73996dbb57383'],
+  ]){
+    if(recorded===actual)break;
+    const report=JSON.parse(read(directory+'source-transition.json'));
     const change=report.sources[path];
     if(change?.baseline[field]===recorded){
-      assert.equal(report.baseline_revision,'1fe7048d7b29e0eb8c76700c4917a3d6f5d57bca');
+      assert.equal(report.baseline_revision,baseline);
       assert.equal(report.complete,true);
       assert.equal(report.universal_irq_cases,22);
       assert.equal(report.identical_web_images,18);
-      const evidence=read(pulsePacketReport+'measurements.json');
+      const evidence=read(directory+'measurements.json');
       assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
       recorded=change.current[field];
     }
