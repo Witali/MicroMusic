@@ -274,10 +274,17 @@ The 22 simavr 1.6 IRQ workloads retain exact PWM and run without underruns.
 A decoder in static storage can rely on the AVR C runtime's BSS clear.
 Limit the no-op constructor to the one static instance that the player
 owns. Keep the regular constructor for other storage durations and the
-per-stream reset for all entry points. AVR-GCC 7.3.0 with GNU AVR ABI and
-LTO can then omit the constructor table and its call sequence. This reduces
-startup code on ATtiny88.
+per-stream reset for the public entry point and repeat playback. AVR-GCC
+7.3.0 with GNU AVR ABI and LTO can then omit the constructor table and its
+call sequence on ATtiny88.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-static-rom-2026-11-16/README.md).
+
+The one-shot player also opens its first stream directly in the zeroed
+state. A private entry point passes that guarantee to the common parser.
+This saves another 52 program bytes. Playback keeps the same cycle count
+and PWM in 22 simavr 1.6 runs with IRQ. Three runs starting with nonzero
+SRAM verified the startup clear before first use.
+[One-shot measurements](../../Codecs/LPX/research/tiny-v9-one-shot-bss-2026-11-16/README.md).
 
 ## Copy bounded v9 header words directly from Flash
 

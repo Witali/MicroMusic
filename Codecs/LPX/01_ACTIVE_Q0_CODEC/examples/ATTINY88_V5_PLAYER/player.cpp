@@ -41,6 +41,9 @@ static const uint8_t voice[] PROGMEM={
 #if LPX25_V9_RUNTIME
 struct Lpx4TinyRomPlayer {
     static Lpx4HybridCore decoder;
+#if LPX4_AVR25_V9_ROM_LAYOUT && LPX25_REPEAT == 1
+    static bool begin(){return decoder.beginRom(voice,sizeof(voice),false);}
+#endif
 };
 Lpx4HybridCore Lpx4TinyRomPlayer::decoder{Lpx4HybridCore::StaticZeroInit{}};
 static Lpx4HybridCore& decoder=Lpx4TinyRomPlayer::decoder;
@@ -105,7 +108,11 @@ ISR(TIMER0_COMPA_vect){
     OCR1A=sample;
 }
 #endif
+#if LPX25_V9_RUNTIME && LPX4_AVR25_V9_ROM_LAYOUT && LPX25_REPEAT == 1
+static bool begin(){return Lpx4TinyRomPlayer::begin();}
+#else
 static bool begin(){return decoder.begin(voice,sizeof(voice));}
+#endif
 // Startup enters main with IRQs masked. This player never returns, so no
 // caller registers need to remain saved under the foreground stack.
 #if LPX25_V9_RUNTIME

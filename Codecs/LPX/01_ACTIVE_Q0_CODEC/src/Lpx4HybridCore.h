@@ -271,6 +271,10 @@ private:
     friend struct Lpx4TinyRomPlayer;
     struct StaticZeroInit {};
     explicit Lpx4HybridCore(StaticZeroInit) {}
+#if LPX4_AVR25_V9_ROM_LAYOUT
+    // Only the one-shot ROM player may open a stream in zeroed BSS.
+    bool beginRom(const uint8_t* input,uint16_t size,bool reset);
+#endif
 
     // Stream lifetime and container/entropy readers.
     // Share one clearing loop between construction and begin(), even with LTO.

@@ -289,7 +289,14 @@ bool Lpx4HybridCore::beginStream(ReadByte reader,void* context,uint16_t size){
 bool Lpx4HybridCore::beginSource(uint16_t size){
  bytes_=size;
 #else
+#if LPX4_AVR25_V9_ROM_LAYOUT
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
+ return beginRom(input,size,true);
+}
+bool Lpx4HybridCore::beginRom(const uint8_t* input,uint16_t size,bool reset){
+#else
+bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
+#endif
 #if !LPX4_AVR25_V9_HEADER_COPY
  data_=input;bytes_=size;
 #endif
@@ -297,8 +304,15 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if !LPX4_ROM_POINTER
  cursor_=0;
 #endif
+#if LPX4_AVR25_V9_ROM_LAYOUT
+ if(reset){
+  remaining_=sampleCount_;
+  resetState();
+ }
+#else
  remaining_=sampleCount_;
  resetState();
+#endif
 #if LPX4_ENABLE_INPUT_CALLBACK
  if((!data_&&!inputReader_)||size<(LPX4_COMPACT_VERSION==9?13:20)){error_=BAD_HEADER;return false;}
 #else
