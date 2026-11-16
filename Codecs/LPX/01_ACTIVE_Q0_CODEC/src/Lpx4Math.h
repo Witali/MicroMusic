@@ -411,10 +411,13 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 // For negative a, subtract 256*h. Every intermediate fits signed24;
 // the existing Q4 nibble mask preserves each separate Q12 floor.
 #define LPX4_NOMUL_PRODUCT \
-    "mov r22,r20\n\ttst r22\n\tbrne 18f\n\ttst r21\n\tbrne 18f\n\trjmp 5f\n\t18:\n\t" \
+    /* Test both history bytes while keeping the low byte in r22. */ \
+    "movw r22,r20\n\tor r23,r22\n\tbrne 18f\n\trjmp 5f\n\t18:\n\t" \
     LPX4_NOMUL_SATURATED \
     "clr r24\n\tclr r25\n\t" \
-    ".rept 8\n\t" LPX4_NOMUL_HIGH_STEP ".endr\n\t" \
+    /* The first unsigned round is either zero or half the coefficient. */ \
+    "lsr r22\n\tbrcc 3f\n\tmovw r24,r18\n\tlsr r25\n\tror r24\n\t3:\n\t" \
+    ".rept 7\n\t" LPX4_NOMUL_HIGH_STEP ".endr\n\t" \
     "mov r22,r21\n\tsubi r22,248\n\tcpi r22,16\n\tbrsh 9f\n\t" \
     "mov r23,r24\n\tmov r24,r25\n\tclr r25\n\t" \
     /* Recover the signed counter from the range test and set Z and N. */ \

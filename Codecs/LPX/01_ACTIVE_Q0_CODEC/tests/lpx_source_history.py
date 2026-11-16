@@ -42,6 +42,7 @@ SIGNED6_EXCITATION=REPO/'Codecs/LPX/research/tiny-v9-signed6-excitation-2026-11-
 SYNTHESIS_HISTORY_Z=REPO/'Codecs/LPX/research/tiny-v9-synthesis-history-z-2026-11-16'
 PREPARED_ATTENUATION=REPO/'Codecs/LPX/research/tiny-v9-prepared-attenuation-2026-11-16'
 ALIGNED_PITCH_PAGE=REPO/'Codecs/LPX/research/tiny-v9-aligned-pitch-page-2026-11-16'
+LPC_ZERO_SEED=REPO/'Codecs/LPX/research/tiny-v9-lpc-zero-seed-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -190,6 +191,7 @@ def assert_recorded_source(path,expected):
         (SYNTHESIS_HISTORY_Z,'f37f1b818669a0335c50a411e03e9760011052fe'),
         (PREPARED_ATTENUATION,'3fc608349445f69e9ed054772010232b614509a9'),
         (ALIGNED_PITCH_PAGE,'cf013a74d477564d106a8e4f25de0061b8b8a812'),
+        (LPC_ZERO_SEED,'ce0b1c93cee257e2e2899bb9502d67f2b0bce899'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

@@ -510,3 +510,18 @@ calling convention. The repeat path explicitly clears the separately
 stored ring. The C build uses regular array indexing. AVR-GCC 7.3.0
 with SRAM512, LPC2 and FIFO32 saves 48 program bytes and roughly 4–7
 cycles per sample in 22 simavr 1.6 workloads with active IRQ. [Paired measurements](../../Codecs/LPX/research/tiny-v9-aligned-pitch-page-2026-11-16/README.md).
+
+## Seed the unsigned low-byte rotation in LPC synthesis
+
+Copy the history word with `MOVW` and OR the copy in its high byte to
+check for zero while preserving the low-byte multiplier. At the first
+round the accumulator starts at zero. If the first multiplier bit is
+set, copying the coefficient and shifting it right once gives the same
+initial partial product. If the bit is clear, keep the accumulator at
+zero. The remaining seven rounds and signed correction preserve the
+original per-tap Q12 floor. The selectable C synthesis uses the same
+rounded product.
+
+ATtiny88 with AVR-GCC 7.3.0 saves six program bytes. In 22 simavr 1.6
+IRQ workloads, full PWM remains exact and the heaviest mean drops from
+1610.56 to 1595.62 cycles per sample. [Paired measurements](../../Codecs/LPX/research/tiny-v9-lpc-zero-seed-2026-11-16/README.md).
