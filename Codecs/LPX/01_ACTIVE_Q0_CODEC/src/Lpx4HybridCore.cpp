@@ -821,8 +821,9 @@ bool Lpx4HybridCore::readSubframe(){
    const uint8_t first=readBits(5),second=readBits(5);
    pulsePos_[0]=compactPulsePosition(first&15);
    pulsePos_[1]=20+compactPulsePosition(second&15);
-   pulseAmp_[0]=(first&16)?8:-8;
-   pulseAmp_[1]=(second&16)?8:-8;
+   // Bit 4 contributes either 0 or 16 to the amplitude biased by -8.
+   pulseAmp_[0]=(int8_t)((first&16)-8);
+   pulseAmp_[1]=(int8_t)((second&16)-8);
   }
 #else
 #if LPX4_ENABLE_SPEECH_COMPACT

@@ -304,3 +304,13 @@ representation as the recurrence expects. AVR-GCC 7.3.0 with the GNU AVR
 ABI emits 14 fewer program bytes. The 22 paired simavr 1.6 cases retain
 exact PWM and zero underruns with active IRQ.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-poly-seed-2026-11-16/README.md).
+
+## Decode P4 pulse amplitude with a mask and bias
+
+The P4 amplitude bit has weight 16 in the packed pulse. Mask that bit
+and subtract 8 to recover exactly −8 or +8. The resulting code avoids
+two conditional branches and keeps both signed pulse values available
+for optional extra-pulse merging. On ATtiny88, AVR-GCC 7.3.0 with GNU
+AVR ABI saves 10 program bytes. All 22 simavr 1.6 IRQ cases retain exact
+PWM and real-time playback.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-p4-amplitude-2026-11-16/README.md).
