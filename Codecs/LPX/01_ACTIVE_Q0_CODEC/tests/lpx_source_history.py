@@ -47,6 +47,7 @@ LPC_ODD_PHASE=REPO/'Codecs/LPX/research/tiny-v9-lpc-odd-phase-2026-11-16'
 SHARED_AVR_PLAYER=REPO/'Codecs/LPX/research/shared-avr-v9-player-2026-11-16'
 AVR5_PITCH_PAGE=REPO/'Codecs/LPX/research/avr5-v9-pitch-page-2026-11-16'
 AVR5_LPC_BIAS=REPO/'Codecs/LPX/research/avr5-v9-lpc-bias-2026-11-16'
+AVR5_POLY24=REPO/'Codecs/LPX/research/avr5-v9-poly24-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -200,6 +201,7 @@ def assert_recorded_source(path,expected):
         (SHARED_AVR_PLAYER,'2e141dcc17f3620042fdfba3610349651921cd18'),
         (AVR5_PITCH_PAGE,'799f7b5764e4d4eef88a3475e4354e77158bb7a3'),
         (AVR5_LPC_BIAS,'95bc776c7fc823601c298a23236a0ab14269d849'),
+        (AVR5_POLY24,'b0ea2e27aff3b4807a22ab730bdcc535ef8881ab'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

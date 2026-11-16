@@ -40,6 +40,13 @@
 #define LPX4_AVR25_V9_RUNTIME 0
 #endif
 #define LPX4_AVR25_V9_HEADER_COPY (LPX4_AVR25_V9_ROM_LAYOUT && LPX4_AVR25_V9_RUNTIME)
+#if LPX4_USE_AVR_ASM && LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#define LPX4_USE_AVR5_POLYNOMIAL_MUL 1
+#else
+#define LPX4_USE_AVR5_POLYNOMIAL_MUL 0
+#endif
+#define LPX4_POLY24_WORKSPACE \
+    (LPX4_AVR25_V9_RUNTIME || (LPX4_USE_AVR5_POLYNOMIAL_MUL && LPX4_COMPACT_VERSION==9))
 #if LPX4_AVR25_V9_RUNTIME && !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14)
 #define LPX4_AVR25_V9_PREPARED_ATTENUATION 1
 #else
@@ -1332,8 +1339,7 @@ static inline int32_t polyMulQ12(int32_t v,int16_t c){
     // Preserve the original separate floors of the two split products.
     return (lpx4Mul32x16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
 }
-#if LPX4_USE_AVR_ASM && LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && !defined(LPX4_FIXED_SPEECH_FLAGS)
-#define LPX4_USE_AVR5_POLYNOMIAL_MUL 1
+#if LPX4_USE_AVR5_POLYNOMIAL_MUL
 // The direct branch bounds x to signed24 and the product to signed32.
 // Treat the low two bytes of x as unsigned and the third as signed.
 // Six byte products suffice modulo 2^32. Restore r1 before returning to C++.
@@ -1352,17 +1358,17 @@ static __attribute__((noinline)) int32_t polyDirectProduct(int32_t x,int16_t y){
         : "=&r"(result),"=&r"(zero) : "a"(x),"a"(y) : "r0","r1","cc");
     return (int32_t)result;
 }
-#else
-#define LPX4_USE_AVR5_POLYNOMIAL_MUL 0
 #endif
 // Conversion-only bound: before the fifth quadratic, each coefficient is
 // bounded by 4096*binomial(9,k), at most 516096. Earlier factors use the
 // direct path, so no split-floor error enters that bound. Consequently
 // trunc(v/16) fits signed16 (|hi|<=32256). Keep the exact 250000 threshold
 // and both separate floors; the unrestricted polynomial helper stays above.
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE
 typedef int PolyCoefficient __attribute__((mode(PSI)));
+#endif
 
+#if LPX4_AVR25_V9_RUNTIME
 // Four signed steps compute floor(residue*factor/16). The upper bits of
 // a negative residue encode an implicit -16, corrected after the shifts.
 static inline __attribute__((always_inline)) int16_t polyRemainderQ4(int8_t residue,int16_t factor){
@@ -1469,7 +1475,7 @@ static const bool halfPolynomialP=false;
 #else
 static const bool halfPolynomialP=true;
 #endif
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE
 // Degree-11 coefficients fit signed24: 4096*binomial(11,5)+1 is
 // below 2^21, and twice that bound also fits signed24. Keep the
 // four-byte slot stride so a word never straddles the ring boundary.
@@ -1597,7 +1603,7 @@ static inline __attribute__((always_inline)) int16_t centeredLsf(uint8_t q,uint8
  return q ? (int16_t)((uint16_t)(q*2-1)<<((profile&2)?3:4)) : 0;
 }
 #endif
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE
 // AVR-GCC 7.3.0 emits a smaller recurrence with the address operations
 // left inside their branches. Keep this choice local to the converter.
 __attribute__((optimize("no-code-hoisting")))
@@ -1629,7 +1635,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
     // Lead-in <=3 plus the workspace fits in the 111 dead future slots.
     const uint8_t pbase=(uint8_t)((ringCursor_+3)&252);
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE
     // P stores coefficients 0..5. Q stores 0..10 with the trailing unit implicit.
     const uint8_t qbase=(uint8_t)(pbase+24);
     ringPolyStore24(ringQ_,pbase,4096);
@@ -1676,7 +1682,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
             // |cc|<=8192, so the shared first coefficient fits signed16.
             // P2=P1 and Q2=-Q1 for these exact initial unit factors.
             const int16_t first=unit+cc;
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE
             const PolyCoefficient initial=first;
             ringPolyStore24(ringQ_,base+4,initial);
             ringPolyStore24(ringQ_,base+8,(i&1)?-initial:initial);
@@ -1696,13 +1702,13 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #endif
     }
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE
     // Mirror P at the middle pair. Q remains forward throughout.
     uint8_t pOffset=pbase+4,qOffset=qbase+4;
     uint8_t pStep=4;
 #endif
     for(uint8_t i=0;i<10;i++){
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE
         const PolyCoefficient sum=ringPolyLoad24(ringQ_,pOffset)+ringPolyLoad24(ringQ_,qOffset);
         out[i]=lpx4HalfClip15From24(sum);
         qOffset+=4;

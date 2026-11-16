@@ -68,6 +68,11 @@ static void clip24(int32_t value){
     const int16_t actual=lpx4Clip15From24(value);checkZero(actual);
     if(actual!=referenceClip15(value))math_error=16;
     ++math_cases;
+#if LPX4_COMPACT_VERSION==9
+    const int16_t half=lpx4HalfClip15From24(value);checkZero(half);
+    if(half!=referenceClip15(value/2))math_error=28;
+    ++math_cases;
+#endif
 }
 __attribute__((noinline)) static int32_t unsignedProduct(int8_t x,uint16_t y){return (int32_t)x*y;}
 static void unsignedCase(int8_t x,uint16_t y){
