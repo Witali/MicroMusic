@@ -253,3 +253,18 @@ with SRAM512, LPC2 and FIFO32/prefill24 saves 32 program bytes and
 10–15 cycles/sample including IRQ across all 22 loads in simavr 1.6.
 The direct probe covers all 32,769 inputs with active IRQ.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-bounded-pwm-2026-11-16/README.md).
+
+## Fractional interpolation of an unsigned endpoint difference
+
+Take the sign from the AVR signed comparison after subtracting the LPC
+endpoints. The absolute difference fits 16 bits, including differences
+that overflow signed16. An odd phase seeds half the magnitude. Each
+remaining multiplier bit conditionally adds the magnitude. Rotate the
+unsigned carry into the high byte and the high bit into the low byte.
+Restore the sign after all phase bits to truncate toward zero.
+
+The v9 build uses the same cached endpoint for the rest of a static frame
+after subframe zero. Both changes together save 32 B on ATtiny88 with
+AVR-GCC 7.3.0 and GNU AVR ABI. The selectable C interpolation is equivalent.
+The 22 simavr 1.6 IRQ workloads retain exact PWM and run without underruns.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-unsigned-interp-2026-11-16/README.md).

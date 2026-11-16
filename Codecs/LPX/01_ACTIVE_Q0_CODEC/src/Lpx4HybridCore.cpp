@@ -1469,6 +1469,11 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     // An unchanged LSF vector has identical polynomial anchors and no LPC
     // interpolation. The cached endpoint is valid across repeated frames.
     if(staticSpectrum_){
+#if LPX4_AVR25_V9_RUNTIME && LPX4_ROTATE_LPC_ANCHORS && !defined(LPX3_BANDWIDTH_EXPAND_Q14)
+        // Subframe zero has already primed the cache and copied the
+        // endpoint. The other subframes of a static spectrum reuse it.
+        if(sub)return;
+#endif
         if(!lsfCached_){
             // Use the first frame's current spectrum directly on AVR25.
             convertLsfAt(LPX4_AVR25_V9_RUNTIME?16:0,curLpc);

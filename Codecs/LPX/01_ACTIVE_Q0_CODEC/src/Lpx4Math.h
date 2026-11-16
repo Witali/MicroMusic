@@ -103,27 +103,26 @@ static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t 
         : "r0","r1","cc");
     return (int16_t)product;
 #elif LPX4_USE_AVR_NOMUL_ASM
+    if(oddPhase){
+        // The signed comparison after SBC handles a 17-bit difference.
+        // Its magnitude fits uint16_t. Start with the implicit low phase
+        // bit, then rotate each unsigned addition's carry into the result.
+        // Restoring the sign after the division truncates toward zero.
+        uint16_t part,mag;
+        __asm__(
+            "clt\n\tmovw %A1,%A3\n\tsub %A1,%A4\n\tsbc %B1,%B4\n\t"
+            "brge 1f\n\tset\n\tcom %B1\n\tneg %A1\n\tsbci %B1,255\n\t"
+            "1: movw %A0,%A1\n\tlsr %B0\n\tror %A0\n\tlsr %2\n\t"
+            ".rept %5-1\n\tlsr %2\n\tbrcc 2f\n\t"
+            "add %A0,%A1\n\tadc %B0,%B1\n\t"
+            "2: ror %B0\n\tror %A0\n\t.endr\n\t"
+            "brtc 3f\n\tcom %B0\n\tneg %A0\n\tsbci %B0,255\n\t"
+            "3: add %A0,%A4\n\tadc %B0,%B4\n\t"
+            : "=&d"(part),"=&d"(mag),"+&r"(t) : "r"(cur),"r"(prev),"I"(bits) : "cc");
+        return (int16_t)part;
+    }
     int32_t delta=(int32_t)cur-prev,product;
     uint8_t bias;
-    if(oddPhase){
-        // The subframe midpoint is odd and below 2^bits. Seed the low
-        // product bit with delta and visit only the remaining set-bit span.
-        // Delta is signed17. Its third byte is 0 or -1, and the biased
-        // product fits signed24. The final shift still truncates toward zero.
-        __asm__(
-            "mov %3,%C1\n\tandi %3,%6\n\t"
-            "mov %A0,%A1\n\tmov %B0,%B1\n\tmov %C0,%C1\n\t"
-            "add %A0,%3\n\tadc %B0,__zero_reg__\n\tadc %C0,__zero_reg__\n\t"
-            "lsr %2\n\tbreq 3f\n\t2:\n\t"
-            "lsl %A1\n\trol %B1\n\trol %C1\n\t"
-            "lsr %2\n\tbrcc 1f\n\tadd %A0,%A1\n\tadc %B0,%B1\n\tadc %C0,%C1\n\t"
-            "1: tst %2\n\tbrne 2b\n\t3:\n\t"
-            ".rept %5\n\tasr %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
-            "add %A0,%A4\n\tadc %B0,%B4\n\t"
-            : "=&r"(product),"+&r"(delta),"+&r"(t),"=&d"(bias)
-            : "r"(prev),"I"(bits),"M"((1U<<bits)-1) : "cc");
-        return (int16_t)product;
-    }
     __asm__(
         "clr %A0\n\tclr %B0\n\tclr %C0\n\t"
         "mov %3,%C1\n\tandi %3,%6\n\t"
