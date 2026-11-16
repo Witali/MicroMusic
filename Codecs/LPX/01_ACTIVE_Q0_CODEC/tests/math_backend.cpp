@@ -104,18 +104,19 @@ __attribute__((noinline)) static void ringCase(int32_t excitation,const int16_t*
     ++math_cases;
 }
 #if LPX4_COMPACT_VERSION==9
-template<bool keepQ4>
-__attribute__((noinline)) static void paddedSynthesisCase(int32_t excitation,const int16_t* a,
+template<bool keepQ4,bool spareHistory=true>
+__attribute__((noinline)) static void scaledSynthesisCase(int32_t excitation,const int16_t* a,
                                                          const int16_t* original,int32_t expected){
     int16_t history[11];
     for(uint8_t i=0;i<10;i++)history[i]=original[i];
     history[10]=12345;
     int16_t* base=nullptr;
-    const int32_t actual=lpx4SynthesisQ12<true,true,keepQ4>(excitation*16,a,history,&base);
+    const int32_t actual=lpx4SynthesisQ12<true,spareHistory,keepQ4>(excitation*16,a,history,&base);
     checkZero(actual);
     if(base!=history || actual!=(excitation-expected)*(keepQ4?16:1))math_error=26;
     if(history[0]!=original[0])math_error=27;
-    for(uint8_t i=1;i<11;i++)if(history[i]!=original[i-1])math_error=27;
+    for(uint8_t i=1;i<10;i++)if(history[i]!=original[i-1])math_error=27;
+    if(history[10]!=(spareHistory?original[9]:12345))math_error=27;
     ++math_cases;
 }
 #endif
@@ -235,8 +236,9 @@ int main(){
         ++math_cases;
         ringCase(excitation,a,original,expected,n%10);
 #if LPX4_COMPACT_VERSION==9
-        paddedSynthesisCase<false>(excitation,a,original,expected);
-        paddedSynthesisCase<true>(excitation,a,original,expected);
+        scaledSynthesisCase<false>(excitation,a,original,expected);
+        scaledSynthesisCase<true>(excitation,a,original,expected);
+        scaledSynthesisCase<false,false>(excitation,a,original,expected);
 #endif
     }
 #ifdef __AVR__

@@ -44,9 +44,9 @@ def run(output, avr_bin, runner, lib=None, wsl=None,dot_unroll=9,compact_v9=Fals
             if lib: env['LD_LIBRARY_PATH'] = str(Path(lib).resolve())
             result = subprocess.check_output([str(runner.resolve()),str(target.resolve())],text=True,env=env)
         report = json.loads(next(line for line in result.splitlines() if line.startswith('{')))
-        # v9 adds two padded syntheses and a half-clip for each synthesis
+        # v9 adds three scaled syntheses and a half-clip for each synthesis
         # vector, plus a half-clip for the signed24 boundary cases.
-        expected_cases = 5768584 + (3*16384 + 131072 + 256*6 if compact_v9 else 0)
+        expected_cases = 5768584 + (4*16384 + 131072 + 256*6 if compact_v9 else 0)
         if report['cases'] != expected_cases or report['backend'] != expected or report['irqs'] < 100:
             raise AssertionError(report)
         if not report['done'] or report['error'] or report['zero_error']:

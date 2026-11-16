@@ -2086,6 +2086,11 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     const int32_t synthesis=lpx4SynthesisQ12<LPX4_EXCITATION_Q4,true,true>(excitation,a_,hist_,&history);
     const int16_t pred=lpx4ClipSynthesisQ4(synthesis);
     *history=pred;
+#elif LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9 && \
+      LPX4_AVR_DOT_UNROLL==9 && LPX4_EXCITATION_Q4
+    // The oldest history word is read once and its extra shift slot is dead.
+    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,a_,hist_));
+    hist_[0]=pred;
 #else
     int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,LPX4_COMPACT_VERSION==9>(excitation,a_,hist_));
     hist_[0]=pred;

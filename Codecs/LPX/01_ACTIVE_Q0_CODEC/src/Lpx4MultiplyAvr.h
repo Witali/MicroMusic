@@ -44,9 +44,17 @@ static inline __attribute__((always_inline)) int32_t lpx4Mul8xU16(int8_t x,uint1
     int32_t result;
     __asm__(
         "mulsu %1,%A2\n\tmovw %A0,r0\n\t"
+#if LPX4_COMPACT_VERSION==9
+        // MULSU copies the sign to carry. The two partial products have the
+        // same sign or are zero, so any negative partial makes the result negative.
+        "sbc %C0,%C0\n\t"
+        "mulsu %1,%B2\n\tsbc %D0,%D0\n\tor %D0,%C0\n\t"
+        "add %B0,r0\n\tadc %C0,r1\n\tclr __zero_reg__\n\t"
+#else
         "mov %C0,r1\n\tlsl %C0\n\tsbc %C0,%C0\n\t"
         "mulsu %1,%B2\n\tadd %B0,r0\n\tadc %C0,r1\n\t"
         "mov %D0,%C0\n\tlsl %D0\n\tsbc %D0,%D0\n\tclr __zero_reg__\n\t"
+#endif
         : "=&r"(result) : "a"(x),"a"(y) : "r0","r1","cc");
     return result;
 #else

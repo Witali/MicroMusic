@@ -309,9 +309,18 @@ static inline __attribute__((always_inline)) int32_t lpx4BoundedPolyQ12(int32_t 
 // Ten signed 20-bit products fit a signed 24-bit accumulator. The multiply's
 // partial-product carry pattern follows AVR201 / Speex avr_multiply.h; this
 // unrolled history traversal and per-product shift are LPX-specific.
+#define LPX4_LPC_LOAD_REVERSE "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
+#define LPX4_LPC_SHIFT_HISTORY "std Z+2,r20\n\tstd Z+3,r21\n\t"
+#if LPX4_COMPACT_VERSION==9
+#define LPX4_DOT_LOW_RESULT "mov r23,r1\n\t"
+#define LPX4_DOT_LOW_CLOBBER
+#else
+#define LPX4_DOT_LOW_RESULT "movw r22,r0\n\t"
+#define LPX4_DOT_LOW_CLOBBER "r22",
+#endif
 #define LPX4_DOT_PRODUCT_BYTES \
     "muls r19,r21\n\tmovw r24,r0\n\t" \
-    "mul r18,r20\n\tmovw r22,r0\n\t" \
+    "mul r18,r20\n\t" LPX4_DOT_LOW_RESULT \
     "mulsu r19,r20\n\tsbc r25,r16\n\t" \
     "add r23,r0\n\tadc r24,r1\n\tadc r25,r16\n\t" \
     "mulsu r21,r18\n\tsbc r25,r16\n\t" \
@@ -328,14 +337,14 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     a+=10;h+=10;
     __asm__ (
         "clr %A0\n\tclr %B0\n\tclr %C0\n\tclr r16\n\t"
-        "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
+        LPX4_LPC_LOAD_REVERSE
         LPX4_DOT_MUL
 #if LPX4_AVR_DOT_UNROLL!=9
         "ldi r17," LPX4_STRING(9/LPX4_AVR_DOT_UNROLL) "\n\t1:\n\t"
 #endif
         ".rept " LPX4_STRING(LPX4_AVR_DOT_UNROLL) "\n\t"
-        "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
-        "std Z+2,r20\n\tstd Z+3,r21\n\t"
+        LPX4_LPC_LOAD_REVERSE
+        LPX4_LPC_SHIFT_HISTORY
         LPX4_DOT_MUL
         ".endr\n\t"
 #if LPX4_AVR_DOT_UNROLL!=9
@@ -349,7 +358,7 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 #if LPX4_AVR_DOT_UNROLL!=9
           "r17",
 #endif
-          "r22","r23","r24","r25","cc","memory"
+          LPX4_DOT_LOW_CLOBBER "r23","r24","r25","cc","memory"
     );
     return result;
 #else
@@ -507,19 +516,43 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         "clr r16\n\t"
         ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
         LPX4_SYNTH_INIT
-        "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
-        ".if %4\n\tstd Z+2,r20\n\tstd Z+3,r21\n\t.endif\n\t"
+#if LPX4_COMPACT_VERSION==9 && LPX4_AVR_DOT_UNROLL==9
+        // T distinguishes the two five-tap passes. Before pass one the oldest
+        // word is only loaded. The tail prepares the next tap and shifts it
+        // before pass two reuses the same five multiplies.
+        ".if !%4 && !%3\n\t"
+        "clt\n\t"
+        LPX4_LPC_LOAD_REVERSE
+        "1:\n\t"
+        LPX4_SYNTH_MUL
+        ".rept 4\n\t"
+        LPX4_LPC_LOAD_REVERSE
+        LPX4_LPC_SHIFT_HISTORY
+        LPX4_SYNTH_MUL
+        ".endr\n\tbrts 3f\n\tset\n\t"
+        LPX4_LPC_LOAD_REVERSE
+        LPX4_LPC_SHIFT_HISTORY
+        "rjmp 1b\n\t3:\n\t"
+        ".else\n\t"
+#endif
+        LPX4_LPC_LOAD_REVERSE
+        ".if %4\n\t"
+        LPX4_LPC_SHIFT_HISTORY
+        ".endif\n\t"
         LPX4_SYNTH_MUL
 #if LPX4_AVR_DOT_UNROLL!=9
         "ldi r17," LPX4_STRING(9/LPX4_AVR_DOT_UNROLL) "\n\t1:\n\t"
 #endif
         ".rept " LPX4_STRING(LPX4_AVR_DOT_UNROLL) "\n\t"
-        "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
-        "std Z+2,r20\n\tstd Z+3,r21\n\t"
+        LPX4_LPC_LOAD_REVERSE
+        LPX4_LPC_SHIFT_HISTORY
         LPX4_SYNTH_MUL
         ".endr\n\t"
 #if LPX4_AVR_DOT_UNROLL!=9
         "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
+#endif
+#if LPX4_COMPACT_VERSION==9 && LPX4_AVR_DOT_UNROLL==9
+        ".endif\n\t"
 #endif
         ".if !%5\n\t.rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t.endif\n\t"
         "clr __zero_reg__\n\t"
@@ -529,7 +562,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 #if LPX4_AVR_DOT_UNROLL!=9
           "r17",
 #endif
-          "r22","r23","r24","r25","cc","memory"
+          LPX4_DOT_LOW_CLOBBER "r23","r24","r25","cc","memory"
     );
     if(finalHistory)*finalHistory=h;
     return result;
@@ -545,8 +578,10 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 #endif
         ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
         "ldi r17,10\n\t1:\n\t"
-        "ld r19,-X\n\tld r18,-X\n\tld r21,-Z\n\tld r20,-Z\n\t"
-        ".if !%5\n\tcpi r17,10\n\tbreq 2f\n\t.endif\n\tstd Z+2,r20\n\tstd Z+3,r21\n\t2:\n\t"
+        LPX4_LPC_LOAD_REVERSE
+        ".if !%5\n\tcpi r17,10\n\tbreq 2f\n\t.endif\n\t"
+        LPX4_LPC_SHIFT_HISTORY
+        "2:\n\t"
         LPX4_NOMUL_SUB
         "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
         ".if !%6\n\t.rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t.endif\n\t"
@@ -602,7 +637,7 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
 #if LPX4_AVR_DOT_UNROLL!=9
           "r17",
 #endif
-          "r22","r23","r24","r25","cc","memory"
+          LPX4_DOT_LOW_CLOBBER "r23","r24","r25","cc","memory"
     );
     return result;
 #else
@@ -622,6 +657,10 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
 #undef LPX4_NOMUL_SUB
 #undef LPX4_DOT_PRODUCT
 #undef LPX4_DOT_PRODUCT_BYTES
+#undef LPX4_DOT_LOW_RESULT
+#undef LPX4_DOT_LOW_CLOBBER
+#undef LPX4_LPC_LOAD_REVERSE
+#undef LPX4_LPC_SHIFT_HISTORY
 #undef LPX4_DOT_MUL
 #undef LPX4_STRING
 #undef LPX4_STRING_
