@@ -11,8 +11,16 @@ assert.ok([1,2,4,8,16].includes(build.mul16_unroll),'Valid recorded multiply unr
 const names=['c','asm','generic'];
 const cpus=names.map(name=>{
  assert.equal(sha(`${folder}/${name}.bin`),build.backends[name].binary_sha256,`${name} built image`);
- const nm=readFileSync(`${folder}/${name}.nm`,'utf8');
- const sym=n=>parseInt(nm.split(/\r?\n/).find(l=>l.trim().endsWith(' '+n)).trim().split(/\s+/)[0],16)&65535;
+ const symbols=readFileSync(`${folder}/${name}.nm`,'utf8').split(/\r?\n/);
+ const addresses=new Map();
+ const sym=n=>{
+  if(!addresses.has(n)){
+   const entry=symbols.find(line=>line.trim().endsWith(' '+n));
+   assert.ok(entry,`${name} symbol ${n}`);
+   addresses.set(n,parseInt(entry.trim().split(/\s+/)[0],16)&65535);
+  }
+  return addresses.get(n);
+ };
  const cpu=new AVRCore(readFileSync(`${folder}/${name}.bin`),null,{target:'attiny88',cpuHz:16000000,
   fastIdle:false,fastBlocks:false,optimizeFlags:false,cacheTranslation:false});
  while(!cpu.data[sym('math_ready')]){cpu.step();assert.ok(cpu.cyc<20000);}
@@ -179,7 +187,7 @@ if(process.argv.includes('--exhaustive-synthesis')){
 if(process.argv.includes('--exhaustive-dynamic')){
  for(let c=0;c<=16384;c++)for(const x of [-32768,-32767,-1,1,32767])
   check(4,x,c,Math.floor(x*c/16384));
- for(let x=-32768;x<=32767;x++)for(const c of [1,8191,8193,16383])
+ for(let x=-32768;x<=32767;x++)for(const c of [1,64,8191,8192,8193,16383,16384])
   check(4,x,c,Math.floor(x*c/16384));
 }
 if(process.argv.includes('--exhaustive-fixed'))

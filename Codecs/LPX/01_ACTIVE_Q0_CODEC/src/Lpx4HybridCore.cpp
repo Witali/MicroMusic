@@ -40,6 +40,11 @@
 #define LPX4_AVR25_V9_RUNTIME 0
 #endif
 #define LPX4_AVR25_V9_HEADER_COPY (LPX4_AVR25_V9_ROM_LAYOUT && LPX4_AVR25_V9_RUNTIME)
+#if LPX4_AVR25_V9_RUNTIME && !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14)
+#define LPX4_AVR25_V9_PREPARED_ATTENUATION 1
+#else
+#define LPX4_AVR25_V9_PREPARED_ATTENUATION 0
+#endif
 
 #ifdef __AVR__
 #include <avr/pgmspace.h>
@@ -461,6 +466,10 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
  if((!LPX4_AVR25_V9_HEADER_COPY && error_)||sampleRate_!=8000||!sampleCount_||!geometry||
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
+#if LPX4_AVR25_V9_PREPARED_ATTENUATION
+ preQ14_=lpx4PrepareAttenuationQ14(preQ14_);
+ brightQ14_=lpx4PrepareAttenuationQ14(brightQ14_);
+#endif
  return true;
 }
 // LSB-first bit and entropy readers.
@@ -1943,19 +1952,27 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     hist_[0]=pred;
 #endif
 #endif
-#ifdef LPX4_FIXED_PRE_Q14
+#if LPX4_AVR25_V9_PREPARED_ATTENUATION
+    int16_t deemph=preQ14_?lpx4AddClip15<true>(pred,lpx4PreparedAttenuationQ14(prevDeemph_,preQ14_)):pred;
+#elif defined(LPX4_FIXED_PRE_Q14)
     int16_t deemph=LPX4_FIXED_PRE_Q14?lpx4AddClip15<LPX4_AVR25_V9_RUNTIME>(pred,lpx4AttenuateFixedQ14<LPX4_FIXED_PRE_Q14>(prevDeemph_)):pred;
 #else
     int16_t deemph=preQ14_?lpx4AddClip15<LPX4_AVR25_V9_RUNTIME>(pred,lpx4AttenuateQ14(preQ14_,prevDeemph_)):pred;
 #endif
     // Between samples, brightness history is exactly clipQ14(prevDeemph_).
     // Derive it before publishing the new deemphasis state.
+#if LPX4_AVR25_V9_PREPARED_ATTENUATION
+    const int16_t previous=prevDeemph_;
+#else
     const int16_t prevBright=lpx4ClipQ14(prevDeemph_);
+#endif
     prevDeemph_=deemph;
     int16_t clipped=lpx4ClipQ14(deemph);
     // Header validation limits brightness to11469; both clipped values are
     // +/-16384. The un-clipped difference is within +/-27853, signed16-safe.
-#ifdef LPX4_FIXED_BRIGHT_Q14
+#if LPX4_AVR25_V9_PREPARED_ATTENUATION
+    int16_t b=brightQ14_?lpx4ClipQ14((int16_t)(clipped-lpx4PreparedAttenuationQ14(lpx4ClipQ14(previous),brightQ14_))):clipped;
+#elif defined(LPX4_FIXED_BRIGHT_Q14)
     int16_t b=LPX4_FIXED_BRIGHT_Q14?lpx4ClipQ14((int16_t)(clipped-lpx4AttenuateFixedQ14<LPX4_FIXED_BRIGHT_Q14>(prevBright))):clipped;
 #else
     int16_t b=brightQ14_?lpx4ClipQ14((int16_t)(clipped-lpx4AttenuateQ14(brightQ14_,prevBright))):clipped;

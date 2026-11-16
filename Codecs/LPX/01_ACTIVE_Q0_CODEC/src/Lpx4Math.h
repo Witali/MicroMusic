@@ -817,6 +817,38 @@ static inline int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
 #endif
 }
 
+#if LPX4_USE_AVR_NOMUL_ASM
+// Tag the two shift-only coefficients after validating the stream header.
+// The common offset keeps unity at 0x4000 and puts 64 at 0xa040 and
+// 8192 at 0xc000. The tags are only used by the prepared AVR25 kernel.
+static __attribute__((noinline)) uint16_t lpx4PrepareAttenuationQ14(uint16_t coefficient){
+    if(coefficient==8192 || coefficient==64)coefficient+=0xa000u;
+    return coefficient;
+}
+
+// GNU AVR ABI: state arrives and returns in r25:r24. The coefficient
+// arrives in r23:r22. The leaf uses only call-clobbered registers and flags.
+static __attribute__((naked,noinline,noclone)) int16_t lpx4PreparedAttenuationQ14(int16_t,uint16_t){
+    __asm__ volatile(
+        "cpi r23,64\n\tbrsh 7f\n\t"
+        // Bias the signed state by 32768 and save the unshifted coefficient.
+        "movw r18,r24\n\tmovw r20,r22\n\tsubi r19,128\n\tclr r24\n\tclr r25\n\t"
+        "lsr r22\n\tbrcc 4f\n\tmovw r24,r18\n\tlsr r25\n\tror r24\n\t4:\n\t"
+        "lsr r22\n\tbrcc 2f\n\tadd r24,r18\n\tadc r25,r19\n\t"
+        "2: ror r25\n\tror r24\n\t"
+        // The six remaining low-byte rounds and six high-byte rounds share code.
+        "clt\n\t5:\n\t.rept 6\n\t"
+        "lsr r22\n\tbrcc 2f\n\tadd r24,r18\n\tadc r25,r19\n\t"
+        "2: ror r25\n\tror r24\n\t.endr\n\tbrts 6f\n\tset\n\tmov r22,r23\n\trjmp 5b\n\t"
+        // Undo the bias by subtracting exactly twice the coefficient.
+        "6: lsl r20\n\trol r21\n\tsub r24,r20\n\tsbc r25,r21\n\tret\n\t"
+        // CPI leaves Z for unity and N distinguishes the two shift tags.
+        "7: brne 8f\n\tret\n\t8: brpl 10f\n\t"
+        "asr r25\n\tror r24\n\tret\n\t"
+        "10: mov r24,r25\n\tlsl r25\n\tsbc r25,r25\n\tret");
+}
+#endif
+
 // A ROM player may pin validated stream-wide filter constants at build time.
 // The public/default decoder retains dynamic parameters and portable arithmetic.
 template<uint16_t coefficient>

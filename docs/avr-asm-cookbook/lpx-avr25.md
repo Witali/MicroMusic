@@ -471,3 +471,23 @@ AVR-GCC 7.3.0 with SRAM512, LPC2 and FIFO32 saves four program bytes.
 All 22 simavr 1.6 workloads retain exact PWM and the same mean decode
 time with IRQ. [Paired measurements](../../Codecs/LPX/research/tiny-v9-synthesis-history-z-2026-11-16/README.md).
 [AVR instruction set summary](https://onlinedocs.microchip.com/oxy/GUID-0B644D8F-67E7-49E6-82C9-1B2B9ABE6A0D-en-US-23/GUID-BA59618D-4850-490B-B176-0BCC3D9438A1.html).
+
+## Dispatch bounded Q14 coefficients with one comparison
+
+Once the stream header validates coefficients in 0..16384, add `0xa000`
+to 64 and 8192. Comparing the high byte to 64 separates the generic
+coefficients by carry, unity by zero, and the two tagged shifts by
+negative. Use `BRPL` to read N directly. Under the GNU AVR ABI, pass
+the signed state first so unity can return it in place in r25:r24.
+Only call-clobbered registers and status flags are modified.
+
+For generic coefficients, bias the signed state by 32768. Process the
+least significant two coefficient bits first, then run the same six-bit
+shift-add block for the remaining low byte and the high byte. Subtract
+twice the original coefficient to remove the integral bias. The exact
+result is floor(state × coefficient / 16384). C uses the ordinary
+bounded multiply with the original coefficients.
+
+AVR-GCC 7.3.0 with SRAM512, LPC2 and FIFO32 saves 20 program bytes.
+The 22 simavr 1.6 workloads retain exact PWM, with a gain of 0–8 cycles
+per sample including IRQ. [Paired measurements](../../Codecs/LPX/research/tiny-v9-prepared-attenuation-2026-11-16/README.md).

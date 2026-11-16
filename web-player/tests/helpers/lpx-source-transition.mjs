@@ -40,6 +40,7 @@ const oneShotBssReport='Codecs/LPX/research/tiny-v9-one-shot-bss-2026-11-16/';
 const seededPolyQ8Report='Codecs/LPX/research/tiny-v9-poly-seeded-q8-2026-11-16/';
 const signed6ExcitationReport='Codecs/LPX/research/tiny-v9-signed6-excitation-2026-11-16/';
 const synthesisHistoryZReport='Codecs/LPX/research/tiny-v9-synthesis-history-z-2026-11-16/';
+const preparedAttenuationReport='Codecs/LPX/research/tiny-v9-prepared-attenuation-2026-11-16/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -239,6 +240,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [seededPolyQ8Report,'667360f57425cb9d1045df7ee293624a39ece6d0'],
     [signed6ExcitationReport,'8a1a0310fda1165a2d083bbd2f820904f34c1041'],
     [synthesisHistoryZReport,'f37f1b818669a0335c50a411e03e9760011052fe'],
+    [preparedAttenuationReport,'3fc608349445f69e9ed054772010232b614509a9'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

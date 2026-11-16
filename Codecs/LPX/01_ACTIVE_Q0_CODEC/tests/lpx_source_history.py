@@ -40,6 +40,7 @@ ONE_SHOT_BSS=REPO/'Codecs/LPX/research/tiny-v9-one-shot-bss-2026-11-16'
 SEEDED_POLY_Q8=REPO/'Codecs/LPX/research/tiny-v9-poly-seeded-q8-2026-11-16'
 SIGNED6_EXCITATION=REPO/'Codecs/LPX/research/tiny-v9-signed6-excitation-2026-11-16'
 SYNTHESIS_HISTORY_Z=REPO/'Codecs/LPX/research/tiny-v9-synthesis-history-z-2026-11-16'
+PREPARED_ATTENUATION=REPO/'Codecs/LPX/research/tiny-v9-prepared-attenuation-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -186,6 +187,7 @@ def assert_recorded_source(path,expected):
         (SEEDED_POLY_Q8,'667360f57425cb9d1045df7ee293624a39ece6d0'),
         (SIGNED6_EXCITATION,'8a1a0310fda1165a2d083bbd2f820904f34c1041'),
         (SYNTHESIS_HISTORY_Z,'f37f1b818669a0335c50a411e03e9760011052fe'),
+        (PREPARED_ATTENUATION,'3fc608349445f69e9ed054772010232b614509a9'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

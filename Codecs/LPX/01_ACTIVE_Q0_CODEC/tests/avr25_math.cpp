@@ -15,7 +15,16 @@ __attribute__((noinline,used)) void math_case(){
     case 1:math_out=lpx4Mul8x16((int8_t)math_x,math_y);break;
     case 2:math_out=lpx4Mul8xU16((int8_t)math_x,(uint16_t)math_y);break;
     case 3:math_out=lpx4PitchQ4((int8_t)math_x,(uint8_t)math_y);break;
-    case 4:math_out=lpx4AttenuateQ14((uint16_t)math_y,math_x);break;
+    case 4:{
+        const uint16_t coefficient=(uint16_t)math_y;
+        const int16_t reference=lpx4AttenuateQ14(coefficient,math_x);
+#if LPX4_USE_AVR_NOMUL_ASM
+        const int16_t prepared=lpx4PreparedAttenuationQ14(math_x,lpx4PrepareAttenuationQ14(coefficient));
+        if(prepared!=reference){math_out=INT32_MIN;break;}
+#endif
+        math_out=reference;
+        break;
+    }
     case 5:
         if(math_bits==2)math_out=lpx4LpcInterpolate(math_x,math_y,math_t,2);
         else if(math_bits==3)math_out=lpx4LpcInterpolate(math_x,math_y,math_t,3);
