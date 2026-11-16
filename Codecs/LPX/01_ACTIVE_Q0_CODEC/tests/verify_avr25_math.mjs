@@ -39,7 +39,7 @@ function check(kind,x,y,expected,{exc=0,t=0,bits=0,a=null,h=null}={}){
   assert.equal(c.r[1],0,`${name} zero register`);assert.equal(c.sp,sp,`${name} stack`);
   preserved.forEach(r=>assert.equal(c.r[r],(r*7+cases)&255,`${name} preserved r${r}`));
   if(h){
-   const firstGuard=kind===25||kind===26?11:10;
+   const firstGuard=kind===25||kind===26||kind===35?11:10;
    if(firstGuard===11)assert.equal((c.data[s('math_h')+20]|c.data[s('math_h')+21]<<8)&65535,h[9]&65535,'Discarded padded history');
    for(let i=firstGuard;i<20;i++)assert.equal((c.data[s('math_h')+i*2]|c.data[s('math_h')+i*2+1]<<8)&65535,0x5aa5+i,'History guard');
   }
@@ -116,6 +116,9 @@ for(const x of boundary){
 }
 for(const value of [-3145728,-32769,-32768,-32767,-1,0,1,32767,32768,3145728])
  check(8,0,0,Math.max(-32767,Math.min(32767,value)),{exc:value});
+for(const edge of [-3145728,-65536,-32768,-4096,-16,0,16,4096,32768,65536,3145728])
+ for(let value=edge-2;value<=edge+2;value++)
+  check(34,0,0,Math.max(-32767,Math.min(32767,value)),{exc:value*16});
 // Cover all transitions in signed24 halving, including both clipping edges.
 for(const edge of [-8388608,-4194304,-65536,-32768,0,32768,65534,4194304,8388607])
  for(let value=Math.max(-8388608,edge-3);value<=Math.min(8388607,edge+3);value++)
@@ -145,6 +148,7 @@ for(const coefficient of [...boundary,0x5555,-0x5555])for(const history of split
  const a=Array(10).fill(coefficient),h=Array(10).fill(history);
  const expected=123-a.reduce((sum,v,k)=>sum+Math.floor(v*h[k]/4096),0);
  for(const kind of [7,25,26,27])check(kind,0,0,expected,{a,h,exc:kind===7||kind===25?123*16:123});
+ check(35,0,0,Math.max(-32767,Math.min(32767,expected)),{a,h,exc:123*16});
 }
 // The optimized pitch quotient also preserves the former full signed8
 // input behavior, including the int8 result cast above the six-bit domain.

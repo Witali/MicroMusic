@@ -34,6 +34,7 @@ const lsfInvariantsReport='Codecs/LPX/research/tiny-v9-lsf-invariants-2026-11-16
 const cosEdgeReport='Codecs/LPX/research/tiny-v9-cos-edge-2026-11-16/';
 const q4ScaleRuntimeReport='Codecs/LPX/research/tiny-v9-q4-scale-runtime-2026-11-16/';
 const lpcSaturationReport='Codecs/LPX/research/tiny-v9-lpc-saturation-2026-11-16/';
+const q4SynthesisClipReport='Codecs/LPX/research/tiny-v9-q4-synthesis-clip-2026-11-16/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -227,6 +228,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [cosEdgeReport,'833a2ad05cc18b77160b1c773a90e5a2cf3af28b'],
     [q4ScaleRuntimeReport,'0f746634fb1b61690bfab0d5c64a8219d291015d'],
     [lpcSaturationReport,'bd8121a5987a670e11426b73abff9a5db213b93e'],
+    [q4SynthesisClipReport,'13041e26223245b19eed9b3443f4e56c9a5da058'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

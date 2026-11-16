@@ -383,3 +383,18 @@ The universal ATtiny88 v9 player built with AVR-GCC 7.3.0 saves 16
 program bytes. All 22 simavr 1.6 workloads ran with IRQ active and exact
 PWM. Each workload's longest decoder call used 30–39 fewer CPU cycles.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-lpc-saturation-2026-11-16/README.md).
+
+## Clip the Q4 synthesis accumulator before extracting the word
+
+The integral Q4 accumulator has a zero low nibble. Its upper word
+must be in the signed interval -8..7 for the result to fit in signed16.
+Add eight to that word, then compare to 16 as an unsigned word. On a
+match, assemble the two result bytes with `SWAP` and nibble masks.
+Use the original saturation endpoints on overflow. This keeps the
+floor of each LPC term and replaces the final shift and range check.
+The C backend divides the integral Q4 value by 16 and clamps it.
+
+ATtiny88 with AVR-GCC 7.3.0 saves another six program bytes. The
+22 simavr 1.6 workloads use 2.07–9.47 fewer mean cycles per sample
+including IRQ and preserve exact PWM.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-q4-synthesis-clip-2026-11-16/README.md).

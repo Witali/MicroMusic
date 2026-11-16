@@ -481,7 +481,8 @@ static inline __attribute__((always_inline)) int16_t lpx4NomulAttenuate(uint16_t
 #endif
 // spareHistory explicitly requires h[11]; h[10] is a discarded shift slot.
 // Default callers still require only h[10]. Q4 excitation is exactly integral.
-template<bool excitationQ4=false,bool spareHistory=false>
+// keepQ4 leaves the accumulated integer in Q4 units for a combined final clip.
+template<bool excitationQ4=false,bool spareHistory=false,bool keepQ4=false>
 static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16_t* h){
 #if LPX4_USE_AVR_ASM
     int32_t result=excitation;
@@ -503,10 +504,10 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 #if LPX4_AVR_DOT_UNROLL!=9
         "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
 #endif
-        ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
+        ".if !%5\n\t.rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t.endif\n\t"
         "clr __zero_reg__\n\t"
         : "+&r" (result), "+z" (h), "+x" (a)
-        : "I"(!excitationQ4),"I"(spareHistory)
+        : "I"(!excitationQ4),"I"(spareHistory),"I"(keepQ4)
         : "r0","r1","r16","r18","r19","r20","r21",
 #if LPX4_AVR_DOT_UNROLL!=9
           "r17",
@@ -530,14 +531,14 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         ".if !%5\n\tcpi r17,10\n\tbreq 2f\n\t.endif\n\tstd Z+2,r20\n\tstd Z+3,r21\n\t2:\n\t"
         LPX4_NOMUL_SUB
         "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
-        ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
+        ".if !%6\n\t.rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t.endif\n\t"
         : "+&r"(result),"+z"(h),"+x"(a) : "I"(!excitationQ4)
 #if LPX4_AVR25_SATURATED_PRODUCTS
           ,"r"(saturationHint)
 #else
           ,"I"(0)
 #endif
-          ,"I"(spareHistory)
+          ,"I"(spareHistory),"I"(keepQ4)
         : "r17","r18","r19","r20","r21","r22","r23","r24","r25","cc","memory");
     return result;
 #else
@@ -546,7 +547,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         result-=lpx4Shift12(lpx4Mul16(a[i],h[i]));
         if(spareHistory||i<9)h[i+1]=h[i];
     }
-    return result;
+    return keepQ4?result*16:result;
 #endif
 }
 // Same exact sum, read-only mirrored history. h points just past ten old
@@ -626,6 +627,27 @@ static inline __attribute__((always_inline)) int16_t lpx4Clip15From24(int32_t va
     return result;
 #else
     return value<-32767?-32767:(value>32767?32767:(int16_t)value);
+#endif
+}
+
+// Synthesis has removed each term's fractional bits. Convert the integral
+// Q4 accumulator and clip to -32767..32767 in one operation.
+static inline __attribute__((always_inline)) int16_t lpx4ClipSynthesisQ4(int32_t value){
+#if LPX4_USE_AVR_NOMUL_ASM
+    uint8_t nibble;
+    __asm__(
+        // The two high bytes must represent -8..7 before narrowing.
+        "subi %C0,248\n\tsbci %D0,255\n\t"
+        "cpi %C0,16\n\tcpc %D0,__zero_reg__\n\tbrsh 1f\n\t"
+        "swap %A0\n\tswap %B0\n\tmov %1,%B0\n\tandi %1,240\n\tor %A0,%1\n\t"
+        "andi %B0,15\n\tswap %C0\n\tsubi %C0,128\n\tor %B0,%C0\n\t"
+        "cpi %B0,128\n\tbrne 2f\n\tcpi %A0,1\n\tadc %A0,__zero_reg__\n\trjmp 2f\n\t"
+        "1: ldi %A0,255\n\tldi %B0,127\n\tsbrs %D0,7\n\trjmp 2f\n\t"
+        "ldi %A0,1\n\tldi %B0,128\n\t2:"
+        : "+&d"(value),"=&d"(nibble) : : "cc");
+    return (int16_t)value;
+#else
+    return lpx4Clip15From24(value/16);
 #endif
 }
 

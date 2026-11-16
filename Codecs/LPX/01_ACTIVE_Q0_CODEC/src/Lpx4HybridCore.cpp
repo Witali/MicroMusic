@@ -1855,7 +1855,11 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,a_,history));
     history[0]=history[10]=pred;
 #else
+#if LPX4_AVR25_V9_RUNTIME
+    int16_t pred=lpx4ClipSynthesisQ4(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,true,true>(excitation,a_,hist_));
+#else
     int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,LPX4_COMPACT_VERSION==9>(excitation,a_,hist_));
+#endif
     hist_[0]=pred;
 #endif
 #ifdef LPX4_FIXED_PRE_Q14

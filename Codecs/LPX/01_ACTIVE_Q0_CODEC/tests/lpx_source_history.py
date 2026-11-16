@@ -34,6 +34,7 @@ LSF_INVARIANTS=REPO/'Codecs/LPX/research/tiny-v9-lsf-invariants-2026-11-16'
 COS_EDGE=REPO/'Codecs/LPX/research/tiny-v9-cos-edge-2026-11-16'
 Q4_SCALE_RUNTIME=REPO/'Codecs/LPX/research/tiny-v9-q4-scale-runtime-2026-11-16'
 LPC_SATURATION=REPO/'Codecs/LPX/research/tiny-v9-lpc-saturation-2026-11-16'
+Q4_SYNTHESIS_CLIP=REPO/'Codecs/LPX/research/tiny-v9-q4-synthesis-clip-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -174,6 +175,7 @@ def assert_recorded_source(path,expected):
         (COS_EDGE,'833a2ad05cc18b77160b1c773a90e5a2cf3af28b'),
         (Q4_SCALE_RUNTIME,'0f746634fb1b61690bfab0d5c64a8219d291015d'),
         (LPC_SATURATION,'bd8121a5987a670e11426b73abff9a5db213b93e'),
+        (Q4_SYNTHESIS_CLIP,'13041e26223245b19eed9b3443f4e56c9a5da058'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

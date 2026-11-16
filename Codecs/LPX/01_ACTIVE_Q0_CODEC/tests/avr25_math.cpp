@@ -53,6 +53,8 @@ __attribute__((noinline,used)) void math_case(){
     case 31:math_out=lpx4NibbleMulQ12((int8_t)math_x,math_y);break;
     case 32:math_out=lpx4BoundedPolyQ12(math_exc,math_y);break;
     case 33:math_out=lpx4PwmBounded130(math_x);break;
+    case 34:math_out=lpx4ClipSynthesisQ4(math_exc);break;
+    case 35:math_out=lpx4ClipSynthesisQ4(lpx4SynthesisQ12<true,true,true>(math_exc,math_a,math_h));break;
     }
 }
 }
