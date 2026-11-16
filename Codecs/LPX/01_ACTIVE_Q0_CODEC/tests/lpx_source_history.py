@@ -37,6 +37,7 @@ LPC_SATURATION=REPO/'Codecs/LPX/research/tiny-v9-lpc-saturation-2026-11-16'
 Q4_SYNTHESIS_CLIP=REPO/'Codecs/LPX/research/tiny-v9-q4-synthesis-clip-2026-11-16'
 JOINED_BITFIELD=REPO/'Codecs/LPX/research/tiny-v9-joined-bitfield-2026-11-16'
 ONE_SHOT_BSS=REPO/'Codecs/LPX/research/tiny-v9-one-shot-bss-2026-11-16'
+SEEDED_POLY_Q8=REPO/'Codecs/LPX/research/tiny-v9-poly-seeded-q8-2026-11-16'
 
 
 def assert_recorded_source(path,expected):
@@ -180,6 +181,7 @@ def assert_recorded_source(path,expected):
         (Q4_SYNTHESIS_CLIP,'13041e26223245b19eed9b3443f4e56c9a5da058'),
         (JOINED_BITFIELD,'881d40b62bb46f09a41fc78688e36647a2aac69a'),
         (ONE_SHOT_BSS,'970616ecd82805ee6bc16f620c0b3ead46f561b6'),
+        (SEEDED_POLY_Q8,'667360f57425cb9d1045df7ee293624a39ece6d0'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

@@ -420,3 +420,24 @@ mean cycles per sample including IRQ across 22 simavr 1.6 workloads.
 An exhaustive probe compared cached values, refills and error states
 with a 16-bit lookahead oracle in three AVR25 arithmetic configurations.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-joined-bitfield-2026-11-16/README.md).
+
+## Seed a shared signed multiply to preserve the polynomial floor
+
+Write the bounded polynomial operand as `16*whole + residue`. First
+compute `part = floor(residue*factor/16)`. The direct route then takes
+`floor((whole*factor + part)/256)`. The split route seeds the same
+word multiplication with zero and adds `floor(part/256)` at the end.
+Choose the split's truncating quotient and remainder before multiplying.
+At the positive boundary 250000, the residue is zero and the two
+results coincide.
+
+On AVR25, the factor lies within ±8192. Each signed sum before an
+arithmetic shift fits signed16. T distinguishes the two visits to a
+seven-step block. The final bit adds the factor for the unsigned low
+byte and subtracts it for the signed high byte. The low product byte is
+discarded, as the word product is scaled by 256. The P output cursor
+reverses at the middle pair while Q stays forward.
+
+With AVR-GCC 7.3.0 on ATtiny88, this saves 76 program bytes. The 22
+simavr 1.6 workloads retain exact PWM and sustained IRQ playback.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-poly-seeded-q8-2026-11-16/README.md).

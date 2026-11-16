@@ -1322,6 +1322,68 @@ static __attribute__((noinline)) int32_t polyDirectProduct(int32_t x,int16_t y){
 // direct path, so no split-floor error enters that bound. Consequently
 // trunc(v/16) fits signed16 (|hi|<=32256). Keep the exact 250000 threshold
 // and both separate floors; the unrestricted polynomial helper stays above.
+#if LPX4_AVR25_V9_RUNTIME
+typedef int PolyCoefficient __attribute__((mode(PSI)));
+
+// Four signed steps compute floor(residue*factor/16). The upper bits of
+// a negative residue encode an implicit -16, corrected after the shifts.
+static inline __attribute__((always_inline)) int16_t polyRemainderQ4(int8_t residue,int16_t factor){
+    int16_t result;
+    __asm__(
+        "clr %A0\n\tclr %B0\n\t"
+        ".rept 4\n\tlsr %1\n\tbrcc 1f\n\tadd %A0,%A2\n\tadc %B0,%B2\n\t"
+        "1: asr %B0\n\tror %A0\n\t.endr\n\t"
+        "sbrs %1,3\n\trjmp 2f\n\tsub %A0,%A2\n\tsbc %B0,%B2\n\t2:"
+        : "=&r"(result),"+&r"(residue) : "r"(factor) : "cc");
+    return result;
+}
+
+// Return floor((seed + word*factor)/256). The factor is bounded by 8192,
+// so each addition before the arithmetic shift fits signed16. T selects
+// the eighth unsigned step of the low byte or the signed final step.
+static inline PolyCoefficient polyWordQ8(int16_t seed,int16_t word,int16_t factor){
+    PolyCoefficient result;
+    __asm__(
+        "mov %B0,%A1\n\tmov %C0,%B1\n\tmov %A0,%A2\n\tlsr %A0\n\t"
+        "clt\n\t2:\n\t"
+        ".rept 7\n\t"
+        "brcc 1f\n\tadd %B0,%A3\n\tadc %C0,%B3\n\t"
+        "1: asr %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
+        "brts 3f\n\t"
+        "brcc 1f\n\tadd %B0,%A3\n\tadc %C0,%B3\n\t"
+        "1: asr %C0\n\tror %B0\n\t"
+        "mov %A0,%B2\n\tlsr %A0\n\tset\n\trjmp 2b\n\t3:\n\t"
+        "brcc 1f\n\tsub %B0,%A3\n\tsbc %C0,%B3\n\t"
+        "1: asr %C0\n\tror %B0\n\tror %A0"
+        : "=&r"(result) : "r"(seed),"r"(word),"r"(factor) : "cc");
+    return result;
+}
+
+static inline PolyCoefficient polyCosineMulQ12(PolyCoefficient v,int16_t c){
+    int16_t hi;
+    uint8_t temp;
+    __asm__(
+        "mov %A0,%A2\n\tswap %A0\n\tandi %A0,15\n\t"
+        "mov %1,%B2\n\tswap %1\n\tandi %1,240\n\tor %A0,%1\n\t"
+        "mov %B0,%B2\n\tswap %B0\n\tandi %B0,15\n\t"
+        "mov %1,%C2\n\tswap %1\n\tandi %1,240\n\tor %B0,%1"
+        : "=&d"(hi),"=&d"(temp) : "r"(v) : "cc");
+    // A whole-product floor is needed for -250000 <= v < 250000.
+    // At +250000 the residue is zero, so both rounding rules agree.
+    const uint16_t biased=(uint16_t)hi+15625u;
+    const uint16_t threshold=31250u;
+    int8_t directMask;
+    __asm__("cp %A1,%A2\n\tcpc %B1,%B2\n\tsbc %0,%0"
+            : "=&r"(directMask) : "r"(biased),"r"(threshold) : "cc");
+    int8_t residue=(uint8_t)v&15;
+    if(!directMask && hi<0 && residue){++hi;residue-=16;}
+    // Combine the fractions before the final shift on the direct path.
+    // On the split path add only the independently rounded residue.
+    const int16_t nibble=polyRemainderQ4(residue,c);
+    const PolyCoefficient accum=polyWordQ8(nibble&(int16_t)directMask,hi,c);
+    return accum+(int8_t)((nibble>>8)&~directMask);
+}
+#else
 static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
 #if LPX4_USE_AVR5_POLYNOMIAL_MUL
     if(v<=250000L && v>=-250000L)return lpx4Shift12(polyDirectProduct(v,c));
@@ -1331,26 +1393,17 @@ static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
     if(v<0 && rem){++hi;rem-=16;}
     return (lpx4Mul16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
 #elif LPX4_USE_AVR_NOMUL_ASM
-#if LPX4_AVR25_V9_RUNTIME
-    if(v<=250000L && v>=-250000L)return lpx4BoundedPolyQ12(v,c);
-    // Start with the floor quotient and unsigned low nibble. One adjustment
-    // recovers both parts of truncating division and leaves each floor intact.
-    int16_t hi=(int16_t)(v>>4);
-    int8_t rem=(uint8_t)v&15;
-    if(v<0 && rem){++hi;rem-=16;}
-    return (lpx4Mul16(hi,c)>>8)+lpx4NibbleMulQ12(rem,c);
-#else
     if(v<=250000L && v>=-250000L)return lpx4Shift12(lpx4Mul32x16(v,c));
     const int16_t hi=(int16_t)truncShift(v,4);
     int8_t rem=(uint8_t)v&15;
     if(v<0 && rem)rem-=16;
     return (lpx4Mul16(hi,c)>>8)+lpx4Shift12(lpx4Mul8x16(rem,c));
-#endif
 #else
     // The same fixed-point C reference remains explicitly selectable on AVR.
     return polyMulQ12(v,c);
 #endif
 }
+#endif
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
 // The next 111 ring slots are dead: the largest v5 pitch lag is 145, and
 // every future code is stored before it can be read. Align within those slots
@@ -1382,7 +1435,6 @@ static const bool halfPolynomialP=true;
 // Degree-11 coefficients fit signed24: 4096*binomial(11,5)+1 is
 // below 2^21, and twice that bound also fits signed24. Keep the
 // four-byte slot stride so a word never straddles the ring boundary.
-typedef int PolyCoefficient __attribute__((mode(PSI)));
 static inline PolyCoefficient ringPolyLoad24(const int8_t* ring,uint8_t offset){
     PolyCoefficient value;
     memcpy(&value,ring+offset,sizeof(value));
@@ -1606,13 +1658,20 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #endif
     }
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
+#if LPX4_AVR25_V9_RUNTIME
+    // Mirror P at the middle pair. Q remains forward throughout.
+    uint8_t pOffset=pbase+4,qOffset=qbase+4;
+    uint8_t pStep=4;
+#endif
     for(uint8_t i=0;i<10;i++){
+#if LPX4_AVR25_V9_RUNTIME
+        const PolyCoefficient sum=ringPolyLoad24(ringQ_,pOffset)+ringPolyLoad24(ringQ_,qOffset);
+        out[i]=lpx4HalfClip15From24(sum);
+        qOffset+=4;
+        if(i==4)pStep=(uint8_t)-4;else pOffset+=pStep;
+#else
         // Degree11 P[k] == P[11-k]; fixed-header images retain full P storage.
         const uint8_t pindex=halfPolynomialP?(i<5?i+1:10-i):i+1;
-#if LPX4_AVR25_V9_RUNTIME
-        const PolyCoefficient sum=ringPolyLoad24(ringQ_,pbase+4*pindex)+ringPolyLoad24(ringQ_,qbase+4*(i+1));
-        out[i]=lpx4HalfClip15From24(sum);
-#else
         const int32_t sum=ringPolyGet(ringQ_,pbase,pindex)+ringPolyGet(ringQ_,qbase,i+1);
         out[i]=clamp(truncShift(sum,1),-32767,32767);
 #endif
