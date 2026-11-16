@@ -133,16 +133,18 @@ The [C reference](../../C_REFERENCE.md) supports the same v9 format and metadata
 
 All nine complete phrase/profile images use the same universal v9 recipe.
 The 141,708 PWM samples match the previous HEX files, portable decoder and
-published WAVs. Each complete image saves 52–344 bytes. At 16 MHz with active
-IRQ, the producer never runs out of queued audio. The
+published WAVs. Each complete image saves 216–508 bytes. At 16 MHz with active
+IRQ, at least 23 samples remain queued before each output during production. The
 [catalog](../../../../../web-player/firmware-lpx-attiny88.json) includes
 both sets of Flash and timing results.
 
 | Complete release image measurement | Result |
 | --- | ---: |
-| Flash including audio | 5168–6656 bytes |
-| Program and playback settings excluding LPX | 4775–4776 bytes |
-| Static SRAM / peak stack / stack margin | 433 / 47 / 31 bytes |
+| Flash including audio | 5004–6492 bytes |
+| Program and playback settings excluding LPX | 4611–4612 bytes |
+| Static SRAM / peak stack / stack margin | 433 / 52 / 26 bytes |
+| Mean active decoder CPU plus complete IRQ | 1263.58–1521.51 cycles/sample |
+| Complete IRQ | 38 cycles |
 | PWM write intervals | 1991–2009 cycles |
 | Images fitting standard 6012-byte USB region | 7 of 9 |
 

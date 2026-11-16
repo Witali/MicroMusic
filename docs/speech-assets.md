@@ -56,15 +56,15 @@ WAV в этой таблице — точные 8-битные PWM-отсчёт�
 
 | Фраза / профиль | HEX | Код / звук / полный Flash, Б | Static / пик стека / запас, Б | USB-загрузчик |
 | --- | --- | ---: | ---: | --- |
-| chego / compact | [web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex) | 4776 / 522 / 5298 | 433 / 47 / 31 | Помещается |
-| chego / quality | [web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex) | 4776 / 776 / 5552 | 433 / 47 / 31 | Помещается |
-| otvechaesh / compact | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex) | 4776 / 450 / 5226 | 433 / 47 / 31 | Помещается |
-| otvechaesh / quality | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex) | 4775 / 671 / 5446 | 433 / 47 / 31 | Помещается |
-| vinni / compact | [web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex) | 4776 / 1200 / 5976 | 433 / 47 / 31 | Помещается |
-| vinni / quality | [web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex) | 4776 / 1820 / 6596 | 433 / 47 / 31 | Нужен ISP |
-| bread / compact | [web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex) | 4776 / 996 / 5772 | 433 / 47 / 31 | Помещается |
-| bread / quality | [web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex) | 4775 / 1881 / 6656 | 433 / 47 / 31 | Нужен ISP |
-| bread / low15 | [web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex) | 4775 / 393 / 5168 | 433 / 47 / 31 | Помещается |
+| chego / compact | [web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex) | 4612 / 522 / 5134 | 433 / 52 / 26 | Помещается |
+| chego / quality | [web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex) | 4612 / 776 / 5388 | 433 / 52 / 26 | Помещается |
+| otvechaesh / compact | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex) | 4612 / 450 / 5062 | 433 / 52 / 26 | Помещается |
+| otvechaesh / quality | [web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex) | 4611 / 671 / 5282 | 433 / 52 / 26 | Помещается |
+| vinni / compact | [web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex) | 4612 / 1200 / 5812 | 433 / 52 / 26 | Помещается |
+| vinni / quality | [web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex) | 4612 / 1820 / 6432 | 433 / 52 / 26 | Нужен ISP |
+| bread / compact | [web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex) | 4612 / 996 / 5608 | 433 / 52 / 26 | Помещается |
+| bread / quality | [web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex) | 4611 / 1881 / 6492 | 433 / 52 / 26 | Нужен ISP |
+| bread / low15 | [web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex](../web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex) | 4611 / 393 / 5004 | 433 / 52 / 26 | Помещается |
 
 Ограничения и воспроизведение проверок: [Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/README.md](../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/README.md). Численные сравнения памяти, Flash и времени: [Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/budget-measurements.json](../Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/budget-measurements.json). Измеряемый запас использует соглашение наблюдателя: `static + peakStack + margin = 511`.
 

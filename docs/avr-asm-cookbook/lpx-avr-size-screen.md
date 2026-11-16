@@ -115,6 +115,22 @@ variable mask. In the same AVR-GCC 7.3.0 GNU AVR ABI build this saves another
 20 B. All 22 IRQ-active workloads speed up with exact PWM and the same stack.
 [Paired measurements](../../Codecs/LPX/research/tiny-v9-pulse-schedule-2026-11-14/README.md).
 
+The dense v9 parser can fetch both P6 amplitude nibbles with one read and
+place extra pulses in a forward pass over the two sorted base positions.
+The code preserves signed amplitudes, collision sums and parser faults.
+AVR-GCC 7.3.0 generates a smaller LSF converter with local
+`optimize("no-code-hoisting")`. The paired patch saves 46 B with exact PWM,
+lower peak stack and lower mean and peak decode time on all 22 AVR25 IRQ
+workloads. The generic C parser remains selectable.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-pulse-packet-2026-11-16/README.md).
+
+The AVR25 v9 bounded ROM reader combines an LPM load and pointer advance
+with `LPM Rd,Z+`. Keep the destination disjoint from the Z pair. The
+operation follows the existing bounds check and the C reader still uses
+the vendor access macro. AVR-GCC 7.3.0 saves 4 B and each of the 22 IRQ
+workloads completes faster with exact PWM.
+[Paired measurements](../../Codecs/LPX/research/tiny-v9-flash-read-2026-11-16/README.md).
+
 Two later changes passed all 22 universal Tiny88 AVR25 loads with IRQ.
 With the AVR GCC ABI and AVR-GCC 7.3.0 at `-Os -flto`, sharing the byte-wide
 cache shift saves 30 B. Accumulating the shifted Rice quotient while

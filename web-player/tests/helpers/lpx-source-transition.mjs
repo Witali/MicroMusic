@@ -22,7 +22,12 @@ const tinySubframeReport='Codecs/LPX/research/tiny-v9-subframe-2026-11-13/';
 const tinyOddPhaseReport='Codecs/LPX/research/tiny-v9-odd-phase-2026-11-13/';
 const tinyLpcHalfReport='Codecs/LPX/research/tiny-v9-lpc-half-2026-11-13/';
 const webuiRebuildReceipt='Codecs/LPX/research/webui-rebuild-2026-11-14/source-transition.json';
-const v9ReleaseBase='1fe7048d7b29e0eb8c76700c4917a3d6f5d57bca';
+const pulsePacketReport='Codecs/LPX/research/tiny-v9-pulse-packet-2026-11-16/';
+const flashReadReport='Codecs/LPX/research/tiny-v9-flash-read-2026-11-16/';
+const boundedPwmReport='Codecs/LPX/research/tiny-v9-bounded-pwm-2026-11-16/';
+const unsignedInterpReport='Codecs/LPX/research/tiny-v9-unsigned-interp-2026-11-16/';
+const staticRomReport='Codecs/LPX/research/tiny-v9-static-rom-2026-11-16/';
+const v9ReleaseBase='cef91038b7d98478ff1c5b14d9b3b0a22bc17f4b';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -199,6 +204,26 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       assert.equal(rebuild.baseline_revision,'3ff5dc0f43db10f0c19a11283694d69bd11e211d');
       assert.equal(rebuild.universal_irq_cases,22);
       assert.equal(rebuild.identical_web_images,18);
+      recorded=change.current[field];
+    }
+  }
+  for(const [directory,baseline] of [
+    [pulsePacketReport,'1fe7048d7b29e0eb8c76700c4917a3d6f5d57bca'],
+    [flashReadReport,'bd3ec1ce42b430dbb2663ddf3ff73996dbb57383'],
+    [boundedPwmReport,'31d8aa578098ae3d597735420b2db6c30cd25cf6'],
+    [unsignedInterpReport,'62cbe8834061d270bddcd4c6042f1f3f08c69e7d'],
+    [staticRomReport,'424d611147f0e96547913b5aa73db55b7c17521c'],
+  ]){
+    if(recorded===actual)break;
+    const report=JSON.parse(read(directory+'source-transition.json'));
+    const change=report.sources[path] ?? report.validation_sources?.[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(report.baseline_revision,baseline);
+      assert.equal(report.complete,true);
+      assert.equal(report.universal_irq_cases,22);
+      assert.equal(report.identical_web_images,18);
+      const evidence=read(directory+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
       recorded=change.current[field];
     }
   }

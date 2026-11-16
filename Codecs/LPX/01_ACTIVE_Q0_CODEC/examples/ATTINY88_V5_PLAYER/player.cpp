@@ -74,7 +74,15 @@ static uint8_t playbackGain(uint8_t sample){
 #endif
 }
 #endif
+#if LPX25_V9_RUNTIME
+struct Lpx4TinyRomPlayer {
+    static Lpx4HybridCore decoder;
+};
+Lpx4HybridCore Lpx4TinyRomPlayer::decoder{Lpx4HybridCore::StaticZeroInit{}};
+static Lpx4HybridCore& decoder=Lpx4TinyRomPlayer::decoder;
+#else
 static Lpx4HybridCore decoder;
+#endif
 extern "C" {
 // Retain OR addressing for power-of-two rings. A 24-byte array needs only
 // byte alignment: 32-byte alignment would pad its ELF section back to 32.
