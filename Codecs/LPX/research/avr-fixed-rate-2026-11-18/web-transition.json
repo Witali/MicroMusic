@@ -1,0 +1,297 @@
+{
+  "schema": "lpx-fixed-rate-web-transition-v1",
+  "baseline_revision": "e5db0af54e16a5204a124ca0d2a028c92c382b8b",
+  "measurements_sha256": "5eb90cb17dbaf78596ec0946eaf5825416b660ac61e265c23a222e15f80062c6",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/lpx_source_history.py": {
+      "baseline": {
+        "raw_sha256": "771e52bb9c7ec1f31498b1b2e85efbeb61d8476234235df04e0a5a17b38ff7e1",
+        "text_lf_sha256": "771e52bb9c7ec1f31498b1b2e85efbeb61d8476234235df04e0a5a17b38ff7e1"
+      },
+      "current": {
+        "raw_sha256": "12e89bc0d00fe6624caaaecb1756b0301e0ee0e6b1581bcf27125edcfd243804",
+        "text_lf_sha256": "12e89bc0d00fe6624caaaecb1756b0301e0ee0e6b1581bcf27125edcfd243804"
+      }
+    },
+    "docs/speech-assets.md": {
+      "baseline": {
+        "raw_sha256": "d905a89f268bdbdaca28f6d3bff2dc5ac7ebf2aa1b85cc32b93a6f9aca0c21c1",
+        "text_lf_sha256": "d905a89f268bdbdaca28f6d3bff2dc5ac7ebf2aa1b85cc32b93a6f9aca0c21c1"
+      },
+      "current": {
+        "raw_sha256": "9822d342a28ed43c061ced0f19043fbed648d18fdddb46722b4f166392c1b8f9",
+        "text_lf_sha256": "9822d342a28ed43c061ced0f19043fbed648d18fdddb46722b4f166392c1b8f9"
+      }
+    },
+    "tools/build-nano-lpx-v9.py": {
+      "baseline": {
+        "raw_sha256": "360b9666978c626832fc8f646c1fe19ea6d77e4981a603c123b20d70395505d6",
+        "text_lf_sha256": "360b9666978c626832fc8f646c1fe19ea6d77e4981a603c123b20d70395505d6"
+      },
+      "current": {
+        "raw_sha256": "a3b83c789c9cff716a1f6a250a6a2cf4e42b4e2e95ebc581ab0d5a73311402b6",
+        "text_lf_sha256": "fecd4d8f45161cc1815c5f27f7dbbbcaa7d22fd15e6c24c692c470f6cd69d2e1"
+      }
+    },
+    "tools/build-tiny88-speech-catalog.py": {
+      "baseline": {
+        "raw_sha256": "9318581923157f5e50e974cd25532226699c6ca97bf8370358bb0bfcf00938df",
+        "text_lf_sha256": "9318581923157f5e50e974cd25532226699c6ca97bf8370358bb0bfcf00938df"
+      },
+      "current": {
+        "raw_sha256": "93b7dfb0832589d72fa59151028c6e3302d389b372d20b5a158ccdba7e0407cc",
+        "text_lf_sha256": "4435e4b45e8c13b12b498fcd94f7b6efefc6031edf63cdc18494e7072f4f2822"
+      }
+    },
+    "web-player/app.js": {
+      "baseline": {
+        "raw_sha256": "2c63d5832ae840570c29ecf8f0e2be76abed8f045d2f1187b2f145d50cc32437",
+        "text_lf_sha256": "2c63d5832ae840570c29ecf8f0e2be76abed8f045d2f1187b2f145d50cc32437"
+      },
+      "current": {
+        "raw_sha256": "64178675bf9cd33ccd3e37a9ae09ecfe8b71bac5f1738756bb1354d93ec0e7b2",
+        "text_lf_sha256": "cd9fec91727891864ab7f25db120ba3fe6d71ce46676461ca2c58c562043d86b"
+      }
+    },
+    "web-player/audio/lpx-dialogue/manifest.json": {
+      "baseline": {
+        "raw_sha256": "6e5dbf764ed1fadafb05519833f43ac6d08f725ee97a54b8b55cba6015e68faa",
+        "text_lf_sha256": "6e5dbf764ed1fadafb05519833f43ac6d08f725ee97a54b8b55cba6015e68faa"
+      },
+      "current": {
+        "raw_sha256": "5d00145046bf62e3973d9414c2cbe83e7fb2dd9011724fd51db7cdcbb5ceb96b",
+        "text_lf_sha256": "5d00145046bf62e3973d9414c2cbe83e7fb2dd9011724fd51db7cdcbb5ceb96b"
+      }
+    },
+    "web-player/firmware-atmega328p.json": {
+      "baseline": {
+        "raw_sha256": "6bef50f1943b2d5e907bb38e8fc4b122a675fa59068eb41bc1d51965c71d80a5",
+        "text_lf_sha256": "6bef50f1943b2d5e907bb38e8fc4b122a675fa59068eb41bc1d51965c71d80a5"
+      },
+      "current": {
+        "raw_sha256": "806fb52d7e858c526b51a3bf9f5d67d266dfad20ca0b484171f807bcfad7a0f6",
+        "text_lf_sha256": "806fb52d7e858c526b51a3bf9f5d67d266dfad20ca0b484171f807bcfad7a0f6"
+      }
+    },
+    "web-player/firmware-lpx-attiny88.json": {
+      "baseline": {
+        "raw_sha256": "727199759362a2f082415f73fc411c519da397d1e9321eee0289ba71d00557d5",
+        "text_lf_sha256": "727199759362a2f082415f73fc411c519da397d1e9321eee0289ba71d00557d5"
+      },
+      "current": {
+        "raw_sha256": "2d990f5a7baac7d63b0b96b56b212ea5a1a50e6f48bf6ce904088c08d54ba444",
+        "text_lf_sha256": "2d990f5a7baac7d63b0b96b56b212ea5a1a50e6f48bf6ce904088c08d54ba444"
+      }
+    },
+    "web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex": {
+      "baseline": {
+        "raw_sha256": "eff9e0bb49becb8a9867caf75b6390f494b95b6fffa6193bf77e9e2b3fd89908",
+        "text_lf_sha256": "c5593357c681088b94fa41d4b87c4cb4ae4e61b4e29a3d29354f144a5a92dfa0"
+      },
+      "current": {
+        "raw_sha256": "c695539680dca9edca629fe2d1d6332322f33aa12d4bd9efc0ca01b040a335db",
+        "text_lf_sha256": "1ee9b0fa3e963cfdf4e39c7315726c5c8cf600f1fe400ba84020ab77ee9d5d33"
+      }
+    },
+    "web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex": {
+      "baseline": {
+        "raw_sha256": "45db2a03bad16a9be7c9fb4e84006e92afaedd71ac1b7663bc103b3ea8a3d88d",
+        "text_lf_sha256": "8fa45bbcf2f040a4789c4a06a61910ccbb86476db784a8d7a23bfd85ce429fed"
+      },
+      "current": {
+        "raw_sha256": "d5a2ab8f24483a244fb6baaf52015ec5651f174e058378debb0900d92df78c2d",
+        "text_lf_sha256": "0f3474026fab43b1c310b4034313ec6b235401fa02f1c7db19290ec8d1a9e38c"
+      }
+    },
+    "web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex": {
+      "baseline": {
+        "raw_sha256": "09a5aeb397c3cb99f589810fd4adecb8df164e24b00e399d3a0d5b04345d463b",
+        "text_lf_sha256": "ca8a943a15f60a462143632eab07654da5462f77684657e060d9a9a4b9eb137f"
+      },
+      "current": {
+        "raw_sha256": "065596fc4c2f003d9f91c348c25c8e98a243a7e58b0e4732274e76d7cb28be87",
+        "text_lf_sha256": "b3af3cc6ccee659933d003799b5f72fb57c40a4708a21e08985eb71a4c90e070"
+      }
+    },
+    "web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex": {
+      "baseline": {
+        "raw_sha256": "142339d0986f08dfa873509784d9596f954d38bff2aa96e90615ddd7e10aad4a",
+        "text_lf_sha256": "93c88a181de0b30e492635bba8e9c301fae82cdda21a1048b44206b5e37b9903"
+      },
+      "current": {
+        "raw_sha256": "a2cb9f9095baf34be591fbcfcf6c90239ef53ca85fa8e73e147a0bc9f2b6fee1",
+        "text_lf_sha256": "d19b8ac2e50c373a8e485091155bd320cf1f37fbe1812d6a1a302fcd1630dabd"
+      }
+    },
+    "web-player/firmware/arduino-nano/lpx-nano-dialogue-quality.hex": {
+      "baseline": {
+        "raw_sha256": "1f811d77972e315b6825f8f14dffd6e3aecae5a57da778f5c51e047949158ff8",
+        "text_lf_sha256": "5fe58dcecd410ed5a7ecd02726227bd65b2a23b3fa14cee21bdc5fe89e8e6650"
+      },
+      "current": {
+        "raw_sha256": "1885272e71d065e20d4a290ca6096302e29c3d1807fd4080d51559676aac82d8",
+        "text_lf_sha256": "f2860c3ab1b292c3acf28bf68ea505161e7fe8f56646a9fcecffdfeb070da210"
+      }
+    },
+    "web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex": {
+      "baseline": {
+        "raw_sha256": "73ca6956a11bd39554eca5cdf14a9a0c81f6c138c4142f32bc3a4dcfd052a01d",
+        "text_lf_sha256": "d1907326cc15e02375084d2825fff02f7abed7acb6c75b78ba5165bbe0d0d3b0"
+      },
+      "current": {
+        "raw_sha256": "b68b6f6386a65106d6794ef7ec1be9eec39d025a4f6651e6d94710e02c4f8ef2",
+        "text_lf_sha256": "5b1c28a9a431d38e8c6d2e83f78ba91ac27194e57e5e183391e83787a6996f13"
+      }
+    },
+    "web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex": {
+      "baseline": {
+        "raw_sha256": "add252c00995c9ee344f20de9358d5d8d5c56fc57f3abe476a9be03ecd503eb5",
+        "text_lf_sha256": "22485602cbb23f9dd1a581fd03c15b565483728f3436bfc52e60b01d561d92ab"
+      },
+      "current": {
+        "raw_sha256": "b2b2f7a15ad08c82ec38fa3690573037a29dbe98f2c519e4e07a3b4c16fb1005",
+        "text_lf_sha256": "6f2a7db58fe2fa5b36078099bd3bfd5afa7178bb015a63b936602f9ba16b7cd4"
+      }
+    },
+    "web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex": {
+      "baseline": {
+        "raw_sha256": "265c9bb5eed2e080279cf10462d39ec6f60a155c17f648a02615cc88cc6f101c",
+        "text_lf_sha256": "3d636219575176b422c969a342b5234715554bddecb067d5d7731f47809c3dc2"
+      },
+      "current": {
+        "raw_sha256": "9ea424d1685f018814c6193dc07bd408248af27906dd9f2ae93118f8b61a8590",
+        "text_lf_sha256": "8b2fc7cd05bb2574fb44d067e8f55829c002729b5c1612c65c1b0510bf636dfd"
+      }
+    },
+    "web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex": {
+      "baseline": {
+        "raw_sha256": "d8b7046aab8e0e2426b8752d739761b715b9b29cb7288ad42440a85fc56aa51a",
+        "text_lf_sha256": "4a76bc54fed85500fc04c3054834f95ffb707df56973334716c5de2541807973"
+      },
+      "current": {
+        "raw_sha256": "a52ed6fff8935710b9da65cf3f12376026fc2265b9093c60c2c60c74526ff559",
+        "text_lf_sha256": "18c86b78d21915b6770c3b2ccd5d4c760e417783b4a2e9af436bcdfb6422424b"
+      }
+    },
+    "web-player/firmware/attiny88/lpx-tiny88-bread-compact.hex": {
+      "baseline": {
+        "raw_sha256": "2747094938a07146ef1057e2afce4b47b4704762a7cc2a11e162c2e6e510ecf7",
+        "text_lf_sha256": "fe53a5802ac25de6826a5faef8b946d2c38557e37e3a7305bcfca6ca18826ee5"
+      },
+      "current": {
+        "raw_sha256": "b6daaa5d0f4a765c7eb7e514e04117b3f52c50a7dabfa23857026d2108f93a59",
+        "text_lf_sha256": "dd8dda0b385f47efa304fd53558b29ed709707bb8e80c2101bb99511a9be194d"
+      }
+    },
+    "web-player/firmware/attiny88/lpx-tiny88-bread-low15.hex": {
+      "baseline": {
+        "raw_sha256": "62e597502e706191508fb6e8e05f7eec5a42e197e3f4ef06782edee54f120228",
+        "text_lf_sha256": "bd615c86bb9f4c60ec7ad8a4f9c28a2b10f168fbaaf9affa8ab294af9721aafc"
+      },
+      "current": {
+        "raw_sha256": "ffae57d4e963ca04ff88100fb840cf1c4b6165f2faca6dc4834d9cf1fd377a94",
+        "text_lf_sha256": "d8cf62984f58dabcaeda4faa5d0760046e9e62a12f6e575c94cead5f05d19351"
+      }
+    },
+    "web-player/firmware/attiny88/lpx-tiny88-bread-quality.hex": {
+      "baseline": {
+        "raw_sha256": "e5df2c84c64ab8a66ab67df31d3609b360661e1a40d252e65b02eed92ca31422",
+        "text_lf_sha256": "cd2cc2747d23ae7c909dc1fc3a804997e4047a21db3f417e4d2c37d336c65c96"
+      },
+      "current": {
+        "raw_sha256": "d610df85ad0dedc9ebc28e287d3bacdbef47fa26f1a5cd69a62487df8d2f1943",
+        "text_lf_sha256": "7b42b6df277d2f23a0d1f8d92a321814588b2323394b3852a2083c92e59bb198"
+      }
+    },
+    "web-player/firmware/attiny88/lpx-tiny88-chego-compact.hex": {
+      "baseline": {
+        "raw_sha256": "c4f0018fb079c6745645419cb5933d2b867c1f1a46d595f46fb0626bd1af5406",
+        "text_lf_sha256": "8772a7a8596cad439bc250184ea4d82596ec1de90bed20d8e498883d8587bdcd"
+      },
+      "current": {
+        "raw_sha256": "90cb49abd04879074c7eb9928eb02345a40113ef02ac8161242f724cb917bd2f",
+        "text_lf_sha256": "d52e66351c38cb278876266148b28cc81c4efa0d224e425743396c6d12ee2abb"
+      }
+    },
+    "web-player/firmware/attiny88/lpx-tiny88-chego-quality.hex": {
+      "baseline": {
+        "raw_sha256": "3f57e2d27b2834b6c9ef9f0fa3593cf73a76a7c720a827b664cd0e0638123e0c",
+        "text_lf_sha256": "9e53b549c48835cf42a9e47dbdfa1b1e21132c0e82564dc28b2907bc02f716fa"
+      },
+      "current": {
+        "raw_sha256": "d187664326cc421c1a4105f79f444550e917a42c2f3a8081ec82878db7db307c",
+        "text_lf_sha256": "93d50287ce29026541f42315e80e35c5d2c4dd6408b983f5899981c9e4936a9c"
+      }
+    },
+    "web-player/firmware/attiny88/lpx-tiny88-otvechaesh-compact.hex": {
+      "baseline": {
+        "raw_sha256": "a659bcd04d845fb884a03b2969821276fed40743b400014eb8b38f009841d83d",
+        "text_lf_sha256": "c86e99566e85a11f8cdf08078439feda147d5145fd9323a6ec9a9f987258150d"
+      },
+      "current": {
+        "raw_sha256": "d593859258d5abc04623eb72c4c322c7eadd71449afe37e69bd459bb5e74ace9",
+        "text_lf_sha256": "2fce2a021b917350883eaadf867d266c7b9dc62d72eedf5d5476482fc1f4eb40"
+      }
+    },
+    "web-player/firmware/attiny88/lpx-tiny88-otvechaesh-quality.hex": {
+      "baseline": {
+        "raw_sha256": "86ade36cc122fb3778df888cd537d0a8162ad2540f2d9d17a172dd1f23e90d12",
+        "text_lf_sha256": "a644c0ad5c6da68e87257f4b6d636bbcde8871f44d96539460f8abb7e7686052"
+      },
+      "current": {
+        "raw_sha256": "b40bd0e28861bb2fa9b0adf8acb7384f672995fad199b87f477f8daf6c3d2def",
+        "text_lf_sha256": "2311c2f790ae5b0d13dc162eb199f2b192558bc70ece442391aa31c61e12dbc5"
+      }
+    },
+    "web-player/firmware/attiny88/lpx-tiny88-vinni-compact.hex": {
+      "baseline": {
+        "raw_sha256": "6883e74a648da52eed7ad28f4d8c5aecc18580a4d583b3db73168f83f8ebcade",
+        "text_lf_sha256": "d168f2824074e92eb1ca4ff16ecb6fa0e0170a6e8dec4dd53f072196cd52bd39"
+      },
+      "current": {
+        "raw_sha256": "94bbabbf91851d6469bc51821bff9fd07fc3e238719fa13469d21dda42929d88",
+        "text_lf_sha256": "f804f0ee80c5fda93c9bb4d92be9ce9eb56e3723a52d5941978d5fabfe9f9e60"
+      }
+    },
+    "web-player/firmware/attiny88/lpx-tiny88-vinni-quality.hex": {
+      "baseline": {
+        "raw_sha256": "9ee3d2a9d7fb41a9ab74e7cf40df7522d1896c93ff3de0d7f175639ca1df3a47",
+        "text_lf_sha256": "25b2483d14a697e10247e685997f4b8f3bf08710414547c3754fce197b135d8f"
+      },
+      "current": {
+        "raw_sha256": "a633b6ba07e30518b5aa532f5e4f56ee99f30a92752588b4fee76e4811c3f132",
+        "text_lf_sha256": "e07c38b6c64af599e6682883863561c3be46cf6ab9a9ed2e1b6d5d06d5ce5cc9"
+      }
+    },
+    "web-player/index.html": {
+      "baseline": {
+        "raw_sha256": "cb20d711b0af55bbcac74d3e9b8c1e97d68c45fadd435e16fd341242c6c5e6a5",
+        "text_lf_sha256": "cb20d711b0af55bbcac74d3e9b8c1e97d68c45fadd435e16fd341242c6c5e6a5"
+      },
+      "current": {
+        "raw_sha256": "dd4a495bfe3f6d0cf87e89d511f845df8a5709db0f3cd9b4f19c918b8d696f44",
+        "text_lf_sha256": "1f377bace687258cf81812e3d2b2562211826a56963cfb1a060e0a14a2be73b3"
+      }
+    },
+    "web-player/lib/tiny88-preview.js": {
+      "baseline": {
+        "raw_sha256": "d75a4963bd7e57a50e13d768c4e17f7cb79202e09ef8a23a68c3b7a6d2058d38",
+        "text_lf_sha256": "d75a4963bd7e57a50e13d768c4e17f7cb79202e09ef8a23a68c3b7a6d2058d38"
+      },
+      "current": {
+        "raw_sha256": "c409461c084ff38b28c621bcdd22d73fb610f4765a970f8a38f30e2be7e6e1d0",
+        "text_lf_sha256": "b82175282944139aef98b32a6facc507e9c72d9ab3d795742d88f26cfacf277b"
+      }
+    },
+    "web-player/tests/helpers/lpx-source-transition.mjs": {
+      "baseline": {
+        "raw_sha256": "fec272670afbabf6c379e3fcbdf4c6c353fc4c7bf596954f7b39425e5bb26113",
+        "text_lf_sha256": "fec272670afbabf6c379e3fcbdf4c6c353fc4c7bf596954f7b39425e5bb26113"
+      },
+      "current": {
+        "raw_sha256": "c6f7b235dee7f1c50bff6491284b7f5bdd0e9550c9f2bcdc50dc77e926d3e192",
+        "text_lf_sha256": "0683c3859796d6187293d5d26aacfb070ba6dc1b846aa962fdf4a7eea9a9b8df"
+      }
+    }
+  }
+}

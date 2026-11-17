@@ -56,3 +56,25 @@ python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_avr_player22.py build/fixed-r
 
 Use `--wsl Ubuntu` on Windows. `source-transition.json` binds the new source
 and measurements while preserving the historical automatic-player reports.
+
+## WebUI images rebuilt at 8 kHz
+
+All 18 public LPX images are rebuilt with the default single frequency,
+including the Owl dialogue. `web-rebuild.json` binds each new HEX to its
+independent ASM rebuild and the unchanged public WAV/C output. The old
+publication's retained PWM hashes are identical for all 345470 samples;
+every new full playback has zero IRQ underruns. All 26 LPX/audio assets
+remain byte-identical. `web-transition.json` preserves the metadata/cache
+transition separately from the decoder change.
+
+| Image | Program excluding audio | Change | Largest complete image |
+| --- | ---: | ---: | ---: |
+| Tiny88 release | 3629–3630 B (3.544–3.545 KiB) | −36 B | 5510 B |
+| Nano single stream | 3016–3017 B (2.945–2.946 KiB) | −40 B | 4898 B |
+| Nano dialogue | 3295 B (3.218 KiB) | −44 B | 8844 B |
+
+The single-stream Nano remains below 3 KiB. All Tiny images fit both the
+6012-byte standard USB application region and 6.5 KiB project cap. The
+catalogs record compile-time 8 kHz selection; shared WebUI cache keys and
+the speech asset inventory are refreshed. No source recording or compressed
+sound was regenerated.

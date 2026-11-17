@@ -402,4 +402,19 @@ def assert_recorded_source(path,expected):
                 assert row['irq_max']<=before['irq_max']
                 if row['rate']==8000 or row['target']=='atmega328p':assert row['accepted']
             recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        directory=REPO/'Codecs/LPX/research/avr-fixed-rate-2026-11-18'
+        report=json.loads((directory/'web-transition.json').read_text(encoding='utf-8'))
+        change=report['sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert report['schema']=='lpx-fixed-rate-web-transition-v1'
+            evidence=(directory/'web-rebuild.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
+            result=json.loads(evidence)
+            assert len(result['cases'])==18 and result['all_audio_stream_assets_unchanged']
+            assert result['independent_rebuild']['all_binaries_exact']
+            assert all(r['exact_old_recorded_c_public_pwm'] and r['after']['accepted'] and
+                       r['after']['underruns']==0 and r['after']['flash']<r['before']['flash'] and
+                       r['after']['stream']==r['before']['stream'] for r in result['cases'])
+            recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

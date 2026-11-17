@@ -1,4 +1,4 @@
-import {lpxPreviewEntries} from './native-preview.js?v=20261117-lpx-3k-rates';
+import {lpxPreviewEntries} from './native-preview.js?v=20261118-lpx-fixed-rate';
 
 const phrases=['chego','otvechaesh','vinni','bread'];
 const positive=value=>Number.isSafeInteger(value)&&value>0;

@@ -496,5 +496,20 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       recorded=change.current[field];
     }
   }
+  if(recorded!==actual){
+    const directory='Codecs/LPX/research/avr-fixed-rate-2026-11-18/';
+    const report=JSON.parse(read(directory+'web-transition.json')),change=report.sources[path];
+    if(change?.baseline?.[field]===recorded){
+      assert.equal(report.schema,'lpx-fixed-rate-web-transition-v1');
+      const evidence=read(directory+'web-rebuild.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      const result=JSON.parse(evidence);assert.equal(result.cases.length,18);
+      assert.equal(result.all_audio_stream_assets_unchanged,true);
+      assert.equal(result.independent_rebuild.all_binaries_exact,true);
+      assert.ok(result.cases.every(r=>r.exact_old_recorded_c_public_pwm&&r.after.accepted&&
+        r.after.underruns===0&&r.after.flash<r.before.flash&&r.after.stream===r.before.stream));
+      recorded=change.current[field];
+    }
+  }
   assert.equal(recorded,actual,path+' current source');
 }

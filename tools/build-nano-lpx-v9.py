@@ -112,6 +112,7 @@ def main():
                 source=retained[-1][1].relative_to(WEB).as_posix(),streamSha256=digest(streams[0]),timing=timing)
         else:
             row=dict(old,**common,compactVersion=9,universalDecoder=True,romOutputGain=True,queue=32,prefill=24,
+                sampleRateSelection='compile-time',supportedSampleRates=[8000],
                 streamBytes=cost['embedded_audio_bytes'],sourceHashEncoding='text-lf',
                 sourceSha256={**old.get('sourceSha256',{}),**creation_hashes,**hashes})
             for segment,stream,rom in zip(row['segments'],retained,cost['embedded_segment_ranges']):
@@ -132,6 +133,7 @@ def main():
         assert hashlib.sha256((ROOT/path).read_bytes().replace(b'\r\n',b'\n')).hexdigest()==expected,path
     catalog=dict(schema='micromusic-lpx-avr-firmware-v2',device='atmega328p',
         cpuHz=16000000,sampleHz=8000,pwmHz=62500,pwmOutput='D3 / PD3 / OC2B',queue=32,prefill=24,
+        sampleRateSelection='compile-time',supportedSampleRates=[8000],
         assemblyEnabled=True,cFallbackSelectable=True,physicalBoardMeasured=False,
         compactVersion=9,universalDecoder=True,romOutputGain=True,
         sourceHashEncoding='text-lf',sourceSha256=hashes,clips=clips,variants=[r for r,_ in built[:-1]])

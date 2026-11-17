@@ -112,6 +112,7 @@ def main():
     for name,digest in hashes.items():assert sha(ROOT/name,True)==digest,name
     manifest=dict(schema='micromusic-lpx-attiny88-firmware-v1',device='attiny88',cpuHz=16000000,
         sampleHz=8000,pwmHz=62500,pwmOutput='D9 / PB1 / OC1A',flashLimitBytes=8192,bootloaderLimitBytes=6012,
+        sampleRateSelection='compile-time',supportedSampleRates=[8000],
         physicalBoardMeasured=False,arithmeticBackend='avr25-asm',cFallbackSelectable=True,
         queueBytes=args.queue,prefillSamples=args.queue*3//4,mul16Unroll=args.mul16_unroll,
         compactVersion=9,universalDecoder=True,romOutputGain=True,releaseFlashLimitBytes=RELEASE_FLASH_LIMIT,
