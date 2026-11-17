@@ -960,13 +960,13 @@ static inline int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
 #if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
     uint32_t wide;
     __asm__(
-        "muls %B1,%B2\n\tmovw %C0,r0\n\t"
-        "mul %A1,%A2\n\tmov %B0,r1\n\tclr %A0\n\t"
-        "mulsu %B1,%A2\n\t"
+        "clr %A0\n\tfmuls %B1,%B2\n\tmovw %C0,r0\n\t"
+        "fmul %A1,%A2\n\tadc %C0,%A0\n\tmov %B0,r1\n\t"
+        "fmulsu %B1,%A2\n\t"
         "add %B0,r0\n\tadc %C0,r1\n\tadc %D0,%A0\n\t"
-        "mulsu %B2,%A1\n\tsbc %D0,%A0\n\t"
+        "fmulsu %B2,%A1\n\tsbc %D0,%A0\n\t"
         "add %B0,r0\n\tadc %C0,r1\n\tadc %D0,%A0\n\t"
-        ".rept 2\n\tlsl %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t"
+        "lsl %B0\n\trol %C0\n\trol %D0\n\t"
         "clr __zero_reg__"
         : "=&r"(wide) : "a"(coefficient),"a"(state) : "r0","r1","cc");
     return (int16_t)(wide>>16);
