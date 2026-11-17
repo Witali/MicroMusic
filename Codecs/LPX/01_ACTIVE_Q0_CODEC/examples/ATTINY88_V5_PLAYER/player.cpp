@@ -48,6 +48,10 @@ static const uint8_t voice[] PROGMEM={
 // the stream, including when this build requests repeat playback.
 struct Lpx4RomPlayer {
     static Lpx4HybridCore decoder;
+#if LPX4_BATCHED_REMAINING
+    // Called after next() succeeds, with parser errors already excluded.
+    static bool sampleWasLast(){return decoder.subPos_==decoder.subEnd_;}
+#endif
 #if LPX4_V9_ROM_HEADER_LAYOUT && LPX25_REPEAT == 1
     static bool begin(){return decoder.beginRom(voice,sizeof(voice),false);}
 #endif
@@ -190,7 +194,11 @@ int main(){
         const bool decoded=decoder.next(sample);
         __asm__ __volatile__(".global lpx25_decode_end\nlpx25_decode_end:" ::: "memory");
         if(!decoded){lpx25_error=decoder.error();break;}
+#if LPX25_V9_ROM_PLAYER && LPX4_BATCHED_REMAINING
+        const bool last=Lpx4RomPlayer::sampleWasLast() && repeats==1;
+#else
         const bool last=decoder.finished() && repeats==1;
+#endif
         lpx25_queue[head]=micromusic_pwm_gain(sample);barrier();
 #if LPX25_V9_ROM_PLAYER
         // The barrier orders the sample before the byte store. Only
