@@ -2424,6 +2424,9 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     hist_[0]=pred;
 #endif
 #endif
+#if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9 && LPX4_V9_ROM_HEADER_LAYOUT
+    int16_t b=limitBrightnessOutput(lpx4PostfilterPair<offsetof(Lpx4HybridCore,prevDeemph_)-offsetof(Lpx4HybridCore,preQ14_)>(pred,(uint8_t*)&preQ14_));
+#else
 #if LPX4_AVR25_V9_PREPARED_ATTENUATION
     int16_t deemph=preQ14_?lpx4AddClip15<true>(pred,lpx4PreparedAttenuationQ14(prevDeemph_,preQ14_)):pred;
 #elif defined(LPX4_FIXED_PRE_Q14)
@@ -2448,6 +2451,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     int16_t b=LPX4_FIXED_BRIGHT_Q14?lpx4ClipQ14((int16_t)(clipped-lpx4AttenuateFixedQ14<LPX4_FIXED_BRIGHT_Q14>(prevBright))):clipped;
 #else
     int16_t b=brightQ14_?limitBrightnessOutput((int16_t)(clipped-lpx4AttenuateQ14(brightQ14_,prevBright))):clipped;
+#endif
 #endif
 #endif
     // Preserve the postfilter signal before final output conversion. Floating

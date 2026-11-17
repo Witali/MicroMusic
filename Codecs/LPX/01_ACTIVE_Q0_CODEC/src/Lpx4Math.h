@@ -1000,6 +1000,49 @@ static inline int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
 #endif
 }
 
+// The AVR5 v9 player supplies its adjacent pre/brightness words and the
+// displacement of its signed16 deemphasis state. No independent state is kept.
+// pre is 0..16384 and brightness is 0..11469. The previous word is disjoint.
+template<uint8_t previousOffset>
+static inline __attribute__((always_inline)) int16_t lpx4PostfilterPair(int16_t predicted,uint8_t* coefficients){
+    static_assert(previousOffset>=4 && previousOffset<=62,"Postfilter state exceeds the AVR displacement range");
+#if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
+    __asm__ volatile(
+        "ldd r18,Z+%[prev]\n\tldd r19,Z+%[prev]+1\n\t"
+        "ld r20,Z\n\tldd r21,Z+1\n\tmov r22,r20\n\tor r22,r21\n\tbreq 5f\n\tclt\n\t"
+        "1: clr r22\n\tfmuls r21,r19\n\tmovw r26,r0\n\t"
+        "fmul r20,r18\n\tadc r26,r22\n\tmov r23,r1\n\t"
+        "fmulsu r21,r18\n\tadd r23,r0\n\tadc r26,r1\n\tadc r27,r22\n\t"
+        "fmulsu r19,r20\n\tsbc r27,r22\n\tadd r23,r0\n\tadc r26,r1\n\tadc r27,r22\n\t"
+        "lsl r23\n\trol r26\n\trol r27\n\tclr __zero_reg__\n\tbrts 7f\n\t"
+        // Exact signed16 addition saturated to +/-32767.
+        "add %A[value],r26\n\tadc %B[value],r27\n\tbrvc 4f\n\tbrmi 3f\n\t"
+        "ldi %A[value],1\n\tldi %B[value],128\n\trjmp 5f\n\t"
+        "3: ldi %A[value],255\n\tldi %B[value],127\n\trjmp 5f\n\t"
+        "4: cpi %B[value],128\n\tbrne 5f\n\tcpi %A[value],1\n\tadc %A[value],__zero_reg__\n\t"
+        "5: std Z+%[prev],%A[value]\n\tstd Z+%[prev]+1,%B[value]\n\t"
+        "mov r22,%B[value]\n\tsubi r22,192\n\tbrpl 6f\n\t"
+        "clr %A[value]\n\tldi %B[value],64\n\tsbrc r22,6\n\tori %B[value],128\n\t"
+        "6: ldd r20,Z+2\n\tldd r21,Z+3\n\tmov r22,r20\n\tor r22,r21\n\tbreq 8f\n\t"
+        "mov r22,r19\n\tsubi r22,192\n\tbrpl 9f\n\t"
+        "clr r18\n\tldi r19,64\n\tsbrc r22,6\n\tori r19,128\n\t"
+        "9: set\n\trjmp 1b\n\t"
+        "7: sub %A[value],r26\n\tsbc %B[value],r27\n\t8:"
+        : [value] "+&d"(predicted) : "z"(coefficients),[prev]"I"(previousOffset)
+        : "r0","r1","r18","r19","r20","r21","r22","r23","r26","r27","cc","memory");
+    return predicted;
+#else
+    const uint16_t pre=(uint16_t)coefficients[0]|((uint16_t)coefficients[1]<<8);
+    const uint16_t bright=(uint16_t)coefficients[2]|((uint16_t)coefficients[3]<<8);
+    const int16_t old=(int16_t)((uint16_t)coefficients[previousOffset]|((uint16_t)coefficients[previousOffset+1]<<8));
+    const int16_t deemphasis=pre?lpx4AddClip15(predicted,lpx4AttenuateQ14(pre,old)):predicted;
+    coefficients[previousOffset]=(uint8_t)deemphasis;
+    coefficients[previousOffset+1]=(uint8_t)((uint16_t)deemphasis>>8);
+    const int16_t clipped=lpx4ClipQ14(deemphasis);
+    return bright?(int16_t)(clipped-lpx4AttenuateQ14(bright,lpx4ClipQ14(old))):clipped;
+#endif
+}
+
 #if LPX4_USE_AVR_NOMUL_ASM
 // Tag the two shift-only coefficients after validating the stream header.
 // The common offset keeps unity at 0x4000 and puts 64 at 0xa040 and

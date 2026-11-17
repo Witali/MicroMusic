@@ -90,6 +90,7 @@ AVR5_SATURATION_RAILS=REPO/'Codecs/LPX/research/avr5-v9-saturation-rails-2026-11
 TINY_PREPARE_REGISTERS=REPO/'Codecs/LPX/research/tiny-v9-prepare-registers-2026-11-17'
 AVR5_FMUL_FILTER=REPO/'Codecs/LPX/research/avr5-v9-fmul-filter-2026-11-17'
 AVR5_PLAYER_WORDS=REPO/'Codecs/LPX/research/avr5-v9-player-words-2026-11-17'
+AVR5_SHARED_FILTER=REPO/'Codecs/LPX/research/avr5-v9-shared-filter-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -286,6 +287,7 @@ def assert_recorded_source(path,expected):
         (TINY_PREPARE_REGISTERS,'2e1e4a0471756ae6827256d03f11586a5dd7712b'),
         (AVR5_FMUL_FILTER,'d75d66e355046ac4e1eb7527ebcc685d020cea4b'),
         (AVR5_PLAYER_WORDS,'527dd8a3c42ed69fe7cb3b9d054ca25edc4ce80b'),
+        (AVR5_SHARED_FILTER,'fba54e7b6e9458b483cf4b906f8a2c3c1684b5b2'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
