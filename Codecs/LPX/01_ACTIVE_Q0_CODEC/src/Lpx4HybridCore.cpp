@@ -736,7 +736,13 @@ uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
   if(error_)return 0;
   upper+=step;
  }
+#if LPX4_AVR25_V9_RUNTIME && LPX4_AVR25_V9_ROM_LAYOUT && !defined(LPX4_ENABLE_PCM16)
+ // bits=5+(profile&2)/2, k=bits-4-delta, width=bits+delta.
+ // Reconstruct only on escape, avoiding a held width through the prefix.
+ return readBits(6+(LPX4_SPEECH_FLAGS&2)-k);
+#else
  return readBits(width);
+#endif
 #else
  uint8_t high=0;
  while(high<8 && !readOne()){
