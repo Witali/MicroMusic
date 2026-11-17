@@ -66,6 +66,7 @@ AVR_ROM_START=REPO/'Codecs/LPX/research/avr-v9-rom-start-2026-11-17'
 AVR_ROM_REFILL=REPO/'Codecs/LPX/research/avr-v9-rom-refill-2026-11-17'
 AVR_PULSE_SWAP=REPO/'Codecs/LPX/research/avr-v9-pulse-swap-2026-11-17'
 AVR5_LPC_CIRCULAR=REPO/'Codecs/LPX/research/avr5-v9-lpc-circular-2026-11-17'
+AVR_SHARED_SCALE=REPO/'Codecs/LPX/research/avr-v9-shared-scale-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -238,6 +239,7 @@ def assert_recorded_source(path,expected):
         (AVR_ROM_REFILL,'d6e878101d37718234a13d7365ece466debc8242'),
         (AVR_PULSE_SWAP,'a8c0015d2a672cadc799b9bc019aafebad082a3c'),
         (AVR5_LPC_CIRCULAR,'4d3d52cb8970c0183242c24be097eb493242a15c'),
+        (AVR_SHARED_SCALE,'573aebc0a800aa10b3a99c59bb839c945be1dc94'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

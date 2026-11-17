@@ -133,7 +133,10 @@ static const uint8_t LP_PROGMEM cosineBend[64]={
 };
 #if LPX4_COMPACT_ONLY
 // Compact speech transmits a five-bit scale, originalStep[index*8].
-#if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
+#if LPX4_AVR_V9_PACKETS && LPX4_EXCITATION_Q4
+#if LPX4_USE_AVR_ASM
+__attribute__((noinline))
+#endif
 static uint16_t scaleStep(uint8_t header){
  // The scale is in the low five bits of the scale/gain byte.
  // The two mantissas are entries 0 and 8 of the original scale grid.
@@ -141,9 +144,18 @@ static uint16_t scaleStep(uint8_t header){
  uint16_t scaled=(header&1)?5931:4194;
  uint8_t group=header;
  __asm__(
+#if LPX4_USE_AVR_ASM
+     "lsr %1\n\tandi %1,15\n\tsubi %1,3\n\tbrcs 5f\n\tsubi %1,9\n\tbreq 4f\n\tbrpl 3f\n\t"
+#else
      "lsr %1\n\tandi %1,15\n\tsubi %1,12\n\tbreq 4f\n\tbrpl 3f\n\t"
+#endif
      "1: lsr %B0\n\tror %A0\n\tinc %1\n\tbrne 1b\n\trjmp 4f\n\t"
+#if LPX4_USE_AVR_ASM
+     "3: lsl %A0\n\trol %B0\n\tdec %1\n\tbrne 3b\n\trjmp 4f\n\t"
+     "5: clr %A0\n\tclr %B0\n\t4:"
+#else
      "3: lsl %A0\n\trol %B0\n\tdec %1\n\tbrne 3b\n\t4:"
+#endif
      : "+&w"(scaled),"+d"(group) : : "cc");
  return (scaled+8)&0xfff0;
 }
@@ -841,7 +853,7 @@ bool Lpx4HybridCore::readFrame(){
 #endif
   if((LPX4_SPEECH_FLAGS&8) && secondHalf)return !error_;
 #endif
-#if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
+#if LPX4_AVR_V9_PACKETS
   // The v9 scale and gain are adjacent LSB-first fields, eight bits total.
   const uint8_t blockHeader=readBits(8);
 #else
@@ -852,8 +864,10 @@ bool Lpx4HybridCore::readFrame(){
   blockScale_=readBits(5)<<3;
 #endif
 #if LPX4_COMPACT_VERSION == 9
+#if LPX4_AVR_V9_PACKETS
 #if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
   blockStep_=scaleStep(blockHeader);
+#endif
   gain_=(blockHeader>>4)&14;
 #else
   gain_=readBits(3)<<1;
@@ -863,14 +877,20 @@ bool Lpx4HybridCore::readFrame(){
 #else
   lag_=18+readBits(7);gain_=readBits(3)<<1;
 #endif
-#if !(LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4)
+#if LPX4_AVR_V9_PACKETS && !(LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4)
+#if LPX4_USE_AVR_ASM && LPX4_EXCITATION_Q4
+  blockStep_=scaleStep(blockHeader);
+#else
+  blockStep_=scaleStep(blockHeader&31);
+#endif
+#elif !LPX4_AVR_V9_PACKETS
 #if LPX4_COMPACT_ONLY
   blockStep_=scaleStep(blockScale);
 #else
   blockStep_=scaleStep(blockScale_);
 #endif
 #endif
-#if LPX4_EXCITATION_Q4 && !LPX4_AVR25_V9_RUNTIME
+#if LPX4_EXCITATION_Q4 && !LPX4_AVR_V9_PACKETS
   blockStep_<<=4;
 #endif
   return !error_;
