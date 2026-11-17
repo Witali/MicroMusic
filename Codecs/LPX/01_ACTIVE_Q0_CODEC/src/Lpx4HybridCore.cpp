@@ -2169,9 +2169,10 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     *history=pred;
 #elif LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9 && \
       LPX4_AVR_DOT_UNROLL==9 && LPX4_EXCITATION_Q4
-    // The oldest history word is read once and its extra shift slot is dead.
-    int16_t pred=lpx4Clip15From24(lpx4SynthesisQ12<LPX4_EXCITATION_Q4>(excitation,a_,hist_));
-    hist_[0]=pred;
+    // The 20-sample subframe resets on a ten-slot history boundary.
+    constexpr size_t historyOffset=offsetof(Lpx4HybridCore,hist_)-offsetof(Lpx4HybridCore,subPos_);
+    static_assert(historyOffset<=63,"LPC history exceeds the AVR ADIW immediate");
+    int16_t pred=lpx4SynthesisCircularQ12<historyOffset>(excitation,a_,&subPos_);
 #else
     int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,LPX4_COMPACT_VERSION==9>(excitation,a_,hist_));
     hist_[0]=pred;

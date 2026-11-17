@@ -65,6 +65,7 @@ const tinyFrameRiceReport='Codecs/LPX/research/tiny-v9-frame-rice-2026-11-17/';
 const avrRomStartReport='Codecs/LPX/research/avr-v9-rom-start-2026-11-17/';
 const avrRomRefillReport='Codecs/LPX/research/avr-v9-rom-refill-2026-11-17/';
 const avrPulseSwapReport='Codecs/LPX/research/avr-v9-pulse-swap-2026-11-17/';
+const avr5LpcCircularReport='Codecs/LPX/research/avr5-v9-lpc-circular-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -289,6 +290,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avrRomStartReport,'7c7aa0b2704ed97d5a5a56882048ecfc5c547b8b'],
     [avrRomRefillReport,'d6e878101d37718234a13d7365ece466debc8242'],
     [avrPulseSwapReport,'a8c0015d2a672cadc799b9bc019aafebad082a3c'],
+    [avr5LpcCircularReport,'4d3d52cb8970c0183242c24be097eb493242a15c'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

@@ -647,6 +647,52 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
     return result;
 #endif
 }
+#if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
+// subframePosition points to the current position (0..19), with the ten
+// history words at historyOffset bytes after it. Position modulo ten selects
+// the oldest sample. Z reads the two spans in chronological order while X
+// walks the coefficients backwards, then Z returns to the oldest slot.
+#define LPX4_LPC_RING_TAP \
+    "ld r19,-X\n\tld r18,-X\n\tld r20,Z+\n\tld r21,Z+\n\t" LPX4_SYNTH_MUL
+template<uint8_t historyOffset>
+static inline __attribute__((always_inline)) int16_t lpx4SynthesisCircularQ12(
+        int32_t excitation,const int16_t* coefficients,uint8_t* subframePosition){
+    int32_t result=excitation;
+    const int16_t* a=coefficients+10;
+    __asm__(
+        "clr r16\n\t"
+        LPX4_SYNTH_INIT
+        "ld r22,Z\n\tadiw r30,%3\n\tcpi r22,10\n\tbrlo 7f\n\tsubi r22,10\n\t"
+        "7: mov r17,r22\n\tlsl r17\n\tadd r30,r17\n\tadc r31,r16\n\t"
+        "ldi r17,10\n\tsub r17,r22\n\tclt\n\t"
+        // Enter on the second tap for odd spans. T marks the wrapped span
+        // and the playback ISR preserves it with the rest of SREG.
+        "lsr r17\n\tbrcs 2f\n\tdec r17\n\t"
+        "1: " LPX4_LPC_RING_TAP
+        "2: " LPX4_LPC_RING_TAP
+        "subi r17,1\n\tbrcc 1b\n\t"
+        "brts 4f\n\tsbiw r30,20\n\tset\n\tmov r17,r22\n\tlsr r17\n\t"
+        "brcs 2b\n\tbreq 4f\n\tdec r17\n\trjmp 1b\n\t"
+        // Bias the high word by eight. Values below 16 fit signed16 after
+        // dropping the zero fractional nibble. Clip before writing history.
+        "4: movw r24,%C0\n\tadiw r24,8\n\t"
+        "cpi r24,16\n\tcpc r25,r16\n\tbrsh 5f\n\t"
+        "swap %A0\n\tswap %B0\n\tmov r25,%B0\n\tandi r25,240\n\t"
+        "or %A0,r25\n\teor %B0,r25\n\t"
+        "swap r24\n\tsubi r24,128\n\tor %B0,r24\n\t"
+        "ldi r25,128\n\tcp %B0,r25\n\tbrne 6f\n\t"
+        "ldi r24,1\n\tcp %A0,r24\n\tadc %A0,r16\n\trjmp 6f\n\t"
+        "5: ldi r24,255\n\tldi r25,127\n\tsbrs %D0,7\n\trjmp 7f\n\t"
+        "ldi r24,1\n\tldi r25,128\n\t7: movw %A0,r24\n\t"
+        "6: st Z+,%A0\n\tst Z,%B0\n\tclr __zero_reg__"
+        : "+&r"(result),"+z"(subframePosition),"+x"(a)
+        : "I"(historyOffset)
+        : "r0","r1","r16","r17","r18","r19","r20","r21","r22","r23","r24","r25","cc","memory");
+    return (int16_t)result;
+}
+#undef LPX4_LPC_RING_TAP
+#endif
+
 #undef LPX4_SYNTH_MUL
 #undef LPX4_SYNTH_INIT
 #undef LPX4_NOMUL_PRODUCT
