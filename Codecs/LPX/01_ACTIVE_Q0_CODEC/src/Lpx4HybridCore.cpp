@@ -1518,38 +1518,34 @@ static inline __attribute__((always_inline)) int16_t polyHighWord(Coefficient v)
 #endif
 
 #if LPX4_AVR25_V9_RUNTIME
-// Four signed steps compute floor(residue*factor/16). The upper bits of
-// a negative residue encode an implicit -16, corrected after the shifts.
-static inline __attribute__((always_inline)) int16_t polyRemainderQ4(int8_t residue,int16_t factor){
-    int16_t result;
+// Both bytes of hi use the same seven shift/add rounds. The residue
+// uses the final four rounds. The intermediate sum fits for |c|<=8192.
+static inline __attribute__((always_inline)) PolyCoefficient polyGroupedQ12(int8_t residue,int16_t hi,int16_t c,int8_t directMask){
+    PolyCoefficient out;
+    uint8_t phase;
     __asm__(
-        "clr %A0\n\tclr %B0\n\t"
-        ".rept 4\n\tlsr %1\n\tbrcc 1f\n\tadd %A0,%A2\n\tadc %B0,%B2\n\t"
-        "1: asr %B0\n\tror %A0\n\t.endr\n\t"
-        "sbrs %1,3\n\trjmp 2f\n\tsub %A0,%A2\n\tsbc %B0,%B2\n\t2:"
-        : "=&r"(result),"+&r"(residue) : "r"(factor) : "cc");
-    return result;
-}
-
-// Return floor((seed + word*factor)/256). The factor is bounded by 8192,
-// so each addition before the arithmetic shift fits signed16. T selects
-// the eighth unsigned step of the low byte or the signed final step.
-static inline PolyCoefficient polyWordQ8(int16_t seed,int16_t word,int16_t factor){
-    PolyCoefficient result;
-    __asm__(
-        "mov %B0,%A1\n\tmov %C0,%B1\n\tmov %A0,%A2\n\tlsr %A0\n\t"
-        "clt\n\t2:\n\t"
-        ".rept 7\n\t"
-        "brcc 1f\n\tadd %B0,%A3\n\tadc %C0,%B3\n\t"
+        "mov %A0,%2\n\tclr %B0\n\tclr %C0\n\t"
+        "lsr %A0\n\tclr %1\n\trjmp 4f\n\t2:\n\t.rept 3\n\t"
+        "brcc 1f\n\tadd %B0,%A4\n\tadc %C0,%B4\n\t"
+        "1: asr %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t4:\n\t.rept 4\n\t"
+        "brcc 1f\n\tadd %B0,%A4\n\tadc %C0,%B4\n\t"
         "1: asr %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
-        "brts 3f\n\t"
-        "brcc 1f\n\tadd %B0,%A3\n\tadc %C0,%B3\n\t"
+        "dec %1\n\tbrmi 6f\n\tbreq 8f\n\t"
+        "brcc 1f\n\tadd %B0,%A4\n\tadc %C0,%B4\n\t"
         "1: asr %C0\n\tror %B0\n\t"
-        "mov %A0,%B2\n\tlsr %A0\n\tset\n\trjmp 2b\n\t3:\n\t"
-        "brcc 1f\n\tsub %B0,%A3\n\tsbc %C0,%B3\n\t"
+        "mov %A0,%B3\n\tlsr %A0\n\trjmp 2b\n\t"
+        // Negative signed low nibble equals its four unsigned bits minus 16.
+        "6: sbrs %2,7\n\trjmp 7f\n\tsub %B0,%A4\n\tsbc %C0,%B4\n\t"
+        // Split rounding discards the residue's low byte before adding it
+        // to the word product. Direct rounding keeps that byte for carry.
+        "7: sbrs %5,7\n\tclr %B0\n\t"
+        "ldi %1,2\n\tmov %A0,%A3\n\tlsr %A0\n\trjmp 2b\n\t"
+        // The final bit is the signed weight of the high word byte.
+        "8: brcc 1f\n\tsub %B0,%A4\n\tsbc %C0,%B4\n\t"
         "1: asr %C0\n\tror %B0\n\tror %A0"
-        : "=&r"(result) : "r"(seed),"r"(word),"r"(factor) : "cc");
-    return result;
+        : "=&r"(out),"=&d"(phase)
+        : "r"(residue),"r"(hi),"r"(c),"r"(directMask) : "cc");
+    return out;
 }
 
 static inline PolyCoefficient polyCosineMulQ12(PolyCoefficient v,int16_t c){
@@ -1563,11 +1559,7 @@ static inline PolyCoefficient polyCosineMulQ12(PolyCoefficient v,int16_t c){
             : "=&r"(directMask) : "r"(biased),"r"(threshold) : "cc");
     int8_t residue=(uint8_t)v&15;
     if(!directMask && hi<0 && residue){++hi;residue-=16;}
-    // Combine the fractions before the final shift on the direct path.
-    // On the split path add only the independently rounded residue.
-    const int16_t nibble=polyRemainderQ4(residue,c);
-    const PolyCoefficient accum=polyWordQ8(nibble&(int16_t)directMask,hi,c);
-    return accum+(int8_t)((nibble>>8)&~directMask);
+    return polyGroupedQ12(residue,hi,c,directMask);
 }
 #elif LPX4_POLY24_WORKSPACE
 static inline PolyCoefficient polyCosineMulQ12(PolyCoefficient v,int16_t c){
