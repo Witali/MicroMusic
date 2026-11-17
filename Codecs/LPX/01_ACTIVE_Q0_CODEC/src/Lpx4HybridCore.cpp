@@ -750,8 +750,15 @@ uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
 #endif
 // Container parsing: frame, block, and subframe headers.
 bool Lpx4HybridCore::readFrame(){
+#if LPX4_TINY_ANCHOR_PHASE
+ // The upper anchor is dead until midpoint output replaces it.
+ uint8_t* const oldBins=reinterpret_cast<uint8_t*>(lpcAnchors_+10);
+#define LPX4_PREVIOUS_BINS oldBins
+#else
+#define LPX4_PREVIOUS_BINS prev_
+#endif
 #if !LPX4_COMPACT_ONLY
- for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+ for(uint8_t i=0;i<10;i++)LPX4_PREVIOUS_BINS[i]=cur_[i];
 #endif
 #if LPX4_ENABLE_SPEECH
 #if !LPX4_COMPACT_ONLY
@@ -775,7 +782,7 @@ bool Lpx4HybridCore::readFrame(){
 #endif
 #if LPX4_COMPACT_ONLY && !LPX4_AVR_V9_PACKETS
    // The second half uses cached LPC; the next first half refreshes prev.
-   for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+   for(uint8_t i=0;i<10;i++)LPX4_PREVIOUS_BINS[i]=cur_[i];
 #endif
 #if LPX4_AVR25_V9_RUNTIME
    const uint8_t wide=(LPX4_SPEECH_FLAGS>>1)&1;
@@ -837,15 +844,15 @@ bool Lpx4HybridCore::readFrame(){
       if(value<=last || value>limit){error_=CORRUPT_STREAM;return false;}
       // A repeat uses the cached LPC. Save the old LSF only when decoding a
       // new vector, immediately before replacing the corresponding index.
-      prev_[i]=previous;
+      LPX4_PREVIOUS_BINS[i]=previous;
       if(value!=previous)staticSpectrum_=false;
       cur_[i]=value;last=value;
 #else
       const int8_t difference=(code&1)?-(int8_t)((code+1)>>1):(int8_t)(code>>1);
 #if LPX4_COMPACT_ONLY
-      const int8_t value=delta?(prev_[i]-1+difference):last+1+code;
+      const int8_t value=delta?(LPX4_PREVIOUS_BINS[i]-1+difference):last+1+code;
 #else
-      const int8_t value=delta?((prev_[i]>>shift)+difference):last+1+code;
+      const int8_t value=delta?((LPX4_PREVIOUS_BINS[i]>>shift)+difference):last+1+code;
 #endif
       if(error_)return false;
       if(value<=last || (uint8_t)value>=limit){error_=CORRUPT_STREAM;return false;}
@@ -854,7 +861,7 @@ bool Lpx4HybridCore::readFrame(){
 #else
       const int16_t v=(value<<shift)+(1u<<(shift-1));
 #endif
-      if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
+      if(initializedFrame_ && v!=LPX4_PREVIOUS_BINS[i])staticSpectrum_=false;
       cur_[i]=v;last=value;
 #endif
      }
@@ -869,7 +876,7 @@ bool Lpx4HybridCore::readFrame(){
    for(uint8_t i=0;i<10;i++){
     const int16_t v=((uint16_t)readBits(bits)<<shift)+(1u<<(shift-1));
     if(i && v<=cur_[i-1]){error_=CORRUPT_STREAM;return false;}
-    if(initializedFrame_ && v!=prev_[i])staticSpectrum_=false;
+    if(initializedFrame_ && v!=LPX4_PREVIOUS_BINS[i])staticSpectrum_=false;
     cur_[i]=v;
    }
    if(LPX4_SPEECH_FLAGS==6 && readBits(6)){error_=CORRUPT_STREAM;return false;}
@@ -882,7 +889,7 @@ bool Lpx4HybridCore::readFrame(){
    initializedFrame_=true;
   }
 #else
-  if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+  if(!initializedFrame_)for(uint8_t i=0;i<10;i++)LPX4_PREVIOUS_BINS[i]=cur_[i];
   initializedFrame_=true;
 #endif
 #if LPX4_COMPACT_ONLY && !LPX4_AVR_V9_PACKETS
@@ -993,12 +1000,13 @@ bool Lpx4HybridCore::readFrame(){
  staticSpectrum_=true;
  for(uint8_t i=0;i<10;i++){
   if(v[i]<0||v[i]>1023){error_=CORRUPT_STREAM;return false;}
-  if(initializedFrame_ && v[i]!=prev_[i])staticSpectrum_=false;
+  if(initializedFrame_ && v[i]!=LPX4_PREVIOUS_BINS[i])staticSpectrum_=false;
   cur_[i]=v[i];
  }
- if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
+ if(!initializedFrame_)for(uint8_t i=0;i<10;i++)LPX4_PREVIOUS_BINS[i]=cur_[i];
  initializedFrame_=true;return true;
 #endif
+#undef LPX4_PREVIOUS_BINS
 }
 #if !LPX4_COMPACT_ONLY
 bool Lpx4HybridCore::readBlock(){
@@ -1879,6 +1887,17 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
     for(uint8_t i=0;i<10;++i)
         out[i]=lpx4FloatClamp((p[i+1]+q[i+1])*0.5,-32767.0/4096.0,32767.0/4096.0);
 #else
+#if LPX4_TINY_ANCHOR_PHASE
+#if LPX4_AVR25_V9_RUNTIME
+    const uint8_t* const oldBins=reinterpret_cast<const uint8_t*>(lpcAnchors_+10);
+#else
+    // The portable fallback's first static conversion uses t=0.
+    const uint8_t* const oldBins=staticSpectrum_?cur_:reinterpret_cast<const uint8_t*>(lpcAnchors_+10);
+#endif
+#define LPX4_PREVIOUS_BINS oldBins
+#else
+#define LPX4_PREVIOUS_BINS prev_
+#endif
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
     // Lead-in <=3 plus the workspace fits in the 111 dead future slots.
     const uint8_t pbase=(uint8_t)((ringCursor_+3)&252);
@@ -1898,7 +1917,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
     // LPC segments 1/2 use t=0, 8, 16. Select the endpoints once so
     // both endpoints and the midpoint use the same centered-grid sum.
 #if LPX4_COMPACT_VERSION==9
-    const uint8_t* left=prev_;
+    const uint8_t* left=LPX4_PREVIOUS_BINS;
     const uint8_t* right=cur_;
     // Bit 4 selects the current endpoint. Zero selects the previous one.
     // The midpoint uses both pointers, so neither needs changing.
@@ -1906,8 +1925,8 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
             "tst %2\n\tbrne 1f\n\tmovw %A1,%A0\n\t1:"
             : "+&w"(left),"+&w"(right) : "r"(t) : "cc");
 #else
-    const uint8_t* left=t==16?cur_:prev_;
-    const uint8_t* right=t==0?prev_:cur_;
+    const uint8_t* left=t==16?cur_:LPX4_PREVIOUS_BINS;
+    const uint8_t* right=t==0?LPX4_PREVIOUS_BINS:cur_;
 #endif
 #endif
     for(uint8_t i=0;i<10;i++){
@@ -1923,13 +1942,13 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
         // For segments1/2, u is 0/1/2. Factoring centered q+1 values
         // gives the even-grid index directly, without widening and shifting back.
         const uint8_t u=t>>3;
-        const uint8_t node=(uint8_t)(prev_[i]*(2-u)+cur_[i]*u-1)<<((LPX4_SPEECH_FLAGS&2)?0:1);
+        const uint8_t node=(uint8_t)(LPX4_PREVIOUS_BINS[i]*(2-u)+cur_[i]*u-1)<<((LPX4_SPEECH_FLAGS&2)?0:1);
         const int16_t cc=(int16_t)-cosineEvenNode(node);
 #elif LPX4_COMPACT_ONLY
         const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(
-            centeredLsf(prev_[i],LPX4_SPEECH_FLAGS),centeredLsf(cur_[i],LPX4_SPEECH_FLAGS),t));
+            centeredLsf(LPX4_PREVIOUS_BINS[i],LPX4_SPEECH_FLAGS),centeredLsf(cur_[i],LPX4_SPEECH_FLAGS),t));
 #else
-        const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(prev_[i],cur_[i],t));
+        const int16_t cc=(int16_t)-cosineInterpolate(lpx4LsfNorm10(LPX4_PREVIOUS_BINS[i],cur_[i],t));
 #endif
         // P/Q polynomials are independent; each pair retains the same degree.
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
@@ -1993,9 +2012,12 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
     for(uint8_t i=0;i<10;i++)out[i]=clamp(truncShift(polyP_[i+1]+polyQ_[i+1],1),-32767,32767);
 #endif
 #endif // LPX4_FLOAT_SYNTHESIS
+#undef LPX4_PREVIOUS_BINS
 }
 void Lpx4HybridCore::interpolateLsf(uint8_t sub){
-#if LPX4_ROTATE_LPC_ANCHORS
+#if LPX4_TINY_ANCHOR_PHASE
+    Lpx4SynthesisValue* curLpc=lpcAnchors_;
+#elif LPX4_ROTATE_LPC_ANCHORS
     Lpx4SynthesisValue* curLpc=lpcAnchors_+lpcAnchorOffset_;
 #else
     Lpx4SynthesisValue* curLpc=curLpc_;
@@ -2028,7 +2050,21 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #endif
         return;
     }
-#if LPX4_ROTATE_LPC_ANCHORS
+#if LPX4_TINY_ANCHOR_PHASE
+#if LPX4_USE_AVR_NOMUL_ASM
+    static_assert(sizeof(Lpx4SynthesisValue)==2,"LPC anchor stride is twenty bytes");
+    Lpx4SynthesisValue* prevLpc=lpcAnchors_;
+    __asm__("sbrs %2,2\n\tadiw %A0,20\n\t"
+            "sbrc %2,2\n\tadiw %A1,20"
+            : "+&w"(curLpc),"+&w"(prevLpc) : "r"(sub) : "cc");
+#else
+    Lpx4SynthesisValue* prevLpc=lpcAnchors_+10;
+    if(!(sub&4)){
+        prevLpc=lpcAnchors_;
+        curLpc=lpcAnchors_+10;
+    }
+#endif
+#elif LPX4_ROTATE_LPC_ANCHORS
     Lpx4SynthesisValue* prevLpc=lpcAnchors_+(lpcAnchorOffset_^10);
 #endif
     // Segment width in t=0..16; at most one polynomial conversion per
@@ -2036,7 +2072,9 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     const uint8_t width=(uint8_t)(16/LPX3_LPC_SEGMENTS);
     const uint8_t subframesPerSegment=(uint8_t)(8/LPX3_LPC_SEGMENTS);
     if(sub%subframesPerSegment==0){
-#if LPX4_ROTATE_LPC_ANCHORS
+#if LPX4_TINY_ANCHOR_PHASE
+        // Pointer selection already follows the two-segment phase.
+#elif LPX4_ROTATE_LPC_ANCHORS
 #if !LPX4_AVR25_V9_RUNTIME
         if(sub==0&&!lsfCached_)convertLsfAt(0,prevLpc);
         else{
@@ -2058,7 +2096,11 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
             for(uint8_t i=0;i<10;i++)prevLpc[i]=curLpc[i];
         }
 #endif
+#if LPX4_TINY_ANCHOR_PHASE
+        const uint8_t anchor=(sub&4)?16:8;
+#else
         const uint8_t anchor=(uint8_t)(((sub/subframesPerSegment)+1)*width);
+#endif
         convertLsfAt(anchor,curLpc);
 #if !LPX4_AVR25_V9_RUNTIME || !LPX4_ROTATE_LPC_ANCHORS
         lsfCached_=true;

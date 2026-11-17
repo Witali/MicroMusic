@@ -203,6 +203,13 @@ typedef int16_t Lpx4SynthesisValue;
 #ifndef LPX3_LPC_SEGMENTS
 #define LPX3_LPC_SEGMENTS 2
 #endif
+
+// A complete dynamic half visits both LPC2 output anchors, then
+// returns to anchor zero. Static halves do not rotate.
+#define LPX4_TINY_ANCHOR_PHASE (LPX4_PLAYER_PITCH_PAGE && LPX4_AVR25_V9_ROM_LAYOUT && \
+    LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS==2 && LPX4_ROTATE_LPC_ANCHORS && !LPX4_FLOAT_SYNTHESIS)
+
+
 // Optional local O2 tuning; arithmetic/Flash backend selection is separate.
 #ifndef LPX4_FUNCTION_TUNING
 #define LPX4_FUNCTION_TUNING 7
@@ -416,7 +423,7 @@ private:
     bool initializedFrame_;
     bool lsfCached_,staticSpectrum_;
 #endif
-#if LPX4_ROTATE_LPC_ANCHORS
+#if LPX4_ROTATE_LPC_ANCHORS && !LPX4_TINY_ANCHOR_PHASE
     uint8_t lpcAnchorOffset_;
 #endif
     // The AVR5 circular walk needs ten words. Its linear fallback skips
@@ -437,7 +444,11 @@ private:
     int8_t pulseAmp_[LPX4_MAX_PULSES];
 #endif
 #if LPX4_COMPACT_ONLY
+#if LPX4_TINY_ANCHOR_PHASE
+    uint8_t cur_[10];
+#else
     uint8_t prev_[10],cur_[10]; // v5 grid index + 1; zero means untouched
+#endif
 #else
     int16_t prev_[10],cur_[10];
 #endif
