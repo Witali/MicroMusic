@@ -204,10 +204,14 @@ typedef int16_t Lpx4SynthesisValue;
 #define LPX3_LPC_SEGMENTS 2
 #endif
 
-// A complete dynamic half visits both LPC2 output anchors, then
-// returns to anchor zero. Static halves do not rotate.
-#define LPX4_TINY_ANCHOR_PHASE (LPX4_PLAYER_PITCH_PAGE && LPX4_AVR25_V9_ROM_LAYOUT && \
+// While reading a new LPC2 spectrum, the upper anchor is dead until
+// midpoint output replaces it. Both arithmetic backends share this layout.
+#define LPX4_LPC2_LSF_OVERLAY (LPX4_PLAYER_PITCH_PAGE && LPX4_V9_ROM_HEADER_LAYOUT && \
     LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS==2 && LPX4_ROTATE_LPC_ANCHORS && !LPX4_FLOAT_SYNTHESIS)
+
+// A complete dynamic half visits both anchors and returns to anchor zero.
+// Tiny88 derives that phase directly. AVR5 retains its existing phase byte.
+#define LPX4_TINY_ANCHOR_PHASE (LPX4_LPC2_LSF_OVERLAY && LPX4_AVR25_V9_ROM_LAYOUT)
 
 
 // Optional local O2 tuning; arithmetic/Flash backend selection is separate.
@@ -447,7 +451,7 @@ private:
     int8_t pulseAmp_[LPX4_MAX_PULSES];
 #endif
 #if LPX4_COMPACT_ONLY
-#if LPX4_TINY_ANCHOR_PHASE
+#if LPX4_LPC2_LSF_OVERLAY
     uint8_t cur_[10];
 #else
     uint8_t prev_[10],cur_[10]; // v5 grid index + 1; zero means untouched

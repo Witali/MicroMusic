@@ -750,7 +750,7 @@ uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
 #endif
 // Container parsing: frame, block, and subframe headers.
 bool Lpx4HybridCore::readFrame(){
-#if LPX4_TINY_ANCHOR_PHASE
+#if LPX4_LPC2_LSF_OVERLAY
  // The upper anchor is dead until midpoint output replaces it.
  uint8_t* const oldBins=reinterpret_cast<uint8_t*>(lpcAnchors_+10);
 #define LPX4_PREVIOUS_BINS oldBins
@@ -1952,8 +1952,8 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
     for(uint8_t i=0;i<10;++i)
         out[i]=lpx4FloatClamp((p[i+1]+q[i+1])*0.5,-32767.0/4096.0,32767.0/4096.0);
 #else
-#if LPX4_TINY_ANCHOR_PHASE
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_LPC2_LSF_OVERLAY
+#if LPX4_AVR_V9_PACKETS
     const uint8_t* const oldBins=reinterpret_cast<const uint8_t*>(lpcAnchors_+10);
 #else
     // The portable fallback's first static conversion uses t=0.
