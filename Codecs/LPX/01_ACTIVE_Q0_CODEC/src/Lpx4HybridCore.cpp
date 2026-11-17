@@ -2232,6 +2232,11 @@ __attribute__((noinline))
 #else
 inline __attribute__((always_inline))
 #endif
+#if LPX4_AVR25_V9_RUNTIME && LPX4_V9_ROM_HEADER_LAYOUT && LPX3_LPC_SEGMENTS==2 && !defined(LPX4_ENABLE_PCM16)
+// Keep the two-pointer converter's address expressions in their original
+// form across this caller. AVR-GCC 7.3.0 then needs fewer saved registers.
+__attribute__((optimize("no-tree-forwprop,no-tree-ter")))
+#endif
 bool Lpx4HybridCore::prepareSubframe(){
     // All frame/block/excitation headers coincide with a 20-sample boundary.
 #if LPX4_COMPACT_ONLY

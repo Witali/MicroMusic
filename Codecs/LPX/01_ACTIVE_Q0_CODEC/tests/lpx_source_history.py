@@ -87,6 +87,7 @@ TINY_RICE_DERIVED=REPO/'Codecs/LPX/research/tiny-v9-rice-width-2026-11-17'
 AVR5_VECTOR_GAIN=REPO/'Codecs/LPX/research/avr5-v9-vector-gain-2026-11-17'
 AVR5_DIRECT_Q4=REPO/'Codecs/LPX/research/avr5-v9-direct-q4-2026-11-17'
 AVR5_SATURATION_RAILS=REPO/'Codecs/LPX/research/avr5-v9-saturation-rails-2026-11-17'
+TINY_PREPARE_REGISTERS=REPO/'Codecs/LPX/research/tiny-v9-prepare-registers-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -280,6 +281,7 @@ def assert_recorded_source(path,expected):
         (AVR5_VECTOR_GAIN,'18bda37dae0677a76af742810bbc82677cc1a264'),
         (AVR5_DIRECT_Q4,'e08d60bfe41559c5a1cb67d989f0979f6955e2a5'),
         (AVR5_SATURATION_RAILS,'13f76faf5f35042972ac24f0695bebb50d77adc0'),
+        (TINY_PREPARE_REGISTERS,'2e1e4a0471756ae6827256d03f11586a5dd7712b'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

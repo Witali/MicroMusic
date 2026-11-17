@@ -87,6 +87,7 @@ const tinyRiceDerivedReport='Codecs/LPX/research/tiny-v9-rice-width-2026-11-17/'
 const avr5VectorGainReport='Codecs/LPX/research/avr5-v9-vector-gain-2026-11-17/';
 const avr5DirectQ4Report='Codecs/LPX/research/avr5-v9-direct-q4-2026-11-17/';
 const avr5SaturationRailsReport='Codecs/LPX/research/avr5-v9-saturation-rails-2026-11-17/';
+const tinyPrepareRegistersReport='Codecs/LPX/research/tiny-v9-prepare-registers-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -333,6 +334,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avr5VectorGainReport,'18bda37dae0677a76af742810bbc82677cc1a264'],
     [avr5DirectQ4Report,'e08d60bfe41559c5a1cb67d989f0979f6955e2a5'],
     [avr5SaturationRailsReport,'13f76faf5f35042972ac24f0695bebb50d77adc0'],
+    [tinyPrepareRegistersReport,'2e1e4a0471756ae6827256d03f11586a5dd7712b'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));
