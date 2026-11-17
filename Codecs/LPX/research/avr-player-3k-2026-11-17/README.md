@@ -7,7 +7,7 @@ excluding audio. Also reduce the shared ATtiny88 firmware, preserve exact
 arithmetic. Additional dialogue infrastructure is outside the 3072-byte cap.
 
 `steps.json` orders focused source transitions. Each retained measurement
-pairs 22 actual interrupt-active playbacks per CPU with its predecessor.
+pairs 22 actual interrupt-active playbacks per CPU with its stated comparator.
 The cases include public speech, P4/P6/sparse80, changing/clustering impulses,
 pitch and filter extremes, short tails, and all coordinate pairs.
 Media and generated ELF/HEX/log files remain in ignored `build/`.
@@ -44,6 +44,29 @@ these paired workload receipts do not claim that new binaries equal old HEXes.
   PWM, IRQ, SRAM and stack remain exact. Nano is 3016..3017 B before adding
   higher rates. Tiny stays 3627..3628 B. This step's timing comparator is the
   task-start baseline, not the faster intermediate two-tap implementation.
+- `rates`: the same decoder adds file-selected 8/12/16 kHz with nearest fixed
+  divisors. This feature costs 40 B on Nano / 36 B on Tiny relative to the
+  optimized 8 kHz-only control. Single-stream programs are 3056..3057 B
+  (2.984..2.985 KiB) / 3663..3664 B (3.577..3.578 KiB). The final Nano player
+  is 60 B smaller than task start; Tiny's additional modes cost a net 26 B.
+  The compatibility recipe still saves 100 B / 10 B versus task start.
+
+`sampling-rates.json` records all 132 actual IRQ playbacks. Nano admits 22/22
+at every rate; Tiny admits 22/22, 9/22 and 2/22 at 8/12/16 kHz. Unsupported
+cases keep their underruns and `accepted=false`. All 44 eight-kHz outputs are
+bit-exact with task start, and producer mean/peak plus full IRQ never grows.
+Static SRAM stays 417 / 418 B; peak observed stack is 24 / 27 B. Audio input
+bytes remain unchanged. Higher-rate fixtures are explicitly header-retagged
+timing probes; real rate-aware WAV analysis/encoding is tested separately.
+
+`rate-contract/final.json` binds seven passing source-audio frontend tests,
+1,048,576 fixed/float/legacy/compatibility rate-field checks, and 20 additional
+C/ASM/ISR/playlist controls with 36,128 exact samples. Both disabled-rate
+all-pairs images equal the optimized pre-feature binaries byte-for-byte.
+`final-gain-proof.json` repeats the four exhaustive real-target C/ASM gain
+probes against the integrated player and headers. The existing 13 host
+v9/math/AVR5-reference tests also pass; the former invalid 16000 Hz case now
+tests invalid 16001 Hz and explicitly checks all three valid rates.
 
 The source-bound `rice-reader-proof.json` is reproduced with:
 

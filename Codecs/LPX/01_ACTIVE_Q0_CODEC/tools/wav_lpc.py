@@ -7,20 +7,23 @@ The same Hamming/autocorrelation, reflection clamp and trigonometric root
 scan are retained. No pitch classifier, browser or legacy speech data needed.
 """
 import math
+from numbers import Integral
 import numpy as np
 import soundfile as sf
 from scipy.signal import resample_poly
 
 
-def load_wav(path):
+def load_wav(path, *, sample_rate=8000):
+    if isinstance(sample_rate, bool) or not isinstance(sample_rate, Integral) or sample_rate not in (8000, 12000, 16000):
+        raise ValueError('Expected an 8000, 12000 or 16000 Hz sampling rate')
     audio, rate = sf.read(str(path), dtype='float64', always_2d=True)
     if not len(audio) or rate < 1 or not np.isfinite(audio).all():
         raise ValueError('WAV must contain finite audio samples')
     channels = audio.shape[1]
     audio = np.mean(audio, axis=1)
-    if rate != 8000:
-        divisor = math.gcd(rate, 8000)
-        audio = resample_poly(audio, 8000 // divisor, rate // divisor)
+    if rate != sample_rate:
+        divisor = math.gcd(rate, sample_rate)
+        audio = resample_poly(audio, sample_rate // divisor, rate // divisor)
     clipped = int(np.count_nonzero((audio < -1) | (audio > 32767 / 32768)))
     pcm = np.clip(np.rint(audio * 32768), -32768, 32767).astype(np.int16)
     return pcm, {'input_rate': rate, 'input_channels': channels,

@@ -3202,6 +3202,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [LPX SRAM512 memory profile](lpx-sram512.md): reuse 96 dead pitch-ring bytes for exact LSF polynomial scratch; original AVR5 admission and historical Tiny88 C-probe limits, linked to the current player.
 
 - [Exact ROM-selected LPX output gain](lpx-rom-gain.md): seven software rounds on AVR25 or a biased MULSU product on AVR5. Saves 6 / 26 B, with faster complete producers and exact output across 44 interrupt-active playbacks.
+- [LPX v9 rates with fixed hardware divisors](lpx-sample-rates.md): runtime 8/12/16 kHz headers, nearest 12 kHz clocks, unchanged ISR, selected-rate source encoding and full IRQ admission.
 - [AVR25 software products and exact shifts](examples/lpx-avr25/README.md): historical standalone arithmetic provenance, C fallbacks and active-interrupt measurements.
 - [Real-time LPX on AVR25 without MUL](lpx-avr25.md): original integrated arithmetic, fixed-header ROM specialization, reserved-register ISR and full P4/P6 measurements; retains the former 6.5 KiB budget as historical evidence.
 - [Tighten Tiny88 RAM and Flash budgets](lpx-tiny88-budget.md): omit stored fixed-ROM constants, check FIFO24 addressing/ELF alignment, group software-product rounds and retain only reachable P4 cosine nodes; measured complete-player IRQ checks, hard 8192-byte cap and explicit 6012-byte USB loading limit.

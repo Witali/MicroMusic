@@ -606,7 +606,12 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #ifdef LPX4_FIXED_BRIGHT_Q14
  if(brightQ14_!=LPX4_FIXED_BRIGHT_Q14){error_=UNSUPPORTED;return false;}
 #endif
+#if LPX4_EXTENDED_SAMPLE_RATES && LPX4_COMPACT_VERSION==9
+ const bool unsupportedRate=sampleRate_!=8000 && sampleRate_!=12000 && sampleRate_!=16000;
+ if((!LPX4_AVR_V9_HEADER_COPY && error_)||unsupportedRate||!sampleCount_||!geometry||
+#else
  if((!LPX4_AVR_V9_HEADER_COPY && error_)||sampleRate_!=8000||!sampleCount_||!geometry||
+#endif
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
 #if LPX4_AVR25_V9_PREPARED_ATTENUATION
  preQ14_=lpx4PrepareAttenuationQ14(preQ14_);

@@ -60,12 +60,14 @@ def repack(blob, version=9):
     else:raise ValueError('Expected LPX v5, v8 or v9')
     sparse80=flags==15
     legal=sparse80 if source==8 else (flags&127) in (4,6) or (source==9 and sparse80)
-    if not legal or rate!=8000:
+    if not legal or rate not in (8000,12000,16000) or (source!=9 and rate!=8000):
         raise ValueError('Unsupported LPX profile or sample rate')
     if not 1<=n<=64000 or pre>16384 or bright>11469:
         raise ValueError('Invalid LPX metadata')
     if len(blob)>65535 or len(blob)!=header+payload:
         raise ValueError('Invalid bounded payload length')
+    if rate!=8000 and version!=9:
+        raise ValueError('Higher sample rates require LPX v9')
     if sparse80 and version==5 or not sparse80 and version==8:
         raise ValueError('Sparse80 uses legacy version8; P4/P6 use legacy version5')
     r=Bits(blob[header:]);w=Bits()

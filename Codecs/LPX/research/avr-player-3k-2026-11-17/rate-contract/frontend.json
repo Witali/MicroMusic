@@ -1,0 +1,52 @@
+{
+  "schema": "lpx-final-rate-frontend-contract-v1",
+  "source_lf_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4ConvertAvr25.inc": "c10e62b7175acf75afd6ecd525bb57e155c8450a49b1c7d1ed8b01fae4643053",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Float.h": "56798a887b9035d0c3c64665651357684c5431a7375a6d94546b04b33df25b93",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "19c0d9a72ce7fe69b95c7b7d48d7bd9fd51b7a6eb333b9790261aa4ddd14d24f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "deda44594944e7fce10b949f275cd622ee4a39b9a80a3b03542ebd1c58bc4a6a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyAvr.h": "f635c4a341c1730594834f7ea6976c4eb6cbc6a3611743bdf2d0e8bf278f65ac",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "4a4ced85102ae29ca605311ebbf21ed171a2b5cb96d569c5b6cdb27e7964f69e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/profiles/Lpx4Sram512.h": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp": "35f1e15de54177af88dd7298cce1c1df432175360eb587ac1d455871bd7d2218",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/irq_registers.inc": "c1103667c3abb43abac9befe6b21b97881d167b1a49ecfeba4cf692c2aa5f5e0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_attiny88_player.py": "80a7429032a3a3c52c1542ddba57306d3e2fb4e78cb5851f630c87503d3ac5ba",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_atmega328p_player.py": "8824b0e5db559fb5e11f98af7efcd6e41b990f34840dd4d759c2fe7c073d866f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/verify_attiny88_player.py": "b963ead4296a05e7c4b4b1d23cb11ad5f61c06c6f5efaf94c289c643897ed143",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v9.py": "9fb30aadf63f5a5d79bef6b2cc02625c763b37e42822dc32fad334e4ffad4249",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v9_audio.py": "82174b6a967b2e1cc8e1f8c30368163f29eaf84e02ffbc68e016860ebf4401ed",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "6aa98f754d4ea68f2f4d7fbd3f2414406bc9591b6489bc5fe3bc74c0a355c59d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/batch_decoder.py": "a64fec46cf54f7757023cb94cbba464279c62808ec7f01f4a175559af6f1b0d9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "e68c63a71b677cd031724ab75d6ba60c9d925675e2c497c41ff5b77475102b9d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/pcm16_wav.py": "2fdc6d344732b12fffc7e100fc5e5c663daf87ea5c76769a86cf6d8d074cff86",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/test_sample_rates.py": "06277b2f938e5921c25e018be29a971536939bf92c10d5d8faeea1f09d854e86",
+    "Codecs/LPX/validation/attiny88/sim_player.c": "72ecd850c2d5c8329ae275face3016dd410bb20107513714e0af286dd21d6438"
+  },
+  "tests": 7,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "seconds": 25.226,
+  "command": [
+    "python",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests",
+    "-p",
+    "test_sample_rates.py",
+    "-v"
+  ],
+  "environment": {
+    "LPX_TEST_WSL": "Ubuntu"
+  },
+  "sanitized_test_log_sha256": "de31a42dcdcd70be88bb7639e2fb8f97cda2e724fed56a1097b6ef5162a8e920",
+  "physical_board_measured": false
+}

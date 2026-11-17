@@ -47,6 +47,15 @@
 #if LPX25_GPIOR_STATE && (!defined(GPIOR0) || !defined(GPIOR1) || !defined(GPIOR2))
 #error The selected player hardware needs the vendor GPIOR register definitions
 #endif
+#ifndef LPX25_HEADER_SAMPLE_RATE
+#define LPX25_HEADER_SAMPLE_RATE (LPX4_COMPACT_VERSION==9 && LPX4_EXTENDED_SAMPLE_RATES)
+#endif
+#if LPX25_HEADER_SAMPLE_RATE != 0 && LPX25_HEADER_SAMPLE_RATE != 1
+#error LPX25_HEADER_SAMPLE_RATE must be 0 or 1
+#endif
+#if LPX4_COMPACT_VERSION==9 && LPX4_EXTENDED_SAMPLE_RATES && !LPX25_HEADER_SAMPLE_RATE
+#error Select header timing with the extended-rate decoder, or disable both for 8 kHz compatibility
+#endif
 #ifndef LPX25_REUSE_TIMER1_HIGH
 #define LPX25_REUSE_TIMER1_HIGH 0
 #endif
@@ -104,8 +113,8 @@ static uint8_t segmentIndex;
 static uint8_t playbackGain(uint8_t sample){
     const uint8_t gain=pgm_read_byte(voice+sizeof(voice)-1);
 #if LPX4_USE_AVR_NOMUL_ASM
-    // gain is128..255. With d=gain-128, duty=sample+round(sample*d/128)-d.
-    // Seven rounds produce2*sample*d. The rounded correction fits signed8,
+    // Gain is 128..255. With d=gain-128, duty=sample+round(sample*d/128)-d.
+    // Seven rounds produce 2*sample*d. The rounded correction fits signed8,
     // and its sign must equal the final ADD carry for an unclipped result.
     uint8_t low,high,count;
     const uint8_t increment=(uint8_t)(gain-128);
@@ -119,9 +128,9 @@ static uint8_t playbackGain(uint8_t sample){
         : "+&d"(sample),"=&r"(low),"=&r"(high),"=&d"(count) : "r"(increment) : "cc");
     return sample;
 #elif LPX4_USE_AVR_ASM
-    // For signed centered sample m, P=m*gain and B=P+16448. Modulo16,
+    // For signed centered sample m, P=m*gain and B=P+16448. Modulo 16 bits,
     // B<32768 selects the valid duty floor(B/128). On overflow its shifted
-    // byte is0..125 for the upper rail and129..255 for the lower rail.
+    // byte is 0..125 for the upper rail and 129..255 for the lower rail.
     const uint8_t centered=sample^128;
     uint16_t biased;
     __asm__(
@@ -385,7 +394,7 @@ int main(){
 #if !LPX25_V9_ROM_PLAYER
         if(lpx25_eof){
             // The foreground has no decoding left. Drain, then stop within a
-            // few cycles of the final ISR return, before the next 2000-cycle
+            // few cycles of the final ISR return, before the next sample
             // deadline. This keeps terminal bookkeeping out of every ISR.
             while(lpx25_head!=lpx25_tail){}
             ATOMIC_BLOCK(ATOMIC_RESTORESTATE){stop();}
@@ -442,17 +451,32 @@ int main(){
 #endif
         if(!started && (next==LPX25_QUEUE*3/4 || last)){
 #if LPX25_NANO_PWM
-            // Nano D3/OC2B: fast 8-bit PWM at 62.5 kHz. Timer1 CTC /1 gives 8 kHz.
+            // Nano D3/OC2B: 62.5 kHz PWM; Timer1 CTC /1 paces samples.
             DDRD|=_BV(DDD3);OCR2B=128;
             TCCR2A=_BV(COM2B1)|_BV(WGM21)|_BV(WGM20);TCCR2B=_BV(CS20);
-            TCCR1A=0;TCCR1B=0;TCNT1=0;OCR1A=1999;
+            TCCR1A=0;TCCR1B=0;TCNT1=0;
+#if LPX25_HEADER_SAMPLE_RATE
+            // begin() validated 8/12/16 kHz. The nearest fixed 12 kHz
+            // divider gives 12003.00075 Hz; 8/16 kHz are exact at 16 MHz.
+            const uint8_t rateHigh=decoder.sampleRate()>>8;
+            OCR1A=rateHigh==31?1999:rateHigh==62?999:1332;
+#else
+            OCR1A=1999;
+#endif
             TIFR1=_BV(OCF1A);TIMSK1=_BV(OCIE1A);
             TCCR1B=_BV(WGM12)|_BV(CS10);
 #else
-            // OC1A/PB1, fast 8-bit PWM at 62.5 kHz. Timer0 CTC /8 gives 8 kHz.
+            // OC1A/PB1: 62.5 kHz PWM; Timer0 CTC /8 paces samples.
             DDRB|=_BV(PB1);OCR1A=128;
             TCCR1A=_BV(COM1A1)|_BV(WGM10);TCCR1B=_BV(WGM12)|_BV(CS10);
-            OCR0A=249;TCNT0=0;TIFR0=_BV(OCF0A);TIMSK0=_BV(OCIE0A);
+#if LPX25_HEADER_SAMPLE_RATE
+            // Timer0 /8 gives 11976.04790 Hz at nominal 12 kHz.
+            const uint8_t rateHigh=decoder.sampleRate()>>8;
+            OCR0A=rateHigh==31?249:rateHigh==62?124:166;
+#else
+            OCR0A=249;
+#endif
+            TCNT0=0;TIFR0=_BV(OCF0A);TIMSK0=_BV(OCIE0A);
 #if defined(TCCR0B)
             TCCR0A=_BV(WGM01);TCCR0B=_BV(CS01);
 #else

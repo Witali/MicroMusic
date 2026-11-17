@@ -21,6 +21,30 @@ Select `--target atmega328p` and a fresh output directory for ATmega328P.
 Verified HEX files are under `asm/<case>/`. See the
 [shared-player measurements](../../../research/shared-avr-v9-player-2026-11-16/README.md).
 
+## Current single-stream v9 player
+
+At 16 MHz, the universal ASM recipe reads profiles 4/6/15 and nominal
+8/12/16 kHz from the sound file. It uses FIFO32/prefill24 and a complete
+reserved-register IRQ (35 cycles on Tiny, 35..36 on Nano). On the 22-case corpus, program Flash excluding
+audio is 3056..3057 B on Nano (below 3 KiB) and 3663..3664 B on Tiny.
+The explicit 8 kHz-only compatibility recipe is 3016..3017 / 3627..3628 B.
+All sampling-rate modes share the same decoder; there are no recording-specific
+DSP constants in these programs.
+
+All 22 workloads pass exact C/PWM comparison and have zero underruns on Nano
+at all three rates. Tiny passes 22/22 at 8 kHz, 9/22 at 12 kHz and 2/22 at
+16 kHz; other high-rate cases remain unadmitted. Complete producer mean/peak
+work at 8 kHz is no greater than task start. Static SRAM is 417 / 418 B;
+the measured maximum stack is 24 / 27 B. These are simavr 1.6 observations
+with active interrupts. The 3 KiB limit applies to a single stream; extra
+dialogue sequencing is outside that limit.
+
+The nearest nominal 12 kHz divider gives 12003.000750 Hz on Nano and
+11976.047904 Hz on Tiny. See the
+[rate and encoding recipe](../../../../../docs/avr-asm-cookbook/lpx-sample-rates.md)
+and [source-bound measurements](../../../research/avr-player-3k-2026-11-17/README.md).
+The sections below retain their historical recipes and measurements.
+
 ## Universal v9: original sparse80 admission
 
 An `L9` input selects one universal decoder for all three file-defined profiles:

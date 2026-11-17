@@ -138,6 +138,16 @@ typedef int16_t Lpx4SynthesisValue;
 #error LPX4_BATCHED_REMAINING must be 0 or 1
 #endif
 
+// V9 keeps its nominal sampling rate in the stream. Arithmetic is per sample
+// and remains identical; legacy formats retain their existing 8 kHz contract.
+// Zero is an explicit compatibility/control build, not a different wire format.
+#ifndef LPX4_EXTENDED_SAMPLE_RATES
+#define LPX4_EXTENDED_SAMPLE_RATES 1
+#endif
+#if LPX4_EXTENDED_SAMPLE_RATES != 0 && LPX4_EXTENDED_SAMPLE_RATES != 1
+#error LPX4_EXTENDED_SAMPLE_RATES must be 0 or 1
+#endif
+
 // Advance the ROM pointer and decrement its remaining byte count.
 // Zero retains base+cursor+size; hardware Flash access is unchanged.
 #ifndef LPX4_ROM_POINTER

@@ -2,7 +2,7 @@
 
 V9 repacks v5 P4/P6 and v8 sparse80 streams without re-analysis, quantization or resampling.
 It preserves every decoded PCM16/PWM sample. All variable recording parameters
-remain in the file. The decoder still supports 8 kHz and 1..64000 samples per
+remain in the file. The v9 decoder supports 8, 12 and 16 kHz and 1..64000 samples per
 segment, with the same 16-bit bounded input API.
 
 ## Header
@@ -13,7 +13,7 @@ All multibyte words are little-endian. The header is 13 bytes; v5 uses 22.
 | --- | ---: | --- |
 | 0 | 2 | ASCII `L9`, identifying version 9 |
 | 2 | 1 | Profile 4 or 6, optionally OR 128 for extra-pulse markers; or 15 for sparse80 |
-| 3 | 2 | Sample rate, currently 8000 |
+| 3 | 2 | Nominal sample rate: 8000, 12000 or 16000 Hz |
 | 5 | 2 | Sample count, 1..64000 |
 | 7 | 2 | Pre-emphasis coefficient Q14, 0..16384 |
 | 9 | 2 | Brightness coefficient Q14, 0..11469 |
@@ -55,10 +55,13 @@ low  = (x & 3) | ((y & 3) << 2)       // four bits, first
 high = (x >> 2) + 5 * (y >> 2)        // five bits, second
 ```
 
-Reject `high >= 25`. A25-byte Flash table returns
+Reject `high >= 25`. The reference 25-byte lookup returns
 `((high % 5) << 2) | ((high / 5) << 5)`. Combine the two low coordinate bits
 with the corresponding table bits. This removes runtime division by 20 and
-its constant software products on AVR25. All 400 pairs remain representable
+its constant software products on AVR25. The universal AVR5 ROM path instead
+computes the bounded quotient with hardware MUL and derives both coordinates
+directly, without the lookup. Both paths keep the same wire representation.
+All 400 pairs remain representable
 in nine bits. Amplitudes and optional extra-pulse markers/positions remain
 identical to v5.
 
@@ -81,6 +84,25 @@ Use `--version 8` to restore its long header and complete final packets;
 profile15 cannot be serialized as ordinary v5 (the independent reference
 adapter instead expands it to P6 with zero innovations between sparse pulses).
 
+## Sampling rates
+
+The rate field already existed; supporting 12/16 kHz adds no header or payload
+bytes. Legacy v4/v5/v8 retain their 8 kHz contract. Repacking v9 preserves its
+rate, and conversion to a legacy format rejects higher rates. Define
+`LPX4_EXTENDED_SAMPLE_RATES=0` for the explicit 8 kHz compatibility build,
+including the portable C reference on AVR or a PC.
+
+Geometry remains defined in samples: a 320-sample frame lasts 40, 26.667 or
+20 ms at 8/12/16 kHz. Higher-rate encoding must resample source audio before
+analysis. Merely changing an existing file's rate changes playback speed.
+The selected-rate P4/P6 encoder keeps the existing search; higher rates raise
+the actual bitrate and change the physical pitch range. Existing 8 kHz
+payloads and decoded samples remain unchanged.
+
+Use `tools/speech_v9_audio.py encode --sample-rate 12000` or `16000`, and its
+`decode` subcommand to write WAV at the stored rate. See the
+[encoder commands, AVR clock divisors and IRQ admission rules](../../../docs/avr-asm-cookbook/lpx-sample-rates.md).
+
 ## Tools and selection
 
 ```sh
@@ -101,11 +123,15 @@ requires compact-only decoding and includes sparse80 automatically. The legacy
 v5 build still requires `LPX4_ENABLE_SPARSE80=1` to accept v8/15. Select C with
 `LPX4_ENABLE_ASM=0`; ASM additionally needs a supported real target and explicit
 enable. Format, arithmetic and Flash/input-source selection are independent.
-Browser previews and existing published v5 streams keep their existing format.
+WebUI AVR images embed v9. Browser previews use their catalog's declared
+stream format; existing legacy files remain available through legacy builds.
 
-The current universal v9 Tiny88 player uses FIFO32/prefill24 and a38-cycle
-complete IRQ. Its22-case admission, including sparse80 boundary cases and a
-real1.93 kbit/s phrase, is recorded in
+The current universal v9 player uses FIFO32/prefill24 and a complete ASM IRQ
+of 35 cycles on Tiny / 35..36 on Nano, depending on the linked vector.
+The [132-case rate matrix](../research/avr-player-3k-2026-11-17/sampling-rates.json)
+checks 22 workloads on both CPUs at 8/12/16 kHz, retaining unadmitted Tiny
+high-rate cases. The original 38-cycle sparse80 admission, including a
+real 1.93 kbit/s phrase, remains recorded in
 [the source-bound report](examples/ATTINY88_V5_PLAYER/v9-sparse80-measurements.json).
 The older comparison below is retained as a historical P4/P6 baseline.
 

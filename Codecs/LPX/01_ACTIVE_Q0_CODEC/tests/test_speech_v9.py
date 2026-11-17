@@ -212,10 +212,16 @@ class SpeechV9Tests(unittest.TestCase):
     def test_strict_new_payload_and_metadata_rejections(self):
         good,_=repack(fixture(6,321,18,'changing',True))
         bad=[good[:i] for i in range(len(good))]+[good+b'\0']
-        for at,width,value in ((1,1,56),(2,1,14),(3,2,16000),(5,2,0),(5,2,64001),(7,2,16385),(9,2,11470)):
+        for at,width,value in ((1,1,56),(2,1,14),(3,2,16001),(5,2,0),(5,2,64001),(7,2,16385),(9,2,11470)):
             blob=bytearray(good);blob[at:at+width]=value.to_bytes(width,'little');bad.append(blob)
         for blob in bad:
             with self.assertRaises(ValueError):repack(blob)
+        # The v9 rate field now accepts all three nominal playback modes.
+        for rate in (8000,12000,16000):
+            blob=bytearray(good);struct.pack_into('<H',blob,3,rate)
+            self.assertEqual(repack(blob)[0],blob)
+            for key in self.libs:
+                if key[0]==9:self.assertEqual(self.decode(key,blob),self.decode(key,good),key)
         # Correctly declared trailing bytes/padding must still fail at EOF.
         blob=bytearray(good+b'\0');struct.pack_into('<H',blob,11,len(blob)-13)
         with self.assertRaises(ValueError):repack(blob)

@@ -73,7 +73,7 @@ def target_path(path,wsl):
         return '/mnt/'+p.drive[0].lower()+'/'+ '/'.join(p.parts[1:])
     return str(p)
 
-def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=None,output_gain=128,universal=True,rom_output_gain=False,target='attiny88',nano_pwm=False):
+def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=None,output_gain=128,universal=True,rom_output_gain=False,target='attiny88',nano_pwm=False,extended_sample_rates=True):
     if target not in ('attiny88','atmega328','atmega328p'):
         raise ValueError('Unsupported AVR player target')
     if nano_pwm and target=='attiny88':
@@ -104,12 +104,21 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
             sparse80 and blob[:6]==b'L4HY\x08\x0f'):
         raise ValueError('Expected compact v5/v9, or sparse80 with its explicit enable')
     compact_version=9 if version==9 else 5
+    if type(extended_sample_rates) is not bool:raise ValueError('Extended sample-rate selection must be boolean')
     if len(blobs)>1:
         if not universal or compact_version!=9 or any(data[:2]!=b'L9' for data in blobs):
             raise ValueError('Multiple streams require universal LPX v9')
         for data in blobs:
             if len(data)<13 or len(data)!=13+int.from_bytes(data[11:13],'little'):
                 raise ValueError('Incomplete LPX v9 segment')
+    rates=[int.from_bytes(data[3:5] if compact_version==9 else data[6:8],'little') for data in blobs]
+    allowed_rates=(8000,12000,16000) if extended_sample_rates and compact_version==9 else (8000,)
+    if any(rate not in allowed_rates for rate in rates):raise ValueError('Unsupported stream sampling rate')
+    # A continuous FIFO has one clock. Mixed-rate sequences need rate tags at
+    # consumer boundaries; rejecting them avoids retiming already queued audio.
+    if len(set(rates))!=1:raise ValueError('Continuous stream sequences require one common sampling rate')
+    sample_hz=rates[0]
+    sample_period_cycles={8000:2000,12000:1333 if nano_pwm else 1336,16000:1000}[sample_hz]
     if rom_output_gain and (not universal or compact_version!=9):
         raise ValueError('ROM output gain requires universal LPX v9')
     if queue is None:queue=32 if compact_version==9 or not universal else 44
@@ -160,7 +169,9 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     if nano_pwm:flags+=['-DLPX25_NANO_PWM=1']
     if len(blobs)>1:flags+=[f'-DLPX25_SEGMENTS={len(blobs)}']
     if sparse80:flags+=['-DLPX4_ENABLE_SPARSE80=1']
-    if compact_version==9:flags+=['-DLPX4_COMPACT_VERSION=9']
+    if compact_version==9:
+        flags+=['-DLPX4_COMPACT_VERSION=9',f'-DLPX4_EXTENDED_SAMPLE_RATES={int(extended_sample_rates)}',
+                f'-DLPX25_HEADER_SAMPLE_RATE={int(extended_sample_rates)}']
     if universal:
         flags+=['-DLPX4_AVR25_SATURATED_PRODUCTS=1','-DLPX25_REUSE_TIMER1_HIGH=1']
     else:
@@ -216,7 +227,10 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     source_files=[player,*([register_map] if shared_irq else []),
         *sorted((ROOT/'src').glob('Lpx4*')),ROOT/'profiles/Lpx4Sram512.h']
     if target=='attiny88':source_files.append(DFP/'avr/iotn88.h')
-    report=dict(target=target,cpu_hz=16000000,sample_hz=8000,queue=queue,prefill=queue*3//4,
+    report=dict(target=target,cpu_hz=16000000,sample_hz=sample_hz,
+        sample_period_cycles=sample_period_cycles,actual_sample_hz=16000000/sample_period_cycles,
+        sample_clock_policy='nearest-fixed-divider',supported_sample_rates=list(allowed_rates),
+        queue=queue,prefill=queue*3//4,
         repeat=repeat,samples=samples*repeat,compact_version=compact_version,
         supported_profiles=[4,6,15] if compact_version==9 or sparse80 else [4,6],
         assembly=assembly,asm_isr=asm_isr,sparse80=sparse80,lpc_segments=lpc_segments,mul16_unroll=mul16_unroll,universal=universal,

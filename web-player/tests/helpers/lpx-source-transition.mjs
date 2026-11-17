@@ -424,6 +424,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     if(change?.baseline[field]!==recorded)continue;
     assert.equal(report.schema,'lpx-avr-player-step-v1');
     assert.equal(report.complete,true);
+    assert.ok(['reduction','rate-extension'].includes(report.kind));
     const evidence=read(directory+report.measurements);
     assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
     const rows=JSON.parse(evidence).cases;
@@ -442,6 +443,11 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
         assert.ok(after[key]+after.irq_max<=before[key]+before.irq_max,key);
       for(const key of ['static_ram_bytes','stack_bytes'])assert.ok(after[key]<=before[key],key);
       if(report.kind==='reduction')assert.ok(after.program_excluding_audio_bytes<=before.program_excluding_audio_bytes);
+      else{
+        const overhead=row.target==='atmega328p'?40:36;
+        assert.ok(after.program_excluding_audio_bytes<=row.compatibility_program_bytes+overhead);
+        if(row.target==='atmega328p')assert.ok(after.program_excluding_audio_bytes<=3072);
+      }
     }
     recorded=change.current[field];
   }

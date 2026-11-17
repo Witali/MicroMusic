@@ -41,14 +41,14 @@ int main(){
 
 def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=None,
            flash_limit=8192,lpc_segments=2,sparse80=False,mul16_unroll=None,normalize_output=False,universal=True,
-           rom_output_gain=False,extra_flags=(),target='attiny88',nano_pwm=False):
+           rom_output_gain=False,extra_flags=(),target='attiny88',nano_pwm=False,extended_sample_rates=True):
     output=Path(output).resolve()
     if universal and normalize_output and not rom_output_gain:
         raise ValueError('Universal playback must not specialize gain for a recording')
     if mul16_unroll is None:mul16_unroll=2 if universal else 16
     options=dict(assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,
         flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll,universal=universal,
-        rom_output_gain=rom_output_gain,extra_flags=extra_flags,target=target,nano_pwm=nano_pwm)
+        rom_output_gain=rom_output_gain,extra_flags=extra_flags,target=target,nano_pwm=nano_pwm,extended_sample_rates=extended_sample_rates)
     cost=build(source,output,**options)
     queue=cost['queue']
     prefix=['wsl','-d',wsl,'--'] if wsl else []
@@ -62,7 +62,7 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
         raise ValueError('This calibrated interrupt-entry adapter requires simavr1.6')
     run('g++','-O2','-std=c++11',f'-DLPX3_LPC_SEGMENTS={lpc_segments}',
         *(['-DLPX4_ENABLE_SPARSE80=1'] if sparse80 else []),
-        f'-DLPX4_COMPACT_VERSION={cost["compact_version"]}',
+        f'-DLPX4_COMPACT_VERSION={cost["compact_version"]}',f'-DLPX4_EXTENDED_SAMPLE_RATES={int(extended_sample_rates)}',
         *([f'-DLPX_REFERENCE_SEGMENTS={len(cost["segment_bytes"])}'] if len(cost['segment_bytes'])>1 else []),
         '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(ROOT/'src'),
         path(output/'reference.cpp'),path(ROOT/'src/Lpx4HybridCore.cpp'),'-o',path(output/'reference'))
@@ -82,7 +82,9 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
     timing=json.loads((output/'timing.json').read_text())
     actual=(output/'actual.pwm').read_bytes()
     exact=actual==expected
-    timing.update(pwm_exact=exact,flash_bytes=cost['flash_bytes'],static_ram_bytes=cost['static_ram_bytes'],
+    period=cost['sample_period_cycles']
+    timing.update(sample_hz=cost['sample_hz'],actual_sample_hz=cost['actual_sample_hz'],sample_period_cycles=period,
+        sample_clock_policy=cost['sample_clock_policy'],pwm_exact=exact,flash_bytes=cost['flash_bytes'],static_ram_bytes=cost['static_ram_bytes'],
         flash_limit=flash_limit,queue=queue,repeat=repeat,assembly=assembly,asm_isr=asm_isr,
         embedded_audio_bytes=cost['embedded_audio_bytes'],program_excluding_audio_bytes=cost['program_excluding_audio_bytes'],
         physical_board_measured=False,universal=universal,bootloader_application_bytes=cost['bootloader_application_bytes'],
@@ -91,7 +93,7 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
         and not timing['underruns'] and timing['error']==0 and timing['eof']==timing['stopped']==1
         and timing['queue_empty'] and timing['timer_stopped'] and timing['stack_margin']>0
         and timing['irq_entry_cycles']==4 and timing['irq_reti_complete']
-        and (cost['samples']<2 or (timing['output_gap_min']>=1980 and timing['output_gap_max']<=2020))
+        and (cost['samples']<2 or (timing['output_gap_min']>=period-20 and timing['output_gap_max']<=period+20))
         and cost['flash_bytes']<=flash_limit
         and cost['static_ram_bytes']+timing['stack_bytes']<(512 if target=='attiny88' else 2048))
     (output/'verification.json').write_text(json.dumps(timing,indent=2)+'\n',encoding='utf-8')

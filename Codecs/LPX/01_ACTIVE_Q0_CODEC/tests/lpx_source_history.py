@@ -341,6 +341,7 @@ def assert_recorded_source(path,expected):
         change=report['sources'].get(path)
         if not change or change['baseline']['text_lf_sha256']!=recorded:continue
         assert report['schema']=='lpx-avr-player-step-v1' and report['complete']
+        assert report['kind'] in ('reduction','rate-extension')
         evidence=(directory/report['measurements']).read_bytes().replace(b'\r\n',b'\n')
         assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
         rows=json.loads(evidence)['cases']
@@ -358,5 +359,11 @@ def assert_recorded_source(path,expected):
                 assert after[field]<=before[field]
             if report['kind']=='reduction':
                 assert after['program_excluding_audio_bytes']<=before['program_excluding_audio_bytes']
+            else:
+                # Explicit extra feature: bound its measured code cost against
+                # the optimized 8 kHz-only control, retaining the Nano cap.
+                overhead=40 if row['target']=='atmega328p' else 36
+                assert after['program_excluding_audio_bytes']<=row['compatibility_program_bytes']+overhead
+                if row['target']=='atmega328p':assert after['program_excluding_audio_bytes']<=3072
         recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')
