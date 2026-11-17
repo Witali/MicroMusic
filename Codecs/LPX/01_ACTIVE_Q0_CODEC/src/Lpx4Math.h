@@ -741,8 +741,8 @@ static inline __attribute__((always_inline)) int16_t lpx4SynthesisCircularQ12(
         "swap r24\n\tsubi r24,128\n\tor %B0,r24\n\t"
         "ldi r25,128\n\tcp %B0,r25\n\tbrne 6f\n\t"
         "ldi r24,1\n\tcp %A0,r24\n\tadc %A0,r16\n\trjmp 6f\n\t"
-        "5: ldi r24,255\n\tldi r25,127\n\tsbrs %D0,7\n\trjmp 7f\n\t"
-        "ldi r24,1\n\tldi r25,128\n\t7: movw %A0,r24\n\t"
+        // The saturation rails 0x7fff and 0x8001 differ by two.
+        "5: ldi r24,255\n\tldi r25,127\n\tsbrc %D0,7\n\tadiw r24,2\n\tmovw %A0,r24\n\t"
         "6: st Z+,%A0\n\tst Z,%B0\n\tclr __zero_reg__"
         : "+&r"(result),"+z"(subframePosition),"+x"(a)
         : "I"(historyOffset)
