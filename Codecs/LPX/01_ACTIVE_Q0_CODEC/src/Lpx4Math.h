@@ -798,8 +798,25 @@ static inline __attribute__((always_inline)) int16_t lpx4Clip15From24(int32_t va
 
 // Synthesis has removed each term's fractional bits. Convert the integral
 // Q4 accumulator and clip to -32767..32767 in one operation.
+// The synthesis bound is signed27, and the low fractional nibble is zero.
 static inline __attribute__((always_inline)) int16_t lpx4ClipSynthesisQ4(int32_t value){
-#if LPX4_USE_AVR_NOMUL_ASM
+#if LPX4_USE_AVR_NOMUL_ASM && LPX4_COMPACT_VERSION==9
+    uint16_t result,high=(uint16_t)((uint32_t)value>>16);
+    const uint16_t low=(uint16_t)value;
+    __asm__(
+        // Borrow identifies high words -8..7. The subtraction leaves their
+        // low byte in 0xf0..0xff, absorbed by the extraction bias 143.
+        "adiw %A1,8\n\t"
+        "sbiw %A1,16\n\tbrcc 1f\n\t"
+        "movw %A0,%A2\n\tswap %A0\n\tswap %B0\n\t"
+        "mov %B1,%B0\n\tandi %B1,240\n\tor %A0,%B1\n\tandi %B0,15\n\t"
+        "swap %A1\n\tsubi %A1,143\n\tor %B0,%A1\n\t"
+        "cpi %B0,128\n\tbrne 2f\n\tcpi %A0,1\n\tadc %A0,__zero_reg__\n\trjmp 2f\n\t"
+        // The negative saturation rail is two above the positive one.
+        "1: ldi %A0,255\n\tldi %B0,127\n\tsbrc %B1,7\n\tadiw %A0,2\n\t2:"
+        : "=&w"(result),"+&w"(high) : "r"(low) : "cc");
+    return (int16_t)result;
+#elif LPX4_USE_AVR_NOMUL_ASM
     uint8_t nibble;
     __asm__(
         // The two high bytes must represent -8..7 before narrowing.
@@ -842,6 +859,18 @@ static inline __attribute__((always_inline)) int16_t lpx4HalfClip15From24(Value 
 // Full signed16 addition with the same non-minimum saturation range.
 template<bool compactAvr25=false>
 static inline __attribute__((always_inline)) int16_t lpx4AddClip15(int16_t a,int16_t b){
+#if LPX4_USE_AVR_NOMUL_ASM && LPX4_COMPACT_VERSION==9
+    if(compactAvr25){
+        __asm__(
+            "add %A0,%A1\n\tadc %B0,%B1\n\tbrvs 2f\n\t"
+            "cpi %B0,128\n\tbrne 3f\n\tcpi %A0,1\n\tadc %A0,__zero_reg__\n\trjmp 3f\n\t"
+            // ADC carry distinguishes the two overflow directions.
+            "2: ldi %A0,1\n\tldi %B0,128\n\tbrcs 3f\n\tsbiw %A0,2\n\t3:"
+            : "+&w"(a) : "r"(b) : "cc");
+        return a;
+    }
+#endif
+
 #if LPX4_USE_AVR_ASM || LPX4_USE_AVR_NOMUL_ASM
     __asm__(
         "add %A0,%A1\n\tadc %B0,%B1\n\tbrvc 1f\n\tbrmi 2f\n\t"
