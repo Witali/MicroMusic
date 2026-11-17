@@ -762,9 +762,9 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
 }
 #if LPX4_ENABLE_SPEECH_COMPACT
 uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
-#if LPX4_COMPACT_ONLY && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
+#if LPX4_COMPACT_ONLY && (LPX4_USE_AVR_NOMUL_ASM || LPX4_AVR_V9_PACKETS) && !defined(LPX4_FIXED_SPEECH_FLAGS)
  // Accumulate high << k as zeros arrive. The eighth zero still selects escape.
-#if LPX4_AVR25_V9_RUNTIME && LPX4_AVR25_V9_ROM_LAYOUT && !defined(LPX4_ENABLE_PCM16)
+#if LPX4_AVR_V9_PACKETS && LPX4_V9_ROM_HEADER_LAYOUT && !defined(LPX4_ENABLE_PCM16)
  // Compact LSF Rice widths leave only k=0, 1, or 2.
  const uint8_t step=k+k+(k==0);
 #else
@@ -776,7 +776,7 @@ uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
   if(error_)return 0;
   upper+=step;
  }
-#if LPX4_AVR25_V9_RUNTIME && LPX4_AVR25_V9_ROM_LAYOUT && !defined(LPX4_ENABLE_PCM16)
+#if LPX4_AVR_V9_PACKETS && LPX4_V9_ROM_HEADER_LAYOUT && !defined(LPX4_ENABLE_PCM16)
  // bits=5+(profile&2)/2, k=bits-4-delta, width=bits+delta.
  // Reconstruct only on escape, avoiding a held width through the prefix.
  return readBits(6+(LPX4_SPEECH_FLAGS&2)-k);

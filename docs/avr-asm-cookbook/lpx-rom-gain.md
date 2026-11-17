@@ -57,3 +57,18 @@ backend, with live interrupts and canaries for every callee-saved register,
 Y and r1. [Exhaustive receipt](../../Codecs/LPX/research/avr-player-3k-2026-11-17/gain-exhaustive.json).
 Run it from a Linux checkout with AVR-GCC and simavr development libraries;
 all generated files go below ignored `build/`.
+
+## Share the bounded Rice prefix accumulator
+
+The v9 ROM layout limits Rice `k` to 0, 1 or 2. Accumulate `high << k` as
+zero prefix bits arrive, then append the residue on the terminating one.
+The eighth zero still selects the escape. Use `k+k+(k==0)` for the step and
+derive `6+(flags&2)-k` only on escape, avoiding a live width through the loop.
+The AVR5 reader can share the already measured AVR25 logic; explicit C and
+legacy paths remain selectable. This saves another 10 B on Nano and changes
+no Tiny binary. All 22 inputs per CPU retain exact PWM, IRQ timing, SRAM and
+stack; complete producer mean/peak never increase. The private reader probe
+also covered 28,800 traces per predecessor/successor and C/ASM combination,
+including cache offsets, short ROM bounds and pre-existing errors. The
+pre-existing private cache/cursor difference between C and ASM after an
+already-set error is retained, rather than asserted equivalent.

@@ -27,3 +27,6 @@ these paired workload receipts do not claim that new binaries equal old HEXes.
 
 - `gain`: exact gain arithmetic saves 26 B on Nano and 6 B on Tiny.
   See the [technique and bounds](../../../../docs/avr-asm-cookbook/lpx-rom-gain.md).
+- `rice`: use the same bounded prefix accumulator on AVR5 and AVR25.
+  Nano saves another 10 B (3080..3081 B); Tiny binaries are unchanged.
+  All 44 complete IRQ playbacks remain exact without a speed or memory loss.
