@@ -384,4 +384,28 @@ def assert_recorded_source(path,expected):
                        r['producer_and_irq_after']<=r['producer_and_irq_before'] and
                        r['producer_cpu_max_delta']<=0 for r in result['timing_comparison'])
             recorded=change['current']['text_lf_sha256']
+    directory=REPO/'Codecs/LPX/research/tiny12-2026-11-17'
+    for step in json.loads((directory/'steps.json').read_text(encoding='utf-8')):
+        if recorded==actual:break
+        report=json.loads((directory/step).read_text(encoding='utf-8'))
+        change=report['sources'].get(path)
+        if not change or change['baseline']['text_lf_sha256']!=recorded:continue
+        assert report['schema']=='lpx-tiny12-step-v1'
+        evidence=(directory/report['measurements']).read_bytes().replace(b'\r\n',b'\n')
+        assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
+        result=json.loads(evidence);rows=result['cases']
+        assert len(rows)==44 and all(sum(r['rate']==rate for r in rows)==22 for rate in (8000,12000))
+        for row in rows:
+            before,after=row['before'],row['after']
+            assert after['valid_pwm_exact'] and after['valid_samples']==after['source_samples']
+            assert before['expected_pwm_sha256']==after['expected_pwm_sha256']
+            assert before['embedded_audio_bytes']==after['embedded_audio_bytes']
+            if row['rate']==8000:assert after['accepted'] and after['pwm_sha256']==before['pwm_sha256']
+            assert after['underruns']<=before['underruns']
+            for key in ('producer_cpu_mean','producer_active_cpu_mean','producer_cpu_max','producer_active_cpu_max'):
+                assert after[key]+after['irq_max']<=before[key]+before['irq_max']
+            assert after['flash_bytes']<=6656 and after['static_ram_bytes']+after['stack_bytes']<512
+        assert len(result['nano_controls']['cases'])==22
+        assert all(r['binary_exact'] and r['program']<=3072 for r in result['nano_controls']['cases'])
+        recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

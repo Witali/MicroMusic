@@ -82,14 +82,18 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
     timing=json.loads((output/'timing.json').read_text())
     actual=(output/'actual.pwm').read_bytes()
     exact=actual==expected
+    valid=(output/'actual.pwm.valid').read_bytes()
+    valid_exact=valid==expected
     period=cost['sample_period_cycles']
     timing.update(sample_hz=cost['sample_hz'],actual_sample_hz=cost['actual_sample_hz'],sample_period_cycles=period,
-        sample_clock_policy=cost['sample_clock_policy'],pwm_exact=exact,flash_bytes=cost['flash_bytes'],static_ram_bytes=cost['static_ram_bytes'],
+        sample_clock_policy=cost['sample_clock_policy'],pwm_exact=exact,
+        valid_pwm_exact=valid_exact,valid_samples=len(valid),
+        flash_bytes=cost['flash_bytes'],static_ram_bytes=cost['static_ram_bytes'],
         flash_limit=flash_limit,queue=queue,repeat=repeat,assembly=assembly,asm_isr=asm_isr,
         embedded_audio_bytes=cost['embedded_audio_bytes'],program_excluding_audio_bytes=cost['program_excluding_audio_bytes'],
         physical_board_measured=False,universal=universal,bootloader_application_bytes=cost['bootloader_application_bytes'],
         fits_standard_bootloader=cost['fits_standard_bootloader'],requires_isp=cost['requires_isp'],mul16_unroll=mul16_unroll,outputLevel=level)
-    timing['accepted']=bool(exact and timing['samples']==timing['ticks']==timing['timer_events']==cost['samples']
+    timing['accepted']=bool(exact and valid_exact and timing['samples']==timing['ticks']==timing['timer_events']==cost['samples']
         and not timing['underruns'] and timing['error']==0 and timing['eof']==timing['stopped']==1
         and timing['queue_empty'] and timing['timer_stopped'] and timing['stack_margin']>0
         and timing['irq_entry_cycles']==4 and timing['irq_reti_complete']

@@ -15,12 +15,13 @@
 #include "avr_timer.h"
 #include "avr_ioport.h"
 #include "hardware.h"
+// Validity comes from the queue at IRQ entry, including genuine duty128.
+static FILE *valid_out;
+static unsigned expected_valid;
 #ifdef H_LPX_NATIVE_TARGET
 static avr_t *native_cpu;
 #define cpu (*native_cpu)
 static uint8_t entry_registers[32],entry_flags[7];
-static FILE *valid_out;
-static unsigned expected_valid;
 static uint64_t irq_r0_nonzero,irq_r1_nonzero;
 #else
 #define BIT(r,b) { .reg=H_##r, .bit=H_##b, .mask=1 }
@@ -109,9 +110,7 @@ static void running(struct avr_irq_t *irq,uint32_t value,void *p){
   unsigned h=cpu.data[head],t=cpu.data[tail];
   if(h>=H_LPX25_QUEUE || t>=H_LPX25_QUEUE){fprintf(stderr,"Invalid queue cursor\n");exit(3);}
   unsigned count=h>=t?h-t:H_LPX25_QUEUE+h-t;
-#ifdef H_LPX_NATIVE_TARGET
   expected_valid=count!=0;
-#endif
   if(!cpu.data[eof] && count<min_queue)min_queue=count;
   if(!count)underruns++;
   expected=count?cpu.data[queue+cpu.data[tail]]:128;
@@ -126,9 +125,7 @@ static void pwm(struct avr_irq_t *irq,uint32_t value,void *p){
  if((value&255)!=expected){fprintf(stderr,"Queue/PWM mismatch\n");exit(3);}
  if(writes++){uint64_t gap=cpu.cycle-last;if(gap<min_gap)min_gap=gap;if(gap>max_gap)max_gap=gap;}else first=cpu.cycle;
  last=cpu.cycle;fputc(value&255,out);
-#ifdef H_LPX_NATIVE_TARGET
  if(expected_valid)fputc(value&255,valid_out);
-#endif
 }
 int main(int argc,char **argv){
  if(argc!=4){fprintf(stderr,"usage: sim_player player.elf output.pwm timing.json\n");return 2;}
@@ -143,11 +140,9 @@ int main(int argc,char **argv){
  if(avr_init(&cpu)<0)return 2;cpu.frequency=16000000;f.frequency=16000000;avr_load_firmware(&cpu,&f);
  cpu.run_cycle_limit=1;
  out=fopen(argv[2],"wb");if(!out)return 2;
-#ifdef H_LPX_NATIVE_TARGET
  char *valid_name=malloc(strlen(argv[2])+7);if(!valid_name)return 2;
  sprintf(valid_name,"%s.valid",argv[2]);
  valid_out=fopen(valid_name,"wb");free(valid_name);if(!valid_out)return 2;
-#endif
  avr_irq_t *audio=avr_get_interrupt_irq(&cpu,H_LPX_SAMPLE_VECTOR);
  avr_irq_register_notify(audio+AVR_INT_IRQ_PENDING,pending,NULL);
  avr_irq_register_notify(audio+AVR_INT_IRQ_RUNNING,running,NULL);
@@ -208,9 +203,7 @@ int main(int argc,char **argv){
   if(minimum_sp<bss){fprintf(stderr,"Stack collision\n");return 4;}
   if(cpu.data[stopped] && !in_irq){if(!end)end=cpu.cycle;if(cpu.cycle-end>=12000)break;}
  }
-#ifdef H_LPX_NATIVE_TARGET
  fclose(valid_out);
-#endif
  fclose(out);FILE *report=fopen(argv[3],"w");if(!report)return 2;
  fprintf(report,"{\"samples\":%llu,\"ticks\":%llu,\"timer_events\":%llu,\"underruns\":%llu,\"min_queue\":%u,"
   "\"first_output_cycle\":%llu,\"last_output_cycle\":%llu,\"output_gap_min\":%llu,\"output_gap_max\":%llu,"

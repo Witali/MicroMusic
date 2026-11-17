@@ -117,15 +117,15 @@ static uint8_t playbackGain(uint8_t sample){
     // Seven rounds produce 2*sample*d. The rounded correction fits signed8,
     // and its sign must equal the final ADD carry for an unclipped result.
     uint8_t low,high,count;
-    const uint8_t increment=(uint8_t)(gain-128);
+    uint8_t increment=gain;
     __asm__(
-        "mov %1,%4\n\tclr %2\n\tldi %3,7\n\tlsr %1\n\t"
-        "1: brcc 2f\n\tadd %2,%0\n\t"
-        "2: ror %2\n\tror %1\n\tdec %3\n\tbrne 1b\n\t"
+        "subi %4,128\n\tbreq 4f\n\tmov %1,%4\n\tclr %2\n\tldi %3,2\n\tlsr %1\n\t"
+        "brcc 2f\n\tadd %2,%0\n\t2: ror %2\n\tror %1\n\t"
+        "1: .rept 3\n\tbrcc 2f\n\tadd %2,%0\n\t2: ror %2\n\tror %1\n\t.endr\n\t"
+        "dec %3\n\tbrne 1b\n\t"
         "lsl %1\n\tadc %2,__zero_reg__\n\tsub %2,%4\n\t"
-        "add %0,%2\n\tbrcs 3f\n\tsbrc %2,7\n\tclr %0\n\trjmp 4f\n\t"
-        "3: sbrs %2,7\n\tser %0\n\t4:"
-        : "+&d"(sample),"=&r"(low),"=&r"(high),"=&d"(count) : "r"(increment) : "cc");
+        "add %0,%2\n\tsbc %3,%3\n\teor %2,%3\n\tsbrc %2,7\n\tmov %0,%3\n\t4:"
+        : "+&d"(sample),"=&r"(low),"=&r"(high),"=&d"(count),"+&d"(increment) : : "cc");
     return sample;
 #elif LPX4_USE_AVR_ASM
     // For signed centered sample m, P=m*gain and B=P+16448. Modulo 16 bits,

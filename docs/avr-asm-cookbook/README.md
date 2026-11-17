@@ -3282,4 +3282,6 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 
 ## ATtiny13A: fit speech parameters and check noise
 
+- [Group AVR25 PWM multiply rounds](../../Codecs/LPX/research/tiny12-2026-11-17/README.md) handles unity before the software product and groups seven exact rounds as 1+3+3. Measured complete-player savings are 59 cycles/sample at unity and 14–15 otherwise, for 22 B more Flash and unchanged SRAM/stack. All 44 Tiny IRQ workloads retain exact decoded PWM; all 22 Nano images remain binary-identical. Exhaustive C/ASM checks cover all 32768 duty/gain pairs on each target under IRQ. Requires the explicit AVR25 ASM backend, gain128…255 and GNU AVR ABI; AVR-GCC 7.3.0/simavr 1.6. This alone does not make all 12 kHz workloads real-time.
+
 [Bounded speech data and spectral selection](tiny-speech-budget.md): dictionary/parameter search fits the complete phrase, then an aligned noise/spectral objective selects a 1014-byte image plus 64-byte EEPROM. Active-IRQ output verification and the STOI tradeoff are recorded; decoder assembly is unchanged.

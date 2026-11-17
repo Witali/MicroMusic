@@ -391,9 +391,11 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
         assert.equal(release.variants.length,9);
         // A retained catalog may precede the current measured optimization.
         // Bind it to its published sources before following later steps.
-        const published=release.sourceSha256[path]===textDigest(bytes)?bytes:
-          readRecordedBuildFile('ead0bdcb0b627532afbf2d7b52fce7f015cf6dbc',path);
-        assert.equal(release.sourceSha256[path],textDigest(published),path+' v9 release source');
+        const published=[bytes,
+          readRecordedBuildFile('66e3d93499b6df060f8a5c7cdcb133d682dc3106',path),
+          readRecordedBuildFile('ead0bdcb0b627532afbf2d7b52fce7f015cf6dbc',path)]
+          .find(value=>release.sourceSha256[path]===textDigest(value));
+        assert.ok(published,path+' v9 release source');
         recorded=encoding==='raw'?sha(published):textDigest(published);
       }
     }
@@ -470,6 +472,32 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
         r.producer_and_irq_after<=r.producer_and_irq_before&&r.producer_cpu_max_delta<=0));
       recorded=change.current[field];
     }
+  }
+  const tiny12='Codecs/LPX/research/tiny12-2026-11-17/';
+  for(const step of JSON.parse(read(tiny12+'steps.json'))){
+    if(recorded===actual)break;
+    const report=JSON.parse(read(tiny12+step)),change=report.sources[path];
+    if(change?.baseline?.[field]!==recorded)continue;
+    assert.equal(report.schema,'lpx-tiny12-step-v1');
+    const evidence=read(tiny12+report.measurements);
+    assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+    const result=JSON.parse(evidence);
+    assert.equal(result.cases.length,44);
+    for(const rate of [8000,12000])assert.equal(result.cases.filter(r=>r.rate===rate).length,22);
+    for(const row of result.cases){
+      const {before,after}=row;
+      assert.equal(after.valid_pwm_exact,true);assert.equal(after.valid_samples,after.source_samples);
+      assert.equal(before.expected_pwm_sha256,after.expected_pwm_sha256);
+      assert.equal(before.embedded_audio_bytes,after.embedded_audio_bytes);
+      if(row.rate===8000){assert.equal(after.accepted,true);assert.equal(after.pwm_sha256,before.pwm_sha256);}
+      assert.ok(after.underruns<=before.underruns);
+      for(const key of ['producer_cpu_mean','producer_active_cpu_mean','producer_cpu_max','producer_active_cpu_max'])
+        assert.ok(after[key]+after.irq_max<=before[key]+before.irq_max,key);
+      assert.ok(after.flash_bytes<=6656);assert.ok(after.static_ram_bytes+after.stack_bytes<512);
+    }
+    assert.equal(result.nano_controls.cases.length,22);
+    assert.ok(result.nano_controls.cases.every(r=>r.binary_exact&&r.program<=3072));
+    recorded=change.current[field];
   }
   assert.equal(recorded,actual,path+' current source');
 }
