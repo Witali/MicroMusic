@@ -18,6 +18,17 @@
 #ifndef LPX25_REPEAT
 #define LPX25_REPEAT 1
 #endif
+#ifndef LPX25_GPIOR_STATE
+// The dedicated v9 ROM player owns these three general-purpose registers.
+// Arithmetic and ISR backends can each be selected independently.
+#define LPX25_GPIOR_STATE LPX4_V9_ROM_HEADER_LAYOUT
+#endif
+#if LPX25_GPIOR_STATE != 0 && LPX25_GPIOR_STATE != 1
+#error LPX25_GPIOR_STATE must be 0 or 1
+#endif
+#if LPX25_GPIOR_STATE && (!defined(GPIOR0) || !defined(GPIOR1) || !defined(GPIOR2))
+#error The selected player hardware needs the vendor GPIOR register definitions
+#endif
 #ifndef LPX25_REUSE_TIMER1_HIGH
 #define LPX25_REUSE_TIMER1_HIGH 0
 #endif
@@ -89,7 +100,9 @@ extern "C" {
 // byte alignment: 32-byte alignment would pad its ELF section back to 32.
 uint8_t lpx25_queue[LPX25_QUEUE] __attribute__((used,externally_visible,aligned(LPX25_QUEUE==24||LPX25_QUEUE==44?1:LPX25_QUEUE)));
 #if LPX25_V9_ROM_PLAYER
+#if !LPX25_GPIOR_STATE
 volatile uint8_t lpx25_head,lpx25_tail,lpx25_stopped;
+#endif
 #if LPX25_ALIAS_ERROR
 extern volatile uint8_t lpx25_error;
 #else
@@ -99,9 +112,32 @@ volatile uint8_t lpx25_error;
 // after the aligned queue to avoid adding an alignment gap.
 volatile uint8_t lpx25_eof __attribute__((section(".gnu.linkonce.b.lpx25_eof")));
 #else
+#if LPX25_GPIOR_STATE
+volatile uint8_t lpx25_eof,lpx25_error;
+#else
 volatile uint8_t lpx25_head,lpx25_tail,lpx25_eof,lpx25_stopped,lpx25_error;
 #endif
+#endif
 }
+#if LPX25_GPIOR_STATE
+#define lpx25_head GPIOR0
+#define lpx25_tail GPIOR1
+#define lpx25_stopped GPIOR2
+static inline void initializePlayerRegisters(){
+    __asm__ __volatile__(
+        ".global lpx25_head\n\t.type lpx25_head,@object\n\t"
+        ".set lpx25_head,%[head_mem]\n\t.size lpx25_head,1\n\t"
+        ".global lpx25_tail\n\t.type lpx25_tail,@object\n\t"
+        ".set lpx25_tail,%[tail_mem]\n\t.size lpx25_tail,1\n\t"
+        ".global lpx25_stopped\n\t.type lpx25_stopped,@object\n\t"
+        ".set lpx25_stopped,%[stopped_mem]\n\t.size lpx25_stopped,1"
+        : : [head_mem]"n"(_SFR_MEM_ADDR(GPIOR0)),[tail_mem]"n"(_SFR_MEM_ADDR(GPIOR1)),
+            [stopped_mem]"n"(_SFR_MEM_ADDR(GPIOR2)) : "memory");
+    lpx25_head=0;
+    lpx25_tail=0;
+    lpx25_stopped=0;
+}
+#endif
 #if LPX25_ALIAS_ERROR
 #define LPX25_REPORT_ERROR() Lpx4RomPlayer::materializeError()
 #else
@@ -151,7 +187,11 @@ ISR(TIMER0_COMPA_vect,ISR_NAKED){
         ".include \"" LPX25_IRQ_REGISTER_MAP "\"\n\t"
 #endif
         "in " LPX25_IRQ_SREG ",%0\n\tpush r30\n\tpush r31\n\t"
+#if LPX25_GPIOR_STATE
+        "in " LPX25_IRQ_SAMPLE ",%[head_io]\n\tin r30,%[tail_io]\n\t"
+#else
         "lds " LPX25_IRQ_SAMPLE ",lpx25_head\n\tlds r30,lpx25_tail\n\t"
+#endif
         "cp " LPX25_IRQ_SAMPLE ",r30\n\tbreq 2f\n\t"
 #if LPX25_QUEUE == 24 || LPX25_QUEUE == 44
         "ldi r31,0\n\tsubi r30,lo8(-(lpx25_queue))\n\tsbci r31,hi8(-(lpx25_queue))\n\t"
@@ -161,7 +201,11 @@ ISR(TIMER0_COMPA_vect,ISR_NAKED){
         "ldi r31,hi8(lpx25_queue)\n\tori r30,lo8(lpx25_queue)\n\t"
         "ld " LPX25_IRQ_SAMPLE ",Z\n\tinc r30\n\tandi r30,%3\n\t"
 #endif
+#if LPX25_GPIOR_STATE
+        "out %[tail_io],r30\n\trjmp 3f\n\t"
+#else
         "sts lpx25_tail,r30\n\trjmp 3f\n\t"
+#endif
         "2: ldi r30,128\n\tmov " LPX25_IRQ_SAMPLE ",r30\n\t"
         "3:\n\t"
 #if !LPX25_REUSE_TIMER1_HIGH
@@ -170,7 +214,11 @@ ISR(TIMER0_COMPA_vect,ISR_NAKED){
         "sts %2," LPX25_IRQ_SAMPLE "\n\t"
         "pop r31\n\tpop r30\n\tout %0," LPX25_IRQ_SREG "\n\treti\n\t"
         : : "I"(_SFR_IO_ADDR(SREG)),"n"(_SFR_MEM_ADDR(OCR1AH)),"n"(_SFR_MEM_ADDR(OCR1AL)),
-            "M"(LPX25_QUEUE==24||LPX25_QUEUE==44?31:LPX25_QUEUE-1),"M"(LPX25_QUEUE));
+            "M"(LPX25_QUEUE==24||LPX25_QUEUE==44?31:LPX25_QUEUE-1),"M"(LPX25_QUEUE)
+#if LPX25_GPIOR_STATE
+            ,[head_io]"I"(_SFR_IO_ADDR(GPIOR0)),[tail_io]"I"(_SFR_IO_ADDR(GPIOR1))
+#endif
+            );
 }
 #undef LPX25_IRQ_SAMPLE
 #undef LPX25_IRQ_SREG
@@ -205,6 +253,9 @@ __attribute__((optimize("no-tree-dominator-opts,no-tree-ter")))
 int main(){
     // Reset starts with interrupts masked. Keep the actual compiler CPU macros.
     CLKPR=_BV(CLKPCE);CLKPR=0;
+#if LPX25_GPIOR_STATE
+    initializePlayerRegisters();
+#endif
     if(!begin()){LPX25_REPORT_ERROR();lpx25_stopped=1;for(;;){}}
     uint8_t repeats=LPX25_REPEAT;
     bool started=false;
