@@ -59,6 +59,7 @@ const avrFinalPwmClipReport='Codecs/LPX/research/avr-v9-final-pwm-clip-2026-11-1
 const avr5LpcTwoPassesReport='Codecs/LPX/research/avr5-v9-lpc-two-passes-2026-11-16/';
 const avrLsfAddressingReport='Codecs/LPX/research/avr-v9-lsf-addressing-2026-11-17/';
 const avrLsfFrameReport='Codecs/LPX/research/avr-v9-lsf-frame-2026-11-17/';
+const avrPolyWidthReport='Codecs/LPX/research/avr-v9-poly24-width-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -277,6 +278,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avr5LpcTwoPassesReport,'26470b553cc5f9392fc5e250da22aca86a2a1e47'],
     [avrLsfAddressingReport,'c4a988f3f922f4356e91ccc4ae6d1c6ab1f4ee84'],
     [avrLsfFrameReport,'95dca671cf1cc7cb7beb7b9085f4d269b0a0a43d'],
+    [avrPolyWidthReport,'0eb4f9525e56a59a234c49d64e46632010cf984c'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

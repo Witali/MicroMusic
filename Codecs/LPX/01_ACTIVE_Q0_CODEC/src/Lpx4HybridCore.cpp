@@ -1502,9 +1502,8 @@ static inline PolyCoefficient polyCosineMulQ12(PolyCoefficient v,int16_t c){
     const PolyCoefficient accum=polyWordQ8(nibble&(int16_t)directMask,hi,c);
     return accum+(int8_t)((nibble>>8)&~directMask);
 }
-#else
-static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
-#if LPX4_POLY24_WORKSPACE
+#elif LPX4_POLY24_WORKSPACE
+static inline PolyCoefficient polyCosineMulQ12(PolyCoefficient v,int16_t c){
     int16_t hi=polyHighWord(v);
     const bool direct=(uint16_t)(hi+15625U)<31250U;
     int8_t residue=(uint8_t)v&15;
@@ -1523,7 +1522,10 @@ static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
     const int32_t word=lpx4Mul16(hi,c);
     // At +250000 residue is zero, so either rounding rule is exact there.
     return direct?(word+nibble)>>8:(word>>8)+(nibble>>8);
-#elif LPX4_USE_AVR5_POLYNOMIAL_MUL
+}
+#else
+static inline int32_t polyCosineMulQ12(int32_t v,int16_t c){
+#if LPX4_USE_AVR5_POLYNOMIAL_MUL
     if(v<=250000L && v>=-250000L)return lpx4Shift12(polyDirectProduct(v,c));
     int16_t hi=(int16_t)(v>>4);
     int8_t rem=(uint8_t)v&15;
@@ -1597,7 +1599,13 @@ static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,ui
         current=-4096;
     }
     // Both polynomials use the same descending recurrence and Q12 floors.
+#if LPX4_AVR25_V9_RUNTIME
+    // The first factor already has its two edge values. Its recurrence
+    // is empty, and the normal final store writes the first coefficient.
+    while(offset!=(uint8_t)(base+4)){
+#else
     do{
+#endif
         const PolyCoefficient product=polyCosineMulQ12(previous,c);
         const PolyCoefficient earlier=ringPolyLoad24(ring,offset-8);
         ringPolyStore24(ring,offset,earlier+product+current);
@@ -1605,7 +1613,11 @@ static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,ui
         current=previous;
         previous=earlier;
         offset-=4;
+#if LPX4_AVR25_V9_RUNTIME
+    }
+#else
     }while(offset!=(uint8_t)(base+4));
+#endif
     ringPolyStore24(ring,offset,c+current);
 }
 #elif LPX4_USE_AVR5_POLYNOMIAL_MUL || (LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS))
@@ -1784,6 +1796,9 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
         // P/Q polynomials are independent; each pair retains the same degree.
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
         const uint8_t base=(i&1)?qbase:pbase;
+#if LPX4_AVR25_V9_RUNTIME
+        ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2),!(i&1));
+#else
         if(i<2){
             const int16_t unit=(i&1)?-4096:4096;
             // |cc|<=8192, so the shared first coefficient fits signed16.
@@ -1799,6 +1814,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
             ringPolyPut(ringQ_,base,3,unit);
 #endif
         }else ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2),halfPolynomialP&&!(i&1));
+#endif
 #else
         int32_t* p=(i&1)?polyQ_:polyP_;
         if(i<2){
@@ -1816,7 +1832,21 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #endif
     for(uint8_t i=0;i<10;i++){
 #if LPX4_POLY24_WORKSPACE
+#if LPX4_PLAYER_PITCH_PAGE
+        // Both coefficients are in the same aligned SRAM page. Reuse ZH
+        // and consume the second coefficient a byte at a time.
+        const int8_t* address=pitchRingAddress(ringQ_,pOffset);
+        PolyCoefficient sum;
+        uint8_t part;
+        __asm__("ld %A0,Z\n\tldd %B0,Z+1\n\tldd %C0,Z+2\n\t"
+                "mov %A1,%3\n\t"
+                "ld %2,Z\n\tadd %A0,%2\n\t"
+                "ldd %2,Z+1\n\tadc %B0,%2\n\t"
+                "ldd %2,Z+2\n\tadc %C0,%2"
+                : "=&r"(sum),"+&z"(address),"=&r"(part) : "r"(qOffset) : "cc","memory");
+#else
         const PolyCoefficient sum=ringPolyLoad24(ringQ_,pOffset)+ringPolyLoad24(ringQ_,qOffset);
+#endif
         out[i]=lpx4HalfClip15From24(sum);
         qOffset+=4;
         if(i==4)pStep=(uint8_t)-4;else pOffset+=pStep;

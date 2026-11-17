@@ -713,7 +713,8 @@ static inline __attribute__((always_inline)) int16_t lpx4ClipSynthesisQ4(int32_t
 }
 
 // Halve a signed24 polynomial sum toward zero and clamp to the LPC range.
-static inline __attribute__((always_inline)) int16_t lpx4HalfClip15From24(int32_t value){
+template<class Value>
+static inline __attribute__((always_inline)) int16_t lpx4HalfClip15From24(Value value){
 #if LPX4_USE_AVR_NOMUL_ASM || (LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9)
     // After biasing negative sums by one, only high bytes 0 and 255 can
     // fit after halving. INC maps them to 1 and 0, respectively. On the
