@@ -88,9 +88,11 @@ adapter instead expands it to P6 with zero innovations between sparse pulses).
 
 The rate field already existed; supporting 12/16 kHz adds no header or payload
 bytes. Legacy v4/v5/v8 retain their 8 kHz contract. Repacking v9 preserves its
-rate, and conversion to a legacy format rejects higher rates. Define
-`LPX4_EXTENDED_SAMPLE_RATES=0` for the explicit 8 kHz compatibility build,
-including the portable C reference on AVR or a PC.
+rate, and conversion to a legacy format rejects higher rates. AVR firmware
+selects one rate at compilation with `LPX4_SAMPLE_RATE=8000`, `12000` or
+`16000` (default 8000). The file rate must match. The portable PC reference
+defaults to zero, accepting all three rates. `LPX4_EXTENDED_SAMPLE_RATES=0`
+retains the explicit 8 kHz-only C/library compatibility mode.
 
 Geometry remains defined in samples: a 320-sample frame lasts 40, 26.667 or
 20 ms at 8/12/16 kHz. Higher-rate encoding must resample source audio before

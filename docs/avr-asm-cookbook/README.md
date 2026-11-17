@@ -3282,4 +3282,6 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 
 ## ATtiny13A: fit speech parameters and check noise
 
+- [Compile one LPX playback rate](../../Codecs/LPX/research/avr-fixed-rate-2026-11-18/README.md) uses a constant timer divisor and checks the full file rate against one build setting. Defaults to 8 kHz on AVR, with explicit 12/16 kHz builds and a rate-agnostic PC reference. Saves 36 B on Tiny and 40 B on single-stream Nano versus the automatic player. All 132 matched IRQ cases retain identical PWM, foreground work, RAM, stack and underrun counts; IRQ never grows. Eight actual-wideband Nano controls also pass. GNU AVR ABI, AVR-GCC 7.3.0/simavr 1.6; no claim that a configured Tiny high-rate workload meets its deadline.
+
 [Bounded speech data and spectral selection](tiny-speech-budget.md): dictionary/parameter search fits the complete phrase, then an aligned noise/spectral objective selects a 1014-byte image plus 64-byte EEPROM. Active-IRQ output verification and the STOI tradeoff are recorded; decoder assembly is unchanged.

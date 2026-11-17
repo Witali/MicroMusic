@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {assertLpxRecordedSource} from './helpers/lpx-source-transition.mjs';
+import {readRecordedBuildFile} from './helpers/recorded-build-source.mjs';
 
 const root=new URL('../../',import.meta.url);
 const directory='Codecs/LPX/research/avr-player-3k-2026-11-17/';
@@ -65,7 +66,7 @@ test('rate-aware source encoding and selectable C/ASM controls retain their evid
   }
 });
 
-test('all 18 WebUI images retain exact media and the single-stream Nano size cap',()=>{
+test('the historical three-rate WebUI release retains exact media and its Nano size cap',()=>{
   const report=json(directory+'web-rebuild.json');
   assert.equal(report.cases.length,18);
   assert.equal(report.release_checks.total_samples,345470);
@@ -74,12 +75,13 @@ test('all 18 WebUI images retain exact media and the single-stream Nano size cap
   assert.equal(report.independent_rebuild.all_no_float_runtime_symbols,true);
   assert.equal(Object.keys(report.protected_asset_sha256).length,26);
   for(const [path,digest] of Object.entries(report.protected_asset_sha256))assert.equal(sha(read(path)),digest);
-  const nano=json('web-player/firmware-atmega328p.json');
+  const revision='66e3d93499b6df060f8a5c7cdcb133d682dc3106';
+  const nano=JSON.parse(readRecordedBuildFile(revision,'web-player/firmware-atmega328p.json'));
   for(const row of report.cases){
     assert.equal(row.pwm_exact,true);assert.equal(row.after.accepted,true);assert.equal(row.after.underruns,0);
     assert.equal(row.after.stream,row.before.stream);
     assert.ok(row.after.ram<=row.before.ram);assert.ok(row.after.stack<=row.before.stack);
-    assert.equal(sha(read(row.source)),row.hex_sha256);
+    assert.equal(sha(readRecordedBuildFile(revision,row.source)),row.hex_sha256);
     if(row.family==='nano'){
       assert.ok(row.after.program<=3072);
       const variant=nano.variants.find(v=>v.clipId+'-'+v.id===row.id);
@@ -99,5 +101,5 @@ test('all 18 WebUI images retain exact media and the single-stream Nano size cap
   assert.ok(arithmetic.atmega328_328p_control_binary_identity.every(row=>row.binary_identical));
   for(const [name,digest] of Object.entries(arithmetic.evidence_sha256))assert.equal(sha(read(directory+name)),digest);
   for(const path of ['web-player/app.js','web-player/index.html','web-player/lib/tiny88-preview.js'])
-    assert.match(read(path).toString(),/20261117-lpx-3k-rates/);
+    assert.match(readRecordedBuildFile(revision,path).toString(),/20261117-lpx-3k-rates/);
 });

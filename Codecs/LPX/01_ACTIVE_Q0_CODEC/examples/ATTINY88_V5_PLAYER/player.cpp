@@ -47,14 +47,8 @@
 #if LPX25_GPIOR_STATE && (!defined(GPIOR0) || !defined(GPIOR1) || !defined(GPIOR2))
 #error The selected player hardware needs the vendor GPIOR register definitions
 #endif
-#ifndef LPX25_HEADER_SAMPLE_RATE
-#define LPX25_HEADER_SAMPLE_RATE (LPX4_COMPACT_VERSION==9 && LPX4_EXTENDED_SAMPLE_RATES)
-#endif
-#if LPX25_HEADER_SAMPLE_RATE != 0 && LPX25_HEADER_SAMPLE_RATE != 1
-#error LPX25_HEADER_SAMPLE_RATE must be 0 or 1
-#endif
-#if LPX4_COMPACT_VERSION==9 && LPX4_EXTENDED_SAMPLE_RATES && !LPX25_HEADER_SAMPLE_RATE
-#error Select header timing with the extended-rate decoder, or disable both for 8 kHz compatibility
+#if LPX4_SAMPLE_RATE != 8000 && LPX4_SAMPLE_RATE != 12000 && LPX4_SAMPLE_RATE != 16000
+#error Select one playback rate with LPX4_SAMPLE_RATE (default 8000 on AVR)
 #endif
 #ifndef LPX25_REUSE_TIMER1_HIGH
 #define LPX25_REUSE_TIMER1_HIGH 0
@@ -455,27 +449,16 @@ int main(){
             DDRD|=_BV(DDD3);OCR2B=128;
             TCCR2A=_BV(COM2B1)|_BV(WGM21)|_BV(WGM20);TCCR2B=_BV(CS20);
             TCCR1A=0;TCCR1B=0;TCNT1=0;
-#if LPX25_HEADER_SAMPLE_RATE
-            // begin() validated 8/12/16 kHz. The nearest fixed 12 kHz
-            // divider gives 12003.00075 Hz; 8/16 kHz are exact at 16 MHz.
-            const uint8_t rateHigh=decoder.sampleRate()>>8;
-            OCR1A=rateHigh==31?1999:rateHigh==62?999:1332;
-#else
-            OCR1A=1999;
-#endif
+            // One compile-time divider; nominal 12 kHz gives 12003.00075 Hz.
+            OCR1A=(F_CPU+LPX4_SAMPLE_RATE/2)/LPX4_SAMPLE_RATE-1;
             TIFR1=_BV(OCF1A);TIMSK1=_BV(OCIE1A);
             TCCR1B=_BV(WGM12)|_BV(CS10);
 #else
             // OC1A/PB1: 62.5 kHz PWM; Timer0 CTC /8 paces samples.
             DDRB|=_BV(PB1);OCR1A=128;
             TCCR1A=_BV(COM1A1)|_BV(WGM10);TCCR1B=_BV(WGM12)|_BV(CS10);
-#if LPX25_HEADER_SAMPLE_RATE
             // Timer0 /8 gives 11976.04790 Hz at nominal 12 kHz.
-            const uint8_t rateHigh=decoder.sampleRate()>>8;
-            OCR0A=rateHigh==31?249:rateHigh==62?124:166;
-#else
-            OCR0A=249;
-#endif
+            OCR0A=(F_CPU+4UL*LPX4_SAMPLE_RATE)/(8UL*LPX4_SAMPLE_RATE)-1;
             TCNT0=0;TIFR0=_BV(OCF0A);TIMSK0=_BV(OCIE0A);
 #if defined(TCCR0B)
             TCCR0A=_BV(WGM01);TCCR0B=_BV(CS01);

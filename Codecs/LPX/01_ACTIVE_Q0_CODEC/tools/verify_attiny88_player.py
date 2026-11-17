@@ -41,14 +41,14 @@ int main(){
 
 def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=None,
            flash_limit=8192,lpc_segments=2,sparse80=False,mul16_unroll=None,normalize_output=False,universal=True,
-           rom_output_gain=False,extra_flags=(),target='attiny88',nano_pwm=False,extended_sample_rates=True):
+           rom_output_gain=False,extra_flags=(),target='attiny88',nano_pwm=False,sample_rate=8000):
     output=Path(output).resolve()
     if universal and normalize_output and not rom_output_gain:
         raise ValueError('Universal playback must not specialize gain for a recording')
     if mul16_unroll is None:mul16_unroll=2 if universal else 16
     options=dict(assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,
         flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll,universal=universal,
-        rom_output_gain=rom_output_gain,extra_flags=extra_flags,target=target,nano_pwm=nano_pwm,extended_sample_rates=extended_sample_rates)
+        rom_output_gain=rom_output_gain,extra_flags=extra_flags,target=target,nano_pwm=nano_pwm,sample_rate=sample_rate)
     cost=build(source,output,**options)
     queue=cost['queue']
     prefix=['wsl','-d',wsl,'--'] if wsl else []
@@ -62,7 +62,7 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
         raise ValueError('This calibrated interrupt-entry adapter requires simavr1.6')
     run('g++','-O2','-std=c++11',f'-DLPX3_LPC_SEGMENTS={lpc_segments}',
         *(['-DLPX4_ENABLE_SPARSE80=1'] if sparse80 else []),
-        f'-DLPX4_COMPACT_VERSION={cost["compact_version"]}',f'-DLPX4_EXTENDED_SAMPLE_RATES={int(extended_sample_rates)}',
+        f'-DLPX4_COMPACT_VERSION={cost["compact_version"]}',f'-DLPX4_SAMPLE_RATE={sample_rate}',
         *([f'-DLPX_REFERENCE_SEGMENTS={len(cost["segment_bytes"])}'] if len(cost['segment_bytes'])>1 else []),
         '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(ROOT/'src'),
         path(output/'reference.cpp'),path(ROOT/'src/Lpx4HybridCore.cpp'),'-o',path(output/'reference'))
@@ -104,6 +104,7 @@ if __name__=='__main__':
     ap.add_argument('input',type=Path);ap.add_argument('output',type=Path)
     ap.add_argument('--wsl');ap.add_argument('--c',action='store_true');ap.add_argument('--c-isr',action='store_true')
     ap.add_argument('--queue',type=int,choices=(16,24,32,44));ap.add_argument('--repeat',type=int,default=1)
+    ap.add_argument('--sample-rate',type=int,choices=(8000,12000,16000),default=8000)
     mode=ap.add_mutually_exclusive_group()
     mode.add_argument('--universal',dest='universal',action='store_true')
     mode.add_argument('--fixed-header',dest='universal',action='store_false')
@@ -112,5 +113,5 @@ if __name__=='__main__':
     ap.add_argument('--enable-sparse80',action='store_true')
     ap.add_argument('--mul16-unroll',type=int,choices=(1,2,4,8,16))
     a=ap.parse_args();r=verify(a.input,a.output,wsl=a.wsl,assembly=not a.c,asm_isr=not a.c_isr,
-        queue=a.queue,repeat=a.repeat,flash_limit=a.flash_limit,sparse80=a.enable_sparse80,mul16_unroll=a.mul16_unroll,universal=a.universal)
+        queue=a.queue,repeat=a.repeat,flash_limit=a.flash_limit,sparse80=a.enable_sparse80,mul16_unroll=a.mul16_unroll,universal=a.universal,sample_rate=a.sample_rate)
     print(json.dumps(r));raise SystemExit(0 if r['accepted'] else 1)

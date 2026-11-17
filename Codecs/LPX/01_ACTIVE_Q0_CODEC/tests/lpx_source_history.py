@@ -384,4 +384,22 @@ def assert_recorded_source(path,expected):
                        r['producer_and_irq_after']<=r['producer_and_irq_before'] and
                        r['producer_cpu_max_delta']<=0 for r in result['timing_comparison'])
             recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        directory=REPO/'Codecs/LPX/research/avr-fixed-rate-2026-11-18'
+        report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
+        change=report['sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert report['schema']=='lpx-avr-fixed-rate-transition-v1'
+            evidence=(directory/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
+            rows=json.loads(evidence)['cases'];assert len(rows)==132
+            for row in rows:
+                before=row['before']
+                for key in ('input_sha256','pwm_sha256','underruns','static_ram_bytes','stack_bytes',
+                            'producer_cpu_mean','producer_cpu_max','producer_active_cpu_mean','producer_active_cpu_max'):
+                    assert row[key]==before[key],(row['target'],row['rate'],row['case'],key)
+                assert row['program_excluding_audio_bytes']<before['program_excluding_audio_bytes']
+                assert row['irq_max']<=before['irq_max']
+                if row['rate']==8000 or row['target']=='atmega328p':assert row['accepted']
+            recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

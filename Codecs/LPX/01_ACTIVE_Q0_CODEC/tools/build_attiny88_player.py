@@ -73,7 +73,7 @@ def target_path(path,wsl):
         return '/mnt/'+p.drive[0].lower()+'/'+ '/'.join(p.parts[1:])
     return str(p)
 
-def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=None,output_gain=128,universal=True,rom_output_gain=False,target='attiny88',nano_pwm=False,extended_sample_rates=True):
+def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=None,output_gain=128,universal=True,rom_output_gain=False,target='attiny88',nano_pwm=False,sample_rate=8000):
     if target not in ('attiny88','atmega328','atmega328p'):
         raise ValueError('Unsupported AVR player target')
     if nano_pwm and target=='attiny88':
@@ -104,7 +104,12 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
             sparse80 and blob[:6]==b'L4HY\x08\x0f'):
         raise ValueError('Expected compact v5/v9, or sparse80 with its explicit enable')
     compact_version=9 if version==9 else 5
-    if type(extended_sample_rates) is not bool:raise ValueError('Extended sample-rate selection must be boolean')
+    if type(sample_rate) is not int or sample_rate not in (8000,12000,16000):
+        raise ValueError('Select a build sampling rate of 8000, 12000 or 16000 Hz')
+    if sample_rate!=8000 and compact_version!=9:
+        raise ValueError('Higher sample rates require LPX v9')
+    if any(re.match(r'-[DU](?:LPX4_SAMPLE_RATE|LPX25_HEADER_SAMPLE_RATE|LPX4_EXTENDED_SAMPLE_RATES)(?:=|$)',flag) for flag in extra_flags):
+        raise ValueError('Use sample_rate to select the firmware sampling rate')
     if len(blobs)>1:
         if not universal or compact_version!=9 or any(data[:2]!=b'L9' for data in blobs):
             raise ValueError('Multiple streams require universal LPX v9')
@@ -112,12 +117,11 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
             if len(data)<13 or len(data)!=13+int.from_bytes(data[11:13],'little'):
                 raise ValueError('Incomplete LPX v9 segment')
     rates=[int.from_bytes(data[3:5] if compact_version==9 else data[6:8],'little') for data in blobs]
-    allowed_rates=(8000,12000,16000) if extended_sample_rates and compact_version==9 else (8000,)
-    if any(rate not in allowed_rates for rate in rates):raise ValueError('Unsupported stream sampling rate')
     # A continuous FIFO has one clock. Mixed-rate sequences need rate tags at
     # consumer boundaries; rejecting them avoids retiming already queued audio.
     if len(set(rates))!=1:raise ValueError('Continuous stream sequences require one common sampling rate')
-    sample_hz=rates[0]
+    if rates[0]!=sample_rate:raise ValueError('Stream sampling rate does not match the build sampling rate')
+    sample_hz=sample_rate
     sample_period_cycles={8000:2000,12000:1333 if nano_pwm else 1336,16000:1000}[sample_hz]
     if rom_output_gain and (not universal or compact_version!=9):
         raise ValueError('ROM output gain requires universal LPX v9')
@@ -148,7 +152,7 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
            '-fno-jump-tables','-fno-exceptions','-fno-rtti','-ffunction-sections','-fdata-sections',
            '-std=gnu++11','-DLPX4_FUNCTION_TUNING=0',f'-DLPX4_ENABLE_ASM={int(assembly)}',f'-DLPX3_LPC_SEGMENTS={lpc_segments}',
            f'-DLPX25_QUEUE={queue}',f'-DLPX25_REPEAT={repeat}',f'-DPWM_GAIN_Q7={128 if rom_output_gain else output_gain}',
-           f'-DLPX4_AVR25_MUL16_UNROLL={mul16_unroll}',
+           f'-DLPX4_AVR25_MUL16_UNROLL={mul16_unroll}',f'-DLPX4_SAMPLE_RATE={sample_rate}',
            '-include',path(ROOT/'profiles/Lpx4Sram512.h'),
            *(['-I'+path(DFP)] if target=='attiny88' else []),
            '-I'+path(ROOT/'src'),'-I'+path(output)]
@@ -170,8 +174,7 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     if len(blobs)>1:flags+=[f'-DLPX25_SEGMENTS={len(blobs)}']
     if sparse80:flags+=['-DLPX4_ENABLE_SPARSE80=1']
     if compact_version==9:
-        flags+=['-DLPX4_COMPACT_VERSION=9',f'-DLPX4_EXTENDED_SAMPLE_RATES={int(extended_sample_rates)}',
-                f'-DLPX25_HEADER_SAMPLE_RATE={int(extended_sample_rates)}']
+        flags+=['-DLPX4_COMPACT_VERSION=9']
     if universal:
         flags+=['-DLPX4_AVR25_SATURATED_PRODUCTS=1','-DLPX25_REUSE_TIMER1_HIGH=1']
     else:
@@ -229,7 +232,7 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     if target=='attiny88':source_files.append(DFP/'avr/iotn88.h')
     report=dict(target=target,cpu_hz=16000000,sample_hz=sample_hz,
         sample_period_cycles=sample_period_cycles,actual_sample_hz=16000000/sample_period_cycles,
-        sample_clock_policy='nearest-fixed-divider',supported_sample_rates=list(allowed_rates),
+        sample_clock_policy='compile-time-nearest-fixed-divider',supported_sample_rates=[sample_rate],
         queue=queue,prefill=queue*3//4,
         repeat=repeat,samples=samples*repeat,compact_version=compact_version,
         supported_profiles=[4,6,15] if compact_version==9 or sparse80 else [4,6],
@@ -265,12 +268,13 @@ if __name__=='__main__':
     mode.add_argument('--fixed-header',dest='universal',action='store_false',help='Legacy opt-in ROM specialization for one recording')
     ap.set_defaults(universal=True)
     ap.add_argument('--repeat',type=int,default=1)
+    ap.add_argument('--sample-rate',type=int,choices=(8000,12000,16000),default=8000,help='Compile for one sampling rate (default: 8000 Hz)')
     ap.add_argument('--lpc-segments',type=int,choices=(1,2,4),default=2)
     ap.add_argument('--asm-isr',action='store_true')
     ap.add_argument('--enable-sparse80',action='store_true')
     ap.add_argument('--mul16-unroll',type=int,choices=(1,2,4,8,16),help='Default: 2 universal, 16 fixed-header')
     ap.add_argument('--flash-limit',type=int,default=8192,help='Hard full-image cap, at most the physical 8192 bytes')
     a=ap.parse_args()
-    r=build(a.input,a.output,assembly=a.enable_asm,queue=a.queue,repeat=a.repeat,wsl=a.wsl,avr_bin=a.avr_bin,lpc_segments=a.lpc_segments,asm_isr=a.asm_isr,flash_limit=a.flash_limit,sparse80=a.enable_sparse80,mul16_unroll=a.mul16_unroll,universal=a.universal)
+    r=build(a.input,a.output,assembly=a.enable_asm,queue=a.queue,repeat=a.repeat,wsl=a.wsl,avr_bin=a.avr_bin,lpc_segments=a.lpc_segments,asm_isr=a.asm_isr,flash_limit=a.flash_limit,sparse80=a.enable_sparse80,mul16_unroll=a.mul16_unroll,universal=a.universal,sample_rate=a.sample_rate)
     print(json.dumps({k:r[k] for k in ('flash_bytes','static_ram_bytes','samples','assembly')}))
     if r['requires_isp']:print('Warning: image exceeds the MH-ET LIVE standard USB bootloader limit (6012 bytes); load with an ISP programmer.')

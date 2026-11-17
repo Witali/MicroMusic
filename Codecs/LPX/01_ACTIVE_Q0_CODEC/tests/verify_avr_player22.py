@@ -72,7 +72,7 @@ def main():
         target,rate,name,stream=job;folder=out/str(rate)/target/name
         result=verify(stream,folder,assembly=True,asm_isr=True,queue=32,wsl=args.wsl,
             normalize_output=True,rom_output_gain=True,target=target,nano_pwm=target=='atmega328p',
-            flash_limit=30720 if target=='atmega328p' else 8192)
+            flash_limit=30720 if target=='atmega328p' else 8192,sample_rate=rate)
         cost=read(folder/'build.json')
         assert result['producer_calls']==result['decode_calls']==cost['samples']
         assert result['producer_unpublished_decode_calls']==0

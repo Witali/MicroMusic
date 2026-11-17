@@ -6,17 +6,27 @@ vendor headers. Arithmetic still requires explicit `LPX4_ENABLE_ASM=1`;
 zero selects the equivalent C backend on the same CPU. This is original
 project clock-selection and validation code.
 
-The universal v9 header stores nominal sampling rate. The C reference and
-shared AVR player accept 8000, 12000 and 16000 Hz. Legacy formats retain
-their 8 kHz contract. No payload format change or additional field is needed.
-`LPX4_EXTENDED_SAMPLE_RATES=0` selects an 8 kHz-only compatibility decoder;
-the player must also use `LPX25_HEADER_SAMPLE_RATE=0`. The Python builder's
-`extended_sample_rates=False` selects both compatibility settings.
+The universal v9 header stores nominal sampling rate. Each AVR player is
+compiled for exactly one of 8000, 12000 or 16000 Hz, with 8000 Hz the default.
+Set `LPX4_SAMPLE_RATE` consistently for every translation unit, independently
+of C/ASM arithmetic selection. The shared Python builder's `sample_rate`
+argument and CLI `--sample-rate` option do this for the complete build.
+The Nano wrapper accepts the same `sample_rate` argument.
 
-Validate the complete 16-bit rate in `begin()`. Only then use its high byte
-to choose one of three timer divisors at startup. There is no rate-dependent
-per-sample branch, fractional phase state or extra SRAM. One continuous FIFO
-has one clock: mixed-rate stream lists are rejected before compilation.
+The timer divisor is a compile-time constant. `begin()` checks the complete
+16-bit file rate against that setting; the builder rejects a mismatched file
+or mixed-rate segment list before compilation. A setting does not resample
+or retag audio. Other stream parameters and the payload remain universal.
+There is no fractional phase state or extra SRAM.
+
+The portable PC reference defaults to `LPX4_SAMPLE_RATE=0`, accepting all
+three v9 rates, and can explicitly select one rate as well. On AVR the
+library default is 8000; zero remains available for a library-only reader,
+but the player requires one concrete rate. Legacy formats retain their
+8 kHz contract. `LPX4_EXTENDED_SAMPLE_RATES=0` still limits the C/library
+compatibility path to 8 kHz; the firmware builder uses `sample_rate` instead.
+No payload format change or additional field is needed. The former automatic
+player is preserved at `codex/lpx-auto-sample-rate` (`66e3d934`).
 
 | Nominal rate | Nano D3/OC2B, Timer1 /1 | Tiny OC1A, Timer0 /8 |
 | --- | --- | --- |
@@ -63,6 +73,15 @@ packet duration and source rate. The original 8 kHz payload/search stays exact.
 
 ## Reproduce complete playback
 
+For example, compile a Tiny player for an already encoded 12 kHz stream:
+
+```sh
+python Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_attiny88_player.py build/example/audio.lpx build/player-12k --enable-asm --asm-isr --sample-rate 12000
+```
+
+Omit `--sample-rate` for 8 kHz. The verifier has the same option. Selecting
+12/16 kHz does not by itself establish real-time support on the selected chip.
+
 ```sh
 python Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_avr_player22.py build/lpx-three-rates --rates 8000 12000 16000 --jobs 3
 ```
@@ -74,3 +93,7 @@ matrix inputs change only the header rate and are labelled timing probes.
 The separate `test_sample_rates.py` tests encode real resampled source audio,
 preserve original 8 kHz P4/P6 output, validate compatibility/error/playlist
 contracts and check rate-aware WAV decoding.
+
+The historical three-rate measurements above describe the automatic player.
+The [compile-time selection measurements](../../Codecs/LPX/research/avr-fixed-rate-2026-11-18/README.md)
+record the smaller current images and matched IRQ checks separately.

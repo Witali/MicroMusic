@@ -68,6 +68,19 @@ class SampleRateTests(unittest.TestCase):
                 if rate==8000:self.assertIsNotNone(result)
                 else:self.assertIsNone(result)
 
+    def test_compile_time_c_receiver_checks_the_selected_file_rate(self):
+        data=bytearray(speech_v9.repack(fixture(6,17,145,'changing',True))[0])
+        for selected in SAMPLE_RATES:
+            receiver=ProcessReference(9,wsl=os.environ.get('LPX_TEST_WSL'))
+            receiver.compiler+=[f'-DLPX4_SAMPLE_RATE={selected}']
+            with receiver as fixed:
+                for rate in SAMPLE_RATES:
+                    struct.pack_into('<H',data,3,rate)
+                    actual=fixed.decode_one_s16(data,17)
+                    if rate==selected:
+                        np.testing.assert_array_equal(actual,self.v9.decode_one_s16(data,17))
+                    else:self.assertIsNone(actual)
+
     def test_real_source_resampling_and_header_rate_wav(self):
         with tempfile.TemporaryDirectory() as td:
             folder=Path(td);source=folder/'input.wav'
@@ -123,8 +136,15 @@ class SampleRateTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError,'one common sampling rate'):
                     builder.build(bad,output)
             for path in paths[1:]:
-                with self.assertRaisesRegex(ValueError,'Unsupported stream sampling rate'):
-                    builder.build(path,output,extended_sample_rates=False)
+                with self.assertRaisesRegex(ValueError,'does not match the build sampling rate'):
+                    builder.build(path,output)
+            for rate in (0,True,8000.,11025):
+                with self.assertRaisesRegex(ValueError,'Select a build sampling rate'):
+                    builder.build(paths[0],output,sample_rate=rate)
+            for flag in ('-DLPX4_SAMPLE_RATE=12000','-ULPX4_SAMPLE_RATE',
+                         '-DLPX25_HEADER_SAMPLE_RATE=1','-DLPX4_EXTENDED_SAMPLE_RATES=0'):
+                with self.assertRaisesRegex(ValueError,'Use sample_rate'):
+                    builder.build(paths[0],output,extra_flags=[flag])
 
     def test_truncated_and_bad_v9_are_rejected(self):
         data=speech_v9.repack(fixture(6,17,145,'changing',True))[0]

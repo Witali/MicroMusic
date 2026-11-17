@@ -147,6 +147,21 @@ typedef int16_t Lpx4SynthesisValue;
 #if LPX4_EXTENDED_SAMPLE_RATES != 0 && LPX4_EXTENDED_SAMPLE_RATES != 1
 #error LPX4_EXTENDED_SAMPLE_RATES must be 0 or 1
 #endif
+// AVR firmware selects one rate for the whole build; hosts retain a
+// rate-agnostic reader. The stream must still declare the selected rate.
+#ifndef LPX4_SAMPLE_RATE
+#if defined(__AVR__)
+#define LPX4_SAMPLE_RATE 8000
+#else
+#define LPX4_SAMPLE_RATE 0
+#endif
+#endif
+#if LPX4_SAMPLE_RATE != 0 && LPX4_SAMPLE_RATE != 8000 && LPX4_SAMPLE_RATE != 12000 && LPX4_SAMPLE_RATE != 16000
+#error LPX4_SAMPLE_RATE must be 0, 8000, 12000 or 16000
+#endif
+#if LPX4_SAMPLE_RATE > 8000 && (LPX4_COMPACT_VERSION != 9 || !LPX4_EXTENDED_SAMPLE_RATES)
+#error Higher sample rates require LPX v9 and extended-rate decoding
+#endif
 
 // Advance the ROM pointer and decrement its remaining byte count.
 // Zero retains base+cursor+size; hardware Flash access is unchanged.

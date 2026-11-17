@@ -382,7 +382,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       'tools/verify_attiny88_player.py','tests/verify_web_asm_equivalence.py'
     ].map(name=>'Codecs/LPX/01_ACTIVE_Q0_CODEC/'+name);
     if(paths.includes(path)){
-      const release=JSON.parse(read('web-player/firmware-lpx-attiny88.json'));
+      const release=JSON.parse(readRecordedBuildFile('66e3d93499b6df060f8a5c7cdcb133d682dc3106','web-player/firmware-lpx-attiny88.json'));
       const baseline=readRecordedBuildFile(v9ReleaseBase,path);
       const textDigest=value=>sha(value.toString('utf8').replaceAll('\r\n','\n'));
       if(recorded===(encoding==='raw'?sha(baseline):textDigest(baseline))){
@@ -391,9 +391,11 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
         assert.equal(release.variants.length,9);
         // A retained catalog may precede the current measured optimization.
         // Bind it to its published sources before following later steps.
-        const published=release.sourceSha256[path]===textDigest(bytes)?bytes:
-          readRecordedBuildFile('ead0bdcb0b627532afbf2d7b52fce7f015cf6dbc',path);
-        assert.equal(release.sourceSha256[path],textDigest(published),path+' v9 release source');
+        const published=[bytes,
+          readRecordedBuildFile('66e3d93499b6df060f8a5c7cdcb133d682dc3106',path),
+          readRecordedBuildFile('ead0bdcb0b627532afbf2d7b52fce7f015cf6dbc',path)]
+          .find(value=>release.sourceSha256[path]===textDigest(value));
+        assert.ok(published,path+' v9 release source');
         recorded=encoding==='raw'?sha(published):textDigest(published);
       }
     }
@@ -468,6 +470,29 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       assert.equal(result.independent_rebuild.cases.length,18);
       assert.ok(result.timing_comparison.every(r=>r.exact_old_new_pwm&&r.old_elf_matches_published_hex&&
         r.producer_and_irq_after<=r.producer_and_irq_before&&r.producer_cpu_max_delta<=0));
+      recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    const directory='Codecs/LPX/research/avr-fixed-rate-2026-11-18/';
+    const report=JSON.parse(read(directory+'source-transition.json')),change=report.sources[path];
+    if(change?.baseline?.[field]===recorded){
+      assert.equal(report.schema,'lpx-avr-fixed-rate-transition-v1');
+      const evidence=read(directory+'measurements.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      const result=JSON.parse(evidence);assert.equal(result.cases.length,132);
+      for(const row of result.cases){
+        assert.equal(row.input_sha256,row.before.input_sha256);
+        assert.equal(row.pwm_sha256,row.before.pwm_sha256);
+        assert.equal(row.underruns,row.before.underruns);
+        assert.equal(row.static_ram_bytes,row.before.static_ram_bytes);
+        assert.equal(row.stack_bytes,row.before.stack_bytes);
+        assert.ok(row.irq_max<=row.before.irq_max);
+        for(const key of ['producer_cpu_mean','producer_cpu_max','producer_active_cpu_mean','producer_active_cpu_max'])
+          assert.equal(row[key],row.before[key],key);
+        assert.ok(row.program_excluding_audio_bytes<row.before.program_excluding_audio_bytes);
+        if(row.rate===8000||row.target==='atmega328p')assert.equal(row.accepted,true);
+      }
       recorded=change.current[field];
     }
   }
