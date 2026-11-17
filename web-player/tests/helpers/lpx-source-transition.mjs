@@ -89,6 +89,7 @@ const avr5DirectQ4Report='Codecs/LPX/research/avr5-v9-direct-q4-2026-11-17/';
 const avr5SaturationRailsReport='Codecs/LPX/research/avr5-v9-saturation-rails-2026-11-17/';
 const tinyPrepareRegistersReport='Codecs/LPX/research/tiny-v9-prepare-registers-2026-11-17/';
 const avr5FmulFilterReport='Codecs/LPX/research/avr5-v9-fmul-filter-2026-11-17/';
+const avr5PlayerWordsReport='Codecs/LPX/research/avr5-v9-player-words-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -337,6 +338,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avr5SaturationRailsReport,'13f76faf5f35042972ac24f0695bebb50d77adc0'],
     [tinyPrepareRegistersReport,'2e1e4a0471756ae6827256d03f11586a5dd7712b'],
     [avr5FmulFilterReport,'d75d66e355046ac4e1eb7527ebcc685d020cea4b'],
+    [avr5PlayerWordsReport,'527dd8a3c42ed69fe7cb3b9d054ca25edc4ce80b'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

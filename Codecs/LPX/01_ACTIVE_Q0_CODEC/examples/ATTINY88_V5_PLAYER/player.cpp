@@ -162,6 +162,10 @@ static bool begin(){return decoder.begin(voice,sizeof(voice));}
 #if LPX25_V9_RUNTIME
 __attribute__((OS_main))
 #endif
+#if LPX25_V9_ROM_PLAYER && LPX4_USE_AVR_ASM && LPX3_LPC_SEGMENTS==2
+// Preserve word-sized state expressions in the AVR5 foreground loop.
+__attribute__((optimize("no-split-wide-types,no-tree-ccp")))
+#endif
 int main(){
     // Reset starts with interrupts masked. Keep the actual compiler CPU macros.
     CLKPR=_BV(CLKPCE);CLKPR=0;
