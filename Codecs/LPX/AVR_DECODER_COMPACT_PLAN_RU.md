@@ -117,6 +117,7 @@ ATtiny88 экономят ещё 110 Б на ATtiny88 и 36 Б на ATmega.
 · [Общее восстановление возбуждения AVR5](research/avr5-v9-excitation-leaf-2026-11-17/README.md)
 · [Прежний спектр в свободной опоре AVR5](research/avr5-v9-lsf-overlay-2026-11-17/README.md)
 · [Проверка конца после успешного отсчёта](research/avr-v9-sample-end-2026-11-17/README.md)
+· [Самостоятельная сборка арифметики AVR25](research/avr-math-default-build-2026-11-17/README.md)
 
 ## Что можно объединить между ATtiny88 и ATmega328/328P
 

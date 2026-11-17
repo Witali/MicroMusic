@@ -826,7 +826,13 @@ static inline __attribute__((always_inline)) int16_t lpx4AddClip15(int16_t a,int
         "1: cpi %B0,128\n\tbrne 3f\n\t.if %2\n\t"
         "cpi %A0,1\n\tadc %A0,__zero_reg__\n\t.else\n\t"
         "tst %A0\n\tbrne 3f\n\tinc %A0\n\t.endif\n\t3:"
-        : "+&d"(a) : "r"(b),"I"((compactAvr25 && LPX4_USE_AVR_NOMUL_ASM) || (LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9)) : "cc");
+        : "+&d"(a) : "r"(b),
+#if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
+          "I"(1)
+#else
+          "I"(compactAvr25 && LPX4_USE_AVR_NOMUL_ASM)
+#endif
+        : "cc");
     return a;
 #else
     const int32_t sum=(int32_t)a+b;

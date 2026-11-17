@@ -81,6 +81,7 @@ AVR5_P6_MUL=REPO/'Codecs/LPX/research/avr5-v9-p6-mul-2026-11-17'
 AVR5_EXCITATION_LEAF=REPO/'Codecs/LPX/research/avr5-v9-excitation-leaf-2026-11-17'
 AVR5_LSF_OVERLAY=REPO/'Codecs/LPX/research/avr5-v9-lsf-overlay-2026-11-17'
 AVR_PLAYER_SAMPLE_END=REPO/'Codecs/LPX/research/avr-v9-sample-end-2026-11-17'
+AVR_MATH_DEFAULT_BUILD=REPO/'Codecs/LPX/research/avr-math-default-build-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -268,6 +269,7 @@ def assert_recorded_source(path,expected):
         (AVR5_EXCITATION_LEAF,'f2d665670d2902ea874d3253e94fa1b9e6bc3ce7'),
         (AVR5_LSF_OVERLAY,'f01f5cbc0937cfeffccfba0f1852cea7fc816c6f'),
         (AVR_PLAYER_SAMPLE_END,'78a9d52a48f07ab36283752e88a57e36fbdc65b9'),
+        (AVR_MATH_DEFAULT_BUILD,'cdf197ce495b3dcbf9c807b39062987e8360f030'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

@@ -81,6 +81,7 @@ const avr5P6MulReport='Codecs/LPX/research/avr5-v9-p6-mul-2026-11-17/';
 const avr5ExcitationLeafReport='Codecs/LPX/research/avr5-v9-excitation-leaf-2026-11-17/';
 const avr5LsfOverlayReport='Codecs/LPX/research/avr5-v9-lsf-overlay-2026-11-17/';
 const avrPlayerSampleEndReport='Codecs/LPX/research/avr-v9-sample-end-2026-11-17/';
+const avrMathDefaultBuildReport='Codecs/LPX/research/avr-math-default-build-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -321,6 +322,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avr5ExcitationLeafReport,'f2d665670d2902ea874d3253e94fa1b9e6bc3ce7'],
     [avr5LsfOverlayReport,'f01f5cbc0937cfeffccfba0f1852cea7fc816c6f'],
     [avrPlayerSampleEndReport,'78a9d52a48f07ab36283752e88a57e36fbdc65b9'],
+    [avrMathDefaultBuildReport,'cdf197ce495b3dcbf9c807b39062987e8360f030'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));
