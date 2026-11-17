@@ -410,7 +410,6 @@ private:
 #endif
     Error error_;
 #if LPX4_COMPACT_VERSION == 9
-    // Two freed flag bytes fund a discarded eleventh linear-history word.
     bool initializedFrame_:1;
     bool lsfCached_:1,staticSpectrum_:1;
 #else
@@ -420,7 +419,14 @@ private:
 #if LPX4_ROTATE_LPC_ANCHORS
     uint8_t lpcAnchorOffset_;
 #endif
-    Lpx4SynthesisValue a_[10],hist_[LPX4_LPC_RING?20:LPX4_COMPACT_VERSION==9?11:10];
+    // The AVR5 circular walk needs ten words. Its linear fallback skips
+    // storing the oldest word, so it fits the same allocation.
+#if defined(__AVR_ARCH__) && __AVR_ARCH__ == 5
+    static constexpr bool kShiftHistorySpare=false;
+#else
+    static constexpr bool kShiftHistorySpare=LPX4_COMPACT_VERSION==9;
+#endif
+    Lpx4SynthesisValue a_[10],hist_[LPX4_LPC_RING?20:10+kShiftHistorySpare];
 #if LPX4_PLAYER_PITCH_PAGE
     static int8_t ringQ_[256];
 #else

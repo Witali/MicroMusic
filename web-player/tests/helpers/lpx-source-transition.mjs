@@ -74,6 +74,7 @@ const avrPolyImmediateReport='Codecs/LPX/research/avr-v9-poly-immediate-2026-11-
 const avrPlayerDrainReport='Codecs/LPX/research/avr-v9-player-drain-2026-11-17/';
 const avrStaticOpenReport='Codecs/LPX/research/avr-v9-static-open-2026-11-17/';
 const avrBitReaderZReport='Codecs/LPX/research/avr-v9-bit-reader-z-2026-11-17/';
+const avr5HistorySramReport='Codecs/LPX/research/avr5-v9-history-sram-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -307,6 +308,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avrPlayerDrainReport,'d3121d64b4c73fb9d76be17982989cd6bfe2fde2'],
     [avrStaticOpenReport,'3d06727f2b4ad1d6a663c670f1b960e1069caccf'],
     [avrBitReaderZReport,'5487faa80b5f697d366cade0977dca471c27142e'],
+    [avr5HistorySramReport,'371e74373c6a1b521cfd48af353723be9493efda'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

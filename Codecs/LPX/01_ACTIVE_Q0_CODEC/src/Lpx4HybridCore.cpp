@@ -2213,7 +2213,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #else
     for(int8_t i=9;i>=0;--i){
         pred-=a_[i]*hist_[i];
-        if(LPX4_COMPACT_VERSION==9 || i<9)hist_[i+1]=hist_[i];
+        if(kShiftHistorySpare || i<9)hist_[i+1]=hist_[i];
     }
     pred=lpx4FloatClamp(pred,-32767.0,32767.0);
     hist_[0]=pred;
@@ -2260,7 +2260,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     static_assert(historyOffset<=63,"LPC history exceeds the AVR ADIW immediate");
     int16_t pred=lpx4SynthesisCircularQ12<historyOffset>(excitation,a_,&subPos_);
 #else
-    int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,LPX4_COMPACT_VERSION==9>(excitation,a_,hist_));
+    int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisQ12<LPX4_EXCITATION_Q4,kShiftHistorySpare>(excitation,a_,hist_));
     hist_[0]=pred;
 #endif
 #endif
