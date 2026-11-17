@@ -73,6 +73,7 @@ AVR5_POLY_PAGE=REPO/'Codecs/LPX/research/avr5-v9-poly-page-2026-11-17'
 AVR_POLY_IMMEDIATE=REPO/'Codecs/LPX/research/avr-v9-poly-immediate-2026-11-17'
 AVR_PLAYER_DRAIN=REPO/'Codecs/LPX/research/avr-v9-player-drain-2026-11-17'
 AVR_STATIC_OPEN=REPO/'Codecs/LPX/research/avr-v9-static-open-2026-11-17'
+AVR_BIT_READER_Z=REPO/'Codecs/LPX/research/avr-v9-bit-reader-z-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -252,6 +253,7 @@ def assert_recorded_source(path,expected):
         (AVR_POLY_IMMEDIATE,'78a79936e3070e8fb3b6a9177e32e9ef267cac1a'),
         (AVR_PLAYER_DRAIN,'d3121d64b4c73fb9d76be17982989cd6bfe2fde2'),
         (AVR_STATIC_OPEN,'3d06727f2b4ad1d6a663c670f1b960e1069caccf'),
+        (AVR_BIT_READER_Z,'5487faa80b5f697d366cade0977dca471c27142e'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

@@ -619,7 +619,49 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
  ++bitCalls_;
 #endif
 
-#if LPX4_AVR_V9_PACKETS
+#if LPX4_AVR_V9_PACKETS && LPX4_V9_ROM_HEADER_LAYOUT && !defined(LPX4_ENABLE_PCM16)
+ // Compact v9 calls request 1..8 bits. One ROM byte suffices for a refill.
+ uint8_t out,source,remaining,used;
+ Lpx4HybridCore* base=this;
+ uint8_t lo,hi;
+ static_assert(sizeof(data_)==2 && sizeof(bytes_)==2 && sizeof(error_)==1 &&
+               offsetof(Lpx4HybridCore,error_)<64 &&
+               offsetof(Lpx4HybridCore,bitBuffer_)<64 &&
+               offsetof(Lpx4HybridCore,bitsLeft_)<64 &&
+               offsetof(Lpx4HybridCore,bytes_)+1<64 &&
+               offsetof(Lpx4HybridCore,data_)==0,
+               "LPX v9 reader requires AVR short displacements");
+ __asm__ volatile(
+     // Keep the object in Z while the cached bits suffice.
+     "ldd %[rem],Z+%[left]\n\tldd %[src],Z+%[buffer]\n\t"
+     "mov %[out],%[src]\n\tmov %[use],%[n]\n\tsub %[rem],%[n]\n\tbrcc 6f\n\t"
+     // Subtract from the ROM bound without committing an underflow.
+     "ldd %[lo],Z+%[bytes]\n\tldd %[hi],Z+%[bytes_hi]\n\t"
+     "subi %[lo],1\n\tsbci %[hi],0\n\tbrcc 2f\n\t"
+     "ldi %[lo],%[end_rom]\n\tstd Z+%[error],%[lo]\n\tclr %[src]\n\trjmp 3f\n\t"
+     // Borrow X for the leading cursor word and restore the object in Z.
+     "2: std Z+%[bytes],%[lo]\n\tstd Z+%[bytes_hi],%[hi]\n\t"
+     "movw r26,r30\n\tld r30,X+\n\tld r31,X\n\tlpm %[src],Z+\n\t"
+     "st X,r31\n\tst -X,r30\n\tmovw r30,r26\n\t"
+     // The borrow path joins the new byte after the old cached bits.
+     "3: mov %[lo],%[src]\n\tadd %[use],%[rem]\n\tbreq 5f\n\t"
+     "4: lsl %[lo]\n\tdec %[use]\n\tbrne 4b\n\t"
+     "5: or %[out],%[lo]\n\tmov %[use],%[rem]\n\tneg %[use]\n\t"
+     // Discard the positive bit count and retain the unread part.
+     "6: lsr %[src]\n\tdec %[use]\n\tbrne 6b\n\t"
+     "andi %[rem],7\n\tstd Z+%[left],%[rem]\n\tstd Z+%[buffer],%[src]\n\t"
+     : [out] "=&r"(out),[src] "=&r"(source),[rem] "=&d"(remaining),
+       [use] "=&r"(used),[lo] "=&d"(lo),[hi] "=&d"(hi), [obj] "+z"(base)
+     : [n] "r"(n),
+       [bytes] "I"(offsetof(Lpx4HybridCore,bytes_)),
+       [bytes_hi] "I"(offsetof(Lpx4HybridCore,bytes_)+1),
+       [left] "I"(offsetof(Lpx4HybridCore,bitsLeft_)),
+       [buffer] "I"(offsetof(Lpx4HybridCore,bitBuffer_)),
+       [error] "I"(offsetof(Lpx4HybridCore,error_)),
+       [end_rom] "M"((uint8_t)END_OF_ROM)
+     : "r26","r27","cc","memory");
+ return out&LP_READ_U8(&bitMasks[n]);
+#elif LPX4_AVR_V9_PACKETS
 #if LPX4_USE_AVR_ASM
  uint8_t available=bitsLeft_;
  int8_t remaining=available-n;
