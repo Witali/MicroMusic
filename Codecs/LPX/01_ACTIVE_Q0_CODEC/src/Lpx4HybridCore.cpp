@@ -1552,11 +1552,10 @@ static inline PolyCoefficient polyCosineMulQ12(PolyCoefficient v,int16_t c){
     int16_t hi=polyHighWord(v);
     // A whole-product floor is needed for -250000 <= v < 250000.
     // At +250000 the residue is zero, so both rounding rules agree.
-    const uint16_t biased=(uint16_t)hi+15625u;
-    const uint16_t threshold=31250u;
+    uint16_t biased=(uint16_t)hi+15625u;
     int8_t directMask;
-    __asm__("cp %A1,%A2\n\tcpc %B1,%B2\n\tsbc %0,%0"
-            : "=&r"(directMask) : "r"(biased),"r"(threshold) : "cc");
+    __asm__("subi %A1,lo8(31250)\n\tsbci %B1,hi8(31250)\n\tsbc %0,%0"
+            : "=&r"(directMask),"+&d"(biased) : : "cc");
     int8_t residue=(uint8_t)v&15;
     if(!directMask && hi<0 && residue){++hi;residue-=16;}
     return polyGroupedQ12(residue,hi,c,directMask);
@@ -1669,7 +1668,7 @@ static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,ui
         "mov r17,%B0\n\tswap r17\n\teor r16,r17\n\tandi r17,15\n\teor r16,r17\n\t"
         "mov r18,%C0\n\tswap r18\n\tandi r18,240\n\tor r17,r18\n\t"
         "movw r22,r16\n\tsubi r22,lo8(-15625)\n\tsbci r23,hi8(-15625)\n\t"
-        "cpi r22,lo8(31250)\n\tldi r19,hi8(31250)\n\tcpc r23,r19\n\tsbc r19,r19\n\t"
+        "subi r22,lo8(31250)\n\tsbci r23,hi8(31250)\n\tsbc r19,r19\n\t"
         // Floor((previous & 15) * factor / 16) in r25:r24.
         "mov r18,%A0\n\tswap r18\n\tandi r18,240\n\t"
         "mul r18,r20\n\tmov r24,r1\n\t"
