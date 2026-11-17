@@ -72,3 +72,10 @@ also covered 28,800 traces per predecessor/successor and C/ASM combination,
 including cache offsets, short ROM bounds and pre-existing errors. The
 pre-existing private cache/cursor difference between C and ASM after an
 already-set error is retained, rather than asserted equivalent.
+
+The universal AVR5 24-bit polynomial path can also omit cosine node zero.
+Parsed one-based spectral bins produce nodes 1..127; reflection reads only
+1..64. Move the zero-valued end cursor from table index 64 to 63, preserving
+all LPM instructions and arithmetic. Keep the 65-entry table for selectable
+C, legacy and other geometries. This saves 2 B on Nano, with identical full
+producer timing across all 22 cases and byte-identical Tiny images.

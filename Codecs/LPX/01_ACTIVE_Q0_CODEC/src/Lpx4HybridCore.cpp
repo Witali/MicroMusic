@@ -224,6 +224,11 @@ static inline __attribute__((always_inline)) int16_t cosineInterpolate(uint16_t 
  return (int16_t)((negative?-hi:lo)-(int16_t)loss);
 }
 #if LPX4_COMPACT_ONLY && LPX3_LPC_SEGMENTS != 4
+#if LPX4_AVR25_LSF_ASM || (LPX4_USE_AVR_ASM && LPX4_AVR_V9_PACKETS && LPX4_POLY24_WORKSPACE && LPX3_LPC_SEGMENTS==2)
+#define LPX4_COSINE_OMITS_ZERO 1
+#else
+#define LPX4_COSINE_OMITS_ZERO 0
+#endif
 // Exact cos_table.inc nodes0,2,...128; existing oracle tables stay unchanged.
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && defined(LPX4_FIXED_SPEECH_FLAGS) && !(LPX4_SPEECH_FLAGS&2)
 // Pinned P4 and segment1/2 produce even half-grid indices. Reflection about
@@ -242,10 +247,10 @@ static const uint16_t LP_PROGMEM cosineEven[33]={
 #define LPX4_CONVERT_TABLE_NAME __asm__("lpx4_tiny_cosine_even") __attribute__((used))
 #else
 #define LPX4_CONVERT_TABLE_NAME
-#define LPX4_CONVERT_TABLE_SIZE 65
+#define LPX4_CONVERT_TABLE_SIZE (65-LPX4_COSINE_OMITS_ZERO)
 #endif
 static const uint16_t LP_PROGMEM cosineEven[LPX4_CONVERT_TABLE_SIZE] LPX4_CONVERT_TABLE_NAME={
-#if !LPX4_AVR25_LSF_ASM
+#if !LPX4_COSINE_OMITS_ZERO
  8192,
 #endif
  8190,8182,8170,8153,8130,8103,8071,
@@ -270,14 +275,14 @@ static inline __attribute__((always_inline)) int16_t cosineEvenNode(uint8_t inde
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && defined(LPX4_FIXED_SPEECH_FLAGS) && !(LPX4_SPEECH_FLAGS&2)
  index>>=1;
 #endif
- int16_t value=LP_READ_U16(&cosineEven[index]);
+ int16_t value=LP_READ_U16(&cosineEven[index-LPX4_COSINE_OMITS_ZERO]);
  return negative?-value:value;
 }
 #if LPX4_POLY24_WORKSPACE && LPX4_COMPACT_VERSION==9
 static inline __attribute__((always_inline)) int16_t lpcCosineFactor(uint8_t node){
  // The factor is -cos(node). Count backwards from the zero at node 64.
  // T holds the sign of node-64 while Z reads the reflected magnitude.
- const uint16_t* cursor=&cosineEven[64];
+ const uint16_t* cursor=&cosineEven[64-LPX4_COSINE_OMITS_ZERO];
  int16_t value;
  __asm__(
      "subi %1,64\n\tbst %1,7\n\tbrtc 1f\n\tneg %1\n\t"
@@ -289,6 +294,7 @@ static inline __attribute__((always_inline)) int16_t lpcCosineFactor(uint8_t nod
 }
 #endif
 #endif // The private converter performs its own bounded lookup.
+#undef LPX4_COSINE_OMITS_ZERO
 #endif
 
 

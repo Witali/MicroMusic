@@ -30,3 +30,6 @@ these paired workload receipts do not claim that new binaries equal old HEXes.
 - `rice`: use the same bounded prefix accumulator on AVR5 and AVR25.
   Nano saves another 10 B (3080..3081 B); Tiny binaries are unchanged.
   All 44 complete IRQ playbacks remain exact without a speed or memory loss.
+- `cosine`: omit unreachable node zero from the universal AVR5 table,
+  matching the private AVR25 table's bound. Nano saves another 2 B
+  (3078..3079 B); Tiny binaries and every measured CPU/memory field are unchanged.
