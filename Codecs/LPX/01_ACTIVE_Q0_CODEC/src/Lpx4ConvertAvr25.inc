@@ -304,7 +304,7 @@ lpx4_tiny_convert:
 	subi r30,24
 	ldd r28,Z+3
 	ldi r21,lo8(4)
-	ldi r19,0
+	ldi r19,10
 .Llpx4_convert_11:
 
 	mov r30,r20
@@ -348,14 +348,12 @@ lpx4_tiny_convert:
 	st Y+,r24
 	st Y+,r25
 	subi r18,lo8(-(4))
-	cpi r19,lo8(4)
+	cpi r19,lo8(6)
 	breq .Llpx4_convert_13
 	add r20,r21
 .Llpx4_convert_10:
-	subi r19,lo8(-(1))
-	cpi r19,lo8(10)
-	breq .+2
-	rjmp .Llpx4_convert_11
+	dec r19
+	brne .Llpx4_convert_11
 
 	pop r29
 	pop r28
