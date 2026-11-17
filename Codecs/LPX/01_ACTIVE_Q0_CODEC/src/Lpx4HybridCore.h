@@ -331,6 +331,9 @@ private:
     bool readSubframe();
     bool prepareSubframe();
     // Excitation reconstruction.
+#if LPX4_COMPACT_ONLY && LPX4_COMPACT_VERSION==9 && LPX4_PLAYER_PITCH_PAGE && defined(__AVR_ARCH__) && __AVR_ARCH__==5
+    static int8_t decodeCompactAvr5(uint8_t*);
+#endif
     int16_t pitchPredict() const;
 #if !LPX4_COMPACT_ONLY
     __attribute__((always_inline)) inline bool readUnary8(uint8_t& high);

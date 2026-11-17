@@ -1,0 +1,52 @@
+{
+  "schema": "lpx-tiny-v9-source-transition-v1",
+  "complete": true,
+  "baseline_revision": "f2d665670d2902ea874d3253e94fa1b9e6bc3ce7",
+  "universal_irq_cases": 22,
+  "identical_web_images": 18,
+  "measurements_sha256": "a45c910d82db7eca874a22e5fe842bc99d196351a1e1fe1b974db3dd67b5e131",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": {
+      "baseline": {
+        "raw_sha256": "f0bbefad121cfc15e02241680d521b21f456e389a3e1a3c126906e038c1a45e4",
+        "text_lf_sha256": "f0bbefad121cfc15e02241680d521b21f456e389a3e1a3c126906e038c1a45e4"
+      },
+      "current": {
+        "raw_sha256": "fb033c8bab0b4dc7f8044663b5b6459fc60a0f5390cef8cb857e8fd15603b779",
+        "text_lf_sha256": "fb033c8bab0b4dc7f8044663b5b6459fc60a0f5390cef8cb857e8fd15603b779"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": {
+      "baseline": {
+        "raw_sha256": "c9d3941d7f63997f3e673bdd0a33b6aaee87a0235cd480bd44e86252540aa241",
+        "text_lf_sha256": "c9d3941d7f63997f3e673bdd0a33b6aaee87a0235cd480bd44e86252540aa241"
+      },
+      "current": {
+        "raw_sha256": "358368d72a879420b1d3eb8900875fd96f11aec536aa8819a1268ad9c75449d0",
+        "text_lf_sha256": "358368d72a879420b1d3eb8900875fd96f11aec536aa8819a1268ad9c75449d0"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": {
+      "baseline": {
+        "raw_sha256": "62f1bead4b620746b8294ee6500e7dd4009a1d697fd14c80be996ad7be2cbc32",
+        "text_lf_sha256": "62f1bead4b620746b8294ee6500e7dd4009a1d697fd14c80be996ad7be2cbc32"
+      },
+      "current": {
+        "raw_sha256": "3d11474b748ffb6cbbfdfc2e09a0b38200bf0fab6b89ab57c1ba68e2c97339df",
+        "text_lf_sha256": "3d11474b748ffb6cbbfdfc2e09a0b38200bf0fab6b89ab57c1ba68e2c97339df"
+      }
+    }
+  },
+  "validation_sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/math_backend.cpp": {
+      "baseline": {
+        "raw_sha256": "6f7dccf12b025aba7a8ee544f37b3d329b6d6a8f9942fb59f26a268a46b86ade",
+        "text_lf_sha256": "6f7dccf12b025aba7a8ee544f37b3d329b6d6a8f9942fb59f26a268a46b86ade"
+      },
+      "current": {
+        "raw_sha256": "838b4c005b9c4ab468bb3b51b30469c27f84deec50f41de72ad4682b56004b54",
+        "text_lf_sha256": "838b4c005b9c4ab468bb3b51b30469c27f84deec50f41de72ad4682b56004b54"
+      }
+    }
+  }
+}

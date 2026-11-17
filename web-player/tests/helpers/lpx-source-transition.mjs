@@ -78,6 +78,7 @@ const avr5HistorySramReport='Codecs/LPX/research/avr5-v9-history-sram-2026-11-17
 const avrPolyClipBitReport='Codecs/LPX/research/avr-v9-poly-clip-bit-2026-11-17/';
 const tinyAnchorRamReport='Codecs/LPX/research/tiny-v9-anchor-sram-2026-11-17/';
 const avr5P6MulReport='Codecs/LPX/research/avr5-v9-p6-mul-2026-11-17/';
+const avr5ExcitationLeafReport='Codecs/LPX/research/avr5-v9-excitation-leaf-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -315,6 +316,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avrPolyClipBitReport,'57ac2cee74a436a177b203e1894a4eb0f6a728ab'],
     [tinyAnchorRamReport,'bb9c75b261d7254d3548490653c16878ae43c97b'],
     [avr5P6MulReport,'e96796871af5a3f49e680c18c08e6fa334b660aa'],
+    [avr5ExcitationLeafReport,'f2d665670d2902ea874d3253e94fa1b9e6bc3ce7'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

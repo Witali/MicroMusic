@@ -78,6 +78,7 @@ AVR5_HISTORY_SRAM=REPO/'Codecs/LPX/research/avr5-v9-history-sram-2026-11-17'
 AVR_POLY_CLIP_BIT=REPO/'Codecs/LPX/research/avr-v9-poly-clip-bit-2026-11-17'
 TINY_ANCHOR_RAM=REPO/'Codecs/LPX/research/tiny-v9-anchor-sram-2026-11-17'
 AVR5_P6_MUL=REPO/'Codecs/LPX/research/avr5-v9-p6-mul-2026-11-17'
+AVR5_EXCITATION_LEAF=REPO/'Codecs/LPX/research/avr5-v9-excitation-leaf-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -262,6 +263,7 @@ def assert_recorded_source(path,expected):
         (AVR_POLY_CLIP_BIT,'57ac2cee74a436a177b203e1894a4eb0f6a728ab'),
         (TINY_ANCHOR_RAM,'bb9c75b261d7254d3548490653c16878ae43c97b'),
         (AVR5_P6_MUL,'e96796871af5a3f49e680c18c08e6fa334b660aa'),
+        (AVR5_EXCITATION_LEAF,'f2d665670d2902ea874d3253e94fa1b9e6bc3ce7'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

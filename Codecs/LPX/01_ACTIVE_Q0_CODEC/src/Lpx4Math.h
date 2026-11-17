@@ -78,6 +78,29 @@ static inline __attribute__((always_inline)) int16_t lpx4CosineInterpolate(int16
     return (int16_t)(lo+(product>>4));
 }
 
+// Pre-scale the interior interpolation phase to Q8 once per subframe.
+// phase is 0..255. Endpoints retain the general interpolation helper.
+static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolatePrepared(
+        int16_t prev,int16_t cur,uint8_t phase){
+#if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
+    uint32_t product;
+    uint16_t delta;
+    uint8_t negative;
+    __asm__(
+        "clr %2\n\tmovw %A1,%A4\n\tsub %A1,%A3\n\tsbc %B1,%B3\n\tbrge 1f\n\t"
+        "dec %2\n\tcom %B1\n\tneg %A1\n\tsbci %B1,255\n\t"
+        "1: mul %A1,%5\n\tmov %A0,r1\n\t"
+        "mul %B1,%5\n\tadd %A0,r0\n\tmov %B0,r1\n\t"
+        "clr __zero_reg__\n\tadc %B0,__zero_reg__\n\ttst %2\n\tbreq 2f\n\t"
+        "neg %B0\n\tneg %A0\n\tsbc %B0,__zero_reg__\n\t"
+        "2: add %A0,%A3\n\tadc %B0,%B3"
+        : "=&r"(product),"=&d"(delta),"=&d"(negative) : "r"(prev),"r"(cur),"r"(phase) : "r0","r1","cc");
+    return (int16_t)product;
+#else
+    return (int16_t)(prev+((int32_t(cur)-prev)*phase)/256);
+#endif
+}
+
 // Convex signed16 LPC anchors, t=0..2^bits, bits=2/3/4.
 // Preserve prev + trunc((cur-prev)*t / 2^bits), including a signed17
 // difference. The convex result already fits signed16; no clamp is needed.
@@ -803,7 +826,7 @@ static inline __attribute__((always_inline)) int16_t lpx4AddClip15(int16_t a,int
         "1: cpi %B0,128\n\tbrne 3f\n\t.if %2\n\t"
         "cpi %A0,1\n\tadc %A0,__zero_reg__\n\t.else\n\t"
         "tst %A0\n\tbrne 3f\n\tinc %A0\n\t.endif\n\t3:"
-        : "+&d"(a) : "r"(b),"I"(compactAvr25 && LPX4_USE_AVR_NOMUL_ASM) : "cc");
+        : "+&d"(a) : "r"(b),"I"((compactAvr25 && LPX4_USE_AVR_NOMUL_ASM) || (LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9)) : "cc");
     return a;
 #else
     const int32_t sum=(int32_t)a+b;
@@ -812,7 +835,7 @@ static inline __attribute__((always_inline)) int16_t lpx4AddClip15(int16_t a,int
 }
 
 static inline __attribute__((always_inline)) int16_t lpx4ClipQ14(int16_t value){
-#if LPX4_USE_AVR_NOMUL_ASM && LPX4_AVR25_SATURATED_PRODUCTS
+#if (LPX4_USE_AVR_NOMUL_ASM && LPX4_AVR25_SATURATED_PRODUCTS) || (LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9)
     uint8_t high;
     __asm__(
         "mov %1,%B0\n\tsubi %1,192\n\tbrpl 1f\n\t"
@@ -903,7 +926,20 @@ static inline __attribute__((always_inline)) uint8_t lpx4PwmBounded130(int16_t s
 // Bounded attenuation: coefficient 0..16384, signed16 state, exact floor Q14.
 // The result fits signed16. Keep the generic full-range MulQ14 below.
 static inline int16_t lpx4AttenuateQ14(uint16_t coefficient,int16_t state){
-#if LPX4_USE_AVR_ASM
+#if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
+    uint32_t wide;
+    __asm__(
+        "muls %B1,%B2\n\tmovw %C0,r0\n\t"
+        "mul %A1,%A2\n\tmov %B0,r1\n\tclr %A0\n\t"
+        "mulsu %B1,%A2\n\t"
+        "add %B0,r0\n\tadc %C0,r1\n\tadc %D0,%A0\n\t"
+        "mulsu %B2,%A1\n\tsbc %D0,%A0\n\t"
+        "add %B0,r0\n\tadc %C0,r1\n\tadc %D0,%A0\n\t"
+        ".rept 2\n\tlsl %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t"
+        "clr __zero_reg__"
+        : "=&r"(wide) : "a"(coefficient),"a"(state) : "r0","r1","cc");
+    return (int16_t)(wide>>16);
+#elif LPX4_USE_AVR_ASM
     int16_t result;
     int32_t wide;
     __asm__(

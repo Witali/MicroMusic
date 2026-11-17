@@ -1355,6 +1355,11 @@ bool Lpx4HybridCore::readSubframe(){
 #if LPX4_FAST_PITCH < 0 || (LPX4_FAST_PITCH & ~7) || (LPX4_FAST_PITCH && !(LPX4_FAST_PITCH&1))
 #error Unsupported LPX4_FAST_PITCH
 #endif
+#if LPX4_AVR_V9_PACKETS && LPX4_USE_AVR_ASM && LPX4_PLAYER_PITCH_PAGE && LPX4_FAST_PITCH==3 && !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14)
+#define LPX4_AVR5_SAMPLE_LEAF 1
+#else
+#define LPX4_AVR5_SAMPLE_LEAF 0
+#endif
 int16_t Lpx4HybridCore::pitchPredict() const{
 #if LPX4_FAST_PITCH
 #if !LPX4_COMPACT_ONLY
@@ -1425,6 +1430,41 @@ bool Lpx4HybridCore::readUnary8(uint8_t& high){
  return true;
 }
 #endif
+#if LPX4_AVR5_SAMPLE_LEAF
+// GNU AVR ABI: state arrives in r25:r24 and the excitation returns in r24.
+// The state pointer begins at lag_. Every declared byte offset is constant,
+// and the ring page byte is fixed independently of the arithmetic backend.
+__attribute__((noinline,noclone)) int8_t Lpx4HybridCore::decodeCompactAvr5(uint8_t* state){
+    register uint8_t* input __asm__("r24")=state;
+    register int8_t result __asm__("r24");
+    __asm__ volatile(
+        "movw r30,%A[state]\n\t"
+        "ldd r18,Z+%[gain]\n\tldd r19,Z+%[lag]\n\tldd r20,Z+%[cursor]\n\t"
+        "mov r26,r20\n\tsub r26,r19\n\tldi r27,hi8(%[ring])\n\tld r21,X\n\t"
+        // The gain is at most 14. Multiplying by gain*16 moves the Q4
+        // quotient into the product high byte. The low-byte carry rounds it.
+        "swap r18\n\tmulsu r21,r18\n\tlsl r0\n\tmov r24,r1\n\t"
+        "clr __zero_reg__\n\tadc r24,__zero_reg__\n\t"
+        "ldd r22,Z+%[index]\n\tldd r23,Z+%[count]\n\tcp r22,r23\n\tbrsh 4f\n\t"
+        "movw r26,r30\n\tadd r26,r22\n\tadc r27,__zero_reg__\n\t"
+        "adiw r26,%[pos]\n\t"
+        "ld r23,X\n\tdec r23\n\tst X,r23\n\tbrpl 2f\n\t"
+        "adiw r26,%[amp]\n\tld r23,X\n\tinc r22\n\tstd Z+%[index],r22\n\t"
+        // Only a pulse can push the excitation outside the six-bit range.
+        "add r24,r23\n\tsubi r24,224\n\tcpi r24,64\n\tbrlo 1f\n\t"
+        "cpi r24,128\n\tsbc r24,r24\n\tandi r24,63\n\t"
+        "1: subi r24,32\n\t"
+        "2: ldi r27,hi8(%[ring])\n\t4: mov r26,r20\n\tst X,r24\n\t"
+        "inc r20\n\tstd Z+%[cursor],r20"
+        : "=r"(result) : [state]"r"(input),[gain]"I"(offsetof(Lpx4HybridCore,gain_)-offsetof(Lpx4HybridCore,lag_)),[lag]"I"(0),
+            [cursor]"I"(offsetof(Lpx4HybridCore,ringCursor_)-offsetof(Lpx4HybridCore,lag_)),[index]"I"(offsetof(Lpx4HybridCore,pulseIndex_)-offsetof(Lpx4HybridCore,lag_)),
+            [count]"I"(offsetof(Lpx4HybridCore,pulseCount_)-offsetof(Lpx4HybridCore,lag_)),[pos]"I"(offsetof(Lpx4HybridCore,pulsePos_)-offsetof(Lpx4HybridCore,lag_)),
+            [amp]"I"(offsetof(Lpx4HybridCore,pulseAmp_)-offsetof(Lpx4HybridCore,pulsePos_)),
+            [ring]"i"(ringQ_) : "r0","r1","r18","r19","r20","r21","r26","r27","r30","r31","r22","r23","cc","memory");
+    return result;
+}
+#endif
+
 bool Lpx4HybridCore::decodeCode(int8_t& q){
 #if LPX4_COMPACT_ONLY
 #if LPX4_AVR25_V9_RUNTIME || LPX4_AVR25_V9_ROM_LAYOUT
@@ -2133,9 +2173,14 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     }
     const uint8_t t=(uint8_t)(sub*2+1);
     const uint8_t localT=(uint8_t)(t%width);
+#if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
+    const uint8_t phase=(uint8_t)(localT*(256/width));
+#endif
     for(uint8_t i=0;i<10;i++){
 #if LPX4_FLOAT_SYNTHESIS
         a_[i]=prevLpc[i]+(curLpc[i]-prevLpc[i])*(static_cast<double>(localT)/width);
+#elif LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
+        a_[i]=lpx4LpcInterpolatePrepared(prevLpc[i],curLpc[i],phase);
 #else
         a_[i]=lpx4LpcInterpolate<LPX4_AVR25_V9_RUNTIME>(prevLpc[i],curLpc[i],localT,
             LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2);
@@ -2231,7 +2276,9 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #endif
     if(subPos_==0 && !prepareSubframe())return false;
     int8_t q=0;
-#if LPX4_COMPACT_ONLY
+#if LPX4_AVR5_SAMPLE_LEAF
+    q=decodeCompactAvr5(&lag_);
+#elif LPX4_COMPACT_ONLY
 #if (LPX4_FAST_EXCITATION&2) && !LPX4_AVR25_V9_RUNTIME && !LPX4_AVR25_V9_ROM_LAYOUT
     if(pulseIndex_>=pulseCount_){q=(int8_t)pitchPredict();LPX4_PITCH_RING_SAMPLE(ringQ_,ringCursor_++)=q;}
     else
