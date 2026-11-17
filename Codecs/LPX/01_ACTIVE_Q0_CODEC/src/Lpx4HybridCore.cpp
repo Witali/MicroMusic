@@ -1973,7 +1973,7 @@ __attribute__((always_inline))
 void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #if LPX4_AVR25_LSF_ASM
     // Keep input memory ownership and arithmetic selection independent.
-    // R9/R12/R13/R16 are dead at the caller and need no nested save.
+    // R9/R12/R13/R16/R17 are dead at the caller and need no nested save.
     static_assert(offsetof(Lpx4HybridCore,speechProfile_)<64 && offsetof(Lpx4HybridCore,ringCursor_)<64,
                   "Converter fields must fit AVR displacement addressing");
     register Lpx4HybridCore* self __asm__("r26")=this;
@@ -1990,7 +1990,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
           [profile]"n"(offsetof(Lpx4HybridCore,speechProfile_)),
           [cur]"n"(offsetof(Lpx4HybridCore,cur_)),
           [old]"n"(offsetof(Lpx4HybridCore,lpcAnchors_)+10*sizeof(Lpx4SynthesisValue))
-        : "r0","r9","r12","r13","r16","r18","r19","r20","r21","r25","r30","r31","cc","memory");
+        : "r0","r9","r12","r13","r16","r17","r18","r19","r20","r21","r25","r30","r31","cc","memory");
     return;
 #else
 
@@ -2213,6 +2213,9 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     // 20-sample subframe after the initial frame (two at startup).
     const uint8_t width=(uint8_t)(16/LPX3_LPC_SEGMENTS);
     const uint8_t subframesPerSegment=(uint8_t)(8/LPX3_LPC_SEGMENTS);
+#if LPX4_AVR25_LSF_ASM
+    uint8_t localT;
+#endif
     if(sub%subframesPerSegment==0){
 #if LPX4_TINY_ANCHOR_PHASE
         // Pointer selection already follows the two-segment phase.
@@ -2251,9 +2254,15 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #if !LPX4_AVR_V9_PACKETS || !LPX4_ROTATE_LPC_ANCHORS
         lsfCached_=true;
 #endif
+#if LPX4_AVR25_LSF_ASM
+        // Segment starts are subframe0/4; their prepared odd half-phase is0.
+        localT=0;
+    }else localT=(uint8_t)(sub&3);
+#else
     }
     const uint8_t t=(uint8_t)(sub*2+1);
     const uint8_t localT=(uint8_t)(t%width);
+#endif
 #if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
     const uint8_t phase=LPX3_LPC_SEGMENTS==2?(uint8_t)((sub&3)*64+32):(uint8_t)(localT*(256/width));
 #endif
@@ -2266,7 +2275,7 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #elif LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
         a_[i]=lpx4LpcInterpolatePrepared(prevLpc[i],curLpc[i],phase);
 #else
-        a_[i]=lpx4LpcInterpolate<LPX4_AVR25_V9_RUNTIME>(prevLpc[i],curLpc[i],localT,
+        a_[i]=lpx4LpcInterpolate<LPX4_AVR25_V9_RUNTIME,LPX4_AVR25_LSF_ASM>(prevLpc[i],curLpc[i],localT,
             LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2);
 #endif
     }

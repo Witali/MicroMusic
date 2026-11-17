@@ -4,7 +4,7 @@
 // The original C++ implementation remains the explicitly selectable fallback.
 //
 // X supplies this, r24 supplies the anchor, and r23:r22 supplies output.
-// Preserved registers are r3,r4,r6,r7,r8,r14,r17,r28,r29.
+// Preserved registers are r3,r4,r6,r7,r8,r14,r28,r29.
 // r1,r2,r5,r10,r11,r15 are untouched. The wrapper declares all other writes.
 // Object offsets are assembled from offsetof constraints in the wrapper.
 // Two otherwise dead polynomial padding bytes hold the output pointer.
@@ -19,7 +19,6 @@ lpx4_tiny_convert:
 	push r7
 	push r8
 	push r14
-	push r17
 	push r28
 	push r29
 
@@ -360,7 +359,6 @@ lpx4_tiny_convert:
 
 	pop r29
 	pop r28
-	pop r17
 	pop r14
 	pop r8
 	pop r7

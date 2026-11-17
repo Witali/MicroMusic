@@ -124,6 +124,14 @@ template<uint8_t bits> __attribute__((noinline)) static void lpcCase(int16_t pre
     const int16_t actual=lpx4LpcInterpolate(prev,cur,t,bits);checkZero(actual);
     const int32_t expected=prev+((int32_t)cur-prev)*t/(1L<<bits);
     if(actual!=expected)math_error=21;
+    if(t&1){
+        const int16_t odd=lpx4LpcInterpolate<true>(prev,cur,t,bits);
+        checkZero(odd);
+        if(odd!=expected)math_error=30;
+        const int16_t halfPhase=lpx4LpcInterpolate<true,true>(prev,cur,t>>1,bits);
+        checkZero(halfPhase);
+        if(halfPhase!=expected)math_error=31;
+    }
 #if LPX4_COMPACT_VERSION==9
     if(t<(1<<bits)){
         const int16_t prepared=lpx4LpcInterpolatePrepared(prev,cur,(uint8_t)(t<<(8-bits)));

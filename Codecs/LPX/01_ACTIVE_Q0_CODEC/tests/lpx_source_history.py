@@ -97,6 +97,7 @@ TINY_PLAYER_REGISTERS=REPO/'Codecs/LPX/research/tiny-v9-player-registers-2026-11
 TINY_WORD_SATURATION=REPO/'Codecs/LPX/research/tiny-v9-word-saturation-2026-11-17'
 AVR_PLAYER_GPIOR=REPO/'Codecs/LPX/research/avr-v9-gpior-state-2026-11-17'
 TINY_CONVERTER_ABI=REPO/'Codecs/LPX/research/tiny-v9-converter-abi-2026-11-17'
+TINY_PREPARED_HALF_PHASE=REPO/'Codecs/LPX/research/tiny-v9-prepared-half-phase-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -300,6 +301,7 @@ def assert_recorded_source(path,expected):
         (TINY_WORD_SATURATION,'83e247672e1d02ca8c01f8e283706e6042dfe870'),
         (AVR_PLAYER_GPIOR,'aa99d9ec0945ea65dd845e5b39ed11800a801cd6'),
         (TINY_CONVERTER_ABI,'bfcd72e23b922c76481e23447b6866dabb83f359'),
+        (TINY_PREPARED_HALF_PHASE,'2d8734097980fa6f8f2ff74918e57241317aae7a'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

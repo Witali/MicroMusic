@@ -129,8 +129,14 @@ static inline __attribute__((always_inline)) void lpx4LpcInterpolateVectorPrepar
 // Convex signed16 LPC anchors, t=0..2^bits, bits=2/3/4.
 // Preserve prev + trunc((cur-prev)*t / 2^bits), including a signed17
 // difference. The convex result already fits signed16; no clamp is needed.
-template<bool oddPhase=false>
+// preparedOddPhase supplies (phase-1)/2 for an odd phase. The C backend
+// reconstructs the phase before applying the same truncation rule.
+template<bool oddPhase=false,bool preparedOddPhase=false>
 static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t prev,int16_t cur,uint8_t t,uint8_t bits){
+    static_assert(!preparedOddPhase||oddPhase,"Prepared phase requires an odd interpolation phase");
+#if !LPX4_USE_AVR_NOMUL_ASM
+    if(preparedOddPhase)t=(uint8_t)(t*2+1);
+#endif
 #if LPX4_USE_AVR_ASM
     int32_t product;
     int16_t delta;
@@ -157,7 +163,7 @@ static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolate(int16_t 
         // bit, then rotate each unsigned addition's carry into the result.
         // Add or subtract the truncated magnitude from the previous anchor.
         uint16_t part,mag=(uint16_t)cur;
-        t>>=1;
+        if(!preparedOddPhase)t>>=1;
         __asm__(
             "clt\n\tsub %A1,%A3\n\tsbc %B1,%B3\n\t"
             "brge 1f\n\tset\n\tcom %B1\n\tneg %A1\n\tsbci %B1,255\n\t"
