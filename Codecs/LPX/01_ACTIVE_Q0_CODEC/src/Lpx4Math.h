@@ -773,17 +773,17 @@ static inline __attribute__((always_inline)) int16_t lpx4ClipSynthesisQ4(int32_t
 template<class Value>
 static inline __attribute__((always_inline)) int16_t lpx4HalfClip15From24(Value value){
 #if LPX4_USE_AVR_NOMUL_ASM || (LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9)
-    // After biasing negative sums by one, only high bytes 0 and 255 can
-    // fit after halving. INC maps them to 1 and 0, respectively. On the
-    // narrow path CPI restores the sign to carry for the two-byte shift.
+    // Only high bytes 0 and 255 need the exact half; other inputs reach
+    // the rails even with truncation toward zero. INC maps them to 1 and 0.
     __asm__(
-        "sbrs %C0,7\n\trjmp 1f\n\t"
-        "subi %A0,255\n\tsbci %B0,255\n\tsbci %C0,255\n\t"
-        "1: inc %C0\n\tcpi %C0,2\n\tbrlo 3f\n\t"
-        "ldi %A0,255\n\tldi %B0,127\n\tcpi %C0,129\n\tbrlo 2f\n\t"
-        "ldi %A0,1\n\tldi %B0,128\n\trjmp 2f\n\t"
-        "3: cpi %C0,1\n\tror %B0\n\tror %A0\n\t"
-        "cpi %B0,128\n\tbrne 2f\n\tcpi %A0,1\n\tadc %A0,__zero_reg__\n\t2:"
+        "inc %C0\n\tcpi %C0,2\n\tbrsh 1f\n\t"
+        "cpi %C0,1\n\tror %B0\n\tror %A0\n\t"
+        // Carry now holds the discarded bit. Add it back only for negatives.
+        "sbrc %C0,0\n\trjmp 2f\n\t"
+        "adc %A0,__zero_reg__\n\tadc %B0,__zero_reg__\n\t"
+        "cpi %B0,128\n\tbrne 2f\n\tcpi %A0,1\n\tadc %A0,__zero_reg__\n\trjmp 2f\n\t"
+        "1: ldi %A0,255\n\tldi %B0,127\n\tcpi %C0,129\n\tbrlo 2f\n\t"
+        "ldi %A0,1\n\tldi %B0,128\n\t2:"
         : "+d"(value) : : "cc");
     return (int16_t)value;
 #else
