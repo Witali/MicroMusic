@@ -394,5 +394,23 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       }
     }
   }
+  if(recorded!==actual){
+    const directory='Codecs/LPX/research/nano-webui-v9-2026-11-17/';
+    const release=JSON.parse(read(directory+'source-transition.json'));
+    const change=release.sources[path];
+    if(change?.baseline?.[field]===recorded){
+      assert.equal(release.schema,'lpx-nano-webui-v9-transition-v1');
+      assert.equal(release.baseline_revision,'717d20aa27d33a1440ea8f30d7764137b0e6311d');
+      const evidence=read(directory+'rebuild.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),release.rebuild_sha256);
+      const result=JSON.parse(evidence);
+      assert.equal(result.cases.length,9);
+      assert.equal(result.unchanged_tiny_images,9);
+      assert.equal(result.independent_rebuild.cases.length,18);
+      assert.equal(result.independent_rebuild.all_binaries_exact,true);
+      assert.ok(result.cases.every(row=>row.pwm_exact&&row.size_reduced&&row.after.underruns===0));
+      recorded=change.current[field];
+    }
+  }
   assert.equal(recorded,actual,path+' current source');
 }

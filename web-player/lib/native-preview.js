@@ -55,24 +55,37 @@ export function lpxPreviewEntries(data,baseURL) {
   });
 }
 
+function romOutputLevel(level) {
+  return level?.implementation==='producer-rom-q7'&&Number.isSafeInteger(level.numerator)
+    &&level.numerator>=128&&level.numerator<=255&&level.shift===7;
+}
+
 export function lpxFirmwareEntries(data,baseURL) {
   const previews=data.clips??[data.preview];
+  const version=data.compactVersion===undefined?5:data.compactVersion,v9=version===9;
   if(!['micromusic-lpx-avr-firmware-v1','micromusic-lpx-avr-firmware-v2'].includes(data.schema)||data.device!=='atmega328p'||data.cpuHz!==16000000||data.sampleHz!==8000
+    ||![5,9].includes(version)||(v9&&(data.universalDecoder!==true||data.romOutputGain!==true||data.queue!==32||data.prefill!==24||data.pwmOutput!=='D3 / PD3 / OC2B'))
     ||!Array.isArray(data.variants)||!Array.isArray(previews)||!previews.length||data.variants.length!==previews.length*2
     ||new Set(data.variants.map(variant=>(variant?.clipId??'bread')+'/'+variant?.id)).size!==data.variants.length)
     throw Error('Неверный каталог речевых прошивок Arduino Nano.');
   const base=new URL('./',baseURL);
-  return previews.flatMap(preview=>lpxPreviewEntries(preview,baseURL)).filter(entry=>entry.codec==='lpx-v5').map(entry=>{
+  const entries=previews.flatMap(preview=>lpxPreviewEntries(preview,baseURL)).filter(entry=>[4,6].includes(entry.profile));
+  if(entries.length!==data.variants.length||entries.some(entry=>entry.formatVersion!==version))
+    throw Error('Формат LPX-потоков не соответствует прошивке Arduino Nano.');
+  return entries.map(entry=>{
     const variant=data.variants.find(item=>(item.clipId??'bread')===entry.audioReferenceId&&item.id===entry.id.replace('lpx-'+entry.audioReferenceId+'-',''));
     if(!variant||!['flashBytes','programFlashBytes','staticSramBytes'].every(key=>Number.isSafeInteger(variant[key])&&variant[key]>0)
       ||variant.flashBytes>30720||variant.staticSramBytes>=2048||variant.programFlashBytes+entry.streamBytes!==variant.flashBytes
-      ||!/^[a-f0-9]{64}$/.test(variant.hexSha256)||variant.timing?.underruns!==0||variant.timing?.playedSamples!==entry.phraseSamples)
+      ||!/^[a-f0-9]{64}$/.test(variant.hexSha256)||variant.timing?.underruns!==0||variant.timing?.playedSamples!==entry.phraseSamples
+      ||(v9&&(!romOutputLevel(variant.outputLevel)||variant.outputLevel.numerator!==entry.outputLevel?.numerator||!entry.streamUrl.endsWith('.v9.lpx'))))
       throw Error('Неверные параметры прошивки Arduino Nano.');
     const source=new URL(variant.source,base);
     if(source.origin!==base.origin||!source.pathname.startsWith(base.pathname+'firmware/arduino-nano/')||!source.pathname.endsWith('.hex'))
       throw Error('Неверный адрес прошивки Arduino Nano.');
     return {...entry,id:entry.id.replace('lpx-','lpx-nano-'),device:'atmega328p',intendedBoard:'arduino-nano-16mhz',
-      flashMeasurement:undefined,firmware:{...variant,source:source.href}};
+      flashMeasurement:undefined,outputLevel:variant.outputLevel??entry.outputLevel,
+      firmware:{...variant,source:source.href,pwmPin:3,pwmOutput:data.pwmOutput,
+        compactVersion:version,universalDecoder:v9,romOutputGain:v9,queue:data.queue,prefill:data.prefill}};
   });
 }
 
@@ -81,7 +94,9 @@ export function lpxDialogueEntry(data,baseURL) {
   const positive=value=>Number.isSafeInteger(value)&&value>0;
   const digest=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
   const timing=data.timing;
+  const version=data.compactVersion===undefined?5:data.compactVersion,v9=version===9;
   if(data.schema!=='micromusic-nano-dialogue-v1'||data.device!=='atmega328p'||data.cpuHz!==16000000
+    ||![5,9].includes(version)||(v9&&(data.universalDecoder!==true||data.romOutputGain!==true||!romOutputLevel(data.outputLevel)))
     ||data.sampleHz!==8000||data.pwmOutput!=='D3 / PD3 / OC2B'||data.playback!=='once-after-reset'
     ||typeof data.title!=='string'||!positive(data.samples)||!Number.isFinite(data.durationSeconds)
     ||Math.abs(data.durationSeconds-data.samples/8000)>1/8000
@@ -103,17 +118,30 @@ export function lpxDialogueEntry(data,baseURL) {
       throw Error('Неверный адрес LPX-диалога.');
     return url.href;
   };
+  if(v9){
+    if(!Array.isArray(data.segments)||!data.segments.length)throw Error('Неверные сегменты LPX-диалога.');
+    let samples=0,bytes=0;
+    for(const [index,segment] of data.segments.entries()){
+      if(!segment||!['speech','silence'].includes(segment.kind)||!positive(segment.samples)||!positive(segment.streamBytes)
+        ||!digest(segment.streamSha256)||segment.startSample!==samples)
+        throw Error('Неверные сегменты LPX-диалога.');
+      asset(segment.stream,`audio/lpx-dialogue/${String(index).padStart(2,'0')}.v9.lpx`);
+      samples+=segment.samples;bytes+=segment.streamBytes;
+    }
+    if(samples!==data.samples||bytes!==data.streamBytes)throw Error('Неверная длина LPX-диалога.');
+  }
   const source=asset(data.firmware,'firmware/arduino-nano/lpx-nano-dialogue-quality.hex');
   return {id:'lpx-nano-dialogue-quality',audioReferenceId:'dialogue',order:'05',title:data.title,
     description:'Четыре реплики · громкость выровнена · паузы 0,5 / 1,5 / 0,5 с',
-    profile:6,profileLabel:'Повышенное качество',kind:'speech',codec:'lpx-v5',formatVersion:5,
+    profile:6,profileLabel:'Повышенное качество',kind:'speech',codec:v9?'lpx-v9':'lpx-v5',formatVersion:version,
     playback:'native-pwm8',device:'atmega328p',intendedBoard:'arduino-nano-16mhz',
     sampleHz:8000,phraseSamples:data.samples,audioChannels:1,playOnce:true,streamBytes:data.streamBytes,
     bitrateBps:data.streamBytes*8*8000/data.samples,outputLevel:data.outputLevel,
     nativeAudioUrl:asset(data.audio,'audio/lpx-dialogue/dialogue.wav'),
     research:'../ATmega328/Sound/lpx-dialogue/README.md',
     firmware:{source,flashBytes:data.flashBytes,programFlashBytes:data.programFlashBytes,
-      staticSramBytes:data.staticSramBytes,hexSha256:data.hexSha256,pwmPin:3,pwmOutput:data.pwmOutput}};
+      staticSramBytes:data.staticSramBytes,hexSha256:data.hexSha256,pwmPin:3,pwmOutput:data.pwmOutput,
+      compactVersion:version,universalDecoder:v9,romOutputGain:v9,queue:data.queue,prefill:data.prefill}};
 }
 
 // Read the actual mono PCM16 WAV for display; audio playback uses the same URL.

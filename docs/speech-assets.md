@@ -35,18 +35,25 @@ WAV в этой таблице — точные 8-битные PWM-отсчёт�
 
 ## Arduino Nano: полные HEX
 
-Сборщик [tools/build-nano-speech-catalog.py](../tools/build-nano-speech-catalog.py) встраивает указанный LPX в существующий `AVR_V5_PLAYER`: ATmega328P, 16 МГц, FIFO 256 / prefill 192, D3 / OC2B, 8 кГц. ASM включается отдельным `--enable-asm`; без него выбран C. Все восемь сохранённых HEX проверены в simavr 1.6 с активными IRQ: весь поток, точное совпадение с WAV и ноль underruns. Физическая плата не проверялась.
+Сборщик [tools/build-nano-lpx-v9.py](../tools/build-nano-lpx-v9.py) перепаковывает открытые записи в LPX v9 без потерь и использует общий универсальный проигрыватель Tiny88/Mega. ATmega328P, аппаратный MUL, 16 МГц, FIFO 32 / prefill 24, D3 / OC2B, 8 кГц. Параметры каждого сегмента остаются в LPX. C-арифметика и C-ISR выбираются независимо от аппаратного выхода. Все восемь записей и полный диалог проверены в simavr 1.6 с активными IRQ, точным PWM относительно публичных WAV и без пропусков.
 
 | HEX | LPX | Код / полный Flash, Б | Static SRAM, Б | Отсчётов / пропусков |
 | --- | --- | ---: | ---: | --- |
-| [web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex) | chego / compact | 4472 / 5008 | 756 | 9831 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex) | chego / quality | 4471 / 5262 | 756 | 9831 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex) | otvechaesh / compact | 4472 / 4942 | 756 | 8466 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex) | otvechaesh / quality | 4554 / 5246 | 756 | 8466 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex) | vinni / compact | 4581 / 5824 | 756 | 23757 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex) | vinni / quality | 4556 / 6418 | 756 | 23757 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex) | bread / compact | 4472 / 5480 | 756 | 19200 / 0 |
-| [web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex) | bread / quality | 4471 / 6370 | 756 | 19200 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-chego-compact.hex) | chego / compact | 3116 / 3638 | 417 | 9831 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-chego-quality.hex) | chego / quality | 3116 / 3892 | 417 | 9831 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-otvechaesh-compact.hex) | otvechaesh / compact | 3116 / 3566 | 417 | 8466 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-otvechaesh-quality.hex) | otvechaesh / quality | 3117 / 3788 | 417 | 8466 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-vinni-compact.hex) | vinni / compact | 3116 / 4316 | 417 | 23757 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-vinni-quality.hex) | vinni / quality | 3116 / 4936 | 417 | 23757 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-compact.hex) | bread / compact | 3116 / 4112 | 417 | 19200 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-bread-quality.hex) | bread / quality | 3117 / 4998 | 417 | 19200 / 0 |
+| [web-player/firmware/arduino-nano/lpx-nano-dialogue-quality.hex](../web-player/firmware/arduino-nano/lpx-nano-dialogue-quality.hex) | Разговор у Совы / P6 | 3397 / 8946 | 420 | 81254 / 0 |
+
+```text
+python tools/build-nano-lpx-v9.py --retain --jobs 3
+```
+
+На Windows добавьте `--wsl Ubuntu`. Нужны AVR-GCC 7.3.0, host g++, simavr 1.6 и libelf. Результаты относятся к симулятору.
 
 ## ATtiny88: LPX в 512 байтах RAM
 

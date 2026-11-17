@@ -73,16 +73,25 @@ def target_path(path,wsl):
         return '/mnt/'+p.drive[0].lower()+'/'+ '/'.join(p.parts[1:])
     return str(p)
 
-def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=None,output_gain=128,universal=True,rom_output_gain=False):
-    source,output=Path(source).resolve(),Path(output).resolve()
+def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=None,lpc_segments=2,asm_isr=False,extra_flags=(),flash_limit=8192,sparse80=False,mul16_unroll=None,output_gain=128,universal=True,rom_output_gain=False,target='attiny88',nano_pwm=False):
+    if target not in ('attiny88','atmega328','atmega328p'):
+        raise ValueError('Unsupported AVR player target')
+    if nano_pwm and target=='attiny88':
+        raise ValueError('Nano PWM requires ATmega328 or ATmega328P')
+    inputs=source if isinstance(source,(list,tuple)) else [source]
+    if not 1<=len(inputs)<=255:
+        raise ValueError('Expected 1..255 complete LPX streams')
+    sources=[Path(path).resolve() for path in inputs]
+    source,output=sources[0],Path(output).resolve()
     if output==REPO/'build' or REPO/'build' not in output.parents or source==output or output.is_symlink():
         raise ValueError('Use an output subdirectory under ignored repository build/')
-    names=('audio.inc','output_gain.inc','player.elf','player.bin','player.hex','player.nm','player.lss','build.json',
+    names=('audio.inc','output_gain.inc','segment_lengths.inc','player.elf','player.bin','player.hex','player.nm','player.lss','build.json',
            'hardware.cpp','hardware.o','hardware.bin','hardware.h')
-    if any((output/n).is_symlink() or (output/n).resolve()==source or
+    if any((output/n).is_symlink() or (output/n).resolve() in sources or
            ((output/n).exists() and (output/n).stat().st_nlink>1) for n in names):
         raise ValueError('Output aliases input or uses a symlink')
-    blob=source.read_bytes()
+    blobs=[path.read_bytes() for path in sources]
+    blob=blobs[0]
     if type(universal) is not bool:raise ValueError('Universal selection must be boolean')
     if mul16_unroll is None:mul16_unroll=2 if universal else 16
     if universal and ((output_gain!=128 and not rom_output_gain) or any(flag.startswith('-DLPX4_FIXED_') for flag in extra_flags)):
@@ -95,13 +104,20 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
             sparse80 and blob[:6]==b'L4HY\x08\x0f'):
         raise ValueError('Expected compact v5/v9, or sparse80 with its explicit enable')
     compact_version=9 if version==9 else 5
+    if len(blobs)>1:
+        if not universal or compact_version!=9 or any(data[:2]!=b'L9' for data in blobs):
+            raise ValueError('Multiple streams require universal LPX v9')
+        for data in blobs:
+            if len(data)<13 or len(data)!=13+int.from_bytes(data[11:13],'little'):
+                raise ValueError('Incomplete LPX v9 segment')
     if rom_output_gain and (not universal or compact_version!=9):
         raise ValueError('ROM output gain requires universal LPX v9')
     if queue is None:queue=32 if compact_version==9 or not universal else 44
-    samples=int.from_bytes(blob[5:7] if version==9 else blob[8:12],'little')
+    samples=sum(int.from_bytes(data[5:7] if version==9 else data[8:12],'little') for data in blobs)
     pre_at=7 if version==9 else 12
     if queue not in (16,24,32,44) or not 1<=repeat<=255 or lpc_segments not in (1,2,4):raise ValueError('Invalid playback geometry')
-    if not 1<=flash_limit<=8192:raise ValueError('Flash limit must be1..8192 bytes')
+    physical_flash=8192 if target=='attiny88' else 32768
+    if not 1<=flash_limit<=physical_flash:raise ValueError('Flash limit exceeds the selected device')
     if isinstance(mul16_unroll,bool) or mul16_unroll not in (1,2,4,8,16):raise ValueError('Invalid AVR25 multiply unroll')
     if type(output_gain) is not int or not 128<=output_gain<=255:raise ValueError('Invalid Q7 output gain')
     output.mkdir(parents=True,exist_ok=True)
@@ -112,21 +128,25 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
         result=subprocess.run([*prefix,executable,*args],capture_output=True)
         if result.returncode:raise RuntimeError(result.stderr.decode(errors='replace'))
         return result.stdout
-    voice=blob+bytes([output_gain]) if rom_output_gain else blob
-    (output/'audio.inc').write_text(','.join(map(str,blob))+'\n',encoding='ascii')
+    audio_data=b''.join(blobs)
+    voice=audio_data+bytes([output_gain]) if rom_output_gain else audio_data
+    (output/'audio.inc').write_text(','.join(map(str,audio_data))+'\n',encoding='ascii')
+    if len(blobs)>1:
+        (output/'segment_lengths.inc').write_text(','.join(str(len(data)) for data in blobs)+'\n',encoding='ascii')
     if rom_output_gain:
         (output/'output_gain.inc').write_text(f',{output_gain}\n',encoding='ascii')
-    flags=['-mmcu=attiny88','-DF_CPU=16000000UL','-Os','-flto','-mcall-prologues','-mrelax',
+    flags=['-mmcu='+target,'-DF_CPU=16000000UL','-Os','-flto','-mcall-prologues','-mrelax',
            '-fno-jump-tables','-fno-exceptions','-fno-rtti','-ffunction-sections','-fdata-sections',
            '-std=gnu++11','-DLPX4_FUNCTION_TUNING=0',f'-DLPX4_ENABLE_ASM={int(assembly)}',f'-DLPX3_LPC_SEGMENTS={lpc_segments}',
            f'-DLPX25_QUEUE={queue}',f'-DLPX25_REPEAT={repeat}',f'-DPWM_GAIN_Q7={128 if rom_output_gain else output_gain}',
            f'-DLPX4_AVR25_MUL16_UNROLL={mul16_unroll}',
-           '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(DFP),
+           '-include',path(ROOT/'profiles/Lpx4Sram512.h'),
+           *(['-I'+path(DFP)] if target=='attiny88' else []),
            '-I'+path(ROOT/'src'),'-I'+path(output)]
     player=ROOT/'examples/ATTINY88_V5_PLAYER/player.cpp'
     register_map=player.with_name('irq_registers.inc')
     shared_irq=asm_isr and universal and compact_version==9
-    irq_registers=read_irq_registers(register_map) if shared_irq else (2,3)
+    irq_registers=read_irq_registers(register_map) if shared_irq else ((4,5) if target!='attiny88' else (2,3))
     if asm_isr:
         flags+=['-DLPX25_ENABLE_ASM_ISR=1','-DLPX25_ISR_FIXED_REGS=1',*(f'-ffixed-r{r}' for r in irq_registers)]
     if shared_irq:
@@ -137,6 +157,8 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
                 f'-DLPX25_IRQ_SAMPLE_REGISTER={irq_registers[0]}',
                 f'-DLPX25_IRQ_SREG_REGISTER={irq_registers[1]}']
     if rom_output_gain:flags+=['-DLPX25_ROM_OUTPUT_GAIN=1']
+    if nano_pwm:flags+=['-DLPX25_NANO_PWM=1']
+    if len(blobs)>1:flags+=[f'-DLPX25_SEGMENTS={len(blobs)}']
     if sparse80:flags+=['-DLPX4_ENABLE_SPARSE80=1']
     if compact_version==9:flags+=['-DLPX4_COMPACT_VERSION=9']
     if universal:
@@ -157,6 +179,9 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     (output/'player.lss').write_bytes(run('avr-objdump','-d','-C',path(output/'player.elf')))
     registers='TCCR0A TCNT0 OCR0A OCR0B TIMSK0 TIFR0 TCCR1A TCCR1B TCNT1L TCNT1H OCR1AL OCR1AH OCR1BL OCR1BH ICR1L ICR1H TIMSK1 TIFR1 PORTB DDRB PINB SPL SPH CLKPR'.split()
     constants='CTC0 CS00 CS01 CS02 OCIE0A OCF0A TOIE0 TOV0 OCIE1A OCF1A TOIE1 TOV1 WGM10 WGM11 WGM12 WGM13 CS10 CS11 CS12 COM1A0 PB1 TIMER0_COMPA_vect_num TIMER0_OVF_vect_num TIMER1_COMPA_vect_num TIMER1_COMPB_vect_num TIMER1_OVF_vect_num RAMSTART RAMEND FLASHEND E2END LPX25_QUEUE'.split()
+    if target!='attiny88':
+        registers+=['TCCR0B','TCCR2A','TCCR2B','OCR2B','DDRD']
+        constants[0]='WGM01'
     values=[(name,'_SFR_MEM_ADDR('+name+')') for name in registers]+[(name,name) for name in constants]
     text='#include <avr/io.h>\nextern "C" const unsigned short hardware[] __attribute__((used,section(".lpx_meta")))={'+','.join(v for _,v in values)+'};\n'
     (output/'hardware.cpp').write_text(text,encoding='ascii')
@@ -165,11 +190,16 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     hardware=(output/'hardware.bin').read_bytes()
     if len(hardware)!=2*len(values):raise ValueError('Invalid vendor metadata object')
     definitions={name:int.from_bytes(hardware[2*i:2*i+2],'little') for i,(name,_) in enumerate(values)}
-    (output/'hardware.h').write_text('// Generated from the pinned vendor ATtiny88 header; observer only.\n'+''.join(
-        f'#define H_{name} {value}\n' for name,value in definitions.items()),encoding='ascii')
+    hardware_defines=''.join(f'#define H_{name} {value}\n' for name,value in definitions.items())
+    if target!='attiny88':
+        hardware_defines+=f'#define H_LPX_NATIVE_TARGET "{target}"\n'
+        hardware_defines+=f'#define H_LPX_IRQ_SAMPLE {irq_registers[0] if asm_isr else 255}\n#define H_LPX_IRQ_SREG {irq_registers[1] if asm_isr else 255}\n'
+    if nano_pwm:
+        hardware_defines+='#define H_LPX_SAMPLE_VECTOR H_TIMER1_COMPA_vect_num\n#define H_LPX_SAMPLE_CLOCK H_TCCR1B\n#define H_LPX_SAMPLE_MASK H_TIMSK1\n#define H_LPX_PWM_REGISTER H_OCR2B\n'
+    (output/'hardware.h').write_text('// Generated from the compiler-selected device header; observer only.\n'+hardware_defines,encoding='ascii')
     audited=audit_registers(output/'player.elf',output/'player.lss',asm_isr,irq_registers=irq_registers,
-                            sample_irq=f"__vector_{definitions['TIMER0_COMPA_vect_num']}",
-                            allow_hardware_mul=False)
+                            sample_irq=f"__vector_{definitions['TIMER1_COMPA_vect_num' if nano_pwm else 'TIMER0_COMPA_vect_num']}",
+                            allow_hardware_mul=target!='attiny88')
     size=run('avr-size',path(output/'player.elf')).decode().splitlines()[1].split()
     image=(output/'player.bin').read_bytes()
     audio=[line.split() for line in (output/'player.nm').read_text().splitlines()
@@ -179,20 +209,29 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     if length!=len(voice) or image[start:start+length]!=voice:raise ValueError('Embedded audio differs from input')
     if len(image)!=int(size[0])+int(size[1]):raise ValueError('Unexpected Flash image gaps')
     def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
-    report=dict(target='attiny88',cpu_hz=16000000,sample_hz=8000,queue=queue,prefill=queue*3//4,
+    source_files=[player,*([register_map] if shared_irq else []),
+        *sorted((ROOT/'src').glob('Lpx4*')),ROOT/'profiles/Lpx4Sram512.h']
+    if target=='attiny88':source_files.append(DFP/'avr/iotn88.h')
+    report=dict(target=target,cpu_hz=16000000,sample_hz=8000,queue=queue,prefill=queue*3//4,
         repeat=repeat,samples=samples*repeat,compact_version=compact_version,
         supported_profiles=[4,6,15] if compact_version==9 or sparse80 else [4,6],
         assembly=assembly,asm_isr=asm_isr,sparse80=sparse80,lpc_segments=lpc_segments,mul16_unroll=mul16_unroll,universal=universal,
         flash_bytes=int(size[0])+int(size[1]),static_ram_bytes=int(size[1])+int(size[2]),
         compiler=run('avr-g++','--version').decode().splitlines()[0],compiler_options=flags,
-        source_sha256={str(p.relative_to(REPO)):sha(p) for p in [player,*([register_map] if shared_irq else []),
-            *sorted((ROOT/'src').glob('Lpx4*')),ROOT/'profiles/Lpx4Sram512.h',DFP/'avr/iotn88.h']},
+        source_sha256={str(p.relative_to(REPO)):sha(p) for p in source_files},
         image_sha256=sha(output/'player.bin'),input_sha256=sha(source),physical_board_measured=False,
         register_audit_passed=audited,irq_registers=[f'r{r}' for r in irq_registers] if asm_isr else [],
         flash_limit=flash_limit,
-        embedded_audio_bytes=len(blob),program_excluding_audio_bytes=len(image)-len(blob),
-        bootloader_application_bytes=6012,fits_standard_bootloader=len(image)<=6012,
-        requires_isp=len(image)>6012,timing_verified=False)
+        embedded_audio_bytes=len(audio_data),program_excluding_audio_bytes=len(image)-len(audio_data),
+        bootloader_application_bytes=6012 if target=='attiny88' else 30720,
+        fits_standard_bootloader=len(image)<=(6012 if target=='attiny88' else 30720),
+        requires_isp=len(image)>(6012 if target=='attiny88' else 30720),timing_verified=False)
+    report['segment_bytes']=[len(data) for data in blobs]
+    report['segment_sha256']=[sha(path) for path in sources]
+    report['embedded_segment_ranges']=[]
+    for data in blobs:
+        report['embedded_segment_ranges'].append([start,start+len(data)])
+        start+=len(data)
     (output/'build.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
     if report['flash_bytes']>flash_limit:
         raise ValueError(f'Complete image is{report["flash_bytes"]} bytes; limit is{flash_limit} bytes')

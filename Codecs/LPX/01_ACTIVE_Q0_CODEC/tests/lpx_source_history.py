@@ -316,4 +316,20 @@ def assert_recorded_source(path,expected):
             evidence=(directory/'measurements.json').read_bytes().replace(b'\r\n',b'\n')
             assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
             recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        directory=REPO/'Codecs/LPX/research/nano-webui-v9-2026-11-17'
+        release=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
+        change=release['sources'].get(path)
+        if change and change['baseline'] and change['baseline']['text_lf_sha256']==recorded:
+            assert release['schema']=='lpx-nano-webui-v9-transition-v1'
+            assert release['baseline_revision']=='717d20aa27d33a1440ea8f30d7764137b0e6311d'
+            evidence=(directory/'rebuild.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==release['rebuild_sha256']
+            result=json.loads(evidence)
+            assert len(result['cases'])==9 and result['unchanged_tiny_images']==9
+            assert result['independent_rebuild']['all_binaries_exact']
+            assert len(result['independent_rebuild']['cases'])==18
+            assert all(row['pwm_exact'] and row['size_reduced'] and row['after']['underruns']==0
+                       for row in result['cases'])
+            recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

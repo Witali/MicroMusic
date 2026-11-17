@@ -37,10 +37,14 @@ def document():
             rows.append(f"| {clip['clipId']} | {link('web-player/'+variant['stream'])} | {'S15 v8' if variant['id']=='low15' else 'LPX v5'} / {variant['profile']} | {variant['bytes']} | {link('web-player/'+variant['audio'])} | {link(script)} |")
     rows+=['','WAV в этой таблице — точные 8-битные PWM-отсчёты декодера в PCM16: `(duty - 128) * 256`. Они служат превью ATtiny88 и Nano, не являются записью аналогового выхода платы.','',
         '## Arduino Nano: полные HEX','',
-        'Сборщик '+link('tools/build-nano-speech-catalog.py')+' встраивает указанный LPX в существующий `AVR_V5_PLAYER`: ATmega328P, 16 МГц, FIFO 256 / prefill 192, D3 / OC2B, 8 кГц. ASM включается отдельным `--enable-asm`; без него выбран C. Все восемь сохранённых HEX проверены в simavr 1.6 с активными IRQ: весь поток, точное совпадение с WAV и ноль underruns. Физическая плата не проверялась.','',
+        'Сборщик '+link('tools/build-nano-lpx-v9.py')+' перепаковывает открытые записи в LPX v9 без потерь и использует общий универсальный проигрыватель Tiny88/Mega. ATmega328P, аппаратный MUL, 16 МГц, FIFO 32 / prefill 24, D3 / OC2B, 8 кГц. Параметры каждого сегмента остаются в LPX. C-арифметика и C-ISR выбираются независимо от аппаратного выхода. Все восемь записей и полный диалог проверены в simavr 1.6 с активными IRQ, точным PWM относительно публичных WAV и без пропусков.','',
         '| HEX | LPX | Код / полный Flash, Б | Static SRAM, Б | Отсчётов / пропусков |','| --- | --- | ---: | ---: | --- |']
     for variant in nano['variants']:
         rows.append(f"| {link('web-player/'+variant['source'])} | {variant['clipId']} / {variant['id']} | {variant['programFlashBytes']} / {variant['flashBytes']} | {variant['staticSramBytes']} | {variant['timing']['playedSamples']} / {variant['timing']['underruns']} |")
+    dialogue=read('web-player/audio/lpx-dialogue/manifest.json')
+    rows.append(f"| {link('web-player/'+dialogue['firmware'])} | Разговор у Совы / P6 | {dialogue['programFlashBytes']} / {dialogue['flashBytes']} | {dialogue['staticSramBytes']} | {dialogue['timing']['played']} / {dialogue['timing']['underruns']} |")
+    rows+=['','```text','python tools/build-nano-lpx-v9.py --retain --jobs 3','```','',
+        'На Windows добавьте `--wsl Ubuntu`. Нужны AVR-GCC 7.3.0, host g++, simavr 1.6 и libelf. Результаты относятся к симулятору.']
     tiny88=read('web-player/firmware-lpx-attiny88.json')
     rows+=['','## ATtiny88: LPX в 512 байтах RAM','',
         'Сборщик '+link('tools/build-tiny88-speech-catalog.py')+' перепаковывает LPX в v9 без потерь. Общий декодер читает P4, P6 и Sparse80. Коэффициент усиления хранится одним байтом после потока в ROM. Сборка использует AVR25 ASM без аппаратного MUL, SRAM512, FIFO 32 / prefill 24 и `--mul16-unroll '+str(tiny88['mul16Unroll'])+'`. Все PWM-отсчёты совпадают с предыдущими HEX, C-декодером и опубликованным WAV. В simavr с активным IRQ пропусков нет. Переключаемые C-арифметика и C-ISR сохранены.','',

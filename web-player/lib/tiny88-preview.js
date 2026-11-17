@@ -1,4 +1,4 @@
-import {lpxPreviewEntries} from './native-preview.js?v=20261114-lpx-v9';
+import {lpxPreviewEntries} from './native-preview.js?v=20261117-nano-lpx-v9';
 
 const phrases=['chego','otvechaesh','vinni','bread'];
 const positive=value=>Number.isSafeInteger(value)&&value>0;

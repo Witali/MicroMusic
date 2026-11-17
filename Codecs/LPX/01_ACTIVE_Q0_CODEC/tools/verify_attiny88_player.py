@@ -19,22 +19,36 @@ static const unsigned char audio[]={
 #include "audio.inc"
 };
 int main(){
+#ifdef LPX_REFERENCE_SEGMENTS
+ static const unsigned short lengths[]={
+#include "segment_lengths.inc"
+ };
+ unsigned offset=0;
+ for(unsigned i=0;i<LPX_REFERENCE_SEGMENTS;i++){
+  Lpx4HybridCore d;if(!d.begin(audio+offset,lengths[i]))return 1;
+  unsigned char p;while(d.next(p))putchar(p);
+  if(d.error())return 2;
+  offset+=lengths[i];
+ }
+ return 0;
+#else
  Lpx4HybridCore d;if(!d.begin(audio,sizeof(audio)))return 1;
  unsigned char p;while(d.next(p))putchar(p);
  return d.error()?2:0;
+#endif
 }
 '''
 
 def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=None,
            flash_limit=8192,lpc_segments=2,sparse80=False,mul16_unroll=None,normalize_output=False,universal=True,
-           rom_output_gain=False,extra_flags=()):
+           rom_output_gain=False,extra_flags=(),target='attiny88',nano_pwm=False):
     output=Path(output).resolve()
     if universal and normalize_output and not rom_output_gain:
         raise ValueError('Universal playback must not specialize gain for a recording')
     if mul16_unroll is None:mul16_unroll=2 if universal else 16
     options=dict(assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,
         flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll,universal=universal,
-        rom_output_gain=rom_output_gain,extra_flags=extra_flags)
+        rom_output_gain=rom_output_gain,extra_flags=extra_flags,target=target,nano_pwm=nano_pwm)
     cost=build(source,output,**options)
     queue=cost['queue']
     prefix=['wsl','-d',wsl,'--'] if wsl else []
@@ -49,6 +63,7 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
     run('g++','-O2','-std=c++11',f'-DLPX3_LPC_SEGMENTS={lpc_segments}',
         *(['-DLPX4_ENABLE_SPARSE80=1'] if sparse80 else []),
         f'-DLPX4_COMPACT_VERSION={cost["compact_version"]}',
+        *([f'-DLPX_REFERENCE_SEGMENTS={len(cost["segment_bytes"])}'] if len(cost['segment_bytes'])>1 else []),
         '-include',path(ROOT/'profiles/Lpx4Sram512.h'),'-I'+path(ROOT/'src'),
         path(output/'reference.cpp'),path(ROOT/'src/Lpx4HybridCore.cpp'),'-o',path(output/'reference'))
     expected=run(path(output/'reference'))*repeat
@@ -77,7 +92,8 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
         and timing['queue_empty'] and timing['timer_stopped'] and timing['stack_margin']>0
         and timing['irq_entry_cycles']==4 and timing['irq_reti_complete']
         and (cost['samples']<2 or (timing['output_gap_min']>=1980 and timing['output_gap_max']<=2020))
-        and cost['flash_bytes']<=flash_limit and cost['static_ram_bytes']+timing['stack_bytes']<512)
+        and cost['flash_bytes']<=flash_limit
+        and cost['static_ram_bytes']+timing['stack_bytes']<(512 if target=='attiny88' else 2048))
     (output/'verification.json').write_text(json.dumps(timing,indent=2)+'\n',encoding='utf-8')
     return timing
 

@@ -11,11 +11,12 @@ const hash=data=>createHash('sha256').update(data).digest('hex');
 test('LPX and Speex public PWM spans use calibrated firmware gain without saturation',()=>{
   const nano=json('firmware-atmega328p.json'),tiny=json('firmware-lpx-attiny88.json');
   const speex=json('firmware-speex-atmega328p.json'),dialogue=json('audio/lpx-dialogue/manifest.json');
-  const recordings=[...nano.variants.map(v=>({level:v.outputLevel,audio:nano.clips.find(c=>c.clipId===v.clipId).variants.find(p=>p.id===v.id).audio})),
-    ...speex.variants.map(v=>({level:v.outputLevel,audio:v.audio})),{level:dialogue.outputLevel,audio:dialogue.audio}];
+  const recordings=[...nano.variants.map(v=>({level:v.outputLevel,audio:nano.clips.find(c=>c.clipId===v.clipId).variants.find(p=>p.id===v.id).audio,implementation:'producer-rom-q7'})),
+    ...speex.variants.map(v=>({level:v.outputLevel,audio:v.audio,implementation:'producer-constant-q7'})),
+    {level:dialogue.outputLevel,audio:dialogue.audio,implementation:'producer-rom-q7'}];
   assert.equal(recordings.length,21);
-  for(const {level,audio}of recordings){
-    assert.equal(level.implementation,'producer-constant-q7');assert.equal(level.saturatedSamples,0);
+  for(const {level,audio,implementation}of recordings){
+    assert.equal(level.implementation,implementation);assert.equal(level.saturatedSamples,0);
     assert.ok(level.numerator>=128&&level.numerator<=255);assert.equal(level.shift,7);
     const wav=read(audio),pcm=Buffer.from(Array.from({length:wav.readUInt32LE(40)/2},(_,i)=>wav.readInt16LE(44+i*2)/256+128));
     assert.equal(hash(pcm),level.after.pcmSha256,audio);
@@ -31,9 +32,10 @@ test('LPX and Speex public PWM spans use calibrated firmware gain without satura
     if(v.id==='low15')assert.equal(v.outputLevel.numerator,128);
     else {
       const {implementation,gainDb,...level}=v.outputLevel;
-      const {gainDb:nanoGainDb,...legacyLevel}=nano.variants.find(n=>n.clipId===v.clipId&&n.id===v.id).outputLevel;
+      const {implementation:nanoImplementation,gainDb:nanoGainDb,...nanoLevel}=nano.variants.find(n=>n.clipId===v.clipId&&n.id===v.id).outputLevel;
+      assert.equal(nanoImplementation,'producer-rom-q7');
       assert.ok(Math.abs(gainDb-nanoGainDb)<1e-12);
-      assert.deepEqual({...level,implementation:'producer-constant-q7'},legacyLevel);
+      assert.deepEqual(level,nanoLevel);
     }
   }
 });

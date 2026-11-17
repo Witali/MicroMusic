@@ -41,27 +41,51 @@ def plan():
  jobs=[]
  for family,name in [('tiny','firmware-lpx-attiny88.json'),('nano','firmware-atmega328p.json')]:
   catalog=read(WEB/name)
+  if family=='nano':assert catalog.get('compactVersion',5) in (5,9)
+  mega_v9=family=='nano' and catalog.get('compactVersion')==9
+  if mega_v9:
+   assert catalog['universalDecoder'] is True and catalog['romOutputGain'] is True
+   assert catalog['queue']==32 and catalog['prefill']==24
   for variant in catalog['variants']:
    clip=next(c for c in catalog['clips'] if c['clipId']==variant['clipId'])
    preview=next(v for v in clip['variants'] if v['id']==variant['id'])
    source=WEB/variant['source'];stream=WEB/preview['stream'];hexdata=source.read_bytes();blob=stream.read_bytes()
    assert sha(hexdata)==variant['hexSha256'] and sha(blob)==variant['streamSha256']
+   assert len(blob)==preview['bytes'] and (blob[:2]==b'L9' or blob[:4]==b'L4HY')
+   if mega_v9:
+    assert blob[:2]==b'L9' and preview['formatVersion']==9 and preview['codec']=='lpx-v9'
+    assert int.from_bytes(blob[5:7],'little')==clip['samples']
+    assert stream.name.endswith('.v9.lpx') and variant['outputLevel']['implementation']=='producer-rom-q7'
    assert len(hex_bytes(hexdata,8192 if family=='tiny' else 30720))==variant['flashBytes']
    gain=(variant.get('outputLevel') or preview['outputLevel'])['numerator']
    if 'outputLevel' in preview:assert gain==preview['outputLevel']['numerator']
    jobs.append(dict(family=family,id=variant['clipId']+'-'+variant['id'],hex=source,streams=[stream],
-    gain=gain,low15=variant['id']=='low15',flash=variant['flashBytes'],program=variant['programFlashBytes'],catalog=WEB/name))
+    gain=gain,low15=variant['id']=='low15',flash=variant['flashBytes'],program=variant['programFlashBytes'],catalog=WEB/name,
+    mega_v9=mega_v9,queue=catalog.get('queue',256),rom_output_gain=mega_v9))
    if family=='tiny':
     jobs[-1]['tiny_v9']=catalog.get('compactVersion')==9
     jobs[-1]['tiny_queue']=catalog['queueBytes']
     jobs[-1]['tiny_unroll']=catalog['mul16Unroll']
     jobs[-1]['tiny_flags']=catalog.get('compilerOptions',[])
  dialogue=read(WEB/'audio/lpx-dialogue/manifest.json');hexfile=WEB/dialogue['firmware']
+ assert dialogue.get('compactVersion',5) in (5,9)
  assert sha(hexfile.read_bytes())==dialogue['hexSha256']
  streams=[WEB/s['stream'] for s in dialogue['segments']]
- for p,s in zip(streams,dialogue['segments']):assert sha(p.read_bytes())==s['streamSha256']
+ dialogue_v9=dialogue.get('compactVersion')==9
+ if dialogue_v9:
+  assert dialogue['universalDecoder'] is True and dialogue['romOutputGain'] is True
+  assert dialogue['outputLevel']['implementation']=='producer-rom-q7'
+  assert dialogue.get('queue',32)==32 and dialogue.get('prefill',24)==24
+ for p,s in zip(streams,dialogue['segments']):
+  blob=p.read_bytes()
+  assert sha(blob)==s['streamSha256'] and len(blob)==s['streamBytes']
+  if dialogue_v9:
+   assert p.name.endswith('.v9.lpx') and blob[:2]==b'L9'
+   assert int.from_bytes(blob[5:7],'little')==s['samples']
+ assert sum(p.stat().st_size for p in streams)==dialogue['streamBytes']
  jobs.append(dict(family='dialogue',id='dialogue-quality',hex=hexfile,streams=streams,gain=dialogue['outputLevel']['numerator'],low15=False,
-  flash=dialogue['flashBytes'],program=dialogue['programFlashBytes'],catalog=WEB/'audio/lpx-dialogue/manifest.json'))
+  flash=dialogue['flashBytes'],program=dialogue['programFlashBytes'],catalog=WEB/'audio/lpx-dialogue/manifest.json',
+  mega_v9=dialogue_v9,queue=dialogue.get('queue',32 if dialogue_v9 else 256),rom_output_gain=dialogue_v9))
  assert sum(j['family']=='tiny' for j in jobs)==9 and sum(j['family']=='nano' for j in jobs)==8 and sum(j['family']=='dialogue' for j in jobs)==1
  return jobs
 
@@ -71,15 +95,16 @@ def main():
  if not out.is_relative_to((ROOT/'build').resolve()):raise ValueError('Use ignored build storage')
  if out.exists() and any(out.iterdir()):raise ValueError('Use a fresh output directory')
  out.mkdir(parents=True,exist_ok=True);jobs=plan()
- recipe=ast_exports(ACTIVE/'tools/benchmark_speech_flash.py',('BASE','LTO','GC','CALL','RELAX','CANDIDATES'),('candidate','command_flags'))
- voice=ast_exports(ACTIVE/'tools/measure_speech_firmware.py',functions=('voice_header',))['voice_header']
- spec=recipe['CANDIDATES']['unroll1-tune0-lto-call-relax']
- assert spec==dict(unroll=1,tuning=0,flags=['-flto','-mcall-prologues','-mrelax'])
+ if any(job['family']!='tiny' and not job['mega_v9'] for job in jobs):
+  recipe=ast_exports(ACTIVE/'tools/benchmark_speech_flash.py',('BASE','LTO','GC','CALL','RELAX','CANDIDATES'),('candidate','command_flags'))
+  voice=ast_exports(ACTIVE/'tools/measure_speech_firmware.py',functions=('voice_header',))['voice_header']
+  spec=recipe['CANDIDATES']['unroll1-tune0-lto-call-relax']
+  assert spec==dict(unroll=1,tuning=0,flags=['-flto','-mcall-prologues','-mrelax'])
  summary=dict(schema='lpx-shipped-asm-equivalence-v1',prepared=True,builds_performed=False,tiny_images=9,nano_images=8,dialogue_images=1,
   source_header_overrides=False,physical_board_measured=False,new_irq_measurement=False,
   scope='Exact rebuilt current linked ASM binaries compared with decoded shipped public HEX; old catalogs/timing receipts stay unchanged')
  (out/'plan.json').write_text(json.dumps(summary,indent=2)+'\n')
- if not args.run:print('Prepared18 public-image comparisons; no compilation performed.');return
+ if not args.run:print('Prepared 18 public-image comparisons; no compilation performed.');return
  prefix=['wsl','-d',args.wsl,'--'] if args.wsl else []
  def target(p):
   p=Path(p).resolve()
@@ -91,11 +116,13 @@ def main():
  sources=[Path(__file__),*sorted((ACTIVE/'src').rglob('*')),*sorted((ROOT/'Codecs/common').rglob('*')),
   ACTIVE/'profiles/Lpx4Sram512.h',ACTIVE/'examples/ATTINY88_V5_PLAYER/player.cpp',ACTIVE/'examples/AVR_V5_PLAYER/player.cpp',
   ACTIVE/'examples/AVR_V5_PLAYER/player_config.h',ACTIVE/'tools/build_attiny88_player.py',ACTIVE/'tools/build_release_player.py',
+  ACTIVE/'tools/build_atmega328p_player.py',
   ACTIVE/'tools/benchmark_speech_flash.py',ACTIVE/'tools/measure_speech_firmware.py',
   ROOT/'ATtiny88/Music/universal/vendor/ATtiny_DFP/3.4.278/include/avr/iotn88.h']
  sources=[p for p in sources if p.is_file()];binding={p.relative_to(ROOT).as_posix():textsha(p.read_bytes()) for p in sources}
  protected={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for j in jobs for p in (j['hex'],j['catalog'],*j['streams'])}
  sys.path.insert(0,str(ACTIVE/'tools'));import build_attiny88_player as tiny
+ if any(job['mega_v9'] for job in jobs):import build_atmega328p_player as mega
  rows=[]
  for job in jobs:
   folder=out/job['family']/job['id'];folder.mkdir(parents=True,exist_ok=True);blobs=[p.read_bytes() for p in job['streams']]
@@ -105,6 +132,11 @@ def main():
     queue=job['tiny_queue'],mul16_unroll=job['tiny_unroll'],output_gain=job['gain'],
     sparse80=job['low15'] and not v9,universal=v9,rom_output_gain=v9,extra_flags=job['tiny_flags'])
    binary=(folder/'player.bin').read_bytes();flags=cost['compiler_options']
+  elif job['mega_v9']:
+   cost=mega.build(job['streams'],folder,wsl=args.wsl,assembly=True,asm_isr=True,
+    queue=job['queue'],output_gain=job['gain'],rom_output_gain=job['rom_output_gain'])
+   binary=(folder/'player.bin').read_bytes();flags=cost['compiler_options']
+   assert '-mmcu=atmega328p' in flags and '-DLPX4_ENABLE_ASM=1' in flags
   else:
    settings={**recipe['BASE'],'queue':256,'prefill':192};env=dict(settings=settings,compact_only=True,retained_profile_symbols=[])
    flags=recipe['command_flags'](env,spec,True,0)
@@ -133,5 +165,5 @@ def main():
  summary.update(builds_performed=True,current_source_sha256=binding,shipped_artifact_sha256=protected,cases=rows,
   all_binaries_exact=all(r['binary_exact'] for r in rows),all_no_float_runtime_symbols=all(r['no_float_runtime_symbols'] for r in rows),all_declared_sizes_exact=all(r['declared_size_matches'] for r in rows),compiler=command('avr-g++','--version').decode().splitlines()[0])
  (out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
- if not summary['all_binaries_exact']:raise SystemExit(2)
+ if not all(summary[key] for key in ('all_binaries_exact','all_no_float_runtime_symbols','all_declared_sizes_exact')):raise SystemExit(2)
 if __name__=='__main__':main()

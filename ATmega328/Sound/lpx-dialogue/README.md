@@ -40,8 +40,11 @@ LPX-сегменты позволяют сохранить все фразы, х
 - [Точный PWM8 WAV](../../../web-player/audio/lpx-dialogue/dialogue.wav).
 - [Рецепт](recipe.json) и [результаты](../../../web-player/audio/lpx-dialogue/manifest.json).
 
-Полный Flash — 10,240 KiB, из них программа 4680 Б и сжатые сегменты
-5806 Б. Static SRAM — 756 Б; EEPROM не используется. Образ помещается
+Полный Flash LPX v9 — 8946 Б (8,736 КиБ), из них программа 3397 Б
+и сжатые сегменты 5549 Б. Static SRAM — 420 Б, пиковый стек — 24 Б.
+Семь сегментов перепакованы без потерь, весь PWM совпадает побитно
+с прежним образом. Кольцевой буфер работает непрерывно при сбросе
+декодера между сегментами. Образ помещается
 в консервативный бюджет приложения классического Nano 30 KiB без замены
 существующего загрузчика или настроек fuse.
 
@@ -83,13 +86,18 @@ D3 / PD3 / OC2B, Timer2 fast PWM 62,5 кГц; Timer1 выдаёт 8 кГц.
 
 ## Повторение сборки
 
-Нужны Python-пакеты кодека, FFmpeg, host g++, AVR-GCC проекта и simavr 1.6.
+Для пересборки из опубликованных LPX нужны Python, host g++, AVR-GCC 7.3.0,
+simavr 1.6 и libelf. На Windows добавьте `--wsl Ubuntu`.
 Из корня репозитория:
 
 ```text
-python Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_release_observer.py build/nano-dialogue/observer --include /path/to/simavr/include/simavr --lib /path/to/simavr/lib
-python tools/build-nano-dialogue.py --avr-bin /path/to/avr/bin --observer build/nano-dialogue/observer/sim_player --lib /path/to/simavr/lib --enable-asm --retain
+python tools/build-nano-lpx-v9.py --retain --jobs 3
 ```
+
+Эта команда собирает восемь отдельных записей и диалог общим универсальным
+проигрывателем. Первоначальное кодирование нормализованных оригиналов
+сохраняется в `tools/build-nano-dialogue.py` и рецепте. Его WAV и параметры
+нормализации используются как побитный эталон нового выпуска.
 
 На Windows добавьте `--wsl Ubuntu` к обеим командам. `--enable-asm`
 выбирает существующий AVR5-бэкенд с MUL; без него остаётся эквивалентный C.

@@ -12,11 +12,29 @@
 #if F_CPU != 16000000UL
 #error This playback clock requires 16 MHz
 #endif
+#ifndef LPX25_NANO_PWM
+#define LPX25_NANO_PWM 0
+#endif
+#if LPX25_NANO_PWM != 0 && LPX25_NANO_PWM != 1
+#error LPX25_NANO_PWM must be 0 or 1
+#endif
+#if LPX25_NANO_PWM && !defined(__AVR_ATmega328__) && !defined(__AVR_ATmega328P__)
+#error Nano D3 PWM requires ATmega328 or ATmega328P
+#endif
 #ifndef LPX25_QUEUE
 #define LPX25_QUEUE 32
 #endif
 #ifndef LPX25_REPEAT
 #define LPX25_REPEAT 1
+#endif
+#ifndef LPX25_SEGMENTS
+#define LPX25_SEGMENTS 1
+#endif
+#if LPX25_SEGMENTS < 1 || LPX25_SEGMENTS > 255
+#error Segment count must be 1..255
+#endif
+#if LPX25_SEGMENTS > 1 && LPX4_COMPACT_VERSION != 9
+#error Concatenated playback requires complete LPX v9 streams
 #endif
 #ifndef LPX25_GPIOR_STATE
 // The dedicated v9 ROM player owns these three general-purpose registers.
@@ -69,6 +87,17 @@ static const uint8_t voice[] PROGMEM={
 #include "output_gain.inc"
 #endif
 };
+#if LPX25_SEGMENTS > 1
+// Lengths describe complete concatenated streams in audio.inc, excluding the
+// optional final output-gain byte. Every decoder parameter stays in its stream.
+static const uint16_t segmentLengths[] PROGMEM={
+#include "segment_lengths.inc"
+};
+static_assert(sizeof(segmentLengths)/sizeof(segmentLengths[0])==LPX25_SEGMENTS,
+              "Segment length count must match LPX25_SEGMENTS");
+static const uint8_t* segmentData;
+static uint8_t segmentIndex;
+#endif
 #if LPX25_ROM_OUTPUT_GAIN
 // The byte after the LPX file belongs to the ROM playback configuration.
 // Keep the LPX stream length and wire format unchanged for other decoders.
@@ -117,7 +146,7 @@ struct Lpx4RomPlayer {
     // Called after next() succeeds, with parser errors already excluded.
     static bool sampleWasLast(){return decoder.subPos_==decoder.subEnd_;}
 #endif
-#if LPX4_V9_ROM_HEADER_LAYOUT && LPX25_REPEAT == 1
+#if LPX4_V9_ROM_HEADER_LAYOUT && LPX25_REPEAT == 1 && LPX25_SEGMENTS == 1
     static bool begin(){
 #if LPX25_ALIAS_ERROR
         publishErrorAlias();
@@ -192,18 +221,23 @@ static inline uint8_t advance(uint8_t at){
 #endif
 }
 static void stop(){
+#if LPX25_NANO_PWM
+    TCCR1B=0;
+    TIMSK1=0;
+#else
     TCCR0A=0;
 #if defined(TCCR0B)
     TCCR0B=0;
 #endif
     TIMSK0=0;
+#endif
     lpx25_stopped=1;
 }
 #ifndef LPX25_ENABLE_ASM_ISR
 #define LPX25_ENABLE_ASM_ISR 0
 #endif
 #if LPX25_ENABLE_ASM_ISR && defined(__AVR_ARCH__) && \
-    (__AVR_ARCH__==25 || (__AVR_ARCH__==5 && LPX25_REUSE_TIMER1_HIGH))
+    (__AVR_ARCH__==25 || (__AVR_ARCH__==5 && (LPX25_REUSE_TIMER1_HIGH || LPX25_NANO_PWM)))
 #ifndef LPX25_ISR_FIXED_REGS
 #error The reserved-register ISR requires the matching whole-program -ffixed flags
 #endif
@@ -218,7 +252,11 @@ static void stop(){
 #define LPX25_IRQ_SAMPLE "r2"
 #define LPX25_IRQ_SREG "r3"
 #endif
+#if LPX25_NANO_PWM
+ISR(TIMER1_COMPA_vect,ISR_NAKED){
+#else
 ISR(TIMER0_COMPA_vect,ISR_NAKED){
+#endif
     // The scratch pair is excluded from every foreground compilation. Z is a
     // normal foreground pointer and is preserved. The AVR5 path writes only
     // OCR1AL so it can preserve r0/r1 without using the MUL scratch registers.
@@ -248,12 +286,17 @@ ISR(TIMER0_COMPA_vect,ISR_NAKED){
 #endif
         "2: ldi r30,128\n\tmov " LPX25_IRQ_SAMPLE ",r30\n\t"
         "3:\n\t"
-#if !LPX25_REUSE_TIMER1_HIGH
+#if !LPX25_REUSE_TIMER1_HIGH && !LPX25_NANO_PWM
         "sts %1,__zero_reg__\n\t"
 #endif
         "sts %2," LPX25_IRQ_SAMPLE "\n\t"
         "pop r31\n\tpop r30\n\tout %0," LPX25_IRQ_SREG "\n\treti\n\t"
-        : : "I"(_SFR_IO_ADDR(SREG)),"n"(_SFR_MEM_ADDR(OCR1AH)),"n"(_SFR_MEM_ADDR(OCR1AL)),
+        : : "I"(_SFR_IO_ADDR(SREG)),"n"(_SFR_MEM_ADDR(OCR1AH)),
+#if LPX25_NANO_PWM
+            "n"(_SFR_MEM_ADDR(OCR2B)),
+#else
+            "n"(_SFR_MEM_ADDR(OCR1AL)),
+#endif
             "M"(LPX25_QUEUE==24||LPX25_QUEUE==44?31:LPX25_QUEUE-1),"M"(LPX25_QUEUE)
 #if LPX25_GPIOR_STATE
             ,[head_io]"I"(_SFR_IO_ADDR(GPIOR0)),[tail_io]"I"(_SFR_IO_ADDR(GPIOR1))
@@ -263,16 +306,31 @@ ISR(TIMER0_COMPA_vect,ISR_NAKED){
 #undef LPX25_IRQ_SAMPLE
 #undef LPX25_IRQ_SREG
 #else
+#if LPX25_NANO_PWM
+ISR(TIMER1_COMPA_vect){
+#else
 ISR(TIMER0_COMPA_vect){
+#endif
     uint8_t sample=128;
     const uint8_t tail=lpx25_tail;
     if(tail!=lpx25_head){
         barrier();sample=lpx25_queue[tail];barrier();
         lpx25_tail=advance(tail);
     }
+#if LPX25_NANO_PWM
+    OCR2B=sample;
+#else
     OCR1A=sample;
+#endif
 }
 #endif
+#if LPX25_SEGMENTS > 1
+static bool begin(){
+    // begin() resets parser, predictors and filters, while player-owned queue
+    // indices and the running sample timer remain continuous across streams.
+    return decoder.begin(segmentData,pgm_read_word(segmentLengths+segmentIndex));
+}
+#else
 #if LPX25_V9_ROM_PLAYER && LPX4_V9_ROM_HEADER_LAYOUT && LPX25_REPEAT == 1
 static bool begin(){return Lpx4RomPlayer::begin();}
 #else
@@ -280,6 +338,7 @@ static bool begin(){return Lpx4RomPlayer::begin();}
 static bool begin(){return decoder.begin(voice,sizeof(voice)-1);}
 #else
 static bool begin(){return decoder.begin(voice,sizeof(voice));}
+#endif
 #endif
 #endif
 // Startup enters main with IRQs masked. This player never returns, so no
@@ -300,6 +359,13 @@ int main(){
 #if LPX25_GPIOR_STATE
     initializePlayerRegisters();
 #endif
+#if LPX25_SEGMENTS > 1
+    segmentData=voice;
+    segmentIndex=0;
+#if LPX25_ALIAS_ERROR
+    Lpx4RomPlayer::publishErrorAlias();
+#endif
+#endif
     if(!begin()){LPX25_REPORT_ERROR();lpx25_stopped=1;for(;;){}}
     uint8_t repeats=LPX25_REPEAT;
     bool started=false;
@@ -318,10 +384,24 @@ int main(){
         if(next==lpx25_tail)continue;
         // Single playback publishes EOF on its last sample and goes directly
         // to the drain. A restart is reachable only for a repeat build.
+#if LPX25_SEGMENTS > 1
+        if(decoder.finished()){
+            if(segmentIndex==LPX25_SEGMENTS-1){
+                --repeats;
+                segmentIndex=0;
+                segmentData=voice;
+            }else{
+                segmentData+=pgm_read_word(segmentLengths+segmentIndex);
+                ++segmentIndex;
+            }
+            if(!begin()){LPX25_REPORT_ERROR();break;}
+        }
+#else
         if((!LPX25_V9_ROM_PLAYER || LPX25_REPEAT>1) && decoder.finished()){
             --repeats;
             if(!begin()){LPX25_REPORT_ERROR();break;}
         }
+#endif
         uint8_t sample;
         // Zero-byte symbols delimit the actual production decode region for
         // an external observer. They add no firmware counters or instructions.
@@ -329,7 +409,9 @@ int main(){
         const bool decoded=decoder.next(sample);
         __asm__ __volatile__(".global lpx25_decode_end\nlpx25_decode_end:" ::: "memory");
         if(!decoded){LPX25_REPORT_ERROR();break;}
-#if LPX25_V9_ROM_PLAYER && LPX4_BATCHED_REMAINING
+#if LPX25_SEGMENTS > 1
+        const bool last=decoder.finished() && segmentIndex==LPX25_SEGMENTS-1 && repeats==1;
+#elif LPX25_V9_ROM_PLAYER && LPX4_BATCHED_REMAINING
         const bool last=Lpx4RomPlayer::sampleWasLast() && repeats==1;
 #else
         const bool last=decoder.finished() && repeats==1;
@@ -347,6 +429,14 @@ int main(){
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE){lpx25_head=next;if(last)lpx25_eof=1;}
 #endif
         if(!started && (next==LPX25_QUEUE*3/4 || last)){
+#if LPX25_NANO_PWM
+            // Nano D3/OC2B: fast 8-bit PWM at 62.5 kHz. Timer1 CTC /1 gives 8 kHz.
+            DDRD|=_BV(DDD3);OCR2B=128;
+            TCCR2A=_BV(COM2B1)|_BV(WGM21)|_BV(WGM20);TCCR2B=_BV(CS20);
+            TCCR1A=0;TCCR1B=0;TCNT1=0;OCR1A=1999;
+            TIFR1=_BV(OCF1A);TIMSK1=_BV(OCIE1A);
+            TCCR1B=_BV(WGM12)|_BV(CS10);
+#else
             // OC1A/PB1, fast 8-bit PWM at 62.5 kHz. Timer0 CTC /8 gives 8 kHz.
             DDRB|=_BV(PB1);OCR1A=128;
             TCCR1A=_BV(COM1A1)|_BV(WGM10);TCCR1B=_BV(WGM12)|_BV(CS10);
@@ -355,6 +445,7 @@ int main(){
             TCCR0A=_BV(WGM01);TCCR0B=_BV(CS01);
 #else
             TCCR0A=_BV(CTC0)|_BV(CS01);
+#endif
 #endif
             started=true;sei();
         }

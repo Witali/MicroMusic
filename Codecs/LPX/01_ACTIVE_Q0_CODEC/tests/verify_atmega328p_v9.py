@@ -61,6 +61,8 @@ def adapt_player(text, target='atmega328p'):
 
 
 def adapt_observer(text, target='atmega328p'):
+    if '#ifdef H_LPX_NATIVE_TARGET' in text:
+        return text
     start = text.index('#define BIT(r,b)')
     end = text.index('static unsigned head,tail', start)
     text = text[:start]+'static avr_t *cpu;\n'+text[end:]
@@ -105,6 +107,8 @@ def adapt_observer(text, target='atmega328p'):
 
 
 def adapt_builder(text, target='atmega328p', *, fixed_isr=False):
+    if "target='attiny88',nano_pwm=False" in text:
+        return replace(text,"target='attiny88',nano_pwm=False",f"target='{target}',nano_pwm=False")
     shared_irq_map='def read_irq_registers(' in text
     if shared_irq_map:
         text = replace(text, 'allow_hardware_mul=False)', 'allow_hardware_mul=True)')
@@ -137,11 +141,14 @@ def adapt_builder(text, target='atmega328p', *, fixed_isr=False):
     return text
 
 
-def adapt_verifier(text):
+def adapt_verifier(text, target='atmega328p'):
+    if "target='attiny88',nano_pwm=False" in text:
+        text=replace(text,"target='attiny88',nano_pwm=False",f"target='{target}',nano_pwm=False")
     text = replace(text, 'from build_attiny88_player import', 'from build_mega_player import')
     text = replace(text, 'flash_limit=8192', 'flash_limit=32768')
-    text = replace(text, "cost['static_ram_bytes']+timing['stack_bytes']<512",
-                   "cost['static_ram_bytes']+timing['stack_bytes']<2048")
+    if "cost['static_ram_bytes']+timing['stack_bytes']<512" in text:
+        text = replace(text, "cost['static_ram_bytes']+timing['stack_bytes']<512",
+                       "cost['static_ram_bytes']+timing['stack_bytes']<2048")
     return replace(text, "run('g++','-O2','-std=c++11',",
                    "run('g++','-O2','-std=c++11','-DLPX4_ENABLE_ASM=0',")
 
@@ -229,7 +236,7 @@ def run(output, *, wsl=None, current_source=False, target='atmega328p', fixed_is
         sample_vector=int(definitions['TIMER0_COMPA_vect_num']))
     for name, transform, source in (
         ('build_mega_player', partial(adapt_builder,target=target,fixed_isr=fixed_isr), 'build_attiny88_player'),
-        ('verify_mega_player', adapt_verifier, 'verify_attiny88_player')):
+        ('verify_mega_player', partial(adapt_verifier,target=target), 'verify_attiny88_player')):
         (output/(name+'.py')).write_text(transform((ACTIVE/'tools'/ (source+'.py')).read_text()),
                                          encoding='utf-8', newline='\n')
     sys.path[:0] = [str(output), str(ACTIVE/'tools'), str(ACTIVE/'tests')]

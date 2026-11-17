@@ -16,6 +16,36 @@ const waveform=previewWaveform(wav.buffer.slice(wav.byteOffset,wav.byteOffset+wa
 const flush=()=>new Promise(setImmediate);
 const cards=app=>app.get('catalog').children.map(row=>row.children[0]);
 
+function formatFixture(version){
+  const data=structuredClone(manifest),v9=version===9;
+  data.compactVersion=version;data.universalDecoder=v9;data.romOutputGain=v9;
+  data.outputLevel.implementation=v9?'producer-rom-q7':'producer-constant-q7';
+  for(const segment of data.segments)
+    segment.stream=segment.stream.replace(/(?:\.v9)?\.lpx$/,v9?'.v9.lpx':'.lpx');
+  return data;
+}
+
+test('dialogue adapter preserves legacy v5 and shows v9 without changing its download or audio identity',()=>{
+  const base='https://example.test/MicroMusic/web-player/';
+  const legacy=lpxDialogueEntry(formatFixture(5),base),universal=lpxDialogueEntry(formatFixture(9),base);
+  assert.equal(universal.id,'lpx-nano-dialogue-quality');assert.equal(universal.id,legacy.id);
+  assert.equal(universal.nativeAudioUrl,legacy.nativeAudioUrl);assert.equal(universal.firmware.source,legacy.firmware.source);
+  assert.equal(universal.codec,'lpx-v9');assert.equal(universal.formatVersion,9);
+  assert.equal(universal.firmware.universalDecoder,true);assert.equal(universal.firmware.romOutputGain,true);
+  assert.equal(universal.firmware.pwmPin,3);assert.equal(universal.firmware.pwmOutput,'D3 / PD3 / OC2B');
+  assert.equal(legacy.codec,'lpx-v5');assert.equal(legacy.formatVersion,5);
+});
+
+test('universal dialogue rejects inconsistent segment geometry, mixed paths and incorrect ROM metadata',()=>{
+  for(const mutate of [d=>d.compactVersion=8,d=>d.universalDecoder=false,d=>d.romOutputGain=false,
+    d=>d.outputLevel.implementation='producer-constant-q7',d=>d.outputLevel.numerator=256,
+    d=>d.segments=[],d=>d.segments[1].startSample++,d=>d.segments[0].streamBytes++,
+    d=>d.segments[0].stream=d.segments[0].stream.replace('.v9.lpx','.lpx'),
+    d=>d.segments[0].stream='https://other.test/00.v9.lpx',d=>d.segments[0].streamSha256='invalid']){
+    const data=formatFixture(9);mutate(data);assert.throws(()=>lpxDialogueEntry(data,'https://example.test/web-player/'));
+  }
+});
+
 test('dialogue is selectable in the shared speech catalog with working audio, waveform and HEX',async()=>{
   for(const prefix of ['/','/MicroMusic/']){
     const app=await playerApp({prefix,device:'atmega328p',firmware:'speex-nano-vinni-wb98'});await flush();
@@ -85,6 +115,7 @@ test('combined Nano dialogue preserves the requested order and exact three pause
 });
 
 test('retained HEX contains every exact compressed segment and leaves bootloader space',()=>{
+  assert.equal(manifest.compactVersion,9);assert.equal(manifest.universalDecoder,true);assert.equal(manifest.romOutputGain,true);
   const hex=read('web-player/'+manifest.firmware),image=Buffer.from(parseHex(hex.toString(),30720));
   assert.equal(hash(hex),manifest.hexSha256);assert.equal(image.length,manifest.flashBytes);
   assert.ok(image.length<=30720);assert.ok(manifest.staticSramBytes<2048);
@@ -92,8 +123,9 @@ test('retained HEX contains every exact compressed segment and leaves bootloader
   for(const segment of manifest.segments){
     const stream=read('web-player/'+segment.stream);
     assert.equal(hash(stream),segment.streamSha256);assert.equal(stream.length,segment.streamBytes);
-    assert.equal(stream.subarray(0,5).toString('binary'),'L4HY\x05');
-    assert.equal(stream.readUInt32LE(8),segment.samples);
+    assert.equal(stream.subarray(0,2).toString('ascii'),'L9');assert.match(segment.stream,/\.v9\.lpx$/);
+    assert.equal(stream.readUInt16LE(3),8000);assert.equal(stream.readUInt16LE(5),segment.samples);
+    assert.equal(stream.readUInt16LE(11)+13,stream.length);
     assert.deepEqual(image.subarray(segment.romOffset,segment.romEnd),stream);
   }
 });
