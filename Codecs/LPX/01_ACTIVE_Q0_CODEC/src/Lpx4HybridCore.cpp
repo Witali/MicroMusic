@@ -784,14 +784,18 @@ bool Lpx4HybridCore::readFrame(){
   if(!initializedFrame_)for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
   initializedFrame_=true;
 #endif
-#if LPX4_COMPACT_ONLY && !LPX4_AVR25_V9_RUNTIME
+#if LPX4_COMPACT_ONLY && !LPX4_AVR_V9_PACKETS
   subIndex_^=8;
 #elif !LPX4_COMPACT_ONLY
   speechHalf_^=1;
 #endif
 #if LPX4_COMPACT_ONLY
 #if LPX4_HAS_SPARSE80 && !LPX4_AVR25_V9_RUNTIME
+#if LPX4_AVR_V9_PACKETS
+  const bool secondHalf=subIndex_&8;
+#else
   const bool secondHalf=!(subIndex_&8);
+#endif
   if((LPX4_SPEECH_FLAGS&8) && secondHalf)return !error_;
 #endif
 #if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
@@ -1961,7 +1965,7 @@ bool Lpx4HybridCore::prepareSubframe(){
 #if !LPX4_COMPACT_ONLY
     if(!(subIndex_&3)&&!readBlock())return false;
 #endif
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_AVR_V9_PACKETS
     // Dense pulse packets occur every other subframe. Sparse80 uses
     // every fourth, so test the second phase bit only for that profile.
     if(!(subIndex_&1) && (!(LPX4_SPEECH_FLAGS&8) || !(subIndex_&2)) && !readSubframe())return false;
@@ -2203,7 +2207,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
         remaining_-=20;
         subEnd_=remaining_<20?(uint8_t)remaining_:20;
 #endif
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_AVR_V9_PACKETS
         // Consumers use only the low four bits. Unsigned wrap is harmless.
         ++subIndex_;
 #elif LPX4_COMPACT_ONLY
