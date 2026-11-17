@@ -488,6 +488,16 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 #else
 #define LPX4_NOMUL_SATURATED ""
 #endif
+// Universal AVR25 synthesis biases each signed24 product by2^23. Ten
+// biases are compensated once. The zero path applies its own bias while
+// skipping both coefficient loads and the distant common loop latch.
+// Legacy arithmetic keeps its original instruction stream.
+#if LPX4_COMPACT_VERSION==9 && LPX4_AVR25_SATURATED_PRODUCTS
+#define LPX4_NOMUL_ZERO_TEST ""
+#else
+#define LPX4_NOMUL_ZERO_TEST \
+    "movw r22,r20\n\tor r23,r22\n\tbrne 18f\n\trjmp 5f\n\t18:\n\t"
+#endif
 #if LPX4_AVR25_SATURATED_PRODUCTS
 // In the full-width path, r23 starts as the history high byte. Each
 // rotation supplies the next multiplier bit through carry and replaces the
@@ -504,7 +514,7 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 // the existing Q4 nibble mask preserves each separate Q12 floor.
 #define LPX4_NOMUL_PRODUCT \
     /* Test both history bytes while keeping the low byte in r22. */ \
-    "movw r22,r20\n\tor r23,r22\n\tbrne 18f\n\trjmp 5f\n\t18:\n\t" \
+    LPX4_NOMUL_ZERO_TEST \
     LPX4_NOMUL_SATURATED \
     "clr r24\n\tclr r25\n\t" \
     /* The first unsigned round is either zero or half the coefficient. */ \
@@ -546,10 +556,18 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     "4: sbrc r19,7\n\tsub r24,r20\n\t" \
     "mov r25,r24\n\tlsl r25\n\tsbc r25,r25\n\t8:\n\t"
 #endif
+#if LPX4_COMPACT_VERSION==9 && LPX4_AVR25_SATURATED_PRODUCTS
+#define LPX4_NOMUL_SUB \
+    LPX4_NOMUL_PRODUCT \
+    "andi r23,240\n\tsubi r25,128\n\tsub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\t" \
+    "sbc %D0,__zero_reg__\n\t5:\n\t"
+#else
 #define LPX4_NOMUL_SUB \
     LPX4_NOMUL_PRODUCT \
     "andi r23,240\n\tsub %A0,r23\n\tsbc %B0,r24\n\tsbc %C0,r25\n\t" \
     "sbc %D0,__zero_reg__\n\tsbrc r25,7\n\tinc %D0\n\t5:\n\t"
+#endif
+
 #if LPX4_USE_AVR_NOMUL_ASM
 // coefficient is below 16384; the endpoint is handled by AttenuateQ14.
 // Bias the signed state by 32768, then subtract 2*coefficient after the
@@ -650,6 +668,19 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         "bst %4,0\n\t"
 #endif
         ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
+#if LPX4_COMPACT_VERSION==9 && LPX4_AVR25_SATURATED_PRODUCTS
+        "ldi r25,5\n\tadd %D0,r25\n\t"
+        "ldi r17,10\n\trjmp 1f\n\t"
+        "20: sbiw r26,2\n\tldi r25,128\n\tsub %C0,r25\n\tsbc %D0,__zero_reg__\n\t"
+        "dec r17\n\tbrne 1f\n\trjmp 30f\n\t"
+        "1: ld r21,-Z\n\tld r20,-Z\n\t"
+        ".if !%5\n\tcpi r17,10\n\tbreq 2f\n\t.endif\n\t"
+        LPX4_LPC_SHIFT_HISTORY
+        "2: movw r22,r20\n\tor r23,r22\n\tbreq 20b\n\t"
+        "ld r19,-X\n\tld r18,-X\n\t"
+        LPX4_NOMUL_SUB
+        "dec r17\n\tbreq 30f\n\trjmp 1b\n\t30:\n\t"
+#else
         "ldi r17,10\n\t1:\n\t"
         LPX4_LPC_LOAD_REVERSE
         ".if !%5\n\tcpi r17,10\n\tbreq 2f\n\t.endif\n\t"
@@ -657,6 +688,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
         "2:\n\t"
         LPX4_NOMUL_SUB
         "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
+#endif
         ".if !%6\n\t.rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t.endif\n\t"
         : "+&r"(result),"+z"(h),"+x"(a) : "I"(!excitationQ4)
 #if LPX4_AVR25_SATURATED_PRODUCTS
@@ -682,7 +714,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 // samples in reverse temporal order; return it advanced back by ten words.
 // The caller then writes the new sample to h[0] and h[10]. Preconditions and
 // Q4 bounds match SynthesisQ12; this helper never shifts/stores old samples.
-template<bool excitationQ4=false>
+template<bool excitationQ4=false,bool keepQ4=false,bool boundedLpc=false>
 static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_t excitation,const int16_t* a,int16_t*& h){
 #if LPX4_USE_AVR_ASM
     int32_t result=excitation;
@@ -702,10 +734,10 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
 #if LPX4_AVR_DOT_UNROLL!=9
         "dec r17\n\tbreq 2f\n\trjmp 1b\n\t2:\n\t"
 #endif
-        ".rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t"
+        ".if !%4\n\t.rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t.endif\n\t"
         "clr __zero_reg__\n\t"
         : "+&r" (result), "+z" (h), "+x" (a)
-        : "I"(!excitationQ4)
+        : "I"(!excitationQ4),"I"(keepQ4)
         : "r0","r1","r16","r18","r19","r20","r21",
 #if LPX4_AVR_DOT_UNROLL!=9
           "r17",
@@ -713,11 +745,31 @@ static inline __attribute__((always_inline)) int32_t lpx4SynthesisRingQ12(int32_
           LPX4_DOT_LOW_CLOBBER "r23","r24","r25","cc","memory"
     );
     return result;
+#elif LPX4_USE_AVR_NOMUL_ASM && LPX4_COMPACT_VERSION==9 && LPX4_AVR25_SATURATED_PRODUCTS
+    int32_t result=excitation;
+    const uint8_t saturationHint=(uint8_t)(((uint16_t)h[-1]>>8)-127)<2;
+    __asm__(
+        "bst %4,0\n\t"
+        ".if %3\n\t.rept 4\n\tlsl %A0\n\trol %B0\n\trol %C0\n\trol %D0\n\t.endr\n\t.endif\n\t"
+        "ldi r25,5\n\tadd %D0,r25\n\t"
+        "ldi r17,10\n\trjmp 1f\n\t"
+        "20: adiw r26,2\n\tldi r25,128\n\tsub %C0,r25\n\tsbc %D0,__zero_reg__\n\t"
+        "dec r17\n\tbrne 1f\n\trjmp 30f\n\t"
+        "1: ld r21,-Z\n\tld r20,-Z\n\t"
+        "movw r22,r20\n\tor r23,r22\n\tbreq 20b\n\t"
+        "ld r18,X+\n\tld r19,X+\n\t"
+        LPX4_NOMUL_SUB
+        "dec r17\n\tbreq 30f\n\trjmp 1b\n\t30:\n\t"
+        ".if !%6\n\t.rept 4\n\tasr %D0\n\tror %C0\n\tror %B0\n\tror %A0\n\t.endr\n\t.endif\n\t"
+        : "+&r"(result),"+z"(h),"+x"(a)
+        : "I"(!excitationQ4),"r"(saturationHint),"I"(0),"I"(keepQ4),"I"(boundedLpc)
+        : "r17","r18","r19","r20","r21","r22","r23","r24","r25","cc","memory");
+    return result;
 #else
     int32_t result=excitationQ4?excitation/16:excitation;
     for(uint8_t i=0;i<10;i++)result-=lpx4Shift12(lpx4Mul16(a[i],h[-1-i]));
     h-=10;
-    return result;
+    return keepQ4?result*16:result;
 #endif
 }
 #if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
@@ -775,6 +827,7 @@ static inline __attribute__((always_inline)) int16_t lpx4SynthesisCircularQ12(
 
 #undef LPX4_SYNTH_MUL
 #undef LPX4_SYNTH_INIT
+#undef LPX4_NOMUL_ZERO_TEST
 #undef LPX4_NOMUL_PRODUCT
 #undef LPX4_NOMUL_SATURATED
 #undef LPX4_NOMUL_HIGH_STEP

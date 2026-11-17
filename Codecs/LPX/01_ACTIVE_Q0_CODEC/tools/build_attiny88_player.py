@@ -178,6 +178,9 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
         flags += [f'-DLPX4_FIXED_PRE_Q14={int.from_bytes(blob[pre_at:pre_at+2],"little")}',
                   f'-DLPX4_FIXED_BRIGHT_Q14={int.from_bytes(blob[pre_at+2:pre_at+4],"little")}',
                   f'-DLPX4_FIXED_SPEECH_FLAGS={blob[flags_at]}']
+    if universal and compact_version==9 and target=='attiny88':
+        # Spend18 B on mirrored LPC history, with the same layout for C/ASM.
+        flags+=['-DLPX4_LPC_RING=1']
     # Measured AVR25 ASM recipe: avoid repeated small reader bodies and reduce
     # foreground register pressure. The explicitly selected C recipe stays C.
     if assembly:flags+=['-finline-small-functions' if universal else '-fno-inline-small-functions']

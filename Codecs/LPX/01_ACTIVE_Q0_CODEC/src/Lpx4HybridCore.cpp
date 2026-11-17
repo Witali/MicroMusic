@@ -2482,7 +2482,11 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #if LPX4_LPC_RING
     // subPos already repeats every20 samples; no separate ring cursor is needed.
     int16_t* history=hist_+(subPos_<10?subPos_:subPos_-10)+10;
+#if LPX4_AVR25_V9_RUNTIME && LPX4_AVR25_SATURATED_PRODUCTS
+    int16_t pred=lpx4ClipSynthesisQ4(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4,true,true>(excitation,a_,history));
+#else
     int16_t pred=lpx4Clip15From24<LPX4_AVR25_V9_RUNTIME>(lpx4SynthesisRingQ12<LPX4_EXCITATION_Q4>(excitation,a_,history));
+#endif
     history[0]=history[10]=pred;
 #else
 #if LPX4_AVR25_V9_RUNTIME

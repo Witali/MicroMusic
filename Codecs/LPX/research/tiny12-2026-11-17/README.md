@@ -52,3 +52,52 @@ and P6 are encoded at 12 and 16 kHz. These are deliberately selected stress
 excerpts, not a representative quality study. Timing and upper-band quality
 are reported separately. No quality improvement is claimed for an exact
 decoder optimization.
+
+## LPC accumulation and mirrored history
+
+The AVR25 v9 loop biases every signed24 product by 2^23 and compensates ten
+biases once in the accumulator. A zero history sample skips coefficient
+loads. Other compact versions and the explicit C backend retain their
+arithmetic. The linear loop alone adds 16 B and saves 14.86–16 cycles/sample.
+
+The universal Tiny builder then selects the existing 20-word mirrored LPC
+history layout for both C and ASM. A single cursor derived from subPos
+consumes ten reverse-history words; only the new sample is written twice.
+No separate cursor or stack byte is added. This removes history shifts and
+saves another 21.31–21.41 cycles/sample, for 28 B Flash and 18 B static RAM.
+The Nano layout is unchanged.
+
+Together with the gain change, the player is 3729–3730 B excluding audio
+(+66 B against task start), with 436 B static RAM and at most 27 B stack:
+49 B measured margin in 512 B. The largest of the required 22 images is
+5610 B including sound. All 44 genuine PWM streams are exact, all 22 8 kHz
+outputs remain uninterrupted and exact, and all 12 kHz underrun counts
+decrease or stay zero. The 12 kHz admission count is still 9/22.
+
+`lpc-measurements.json` compares the combined player with task start, not
+the gain-only intermediate. Every mean and peak improves against task
+start. Against the gain-only intermediate, all active CPU peaks improve;
+the all-pairs wall-clock producer peak increases 5 cycles because of IRQ
+phase, while remaining below task start. Against the linear biased loop,
+the mirror's all-pairs active peak rises 9 cycles, also below task start.
+These intermediate peak costs are included in the comparison scope.
+
+`lpc-arithmetic.json` records 44662 linear and 41280 mirrored cases per C/ASM
+backend under live IRQ, with zero arithmetic, bounds or r1 errors. The
+mirrored probe covers all 20 phases and chained wrap/saturation transitions.
+Reproduce on Linux/WSL with:
+
+```
+python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_avr25_lpc.py --fixtures both
+```
+
+An independent native lifecycle comparison checks 2170 operations across
+22 full workloads and 26 short streams, including copy, assignment, reset,
+restart and EOF/error state. Linear and mirrored histories produce the
+same digest (`lpc-lifecycle.json`).
+
+Two complete Tiny controls also select C arithmetic with the mirrored layout
+and live ASM IRQ, at 8/12 kHz. All 22631 genuine samples match; static SRAM
+437 B plus peak stack 50 B fits 512 B. These slower C controls are output and
+fallback checks, not real-time admissions (`lpc-c-controls.json`). Seven
+actual-rate frontend tests and the fixed/desktop-float controls also pass.
