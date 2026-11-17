@@ -40,6 +40,12 @@
 #else
 #define LPX25_V9_ROM_PLAYER 0
 #endif
+#if LPX25_V9_ROM_PLAYER && LPX4_V9_ROM_HEADER_LAYOUT && LPX25_REPEAT == 1 && \
+    !LPX4_ENABLE_INPUT_CALLBACK && !defined(LPX4_ENABLE_PCM16)
+#define LPX25_ALIAS_ERROR 1
+#else
+#define LPX25_ALIAS_ERROR 0
+#endif
 static const uint8_t voice[] PROGMEM={
 #include "audio.inc"
 };
@@ -48,12 +54,29 @@ static const uint8_t voice[] PROGMEM={
 // the stream, including when this build requests repeat playback.
 struct Lpx4RomPlayer {
     static Lpx4HybridCore decoder;
+#if LPX25_ALIAS_ERROR
+    static inline void materializeError(){
+        // Keep the aliased byte observable when LTO folds a failed begin().
+        __asm__ __volatile__("" : : "m"(decoder.error_) : "memory");
+    }
+    static inline void publishErrorAlias(){
+        __asm__ __volatile__(
+          ".global lpx25_error\n\t.type lpx25_error,@object\n\t"
+          ".set lpx25_error,%0+%1\n\t.size lpx25_error,1"
+          : : "i"(&decoder),"n"(__builtin_offsetof(Lpx4HybridCore,error_)) : "memory");
+    }
+#endif
 #if LPX4_BATCHED_REMAINING
     // Called after next() succeeds, with parser errors already excluded.
     static bool sampleWasLast(){return decoder.subPos_==decoder.subEnd_;}
 #endif
 #if LPX4_V9_ROM_HEADER_LAYOUT && LPX25_REPEAT == 1
-    static bool begin(){return decoder.beginRom(voice,sizeof(voice),false);}
+    static bool begin(){
+#if LPX25_ALIAS_ERROR
+        publishErrorAlias();
+#endif
+        return decoder.beginRom(voice,sizeof(voice),false);
+    }
 #endif
 };
 Lpx4HybridCore Lpx4RomPlayer::decoder{Lpx4HybridCore::StaticZeroInit{}};
@@ -66,7 +89,12 @@ extern "C" {
 // byte alignment: 32-byte alignment would pad its ELF section back to 32.
 uint8_t lpx25_queue[LPX25_QUEUE] __attribute__((used,externally_visible,aligned(LPX25_QUEUE==24||LPX25_QUEUE==44?1:LPX25_QUEUE)));
 #if LPX25_V9_ROM_PLAYER
-volatile uint8_t lpx25_head,lpx25_tail,lpx25_stopped,lpx25_error;
+volatile uint8_t lpx25_head,lpx25_tail,lpx25_stopped;
+#if LPX25_ALIAS_ERROR
+extern volatile uint8_t lpx25_error;
+#else
+volatile uint8_t lpx25_error;
+#endif
 // GNU AVR ld puts linkonce BSS after regular BSS. Keep this byte
 // after the aligned queue to avoid adding an alignment gap.
 volatile uint8_t lpx25_eof __attribute__((section(".gnu.linkonce.b.lpx25_eof")));
@@ -74,6 +102,11 @@ volatile uint8_t lpx25_eof __attribute__((section(".gnu.linkonce.b.lpx25_eof")))
 volatile uint8_t lpx25_head,lpx25_tail,lpx25_eof,lpx25_stopped,lpx25_error;
 #endif
 }
+#if LPX25_ALIAS_ERROR
+#define LPX25_REPORT_ERROR() Lpx4RomPlayer::materializeError()
+#else
+#define LPX25_REPORT_ERROR() (lpx25_error=decoder.error())
+#endif
 static inline void barrier(){__asm__ __volatile__("" ::: "memory");}
 static inline uint8_t advance(uint8_t at){
 #if LPX25_QUEUE == 24 || LPX25_QUEUE == 44
@@ -169,7 +202,7 @@ __attribute__((optimize("no-split-wide-types,no-tree-ccp")))
 int main(){
     // Reset starts with interrupts masked. Keep the actual compiler CPU macros.
     CLKPR=_BV(CLKPCE);CLKPR=0;
-    if(!begin()){lpx25_error=decoder.error();lpx25_stopped=1;for(;;){}}
+    if(!begin()){LPX25_REPORT_ERROR();lpx25_stopped=1;for(;;){}}
     uint8_t repeats=LPX25_REPEAT;
     bool started=false;
     for(;;){
@@ -189,7 +222,7 @@ int main(){
         // to the drain. A restart is reachable only for a repeat build.
         if((!LPX25_V9_ROM_PLAYER || LPX25_REPEAT>1) && decoder.finished()){
             --repeats;
-            if(!begin()){lpx25_error=decoder.error();break;}
+            if(!begin()){LPX25_REPORT_ERROR();break;}
         }
         uint8_t sample;
         // Zero-byte symbols delimit the actual production decode region for
@@ -197,7 +230,7 @@ int main(){
         __asm__ __volatile__(".global lpx25_decode_begin\nlpx25_decode_begin:" ::: "memory");
         const bool decoded=decoder.next(sample);
         __asm__ __volatile__(".global lpx25_decode_end\nlpx25_decode_end:" ::: "memory");
-        if(!decoded){lpx25_error=decoder.error();break;}
+        if(!decoded){LPX25_REPORT_ERROR();break;}
 #if LPX25_V9_ROM_PLAYER && LPX4_BATCHED_REMAINING
         const bool last=Lpx4RomPlayer::sampleWasLast() && repeats==1;
 #else
