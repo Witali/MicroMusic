@@ -71,6 +71,7 @@ TINY_LPC_SATURATED=REPO/'Codecs/LPX/research/tiny-v9-lpc-saturated-2026-11-17'
 TINY_POLY_SEED=REPO/'Codecs/LPX/research/tiny-v9-poly-seed-2026-11-17'
 AVR5_POLY_PAGE=REPO/'Codecs/LPX/research/avr5-v9-poly-page-2026-11-17'
 AVR_POLY_IMMEDIATE=REPO/'Codecs/LPX/research/avr-v9-poly-immediate-2026-11-17'
+AVR_PLAYER_DRAIN=REPO/'Codecs/LPX/research/avr-v9-player-drain-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -248,6 +249,7 @@ def assert_recorded_source(path,expected):
         (TINY_POLY_SEED,'5f7fd2028ee18acc3e848b5207a0243b1775201b'),
         (AVR5_POLY_PAGE,'2115dcad6ec59e3fc6197f069fce7624884003fd'),
         (AVR_POLY_IMMEDIATE,'78a79936e3070e8fb3b6a9177e32e9ef267cac1a'),
+        (AVR_PLAYER_DRAIN,'d3121d64b4c73fb9d76be17982989cd6bfe2fde2'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))

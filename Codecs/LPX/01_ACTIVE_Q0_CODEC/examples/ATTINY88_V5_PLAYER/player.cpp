@@ -35,11 +35,15 @@
 #else
 #define LPX25_V9_RUNTIME 0
 #endif
+#if LPX25_V9_RUNTIME || (LPX4_USE_AVR_ASM && LPX4_V9_ROM_HEADER_LAYOUT && LPX4_PLAYER_PITCH_PAGE)
+#define LPX25_V9_ROM_PLAYER 1
+#else
+#define LPX25_V9_ROM_PLAYER 0
+#endif
 static const uint8_t voice[] PROGMEM={
 #include "audio.inc"
 };
-#if LPX25_V9_RUNTIME || \
-    (LPX4_USE_AVR_ASM && LPX4_V9_ROM_HEADER_LAYOUT && LPX4_PLAYER_PITCH_PAGE)
+#if LPX25_V9_ROM_PLAYER
 // Static storage is cleared by startup. A normal begin() still resets
 // the stream, including when this build requests repeat playback.
 struct Lpx4RomPlayer {
@@ -57,7 +61,14 @@ extern "C" {
 // Retain OR addressing for power-of-two rings. A 24-byte array needs only
 // byte alignment: 32-byte alignment would pad its ELF section back to 32.
 uint8_t lpx25_queue[LPX25_QUEUE] __attribute__((used,externally_visible,aligned(LPX25_QUEUE==24||LPX25_QUEUE==44?1:LPX25_QUEUE)));
+#if LPX25_V9_ROM_PLAYER
+volatile uint8_t lpx25_head,lpx25_tail,lpx25_stopped,lpx25_error;
+// GNU AVR ld puts linkonce BSS after regular BSS. Keep this byte
+// after the aligned queue to avoid adding an alignment gap.
+volatile uint8_t lpx25_eof __attribute__((section(".gnu.linkonce.b.lpx25_eof")));
+#else
 volatile uint8_t lpx25_head,lpx25_tail,lpx25_eof,lpx25_stopped,lpx25_error;
+#endif
 }
 static inline void barrier(){__asm__ __volatile__("" ::: "memory");}
 static inline uint8_t advance(uint8_t at){
@@ -154,23 +165,21 @@ int main(){
     uint8_t repeats=LPX25_REPEAT;
     bool started=false;
     for(;;){
+#if !LPX25_V9_ROM_PLAYER
         if(lpx25_eof){
-#if LPX25_V9_RUNTIME
-            break;
-#else
             // The foreground has no decoding left. Drain, then stop within a
             // few cycles of the final ISR return, before the next 2000-cycle
             // deadline. This keeps terminal bookkeeping out of every ISR.
             while(lpx25_head!=lpx25_tail){}
             ATOMIC_BLOCK(ATOMIC_RESTORESTATE){stop();}
             for(;;){}
-#endif
         }
+#endif
         const uint8_t head=lpx25_head,next=advance(head);
         if(next==lpx25_tail)continue;
         // Single playback publishes EOF on its last sample and goes directly
         // to the drain. A restart is reachable only for a repeat build.
-        if((!LPX25_V9_RUNTIME || LPX25_REPEAT>1) && decoder.finished()){
+        if((!LPX25_V9_ROM_PLAYER || LPX25_REPEAT>1) && decoder.finished()){
             --repeats;
             if(!begin()){lpx25_error=decoder.error();break;}
         }
@@ -183,8 +192,13 @@ int main(){
         if(!decoded){lpx25_error=decoder.error();break;}
         const bool last=decoder.finished() && repeats==1;
         lpx25_queue[head]=micromusic_pwm_gain(sample);barrier();
-        // Final head and EOF are one publication, even with byte indices.
+#if LPX25_V9_ROM_PLAYER
+        // The barrier orders the sample before the byte store. Only
+        // the producer writes head, and the ISR never reads EOF.
+        lpx25_head=next;
+#else
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE){lpx25_head=next;if(last)lpx25_eof=1;}
+#endif
         if(!started && (next==LPX25_QUEUE*3/4 || last)){
             // OC1A/PB1, fast 8-bit PWM at 62.5 kHz. Timer0 CTC /8 gives 8 kHz.
             DDRB|=_BV(PB1);OCR1A=128;
@@ -197,10 +211,12 @@ int main(){
 #endif
             started=true;sei();
         }
+#if LPX25_V9_ROM_PLAYER
+        if(last)break;
+#endif
     }
-#if LPX25_V9_RUNTIME
-    // Stop after the queued prefix, whether decoding ended or failed. Only
-    // the foreground consumes EOF; the ISR uses head and tail exclusively.
+#if LPX25_V9_ROM_PLAYER
+    // Report the end of decoding before the ISR drains the valid prefix.
     lpx25_eof=1;
     if(started){while(lpx25_head!=lpx25_tail){}}
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE){stop();}
