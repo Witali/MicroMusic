@@ -681,7 +681,7 @@ bool Lpx4HybridCore::readFrame(){
 #else
   if(!speechHalf_){
 #endif
-#if LPX4_COMPACT_ONLY && !LPX4_AVR25_V9_RUNTIME
+#if LPX4_COMPACT_ONLY && !LPX4_AVR_V9_PACKETS
    // The second half uses cached LPC; the next first half refreshes prev.
    for(uint8_t i=0;i<10;i++)prev_[i]=cur_[i];
 #endif
@@ -710,6 +710,8 @@ bool Lpx4HybridCore::readFrame(){
      // Converting a negative delta result to uint8_t puts it above the limit.
 #if LPX4_AVR25_V9_RUNTIME
      const uint8_t width=bits+(uint8_t)delta;
+#endif
+#if LPX4_AVR_V9_PACKETS
      uint8_t last=0;
 #else
      int8_t last=-1;
@@ -726,7 +728,7 @@ bool Lpx4HybridCore::readFrame(){
       const uint8_t code=readSpeechRice(k,bits+(delta?1:0));
 #endif
       // Compact Rice codes use at most seven bits: delta is -64..63.
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_AVR_V9_PACKETS
       const int8_t difference=(code>>1)^-(code&1);
       const uint8_t previous=cur_[i];
       const uint8_t value=delta?previous+difference:last+1+code;
@@ -773,7 +775,7 @@ bool Lpx4HybridCore::readFrame(){
    }
 #endif
   }
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_AVR_V9_PACKETS
   if(!initializedFrame_){
    staticSpectrum_=true;
    initializedFrame_=true;
@@ -1846,8 +1848,9 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
         if(sub)return;
 #endif
         if(!lsfCached_){
-            // Use the first frame's current spectrum directly on AVR25.
-            convertLsfAt(LPX4_AVR25_V9_RUNTIME?16:0,curLpc);
+            // The v9 packet path initializes from the current spectrum
+            // without copying its bins to the previous spectrum.
+            convertLsfAt(LPX4_AVR_V9_PACKETS?16:0,curLpc);
             lsfCached_=true;
         }
         // The endpoint is unchanged for the whole frame. Refresh a_ at its
