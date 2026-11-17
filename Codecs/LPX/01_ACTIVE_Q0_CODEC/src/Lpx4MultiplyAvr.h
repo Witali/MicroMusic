@@ -59,14 +59,29 @@ static inline __attribute__((always_inline)) int32_t lpx4Mul8xU16(int8_t x,uint1
     return result;
 #else
     if(!x)return 0;
-    if(x==1)return y;
-    if(x==-1)return -(int32_t)y;
-    if(x==3 || x==-3){
-        uint32_t triple=y;
-        __asm__("lsl %A0\n\trol %B0\n\trol %C0\n\t"
-                "add %A0,%A1\n\tadc %B0,%B1\n\tadc %C0,__zero_reg__\n\t"
-                : "+&r"(triple) : "r"(y) : "cc");
-        return x<0?-(int32_t)triple:(int32_t)triple;
+    if(scaledSixBit){
+        const uint8_t magnitude=x<0?(uint8_t)-x:(uint8_t)x;
+        if(magnitude<=3){
+            uint32_t product=y;
+            if(magnitude>1){
+                __asm__("lsl %A0\n\trol %B0\n\trol %C0"
+                        : "+&r"(product) : : "cc");
+                if(magnitude==3)
+                    __asm__("add %A0,%A1\n\tadc %B0,%B1\n\tadc %C0,__zero_reg__"
+                            : "+&r"(product) : "r"(y) : "cc");
+            }
+            return x<0?-(int32_t)product:(int32_t)product;
+        }
+    }else{
+        if(x==1)return y;
+        if(x==-1)return -(int32_t)y;
+        if(x==3 || x==-3){
+            uint32_t triple=y;
+            __asm__("lsl %A0\n\trol %B0\n\trol %C0\n\t"
+                    "add %A0,%A1\n\tadc %B0,%B1\n\tadc %C0,__zero_reg__\n\t"
+                    : "+&r"(triple) : "r"(y) : "cc");
+            return x<0?-(int32_t)triple:(int32_t)triple;
+        }
     }
     // Six rounds leave the partial product scaled by four. A Q4 scale
     // is divisible by four, so shrink it before multiplying. The one
