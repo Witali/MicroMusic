@@ -386,10 +386,14 @@ bool Lpx4HybridCore::beginStream(ReadByte reader,void* context,uint16_t size){
 bool Lpx4HybridCore::beginSource(uint16_t size){
  bytes_=size;
 #else
-#if LPX4_AVR25_V9_ROM_LAYOUT
+#if LPX4_V9_ROM_HEADER_LAYOUT
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  return beginRom(input,size,true);
 }
+#if LPX4_USE_AVR_ASM
+// Keep header validation outside the foreground decode loop's register frame.
+__attribute__((noinline))
+#endif
 bool Lpx4HybridCore::beginRom(const uint8_t* input,uint16_t size,bool reset){
 #else
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
@@ -401,7 +405,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if !LPX4_ROM_POINTER
  cursor_=0;
 #endif
-#if LPX4_AVR25_V9_ROM_LAYOUT
+#if LPX4_V9_ROM_HEADER_LAYOUT
  if(reset){
   remaining_=sampleCount_;
   resetState();

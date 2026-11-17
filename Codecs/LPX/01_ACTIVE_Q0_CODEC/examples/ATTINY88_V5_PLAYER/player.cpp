@@ -48,7 +48,7 @@ static const uint8_t voice[] PROGMEM={
 // the stream, including when this build requests repeat playback.
 struct Lpx4RomPlayer {
     static Lpx4HybridCore decoder;
-#if LPX4_AVR25_V9_ROM_LAYOUT && LPX25_REPEAT == 1
+#if LPX4_V9_ROM_HEADER_LAYOUT && LPX25_REPEAT == 1
     static bool begin(){return decoder.beginRom(voice,sizeof(voice),false);}
 #endif
 };
@@ -148,7 +148,7 @@ ISR(TIMER0_COMPA_vect){
     OCR1A=sample;
 }
 #endif
-#if LPX25_V9_RUNTIME && LPX4_AVR25_V9_ROM_LAYOUT && LPX25_REPEAT == 1
+#if LPX25_V9_ROM_PLAYER && LPX4_V9_ROM_HEADER_LAYOUT && LPX25_REPEAT == 1
 static bool begin(){return Lpx4RomPlayer::begin();}
 #else
 static bool begin(){return decoder.begin(voice,sizeof(voice));}
