@@ -104,20 +104,32 @@ static uint8_t segmentIndex;
 static uint8_t playbackGain(uint8_t sample){
     const uint8_t gain=pgm_read_byte(voice+sizeof(voice)-1);
 #if LPX4_USE_AVR_NOMUL_ASM
-    // Unity is the centered duty itself. Multiply by twice the remaining
-    // Q7 numerator, then use the high byte and the low byte's sign bit for
-    // the signed correction and rounding. Saturate on signed addition overflow.
-    uint8_t centered=sample^128, productLow, productHigh, count;
-    const uint8_t fraction=(uint8_t)(gain<<1);
+    // gain is128..255. With d=gain-128, duty=sample+round(sample*d/128)-d.
+    // Seven rounds produce2*sample*d. The rounded correction fits signed8,
+    // and its sign must equal the final ADD carry for an unclipped result.
+    uint8_t low,high,count;
+    const uint8_t increment=(uint8_t)(gain-128);
     __asm__(
-        "mov %1,%4\n\tclr %2\n\tldi %3,8\n\tlsr %1\n\t"
+        "mov %1,%4\n\tclr %2\n\tldi %3,7\n\tlsr %1\n\t"
         "1: brcc 2f\n\tadd %2,%0\n\t"
         "2: ror %2\n\tror %1\n\tdec %3\n\tbrne 1b\n\t"
-        "sbrc %0,7\n\tsub %2,%4\n\tlsl %1\n\tadc %2,__zero_reg__\n\t"
-        "add %0,%2\n\tbrvc 4f\n\tldi %2,127\n\tsbrs %0,7\n\tinc %2\n\tmov %0,%2\n\t4:"
-        : "+&r"(centered),"=&r"(productLow),"=&d"(productHigh),"=&d"(count)
-        : "r"(fraction) : "cc");
-    return centered^128;
+        "lsl %1\n\tadc %2,__zero_reg__\n\tsub %2,%4\n\t"
+        "add %0,%2\n\tbrcs 3f\n\tsbrc %2,7\n\tclr %0\n\trjmp 4f\n\t"
+        "3: sbrs %2,7\n\tser %0\n\t4:"
+        : "+&d"(sample),"=&r"(low),"=&r"(high),"=&d"(count) : "r"(increment) : "cc");
+    return sample;
+#elif LPX4_USE_AVR_ASM
+    // For signed centered sample m, P=m*gain and B=P+16448. Modulo16,
+    // B<32768 selects the valid duty floor(B/128). On overflow its shifted
+    // byte is0..125 for the upper rail and129..255 for the lower rail.
+    const uint8_t centered=sample^128;
+    uint16_t biased;
+    __asm__(
+        "mulsu %1,%2\n\tmovw %A0,r0\n\tclr __zero_reg__\n\t"
+        "subi %A0,192\n\tsbci %B0,191\n\tlsl %A0\n\trol %B0\n\tbrcc 1f\n\t"
+        "cpi %B0,128\n\tsbc %B0,%B0\n\t1:"
+        : "=d"(biased) : "a"(centered),"a"(gain) : "r0","r1","cc");
+    return (uint8_t)(biased>>8);
 #else
     const uint16_t scaled=((uint16_t)sample*gain+64)>>7;
     const int16_t duty=(int16_t)scaled+128-gain;

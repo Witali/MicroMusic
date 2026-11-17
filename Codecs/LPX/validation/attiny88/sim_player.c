@@ -60,6 +60,28 @@ static unsigned in_irq,irq_finishing,min_queue=H_LPX25_QUEUE,minimum_sp=H_RAMEND
 static uint64_t decode_start,decode_sum,decode_calls,decode_max,active_sum,active_calls;
 static uint64_t decode_irq_start,decode_irq_sum,decode_cpu_sum,decode_cpu_max,active_cpu_sum;
 static unsigned decoding,decode_active;
+/* Foreground-only direct IN/LDS(head) to actual OUT/STS(head) publication.
+ * All addresses come from ELF aliases; no firmware markers are added.
+ * Each retry replaces the pending read, so full-queue waits are excluded.
+ */
+static uint64_t producer_start,producer_irq_start,producer_calls;
+static uint64_t producer_sum,producer_irq_sum,producer_cpu_sum,producer_cpu_max;
+static uint64_t producer_active_calls,producer_active_sum,producer_active_cpu_sum,producer_active_cpu_max;
+static unsigned producer_open,producer_decoded,producer_active;
+static uint64_t irq_clock(void){
+ return irq_total+((in_irq||irq_finishing)?cpu.cycle-irq_start:0);
+}
+static unsigned head_access(uint32_t pc,unsigned store){
+ if(pc+1>H_FLASHEND)return 0;
+ const uint16_t op=cpu.flash[pc]|(uint16_t)cpu.flash[pc+1]<<8;
+ /* Ordinary AVR IN/OUT has a six-bit I/O address, mapped at data+0x20. */
+ if(head>=0x20 && head<0x60 && (op&0xf800)==(store?0xb800:0xb000))
+  return ((op&15)|((op>>5)&0x30))+0x20==head;
+ /* Direct SRAM fallback for a build that does not use a GPIOR alias. */
+ if(pc+3<=H_FLASHEND && (op&0xfe0f)==(store?0x9200:0x9000))
+  return (cpu.flash[pc+2]|(unsigned)cpu.flash[pc+3]<<8)==head;
+ return 0;
+}
 static uint8_t expected;
 static unsigned symbol(elf_firmware_t *f,const char *name){
  for(unsigned i=0;i<f->symbolcount;i++)if(!strcmp(f->symbol[i]->symbol,name))return f->symbol[i]->addr&65535;
@@ -132,7 +154,17 @@ int main(int argc,char **argv){
  avr_irq_register_notify(avr_iomem_getirq(&cpu,H_LPX_PWM_REGISTER,NULL,AVR_IOMEM_IRQ_ALL),pwm,NULL);
  uint64_t end=0;int state=cpu_Running;
  while(cpu.cycle<UINT64_C(1000000000) && state!=cpu_Crashed && state!=cpu_Done){
-  if(cpu.pc==decode_begin && !decoding){decode_start=cpu.cycle;decode_irq_start=irq_total;decoding=1;decode_active=cpu.data[H_LPX_SAMPLE_CLOCK]!=0;}
+  const unsigned foreground_step=!in_irq;
+  const unsigned before_head=cpu.data[head];
+  const unsigned publishing=foreground_step && head_access(cpu.pc,1);
+  if(foreground_step && head_access(cpu.pc,0)){
+   producer_start=cpu.cycle;producer_irq_start=irq_clock();
+   producer_open=1;producer_decoded=0;
+   producer_active=cpu.data[H_LPX_SAMPLE_CLOCK]!=0;
+  }
+  if(cpu.pc==decode_begin && !decoding){
+   if(!producer_open){fprintf(stderr,"Decode without a supported foreground head read\n");return 8;}
+   producer_decoded=1;decode_start=cpu.cycle;decode_irq_start=irq_total;decoding=1;decode_active=cpu.data[H_LPX_SAMPLE_CLOCK]!=0;}
   if(cpu.pc==decode_end && decoding){
    uint64_t elapsed=cpu.cycle-decode_start,interrupted=irq_total-decode_irq_start;
    if(interrupted>elapsed){fprintf(stderr,"Invalid decode IRQ accounting\n");return 6;}
@@ -157,6 +189,19 @@ int main(int argc,char **argv){
    uint64_t duration=cpu.cycle-irq_start;irq_total+=duration;if(duration>irq_max)irq_max=duration;
    irq_finishing=0;
   }
+  if(publishing && cpu.data[head]!=before_head && producer_open && producer_decoded){
+   const uint64_t elapsed=cpu.cycle-producer_start;
+   const uint64_t interrupted=irq_clock()-producer_irq_start;
+   if(interrupted>elapsed){fprintf(stderr,"Invalid producer IRQ accounting\n");return 8;}
+   const uint64_t foreground=elapsed-interrupted;
+   producer_calls++;producer_sum+=elapsed;producer_irq_sum+=interrupted;producer_cpu_sum+=foreground;
+   if(foreground>producer_cpu_max)producer_cpu_max=foreground;
+   if(producer_active){
+    producer_active_calls++;producer_active_sum+=elapsed;producer_active_cpu_sum+=foreground;
+    if(foreground>producer_active_cpu_max)producer_active_cpu_max=foreground;
+   }
+   producer_open=0;producer_decoded=0;
+  }
   unsigned sp=cpu.data[H_SPL]|cpu.data[H_SPH]<<8;
   if(sp>=H_RAMSTART && sp<=H_RAMEND)sp_ready=1;
   if(sp_ready && sp<minimum_sp)minimum_sp=sp;
@@ -178,7 +223,7 @@ int main(int argc,char **argv){
 #ifdef H_LPX_NATIVE_TARGET
   ",\"irq_r0_nonzero\":%llu,\"irq_r1_nonzero\":%llu,\"irq_registers_preserved\":true"
 #endif
-  "}\n",
+  "",
   (unsigned long long)writes,(unsigned long long)ticks,(unsigned long long)events,(unsigned long long)underruns,min_queue,
   (unsigned long long)first,(unsigned long long)last,(unsigned long long)min_gap,(unsigned long long)max_gap,
   (unsigned long long)event_min,(unsigned long long)event_max,(double)irq_total/(ticks?ticks:1),(unsigned long long)irq_max,
@@ -192,5 +237,18 @@ int main(int argc,char **argv){
   ,(unsigned long long)irq_r0_nonzero,(unsigned long long)irq_r1_nonzero
 #endif
   );
+ fprintf(report,
+  ",\"producer_accounting_kind\":\"foreground-direct-head-read-to-publish-v1\","
+  "\"producer_calls\":%llu,\"producer_active_calls\":%llu,\"producer_unpublished_decode_calls\":%llu,"
+  "\"producer_cycles\":%llu,\"producer_irq_cycles\":%llu,\"producer_cpu_cycles\":%llu,"
+  "\"producer_mean\":%.6f,\"producer_cpu_mean\":%.6f,\"producer_cpu_max\":%llu,"
+  "\"producer_active_irq_mean\":%.6f,\"producer_active_cpu_mean\":%.6f,\"producer_active_cpu_max\":%llu}\n",
+  (unsigned long long)producer_calls,(unsigned long long)producer_active_calls,
+  (unsigned long long)(decode_calls-producer_calls),
+  (unsigned long long)producer_sum,(unsigned long long)producer_irq_sum,(unsigned long long)producer_cpu_sum,
+  (double)producer_sum/(producer_calls?producer_calls:1),(double)producer_cpu_sum/(producer_calls?producer_calls:1),
+  (unsigned long long)producer_cpu_max,
+  (double)producer_active_sum/(producer_active_calls?producer_active_calls:1),
+  (double)producer_active_cpu_sum/(producer_active_calls?producer_active_calls:1),(unsigned long long)producer_active_cpu_max);
  fclose(report);avr_terminate(&cpu);return end?0:5;
 }

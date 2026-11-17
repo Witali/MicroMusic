@@ -389,8 +389,12 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
         assert.equal(release.compactVersion,9);
         assert.equal(release.universalDecoder,true);
         assert.equal(release.variants.length,9);
-        assert.equal(release.sourceSha256[path],textDigest(bytes),path+' v9 release source');
-        recorded=actual;
+        // A retained catalog may precede the current measured optimization.
+        // Bind it to its published sources before following later steps.
+        const published=release.sourceSha256[path]===textDigest(bytes)?bytes:
+          readRecordedBuildFile('ead0bdcb0b627532afbf2d7b52fce7f015cf6dbc',path);
+        assert.equal(release.sourceSha256[path],textDigest(published),path+' v9 release source');
+        recorded=encoding==='raw'?sha(published):textDigest(published);
       }
     }
   }
@@ -411,6 +415,35 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       assert.ok(result.cases.every(row=>row.pwm_exact&&row.size_reduced&&row.after.underruns===0));
       recorded=change.current[field];
     }
+  }
+  const directory='Codecs/LPX/research/avr-player-3k-2026-11-17/';
+  for(const step of JSON.parse(read(directory+'steps.json'))){
+    if(recorded===actual)break;
+    const report=JSON.parse(read(directory+step));
+    const change=report.sources[path];
+    if(change?.baseline[field]!==recorded)continue;
+    assert.equal(report.schema,'lpx-avr-player-step-v1');
+    assert.equal(report.complete,true);
+    const evidence=read(directory+report.measurements);
+    assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+    const rows=JSON.parse(evidence).cases;
+    assert.equal(rows.length,44);
+    for(const target of ['attiny88','atmega328p'])assert.equal(rows.filter(r=>r.target===target).length,22);
+    for(const row of rows){
+      const {before,after}=row;
+      assert.equal(after.accepted,true);
+      assert.equal(after.underruns,0);
+      assert.equal(before.pwm_sha256,after.pwm_sha256);
+      assert.equal(before.samples,after.samples);
+      assert.equal(after.samples,after.producer_calls);
+      assert.equal(after.samples,after.decode_calls);
+      assert.equal(after.producer_unpublished_decode_calls,0);
+      for(const key of ['producer_cpu_mean','producer_cpu_max','producer_active_cpu_mean','producer_active_cpu_max'])
+        assert.ok(after[key]+after.irq_max<=before[key]+before.irq_max,key);
+      for(const key of ['static_ram_bytes','stack_bytes'])assert.ok(after[key]<=before[key],key);
+      if(report.kind==='reduction')assert.ok(after.program_excluding_audio_bytes<=before.program_excluding_audio_bytes);
+    }
+    recorded=change.current[field];
   }
   assert.equal(recorded,actual,path+' current source');
 }

@@ -332,4 +332,31 @@ def assert_recorded_source(path,expected):
             assert all(row['pwm_exact'] and row['size_reduced'] and row['after']['underruns']==0
                        for row in result['cases'])
             recorded=change['current']['text_lf_sha256']
+    # Later player reductions pair complete producers on both supported CPUs.
+    # Older WebUI receipts remain historical; they need not describe new HEXes.
+    directory=REPO/'Codecs/LPX/research/avr-player-3k-2026-11-17'
+    for step in json.loads((directory/'steps.json').read_text(encoding='utf-8')):
+        if recorded==actual:break
+        report=json.loads((directory/step).read_text(encoding='utf-8'))
+        change=report['sources'].get(path)
+        if not change or change['baseline']['text_lf_sha256']!=recorded:continue
+        assert report['schema']=='lpx-avr-player-step-v1' and report['complete']
+        evidence=(directory/report['measurements']).read_bytes().replace(b'\r\n',b'\n')
+        assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
+        rows=json.loads(evidence)['cases']
+        assert len(rows)==44
+        assert all(sum(r['target']==t for r in rows)==22 for t in ('attiny88','atmega328p'))
+        for row in rows:
+            before,after=row['before'],row['after']
+            assert after['accepted'] and after['underruns']==0
+            assert before['pwm_sha256']==after['pwm_sha256']
+            assert before['samples']==after['samples']==after['producer_calls']==after['decode_calls']
+            assert after['producer_unpublished_decode_calls']==0
+            for field in ('producer_cpu_mean','producer_cpu_max','producer_active_cpu_mean','producer_active_cpu_max'):
+                assert after[field]+after['irq_max']<=before[field]+before['irq_max']
+            for field in ('static_ram_bytes','stack_bytes'):
+                assert after[field]<=before[field]
+            if report['kind']=='reduction':
+                assert after['program_excluding_audio_bytes']<=before['program_excluding_audio_bytes']
+        recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

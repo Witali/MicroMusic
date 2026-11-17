@@ -1,0 +1,30 @@
+{
+  "schema": "lpx-avr-player-step-v1",
+  "kind": "reduction",
+  "complete": true,
+  "baseline_revision": "ead0bdcb0b627532afbf2d7b52fce7f015cf6dbc",
+  "measurements": "gain-measurements.json",
+  "measurements_sha256": "6519a3b100af3a04bb7ea54af0dd97ed1143234b5cc86c9581e77e082d11c840",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp": {
+      "baseline": {
+        "raw_sha256": "7538084e7e7544784be4ce92b4fb918c83ae2791985da8564af2822dfcaac1f6",
+        "text_lf_sha256": "7538084e7e7544784be4ce92b4fb918c83ae2791985da8564af2822dfcaac1f6"
+      },
+      "current": {
+        "raw_sha256": "36a39a1e052e480b487303554b578856ebbcfc7fd0125dd914cabad3aa4c07c9",
+        "text_lf_sha256": "36a39a1e052e480b487303554b578856ebbcfc7fd0125dd914cabad3aa4c07c9"
+      }
+    },
+    "Codecs/LPX/validation/attiny88/sim_player.c": {
+      "baseline": {
+        "raw_sha256": "3a9d4317837d534631310566582f658ba1742da48f52aec1a97a79e5bf15da9b",
+        "text_lf_sha256": "8569f9649138f4a6d67683286bd814f6921b3393d18ca961d9b40d43a91f94f9"
+      },
+      "current": {
+        "raw_sha256": "72ecd850c2d5c8329ae275face3016dd410bb20107513714e0af286dd21d6438",
+        "text_lf_sha256": "72ecd850c2d5c8329ae275face3016dd410bb20107513714e0af286dd21d6438"
+      }
+    }
+  }
+}
