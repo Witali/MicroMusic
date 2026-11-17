@@ -61,6 +61,7 @@ const avrLsfAddressingReport='Codecs/LPX/research/avr-v9-lsf-addressing-2026-11-
 const avrLsfFrameReport='Codecs/LPX/research/avr-v9-lsf-frame-2026-11-17/';
 const avrPolyWidthReport='Codecs/LPX/research/avr-v9-poly24-width-2026-11-17/';
 const avrSubframePhaseReport='Codecs/LPX/research/avr-v9-subframe-phase-2026-11-17/';
+const tinyFrameRiceReport='Codecs/LPX/research/tiny-v9-frame-rice-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -281,6 +282,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avrLsfFrameReport,'95dca671cf1cc7cb7beb7b9085f4d269b0a0a43d'],
     [avrPolyWidthReport,'0eb4f9525e56a59a234c49d64e46632010cf984c'],
     [avrSubframePhaseReport,'2389ef364a722fe7793f8a54df24269d52f9527f'],
+    [tinyFrameRiceReport,'9a2f76626b9cb9c9a7f5be5bd81ebd17c4ccf9e0'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

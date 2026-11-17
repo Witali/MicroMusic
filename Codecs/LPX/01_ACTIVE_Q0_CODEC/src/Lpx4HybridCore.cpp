@@ -641,7 +641,12 @@ uint8_t Lpx4HybridCore::readBits(uint8_t n){
 uint8_t Lpx4HybridCore::readSpeechRice(uint8_t k,uint8_t width){
 #if LPX4_COMPACT_ONLY && LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS)
  // Accumulate high << k as zeros arrive. The eighth zero still selects escape.
+#if LPX4_AVR25_V9_RUNTIME && LPX4_AVR25_V9_ROM_LAYOUT && !defined(LPX4_ENABLE_PCM16)
+ // Compact LSF Rice widths leave only k=0, 1, or 2.
+ const uint8_t step=k+k+(k==0);
+#else
  const uint8_t step=1<<k;
+#endif
  uint8_t upper=0;
  for(uint8_t high=0;high<8;++high){
   if(readOne())return upper|(k?readBits(k):0);
@@ -672,11 +677,15 @@ bool Lpx4HybridCore::readFrame(){
  {
 #endif
   staticSpectrum_=true;
-#if LPX4_AVR25_V9_RUNTIME
-  // The second Sparse80 half reuses the spectrum and consumes no header.
+#if LPX4_AVR25_V9_RUNTIME && LPX4_AVR25_V9_ROM_LAYOUT && !defined(LPX4_ENABLE_PCM16)
+  if(subIndex_&8){
+   // The second Sparse80 half reuses the spectrum and consumes no header.
+   if(LPX4_SPEECH_FLAGS&8)return true;
+  }else{
+#elif LPX4_AVR25_V9_RUNTIME
   if((LPX4_SPEECH_FLAGS&8) && (subIndex_&8))return true;
-#endif
-#if LPX4_COMPACT_ONLY
+  if(!(subIndex_&8)){
+#elif LPX4_COMPACT_ONLY
   if(!(subIndex_&8)){
 #else
   if(!speechHalf_){
@@ -700,11 +709,20 @@ bool Lpx4HybridCore::readFrame(){
 #else
    {
 #endif
+#if LPX4_AVR25_V9_RUNTIME && LPX4_AVR25_V9_ROM_LAYOUT && !defined(LPX4_ENABLE_PCM16)
+    const bool haveSpectrum=initializedFrame_;
+    if(!readOne()){
+     if(!haveSpectrum){error_=CORRUPT_STREAM;return false;}
+    }else{
+     const bool delta=readOne()!=0;
+     if(delta&&!haveSpectrum){error_=CORRUPT_STREAM;return false;}
+#else
     if(!readOne()){
      if(!initializedFrame_){error_=CORRUPT_STREAM;return false;}
     }else{
      const bool delta=readOne()!=0;
      if(delta&&!initializedFrame_){error_=CORRUPT_STREAM;return false;}
+#endif
      const uint8_t k=bits-4-(uint8_t)delta;
      // AVR25 keeps the same one-based indices in the parser and workspace.
      // Converting a negative delta result to uint8_t puts it above the limit.
