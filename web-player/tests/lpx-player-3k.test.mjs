@@ -64,3 +64,40 @@ test('rate-aware source encoding and selectable C/ASM controls retain their evid
     assert.equal(row.done,1);assert.ok(row.irqs>0);
   }
 });
+
+test('all 18 WebUI images retain exact media and the single-stream Nano size cap',()=>{
+  const report=json(directory+'web-rebuild.json');
+  assert.equal(report.cases.length,18);
+  assert.equal(report.release_checks.total_samples,345470);
+  assert.equal(report.release_checks.all_whole_producer_mean_peak_no_slower,true);
+  assert.equal(report.independent_rebuild.all_binaries_exact,true);
+  assert.equal(report.independent_rebuild.all_no_float_runtime_symbols,true);
+  assert.equal(Object.keys(report.protected_asset_sha256).length,26);
+  for(const [path,digest] of Object.entries(report.protected_asset_sha256))assert.equal(sha(read(path)),digest);
+  const nano=json('web-player/firmware-atmega328p.json');
+  for(const row of report.cases){
+    assert.equal(row.pwm_exact,true);assert.equal(row.after.accepted,true);assert.equal(row.after.underruns,0);
+    assert.equal(row.after.stream,row.before.stream);
+    assert.ok(row.after.ram<=row.before.ram);assert.ok(row.after.stack<=row.before.stack);
+    assert.equal(sha(read(row.source)),row.hex_sha256);
+    if(row.family==='nano'){
+      assert.ok(row.after.program<=3072);
+      const variant=nano.variants.find(v=>v.clipId+'-'+v.id===row.id);
+      assert.equal(variant.programFlashBytes,row.after.program);
+      assert.equal(row.after.flash,row.before.flash-60);
+    }else if(row.family==='tiny')assert.ok(row.after.flash<=6012);
+  }
+  const vectors=json(directory+'irq-vectors.json');
+  assert.equal(vectors.cases.length,132);
+  assert.ok(vectors.cases.every(row=>row.irq_delta===0));
+  assert.equal(vectors.groups.atmega328p.isr_body_cycles,29);
+  assert.equal(vectors.groups.attiny88.isr_body_cycles,29);
+  const arithmetic=json(directory+'arithmetic-audit.json');
+  assert.equal(arithmetic.passed,true);
+  assert.equal(arithmetic.whole_c_fallback_control_valid_pwm,true);
+  assert.equal(arithmetic.selection_cases,12);
+  assert.ok(arithmetic.atmega328_328p_control_binary_identity.every(row=>row.binary_identical));
+  for(const [name,digest] of Object.entries(arithmetic.evidence_sha256))assert.equal(sha(read(directory+name)),digest);
+  for(const path of ['web-player/app.js','web-player/index.html','web-player/lib/tiny88-preview.js'])
+    assert.match(read(path).toString(),/20261117-lpx-3k-rates/);
+});

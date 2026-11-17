@@ -1,13 +1,13 @@
 import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js?v=20261102-speex-nano';
 import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-speex-dialogue';
 import {speexFirmwareEntries,speexDialogueProfiles} from './lib/speex-preview.js?v=20261102-speex-dialogue';
-import {lpxTiny88FirmwareEntries} from './lib/tiny88-preview.js?v=20261117-nano-lpx-v9';
+import {lpxTiny88FirmwareEntries} from './lib/tiny88-preview.js?v=20261117-lpx-3k-rates';
 import {speechSignals,speechWindow} from './lib/speech-waveform.js?v=20261103-playback-volume';
 import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js?v=20261102-speex-nano';
 import { parseHex } from './lib/hex.js';
 import { RealtimeMonitor } from './lib/realtime.js';
 import { universalPackageEntry } from './lib/universal-package.js?v=20261025-um88-channels';
-import { lpxPreviewEntries, lpxFirmwareEntries, lpxDialogueEntry, previewWaveform } from './lib/native-preview.js?v=20261117-nano-lpx-v9';
+import { lpxPreviewEntries, lpxFirmwareEntries, lpxDialogueEntry, previewWaveform } from './lib/native-preview.js?v=20261117-lpx-3k-rates';
 const $ = id => document.getElementById(id);
 const formatHex = (value, length=2) => value.toString(16).toUpperCase().padStart(length,'0');
 const canvas = $('wave');
@@ -585,7 +585,7 @@ try {
   }catch{/* Older/offline catalogs retain their own examples when the shared index is unavailable. */}
   let previewError;
   try{
-    const response=await fetch(new URL('./firmware-atmega328p.json?v=20261117-nano-lpx-v9',import.meta.url));
+    const response=await fetch(new URL('./firmware-atmega328p.json?v=20261117-lpx-3k-rates',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(...lpxFirmwareEntries(await response.json(),import.meta.url));
   }catch{/* Other Nano catalogs remain usable. */}
@@ -595,7 +595,7 @@ try {
     catalog.entries.push(...speexFirmwareEntries(await response.json(),import.meta.url));
   }catch{/* LPX remains usable without the individual Speex catalog. */}
   try{
-    const response=await fetch(new URL('./audio/lpx-dialogue/manifest.json?v=20261117-nano-lpx-v9',import.meta.url));
+    const response=await fetch(new URL('./audio/lpx-dialogue/manifest.json?v=20261117-lpx-3k-rates',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     catalog.entries.push(lpxDialogueEntry(await response.json(),import.meta.url));
   }catch{/* Individual recordings and Speex dialogue remain usable. */}
@@ -619,7 +619,7 @@ try {
     catalog.entries.push(...data.clips.flatMap(clip=>lpxPreviewEntries(clip,import.meta.url)));
   }catch{/* Existing LPX clips remain usable if additional assets cannot load. */}
   try{
-    const response=await fetch(new URL('./firmware-lpx-attiny88.json?v=20261114-lpx-v9',import.meta.url));
+    const response=await fetch(new URL('./firmware-lpx-attiny88.json?v=20261117-lpx-3k-rates',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     const verified=lpxTiny88FirmwareEntries(await response.json(),import.meta.url);
     const ids=new Set(verified.map(entry=>entry.id));

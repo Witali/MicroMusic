@@ -33,6 +33,12 @@ These are simulator measurements with active interrupts, not physical-board
 measurements. A new recording/rate is admitted only by complete IRQ playback
 with exact PWM and zero underruns; an average below the deadline is insufficient.
 
+The filled-queue body is 29 cycles on both chips. GNU linker relaxation uses
+a two-cycle RJMP vector when it can reach the handler; larger Nano images
+retain a three-cycle JMP vector. With four entry cycles this explains 35/36
+without a change to the ISR body. All 132 final ELF vectors were inspected;
+none changed vector cost relative to its matched task-start image.
+
 ## Encode source audio at the selected rate
 
 From the repository root with the existing scientific Python dependencies:

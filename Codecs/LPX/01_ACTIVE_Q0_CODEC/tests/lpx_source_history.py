@@ -366,4 +366,22 @@ def assert_recorded_source(path,expected):
                 assert after['program_excluding_audio_bytes']<=row['compatibility_program_bytes']+overhead
                 if row['target']=='atmega328p':assert after['program_excluding_audio_bytes']<=3072
         recorded=change['current']['text_lf_sha256']
+    if recorded!=actual:
+        directory=REPO/'Codecs/LPX/research/avr-player-3k-2026-11-17'
+        report=json.loads((directory/'web-release-transition.json').read_text(encoding='utf-8'))
+        change=report['sources'].get(path)
+        if change and change['baseline']['text_lf_sha256']==recorded:
+            assert report['schema']=='lpx-avr-player-web-release-v1'
+            assert report['baseline_revision']=='f69487c3ae6e14e888717d60edbaa11511285bcf'
+            evidence=(directory/'web-rebuild.json').read_bytes().replace(b'\r\n',b'\n')
+            assert hashlib.sha256(evidence).hexdigest()==report['measurements_sha256']
+            result=json.loads(evidence)
+            assert len(result['cases'])==18 and result['all_audio_stream_assets_unchanged']
+            assert result['independent_rebuild']['all_binaries_exact']
+            assert result['independent_rebuild']['all_no_float_runtime_symbols']
+            assert len(result['independent_rebuild']['cases'])==18
+            assert all(r['exact_old_new_pwm'] and r['old_elf_matches_published_hex'] and
+                       r['producer_and_irq_after']<=r['producer_and_irq_before'] and
+                       r['producer_cpu_max_delta']<=0 for r in result['timing_comparison'])
+            recorded=change['current']['text_lf_sha256']
     assert recorded==actual,(path,'current source')

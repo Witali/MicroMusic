@@ -1,0 +1,62 @@
+{
+  "schema": "lpx-final-arithmetic-and-irq-audit-v1",
+  "passed": true,
+  "issues": [],
+  "source_lf_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "deda44594944e7fce10b949f275cd622ee4a39b9a80a3b03542ebd1c58bc4a6a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "19c0d9a72ce7fe69b95c7b7d48d7bd9fd51b7a6eb333b9790261aa4ddd14d24f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/examples/ATTINY88_V5_PLAYER/player.cpp": "35f1e15de54177af88dd7298cce1c1df432175360eb587ac1d455871bd7d2218",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_attiny88_player.py": "80a7429032a3a3c52c1542ddba57306d3e2fb4e78cb5851f630c87503d3ac5ba"
+  },
+  "evidence_sha256": {
+    "final-gain-proof.json": "416b8a125006f0fa331efd46e8de32237e4ae5a73e65933fbbbc2a7c9158ad36",
+    "backend-selection.json": "a6313aa9579e7029276688d6491c9b196af3b8dd31a74710a776a1cb7c7d204a",
+    "atmega328-controls.json": "9a713b24597665388f85fd9d7874052f84f50f9d2d22a24711769300ecf602a4",
+    "final-ring-proof.json": "0c31e3ccecf454957c88a59944f61893b858106aab50522a0cf85a031a0b690f",
+    "irq-vectors.json": "051f0185086bdfc76426e86043fd7bce01fd6e918633ab573b6e0ecdbf9d9216"
+  },
+  "selection_cases": 12,
+  "gain_backend_cases": 4,
+  "exhaustive_gain_pairs_per_backend": 32768,
+  "ring_transitions": 41280,
+  "ring_irqs": 6057,
+  "atmega328_328p_control_binary_identity": [
+    {
+      "sample_hz": 8000,
+      "control": "chego-2k",
+      "binary_identical": true
+    },
+    {
+      "sample_hz": 12000,
+      "control": "chego-2k",
+      "binary_identical": true
+    },
+    {
+      "sample_hz": 16000,
+      "control": "chego-2k",
+      "binary_identical": true
+    }
+  ],
+  "whole_c_fallback_control_valid_pwm": true,
+  "irq_max_cycles": {
+    "atmega328p": [
+      35,
+      36
+    ],
+    "attiny88": [
+      35
+    ]
+  },
+  "unchanged_isr_body_all132": true,
+  "baseline_vector_reach_crossings": 0,
+  "physical_board_measured": false,
+  "notes": [
+    "C remains explicitly selectable independently of AVR Flash access and hardware layout.",
+    "No-ROM-gain recipes retain two LPC taps; the supported AVR5 ROM-gain player explicitly selects one.",
+    "ATmega328 and ATmega328P retain real AVR5 compiler macros and identical control binaries at all three rates.",
+    "The ISR pushes only Z; reserved r10/r11 and SREG policy are unchanged. MUL scratch r0/r1 are preserved.",
+    "Nano IRQ variation comes from vector RJMP/JMP reach to the unchanged 29-cycle filled-FIFO body."
+  ],
+  "evidence_hash_encoding": "text-lf"
+}

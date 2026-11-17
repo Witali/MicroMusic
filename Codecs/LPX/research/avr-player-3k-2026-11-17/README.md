@@ -102,3 +102,43 @@ and guard bytes, with 6057 active IRQs and zero output/r1 errors. The receipt
 records the exact compiler/observer commands. The general arithmetic default
 remains two taps; the player builder explicitly selects one only for ASM,
 universal v9, hardware-MUL targets with the optimized ROM-selected gain.
+
+## Rebuilt WebUI images
+
+`web-rebuild.json` records all 18 rebuilt assets against the exact task-start
+publication, including a replay of each old ELF after proving it matches the
+published HEX. All 345,470 PWM samples match C, the existing public WAV and
+their predecessor, with zero IRQ underruns. All 26 sound/stream assets stay
+byte-identical. Every image has a separately rebuilt, byte-exact ASM binary
+with no floating-point runtime symbols.
+
+| Image | Program excluding audio | Full image | Change from publication |
+| --- | ---: | ---: | ---: |
+| Nano single stream | 3056..3057 B | 3506..4938 B | −60 B each |
+| Nano dialogue | 3339 B | 8888 B | −58 B |
+| Tiny three-rate release | 3665..3666 B | 4058..5546 B | +26 B each |
+
+Tiny's release flags differ from the generic 22-case recipe. All nine full
+Tiny images fit the 6012-byte standard bootloader region and the 6656-byte
+project cap. The table's Tiny growth is the explicit new rate feature cost,
+not growth of sound data. The ordinary 8 kHz-only compatibility build remains
+smaller than task start.
+
+Matched full producer plus IRQ means improve by 0.275..0.422 cycles/sample on
+Nano, 8.000..8.304 on Tiny and 1.319 on the dialogue; peaks never increase.
+The raw Nano decoding region grows about 9.6 cycles while the faster output
+gain offsets it. Queue minima and peak stack stay unchanged in the released
+images. `irq-vectors.json` explains the linked Nano 35/36-cycle vector cost;
+all 132 measured vector/body combinations match their predecessor costs.
+
+The WebUI cache keys and generated speech inventory were refreshed. The full
+1966-test web suite passed, followed by the added release-receipt assertion
+and its two existing matrix/contract checks. The 13 host reference tests,
+seven source-rate frontend tests and generated inventory check also passed.
+
+`arithmetic-audit.json` binds the final 12 MCU/backend/gain selections, the
+retained ring/gain tests, and native ATmega328 controls at all three rates.
+Those control binaries equal the matching ATmega328P binaries. Explicit C
+remains available with either hardware memory layout; no-gain builds keep
+the general two-tap default. The complete C fallback control also produces
+exact PWM and preserves the native interrupt context.

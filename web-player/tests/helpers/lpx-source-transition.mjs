@@ -451,5 +451,25 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     }
     recorded=change.current[field];
   }
+  if(recorded!==actual){
+    const directory='Codecs/LPX/research/avr-player-3k-2026-11-17/';
+    const report=JSON.parse(read(directory+'web-release-transition.json'));
+    const change=report.sources[path];
+    if(change?.baseline[field]===recorded){
+      assert.equal(report.schema,'lpx-avr-player-web-release-v1');
+      assert.equal(report.baseline_revision,'f69487c3ae6e14e888717d60edbaa11511285bcf');
+      const evidence=read(directory+'web-rebuild.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      const result=JSON.parse(evidence);
+      assert.equal(result.cases.length,18);
+      assert.equal(result.all_audio_stream_assets_unchanged,true);
+      assert.equal(result.independent_rebuild.all_binaries_exact,true);
+      assert.equal(result.independent_rebuild.all_no_float_runtime_symbols,true);
+      assert.equal(result.independent_rebuild.cases.length,18);
+      assert.ok(result.timing_comparison.every(r=>r.exact_old_new_pwm&&r.old_elf_matches_published_hex&&
+        r.producer_and_irq_after<=r.producer_and_irq_before&&r.producer_cpu_max_delta<=0));
+      recorded=change.current[field];
+    }
+  }
   assert.equal(recorded,actual,path+' current source');
 }
