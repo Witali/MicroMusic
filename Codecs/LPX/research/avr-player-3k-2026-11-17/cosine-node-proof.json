@@ -1,0 +1,52 @@
+{
+  "cases_per_backend": 2032,
+  "backends": 4,
+  "minimum_node": 1,
+  "maximum_node": 127,
+  "repeats": 16,
+  "all_reachable_nodes_exact": true,
+  "C_and_ASM_exact": true,
+  "abi_preserved": true,
+  "native_target": "atmega328p",
+  "physical_board_measured": false,
+  "irq_counts": [
+    268,
+    268,
+    316,
+    316
+  ],
+  "baseline_revision": "8cf06a50944bfc2a7b99dbbc1517d808937fa785",
+  "compiler": "avr-g++ (GCC) 7.3.0",
+  "simavr": "1.6",
+  "explicit_c_binary_exact": true,
+  "source_binding": {
+    "old-asm": {
+      "core_text_lf_sha256": "5f4324308a8661a98f452c18ec076f86472231358e2ea1e200a0499ab826263c",
+      "header_text_lf_sha256": "0f15ef9efa0d62abc7c5c0e039d7b284c577946fc7fd34768cd62ded6c48381f",
+      "profile_text_lf_sha256": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+      "binary_sha256": "705e3d94f120bbf92d204ff9874d3ced4003837f7080bb3fab661bec05c98dec"
+    },
+    "old-c": {
+      "core_text_lf_sha256": "5f4324308a8661a98f452c18ec076f86472231358e2ea1e200a0499ab826263c",
+      "header_text_lf_sha256": "0f15ef9efa0d62abc7c5c0e039d7b284c577946fc7fd34768cd62ded6c48381f",
+      "profile_text_lf_sha256": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+      "binary_sha256": "278c0de1bb9b60d61227032c83b41092abde8f62b2ccb5aed4d9820b1c6178a8"
+    },
+    "new-asm": {
+      "core_text_lf_sha256": "5a4998afb220d659dc6e9f63636f59982ea6e48047a59c4a61c660b75b0f51a0",
+      "header_text_lf_sha256": "0f15ef9efa0d62abc7c5c0e039d7b284c577946fc7fd34768cd62ded6c48381f",
+      "profile_text_lf_sha256": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+      "binary_sha256": "9df63c39d237a11517d00401fad90388cb985059a1ae9dba27ee99a424fa490d"
+    },
+    "new-c": {
+      "core_text_lf_sha256": "5a4998afb220d659dc6e9f63636f59982ea6e48047a59c4a61c660b75b0f51a0",
+      "header_text_lf_sha256": "0f15ef9efa0d62abc7c5c0e039d7b284c577946fc7fd34768cd62ded6c48381f",
+      "profile_text_lf_sha256": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+      "binary_sha256": "278c0de1bb9b60d61227032c83b41092abde8f62b2ccb5aed4d9820b1c6178a8"
+    }
+  },
+  "probe_text_lf_sha256": "2736a91e4dcb5e2a6e68da10a3fc32d7399a82568254d9e45a3fd93284b9b322",
+  "driver_text_lf_sha256": "67823fb284b7fc0f6ad30379825707d998a727b5335e77867a9319cb5fc187ca",
+  "observer_text_lf_sha256": "ee02fb462d72fe87cf3d376fbdede78f9a43479fd4313bd21ce829b7df7cb806",
+  "cosine_bounds_note": "Validated one-based spectra produce nodes1..127 at everyLPC2 anchor. Reflection reads indices1..64; integerindex-1 and array[63] remain within the64-word array. Node0 is unreachable from validatedstreams."
+}

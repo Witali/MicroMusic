@@ -47,3 +47,9 @@ modes and profiles 4/6/15. It checks the full private reader state, live IRQ,
 ABI/r1/SP and byte-identical explicit C. Clear-error C/ASM traces match;
 the predecessor's private state difference after an already-set error remains
 explicitly recorded. Public `next()` guards errors before reaching that case.
+
+`tests/verify_cosine_nodes.py build/cosine-node-proof --baseline-ref 8cf06a50
+--wsl Ubuntu` similarly reproduces `cosine-node-proof.json`. All nodes
+1..127 are tested 16 times per old/new C/ASM backend on the actual AVR5
+instruction model, with active interrupts and context checks. Explicit C
+binaries remain unchanged. Node zero is unreachable from validated spectra.
