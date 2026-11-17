@@ -33,6 +33,11 @@ these paired workload receipts do not claim that new binaries equal old HEXes.
 - `cosine`: omit unreachable node zero from the universal AVR5 table,
   matching the private AVR25 table's bound. Nano saves another 2 B
   (3078..3079 B); Tiny binaries and every measured CPU/memory field are unchanged.
+- `halt`: after the final drain, mask interrupts and stop once. The dedicated
+  player never returns. This saves 4 B on both CPUs with all 44 playback/CPU
+  results unchanged (Nano 3074..3075 B, Tiny 3627..3628 B). Global SREG.I
+  intentionally stays zero at the permanent halt; every active IRQ still
+  preserves the complete foreground context.
 
 The source-bound `rice-reader-proof.json` is reproduced with:
 
@@ -53,3 +58,11 @@ explicitly recorded. Public `next()` guards errors before reaching that case.
 1..127 are tested 16 times per old/new C/ASM backend on the actual AVR5
 instruction model, with active interrupts and context checks. Explicit C
 binaries remain unchanged. Node zero is unreachable from validated spectra.
+
+`halt-edge-proof.json` retains a separate pre-gain comparison of 30 stop/error
+configurations per CPU: profiles 4/6/15, prefill boundaries, short tails,
+malformed/truncated headers and packets, repeats and segment resets. PWM,
+EOF/error/stop/FIFO/timer state and producer/stack measurements remain exact.
+The canonical `halt` step binds the final gain/Rice/cosine composition.
+An additional 4 B CRT exit-alias experiment was measured but not enabled;
+the ordinary startup exit destination remains unchanged.

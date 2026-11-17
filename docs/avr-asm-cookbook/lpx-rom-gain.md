@@ -79,3 +79,13 @@ Parsed one-based spectral bins produce nodes 1..127; reflection reads only
 all LPM instructions and arithmetic. Keep the 65-entry table for selectable
 C, legacy and other geometries. This saves 2 B on Nano, with identical full
 producer timing across all 22 cases and byte-identical Tiny images.
+
+## Stop once after the final queue drain
+
+For the dedicated ROM player whose main never returns, replace the final
+restore-state atomic block with `cli(); stop();`. This removes an IN/OUT pair
+without changing active playback. Global interrupts intentionally remain
+masked at the permanent halt. Shared libraries and returning callers must
+retain their caller's interrupt state. This saves 4 B on both CPUs; 44 normal
+playbacks and 60 additional stop/error comparisons keep exact output,
+producer cycles, stack, queue, timer and error states.

@@ -469,7 +469,8 @@ int main(){
     // Report the end of decoding before the ISR drains the valid prefix.
     lpx25_eof=1;
     if(started){while(lpx25_head!=lpx25_tail){}}
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){stop();}
+    // This dedicated player never returns after its final drain.
+    cli();stop();
 #else
     // Reject a prefill error; drain an already running valid prefix.
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
