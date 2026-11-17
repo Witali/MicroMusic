@@ -1,1 +1,63 @@
-{"cases_per_backend":28800,"backends":4,"successful_traces":6740,"error_traces":22060,"all_payload_values":true,"cache_positions":8,"rom_bytes":[0,1,2],"initial_errors":[0,4],"paired_old_new_full_reader_state_exact":true,"cross_C_ASM_clear_error_state_exact":true,"existing_nonzero_error_private_state_difference_retained":true,"abi_preserved":true,"native_target":"atmega328p","physical_board_measured":false,"irq_counts":[40446,42416,43864,43864]}
+{
+  "cases_per_backend": 28800,
+  "backends": 4,
+  "successful_traces": 6740,
+  "error_traces": 22060,
+  "all_payload_values": true,
+  "cache_positions": 8,
+  "rom_bytes": [
+    0,
+    1,
+    2
+  ],
+  "initial_errors": [
+    0,
+    4
+  ],
+  "paired_old_new_full_reader_state_exact": true,
+  "cross_C_ASM_clear_error_state_exact": true,
+  "existing_nonzero_error_private_state_difference_retained": true,
+  "abi_preserved": true,
+  "native_target": "atmega328p",
+  "physical_board_measured": false,
+  "irq_counts": [
+    40446,
+    42416,
+    43864,
+    43864
+  ],
+  "baseline_revision": "57513b10b05aa633d62d1cf9f93d6de59a2b0da9",
+  "compiler": "avr-g++ (GCC) 7.3.0",
+  "simavr": "1.6",
+  "explicit_c_binary_exact": true,
+  "source_binding": {
+    "old-asm": {
+      "core_text_lf_sha256": "57282288562aba29074135ab8b0e9254f2aea1a3ae08acf845f29272dfaf5d9c",
+      "header_text_lf_sha256": "0f15ef9efa0d62abc7c5c0e039d7b284c577946fc7fd34768cd62ded6c48381f",
+      "profile_text_lf_sha256": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+      "binary_sha256": "b4614927bf5e92ee9467ea15471890dbae3bdbfa329453db5826ff6acd7fa4eb"
+    },
+    "old-c": {
+      "core_text_lf_sha256": "57282288562aba29074135ab8b0e9254f2aea1a3ae08acf845f29272dfaf5d9c",
+      "header_text_lf_sha256": "0f15ef9efa0d62abc7c5c0e039d7b284c577946fc7fd34768cd62ded6c48381f",
+      "profile_text_lf_sha256": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+      "binary_sha256": "f07f5fe22024dd48a0f972853995e6b7a57ec97cb2444d42881a6cd12733b4ba"
+    },
+    "new-asm": {
+      "core_text_lf_sha256": "5f4324308a8661a98f452c18ec076f86472231358e2ea1e200a0499ab826263c",
+      "header_text_lf_sha256": "0f15ef9efa0d62abc7c5c0e039d7b284c577946fc7fd34768cd62ded6c48381f",
+      "profile_text_lf_sha256": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+      "binary_sha256": "35f19835a3eab5c6c8a6e1d6f470483b128e9fccbd1df6cef35969db784137f7"
+    },
+    "new-c": {
+      "core_text_lf_sha256": "5f4324308a8661a98f452c18ec076f86472231358e2ea1e200a0499ab826263c",
+      "header_text_lf_sha256": "0f15ef9efa0d62abc7c5c0e039d7b284c577946fc7fd34768cd62ded6c48381f",
+      "profile_text_lf_sha256": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c",
+      "binary_sha256": "f07f5fe22024dd48a0f972853995e6b7a57ec97cb2444d42881a6cd12733b4ba"
+    }
+  },
+  "probe_text_lf_sha256": "0607298c46979ad7e98cf30c8cf7f652d5c31da14523dd7f75e641607e466dd5",
+  "driver_text_lf_sha256": "887dfc72e3086c1b28516e904ef5ed646528ada87305d998dc3b4d111916a77c",
+  "observer_text_lf_sha256": "69dc94470fdb653b07a5872fcc884c2e0e4eff9835ee95e05f0a551d930f2453",
+  "private_reader_error_note": "Paired old/new traces match with error0/4. Cross-backend equality is required from a clear error state; the predecessor difference for calls to the private reader with an already-set error remains unchanged."
+}

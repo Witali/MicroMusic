@@ -33,3 +33,17 @@ these paired workload receipts do not claim that new binaries equal old HEXes.
 - `cosine`: omit unreachable node zero from the universal AVR5 table,
   matching the private AVR25 table's bound. Nano saves another 2 B
   (3078..3079 B); Tiny binaries and every measured CPU/memory field are unchanged.
+
+The source-bound `rice-reader-proof.json` is reproduced with:
+
+```text
+python Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_rice_packet.py build/rice-packet-proof --baseline-ref 57513b10 --wsl Ubuntu
+```
+
+Omit `--wsl` on Linux. This requires no media or scientific Python packages.
+The native ATmega328P observer covers 28,800 cases per old/new C/ASM backend:
+all legal payload values, eight cache positions, byte bounds 0/1/2, both delta
+modes and profiles 4/6/15. It checks the full private reader state, live IRQ,
+ABI/r1/SP and byte-identical explicit C. Clear-error C/ASM traces match;
+the predecessor's private state difference after an already-set error remains
+explicitly recorded. Public `next()` guards errors before reaching that case.
