@@ -198,6 +198,9 @@ __attribute__((OS_main))
 #if LPX25_V9_ROM_PLAYER && LPX4_USE_AVR_ASM && LPX3_LPC_SEGMENTS==2
 // Preserve word-sized state expressions in the AVR5 foreground loop.
 __attribute__((optimize("no-split-wide-types,no-tree-ccp")))
+#elif LPX25_V9_RUNTIME && LPX4_V9_ROM_HEADER_LAYOUT && LPX3_LPC_SEGMENTS==2
+// Preserve the measured AVR25 foreground register allocation.
+__attribute__((optimize("no-tree-dominator-opts,no-tree-ter")))
 #endif
 int main(){
     // Reset starts with interrupts masked. Keep the actual compiler CPU macros.
