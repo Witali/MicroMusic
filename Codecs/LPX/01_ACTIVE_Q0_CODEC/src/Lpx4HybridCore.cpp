@@ -203,7 +203,7 @@ static inline __attribute__((always_inline)) int16_t cosineEvenNode(uint8_t inde
  int16_t value=LP_READ_U16(&cosineEven[index]);
  return negative?-value:value;
 }
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE && LPX4_COMPACT_VERSION==9
 static inline __attribute__((always_inline)) int16_t lpcCosineFactor(uint8_t node){
  // The factor is -cos(node). Count backwards from the zero at node 64.
  // T holds the sign of node-64 while Z reads the reflected magnitude.
@@ -1439,8 +1439,9 @@ static inline __attribute__((always_inline)) int16_t polyHighWord(Coefficient v)
     uint8_t temp;
     __asm__(
         "mov %A0,%A2\n\tswap %A0\n\tandi %A0,15\n\t"
-        "mov %1,%B2\n\tswap %1\n\tandi %1,240\n\tor %A0,%1\n\t"
-        "mov %B0,%B2\n\tswap %B0\n\tandi %B0,15\n\t"
+        // XOR the swapped middle byte, mask it, and cancel its low nibble.
+        "mov %B0,%B2\n\tswap %B0\n\teor %A0,%B0\n\t"
+        "andi %B0,15\n\teor %A0,%B0\n\t"
         "mov %1,%C2\n\tswap %1\n\tandi %1,240\n\tor %B0,%1"
         : "=&d"(hi),"=&d"(temp) : "r"(v) : "cc");
     return hi;
@@ -1761,7 +1762,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #if LPX4_SELECT_LSF_ENDPOINTS && !defined(LPX4_FIXED_SPEECH_FLAGS)
         uint8_t node=left[i]+right[i]-1;
         if(!(LPX4_SPEECH_FLAGS&2))node+=node;
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE && LPX4_COMPACT_VERSION==9
         const int16_t cc=lpcCosineFactor(node);
 #else
         const int16_t cc=(int16_t)-cosineEvenNode(node);

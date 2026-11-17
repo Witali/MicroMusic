@@ -57,6 +57,7 @@ AVR_ROM_CURSOR=REPO/'Codecs/LPX/research/avr-v9-rom-cursor-2026-11-16'
 AVR_PACKET_READER=REPO/'Codecs/LPX/research/avr-v9-packet-reader-2026-11-16'
 AVR_FINAL_PWM_CLIP=REPO/'Codecs/LPX/research/avr-v9-final-pwm-clip-2026-11-16'
 AVR5_LPC_TWO_PASSES=REPO/'Codecs/LPX/research/avr5-v9-lpc-two-passes-2026-11-16'
+AVR_LSF_ADDRESSING=REPO/'Codecs/LPX/research/avr-v9-lsf-addressing-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -220,6 +221,7 @@ def assert_recorded_source(path,expected):
         (AVR_PACKET_READER,'8bd91924b78ae510bc4b04137fe2baf93ec62345'),
         (AVR_FINAL_PWM_CLIP,'971de4b246d2dd2b4e40a1e281c45fd2558b7166'),
         (AVR5_LPC_TWO_PASSES,'26470b553cc5f9392fc5e250da22aca86a2a1e47'),
+        (AVR_LSF_ADDRESSING,'c4a988f3f922f4356e91ccc4ae6d1c6ab1f4ee84'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
