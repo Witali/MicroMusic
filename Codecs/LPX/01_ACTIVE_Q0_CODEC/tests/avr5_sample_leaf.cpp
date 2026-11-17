@@ -32,7 +32,11 @@ int main(){
                     const uint8_t idx=kind&1;
                     const uint8_t gap=kind==0?0:kind==1?1:kind==2?79:0;
                     const uint8_t count=kind==3?idx:idx+1;
+#if LPX4_AVR5_SAMPLE_LEAF
                     decoder.gain_=gain<<4;
+#else
+                    decoder.gain_=gain;
+#endif
                     decoder.lag_=lag;
                     decoder.ringCursor_=cursor;
                     decoder.pulseIndex_=idx;
@@ -41,15 +45,28 @@ int main(){
                     decoder.pulseAmp_[idx]=amp;
                     decoder.ringQ_[earlier]=x;
                     decoder.ringQ_[cursor]=73;
-                    const int8_t q=decoder.decodeCompactAvr5(&decoder.lag_);
+                    const uint16_t step=(uint16_t)((gain*7999u)^(cursor*251u));
+                    decoder.blockStep_=step;
+#if LPX4_AVR5_SAMPLE_LEAF
+                    const int32_t excitation=decoder.decodeCompactAvr5(
+                        reinterpret_cast<uint8_t*>(&decoder.blockStep_));
+#else
+                    int8_t q=0;
+                    if(!decoder.decodeCode(q))math_error=1;
+                    const int32_t excitation=lpx4Mul8xU16(q,step);
+#endif
+                    const int8_t quantized=expected(x,gain,kind==0?amp:0);
                     uint8_t zero;
                     __asm__ volatile("mov %0,__zero_reg__" : "=r"(zero));
                     if(zero) math_zero_error=1;
                     const uint8_t resultingIndex=idx+(kind==0);
-                    const uint8_t resultingGap=kind==3?gap:(uint8_t)(gap-1);
-                    if(q!=expected(x,gain,kind==0?amp:0) ||
+                    // The consumed gap slot is dead. The asm countdown leaves
+                    // 255 there; the C decoder retains zero after consumption.
+                    const uint8_t resultingGap=kind==0?(LPX4_AVR5_SAMPLE_LEAF?255:0):
+                        kind==3?gap:(uint8_t)(gap-1);
+                    if(excitation!=(int32_t)quantized*step ||
                        decoder.ringCursor_!=(uint8_t)(cursor+1) ||
-                       decoder.ringQ_[cursor]!=q || decoder.ringQ_[earlier]!=x ||
+                       decoder.ringQ_[cursor]!=quantized || decoder.ringQ_[earlier]!=x ||
                        decoder.pulseIndex_!=resultingIndex ||
                        decoder.pulsePos_[idx]!=resultingGap)
                         math_error=1;

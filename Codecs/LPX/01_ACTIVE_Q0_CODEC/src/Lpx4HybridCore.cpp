@@ -55,7 +55,7 @@
 #if LPX4_FAST_PITCH < 0 || (LPX4_FAST_PITCH & ~7) || (LPX4_FAST_PITCH && !(LPX4_FAST_PITCH&1))
 #error Unsupported LPX4_FAST_PITCH
 #endif
-#if LPX4_AVR_V9_PACKETS && LPX4_USE_AVR_ASM && LPX4_PLAYER_PITCH_PAGE && LPX4_FAST_PITCH==3 && !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14)
+#if LPX4_AVR_V9_PACKETS && LPX4_USE_AVR_ASM && LPX4_PLAYER_PITCH_PAGE && LPX4_FAST_PITCH==3 && LPX4_EXCITATION_Q4 && !defined(LPX3_Q_DIAG) && !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14)
 #define LPX4_AVR5_SAMPLE_LEAF 1
 #else
 #define LPX4_AVR5_SAMPLE_LEAF 0
@@ -1446,12 +1446,12 @@ bool Lpx4HybridCore::readUnary8(uint8_t& high){
 }
 #endif
 #if LPX4_AVR5_SAMPLE_LEAF
-// GNU AVR ABI: state arrives in r25:r24 and the excitation returns in r24.
-// The state pointer begins at lag_. Every declared byte offset is constant,
+// GNU AVR ABI: state arrives in r25:r24. Signed Q4 returns in r25:r22.
+// The state pointer begins at blockStep_. Every byte offset is constant,
 // and the ring page byte is fixed independently of the arithmetic backend.
-__attribute__((noinline,noclone)) int8_t Lpx4HybridCore::decodeCompactAvr5(uint8_t* state){
+__attribute__((noinline,noclone)) int32_t Lpx4HybridCore::decodeCompactAvr5(uint8_t* state){
     register uint8_t* input __asm__("r24")=state;
-    register int8_t result __asm__("r24");
+    register int32_t result __asm__("r22");
     __asm__ volatile(
         "movw r30,%A[state]\n\t"
         "ldd r18,Z+%[gain]\n\tldd r19,Z+%[lag]\n\tldd r20,Z+%[cursor]\n\t"
@@ -1459,24 +1459,27 @@ __attribute__((noinline,noclone)) int8_t Lpx4HybridCore::decodeCompactAvr5(uint8
         // The block parser stored the even gain multiplied by sixteen.
         // Multiplying by this value moves the Q4
         // quotient into the product high byte. The low-byte carry rounds it.
-        "mulsu r21,r18\n\tlsl r0\n\tmov r24,r1\n\t"
-        "clr __zero_reg__\n\tadc r24,__zero_reg__\n\t"
+        "mulsu r21,r18\n\tlsl r0\n\tmov r18,r1\n\t"
+        "clr __zero_reg__\n\tadc r18,__zero_reg__\n\t"
         "ldd r22,Z+%[index]\n\tldd r23,Z+%[count]\n\tcp r22,r23\n\tbrsh 4f\n\t"
         "movw r26,r30\n\tadd r26,r22\n\tadc r27,__zero_reg__\n\t"
-        "adiw r26,%[pos]\n\t"
+        "subi r26,lo8(-%[pos])\n\tsbci r27,hi8(-%[pos])\n\t"
         "ld r23,X\n\tdec r23\n\tst X,r23\n\tbrpl 2f\n\t"
         "adiw r26,%[amp]\n\tld r23,X\n\tinc r22\n\tstd Z+%[index],r22\n\t"
         // Only a pulse can push the excitation outside the six-bit range.
-        "add r24,r23\n\tsubi r24,224\n\tcpi r24,64\n\tbrlo 1f\n\t"
-        "cpi r24,128\n\tsbc r24,r24\n\tandi r24,63\n\t"
-        "1: subi r24,32\n\t"
-        "2: ldi r27,hi8(%[ring])\n\t4: mov r26,r20\n\tst X,r24\n\t"
-        "inc r20\n\tstd Z+%[cursor],r20"
-        : "=r"(result) : [state]"r"(input),[gain]"I"(offsetof(Lpx4HybridCore,gain_)-offsetof(Lpx4HybridCore,lag_)),[lag]"I"(0),
-            [cursor]"I"(offsetof(Lpx4HybridCore,ringCursor_)-offsetof(Lpx4HybridCore,lag_)),[index]"I"(offsetof(Lpx4HybridCore,pulseIndex_)-offsetof(Lpx4HybridCore,lag_)),
-            [count]"I"(offsetof(Lpx4HybridCore,pulseCount_)-offsetof(Lpx4HybridCore,lag_)),[pos]"I"(offsetof(Lpx4HybridCore,pulsePos_)-offsetof(Lpx4HybridCore,lag_)),
+        "add r18,r23\n\tsubi r18,224\n\tcpi r18,64\n\tbrlo 1f\n\t"
+        "cpi r18,128\n\tsbc r18,r18\n\tandi r18,63\n\t"
+        "1: subi r18,32\n\t"
+        "2: ldi r27,hi8(%[ring])\n\t4: mov r26,r20\n\tst X,r18\n\t"
+        "inc r20\n\tstd Z+%[cursor],r20\n\tld r20,Z\n\tldd r21,Z+1\n\t"
+        "mulsu r18,r20\n\tmovw r22,r0\n\tsbc r24,r24\n\t"
+        "mulsu r18,r21\n\tsbc r25,r25\n\tor r25,r24\n\t"
+        "add r23,r0\n\tadc r24,r1\n\tclr __zero_reg__"
+        : "=r"(result) : [state]"r"(input),[gain]"I"(offsetof(Lpx4HybridCore,gain_)-offsetof(Lpx4HybridCore,blockStep_)),[lag]"I"(offsetof(Lpx4HybridCore,lag_)-offsetof(Lpx4HybridCore,blockStep_)),
+            [cursor]"I"(offsetof(Lpx4HybridCore,ringCursor_)-offsetof(Lpx4HybridCore,blockStep_)),[index]"I"(offsetof(Lpx4HybridCore,pulseIndex_)-offsetof(Lpx4HybridCore,blockStep_)),
+            [count]"I"(offsetof(Lpx4HybridCore,pulseCount_)-offsetof(Lpx4HybridCore,blockStep_)),[pos]"n"(offsetof(Lpx4HybridCore,pulsePos_)-offsetof(Lpx4HybridCore,blockStep_)),
             [amp]"I"(offsetof(Lpx4HybridCore,pulseAmp_)-offsetof(Lpx4HybridCore,pulsePos_)),
-            [ring]"i"(ringQ_) : "r0","r1","r18","r19","r20","r21","r26","r27","r30","r31","r22","r23","cc","memory");
+            [ring]"i"(ringQ_) : "r0","r1","r18","r19","r20","r21","r26","r27","r30","r31","cc","memory");
     return result;
 }
 #endif
@@ -2309,10 +2312,11 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     }
 #endif
     if(subPos_==0 && !prepareSubframe())return false;
-    int8_t q=0;
 #if LPX4_AVR5_SAMPLE_LEAF
-    q=decodeCompactAvr5(&lag_);
-#elif LPX4_COMPACT_ONLY
+    const int32_t excitation=decodeCompactAvr5(reinterpret_cast<uint8_t*>(&blockStep_));
+#else
+    int8_t q=0;
+#if LPX4_COMPACT_ONLY
 #if (LPX4_FAST_EXCITATION&2) && !LPX4_AVR25_V9_RUNTIME && !LPX4_AVR25_V9_ROM_LAYOUT
     if(pulseIndex_>=pulseCount_){q=(int8_t)pitchPredict();LPX4_PITCH_RING_SAMPLE(ringQ_,ringCursor_++)=q;}
     else
@@ -2345,6 +2349,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     else
 #endif
     if(!decodeCode(q))return false;
+#endif
 #endif
 #ifdef LPX3_Q_DIAG
     lastQ_=q;
@@ -2382,12 +2387,14 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     const double clipped=lpx4FloatClamp(deemph,-16384.0,16384.0);
     const double b=lpx4FloatClamp(clipped-bright*prevBright,-16384.0,16384.0);
 #else
+#if !LPX4_AVR5_SAMPLE_LEAF
     const uint16_t step=blockStep_;
 #if LPX4_EXCITATION_Q4
     const int32_t excitation=lpx4Mul8xU16<LPX4_AVR25_V9_RUNTIME>(q,step);
 #else
     // q is signed8 and the exact reconstructed step is 0..4016.
     const int32_t excitation=lpx4Excitation(q,step);
+#endif
 #endif
 #if LPX4_LPC_RING
     // subPos already repeats every20 samples; no separate ring cursor is needed.
