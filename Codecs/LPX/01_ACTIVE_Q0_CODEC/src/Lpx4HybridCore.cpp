@@ -1657,14 +1657,51 @@ static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,ui
         ringPolyStore24(ring,offset+4,previous-c);
         current=-4096;
     }
+#if LPX4_USE_AVR_ASM && LPX4_PLAYER_PITCH_PAGE
+    // Change only ZL so a wrapped coefficient stays in the same page.
+    int8_t* cursor=pitchRingAddress(ring,offset);
+    const uint8_t stop=base+4;
+    register int16_t factor __asm__("r20")=c;
+    __asm__ volatile(
+        "cp r30,%4\n\tbrne 1f\n\trjmp 6f\n\t"
+        // Form floor(previous/16) in r17:r16 and test its direct range.
+        "1: mov r16,%A0\n\tswap r16\n\tandi r16,15\n\t"
+        "mov r17,%B0\n\tswap r17\n\teor r16,r17\n\tandi r17,15\n\teor r16,r17\n\t"
+        "mov r18,%C0\n\tswap r18\n\tandi r18,240\n\tor r17,r18\n\t"
+        "movw r22,r16\n\tsubi r22,lo8(-15625)\n\tsbci r23,hi8(-15625)\n\t"
+        "cpi r22,lo8(31250)\n\tldi r19,hi8(31250)\n\tcpc r23,r19\n\tsbc r19,r19\n\t"
+        // Floor((previous & 15) * factor / 16) in r25:r24.
+        "mov r18,%A0\n\tswap r18\n\tandi r18,240\n\t"
+        "mul r18,r20\n\tmov r24,r1\n\t"
+        "mulsu r21,r18\n\tadd r24,r0\n\tmov r25,r1\n\tclr r23\n\tadc r25,r23\n\t"
+        // The split path truncates the original coefficient and discards
+        // the seed's low byte, making its floor independent of the product.
+        "tst r19\n\tbrne 3f\n\tsbrs r17,7\n\trjmp 2f\n\ttst r18\n\tbreq 2f\n\t"
+        "subi r16,255\n\tsbci r17,255\n\tsub r24,r20\n\tsbc r25,r21\n\t"
+        "2: clr r24\n\t3: subi r25,128\n\t"
+        // Add the biased 16-bit seed before discarding the low-low byte.
+        "muls r17,r21\n\tmovw r18,r0\n\t"
+        "mul r16,r20\n\tadd r0,r24\n\tadc r1,r25\n\tmov r22,r1\n\tadc r18,r23\n\tadc r19,r23\n\t"
+        "mulsu r17,r20\n\tsbc r19,r23\n\tadd r22,r0\n\tadc r18,r1\n\tadc r19,r23\n\t"
+        "mulsu r21,r16\n\tsbc r19,r23\n\tadd r22,r0\n\tadc r18,r1\n\tadc r19,r23\n\t"
+        "subi r22,128\n\tsbc r18,r23\n\tsbc r19,r23\n\t"
+        // The cursor is page-relative. Move only ZL to keep modulo-256 addressing.
+        "add r22,%A1\n\tadc r18,%B1\n\tadc r19,%C1\n\t"
+        "mov %A1,%A0\n\tmov %B1,%B0\n\tmov %C1,%C0\n\t"
+        "subi r30,8\n\tld %A0,Z\n\tldd %B0,Z+1\n\tldd %C0,Z+2\n\t"
+        "add r22,%A0\n\tadc r18,%B0\n\tadc r19,%C0\n\t"
+        "subi r30,248\n\tst Z,r22\n\tstd Z+1,r18\n\tstd Z+2,r19\n\t"
+        "subi r30,4\n\tcp r30,%4\n\tbreq 6f\n\trjmp 1b\n\t"
+        "6: mov r17,r21\n\tlsl r17\n\tsbc r17,r17\n\t"
+        "add %A1,r20\n\tadc %B1,r21\n\tadc %C1,r17\n\t"
+        "st Z,%A1\n\tstd Z+1,%B1\n\tstd Z+2,%C1\n\tclr __zero_reg__"
+        : "+&r"(previous),"+&r"(current),"+&z"(cursor) : "r"(factor),"r"(stop)
+        : "r0","r1","r16","r17","r18","r19","r24","r25","r22","r23","cc","memory");
+#else
     // Both polynomials use the same descending recurrence and Q12 floors.
-#if LPX4_AVR25_V9_RUNTIME
     // The first factor already has its two edge values. Its recurrence
     // is empty, and the normal final store writes the first coefficient.
     while(offset!=(uint8_t)(base+4)){
-#else
-    do{
-#endif
         const PolyCoefficient product=polyCosineMulQ12(previous,c);
         const PolyCoefficient earlier=ringPolyLoad24(ring,offset-8);
         ringPolyStore24(ring,offset,earlier+product+current);
@@ -1672,12 +1709,9 @@ static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,ui
         current=previous;
         previous=earlier;
         offset-=4;
-#if LPX4_AVR25_V9_RUNTIME
     }
-#else
-    }while(offset!=(uint8_t)(base+4));
-#endif
     ringPolyStore24(ring,offset,c+current);
+#endif
 }
 #elif LPX4_USE_AVR5_POLYNOMIAL_MUL || (LPX4_USE_AVR_NOMUL_ASM && !defined(LPX4_FIXED_SPEECH_FLAGS))
 static inline __attribute__((always_inline)) void ringPolyFactor(int8_t* ring,uint8_t base,int16_t c,uint8_t n,bool symmetric){
@@ -1855,7 +1889,7 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
         // P/Q polynomials are independent; each pair retains the same degree.
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512
         const uint8_t base=(i&1)?qbase:pbase;
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_POLY24_WORKSPACE
         ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2),!(i&1));
 #else
         if(i<2){
@@ -1863,15 +1897,9 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
             // |cc|<=8192, so the shared first coefficient fits signed16.
             // P2=P1 and Q2=-Q1 for these exact initial unit factors.
             const int16_t first=unit+cc;
-#if LPX4_POLY24_WORKSPACE
-            const PolyCoefficient initial=first;
-            ringPolyStore24(ringQ_,base+4,initial);
-            ringPolyStore24(ringQ_,base+8,(i&1)?-initial:initial);
-#else
             ringPolyPut(ringQ_,base,1,first);
             ringPolyPut(ringQ_,base,2,(i&1)?-(int32_t)first:(int32_t)first);
             ringPolyPut(ringQ_,base,3,unit);
-#endif
         }else ringPolyFactor(ringQ_,base,cc,(uint8_t)((i&254)+2),halfPolynomialP&&!(i&1));
 #endif
 #else

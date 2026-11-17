@@ -69,6 +69,7 @@ const avr5LpcCircularReport='Codecs/LPX/research/avr5-v9-lpc-circular-2026-11-17
 const avrSharedScaleReport='Codecs/LPX/research/avr-v9-shared-scale-2026-11-17/';
 const tinyLpcSaturatedReport='Codecs/LPX/research/tiny-v9-lpc-saturated-2026-11-17/';
 const tinyPolySeedReport='Codecs/LPX/research/tiny-v9-poly-seed-2026-11-17/';
+const avr5PolyPageReport='Codecs/LPX/research/avr5-v9-poly-page-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -297,6 +298,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [avrSharedScaleReport,'573aebc0a800aa10b3a99c59bb839c945be1dc94'],
     [tinyLpcSaturatedReport,'0f5ef996f603c6962f8c693b7ec4ea587610b174'],
     [tinyPolySeedReport,'5f7fd2028ee18acc3e848b5207a0243b1775201b'],
+    [avr5PolyPageReport,'2115dcad6ec59e3fc6197f069fce7624884003fd'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));
