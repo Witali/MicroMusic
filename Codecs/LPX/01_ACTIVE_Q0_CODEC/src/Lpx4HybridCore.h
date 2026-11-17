@@ -158,6 +158,16 @@ typedef int16_t Lpx4SynthesisValue;
 #define LPX4_AVR25_V9_ROM_LAYOUT 0
 #endif
 
+// Compact v9 word layout matches the ten-byte Flash header suffix.
+#if LPX4_AVR25_V9_ROM_LAYOUT || (LPX4_COMPACT_VERSION==9 && LPX4_ROM_POINTER && \
+    !LPX4_ENABLE_INPUT_CALLBACK && defined(__AVR__) && defined(__AVR_ARCH__) && __AVR_ARCH__==5 && \
+    !defined(LPX3_COST_INSTRUMENT) && !defined(LPX4_FIXED_SPEECH_FLAGS) && \
+    !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14))
+#define LPX4_V9_ROM_HEADER_LAYOUT 1
+#else
+#define LPX4_V9_ROM_HEADER_LAYOUT 0
+#endif
+
 // The fixed-register ROM player owns one decoder. Its static pitch history
 // uses an aligned SRAM page independently of the arithmetic backend.
 #if LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && \
@@ -282,7 +292,7 @@ public:
 private:
     // The ROM player owns a static instance whose storage is zeroed by
     // startup. Keep automatic instances on the normal constructor.
-    friend struct Lpx4TinyRomPlayer;
+    friend struct Lpx4RomPlayer;
     struct StaticZeroInit {};
     explicit Lpx4HybridCore(StaticZeroInit) {}
 #if LPX4_AVR25_V9_ROM_LAYOUT
@@ -332,7 +342,7 @@ private:
     // Keep per-sample state within AVR's short displacement range. Arrays
     // are addressed through pointers; frame-only polynomial workspace follows.
     const uint8_t* data_;
-#if LPX4_AVR25_V9_ROM_LAYOUT
+#if LPX4_V9_ROM_HEADER_LAYOUT
     uint16_t sampleRate_,sampleCount_,preQ14_,brightQ14_,bytes_;
     uint16_t remaining_;
 #else

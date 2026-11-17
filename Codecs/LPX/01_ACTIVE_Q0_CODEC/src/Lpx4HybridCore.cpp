@@ -47,7 +47,7 @@
 #else
 #define LPX4_AVR_V9_PACKETS 0
 #endif
-#define LPX4_AVR25_V9_HEADER_COPY (LPX4_AVR25_V9_ROM_LAYOUT && LPX4_AVR25_V9_RUNTIME)
+#define LPX4_AVR_V9_HEADER_COPY (LPX4_V9_ROM_HEADER_LAYOUT && LPX4_AVR_V9_PACKETS)
 #if LPX4_USE_AVR_ASM && LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && !defined(LPX4_FIXED_SPEECH_FLAGS)
 #define LPX4_USE_AVR5_POLYNOMIAL_MUL 1
 #else
@@ -249,7 +249,7 @@ static inline Byte* pitchRingAddress(Byte* ring,uint8_t offset){
 #endif
 
 Lpx4HybridCore::Lpx4HybridCore(): data_(0),
-#if LPX4_AVR25_V9_ROM_LAYOUT
+#if LPX4_V9_ROM_HEADER_LAYOUT
  sampleRate_(0),sampleCount_(0),preQ14_(0),brightQ14_(0),bytes_(0),remaining_(0)
 #else
  bytes_(0),
@@ -357,7 +357,7 @@ bool Lpx4HybridCore::beginRom(const uint8_t* input,uint16_t size,bool reset){
 #else
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
-#if !LPX4_AVR25_V9_HEADER_COPY
+#if !LPX4_AVR_V9_HEADER_COPY
  data_=input;bytes_=size;
 #endif
 #endif
@@ -378,7 +378,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #else
  if(!input||size<(LPX4_COMPACT_VERSION==9?13:20)){error_=BAD_HEADER;return false;}
 #endif
-#if LPX4_AVR25_V9_HEADER_COPY
+#if LPX4_AVR_V9_HEADER_COPY
  if(LP_READ_U16(input)!=0x394c){error_=BAD_HEADER;return false;}
  const uint8_t flags=LP_READ_U8(input+2);
 #elif LPX4_COMPACT_VERSION == 9
@@ -431,7 +431,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
  }
 #endif
-#if LPX4_AVR25_V9_HEADER_COPY
+#if LPX4_AVR_V9_HEADER_COPY
  // The complete header is in bounds. Copy the five little-endian words,
  // including the payload length, and keep the advanced Flash pointer.
  constexpr size_t first=offsetof(Lpx4HybridCore,sampleRate_);
@@ -439,7 +439,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
                offsetof(Lpx4HybridCore,preQ14_)==first+4 &&
                offsetof(Lpx4HybridCore,brightQ14_)==first+6 &&
                offsetof(Lpx4HybridCore,bytes_)==first+8,
-               "AVR25 v9 fields must match the wire order");
+               "v9 fields must match the wire order");
  uint8_t* destination=reinterpret_cast<uint8_t*>(this)+first;
  const uint8_t* cursor=input+3;
  uint8_t count=10,value;
@@ -482,7 +482,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  160;
 #endif
 #endif
-#if LPX4_AVR25_V9_HEADER_COPY
+#if LPX4_AVR_V9_HEADER_COPY
  const uint16_t payload=bytes_;
 #else
  const uint16_t payload=read16();
@@ -519,7 +519,7 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #ifdef LPX4_FIXED_BRIGHT_Q14
  if(brightQ14_!=LPX4_FIXED_BRIGHT_Q14){error_=UNSUPPORTED;return false;}
 #endif
- if((!LPX4_AVR25_V9_HEADER_COPY && error_)||sampleRate_!=8000||!sampleCount_||!geometry||
+ if((!LPX4_AVR_V9_HEADER_COPY && error_)||sampleRate_!=8000||!sampleCount_||!geometry||
     preQ14_>16384||brightQ14_>11469){error_=BAD_HEADER;return false;}
 #if LPX4_AVR25_V9_PREPARED_ATTENUATION
  preQ14_=lpx4PrepareAttenuationQ14(preQ14_);

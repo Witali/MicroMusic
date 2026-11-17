@@ -38,15 +38,18 @@
 static const uint8_t voice[] PROGMEM={
 #include "audio.inc"
 };
-#if LPX25_V9_RUNTIME
-struct Lpx4TinyRomPlayer {
+#if LPX25_V9_RUNTIME || \
+    (LPX4_USE_AVR_ASM && LPX4_V9_ROM_HEADER_LAYOUT && LPX4_PLAYER_PITCH_PAGE)
+// Static storage is cleared by startup. A normal begin() still resets
+// the stream, including when this build requests repeat playback.
+struct Lpx4RomPlayer {
     static Lpx4HybridCore decoder;
 #if LPX4_AVR25_V9_ROM_LAYOUT && LPX25_REPEAT == 1
     static bool begin(){return decoder.beginRom(voice,sizeof(voice),false);}
 #endif
 };
-Lpx4HybridCore Lpx4TinyRomPlayer::decoder{Lpx4HybridCore::StaticZeroInit{}};
-static Lpx4HybridCore& decoder=Lpx4TinyRomPlayer::decoder;
+Lpx4HybridCore Lpx4RomPlayer::decoder{Lpx4HybridCore::StaticZeroInit{}};
+static Lpx4HybridCore& decoder=Lpx4RomPlayer::decoder;
 #else
 static Lpx4HybridCore decoder;
 #endif
@@ -135,7 +138,7 @@ ISR(TIMER0_COMPA_vect){
 }
 #endif
 #if LPX25_V9_RUNTIME && LPX4_AVR25_V9_ROM_LAYOUT && LPX25_REPEAT == 1
-static bool begin(){return Lpx4TinyRomPlayer::begin();}
+static bool begin(){return Lpx4RomPlayer::begin();}
 #else
 static bool begin(){return decoder.begin(voice,sizeof(voice));}
 #endif

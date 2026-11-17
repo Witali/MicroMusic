@@ -62,6 +62,7 @@ AVR_LSF_FRAME=REPO/'Codecs/LPX/research/avr-v9-lsf-frame-2026-11-17'
 AVR_POLY_WIDTH=REPO/'Codecs/LPX/research/avr-v9-poly24-width-2026-11-17'
 AVR_SUBFRAME_PHASE=REPO/'Codecs/LPX/research/avr-v9-subframe-phase-2026-11-17'
 TINY_FRAME_RICE=REPO/'Codecs/LPX/research/tiny-v9-frame-rice-2026-11-17'
+AVR_ROM_START=REPO/'Codecs/LPX/research/avr-v9-rom-start-2026-11-17'
 
 
 def assert_recorded_source(path,expected):
@@ -230,6 +231,7 @@ def assert_recorded_source(path,expected):
         (AVR_POLY_WIDTH,'0eb4f9525e56a59a234c49d64e46632010cf984c'),
         (AVR_SUBFRAME_PHASE,'2389ef364a722fe7793f8a54df24269d52f9527f'),
         (TINY_FRAME_RICE,'9a2f76626b9cb9c9a7f5be5bd81ebd17c4ccf9e0'),
+        (AVR_ROM_START,'7c7aa0b2704ed97d5a5a56882048ecfc5c547b8b'),
     ):
         if recorded==actual:break
         report=json.loads((directory/'source-transition.json').read_text(encoding='utf-8'))
