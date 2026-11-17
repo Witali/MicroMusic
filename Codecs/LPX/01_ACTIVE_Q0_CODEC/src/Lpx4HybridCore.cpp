@@ -1048,7 +1048,7 @@ bool Lpx4HybridCore::readBlock(){
 // Four encoded positions occupy five sample slots, skipping the middle slot.
 // P4 and Sparse80 use the same mapping over different numbers of groups.
 static inline uint8_t compactPulsePosition(uint8_t code){
-#if LPX4_AVR25_V9_RUNTIME
+#if LPX4_AVR25_V9_RUNTIME || (LPX4_AVR_V9_PACKETS && LPX4_V9_ROM_HEADER_LAYOUT && !defined(LPX4_ENABLE_PCM16) && LPX4_USE_AVR_ASM)
     // floor((code+2)/4) is code>>2 plus its original bit 1. The second
     // shift leaves that bit in carry, so one ADC adds both terms.
     uint8_t quotient;
@@ -1072,13 +1072,20 @@ static inline int8_t signedPulseAmplitude(uint8_t raw){
 }
 #endif
 bool Lpx4HybridCore::readSubframe(){
+#if LPX4_AVR_V9_PACKETS && LPX4_V9_ROM_HEADER_LAYOUT && !defined(LPX4_ENABLE_PCM16) && LPX4_USE_AVR_ASM
+ const uint8_t packetFlags=LPX4_SPEECH_FLAGS;
+#define LPX4_PACKET_FLAGS packetFlags
+#else
+#define LPX4_PACKET_FLAGS LPX4_SPEECH_FLAGS
+#endif
+
 #if LPX4_AVR25_V9_ROM_LAYOUT
  // There are at most 80 samples before the next packet or EOF. A gap
  // of 127 after the last impulse cannot reach zero in this packet.
  constexpr uint8_t idleGap=127;
 #endif
 #if LPX4_HAS_SPARSE80
- if(LPX4_SPEECH_FLAGS&8){
+ if(LPX4_PACKET_FLAGS&8){
 #if LPX4_COMPACT_VERSION == 9
   const uint8_t raw=readBits(7),code=raw&63;
   pulsePos_[0]=compactPulsePosition(code);pulseAmp_[0]=(raw&64)?7:-8;
@@ -1096,7 +1103,7 @@ bool Lpx4HybridCore::readSubframe(){
 #endif
 #if LPX4_ENABLE_SPEECH
 #if !LPX4_COMPACT_ONLY
- if(LPX4_SPEECH_FLAGS){
+ if(LPX4_PACKET_FLAGS){
   subType_=2;pulseIndex_=0;pulseCount_=2;
 #else
  {
@@ -1114,7 +1121,7 @@ bool Lpx4HybridCore::readSubframe(){
   // Keep the base pair in registers until the optional third pulse is known.
   uint8_t firstPos,secondPos;
   int8_t firstAmp,secondAmp;
-  if(LPX4_SPEECH_FLAGS&2){
+  if(LPX4_PACKET_FLAGS&2){
    const uint8_t low=readBits(4),high=readBits(5);
    if(high>=25){error_=CORRUPT_STREAM;return false;}
    const uint8_t coordinates=LP_READ_U8(&pulseHigh[high]);
@@ -1137,16 +1144,28 @@ bool Lpx4HybridCore::readSubframe(){
   uint16_t pair=0;
   uint8_t second=0;
 #if LPX4_COMPACT_ONLY
-  if(LPX4_SPEECH_FLAGS&2){
+  if(LPX4_PACKET_FLAGS&2){
 #else
-  if(speechCompact_ && LPX4_SPEECH_FLAGS==6){
+  if(speechCompact_ && LPX4_PACKET_FLAGS==6){
 #endif
 #if LPX4_COMPACT_VERSION == 9
    const uint8_t low=readBits(4),high=readBits(5);
    if(high>=25){error_=CORRUPT_STREAM;return false;}
+#if LPX4_AVR_V9_PACKETS && LPX4_V9_ROM_HEADER_LAYOUT && !defined(LPX4_ENABLE_PCM16) && LPX4_USE_AVR_ASM
+   uint8_t remainder=high,quotient,multiplier;
+   // q=floor(high/5) in 0..4. The second product is at most 20,
+   // so it also restores the ABI zero register before returning.
+   __asm__("ldi %2,52\n\tmul %0,%2\n\tmov %1,r1\n\t"
+       "ldi %2,5\n\tmul %1,%2\n\tsub %0,r0\n\t"
+       "lsl %0\n\tlsl %0\n\tlsl %1\n\tlsl %1"
+       : "+&d"(remainder),"=&r"(quotient),"=&d"(multiplier) : : "r0","r1","cc");
+   pair=(low&3)|remainder;
+   second=(low>>2)|quotient;
+#else
    const uint8_t coordinates=LP_READ_U8(&pulseHigh[high]);
    pair=(low&3)|(coordinates&28);
    second=(low>>2)|secondPulseHigh(coordinates);
+#endif
 #else
    pair=readBits(8);pair|=(uint16_t)readOne()<<8;
    if(pair>=400){error_=CORRUPT_STREAM;return false;}
@@ -1159,7 +1178,7 @@ bool Lpx4HybridCore::readSubframe(){
   for(uint8_t i=0;i<2;i++){
    uint8_t pos;
    int8_t amp;
-   if(!(LPX4_SPEECH_FLAGS&2)){
+   if(!(LPX4_PACKET_FLAGS&2)){
 #if LPX4_COMPACT_VERSION == 9
     const uint8_t raw=readBits(5);
     pos=compactPulsePosition(raw&15);
@@ -1193,7 +1212,7 @@ bool Lpx4HybridCore::readSubframe(){
 #endif
 #if LPX4_ENABLE_SPEECH_COMPACT
 #if LPX4_COMPACT_ONLY
-  if((LPX4_SPEECH_FLAGS&128) && readOne()){
+  if((LPX4_PACKET_FLAGS&128) && readOne()){
 #else
   if((speechCompact_&128) && readOne()){
 #endif
@@ -1252,7 +1271,12 @@ bool Lpx4HybridCore::readSubframe(){
   pulsePos_[pulseCount]=idleGap;
 #endif
 #else
+#if LPX4_AVR_V9_PACKETS && LPX4_V9_ROM_HEADER_LAYOUT && !defined(LPX4_ENABLE_PCM16) && LPX4_USE_AVR_ASM
+  if(pulseCount_==3)pulsePos_[2]-=pulsePos_[1]+1;
+  pulsePos_[1]-=pulsePos_[0]+1;
+#else
   for(uint8_t i=pulseCount_-1;i;--i)pulsePos_[i]-=pulsePos_[i-1]+1;
+#endif
 #endif
 #endif
   return !error_;
@@ -1321,6 +1345,7 @@ bool Lpx4HybridCore::readSubframe(){
  return !error_;
 #endif
 }
+#undef LPX4_PACKET_FLAGS
 // Excitation reconstruction and quantized pitch history.
 // 0 keeps the reference predictor, bit1 narrows the proven result,
 // bit2 bypasses zero history, bit4 additionally bypasses zero gain.
