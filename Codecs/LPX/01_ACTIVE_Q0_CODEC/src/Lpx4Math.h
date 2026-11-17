@@ -47,6 +47,14 @@
 #if LPX4_AVR_DOT_UNROLL!=1 && LPX4_AVR_DOT_UNROLL!=3 && LPX4_AVR_DOT_UNROLL!=9
 #error LPX4_AVR_DOT_UNROLL must be 1, 3 or 9
 #endif
+// Circular AVR5 LPC taps per loop. One tap exchanges recovered producer
+// cycles for smaller code; two remains the general default.
+#ifndef LPX4_AVR5_LPC_UNROLL
+#define LPX4_AVR5_LPC_UNROLL 2
+#endif
+#if LPX4_AVR5_LPC_UNROLL != 1 && LPX4_AVR5_LPC_UNROLL != 2
+#error LPX4_AVR5_LPC_UNROLL must be 1 or 2
+#endif
 // AVR25 software signed16 multiplication: keep the original fully unrolled
 // default; an explicit smaller group trades loop-latch cycles for Flash.
 #ifndef LPX4_AVR25_MUL16_UNROLL
@@ -730,6 +738,12 @@ static inline __attribute__((always_inline)) int16_t lpx4SynthesisCircularQ12(
         "ld r22,Z\n\tadiw r30,%3\n\tcpi r22,10\n\tbrlo 7f\n\tsubi r22,10\n\t"
         "7: mov r17,r22\n\tlsl r17\n\tadd r30,r17\n\tadc r31,r16\n\t"
         "ldi r17,10\n\tsub r17,r22\n\tclt\n\t"
+#if LPX4_AVR5_LPC_UNROLL == 1
+        "1: " LPX4_LPC_RING_TAP
+        "dec r17\n\tbrne 1b\n\t"
+        "brts 4f\n\tsbiw r30,20\n\tmov r17,r22\n\ttst r17\n\tbreq 4f\n\t"
+        "set\n\trjmp 1b\n\t"
+#else
         // Enter on the second tap for odd spans. T marks the wrapped span
         // and the playback ISR preserves it with the rest of SREG.
         "lsr r17\n\tbrcs 2f\n\tdec r17\n\t"
@@ -738,6 +752,7 @@ static inline __attribute__((always_inline)) int16_t lpx4SynthesisCircularQ12(
         "subi r17,1\n\tbrcc 1b\n\t"
         "brts 4f\n\tsbiw r30,20\n\tset\n\tmov r17,r22\n\tlsr r17\n\t"
         "brcs 2b\n\tbreq 4f\n\tdec r17\n\trjmp 1b\n\t"
+#endif
         // Bias the high word by eight. Values below 16 fit signed16 after
         // dropping the zero fractional nibble. Clip before writing history.
         "4: movw r24,%C0\n\tadiw r24,8\n\t"

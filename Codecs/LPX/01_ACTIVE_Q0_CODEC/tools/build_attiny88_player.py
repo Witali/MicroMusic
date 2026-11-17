@@ -170,6 +170,10 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     # Measured AVR25 ASM recipe: avoid repeated small reader bodies and reduce
     # foreground register pressure. The explicitly selected C recipe stays C.
     if assembly:flags+=['-finline-small-functions' if universal else '-fno-inline-small-functions']
+    if assembly and universal and compact_version==9 and target!='attiny88' and rom_output_gain:
+        # Spend the ten cycles recovered by the AVR5 ROM-gain kernel on a
+        # single LPC tap body. Other recipes retain the default two-tap loop.
+        flags+=['-DLPX4_AVR5_LPC_UNROLL=1']
     flags+=list(extra_flags)
     run('avr-g++',*flags,path(player),
         path(ROOT/'src/Lpx4HybridCore.cpp'),'-Wl,--gc-sections','-o',path(output/'player.elf'))

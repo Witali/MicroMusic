@@ -38,6 +38,12 @@ these paired workload receipts do not claim that new binaries equal old HEXes.
   results unchanged (Nano 3074..3075 B, Tiny 3627..3628 B). Global SREG.I
   intentionally stays zero at the permanent halt; every active IRQ still
   preserves the complete foreground context.
+- `lpc`: a single-tap circular AVR5 loop saves another 58 B. Its ten extra
+  control cycles use the ten cycles recovered in ROM gain. Compared with
+  task start, all 22 Nano producer means and peaks are equal or lower;
+  PWM, IRQ, SRAM and stack remain exact. Nano is 3016..3017 B before adding
+  higher rates. Tiny stays 3627..3628 B. This step's timing comparator is the
+  task-start baseline, not the faster intermediate two-tap implementation.
 
 The source-bound `rice-reader-proof.json` is reproduced with:
 
@@ -66,3 +72,10 @@ EOF/error/stop/FIFO/timer state and producer/stack measurements remain exact.
 The canonical `halt` step binds the final gain/Rice/cosine composition.
 An additional 4 B CRT exit-alias experiment was measured but not enabled;
 the ordinary startup exit destination remains unchanged.
+
+`lpc-ring-proof.json` binds the retained `avr5_circular_lpc.cpp` regression:
+41,280 chained transitions across all 20 history phases, saturation cases
+and guard bytes, with 6057 active IRQs and zero output/r1 errors. The receipt
+records the exact compiler/observer commands. The general arithmetic default
+remains two taps; the player builder explicitly selects one only for ASM,
+universal v9, hardware-MUL targets with the optimized ROM-selected gain.

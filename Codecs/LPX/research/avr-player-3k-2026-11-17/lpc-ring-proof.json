@@ -1,0 +1,203 @@
+{
+  "schema": "lpx-avr5-single-tap-lpc-v1",
+  "target": "atmega328p",
+  "cpu_hz": 16000000,
+  "sample_hz": 8000,
+  "arithmetic_option": "LPX4_AVR5_LPC_UNROLL=1",
+  "default_option": 2,
+  "arithmetic_reference": "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/avr5_circular_lpc.cpp",
+  "source_lf_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/avr5_circular_lpc.cpp": "ebb6558f64e1693af4c278fcfacc3d417010784d7f025cedb17457d938d6af95",
+    "Codecs/LPX/validation/atmega328p/sim_math.c": "1103eff398f0a37aa3e4ff86a9cb46cfdbc51f08933594d0fa7831c32c0ec0d5",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Float.h": "56798a887b9035d0c3c64665651357684c5431a7375a6d94546b04b33df25b93",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "0f15ef9efa0d62abc7c5c0e039d7b284c577946fc7fd34768cd62ded6c48381f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyAvr.h": "f635c4a341c1730594834f7ea6976c4eb6cbc6a3611743bdf2d0e8bf278f65ac",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "4a4ced85102ae29ca605311ebbf21ed171a2b5cb96d569c5b6cdb27e7964f69e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/profiles/Lpx4Sram512.h": "f36bce536126d572923cfaf18c251500c88ada1f84874228a91e5f70f787683c"
+  },
+  "compiler": "avr-g++ (GCC) 7.3.0",
+  "simavr": "1.6",
+  "compile_argv": [
+    "avr-g++",
+    "-mmcu=atmega328p",
+    "-Os",
+    "-flto",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-std=gnu++11",
+    "-DF_CPU=16000000UL",
+    "-DLPX4_COMPACT_VERSION=9",
+    "-DLPX4_ENABLE_ASM=1",
+    "-DLPX4_AVR5_LPC_UNROLL=1",
+    "-DLPX25_ISR_FIXED_REGS=1",
+    "-ffixed-r10",
+    "-ffixed-r11",
+    "-include",
+    "<repo>/build/agent-rom-gain/lpc-one/source/Codecs/LPX/01_ACTIVE_Q0_CODEC/profiles/Lpx4Sram512.h",
+    "-I<repo>/build/agent-rom-gain/lpc-one/source/Codecs/LPX/01_ACTIVE_Q0_CODEC/src",
+    "<repo>/Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/avr5_circular_lpc.cpp",
+    "-Wl,--gc-sections",
+    "-Wl,--undefined=math_backend",
+    "-o",
+    "<repo>/build/agent-rom-gain/lpc-one/ring-retained.elf"
+  ],
+  "observer_compile_argv": [
+    "gcc",
+    "-O2",
+    "-std=c11",
+    "-I/usr/include/simavr",
+    "<repo>/Codecs/LPX/validation/atmega328p/sim_math.c",
+    "-lsimavr",
+    "-lelf",
+    "-o",
+    "<repo>/build/agent-rom-gain/lpc-one/sim_ring"
+  ],
+  "observer_argv": [
+    "<repo>/build/agent-rom-gain/lpc-one/sim_ring",
+    "<repo>/build/agent-rom-gain/lpc-one/ring-retained.elf"
+  ],
+  "proof": {
+    "done": 1,
+    "error": 0,
+    "zero_error": 0,
+    "cases": 41280,
+    "irqs": 6057,
+    "backend": 1,
+    "cycles": 396959358
+  },
+  "elf_sha256": "962f3c057b55cf97b786d13a58e9768516cc35c907bf3c3258b7e5dc0f8eb4c4",
+  "independent_cases": {
+    "start_positions": 20,
+    "scenarios": 48,
+    "chained_samples": 43,
+    "guard_bytes_checked": true,
+    "per_product_floor_reference": true,
+    "history_after_every_sample": true,
+    "signed_saturation": true
+  },
+  "control_cycles": [
+    {
+      "history_slot": 0,
+      "two_taps": 26,
+      "one_tap": 36,
+      "delta": 10
+    },
+    {
+      "history_slot": 1,
+      "two_taps": 29,
+      "one_tap": 39,
+      "delta": 10
+    },
+    {
+      "history_slot": 2,
+      "two_taps": 29,
+      "one_tap": 39,
+      "delta": 10
+    },
+    {
+      "history_slot": 3,
+      "two_taps": 29,
+      "one_tap": 39,
+      "delta": 10
+    },
+    {
+      "history_slot": 4,
+      "two_taps": 29,
+      "one_tap": 39,
+      "delta": 10
+    },
+    {
+      "history_slot": 5,
+      "two_taps": 29,
+      "one_tap": 39,
+      "delta": 10
+    },
+    {
+      "history_slot": 6,
+      "two_taps": 29,
+      "one_tap": 39,
+      "delta": 10
+    },
+    {
+      "history_slot": 7,
+      "two_taps": 29,
+      "one_tap": 39,
+      "delta": 10
+    },
+    {
+      "history_slot": 8,
+      "two_taps": 29,
+      "one_tap": 39,
+      "delta": 10
+    },
+    {
+      "history_slot": 9,
+      "two_taps": 29,
+      "one_tap": 39,
+      "delta": 10
+    }
+  ],
+  "standalone_kernel_hot_cycle_trade": 10,
+  "isolated_flash_delta": -58,
+  "end_to_end_baseline": "ead0bdcb whole producer with ROM output gain",
+  "whole_producer22": {
+    "cases": 22,
+    "all_pwm_exact": true,
+    "all_no_underruns": true,
+    "measured_deltas": {
+      "flash_delta": [
+        -94,
+        -94
+      ],
+      "static_delta": [
+        0,
+        0
+      ],
+      "stack_delta": [
+        0,
+        0
+      ],
+      "fifo_delta": [
+        0,
+        0
+      ],
+      "irq_delta": [
+        -1,
+        0
+      ],
+      "producer_active_cpu_mean_delta": [
+        -0.555573,
+        0.0
+      ],
+      "producer_cpu_mean_delta": [
+        -0.56875,
+        -0.011375
+      ],
+      "producer_cpu_max_delta": [
+        -182,
+        -85
+      ],
+      "producer_active_cpu_max_delta": [
+        -182,
+        0
+      ]
+    }
+  },
+  "default_identity": {
+    "cases": 44,
+    "reference": "canonical Rice stage",
+    "nano_option2_binary_identical": true,
+    "tiny_option1_unused_binary_identical": true
+  },
+  "physical_board_measured": false,
+  "notes": [
+    "The decoded kernel alone is ten cycles slower; recovered ROM-gain work funds the smaller body.",
+    "The frozen player/core snapshot includes refined gain and Rice, before the later cosine and halt stages.",
+    "Use the separate builder guard to select one tap only for universal v9 AVR5 ASM ROM-gain players.",
+    "Force math_backend at link time because the existing retained probe does not otherwise reference that initialized diagnostic byte."
+  ]
+}

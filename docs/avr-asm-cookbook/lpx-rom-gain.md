@@ -89,3 +89,21 @@ masked at the permanent halt. Shared libraries and returning callers must
 retain their caller's interrupt state. This saves 4 B on both CPUs; 44 normal
 playbacks and 60 additional stop/error comparisons keep exact output,
 producer cycles, stack, queue, timer and error states.
+
+## Spend recovered cycles on one circular LPC tap body
+
+`LPX4_AVR5_LPC_UNROLL=1` keeps one exact MULSU tap body instead of two.
+Count every tap in each of the two contiguous ring spans; T records whether
+the pointer has wrapped. The ISR must preserve T with SREG. For every history
+position, this adds exactly ten control cycles and saves 58 B on AVR5.
+The shorter ROM gain recovers those ten cycles, so the combined complete
+producer is no slower than task start. All 22 Nano/Tiny inputs were replayed
+with active IRQs and bit-exact PWM, without extra SRAM or stack.
+
+The dedicated builder selects this option only for universal v9 hardware-MUL
+ASM players with ROM gain. Other recipes retain the two-tap default, and C
+remains explicitly selectable on the same CPU. The separate 41,280-case
+history/saturation test uses the retained `avr5_circular_lpc.cpp` with this
+define, reserved IRQ registers and `-Wl,--undefined=math_backend` to retain
+its diagnostic byte under section GC. See the
+[source-bound recipe and receipt](../../Codecs/LPX/research/avr-player-3k-2026-11-17/lpc-ring-proof.json).

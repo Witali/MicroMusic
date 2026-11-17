@@ -1,0 +1,32 @@
+{
+  "schema": "lpx-avr-player-step-v1",
+  "kind": "reduction",
+  "complete": true,
+  "measurement_baseline_stage": "baseline",
+  "measurement_current_stage": "lpc",
+  "baseline_revision": "5d2940163ec7fedacb973c94c369549e46d8c7f7",
+  "measurements": "lpc-measurements.json",
+  "measurements_sha256": "597cd107b08019443ab8e45e44bea7cf3975053c83e6fd9fd8c4eaa207c30731",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": {
+      "baseline": {
+        "raw_sha256": "34923d65ad3e662a57ab336fccbf763f8d4fd8d4cc93b970fab76a18eba3255c",
+        "text_lf_sha256": "34923d65ad3e662a57ab336fccbf763f8d4fd8d4cc93b970fab76a18eba3255c"
+      },
+      "current": {
+        "raw_sha256": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+        "text_lf_sha256": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_attiny88_player.py": {
+      "baseline": {
+        "raw_sha256": "ac12134e51bcb14768f94280c46793c2a29d960e8639e7fdc68693b3ced1587b",
+        "text_lf_sha256": "a7d105ea1754f8ca5d3b72970cc875ff908984f75bb8f7a0a7b858ae41397072"
+      },
+      "current": {
+        "raw_sha256": "004bfa6803548cbec9363ca16a9144c8b59d1b1601081b369b9848ec076878e1",
+        "text_lf_sha256": "d95bf796e2cb502abe47b14b45882c288c4dcf4bd51f16231c953e181c52122d"
+      }
+    }
+  }
+}
