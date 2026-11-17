@@ -182,7 +182,8 @@ typedef int16_t Lpx4SynthesisValue;
 #define LPX4_PLAYER_PITCH_PAGE 0
 #endif
 
-// Rotate two LPC anchor halves by an offset0/10, avoiding vector copies.
+// Rotate the LPC anchor halves without vector copies. The v9 ROM layout
+// keeps byte offsets; other builds retain their original word offsets.
 // No self-referencing pointers: ordinary value copies of the object stay valid.
 #ifndef LPX4_ROTATE_LPC_ANCHORS
 #define LPX4_ROTATE_LPC_ANCHORS 1

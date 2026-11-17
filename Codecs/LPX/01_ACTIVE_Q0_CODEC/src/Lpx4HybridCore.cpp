@@ -47,6 +47,19 @@
 #else
 #define LPX4_AVR_V9_PACKETS 0
 #endif
+// 0 keeps the reference predictor, bit1 narrows the proven result,
+// bit2 bypasses zero history, bit4 additionally bypasses zero gain.
+#ifndef LPX4_FAST_PITCH
+#define LPX4_FAST_PITCH 3
+#endif
+#if LPX4_FAST_PITCH < 0 || (LPX4_FAST_PITCH & ~7) || (LPX4_FAST_PITCH && !(LPX4_FAST_PITCH&1))
+#error Unsupported LPX4_FAST_PITCH
+#endif
+#if LPX4_AVR_V9_PACKETS && LPX4_USE_AVR_ASM && LPX4_PLAYER_PITCH_PAGE && LPX4_FAST_PITCH==3 && !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14)
+#define LPX4_AVR5_SAMPLE_LEAF 1
+#else
+#define LPX4_AVR5_SAMPLE_LEAF 0
+#endif
 #define LPX4_AVR_V9_HEADER_COPY (LPX4_V9_ROM_HEADER_LAYOUT && LPX4_AVR_V9_PACKETS)
 #if LPX4_USE_AVR_ASM && LPX4_MEMORY_PROFILE == LPX4_MEMORY_PROFILE_SRAM512 && !defined(LPX4_FIXED_SPEECH_FLAGS)
 #define LPX4_USE_AVR5_POLYNOMIAL_MUL 1
@@ -927,7 +940,12 @@ bool Lpx4HybridCore::readFrame(){
 #if LPX4_AVR25_V9_RUNTIME && LPX4_EXCITATION_Q4
   blockStep_=scaleStep(blockHeader);
 #endif
+#if LPX4_AVR5_SAMPLE_LEAF
+  // Keep the packed gain in Q8 units for one hardware multiply per sample.
+  gain_=blockHeader&224;
+#else
   gain_=(blockHeader>>4)&14;
+#endif
 #else
   gain_=readBits(3)<<1;
 #endif
@@ -1353,19 +1371,6 @@ bool Lpx4HybridCore::readSubframe(){
 }
 #undef LPX4_PACKET_FLAGS
 // Excitation reconstruction and quantized pitch history.
-// 0 keeps the reference predictor, bit1 narrows the proven result,
-// bit2 bypasses zero history, bit4 additionally bypasses zero gain.
-#ifndef LPX4_FAST_PITCH
-#define LPX4_FAST_PITCH 3
-#endif
-#if LPX4_FAST_PITCH < 0 || (LPX4_FAST_PITCH & ~7) || (LPX4_FAST_PITCH && !(LPX4_FAST_PITCH&1))
-#error Unsupported LPX4_FAST_PITCH
-#endif
-#if LPX4_AVR_V9_PACKETS && LPX4_USE_AVR_ASM && LPX4_PLAYER_PITCH_PAGE && LPX4_FAST_PITCH==3 && !defined(LPX4_FIXED_PRE_Q14) && !defined(LPX4_FIXED_BRIGHT_Q14)
-#define LPX4_AVR5_SAMPLE_LEAF 1
-#else
-#define LPX4_AVR5_SAMPLE_LEAF 0
-#endif
 int16_t Lpx4HybridCore::pitchPredict() const{
 #if LPX4_FAST_PITCH
 #if !LPX4_COMPACT_ONLY
@@ -1378,7 +1383,11 @@ int16_t Lpx4HybridCore::pitchPredict() const{
 #if LPX4_FAST_PITCH&4
  if(!gain_)return 0;
 #endif
+#if LPX4_AVR5_SAMPLE_LEAF
+ int8_t v=lpx4PitchQ4(x,gain_>>4,LPX4_AVR25_V9_RUNTIME);
+#else
  int8_t v=lpx4PitchQ4(x,gain_,LPX4_AVR25_V9_RUNTIME);
+#endif
 // v5 gain is0..14 and history is-32..31: prediction is already-28..27.
 #if !LPX4_COMPACT_ONLY
  const int8_t low=-(int8_t)quantLimit_,high=(int8_t)(quantLimit_-1);
@@ -1447,9 +1456,10 @@ __attribute__((noinline,noclone)) int8_t Lpx4HybridCore::decodeCompactAvr5(uint8
         "movw r30,%A[state]\n\t"
         "ldd r18,Z+%[gain]\n\tldd r19,Z+%[lag]\n\tldd r20,Z+%[cursor]\n\t"
         "mov r26,r20\n\tsub r26,r19\n\tldi r27,hi8(%[ring])\n\tld r21,X\n\t"
-        // The gain is at most 14. Multiplying by gain*16 moves the Q4
+        // The block parser stored the even gain multiplied by sixteen.
+        // Multiplying by this value moves the Q4
         // quotient into the product high byte. The low-byte carry rounds it.
-        "swap r18\n\tmulsu r21,r18\n\tlsl r0\n\tmov r24,r1\n\t"
+        "mulsu r21,r18\n\tlsl r0\n\tmov r24,r1\n\t"
         "clr __zero_reg__\n\tadc r24,__zero_reg__\n\t"
         "ldd r22,Z+%[index]\n\tldd r23,Z+%[count]\n\tcp r22,r23\n\tbrsh 4f\n\t"
         "movw r26,r30\n\tadd r26,r22\n\tadc r27,__zero_reg__\n\t"
@@ -2089,7 +2099,12 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #if LPX4_TINY_ANCHOR_PHASE
     Lpx4SynthesisValue* curLpc=lpcAnchors_;
 #elif LPX4_ROTATE_LPC_ANCHORS
+#if LPX4_V9_ROM_HEADER_LAYOUT
+    auto* curLpc=reinterpret_cast<Lpx4SynthesisValue*>(
+        reinterpret_cast<uint8_t*>(lpcAnchors_)+lpcAnchorOffset_);
+#else
     Lpx4SynthesisValue* curLpc=lpcAnchors_+lpcAnchorOffset_;
+#endif
 #else
     Lpx4SynthesisValue* curLpc=curLpc_;
     Lpx4SynthesisValue* prevLpc=prevLpc_;
@@ -2097,7 +2112,7 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     // An unchanged LSF vector has identical polynomial anchors and no LPC
     // interpolation. The cached endpoint is valid across repeated frames.
     if(staticSpectrum_){
-#if LPX4_AVR25_V9_RUNTIME && LPX4_ROTATE_LPC_ANCHORS && !defined(LPX3_BANDWIDTH_EXPAND_Q14)
+#if LPX4_AVR_V9_PACKETS && LPX4_ROTATE_LPC_ANCHORS && !defined(LPX3_BANDWIDTH_EXPAND_Q14)
         // Subframe zero has already primed the cache and copied the
         // endpoint. The other subframes of a static spectrum reuse it.
         if(sub)return;
@@ -2136,7 +2151,12 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
     }
 #endif
 #elif LPX4_ROTATE_LPC_ANCHORS
+#if LPX4_V9_ROM_HEADER_LAYOUT
+    auto* prevLpc=reinterpret_cast<Lpx4SynthesisValue*>(
+        reinterpret_cast<uint8_t*>(lpcAnchors_)+(lpcAnchorOffset_^(10*sizeof(Lpx4SynthesisValue))));
+#else
     Lpx4SynthesisValue* prevLpc=lpcAnchors_+(lpcAnchorOffset_^10);
+#endif
 #endif
     // Segment width in t=0..16; at most one polynomial conversion per
     // 20-sample subframe after the initial frame (two at startup).
@@ -2146,15 +2166,19 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #if LPX4_TINY_ANCHOR_PHASE
         // Pointer selection already follows the two-segment phase.
 #elif LPX4_ROTATE_LPC_ANCHORS
-#if !LPX4_AVR25_V9_RUNTIME
+#if !LPX4_AVR_V9_PACKETS
         if(sub==0&&!lsfCached_)convertLsfAt(0,prevLpc);
         else{
 #endif
-            // The compact AVR25 parser forces the first frame to be static.
+            // The shared v9 parser forces the first frame to be static.
             // Its initial endpoint is valid before dynamic interpolation.
             Lpx4SynthesisValue* scratch=prevLpc;prevLpc=curLpc;curLpc=scratch;
+#if LPX4_V9_ROM_HEADER_LAYOUT
+            lpcAnchorOffset_^=10*sizeof(Lpx4SynthesisValue);
+#else
             lpcAnchorOffset_^=10;
-#if !LPX4_AVR25_V9_RUNTIME
+#endif
+#if !LPX4_AVR_V9_PACKETS
         }
 #endif
 #else
@@ -2173,15 +2197,18 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
         const uint8_t anchor=(uint8_t)(((sub/subframesPerSegment)+1)*width);
 #endif
         convertLsfAt(anchor,curLpc);
-#if !LPX4_AVR25_V9_RUNTIME || !LPX4_ROTATE_LPC_ANCHORS
+#if !LPX4_AVR_V9_PACKETS || !LPX4_ROTATE_LPC_ANCHORS
         lsfCached_=true;
 #endif
     }
     const uint8_t t=(uint8_t)(sub*2+1);
     const uint8_t localT=(uint8_t)(t%width);
 #if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
-    const uint8_t phase=(uint8_t)(localT*(256/width));
+    const uint8_t phase=LPX3_LPC_SEGMENTS==2?(uint8_t)((sub&3)*64+32):(uint8_t)(localT*(256/width));
 #endif
+#if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
+    lpx4LpcInterpolateVectorPrepared(a_,prevLpc,curLpc,phase);
+#else
     for(uint8_t i=0;i<10;i++){
 #if LPX4_FLOAT_SYNTHESIS
         a_[i]=prevLpc[i]+(curLpc[i]-prevLpc[i])*(static_cast<double>(localT)/width);
@@ -2192,6 +2219,7 @@ void Lpx4HybridCore::interpolateLsf(uint8_t sub){
             LPX3_LPC_SEGMENTS==1?4:LPX3_LPC_SEGMENTS==2?3:2);
 #endif
     }
+#endif
 
 }
 

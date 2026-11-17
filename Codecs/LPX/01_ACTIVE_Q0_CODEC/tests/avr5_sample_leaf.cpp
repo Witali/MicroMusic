@@ -32,7 +32,7 @@ int main(){
                     const uint8_t idx=kind&1;
                     const uint8_t gap=kind==0?0:kind==1?1:kind==2?79:0;
                     const uint8_t count=kind==3?idx:idx+1;
-                    decoder.gain_=gain;
+                    decoder.gain_=gain<<4;
                     decoder.lag_=lag;
                     decoder.ringCursor_=cursor;
                     decoder.pulseIndex_=idx;

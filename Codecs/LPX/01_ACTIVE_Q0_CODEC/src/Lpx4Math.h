@@ -101,6 +101,31 @@ static inline __attribute__((always_inline)) int16_t lpx4LpcInterpolatePrepared(
 #endif
 }
 
+// Converter-only ten-word interpolation. phase is Q8 in 0..255.
+// The inline AVR5 player keeps X, Y and Z available for the three
+// streams. The C backend retains the same signed division rule.
+static inline __attribute__((always_inline)) void lpx4LpcInterpolateVectorPrepared(
+        int16_t* output,const int16_t* previous,const int16_t* current,uint8_t phase){
+#if LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9
+    register uint8_t fixedPhase __asm__("r16")=phase;
+    __asm__ volatile(
+        "ldi r17,10\n\t"
+        "1: ld r18,Y+\n\tld r19,Y+\n\tld r20,Z+\n\tld r21,Z+\n\t"
+        "clt\n\tsub r20,r18\n\tsbc r21,r19\n\tbrge 2f\n\t"
+        "set\n\tcom r21\n\tneg r20\n\tsbci r21,255\n\t"
+        "2: mul r20,r16\n\tmov r22,r1\n\t"
+        "mul r21,r16\n\tadd r22,r0\n\tmov r23,r1\n\t"
+        "clr __zero_reg__\n\tadc r23,__zero_reg__\n\tbrtc 3f\n\t"
+        "sub r18,r22\n\tsbc r19,r23\n\trjmp 4f\n\t"
+        "3: add r18,r22\n\tadc r19,r23\n\t4: st X+,r18\n\tst X+,r19\n\t"
+        "dec r17\n\tbrne 1b"
+        : "+x"(output),"+y"(previous),"+z"(current) : "r"(fixedPhase)
+        : "r0","r1","r17","r18","r19","r20","r21","r22","r23","cc","memory");
+#else
+    for(uint8_t i=0;i<10;++i)output[i]=lpx4LpcInterpolatePrepared(previous[i],current[i],phase);
+#endif
+}
+
 // Convex signed16 LPC anchors, t=0..2^bits, bits=2/3/4.
 // Preserve prev + trunc((cur-prev)*t / 2^bits), including a signed17
 // difference. The convex result already fits signed16; no clamp is needed.
