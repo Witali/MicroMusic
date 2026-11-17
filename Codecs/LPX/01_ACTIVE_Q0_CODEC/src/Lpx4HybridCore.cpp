@@ -91,10 +91,29 @@ static const uint8_t LP_PROGMEM bitMasks[9]={0,1,3,7,15,31,63,127,255};
 #if LPX4_COMPACT_VERSION == 9
 // High coordinates of a 20x20 pulse pair. Low two bits per position are raw.
 // The 5x5 index uses five bits; the full pair still occupies exactly nine.
+static constexpr uint8_t packPulseHigh(uint8_t code){
+#if LPX4_AVR_V9_PACKETS
+    // The upper coordinate's bits land in positions 2..4 after SWAP.
+    return (code%5)*4 | (((code/5)&3)<<6) | (code/5>>2);
+#else
+    return (code%5)*4 | ((code/5)<<5);
+#endif
+}
 static const uint8_t LP_PROGMEM pulseHigh[25]={
- 0,4,8,12,16,32,36,40,44,48,64,68,72,76,80,
- 96,100,104,108,112,128,132,136,140,144
+ packPulseHigh(0),packPulseHigh(1),packPulseHigh(2),packPulseHigh(3),packPulseHigh(4),
+ packPulseHigh(5),packPulseHigh(6),packPulseHigh(7),packPulseHigh(8),packPulseHigh(9),
+ packPulseHigh(10),packPulseHigh(11),packPulseHigh(12),packPulseHigh(13),packPulseHigh(14),
+ packPulseHigh(15),packPulseHigh(16),packPulseHigh(17),packPulseHigh(18),packPulseHigh(19),
+ packPulseHigh(20),packPulseHigh(21),packPulseHigh(22),packPulseHigh(23),packPulseHigh(24)
 };
+static inline uint8_t secondPulseHigh(uint8_t packed){
+#if LPX4_AVR_V9_PACKETS
+    packed=(uint8_t)((packed>>4)|(packed<<4));
+#else
+    packed>>=3;
+#endif
+    return packed&28;
+}
 #endif
 
 
@@ -1026,7 +1045,7 @@ bool Lpx4HybridCore::readSubframe(){
    if(high>=25){error_=CORRUPT_STREAM;return false;}
    const uint8_t coordinates=LP_READ_U8(&pulseHigh[high]);
    firstPos=(low&3)|(coordinates&28);
-   secondPos=20+((low>>2)|((coordinates>>3)&28));
+   secondPos=20+((low>>2)|secondPulseHigh(coordinates));
    // The table bounds both positions, and the two signed nibbles are adjacent.
    const uint8_t amp=readBits(8);
    firstAmp=signedPulseAmplitude(amp&15);
@@ -1053,7 +1072,7 @@ bool Lpx4HybridCore::readSubframe(){
    if(high>=25){error_=CORRUPT_STREAM;return false;}
    const uint8_t coordinates=LP_READ_U8(&pulseHigh[high]);
    pair=(low&3)|(coordinates&28);
-   second=(low>>2)|((coordinates>>3)&28);
+   second=(low>>2)|secondPulseHigh(coordinates);
 #else
    pair=readBits(8);pair|=(uint16_t)readOne()<<8;
    if(pair>=400){error_=CORRUPT_STREAM;return false;}

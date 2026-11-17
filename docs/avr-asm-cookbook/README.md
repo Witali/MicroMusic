@@ -3235,6 +3235,7 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 - [LPX v9 half-frame and Rice step on AVR25](../../Codecs/LPX/research/tiny-v9-frame-rice-2026-11-17/README.md) reads the half-frame flag once and replaces a variable shift with a bounded addition. Saves 12 B on ATtiny88.
 - [Shared LPX v9 Flash header and startup initialization](../../Codecs/LPX/research/avr-v9-rom-start-2026-11-17/README.md) uses a bounded ten-byte LPM copy and the startup-zeroed static player instance. Saves 134 B on ATmega328/328P.
 - [Bounded LPX v9 Flash refill](../../Codecs/LPX/research/avr-v9-rom-refill-2026-11-17/README.md) uses the existing byte bound to handle all EOF checks in the ROM-only packet reader. Saves 6 B on each target.
+- [LPX P6 coordinates with SWAP](../../Codecs/LPX/research/avr-v9-pulse-swap-2026-11-17/README.md) arranges a Flash table so exchanging nibbles extracts the second coordinate. Saves 4 B on each target.
 - [Exact C decoding on ATmega328P](lpx-fixed-c-realtime.md): the 0320c101 word-extraction improvement meets real-time on all 306 corpus segments and retains a separate build-selected desktop double mode.
 - [Smaller exact LSF to LPC conversion](lpx-lsf-compact.md): reuse the first coefficient and a proven signed16 split high part; measured smaller universal Tiny/Mega images, unchanged fixed output, and rejected addressing/outline alternatives.
 - Exact power-of-two division, spectrum address selection, and measured parser tradeoffs on the `e0939e89` universal LPX baseline. [AVR size candidates](lpx-avr-size-screen.md).
