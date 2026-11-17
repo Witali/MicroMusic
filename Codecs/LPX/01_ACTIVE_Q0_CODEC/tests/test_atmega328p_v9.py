@@ -19,7 +19,10 @@ class Atmega328pV9Tests(unittest.TestCase):
     def test_measurement_binds_sources_and_private_port(self):
         r = self.receipt
         for name, digest in r['production_source_sha256'].items():
-            assert_recorded_source(name,digest)
+            if name.endswith(('/player.cpp','/build_attiny88_player.py','/verify_attiny88_player.py')):
+                self.assertEqual(text_sha(git('show',f'{MEASURED_REVISION}:{name}')),digest)
+            else:
+                assert_recorded_source(name,digest)
         self.assertEqual(text_sha(RECEIPT.read_bytes()), r['frozen_tiny_receipt_sha256'])
         base = 'Codecs/LPX/'
         for source, transform, generated in (

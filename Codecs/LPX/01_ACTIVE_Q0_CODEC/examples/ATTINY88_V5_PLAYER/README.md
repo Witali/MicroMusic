@@ -150,9 +150,28 @@ v9 build: speech uses 1514.71..1574.41 mean decoder CPU plus IRQ cycles/sample.
 The target is not yet met; the program shrinks 6 B and sound data stays identical.
 The [C reference](../../C_REFERENCE.md) supports the same v9 format and metadata.
 
-## Retained ROM demonstration results
+## Universal v9 WebUI release
 
-The selected public recipe is FIFO24 with multiplication unroll2. All nine
+All nine complete phrase/profile images use the same universal v9 recipe.
+The 141,708 PWM samples match the previous HEX files, portable decoder and
+published WAVs. Each complete image saves 216–508 bytes. At 16 MHz with active
+IRQ, at least 23 samples remain queued before each output during production. The
+[catalog](../../../../../web-player/firmware-lpx-attiny88.json) includes
+both sets of Flash and timing results.
+
+| Complete release image measurement | Result |
+| --- | ---: |
+| Flash including audio | 5004–6492 bytes |
+| Program and playback settings excluding LPX | 4611–4612 bytes |
+| Static SRAM / peak stack / stack margin | 433 / 52 / 26 bytes |
+| Mean active decoder CPU plus complete IRQ | 1263.58–1521.51 cycles/sample |
+| Complete IRQ | 38 cycles |
+| PWM write intervals | 1991–2009 cycles |
+| Images fitting standard 6012-byte USB region | 7 of 9 |
+
+## Historical fixed-header ROM demonstration results
+
+The previous public recipe used FIFO24 with multiplication unroll2. All nine
 complete phrase/profile combinations pass one-shot playback: **141,708 PWM
 samples**, byte-exact against both the independent C reference and the
 existing public WAV, with active interrupts and zero underruns. No phrase,
@@ -173,9 +192,8 @@ The other three images fit physical Flash and require ISP loading. The full
 The stack margin uses the
 observer's conservative SP convention and is bounded evidence for these
 images. The separate paired memory runs decode every combination twice.
-[Current local catalog](../../../../../web-player/firmware-lpx-attiny88.json)
-retains per-image values; [anonymous budget measurements](budget-measurements.json)
-bind the before/after sources and the full timing/control scope.
+[Budget measurements](budget-measurements.json) bind the before/after sources
+and the full timing/control scope.
 
 The earlier FIFO/unroll optimization, recorded in the historical budget receipt,
 saved **202..272 program bytes**. The largest increase in mean IRQ-active
@@ -294,11 +312,14 @@ To regenerate the verified Tiny88 catalog and retain its assets in the local
 web player, run:
 
 ```sh
-python3 tools/build-tiny88-speech-catalog.py --retain --queue 24 --mul16-unroll 2
+python3 tools/build-tiny88-speech-catalog.py --retain --jobs 4
 ```
 
-Add `--wsl Ubuntu` on Windows. This builds and verifies whole phrases, then
-copies the local HEX/catalog assets; it performs no upload or flashing.
+Add `--wsl Ubuntu` on Windows. The release recipe builds universal LPX v9
+with FIFO32, prefill24 and a 6656-byte limit including audio. It verifies
+each full image with active IRQ against the fixed-header release, the C
+decoder and the public WAV. The command copies the verified HEX, LPX v9
+streams and catalog into the local WebUI.
 
 ## Historical 2/3 kbit/s speech and size measurements
 

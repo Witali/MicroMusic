@@ -1,7 +1,7 @@
 import {renderFirmwareCatalog,bitrateLabel} from './lib/player-catalog.js?v=20261102-speex-nano';
 import {readSpeechExamples,orderSpeechEntries,selectSpeechEntry,speechCatalogRows,speechProfileUI} from './lib/speech-catalog.js?v=20261102-speex-dialogue';
 import {speexFirmwareEntries,speexDialogueProfiles} from './lib/speex-preview.js?v=20261102-speex-dialogue';
-import {lpxTiny88FirmwareEntries} from './lib/tiny88-preview.js?v=20261102-tiny88-lpx';
+import {lpxTiny88FirmwareEntries} from './lib/tiny88-preview.js?v=20261114-lpx-v9';
 import {speechSignals,speechWindow} from './lib/speech-waveform.js?v=20261103-playback-volume';
 import {tiny88Boards,boardId,applyDeviceLayout,applyCollectionLayout} from './lib/player-layout.js?v=20261102-speex-nano';
 import { parseHex } from './lib/hex.js';
@@ -619,7 +619,7 @@ try {
     catalog.entries.push(...data.clips.flatMap(clip=>lpxPreviewEntries(clip,import.meta.url)));
   }catch{/* Existing LPX clips remain usable if additional assets cannot load. */}
   try{
-    const response=await fetch(new URL('./firmware-lpx-attiny88.json?v=20261102-output-range',import.meta.url));
+    const response=await fetch(new URL('./firmware-lpx-attiny88.json?v=20261114-lpx-v9',import.meta.url));
     if(!response.ok)throw Error('HTTP '+response.status);
     const verified=lpxTiny88FirmwareEntries(await response.json(),import.meta.url);
     const ids=new Set(verified.map(entry=>entry.id));

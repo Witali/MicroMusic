@@ -77,3 +77,38 @@ already reaches PWM 255. The original is neither trimmed nor time-compressed.
 These three images are admitted on the retained D3 Nano profile; no new D9
 execution or physical-board measurement is implied. The exact hashes and
 timing receipts are in `web-player/firmware-speex-atmega328p.json`.
+
+## Q7 gain from ROM on AVR25
+
+The universal Tiny88 LPX v9 WebUI player stores a Q7 gain byte after the
+compressed file. The producer reads that byte with LPM and passes the exact
+file extent to the decoder. The same decoder and playback recipe handle P4,
+P6 and Sparse80.
+
+For unsigned PWM duty `sample`, form the signed value `x = sample ^ 128`.
+For `gain` in 128..255, multiply `x` by `2 * (gain - 128)` with eight
+carry rotations. The unsigned product needs one high-byte subtraction when
+`x` is negative. The high byte gives the fractional output, and bit 7 of
+the low byte supplies rounding toward positive infinity at a tie. Add the
+fractional output to `x`, saturate on signed overflow and restore the
+unsigned midpoint. The explicit C fallback evaluates the same rounded Q7
+expression using unsigned multiplication. The gain operation runs in the
+producer before queue publication.
+
+Measured with AVR-GCC 7.3.0 and GNU AVR ABI on ATtiny88 at 16 MHz and 8 kHz.
+The recipe uses SRAM512, FIFO32/prefill24, LPC2 and MUL16 unroll1 with
+`-Os -flto -mcall-prologues -mrelax`. The
+[release builder](../../tools/build-tiny88-speech-catalog.py) records the
+additional compiler options. The nine complete images save 52–344 bytes
+each compared with the v5/v8 fixed-header releases. In simavr 1.6 all
+141,708 PWM samples agree with the previous images, the portable decoder
+and the public WAVs. Active IRQ takes 38 cycles and playback has zero
+underruns. See the [release catalog](../../web-player/firmware-lpx-attiny88.json).
+
+The integrated 2026-11-17 release uses the same ROM-gain arithmetic with
+the shared player, GPIOR queue state and IRQ registers r10/r11. It selects
+MUL16 unroll2. All nine Tiny88 images occupy4032–5520 B including audio,
+with418 B static SRAM and28 B peak stack. IRQ takes35 cycles. All141,708
+public Tiny88 samples remain exact, with zero underruns and equal/faster
+mean decoding than the prior fixed-header release. The eight Nano clips
+and dialogue also pass full IRQ playback. [Source-bound release measurements](../../Codecs/LPX/research/webui-release-2026-11-17/README.md).

@@ -26,11 +26,16 @@ int main(){
 '''
 
 def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=None,
-           flash_limit=8192,lpc_segments=2,sparse80=False,mul16_unroll=None,normalize_output=False,universal=True):
+           flash_limit=8192,lpc_segments=2,sparse80=False,mul16_unroll=None,normalize_output=False,universal=True,
+           rom_output_gain=False,extra_flags=()):
     output=Path(output).resolve()
-    if universal and normalize_output:raise ValueError('Universal playback must not specialize gain for a recording')
+    if universal and normalize_output and not rom_output_gain:
+        raise ValueError('Universal playback must not specialize gain for a recording')
     if mul16_unroll is None:mul16_unroll=2 if universal else 16
-    cost=build(source,output,assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll,universal=universal)
+    options=dict(assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,
+        flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll,universal=universal,
+        rom_output_gain=rom_output_gain,extra_flags=extra_flags)
+    cost=build(source,output,**options)
     queue=cost['queue']
     prefix=['wsl','-d',wsl,'--'] if wsl else []
     path=lambda p:target_path(p,wsl)
@@ -49,8 +54,10 @@ def verify(source,output,*,assembly=True,asm_isr=True,queue=None,repeat=1,wsl=No
     expected=run(path(output/'reference'))*repeat
     gain=choose_gain(expected) if normalize_output else 128
     level=describe_level(expected,gain)
+    if rom_output_gain:
+        level['implementation']='producer-rom-q7'
     if gain!=128:
-        cost=build(source,output,assembly=assembly,asm_isr=asm_isr,queue=queue,repeat=repeat,wsl=wsl,lpc_segments=lpc_segments,flash_limit=flash_limit,sparse80=sparse80,mul16_unroll=mul16_unroll,output_gain=gain,universal=universal)
+        cost=build(source,output,output_gain=gain,**options)
         expected=apply_gain(expected,gain)
     (output/'expected.pwm').write_bytes(expected)
     run('gcc','-O2','-std=c11','-I'+path(output),'-I/usr/include/simavr',

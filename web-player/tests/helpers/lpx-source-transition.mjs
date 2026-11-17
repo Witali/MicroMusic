@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
+import {readRecordedBuildFile} from './recorded-build-source.mjs';
 
 const root=new URL('../../../',import.meta.url);
 const read=path=>readFileSync(new URL(path,root));
@@ -100,6 +101,7 @@ const tinyConverterAbiReport='Codecs/LPX/research/tiny-v9-converter-abi-2026-11-
 const tinyPreparedHalfPhaseReport='Codecs/LPX/research/tiny-v9-prepared-half-phase-2026-11-17/';
 const tinyFoldCountdownReport='Codecs/LPX/research/tiny-v9-fold-countdown-2026-11-17/';
 const tinyCosineTrimReport='Codecs/LPX/research/tiny-v9-cosine-trim-2026-11-17/';
+const v9ReleaseBase='41472750f8e7902836403c825f68cba226d1bf13';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -371,6 +373,25 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       const evidence=read(directory+'measurements.json');
       assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
       recorded=change.current[field];
+    }
+  }
+  if(recorded!==actual){
+    // These build files have a measured successor in the v9 WebUI catalog.
+    const paths=[
+      'examples/ATTINY88_V5_PLAYER/player.cpp','tools/build_attiny88_player.py',
+      'tools/verify_attiny88_player.py','tests/verify_web_asm_equivalence.py'
+    ].map(name=>'Codecs/LPX/01_ACTIVE_Q0_CODEC/'+name);
+    if(paths.includes(path)){
+      const release=JSON.parse(read('web-player/firmware-lpx-attiny88.json'));
+      const baseline=readRecordedBuildFile(v9ReleaseBase,path);
+      const textDigest=value=>sha(value.toString('utf8').replaceAll('\r\n','\n'));
+      if(recorded===(encoding==='raw'?sha(baseline):textDigest(baseline))){
+        assert.equal(release.compactVersion,9);
+        assert.equal(release.universalDecoder,true);
+        assert.equal(release.variants.length,9);
+        assert.equal(release.sourceSha256[path],textDigest(bytes),path+' v9 release source');
+        recorded=actual;
+      }
     }
   }
   assert.equal(recorded,actual,path+' current source');
