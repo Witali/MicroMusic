@@ -128,7 +128,9 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
         # LTO assembles the IRQ from a temporary file. Give GAS the map's
         # full path so it does not need the original assembler search path.
         map_path=path(register_map).replace('\\','/')
-        flags+=[f'-DLPX25_IRQ_REGISTER_MAP={json.dumps(map_path)}']
+        flags+=[f'-DLPX25_IRQ_REGISTER_MAP={json.dumps(map_path)}',
+                f'-DLPX25_IRQ_SAMPLE_REGISTER={irq_registers[0]}',
+                f'-DLPX25_IRQ_SREG_REGISTER={irq_registers[1]}']
     if sparse80:flags+=['-DLPX4_ENABLE_SPARSE80=1']
     if compact_version==9:flags+=['-DLPX4_COMPACT_VERSION=9']
     if universal:

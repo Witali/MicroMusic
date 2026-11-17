@@ -100,6 +100,17 @@ static inline __attribute__((always_inline)) int32_t truncShift(int32_t v,uint8_
     return (v+(v<0?((1L<<bits)-1):0))>>bits;
 }
 
+// The private converter uses a custom register contract only in the
+// universal Tiny88 ROM profile. All other builds keep the C++ converter.
+#if LPX4_AVR25_V9_RUNTIME && LPX4_TINY_ANCHOR_PHASE && !defined(LPX3_BANDWIDTH_EXPAND_Q14) && \
+    !defined(LPX3_COST_INSTRUMENT) && \
+    defined(LPX25_IRQ_SAMPLE_REGISTER) && defined(LPX25_IRQ_SREG_REGISTER) && \
+    LPX25_IRQ_SAMPLE_REGISTER==10 && LPX25_IRQ_SREG_REGISTER==11
+#define LPX4_AVR25_LSF_ASM 1
+#else
+#define LPX4_AVR25_LSF_ASM 0
+#endif
+
 static const uint8_t LP_PROGMEM bitMasks[9]={0,1,3,7,15,31,63,127,255};
 #if LPX4_COMPACT_VERSION == 9
 // High coordinates of a 20x20 pulse pair. Low two bits per position are raw.
@@ -224,7 +235,12 @@ static const uint16_t LP_PROGMEM cosineEven[33]={
  3135,2760,2378,1990,1598,1202,803,402,0
 };
 #else
-static const uint16_t LP_PROGMEM cosineEven[65]={
+#if LPX4_AVR25_LSF_ASM
+#define LPX4_CONVERT_TABLE_NAME __asm__("lpx4_tiny_cosine_even") __attribute__((used))
+#else
+#define LPX4_CONVERT_TABLE_NAME
+#endif
+static const uint16_t LP_PROGMEM cosineEven[65] LPX4_CONVERT_TABLE_NAME={
  8192,8190,8182,8170,8153,8130,8103,8071,
  8035,7993,7946,7895,7839,7779,7713,7643,
  7568,7489,7405,7317,7225,7128,7027,6921,
@@ -235,6 +251,7 @@ static const uint16_t LP_PROGMEM cosineEven[65]={
  1598,1401,1202,1003,803,603,402,201,
  0
 };
+#undef LPX4_CONVERT_TABLE_NAME
 #endif
 // V5 centered5/6bit spectra with segments1/2 reach only even cosine
 // nodes: the caller supplies the exact index into this half-grid.
@@ -1942,12 +1959,41 @@ static inline __attribute__((always_inline)) int16_t centeredLsf(uint8_t q,uint8
  return q ? (int16_t)((uint16_t)(q*2-1)<<((profile&2)?3:4)) : 0;
 }
 #endif
-#if LPX4_POLY24_WORKSPACE
+#if LPX4_POLY24_WORKSPACE && !(LPX4_AVR25_LSF_ASM)
 // AVR-GCC 7.3.0 emits a smaller recurrence with the address operations
 // left inside their branches. Keep this choice local to the converter.
 __attribute__((optimize("no-code-hoisting")))
 #endif
+#if LPX4_AVR25_LSF_ASM
+__asm__(
+#include "Lpx4ConvertAvr25.inc"
+);
+__attribute__((always_inline))
+#endif
 void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
+#if LPX4_AVR25_LSF_ASM
+    // Keep input memory ownership and arithmetic selection independent.
+    // R9/R12/R13/R16 are dead at the caller and need no nested save.
+    static_assert(offsetof(Lpx4HybridCore,speechProfile_)<64 && offsetof(Lpx4HybridCore,ringCursor_)<64,
+                  "Converter fields must fit AVR displacement addressing");
+    register Lpx4HybridCore* self __asm__("r26")=this;
+    register uint8_t target __asm__("r24")=t;
+    register Lpx4SynthesisValue* destination __asm__("r22")=out;
+    __asm__ volatile(
+        ".set lpx4_conv_ring_offset,%[ring]\n\t"
+        ".set lpx4_conv_profile_offset,%[profile]\n\t"
+        ".set lpx4_conv_cur_offset,%[cur]\n\t"
+        ".set lpx4_conv_old_offset,%[old]\n\t"
+        "rcall lpx4_tiny_convert"
+        : "+x"(self),"+r"(target),"+r"(destination)
+        : [ring]"n"(offsetof(Lpx4HybridCore,ringCursor_)),
+          [profile]"n"(offsetof(Lpx4HybridCore,speechProfile_)),
+          [cur]"n"(offsetof(Lpx4HybridCore,cur_)),
+          [old]"n"(offsetof(Lpx4HybridCore,lpcAnchors_)+10*sizeof(Lpx4SynthesisValue))
+        : "r0","r9","r12","r13","r16","r18","r19","r20","r21","r25","r30","r31","cc","memory");
+    return;
+#else
+
 #ifdef LPX3_COST_INSTRUMENT
     ++lsfConverts_;
 #endif
@@ -2097,6 +2143,8 @@ void Lpx4HybridCore::convertLsfAt(uint8_t t,Lpx4SynthesisValue* out){
 #endif
 #endif // LPX4_FLOAT_SYNTHESIS
 #undef LPX4_PREVIOUS_BINS
+#endif
+
 }
 void Lpx4HybridCore::interpolateLsf(uint8_t sub){
 #if LPX4_TINY_ANCHOR_PHASE
