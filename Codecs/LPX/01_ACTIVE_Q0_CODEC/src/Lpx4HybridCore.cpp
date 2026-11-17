@@ -298,7 +298,13 @@ uint8_t Lpx4HybridCore::readByte(){
 #ifdef LPX3_COST_INSTRUMENT
  ++romByteCalls_;
 #endif
+#if !(LPX4_AVR_V9_PACKETS && LPX4_ROM_POINTER && !LPX4_ENABLE_INPUT_CALLBACK && !defined(LPX4_ENABLE_PCM16) && !defined(LPX3_COST_INSTRUMENT))
+ // Other backends can fail for reasons besides exhausting the ROM span.
  if(error_)return 0;
+#else
+ // ROM parsing starts with a clear error. Exhaustion leaves bytes_ at
+ // zero. Other errors return to the caller before requesting more bytes.
+#endif
 #if LPX4_ENABLE_INPUT_CALLBACK
  if(inputReader_){
 #if LPX4_ROM_POINTER
