@@ -47,7 +47,7 @@ function check(kind,x,y,expected,{exc=0,t=0,bits=0,a=null,h=null}={}){
   assert.equal(c.r[1],0,`${name} zero register`);assert.equal(c.sp,sp,`${name} stack`);
   preserved.forEach(r=>assert.equal(c.r[r],(r*7+cases)&255,`${name} preserved r${r}`));
   if(h){
-   const firstGuard=kind===25||kind===26||kind===35?11:10;
+   const firstGuard=kind===25||kind===26||kind===35||kind===37?11:10;
    if(firstGuard===11)assert.equal((c.data[s('math_h')+20]|c.data[s('math_h')+21]<<8)&65535,h[9]&65535,'Discarded padded history');
    for(let i=firstGuard;i<20;i++)assert.equal((c.data[s('math_h')+i*2]|c.data[s('math_h')+i*2+1]<<8)&65535,0x5aa5+i,'History guard');
   }
@@ -161,6 +161,14 @@ for(const coefficient of [...boundary,0x5555,-0x5555])for(const history of split
  for(const kind of [7,25,26,27])check(kind,0,0,expected,{a,h,exc:kind===7||kind===25?123*16:123});
  check(35,0,0,Math.max(-32767,Math.min(32767,expected)),{a,h,exc:123*16});
 }
+// The compact decoder bounds coefficients symmetrically. Test every
+// allowed coefficient at both saturated history values, ten per call.
+for(const history of [-32767,32767])for(let first=-32767;first<=32767;first+=10){
+ const a=Array.from({length:10},(_,i)=>first+i<=32767?first+i:0);
+ const h=Array(10).fill(history);
+ const expected=123-a.reduce((sum,v)=>sum+Math.floor(v*history/4096),0);
+ check(37,0,0,expected*16,{a,h,exc:123*16});
+}
 // The optimized pitch quotient also preserves the former full signed8
 // input behavior, including the int8 result cast above the six-bit domain.
 for(let x=-128;x<=127;x++)for(let gain=0;gain<=31;gain++){
@@ -208,6 +216,7 @@ writeFileSync(folder+'/verification.json',JSON.stringify({target:'attiny88',cloc
  mul16_unroll:build.mul16_unroll,cases,results,physical_board_measured:false,
  coverage:{pwm130_signed16_exhaustive:true,pitch_signed8_gain5_exhaustive:true,
   pitch_signed8_even_gain_exhaustive:true,history_layouts:[10,11],
+  saturated_history_bounded_lpc_pairs:131070,
   synthesis_signed16_exhaustive:process.argv.includes('--exhaustive-synthesis'),
   attenuation_dynamic_exhaustive:process.argv.includes('--exhaustive-dynamic')},
  build_sha256:sha(folder+'/build.json'),

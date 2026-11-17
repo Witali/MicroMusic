@@ -65,6 +65,7 @@ __attribute__((noinline,used)) void math_case(){
     case 34:math_out=lpx4ClipSynthesisQ4(math_exc);break;
     case 35:math_out=lpx4ClipSynthesisQ4(lpx4SynthesisQ12<true,true,true>(math_exc,math_a,math_h));break;
     case 36:math_out=lpx4Mul8xU16<true>((int8_t)math_x,(uint16_t)math_y);break;
+    case 37:math_out=lpx4SynthesisQ12<true,true,true,true>(math_exc,math_a,math_h);break;
     }
 }
 }

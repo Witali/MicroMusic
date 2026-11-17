@@ -2184,7 +2184,8 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #else
 #if LPX4_AVR25_V9_RUNTIME
     int16_t* history;
-    const int32_t synthesis=lpx4SynthesisQ12<LPX4_EXCITATION_Q4,true,true>(excitation,a_,hist_,&history);
+    // LSF conversion clips both anchors to +/-32767 and interpolation stays between them.
+    const int32_t synthesis=lpx4SynthesisQ12<LPX4_EXCITATION_Q4,true,true,true>(excitation,a_,hist_,&history);
     const int16_t pred=lpx4ClipSynthesisQ4(synthesis);
     *history=pred;
 #elif LPX4_USE_AVR_ASM && LPX4_COMPACT_VERSION==9 && \

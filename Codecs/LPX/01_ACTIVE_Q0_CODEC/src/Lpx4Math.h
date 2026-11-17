@@ -401,10 +401,19 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
 #if LPX4_AVR25_SATURATED_PRODUCTS
 // For h=32767: floor(a*h/256)=128*a-ceil(a/256).
 // For h=-32767: floor(a*h/256)=-128*a+floor(a/256).
+// With boundedLpc, negating a for the negative rail is safe and shares
+// the positive-rail formula. The subsequent nibble mask keeps the Q12 floor.
 // T is a private hint; skipping this route still uses the exact general product.
 #define LPX4_NOMUL_SATURATED \
     "brtc 11f\n\tcpi r21,127\n\tbrne 10f\n\tcpi r20,255\n\tbreq 12f\n\t" \
     "10: cpi r21,128\n\tbrne 11f\n\tcpi r20,1\n\tbrne 11f\n\t" \
+    ".if %7\n\t" \
+    "12: sbrs r21,7\n\trjmp 13f\n\t" \
+    "com r19\n\tneg r18\n\tsbci r19,255\n\t13:\n\t" \
+    "movw r24,r18\n\tclr r23\n\tasr r25\n\tror r24\n\tror r23\n\t" \
+    "clr r20\n\tsbrc r19,7\n\tdec r20\n\t" \
+    "cp __zero_reg__,r18\n\tsbc r23,r19\n\tsbc r24,r20\n\tsbc r25,r20\n\trjmp 8f\n\t11:\n\t" \
+    ".else\n\t" \
     "12: mov r24,r18\n\tmov r25,r19\n\tclr r23\n\t" \
     "asr r25\n\tror r24\n\tror r23\n\t" \
     "clr r20\n\tsbrc r19,7\n\tdec r20\n\t" \
@@ -412,6 +421,7 @@ static inline int32_t lpx4DotQ12(const int16_t* a,int16_t* h){
     "sbc r23,r19\n\tsbc r24,r20\n\tsbc r25,r20\n\t" \
     "sbrs r21,7\n\trjmp 8f\n\t" \
     "com r25\n\tcom r24\n\tneg r23\n\tsbci r24,255\n\tsbci r25,255\n\trjmp 8f\n\t11:\n\t" \
+    ".endif\n\t" \
     ""
 #else
 #define LPX4_NOMUL_SATURATED ""
@@ -507,7 +517,8 @@ static inline __attribute__((always_inline)) int16_t lpx4NomulAttenuate(uint16_t
 // keepQ4 leaves the accumulated integer in Q4 units for a combined final clip.
 // finalHistory exposes the history base from the completed reverse walk so the
 // caller can store the clipped sample through the same address register.
-template<bool excitationQ4=false,bool spareHistory=false,bool keepQ4=false>
+// boundedLpc requires a[] in -32767..32767.
+template<bool excitationQ4=false,bool spareHistory=false,bool keepQ4=false,bool boundedLpc=false>
 static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16_t* h,int16_t** finalHistory=nullptr){
 #if LPX4_USE_AVR_ASM
     int32_t result=excitation;
@@ -591,7 +602,7 @@ static inline int32_t lpx4SynthesisQ12(int32_t excitation,const int16_t* a,int16
 #else
           ,"I"(0)
 #endif
-          ,"I"(spareHistory),"I"(keepQ4)
+          ,"I"(spareHistory),"I"(keepQ4),"I"(boundedLpc)
         : "r17","r18","r19","r20","r21","r22","r23","r24","r25","cc","memory");
     if(finalHistory)*finalHistory=h;
     return result;

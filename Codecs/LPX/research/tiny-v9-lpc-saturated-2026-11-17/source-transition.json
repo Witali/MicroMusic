@@ -1,0 +1,52 @@
+{
+  "schema": "lpx-tiny-v9-source-transition-v1",
+  "complete": true,
+  "baseline_revision": "0f5ef996f603c6962f8c693b7ec4ea587610b174",
+  "universal_irq_cases": 22,
+  "identical_web_images": 18,
+  "measurements_sha256": "356e284b26acff84a56357c9265c943a838420c06019f4268d99c75f90d1699f",
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": {
+      "baseline": {
+        "raw_sha256": "0cade6f5f87de614b67c457b257f785cffc7469b57d9df7de5b686594962cdb0",
+        "text_lf_sha256": "0cade6f5f87de614b67c457b257f785cffc7469b57d9df7de5b686594962cdb0"
+      },
+      "current": {
+        "raw_sha256": "1b2a53540690e49c2279376a0cd88ffd1d66f20b97dcad64c1804b4bed9a3446",
+        "text_lf_sha256": "1b2a53540690e49c2279376a0cd88ffd1d66f20b97dcad64c1804b4bed9a3446"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": {
+      "baseline": {
+        "raw_sha256": "c6d593e6e91530ffc1675241ec61426a4f82002b7278ff02ef3a3cb241b5fabf",
+        "text_lf_sha256": "c6d593e6e91530ffc1675241ec61426a4f82002b7278ff02ef3a3cb241b5fabf"
+      },
+      "current": {
+        "raw_sha256": "15557a73199dbbc1da8a548fe760f494dd714e3d502cd72656a7a19049ebb612",
+        "text_lf_sha256": "15557a73199dbbc1da8a548fe760f494dd714e3d502cd72656a7a19049ebb612"
+      }
+    }
+  },
+  "validation_sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/avr25_math.cpp": {
+      "baseline": {
+        "raw_sha256": "a6d8de6cfbe165d71844009ba96da54e5fdcc27dd9653d792c0fd6f99e5c32da",
+        "text_lf_sha256": "a6d8de6cfbe165d71844009ba96da54e5fdcc27dd9653d792c0fd6f99e5c32da"
+      },
+      "current": {
+        "raw_sha256": "0c8140348172d64ff5f9bffa3762475bc2c01f2570caa5201d2e4ecc95e2964c",
+        "text_lf_sha256": "0c8140348172d64ff5f9bffa3762475bc2c01f2570caa5201d2e4ecc95e2964c"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tests/verify_avr25_math.mjs": {
+      "baseline": {
+        "raw_sha256": "111cd0a7241529202abbc2145a66e1ddbc3d47431278b4902eb2e0c97c02e363",
+        "text_lf_sha256": "111cd0a7241529202abbc2145a66e1ddbc3d47431278b4902eb2e0c97c02e363"
+      },
+      "current": {
+        "raw_sha256": "61d283560adaf040d7cf15b636a182a9614f2b8e2d2ee513648b91658f3ffddb",
+        "text_lf_sha256": "61d283560adaf040d7cf15b636a182a9614f2b8e2d2ee513648b91658f3ffddb"
+      }
+    }
+  }
+}
