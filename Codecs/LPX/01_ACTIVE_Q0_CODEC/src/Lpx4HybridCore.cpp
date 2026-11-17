@@ -2428,7 +2428,9 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
     int16_t b=limitBrightnessOutput(lpx4PostfilterPair<offsetof(Lpx4HybridCore,prevDeemph_)-offsetof(Lpx4HybridCore,preQ14_)>(pred,(uint8_t*)&preQ14_));
 #else
 #if LPX4_AVR25_V9_PREPARED_ATTENUATION
-    int16_t deemph=preQ14_?lpx4AddClip15<true>(pred,lpx4PreparedAttenuationQ14(prevDeemph_,preQ14_)):pred;
+    // Retain the old state across the arithmetic leaf for both filter passes.
+    const int16_t previous=prevDeemph_;
+    int16_t deemph=preQ14_?lpx4AddClip15<true>(pred,lpx4PreparedAttenuationQ14(previous,preQ14_)):pred;
 #elif defined(LPX4_FIXED_PRE_Q14)
     int16_t deemph=LPX4_FIXED_PRE_Q14?lpx4AddClip15<LPX4_AVR25_V9_RUNTIME>(pred,lpx4AttenuateFixedQ14<LPX4_FIXED_PRE_Q14>(prevDeemph_)):pred;
 #else
@@ -2436,9 +2438,7 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #endif
     // Between samples, brightness history is exactly clipQ14(prevDeemph_).
     // Derive it before publishing the new deemphasis state.
-#if LPX4_AVR25_V9_PREPARED_ATTENUATION
-    const int16_t previous=prevDeemph_;
-#else
+#if !LPX4_AVR25_V9_PREPARED_ATTENUATION
     const int16_t prevBright=lpx4ClipQ14(prevDeemph_);
 #endif
     prevDeemph_=deemph;
