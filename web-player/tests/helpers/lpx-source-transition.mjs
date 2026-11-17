@@ -99,6 +99,7 @@ const avrPlayerGpiorReport='Codecs/LPX/research/avr-v9-gpior-state-2026-11-17/';
 const tinyConverterAbiReport='Codecs/LPX/research/tiny-v9-converter-abi-2026-11-17/';
 const tinyPreparedHalfPhaseReport='Codecs/LPX/research/tiny-v9-prepared-half-phase-2026-11-17/';
 const tinyFoldCountdownReport='Codecs/LPX/research/tiny-v9-fold-countdown-2026-11-17/';
+const tinyCosineTrimReport='Codecs/LPX/research/tiny-v9-cosine-trim-2026-11-17/';
 
 // Follow measured source transitions while retaining the original timing receipts.
 export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
@@ -357,6 +358,7 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
     [tinyConverterAbiReport,'bfcd72e23b922c76481e23447b6866dabb83f359'],
     [tinyPreparedHalfPhaseReport,'2d8734097980fa6f8f2ff74918e57241317aae7a'],
     [tinyFoldCountdownReport,'8abf10289a06a4f6d5c9e64cdbc1ba3aaa0a368b'],
+    [tinyCosineTrimReport,'287222483673a568714713f07c352be042cc4707'],
   ]){
     if(recorded===actual)break;
     const report=JSON.parse(read(directory+'source-transition.json'));

@@ -236,12 +236,19 @@ static const uint16_t LP_PROGMEM cosineEven[33]={
 };
 #else
 #if LPX4_AVR25_LSF_ASM
+// Parsed one-based bins yield nodes 1..127 (P4: 2..126). Reflection
+// reads entries 1..64, so only this private ASM table omits node zero.
+#define LPX4_CONVERT_TABLE_SIZE 64
 #define LPX4_CONVERT_TABLE_NAME __asm__("lpx4_tiny_cosine_even") __attribute__((used))
 #else
 #define LPX4_CONVERT_TABLE_NAME
+#define LPX4_CONVERT_TABLE_SIZE 65
 #endif
-static const uint16_t LP_PROGMEM cosineEven[65] LPX4_CONVERT_TABLE_NAME={
- 8192,8190,8182,8170,8153,8130,8103,8071,
+static const uint16_t LP_PROGMEM cosineEven[LPX4_CONVERT_TABLE_SIZE] LPX4_CONVERT_TABLE_NAME={
+#if !LPX4_AVR25_LSF_ASM
+ 8192,
+#endif
+ 8190,8182,8170,8153,8130,8103,8071,
  8035,7993,7946,7895,7839,7779,7713,7643,
  7568,7489,7405,7317,7225,7128,7027,6921,
  6811,6698,6580,6458,6333,6203,6070,5933,
@@ -252,7 +259,9 @@ static const uint16_t LP_PROGMEM cosineEven[65] LPX4_CONVERT_TABLE_NAME={
  0
 };
 #undef LPX4_CONVERT_TABLE_NAME
+#undef LPX4_CONVERT_TABLE_SIZE
 #endif
+#if !LPX4_AVR25_LSF_ASM
 // V5 centered5/6bit spectra with segments1/2 reach only even cosine
 // nodes: the caller supplies the exact index into this half-grid.
 static inline __attribute__((always_inline)) int16_t cosineEvenNode(uint8_t index){
@@ -279,6 +288,7 @@ static inline __attribute__((always_inline)) int16_t lpcCosineFactor(uint8_t nod
  return value;
 }
 #endif
+#endif // The private converter performs its own bounded lookup.
 #endif
 
 

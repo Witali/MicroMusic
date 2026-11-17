@@ -74,8 +74,8 @@ lpx4_tiny_convert:
 	sbrs r19,1
 	lsl r25
 .Llpx4_convert_2:
-	ldi r30,lo8(lpx4_tiny_cosine_even+128)
-	ldi r31,hi8(lpx4_tiny_cosine_even+128)
+	ldi r30,lo8(lpx4_tiny_cosine_even+126)
+	ldi r31,hi8(lpx4_tiny_cosine_even+126)
 
 	subi r25,64
 	bst r25,7
