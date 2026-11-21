@@ -1,0 +1,63 @@
+{
+  "schema": "micromusic-lpx-v9-wasm-v1",
+  "compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+  "flags": [
+    "--target=wasm32-unknown-unknown",
+    "-O3",
+    "-std=c++11",
+    "-ffreestanding",
+    "-nostdlib",
+    "-fno-exceptions",
+    "-fno-rtti",
+    "-fno-threadsafe-statics",
+    "--sysroot=<emsdk>/upstream/emscripten/cache/sysroot",
+    "-isystem",
+    "<emsdk>/upstream/emscripten/cache/sysroot\\include",
+    "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src",
+    "-DLPX4_ENABLE_ASM=0",
+    "-DLPX4_FLOAT_SYNTHESIS=0",
+    "-DLPX4_ENABLE_SPEECH=1",
+    "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+    "-DLPX4_COMPACT_ONLY=1",
+    "-DLPX4_COMPACT_VERSION=9",
+    "-DLPX4_SAMPLE_RATE=0",
+    "-DLPX4_EXTENDED_SAMPLE_RATES=1",
+    "-Wl,--no-entry",
+    "-Wl,--export-memory",
+    "-Wl,--initial-memory=262144",
+    "-Wl,--max-memory=262144",
+    "-Wl,-z,stack-size=32768",
+    "-Wl,--strip-all",
+    "-Wl,--export=lpx_input",
+    "-Wl,--export=lpx_output",
+    "-Wl,--export=lpx_samples",
+    "-Wl,--export=lpx_rate",
+    "-Wl,--export=lpx_decode"
+  ],
+  "inputs": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "20824b9098f7485c2b23001b1997ab9658aa93fa0dde20a15cae521ca27456d0",
+    "web-player/lpx/native/decoder.cpp": "9a7070c2b41b08c20585f36dbc6ce7ef1c70e4afc68f5544152fd2f6c757dbf9",
+    "web-player/scripts/build-lpx-wasm.mjs": "00c61ac3e2194c396275a00f86279ec5fea070f674127eb8fa3de3946a552f6e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "ad871e841066bb511aa5548707f3d40a5e931a73446337283183de83d371a349",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "4a4ced85102ae29ca605311ebbf21ed171a2b5cb96d569c5b6cdb27e7964f69e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081"
+  },
+  "bytes": 9670,
+  "sha256": "16f7299d16da89325c4b0e96a26333be2bdf71f7529c243e90a010ef704d151d",
+  "imports": [],
+  "memoryBytes": 262144,
+  "output": "PCM16",
+  "rates": [
+    8000,
+    12000,
+    16000
+  ],
+  "profiles": [
+    4,
+    6,
+    15
+  ]
+}
