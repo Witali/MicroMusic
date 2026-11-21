@@ -5,10 +5,14 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createDecoder, parseHeader, encodeWav } from '../lpx/codec.js';
+import { createEncoder } from '../lpx/encoder.js';
+import { makeZip } from '../lpx/zip.js';
 
 const root = new URL('../', import.meta.url);
 const binary = readFileSync(new URL('lpx/decoder.wasm', root));
 const decode = await createDecoder(binary);
+const encode = await createEncoder(readFileSync(new URL('lpx/encoder.wasm', root)));
+const encodedCases = [];
 function corpus(folder) {
   return readdirSync(folder, { withFileTypes: true }).flatMap(entry => {
     const url = new URL(entry.name + (entry.isDirectory() ? '/' : ''), folder);
@@ -65,12 +69,61 @@ test('PCM16 WAV export preserves sample values, rate and channel count', () => {
     assert.deepEqual(wav.subarray(44), Buffer.from(pcm.buffer));
   }
 });
+test('encoder provenance is current and the bounded WASM module has no host imports', () => {
+  const manifest = JSON.parse(readFileSync(new URL('lpx/encoder-build.json', root)));
+  const binary = readFileSync(new URL('lpx/encoder.wasm', root));
+  const hash = data => createHash('sha256').update(data).digest('hex');
+  assert.equal(hash(binary), manifest.sha256);
+  for (const [path, expected] of Object.entries(manifest.inputs)) assert.equal(hash(readFileSync(new URL('../' + path, root), 'utf8').replaceAll('\r\n', '\n')), expected, path);
+  assert.deepEqual(WebAssembly.Module.imports(new WebAssembly.Module(binary)), []);
+});
+test('P4/P6 encoder validates exact C synthesis at packet boundaries and partial tails', () => {
+  for (const profile of [4, 6]) for (const length of [1, 19, 20, 39, 40, 41, 159, 160, 161, 319, 320, 321]) {
+    const pcm = Int16Array.from({ length }, (_, i) => Math.round(8000 * Math.sin(i * .137) + 1500 * Math.sin(i * .317)));
+    const rate = [8000, 12000, 16000][length % 3];
+    const bytes = encode(pcm, rate, profile), result = decode(bytes);
+    assert.equal(result.samples, length); assert.equal(result.profile, profile); assert.equal(result.sampleRate, rate);
+    encodedCases.push({ name: `encoded P${profile}/${length}`, bytes, rate });
+  }
+  assert.throws(() => encode(new Int16Array(), 8000, 6));
+  assert.throws(() => encode(new Int16Array(64001), 8000, 6));
+  assert.throws(() => encode(new Int16Array(1), 44100, 6));
+});
+test('encoder preserves full 64000-sample silence, and produces nonzero speech from a real decoded input', () => {
+  for (const profile of [4, 6]) {
+    const bytes = encode(new Int16Array(64000), 16000, profile);
+    assert.deepEqual(decode(bytes).pcm, new Int16Array(64000));
+    encodedCases.push({ name: `64000 silent P${profile}`, bytes, rate: 16000 });
+  }
+  const pcm = decode(readFileSync(new URL('audio/lpx-speech/chego/quality.v9.lpx', root))).pcm;
+  const bytes = encode(pcm, 8000, 6), actual = decode(bytes).pcm;
+  let energy = 0, signal = 0, error = 0;
+  for (let i = 0; i < pcm.length; i++) { energy += actual[i] ** 2; signal += pcm[i] ** 2; error += (pcm[i] - actual[i]) ** 2; }
+  assert.ok(energy > 0); assert.ok(error < signal, 'speech reconstruction beats silent output without gain fitting');
+  encodedCases.push({ name: 'reencoded speech P6', bytes, rate: 8000 });
+});
+test('ZIP retains UTF-8 names, payloads, directory offsets, and manifest', async () => {
+  const files = [{ name: 'звук-0001.lpx', bytes: new Uint8Array([1, 2, 3]) }, { name: 'playlist.json', bytes: new TextEncoder().encode('{}') }];
+  const bytes = Buffer.from(await makeZip(files).arrayBuffer());
+  let offset = 0;
+  for (const file of files) {
+    assert.equal(bytes.readUInt32LE(offset), 0x04034b50); assert.equal(bytes.readUInt16LE(offset + 6), 0x800);
+    const size = bytes.readUInt32LE(offset + 18), nameSize = bytes.readUInt16LE(offset + 26);
+    assert.equal(bytes.toString('utf8', offset + 30, offset + 30 + nameSize), file.name);
+    assert.deepEqual(bytes.subarray(offset + 30 + nameSize, offset + 30 + nameSize + size), Buffer.from(file.bytes));
+    offset += 30 + nameSize + size;
+  }
+  assert.equal(bytes.readUInt32LE(offset), 0x02014b50);
+  assert.equal(bytes.readUInt32LE(bytes.length - 22), 0x06054b50);
+  assert.equal(bytes.readUInt32LE(bytes.length - 6), offset);
+});
 test('WASM PCM matches independent native C reference for the full rate matrix', { skip: !process.env.LPX_WSL_REFERENCE }, () => {
-  const input = Buffer.concat(cases.flatMap(item => { const size = Buffer.alloc(4); size.writeUInt32LE(item.bytes.length); return [size, item.bytes]; }));
+  const allCases = [...cases, ...encodedCases];
+  const input = Buffer.concat(allCases.flatMap(item => { const size = Buffer.alloc(4); size.writeUInt32LE(item.bytes.length); return [size, item.bytes]; }));
   const result = spawnSync('wsl', ['-d', 'Ubuntu', '--', process.env.LPX_WSL_REFERENCE], { input, maxBuffer: 32 * 1024 * 1024 });
   assert.equal(result.status, 0, result.stderr?.toString());
   let offset = 0;
-  for (const item of cases) {
+  for (const item of allCases) {
     const size = result.stdout.readUInt32LE(offset); offset += 4;
     assert.equal(size, parseHeader(item.bytes).samples * 2);
     const pcm = decode(item.bytes).pcm;

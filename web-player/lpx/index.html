@@ -9,6 +9,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
   <script type="module" src="./app.js"></script>
+  <script type="module" src="./converter.js"></script>
 </head>
 <body>
   <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
@@ -25,7 +26,7 @@
   <div class="shell">
     <header class="header">
       <a class="brand" href="./" aria-label="MicroMusic LPX Player"><span class="brand-icon"><svg><use href="#wave-icon"/></svg></span>MicroMusic<span class="brand-divider">/</span><span class="brand-secondary">PLAYER</span></a>
-      <span class="version">LPX <b>V9</b></span>
+      <nav class="header-tools" aria-label="Инструменты"><a href="#converter">Конвертер в LPX</a><span class="version">LPX <b>V9</b></span></nav>
     </header>
     <main>
       <section class="intro" aria-labelledby="title">
@@ -44,7 +45,7 @@
       <noscript><p class="message error">Для декодирования LPX и воспроизведения включите JavaScript.</p></noscript>
 
       <div class="workspace">
-        <section class="player panel" aria-label="Проигрыватель">
+        <section id="player" class="player panel" aria-label="Проигрыватель">
           <div class="player-heading">
             <div class="file-heading"><span class="small-label">СЕЙЧАС В ПЛЕЕРЕ</span><h2 id="filename">Здесь будет ваш звук</h2><p id="file-summary">Загрузите файл, чтобы увидеть звуковую волну</p></div>
             <span id="profile-badge" class="profile-badge">.LPX</span>
@@ -69,6 +70,17 @@
         </aside>
       </div>
       <section class="notes" aria-label="Возможности"><div><span class="note-number">V9</span><p><b>Актуальный формат</b><span>Профили P4, P6 и Sparse80</span></p></div><div><span class="note-number">8–16</span><p><b>кГц из файла</b><span>8, 12 и 16 кГц</span></p></div><div><svg><use href="#lock-icon"/></svg><p><b>Локальная обработка</b><span>Ваши записи никуда не отправляются</span></p></div></section>
+      <section id="converter" class="converter panel" aria-labelledby="converter-title">
+        <div class="converter-title"><div><p class="eyebrow">ОБРАТНОЕ ПРЕОБРАЗОВАНИЕ</p><h2 id="converter-title">Из аудио — в LPX.</h2></div><span class="profile-badge">C → WASM</span></div>
+        <p class="converter-description">WAV, MP3, FLAC, OGG, M4A и другие форматы, которые читает ваш браузер. Вся конвертация — на вашем устройстве.</p>
+        <div id="source-drop" class="source-drop"><svg><use href="#file-icon"/></svg><div class="source-copy"><h3 id="source-name">Перетащите исходное аудио</h3><p id="source-summary">Любой поддерживаемый браузером аудиофайл · до 100 МБ</p></div><button id="source-open" class="button button-outline">Выбрать аудио</button><input id="source-file" class="visually-hidden" type="file" accept="audio/*,.wav,.mp3,.flac,.ogg,.m4a,.aac,.opus,.webm,.mp4,.aiff" aria-label="Выбрать исходный аудиофайл"></div>
+        <div class="convert-options"><label>Профиль<select id="encode-profile"><option value="6">P6 · повышенное качество</option><option value="4">P4 · компактнее</option></select></label><label>Частота<select id="encode-rate"><option value="8000">8 кГц</option><option value="12000">12 кГц</option><option value="16000">16 кГц</option></select></label><div class="convert-buttons"><button id="convert" class="button button-green" disabled>В LPX V9</button><button id="cancel-convert" class="button button-outline" hidden>Отмена</button></div></div>
+        <progress id="convert-progress" max="100" value="0" aria-label="Прогресс конвертации"></progress>
+        <p id="convert-status" class="message" role="status" aria-live="polite">Выберите аудиофайл для конвертации.</p>
+        <div id="convert-results" class="convert-results" aria-label="Результаты конвертации"></div>
+        <button id="download-all" class="button button-outline download-all" hidden>Скачать всё в ZIP</button>
+        <p class="converter-note">LPX — речевой кодек с потерями. Стерео сводится в моно, громкость не нормализуется. Длинные записи делятся на самостоятельные файлы по 64 000 отсчётов (до 8 с при 8 кГц); границы фрагментов могут быть слышны. ZIP сохраняет порядок в playlist.json.</p>
+      </section>
     </main>
     <footer class="footer"><span>MicroMusic <span class="footer-separator">/</span> LPX V9 Player</span><span>C → WebAssembly <span class="footer-separator">·</span> Без установки</span></footer>
   </div>

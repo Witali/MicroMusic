@@ -44,3 +44,20 @@ const manifest = { schema: 'micromusic-lpx-v9-wasm-v1', compiler: run(['--versio
   output: 'PCM16', rates: [8000, 12000, 16000], profiles: [4, 6, 15] };
 writeFileSync(join(root, 'web-player/lpx/build.json'), JSON.stringify(manifest, null, 2) + '\n');
 console.log(`LPX V9 C → WebAssembly: ${binary.length} bytes, no host imports`);
+
+const encoderSources = ['Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp', 'web-player/lpx/native/encoder.cpp'];
+const encoderExports = ['enc_input', 'enc_output', 'enc_begin', 'enc_step', 'enc_finish'];
+const encoderFlags = flags.filter(flag => !flag.startsWith('-Wl,--export=') && !flag.startsWith('-Wl,--initial-memory=') && !flag.startsWith('-Wl,--max-memory='));
+encoderFlags.push('-Wl,--initial-memory=2097152', '-Wl,--max-memory=2097152', ...encoderExports.map(name => '-Wl,--export=' + name));
+const encoderOutput = join(root, 'web-player/lpx/encoder.wasm');
+run([...encoderFlags, ...encoderSources, '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins', '-o', encoderOutput]);
+const encoderBinary = readFileSync(encoderOutput);
+if (WebAssembly.Module.imports(await WebAssembly.compile(encoderBinary)).length) throw new Error('Encoder must have no host imports');
+const encoderInputs = [...new Set([...inputs.filter(path => !path.endsWith('native/decoder.cpp')), 'web-player/lpx/native/encoder.cpp',
+  ...['speech_v4.py', 'wav_lpc.py', 'q0_model.py', 'speech_v9.py', 'speech_compact.py'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/' + name)])];
+writeFileSync(join(root, 'web-player/lpx/encoder-build.json'), JSON.stringify({ ...manifest,
+  flags: encoderFlags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
+  inputs: Object.fromEntries(encoderInputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
+  schema: 'micromusic-lpx-v9-encoder-wasm-v1', bytes: encoderBinary.length, sha256: hash(encoderBinary), memoryBytes: 2097152,
+  profiles: [4, 6], output: 'LPX V9', algorithm: 'speech_v4 scalar closed-loop search, browser C++ port' }, null, 2) + '\n');
+console.log(`LPX V9 encoder C → WebAssembly: ${encoderBinary.length} bytes, no host imports`);

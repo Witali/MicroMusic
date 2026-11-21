@@ -31,6 +31,7 @@ try {
 
 $('open').onclick = () => $('file').click();
 $('file').onchange = () => { if ($('file').files[0]) load($('file').files[0]); $('file').value = ''; };
+document.addEventListener('lpx-open', event => load(new File([event.detail.bytes], event.detail.name, { type: 'application/octet-stream' })));
 const dropZone = $('drop-zone');
 let dragDepth = 0;
 dropZone.addEventListener('dragenter', event => { event.preventDefault(); dragDepth++; dropZone.classList.add('dragging'); });
