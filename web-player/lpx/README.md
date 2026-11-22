@@ -33,6 +33,13 @@ multi-pass optimizers. LPX is lossy and intended for speech; music may degrade.
 Every complete emitted file is decoded through the shared C core and checked
 sample by sample against the encoder's model, including strict final EOF.
 
+The search stops losing candidates once their accumulated squared error reaches
+the incumbent error, and skips later scale codes with the same integer step or
+a repeated pitch gain. Candidate order, first-winner ties, winning-state replay,
+wire packing and complete C validation remain unchanged. The differential suite
+compares complete LPX bytes and PCM with the shipped exhaustive WASM at commit
+688fc4f6, including V9 Long, clipping, silent ties and partial packets.
+
 ## C/C++ → WebAssembly and PC use
 
 The shared Lpx4HybridCore uses explicitly selected C arithmetic, with assembly
@@ -47,6 +54,22 @@ node web-player/scripts/build-lpx-wasm.mjs --emsdk C:/path/to/emsdk
 node --test web-player/tests/lpx-browser.test.mjs
 node web-player/scripts/decode-lpx.mjs input.lpx new-output.wav
 ```
+
+Build and check an explicitly selectable exhaustive C oracle with both
+`LPX_ENCODER_ENABLE_PRUNING=0` and `LPX_ENCODER_DEDUP_CANDIDATES=0`:
+
+```powershell
+node web-player/scripts/build-lpx-wasm.mjs --emsdk C:/path/to/emsdk --reference-encoder
+$env:LPX_EXHAUSTIVE_WASM = (Resolve-Path build/lpx-encoder-exhaustive.wasm).Path
+node --test web-player/tests/lpx-encoder-exact.test.mjs
+node web-player/scripts/benchmark-lpx-encoder.mjs
+```
+
+The benchmark requires local FFmpeg and compares the old and current production
+modules on identical PCM. It retains hashes, all paired timings and environment
+metadata in `build/lpx-encoder-benchmark.json`. See the retained
+[measurements and reproduction notes](../../research/web-encoder-exact-search-2026-11-22/README.md)
+and the [WASM optimization cookbook](../../docs/wasm-asm-cookbook/README.md).
 
 The PC command uses Node and the same C/WASM decoder; it refuses to overwrite an
 existing output. build.json and encoder-build.json retain source/compiler/flag

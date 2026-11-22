@@ -77,7 +77,7 @@ $('convert').onclick = async () => {
       pcm[i] = Math.min(32767, Math.max(-32768, value));
     }
     $('source-summary').textContent = `${audio.duration.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} с · ${channels.length} кан. → моно · ${rate / 1000} кГц${clipped ? ` · насыщение ${clipped} отсч.` : ''}`;
-    worker = new Worker(new URL('./encode-worker.js', import.meta.url), { type: 'module' });
+    worker = new Worker(new URL('./encode-worker.js?v=20261122-exact-search', import.meta.url), { type: 'module' });
     worker.onerror = event => { event.preventDefault(); if (id === job) { stop(); status('Не удалось запустить энкодер. Обновите страницу и повторите.', true); } };
     worker.onmessage = ({ data }) => {
       if (id !== job) return;
