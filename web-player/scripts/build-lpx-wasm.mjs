@@ -6,7 +6,8 @@ import { parseArgs } from 'node:util';
 import { createHash } from 'node:crypto';
 
 const { values } = parseArgs({ options: { emsdk: { type: 'string' }, clang: { type: 'string' },
-  'reference-encoder': { type: 'boolean', default: false } } });
+  'reference-encoder': { type: 'boolean', default: false },
+  'prefix-selftest': { type: 'boolean', default: false } } });
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const sdk = values.emsdk || process.env.EMSDK;
 if (!sdk) throw new Error('Pass --emsdk <SDK directory> or set EMSDK. The SDK is read only.');
@@ -62,13 +63,22 @@ writeFileSync(join(root, 'web-player/lpx/encoder-build.json'), JSON.stringify({ 
   inputs: Object.fromEntries(encoderInputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
   schema: 'micromusic-lpx-v9-encoder-wasm-v1', bytes: encoderBinary.length, sha256: hash(encoderBinary), maxMemoryBytes: 1073741824,
   profiles: [4, 6], output: 'LPX V9', algorithm: 'speech_v4 scalar closed-loop search, browser C++ port',
-  searchOptimizations: { nonnegativeLossPruning: true, duplicateCandidates: true } }, null, 2) + '\n');
+  searchOptimizations: { nonnegativeLossPruning: true, duplicateCandidates: true, commonPrefixes: true } }, null, 2) + '\n');
 console.log(`LPX V9 encoder C → WebAssembly: ${encoderBinary.length} bytes, no host imports`);
 
 if (values['reference-encoder']) {
   mkdirSync(join(root, 'build'), { recursive: true });
   const referenceOutput = join(root, 'build/lpx-encoder-exhaustive.wasm');
-  run([...encoderFlags, '-DLPX_ENCODER_ENABLE_PRUNING=0', '-DLPX_ENCODER_DEDUP_CANDIDATES=0',
+  run([...encoderFlags, '-DLPX_ENCODER_ENABLE_PRUNING=0', '-DLPX_ENCODER_DEDUP_CANDIDATES=0', '-DLPX_ENCODER_REUSE_PREFIX=0',
     ...encoderSources, '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins', '-o', referenceOutput]);
   console.log('Exhaustive C encoder oracle: build/lpx-encoder-exhaustive.wasm');
+}
+
+if (values['prefix-selftest']) {
+  mkdirSync(join(root, 'build'), { recursive: true });
+  run([...encoderFlags, '-Wl,--export=lpx_prefix_selftest', encoderSources[0],
+    'web-player/tests/helpers/lpx-prefix-selftest.cpp',
+    '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins',
+    '-o', join(root, 'build/lpx-prefix-selftest.wasm')]);
+  console.log('Pulse prefix state/loss/bound self-test: build/lpx-prefix-selftest.wasm');
 }

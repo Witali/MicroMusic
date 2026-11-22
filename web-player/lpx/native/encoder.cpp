@@ -20,6 +20,12 @@
 #if LPX_ENCODER_DEDUP_CANDIDATES != 0 && LPX_ENCODER_DEDUP_CANDIDATES != 1
 #error LPX_ENCODER_DEDUP_CANDIDATES must be 0 or 1
 #endif
+#ifndef LPX_ENCODER_REUSE_PREFIX
+#define LPX_ENCODER_REUSE_PREFIX 1
+#endif
+#if LPX_ENCODER_REUSE_PREFIX != 0 && LPX_ENCODER_REUSE_PREFIX != 1
+#error LPX_ENCODER_REUSE_PREFIX must be 0 or 1
+#endif
 
 namespace {
 constexpr double pi = 3.14159265358979323846;
@@ -40,6 +46,12 @@ static int headerBytes;
 static int count, padded, mode, rate, block, bits, failure;
 struct State { int h[10], ring[256], dd; };
 static State state;
+#if LPX_ENCODER_REUSE_PREFIX
+// One cache per encoder instance, rebuilt for every subframe/scale/gain.
+// Keep it off the 32 KiB stack. Full ring snapshots preserve lags 18 and 19.
+static State prefixState[20];
+static double prefixLoss[20];
+#endif
 int clip(int value, int low = -32767, int high = 32767) { return value < low ? low : value > high ? high : value; }
 int polyMul(int value, int c) {
     if (value >= -250000 && value <= 250000) return (value * c) >> 12;
@@ -121,9 +133,22 @@ void prepareCoefficients() {
         }
     }
 }
-double trial20(State& out, const State& initial, int cursor, int scale, int lag, int gain, int pos, int amp, bool save, double bound = HUGE_VAL) {
-    out = initial; double loss = 0; const int16_t* co = coefficients[cursor / 20];
-    for (int j = 0; j < 20; ++j) {
+double trial20(State& out, const State& initial, int cursor, int scale, int lag, int gain, int pos, int amp, bool save, double bound = HUGE_VAL, bool reusePrefix = false, bool recordPrefix = false) {
+#if LPX_ENCODER_REUSE_PREFIX
+    const int first = reusePrefix ? pos : 0;
+    double loss = reusePrefix ? prefixLoss[pos] : 0;
+#if LPX_ENCODER_ENABLE_PRUNING
+    if (loss >= bound) return loss;
+#endif
+    out = reusePrefix ? prefixState[pos] : initial;
+#else
+    const int first = 0; double loss = 0; out = initial;
+#endif
+    const int16_t* co = coefficients[cursor / 20];
+    for (int j = first; j < 20; ++j) {
+#if LPX_ENCODER_REUSE_PREFIX
+        if (recordPrefix) { prefixState[j] = out; prefixLoss[j] = loss; }
+#endif
         int at = cursor + j, q = clip((gain * out.ring[(at - lag) & 255] + 8) >> 4, -32, 31);
         q = clip(q + (j == pos ? amp : 0), -32, 31); out.ring[at & 255] = q;
         int acc = 0; for (int k = 0; k < 10; ++k) acc += (co[k] * out.h[k]) >> 12;
@@ -148,11 +173,15 @@ double searchBlock(State& result, int scale, int lag, int gain, bool save, doubl
         if (loss >= bound) { result = current; return loss; }
 #endif
         int cursor = block * 160 + si * 20, bestpos = 0, bestamp = 0; double best = HUGE_VAL;
+#if LPX_ENCODER_REUSE_PREFIX
+        // No impulse before a candidate's position: compute that prefix once.
+        trial20(trial, current, cursor, scale, lag, gain, 20, 0, false, HUGE_VAL, false, true);
+#endif
         for (int position = 0; position < (mode == 4 ? 16 : 20); ++position) {
             int pos = mode == 4 ? position + (position + 2) / 4 : position;
             for (int ai = 0; ai < (mode == 4 ? 2 : 16); ++ai) {
                 int amp = mode == 4 ? (ai ? 8 : -8) : ai - 8;
-                double error = trial20(trial, current, cursor, scale, lag, gain, pos, amp, false, best);
+                double error = trial20(trial, current, cursor, scale, lag, gain, pos, amp, false, best, true);
                 if (error < best) { best = error; bestpos = pos; bestamp = amp; }
             }
         }
