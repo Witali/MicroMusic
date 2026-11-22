@@ -26,6 +26,12 @@
 #if LPX_ENCODER_REUSE_PREFIX != 0 && LPX_ENCODER_REUSE_PREFIX != 1
 #error LPX_ENCODER_REUSE_PREFIX must be 0 or 1
 #endif
+#ifndef LPX_ENCODER_FAST_SILENCE
+#define LPX_ENCODER_FAST_SILENCE 1
+#endif
+#if LPX_ENCODER_FAST_SILENCE != 0 && LPX_ENCODER_FAST_SILENCE != 1
+#error LPX_ENCODER_FAST_SILENCE must be 0 or 1
+#endif
 
 namespace {
 constexpr double pi = 3.14159265358979323846;
@@ -190,6 +196,21 @@ double searchBlock(State& result, int scale, int lag, int gain, bool save, doubl
     }
     result = current; return loss;
 }
+#if LPX_ENCODER_FAST_SILENCE
+void commitSilentBlock(int start) {
+    // Under the existing zero-residual/zero-filter guard, scale=0/gain=0
+    // synthesizes zero for every candidate. Strict ties choose pos=0, amp=-8.
+    // Preserve those excitation pulses, including the untouched ring entries.
+    for (int j = 0; j < 160; ++j) {
+        state.ring[(start + j) & 255] = j % 20 == 0 ? -8 : 0;
+        expected[start + j] = 0;
+    }
+    for (int si = 0; si < 8; ++si) {
+        pulses[start / 20 + si][0] = 0;
+        pulses[start / 20 + si][1] = -8;
+    }
+}
+#endif
 void put(int value, int width) {
     for (int bit = 0; bit < width; ++bit) {
         if (headerBytes + (bits >> 3) >= packedCapacity) { failure = 1; return; }
@@ -250,7 +271,11 @@ int enc_step() {
     if (power == 0 && state.dd == 0) {
         bool silent = true; for (int k = 0; k < 10; ++k) if (state.h[k]) silent = false;
         if (silent) {
+#if LPX_ENCODER_FAST_SILENCE
+            commitSilentBlock(start);
+#else
             State next; searchBlock(next, 0, 18, 0, true); state = next;
+#endif
             params[block][0] = 0; params[block][1] = 18; params[block][2] = 0;
             ++block; return block * 100 / (padded / 160);
         }

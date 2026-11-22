@@ -64,3 +64,11 @@ test('encoded uint32 payload lengths and long silent ties remain exact', () => {
   assert.ok(bytes.length > 65535);
   assert.equal(parseHeader(bytes).samples, 1280001);
 });
+
+test('leading silence, zero pauses and resumed excitation retain exact filter/ring history', () => {
+  for (const profile of [4, 6]) for (const rate of [8000, 12000, 16000]) {
+    const pcm = Int16Array.from({ length: 9601 }, (_, i) => i < 641 || (i >= 1920 && i < 7681)
+      ? 0 : Math.round(9000 * Math.sin(i * .14) + 2000 * Math.sin(i * .31)));
+    same(pcm, rate, profile);
+  }
+});
