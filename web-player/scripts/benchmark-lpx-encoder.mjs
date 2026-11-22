@@ -1,4 +1,4 @@
-// Compare the shipped exhaustive WASM with the current production module.
+// Compare a shipped WASM revision with the current production module.
 // Audio stays local. Only timing, provenance and hashes are retained.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
@@ -12,12 +12,13 @@ import { parseArgs } from 'node:util';
 import { createEncoder } from '../lpx/encoder.js';
 import { createDecoder } from '../lpx/codec.js';
 
-const { values } = parseArgs({ options: { output: { type: 'string' } } });
+const { values } = parseArgs({ options: { output: { type: 'string' }, baseline: { type: 'string' } } });
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const revision = '688fc4f618f9ed6176501e0f5d6e55bcb8fc80cf';
+const revision = execFileSync('git', ['rev-parse', '--verify', `${values.baseline || '688fc4f618f9ed6176501e0f5d6e55bcb8fc80cf'}^{commit}`], { cwd: root, encoding: 'utf8' }).trim();
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const baseline = execFileSync('git', ['show', `${revision}:web-player/lpx/encoder.wasm`], { cwd: root });
-assert.equal(hash(baseline), 'f59002ca5e46f6bee2616f28edf3fe61ff91972df93ded823b6af21c64355a49');
+const baselineManifest = JSON.parse(execFileSync('git', ['show', `${revision}:web-player/lpx/encoder-build.json`], { cwd: root, encoding: 'utf8' }));
+assert.equal(hash(baseline), baselineManifest.sha256);
 const candidate = readFileSync(resolve(root, 'web-player/lpx/encoder.wasm'));
 const manifest = JSON.parse(readFileSync(resolve(root, 'web-player/lpx/encoder-build.json')));
 assert.equal(hash(candidate), manifest.sha256);
@@ -68,7 +69,8 @@ const result = { schema: 'micromusic-lpx-encoder-benchmark-v1',
   measuredAt: new Date().toISOString(), node: process.version, v8: process.versions.v8, platform: process.platform,
   arch: process.arch, cpu: cpus()[0].model, warmups, rounds,
   ffmpeg: execFileSync('ffmpeg', ['-version'], { encoding: 'utf8' }).split(/\r?\n/)[0],
-  baseline: { revision, sha256: hash(baseline), bytes: baseline.length },
+  baseline: { revision, sha256: hash(baseline), bytes: baseline.length,
+    compiler: baselineManifest.compiler, flags: baselineManifest.flags, inputs: baselineManifest.inputs },
   optimized: { sha256: hash(candidate), bytes: candidate.length, compiler: manifest.compiler,
     flags: manifest.flags, inputs: manifest.inputs }, rows };
 const output = resolve(root, values.output || 'build/lpx-encoder-benchmark.json');
