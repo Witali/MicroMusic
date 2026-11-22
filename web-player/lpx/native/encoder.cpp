@@ -38,6 +38,13 @@
 #if LPX_ENCODER_CACHE_ANALYSIS != 0 && LPX_ENCODER_CACHE_ANALYSIS != 1
 #error LPX_ENCODER_CACHE_ANALYSIS must be 0 or 1
 #endif
+#ifndef LPX_ENCODER_SIMD_SEARCH
+#define LPX_ENCODER_SIMD_SEARCH 0
+#endif
+#if LPX_ENCODER_SIMD_SEARCH != 0 && LPX_ENCODER_SIMD_SEARCH != 1
+#error LPX_ENCODER_SIMD_SEARCH must be 0 or 1
+#endif
+#include "pulse-search-simd.h"
 
 namespace {
 constexpr double pi = 3.14159265358979323846;
@@ -227,11 +234,26 @@ double searchBlock(State& result, int scale, int lag, int gain, bool save, doubl
 #endif
         for (int position = 0; position < (mode == 4 ? 16 : 20); ++position) {
             int pos = mode == 4 ? position + (position + 2) / 4 : position;
+#if LPX_ENCODER_HAS_SIMD_SEARCH
+            for (int ai = 0; ai < (mode == 4 ? 2 : 16); ai += mode == 4 ? 2 : 4) {
+                const int n = mode == 4 ? 2 : 4;
+                int amplitudes[4]; double errors[4];
+                for (int lane = 0; lane < 4; ++lane) amplitudes[lane] = mode == 4 ? (lane & 1 ? 8 : -8) : ai + lane - 8;
+                const State& prefix = prefixState[pos];
+                lpxTrial4(errors, prefix.h, prefix.ring, prefix.dd, coefficients[cursor / 20], source + cursor,
+                    cursor, steps[scale * 8], lag, gain, pos, amplitudes, prefixLoss[pos], best, LPX_ENCODER_ENABLE_PRUNING);
+                // Preserve the original strict first-winner order within a batch.
+                for (int lane = 0; lane < n; ++lane) if (errors[lane] < best) {
+                    best = errors[lane]; bestpos = pos; bestamp = amplitudes[lane];
+                }
+            }
+#else
             for (int ai = 0; ai < (mode == 4 ? 2 : 16); ++ai) {
                 int amp = mode == 4 ? (ai ? 8 : -8) : ai - 8;
                 double error = trial20(trial, current, cursor, scale, lag, gain, pos, amp, false, best, true);
                 if (error < best) { best = error; bestpos = pos; bestamp = amp; }
             }
+#endif
         }
         loss += trial20(next, current, cursor, scale, lag, gain, bestpos, bestamp, save); current = next;
         if (save) { pulses[cursor / 20][0] = bestpos; pulses[cursor / 20][1] = bestamp; }

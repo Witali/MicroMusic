@@ -8,7 +8,8 @@ import { createHash } from 'node:crypto';
 const { values } = parseArgs({ options: { emsdk: { type: 'string' }, clang: { type: 'string' },
   'reference-encoder': { type: 'boolean', default: false },
   'prefix-selftest': { type: 'boolean', default: false },
-  'analysis-selftest': { type: 'boolean', default: false } } });
+  'analysis-selftest': { type: 'boolean', default: false },
+  'simd-selftest': { type: 'boolean', default: false } } });
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const sdk = values.emsdk || process.env.EMSDK;
 if (!sdk) throw new Error('Pass --emsdk <SDK directory> or set EMSDK. The SDK is read only.');
@@ -57,7 +58,7 @@ const encoderOutput = join(root, 'web-player/lpx/encoder.wasm');
 run([...encoderFlags, ...encoderSources, '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins', '-o', encoderOutput]);
 const encoderBinary = readFileSync(encoderOutput);
 if (WebAssembly.Module.imports(await WebAssembly.compile(encoderBinary)).length) throw new Error('Encoder must have no host imports');
-const encoderInputs = [...new Set([...inputs.filter(path => !path.endsWith('native/decoder.cpp')), 'web-player/lpx/native/encoder.cpp',
+const encoderInputs = [...new Set([...inputs.filter(path => !path.endsWith('native/decoder.cpp')), 'web-player/lpx/native/encoder.cpp', 'web-player/lpx/native/pulse-search-simd.h',
   ...['speech_v4.py', 'wav_lpc.py', 'q0_model.py', 'speech_v9.py', 'speech_compact.py'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/' + name)])];
 writeFileSync(join(root, 'web-player/lpx/encoder-build.json'), JSON.stringify({ ...manifest,
   flags: encoderFlags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
@@ -92,4 +93,23 @@ if (values['analysis-selftest']) {
     '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins',
     '-o', join(root, 'build/lpx-analysis-selftest.wasm')]);
   console.log('Analysis/silent-block self-test: build/lpx-analysis-selftest.wasm');
+}
+
+const simdFlags = [...encoderFlags, '-msimd128', '-DLPX_ENCODER_SIMD_SEARCH=1'];
+{
+  const simdOutput = join(root, 'web-player/lpx/encoder-simd.wasm');
+  run([...simdFlags, ...encoderSources, '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins', '-o', simdOutput]);
+  const simdBinary = readFileSync(simdOutput);
+  if (WebAssembly.Module.imports(await WebAssembly.compile(simdBinary)).length) throw new Error('SIMD encoder must have no host imports');
+  const scalarManifest = JSON.parse(readFileSync(join(root, 'web-player/lpx/encoder-build.json')));
+  writeFileSync(join(root, 'web-player/lpx/encoder-simd-build.json'), JSON.stringify({ ...scalarManifest,
+    flags: simdFlags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
+    bytes: simdBinary.length, sha256: hash(simdBinary), backend: 'wasm-simd128-pulse4' }, null, 2) + '\n');
+  console.log(`LPX V9 four-candidate SIMD encoder: ${simdBinary.length} bytes, no host imports`);
+}
+if (values['simd-selftest']) {
+  mkdirSync(join(root, 'build'), { recursive: true });
+  run([...simdFlags, '-Wl,--export=lpx_simd_selftest', encoderSources[0], 'web-player/tests/helpers/lpx-simd-selftest.cpp',
+    '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins', '-o', join(root, 'build/lpx-simd-selftest.wasm')]);
+  console.log('Four-candidate SIMD self-test: build/lpx-simd-selftest.wasm');
 }
