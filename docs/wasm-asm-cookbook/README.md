@@ -114,6 +114,47 @@ are reproducible experiments, not selected production backends. Keep the
 simpler scalar/full-prefix implementation for these measured workloads; no
 general claim about explicit SIMD kernels or other CPUs follows from this test.
 
+### Evaluate independent pulse candidates in SIMD lanes
+
+The [explicit four-candidate backend](../../web-player/lpx/native/pulse-search-simd.h)
+uses wasm32 SIMD128 intrinsics from the pinned Emscripten 6.0.12/Clang 24 SDK.
+It is original project code; the compiler's LLVM header is included, not copied
+or adapted. [Emscripten's SIMD reference](https://emscripten.org/docs/porting/simd.html)
+documents the intrinsics and `-msimd128` target flag. No relaxed SIMD/fast math,
+threads or handwritten assembly are used. Ordinary C remains explicitly
+selectable, including on SIMD-capable hosts.
+
+Map four amplitudes at the same pulse position to four i32 lanes, sharing the
+cached prefix. Keep ten independent LPC histories and de-emphasis values in
+vectors. Lags 18..145 mean only newly generated samples 0 and 1 can feed back
+within a 20-sample trial; retain those two excitation vectors and read other
+delays from the passed prefix ring. Loser state is never committed, so there
+is no need to clone an entire scalar ring for every trial. Replay each winner
+fully with the original scalar trial to commit pulses/state/PCM.
+
+Each shifted coefficient product and clipped intermediate uses the same signed
+32-bit arithmetic. Products and their sums fit under the existing bounded
+states. Convert PCM differences exactly to two f64x2 pairs and accumulate the
+squared loss per lane in original sample order. Per-trial integer loss remains
+below 2^37, exactly representable as double. Never replace it with float loss or
+reassociate a sum across samples.
+
+A batch uses the incumbent bound from before its first lane. It may do more
+work than sequential pruning, but a rejected lane cannot beat the subsequently
+decreasing incumbent. Stop when all lanes reach the bound, then examine lanes
+in original order using strict `<`. P4 uses two distinct amplitudes in duplicated
+lanes; P6 uses four groups of four. Preserve zero-step ties and clipping.
+
+`LPX_ENCODER_SIMD_SEARCH=1` selects this path only when `__wasm__`,
+`__wasm_simd128__` and prefix reuse are enabled; other builds keep scalar C.
+The C ABI and stream/model validation are unchanged. The web loader validates
+SIMD support before selection, exposes explicit ordinary/SIMD modes, and limits
+automatic fallback to loading/instantiation failures. It does not hide model
+validation failures. [The retained kernel experiment](../../research/web-encoder-simd-search-2026-11-22/README.md)
+records first/warm timings, flags, hashes, 972000 direct lane/bound comparisons
+and complete byte/PCM comparisons for 87 stream cases. These measurements are
+for local V8 workloads and do not establish performance on another CPU/browser.
+
 ### Fallback and evidence
 
 `LPX_ENCODER_ENABLE_PRUNING=0`, `LPX_ENCODER_DEDUP_CANDIDATES=0`,

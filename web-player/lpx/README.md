@@ -33,6 +33,24 @@ multi-pass optimizers. LPX is lossy and intended for speech; music may degrade.
 Every complete emitted file is decoded through the shared C core and checked
 sample by sample against the encoder's model, including strict final EOF.
 
+### Ordinary and SIMD encoding
+
+The page offers Auto, Ordinary and SIMD. Auto validates basic WebAssembly SIMD
+support and selects the four-candidate SIMD search when available. It falls
+back to ordinary C/WASM if the SIMD module cannot load or instantiate. Explicit
+SIMD selection reports an error instead of silently changing mode; unsupported
+browsers disable that option. Encoding/model failures always remain errors.
+Results show the actual backend and synchronous encoding time, excluding
+module loading and audio decoding/resampling. Both modes produce identical LPX.
+
+The SIMD kernel evaluates independent amplitudes in four integer lanes, with
+two pairs of double-precision loss lanes. It preserves per-candidate arithmetic,
+strict tie order and complete scalar winner replay. `LPX_ENCODER_SIMD_SEARCH=0`
+is the default portable backend; the SIMD artifact explicitly enables it with
+`-msimd128`. Both modules are built by the normal build command. No threads or
+cross-origin isolation headers are needed. See the retained
+[kernel measurements](../../research/web-encoder-simd-search-2026-11-22/README.md).
+
 The search stops losing candidates once their accumulated squared error reaches
 the incumbent error, and skips later scale codes with the same integer step or
 a repeated pitch gain. Candidate order, first-winner ties, winning-state replay,
@@ -68,11 +86,13 @@ optimizations disabled (`LPX_ENCODER_ENABLE_PRUNING`,
 `LPX_ENCODER_FAST_SILENCE` and `LPX_ENCODER_CACHE_ANALYSIS` set to zero):
 
 ```powershell
-node web-player/scripts/build-lpx-wasm.mjs --emsdk C:/path/to/emsdk --reference-encoder --prefix-selftest --analysis-selftest
+node web-player/scripts/build-lpx-wasm.mjs --emsdk C:/path/to/emsdk --reference-encoder --prefix-selftest --analysis-selftest --simd-selftest
 $env:LPX_EXHAUSTIVE_WASM = (Resolve-Path build/lpx-encoder-exhaustive.wasm).Path
 $env:LPX_PREFIX_SELFTEST_WASM = (Resolve-Path build/lpx-prefix-selftest.wasm).Path
 $env:LPX_ANALYSIS_SELFTEST_WASM = (Resolve-Path build/lpx-analysis-selftest.wasm).Path
-node --test web-player/tests/lpx-encoder-exact.test.mjs web-player/tests/lpx-prefix.test.mjs web-player/tests/lpx-analysis.test.mjs
+$env:LPX_SIMD_SELFTEST_WASM = (Resolve-Path build/lpx-simd-selftest.wasm).Path
+$lpxTests = Get-ChildItem web-player/tests/lpx-*.test.mjs | ForEach-Object FullName
+node --test $lpxTests
 node web-player/scripts/benchmark-lpx-encoder.mjs
 ```
 
@@ -90,6 +110,11 @@ Use `--baseline 02a2fea5 --cold` to measure the silence/analysis changes after
 items 1-3 and include first encodes in fresh instances. The retained
 [analysis/backend experiments](../../research/web-encoder-analysis-cache-2026-11-22/README.md)
 also cover exact grid math and the measured SIMD/compact-cache alternatives.
+The explicit kernel adds 972000 lane/bound comparisons and backend selection,
+unsupported-runtime and download/instantiation fallback checks. Set
+`LPX_CANDIDATE_WASM` to `web-player/lpx/encoder-simd.wasm` and run
+`lpx-encoder-exact.test.mjs` to compare all 87 stream cases with the shipped
+exhaustive encoder. Clear that variable before the regular suite.
 
 The PC command uses Node and the same C/WASM decoder; it refuses to overwrite an
 existing output. build.json and encoder-build.json retain source/compiler/flag
