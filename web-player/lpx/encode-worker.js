@@ -9,14 +9,7 @@ self.onmessage = async ({ data }) => {
   try {
     const encode = await ready;
     const pcm = new Int16Array(data.pcm);
-    const parts = Math.ceil(pcm.length / 64000);
-    for (let index = 0; index < parts; index++) {
-      const start = index * 64000, segment = pcm.subarray(start, start + 64000);
-      const bytes = encode(segment, data.sampleRate, data.profile, fraction => {
-        self.postMessage({ progress: (index + fraction) / parts, index, parts });
-      });
-      self.postMessage({ segment: { bytes, samples: segment.length, index, parts, start } }, [bytes.buffer]);
-    }
-    self.postMessage({ done: true });
+    const bytes = encode(pcm, data.sampleRate, data.profile, progress => self.postMessage({ progress }));
+    self.postMessage({ result: { bytes, samples: pcm.length, long: !!(bytes[2] & 64) } }, [bytes.buffer]);
   } catch (error) { self.postMessage({ error: error.message || 'Ошибка кодирования LPX.' }); }
 };

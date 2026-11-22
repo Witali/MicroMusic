@@ -511,5 +511,17 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       recorded=change.current[field];
     }
   }
+  if(recorded!==actual){
+    const report=JSON.parse(read('Codecs/LPX/research/v9-long-host-2026-11-21/source-transition.json'));
+    const change=report.sources[path];
+    if(change?.baseline?.[field]===recorded){
+      assert.equal(report.schema,'lpx-v9-long-host-transition-v1');
+      assert.equal(report.baseline_revision,'8a2d2c7d399c409a3eda8d69869d56f41f17a946');
+      assert.equal(report.complete,true);assert.equal(report.all_default_objects_exact,true);
+      assert.equal(report.cases.length,24);
+      for(const row of report.cases)assert.equal(row.after_sha256,row.before_sha256);
+      recorded=change.current[field];
+    }
+  }
   assert.equal(recorded,actual,path+' current source');
 }

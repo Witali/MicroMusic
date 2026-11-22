@@ -5,6 +5,9 @@ It preserves every decoded PCM16/PWM sample. All variable recording parameters
 remain in the file. The v9 decoder supports 8, 12 and 16 kHz and 1..64000 samples per
 segment, with the same 16-bit bounded input API.
 
+For a single longer Web/PC stream, see the separately marked, opt-in
+[V9 Long extension](LPX9_LONG_FORMAT.md). Ordinary V9/AVR limits remain unchanged.
+
 ## Header
 
 All multibyte words are little-endian. The header is 13 bytes; v5 uses 22.

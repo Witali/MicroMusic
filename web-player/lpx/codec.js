@@ -1,16 +1,22 @@
+export const MAX_SAMPLES = 32000000;
+export const MAX_FILE_BYTES = 100 * 1024 * 1024;
+
 export function parseHeader(buffer) {
   const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
-  if (bytes.length < 13 || bytes.length > 65535) throw new Error('Размер LPX V9 должен быть от 13 до 65 535 байт.');
+  if (bytes.length < 13 || bytes.length > MAX_FILE_BYTES) throw new Error('Выберите LPX V9 размером от 13 байт до 100 МБ.');
   if (bytes[0] !== 0x4c || bytes[1] !== 0x39) throw new Error('Это не LPX V9: ожидается сигнатура L9. Старые версии LPX не поддерживаются.');
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-  const profile = bytes[2] & 127;
-  if (![4, 6, 15].includes(profile) || (profile === 15 && bytes[2] !== 15)) throw new Error('Неподдерживаемый профиль LPX V9.');
-  const sampleRate = view.getUint16(3, true), samples = view.getUint16(5, true);
-  const pre = view.getUint16(7, true), brightness = view.getUint16(9, true);
+  const long = !!(bytes[2] & 64), headerBytes = long ? 17 : 13;
+  if (bytes.length < headerBytes || (!long && bytes.length > 65535)) throw new Error('Некорректный размер заголовка или файла LPX V9.');
+  const profile = bytes[2] & 63;
+  if (![4, 6, 15].includes(profile) || (profile === 15 && (bytes[2] & 128))) throw new Error('Неподдерживаемый профиль LPX V9.');
+  const sampleRate = view.getUint16(3, true), samples = long ? view.getUint32(5, true) : view.getUint16(5, true);
+  const pre = view.getUint16(long ? 9 : 7, true), brightness = view.getUint16(long ? 11 : 9, true);
   if (![8000, 12000, 16000].includes(sampleRate)) throw new Error('Поддерживаются частоты 8, 12 и 16 кГц.');
-  if (!samples || samples > 64000 || pre > 16384 || brightness > 11469) throw new Error('Некорректные параметры заголовка LPX V9.');
-  if (view.getUint16(11, true) !== bytes.length - 13) throw new Error('Размер данных не совпадает с заголовком: файл повреждён или обрезан.');
-  return { profile, extraPulses: !!(bytes[2] & 128), sampleRate, samples, bytes: bytes.length,
+  if (!samples || (!long && samples > 64000) || pre > 16384 || brightness > 11469) throw new Error('Некорректные параметры заголовка LPX V9.');
+  if (samples > MAX_SAMPLES) throw new Error('Для этого браузерного плеера предел — 32 000 000 отсчётов на файл.');
+  if ((long ? view.getUint32(13, true) : view.getUint16(11, true)) !== bytes.length - headerBytes) throw new Error('Размер данных не совпадает с заголовком: файл повреждён или обрезан.');
+  return { profile, long, format: long ? 'LPX V9 Long' : 'LPX V9', extraPulses: !!(bytes[2] & 128), sampleRate, samples, bytes: bytes.length,
     duration: samples / sampleRate, bitrate: bytes.length * 8 * sampleRate / samples };
 }
 
@@ -20,6 +26,7 @@ export async function createDecoder(binary) {
   return buffer => {
     const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
     const metadata = parseHeader(bytes);
+    if (!api.lpx_reserve(bytes.length, metadata.samples)) throw new Error('Недостаточно памяти для декодирования этой записи.');
     new Uint8Array(api.memory.buffer, api.lpx_input(), bytes.length).set(bytes);
     if (api.lpx_decode(bytes.length) !== 0) throw new Error('Повреждён поток LPX: декодер отклонил данные или окончание файла.');
     if (api.lpx_samples() !== metadata.samples || api.lpx_rate() !== metadata.sampleRate) throw new Error('Декодер вернул неверные параметры звука.');

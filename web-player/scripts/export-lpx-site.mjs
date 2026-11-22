@@ -1,5 +1,5 @@
 // Export only the standalone application. Never copy the enclosing Git history.
-import { mkdirSync, copyFileSync, writeFileSync, lstatSync } from 'node:fs';
+import { mkdirSync, copyFileSync, writeFileSync, lstatSync, rmSync } from 'node:fs';
 import { resolve, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -11,8 +11,11 @@ for (const path of [resolve(root, 'build'), destination, join(destination, 'dist
 mkdirSync(join(destination, 'dist'), { recursive: true });
 mkdirSync(join(destination, '.openai'), { recursive: true });
 const files = ['index.html', 'styles.css', 'app.js', 'codec.js', 'decode-worker.js', 'decoder.wasm', 'favicon.svg',
-  'converter.js', 'encoder.js', 'encode-worker.js', 'encoder.wasm', 'zip.js'];
+  'converter.js', 'encoder.js', 'encode-worker.js', 'encoder.wasm'];
 for (const name of files) copyFileSync(join(root, 'web-player/lpx', name), join(destination, 'dist', name));
+// Retire only the obsolete asset from this application's earlier ZIP export.
+const obsolete = join(destination, 'dist/zip.js');
+if (lstatSync(obsolete, { throwIfNoEntry: false })?.isFile()) rmSync(obsolete);
 copyFileSync(join(root, 'web-player/lpx/.openai/hosting.json'), join(destination, '.openai/hosting.json'));
 writeFileSync(join(destination, '.gitignore'), 'node_modules/\n.sites-*\n');
 console.log(`Exported ${files.length} application assets and Site manifest to ${destination}`);

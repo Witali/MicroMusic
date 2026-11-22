@@ -107,6 +107,22 @@ typedef int16_t Lpx4SynthesisValue;
 #if LPX4_COMPACT_VERSION == 9 && !LPX4_COMPACT_ONLY
 #error Version9 requires compact-only decoding
 #endif
+// Host-only V9 Long header: bit6 selects uint32 sample/payload lengths.
+// Explicit opt-in; ordinary V9/AVR layouts and the bounded begin API stay intact.
+#ifndef LPX4_ENABLE_WIDE_V9
+#define LPX4_ENABLE_WIDE_V9 0
+#endif
+#if LPX4_ENABLE_WIDE_V9 != 0 && LPX4_ENABLE_WIDE_V9 != 1
+#error LPX4_ENABLE_WIDE_V9 must be 0 or 1
+#endif
+#if LPX4_ENABLE_WIDE_V9 && (LPX4_COMPACT_VERSION != 9 || !LPX4_COMPACT_ONLY || defined(__AVR__) || LPX4_MEMORY_PROFILE != LPX4_MEMORY_PROFILE_STANDARD)
+#error V9 Long requires a non-AVR compact V9 standard-memory build
+#endif
+#if LPX4_ENABLE_WIDE_V9
+typedef uint32_t Lpx4InputSize;
+#else
+typedef uint16_t Lpx4InputSize;
+#endif
 // V9 includes all three runtime profiles. The legacy flag only enables the
 // long-header version8 reader in a version5 build; it does not select DSP.
 #define LPX4_HAS_SPARSE80 (LPX4_COMPACT_VERSION == 9 || LPX4_ENABLE_SPARSE80)
@@ -276,6 +292,10 @@ public:
     __attribute__((noinline))
 #endif
     bool begin(const uint8_t* bytesInProgmem, uint16_t size);
+#if LPX4_ENABLE_WIDE_V9
+    // Accepts standard V9 and the explicitly marked V9 Long extension.
+    bool beginWideV9(const uint8_t* input, uint32_t size);
+#endif
 #if LPX4_ENABLE_INPUT_CALLBACK
     // Return 0..255, or -1 on input failure/EOF. The source must already be
     // positioned at this segment; size bounds all reads, including the header.
@@ -304,13 +324,13 @@ public:
     // words modulo16 before widening to preserve its zero-progress contract.
     uint32_t produced() const {
 #if LPX4_BATCHED_REMAINING
-#if LPX4_COMPACT_ONLY
+#if LPX4_COMPACT_ONLY && !LPX4_ENABLE_WIDE_V9
         return (uint16_t)((uint16_t)sampleCount_-remaining_)+subPos_;
 #else
         return sampleCount_-remaining_+subPos_;
 #endif
 #else
-#if LPX4_COMPACT_ONLY
+#if LPX4_COMPACT_ONLY && !LPX4_ENABLE_WIDE_V9
         return (uint16_t)((uint16_t)sampleCount_-remaining_);
 #else
         return sampleCount_-remaining_;
@@ -341,7 +361,7 @@ private:
     // Share one clearing loop between construction and begin(), even with LTO.
     __attribute__((noinline)) void resetState();
 #if LPX4_ENABLE_INPUT_CALLBACK
-    bool beginSource(uint16_t size);
+    bool beginSource(Lpx4InputSize size);
 #endif
     LPX4_TUNE_READERS uint8_t readByte();
     uint16_t read16();
@@ -386,18 +406,18 @@ private:
     uint16_t sampleRate_,sampleCount_,preQ14_,brightQ14_,bytes_;
     uint16_t remaining_;
 #else
-    uint16_t bytes_;
+    Lpx4InputSize bytes_;
 #if !LPX4_ROM_POINTER
-    uint16_t cursor_;
+    Lpx4InputSize cursor_;
 #endif
-#if LPX4_COMPACT_VERSION == 9
+#if LPX4_COMPACT_VERSION == 9 && !LPX4_ENABLE_WIDE_V9
     // Every serialized v9 count, including rejected values, fits one word.
     // Public metadata remains uint32_t through the existing accessors.
     uint16_t sampleCount_;
 #else
     uint32_t sampleCount_;
 #endif
-#if LPX4_COMPACT_ONLY
+#if LPX4_COMPACT_ONLY && !LPX4_ENABLE_WIDE_V9
     uint16_t remaining_;
 #else
     uint32_t remaining_;

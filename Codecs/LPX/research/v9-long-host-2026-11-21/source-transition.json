@@ -1,0 +1,234 @@
+{
+  "schema": "lpx-v9-long-host-transition-v1",
+  "baseline_revision": "8a2d2c7d399c409a3eda8d69869d56f41f17a946",
+  "compiler": "avr-g++.exe (GCC) 7.3.0",
+  "flags": [
+    "-Os",
+    "-std=c++11",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-DLPX4_ENABLE_SPEECH=1",
+    "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+    "-DLPX4_COMPACT_ONLY=1",
+    "-DLPX4_COMPACT_VERSION=9"
+  ],
+  "scope": "LPX4_ENABLE_WIDE_V9 defaults to zero; no new AVR IRQ or timing admission",
+  "complete": true,
+  "all_default_objects_exact": true,
+  "cases": [
+    {
+      "cpu": "attiny88",
+      "memory": "standard",
+      "asm": 0,
+      "rate": 8000,
+      "before_sha256": "9c7652108788108f2d71a9a712eb7fe6672f89d89bfa9aaa70cd8a667fdc44d7",
+      "after_sha256": "9c7652108788108f2d71a9a712eb7fe6672f89d89bfa9aaa70cd8a667fdc44d7"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "standard",
+      "asm": 0,
+      "rate": 12000,
+      "before_sha256": "b7504feeb87b3e921bcfc6b226e324273e01c1e0645ad34bfb1657740bbbfcb7",
+      "after_sha256": "b7504feeb87b3e921bcfc6b226e324273e01c1e0645ad34bfb1657740bbbfcb7"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "standard",
+      "asm": 0,
+      "rate": 16000,
+      "before_sha256": "3089f223c5e1367499676a580402b085260d540c2789896209b71c2947e5f147",
+      "after_sha256": "3089f223c5e1367499676a580402b085260d540c2789896209b71c2947e5f147"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "standard",
+      "asm": 1,
+      "rate": 8000,
+      "before_sha256": "e27611a996a9cdabc3944a4494e3a2f41484d6be4f819ea94f89c41410bee045",
+      "after_sha256": "e27611a996a9cdabc3944a4494e3a2f41484d6be4f819ea94f89c41410bee045"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "standard",
+      "asm": 1,
+      "rate": 12000,
+      "before_sha256": "63f714bd206278a258c58c579f21f389b9824da7863d69921fd3bfde05f1de28",
+      "after_sha256": "63f714bd206278a258c58c579f21f389b9824da7863d69921fd3bfde05f1de28"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "standard",
+      "asm": 1,
+      "rate": 16000,
+      "before_sha256": "53f71b6595122154ad6ae204310057aceb0b1b41cf5aacbfc99e6c3e6a9e90fb",
+      "after_sha256": "53f71b6595122154ad6ae204310057aceb0b1b41cf5aacbfc99e6c3e6a9e90fb"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "sram512",
+      "asm": 0,
+      "rate": 8000,
+      "before_sha256": "f6adbd9e11049edf85a2dabb6a3f4613b59e271566175ae8cf9fef84f3f68fd7",
+      "after_sha256": "f6adbd9e11049edf85a2dabb6a3f4613b59e271566175ae8cf9fef84f3f68fd7"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "sram512",
+      "asm": 0,
+      "rate": 12000,
+      "before_sha256": "af3372f3b2caabfd2c3130092a123fef90ca1ee9322f5b5918369d700440290e",
+      "after_sha256": "af3372f3b2caabfd2c3130092a123fef90ca1ee9322f5b5918369d700440290e"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "sram512",
+      "asm": 0,
+      "rate": 16000,
+      "before_sha256": "cdc28c439c0bb4b3f7931b42d13dbfa045df0301620c4da01a8fd6e5add0288a",
+      "after_sha256": "cdc28c439c0bb4b3f7931b42d13dbfa045df0301620c4da01a8fd6e5add0288a"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "sram512",
+      "asm": 1,
+      "rate": 8000,
+      "before_sha256": "eb1503a0a8473213b43acaf4ebe3f379c21bc1ba3f23f18fb2da87059d0312a0",
+      "after_sha256": "eb1503a0a8473213b43acaf4ebe3f379c21bc1ba3f23f18fb2da87059d0312a0"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "sram512",
+      "asm": 1,
+      "rate": 12000,
+      "before_sha256": "dfb6adae79454a07dbba318132ed95901a51bfd0616a29841c88e3efbc1ba714",
+      "after_sha256": "dfb6adae79454a07dbba318132ed95901a51bfd0616a29841c88e3efbc1ba714"
+    },
+    {
+      "cpu": "attiny88",
+      "memory": "sram512",
+      "asm": 1,
+      "rate": 16000,
+      "before_sha256": "bd4b5edda14cea4de9bc335a1b504910fd1ad7dfbd254fcc52fafa2cb206cefd",
+      "after_sha256": "bd4b5edda14cea4de9bc335a1b504910fd1ad7dfbd254fcc52fafa2cb206cefd"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "standard",
+      "asm": 0,
+      "rate": 8000,
+      "before_sha256": "b213acef0958cac5484670676fa72cd6d63fefbe61f26e0b61406876e3ce0898",
+      "after_sha256": "b213acef0958cac5484670676fa72cd6d63fefbe61f26e0b61406876e3ce0898"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "standard",
+      "asm": 0,
+      "rate": 12000,
+      "before_sha256": "1b2fdb8fc1af9c46558c28a7682363af28056476af5bd41a526f313aa8eb90e7",
+      "after_sha256": "1b2fdb8fc1af9c46558c28a7682363af28056476af5bd41a526f313aa8eb90e7"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "standard",
+      "asm": 0,
+      "rate": 16000,
+      "before_sha256": "f7c8119009a32c574a3f2cb58f4f6dacce5f4ae3ce980f06f4322acf7866a9c3",
+      "after_sha256": "f7c8119009a32c574a3f2cb58f4f6dacce5f4ae3ce980f06f4322acf7866a9c3"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "standard",
+      "asm": 1,
+      "rate": 8000,
+      "before_sha256": "d0919199fb8a2db1023147048694613246340582737bebce305fe3ffd2731285",
+      "after_sha256": "d0919199fb8a2db1023147048694613246340582737bebce305fe3ffd2731285"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "standard",
+      "asm": 1,
+      "rate": 12000,
+      "before_sha256": "f2eef17e50fcea2ce7015b9eb1c61f8d7b975a4b8687f0a3c2ad8ec615acc63a",
+      "after_sha256": "f2eef17e50fcea2ce7015b9eb1c61f8d7b975a4b8687f0a3c2ad8ec615acc63a"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "standard",
+      "asm": 1,
+      "rate": 16000,
+      "before_sha256": "581ab7fcb4657ffda9c43246d601a1b09394edf6ae949316272a9a58e0e81e83",
+      "after_sha256": "581ab7fcb4657ffda9c43246d601a1b09394edf6ae949316272a9a58e0e81e83"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "sram512",
+      "asm": 0,
+      "rate": 8000,
+      "before_sha256": "c1e55e5e6464463ed9c6092c5d4f0470910153290ef3f3d9675218a888e315d4",
+      "after_sha256": "c1e55e5e6464463ed9c6092c5d4f0470910153290ef3f3d9675218a888e315d4"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "sram512",
+      "asm": 0,
+      "rate": 12000,
+      "before_sha256": "ccefa71e9d89374ca5169c95181aae02781c7292e8d4a3961994ee566fd654b9",
+      "after_sha256": "ccefa71e9d89374ca5169c95181aae02781c7292e8d4a3961994ee566fd654b9"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "sram512",
+      "asm": 0,
+      "rate": 16000,
+      "before_sha256": "43334e926a0baef5aa53e537dfe14cf666479571a7cebb804cfbc47822e56cfd",
+      "after_sha256": "43334e926a0baef5aa53e537dfe14cf666479571a7cebb804cfbc47822e56cfd"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "sram512",
+      "asm": 1,
+      "rate": 8000,
+      "before_sha256": "bf3646c24ebc99bcb44e04cd10e696c799891e6bf6537789403c45309b729cb0",
+      "after_sha256": "bf3646c24ebc99bcb44e04cd10e696c799891e6bf6537789403c45309b729cb0"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "sram512",
+      "asm": 1,
+      "rate": 12000,
+      "before_sha256": "2e4a73f7939c548d56cc583e2b9711b8b0a4b56f849d24a4877a34f68d8dd7f1",
+      "after_sha256": "2e4a73f7939c548d56cc583e2b9711b8b0a4b56f849d24a4877a34f68d8dd7f1"
+    },
+    {
+      "cpu": "atmega328p",
+      "memory": "sram512",
+      "asm": 1,
+      "rate": 16000,
+      "before_sha256": "5f7f02fc68f648eb83a1329ccf3aaab6fd991188d809118546cf9917b7a92672",
+      "after_sha256": "5f7f02fc68f648eb83a1329ccf3aaab6fd991188d809118546cf9917b7a92672"
+    }
+  ],
+  "sources": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": {
+      "baseline": {
+        "raw_sha256": "20824b9098f7485c2b23001b1997ab9658aa93fa0dde20a15cae521ca27456d0",
+        "text_lf_sha256": "20824b9098f7485c2b23001b1997ab9658aa93fa0dde20a15cae521ca27456d0"
+      },
+      "current": {
+        "raw_sha256": "5dbaa8d5d711139a81a9bd7b61618d11472a32073ded24722e9eb2e29cd2b57c",
+        "text_lf_sha256": "5dbaa8d5d711139a81a9bd7b61618d11472a32073ded24722e9eb2e29cd2b57c"
+      }
+    },
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": {
+      "baseline": {
+        "raw_sha256": "ad871e841066bb511aa5548707f3d40a5e931a73446337283183de83d371a349",
+        "text_lf_sha256": "ad871e841066bb511aa5548707f3d40a5e931a73446337283183de83d371a349"
+      },
+      "current": {
+        "raw_sha256": "69faaacf5f23700809591a77e9a54259106b15e192c81f71ed0efc47b70fc10f",
+        "text_lf_sha256": "69faaacf5f23700809591a77e9a54259106b15e192c81f71ed0efc47b70fc10f"
+      }
+    }
+  }
+}

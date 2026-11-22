@@ -6,7 +6,6 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createDecoder, parseHeader, encodeWav } from '../lpx/codec.js';
 import { createEncoder } from '../lpx/encoder.js';
-import { makeZip } from '../lpx/zip.js';
 
 const root = new URL('../', import.meta.url);
 const binary = readFileSync(new URL('lpx/decoder.wasm', root));
@@ -86,7 +85,7 @@ test('P4/P6 encoder validates exact C synthesis at packet boundaries and partial
     encodedCases.push({ name: `encoded P${profile}/${length}`, bytes, rate });
   }
   assert.throws(() => encode(new Int16Array(), 8000, 6));
-  assert.throws(() => encode(new Int16Array(64001), 8000, 6));
+  assert.throws(() => encode(new Int16Array(32000001), 8000, 6));
   assert.throws(() => encode(new Int16Array(1), 44100, 6));
 });
 test('encoder preserves full 64000-sample silence, and produces nonzero speech from a real decoded input', () => {
@@ -102,20 +101,57 @@ test('encoder preserves full 64000-sample silence, and produces nonzero speech f
   assert.ok(energy > 0); assert.ok(error < signal, 'speech reconstruction beats silent output without gain fitting');
   encodedCases.push({ name: 'reencoded speech P6', bytes, rate: 8000 });
 });
-test('ZIP retains UTF-8 names, payloads, directory offsets, and manifest', async () => {
-  const files = [{ name: 'звук-0001.lpx', bytes: new Uint8Array([1, 2, 3]) }, { name: 'playlist.json', bytes: new TextEncoder().encode('{}') }];
-  const bytes = Buffer.from(await makeZip(files).arrayBuffer());
-  let offset = 0;
-  for (const file of files) {
-    assert.equal(bytes.readUInt32LE(offset), 0x04034b50); assert.equal(bytes.readUInt16LE(offset + 6), 0x800);
-    const size = bytes.readUInt32LE(offset + 18), nameSize = bytes.readUInt16LE(offset + 26);
-    assert.equal(bytes.toString('utf8', offset + 30, offset + 30 + nameSize), file.name);
-    assert.deepEqual(bytes.subarray(offset + 30 + nameSize, offset + 30 + nameSize + size), Buffer.from(file.bytes));
-    offset += 30 + nameSize + size;
+test('short encodes retain the original byte-exact V9 representation', () => {
+  const hashes = ['fa5f6b2d1aa14dbc9da1a78216cfd8c19e57b94a6d3984dd7f38cab759896948',
+    '987ffbd09bade2493db4a955bf0b35e7b3544a01ddbc2c6a2027e32551e75637',
+    '60600f86c70d17b5a835e545b50669378c4bb3a85eb4021fb0e59be8b4af7aa8',
+    '0336fad908dbc2f83cef70492e88d615aeed58ceddc0d1648b3fed1079e7020b'];
+  let at = 0;
+  for (const profile of [4, 6]) for (const length of [1, 321]) {
+    const pcm = Int16Array.from({ length }, (_, i) => Math.round(8000 * Math.sin(i * .137) + 1500 * Math.sin(i * .317)));
+    assert.equal(createHash('sha256').update(encode(pcm, 8000, profile)).digest('hex'), hashes[at++]);
   }
-  assert.equal(bytes.readUInt32LE(offset), 0x02014b50);
-  assert.equal(bytes.readUInt32LE(bytes.length - 22), 0x06054b50);
-  assert.equal(bytes.readUInt32LE(bytes.length - 6), offset);
+});
+test('V9 Long promotion preserves all legacy profiles, extras and PCM at all three rates', () => {
+  for (const item of cases) {
+    const original = parseHeader(item.bytes), bytes = Buffer.alloc(item.bytes.length + 4);
+    item.bytes.copy(bytes, 0, 0, 5); bytes[2] |= 64;
+    bytes.writeUInt32LE(original.samples, 5); item.bytes.copy(bytes, 9, 7, 11);
+    bytes.writeUInt32LE(item.bytes.length - 13, 13); item.bytes.copy(bytes, 17, 13);
+    const result = decode(bytes);
+    assert.ok(result.long); assert.deepEqual(result.pcm, decode(item.bytes).pcm);
+    encodedCases.push({ name: `promoted ${item.name}`, bytes, rate: item.rate });
+  }
+});
+test('long audio is encoded as one continuous stream across the old sample limits', () => {
+  for (const profile of [4, 6]) {
+    const length = profile === 4 ? 131073 : 65537;
+    const pcm = Int16Array.from({ length }, (_, i) => Math.round(5000 * Math.sin(i * .14)));
+    const bytes = encode(pcm, 12000, profile), result = decode(bytes);
+    assert.ok(result.long); assert.equal(result.samples, length); assert.equal(result.pcm.length, length);
+    assert.equal(bytes.readUInt32LE ? bytes.readUInt32LE(5) : new DataView(bytes.buffer).getUint32(5, true), length);
+    encodedCases.push({ name: `continuous P${profile}`, bytes, rate: 12000 });
+  }
+});
+test('wide payload sizes, full progress, strict final padding and allocation limits are validated', () => {
+  const length = 1280001, payload = []; let bits = 0;
+  const put = (value, count) => { for (let bit = 0; bit < count; bit++) { if (!(bits & 7)) payload.push(0); payload[bits >> 3] |= ((value >> bit) & 1) << (bits & 7); bits++; } };
+  for (let frame = 0; frame * 320 < length; frame++) {
+    put(frame === 0 ? 1 : 0, 1);
+    if (frame === 0) { put(0, 1); for (let j = 0; j < 10; j++) { const value = j ? 5 : 3; put(0, value >> 2); put(1, 1); put(value & 3, 2); } }
+    for (let half = 0; half < 2 && frame * 320 + half * 160 < length; half++) {
+      put(0, 8);
+      for (let packet = 0; packet < 4 && frame * 320 + half * 160 + packet * 40 < length; packet++) { put(0, 9); put(8, 4); put(8, 4); }
+    }
+  }
+  const bytes = Buffer.alloc(17 + payload.length); bytes.write('L9'); bytes[2] = 64 | 6;
+  bytes.writeUInt16LE(16000, 3); bytes.writeUInt32LE(length, 5); bytes.writeUInt16LE(13926, 9); bytes.writeUInt32LE(payload.length, 13); bytes.set(payload, 17);
+  assert.ok(bytes.length > 65535); assert.deepEqual(decode(bytes).pcm, new Int16Array(length));
+  encodedCases.push({ name: 'payload above 65535 bytes', bytes, rate: 16000 });
+  const trailing = Buffer.concat([bytes, Buffer.from([0])]); trailing.writeUInt32LE(trailing.length - 17, 13); assert.throws(() => decode(trailing));
+  const invalid = Buffer.from(bytes); invalid.writeUInt32LE(0xffffffff, 5); assert.throws(() => decode(invalid));
+  invalid.writeUInt32LE(length, 5); invalid[invalid.length - 1] |= 128; assert.throws(() => decode(invalid));
+  assert.ok(decode(readFileSync(clips[0])).pcm.length, 'small files still decode after large memory growth and failures');
 });
 test('WASM PCM matches independent native C reference for the full rate matrix', { skip: !process.env.LPX_WSL_REFERENCE }, () => {
   const allCases = [...cases, ...encodedCases];
@@ -131,4 +167,11 @@ test('WASM PCM matches independent native C reference for the full rate matrix',
     offset += size;
   }
   assert.equal(offset, result.stdout.length);
+});
+test('the unchanged default C configuration still rejects V9 Long', { skip: !process.env.LPX_LEGACY_REFERENCE }, () => {
+  const samples = encodedCases.filter(item => parseHeader(item.bytes).long);
+  const input = Buffer.concat(samples.flatMap(item => { const size = Buffer.alloc(4); size.writeUInt32LE(item.bytes.length); return [size, item.bytes]; }));
+  const result = spawnSync('wsl', ['-d', 'Ubuntu', '--', process.env.LPX_LEGACY_REFERENCE], { input });
+  assert.equal(result.status, 0, result.stderr?.toString());
+  assert.deepEqual(result.stdout, Buffer.alloc(samples.length * 4));
 });

@@ -13,14 +13,14 @@ const upstream = join(resolve(sdk), 'upstream');
 const compiler = values.clang || join(upstream, 'bin', process.platform === 'win32' ? 'clang.exe' : 'clang');
 const sysroot = join(upstream, 'emscripten/cache/sysroot');
 const sources = ['Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp', 'web-player/lpx/native/decoder.cpp'];
-const exports = ['lpx_input', 'lpx_output', 'lpx_samples', 'lpx_rate', 'lpx_decode'];
+const exports = ['lpx_reserve', 'lpx_input', 'lpx_output', 'lpx_samples', 'lpx_rate', 'lpx_decode'];
 const flags = ['--target=wasm32-unknown-unknown', '-O3', '-std=c++11', '-ffreestanding', '-nostdlib',
   '-fno-exceptions', '-fno-rtti', '-fno-threadsafe-statics', '--sysroot=' + sysroot,
   '-isystem', join(sysroot, 'include'), '-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src',
   '-DLPX4_ENABLE_ASM=0', '-DLPX4_FLOAT_SYNTHESIS=0', '-DLPX4_ENABLE_SPEECH=1',
   '-DLPX4_ENABLE_SPEECH_COMPACT=1', '-DLPX4_COMPACT_ONLY=1', '-DLPX4_COMPACT_VERSION=9',
-  '-DLPX4_SAMPLE_RATE=0', '-DLPX4_EXTENDED_SAMPLE_RATES=1',
-  '-Wl,--no-entry', '-Wl,--export-memory', '-Wl,--initial-memory=262144', '-Wl,--max-memory=262144',
+  '-DLPX4_SAMPLE_RATE=0', '-DLPX4_EXTENDED_SAMPLE_RATES=1', '-DLPX4_ENABLE_WIDE_V9=1',
+  '-Wl,--no-entry', '-Wl,--export-memory', '-Wl,--initial-memory=262144', '-Wl,--max-memory=268435456',
   '-Wl,-z,stack-size=32768', '-Wl,--strip-all', ...exports.map(name => '-Wl,--export=' + name)];
 function run(args) {
   const result = spawnSync(compiler, args, { cwd: root, encoding: 'utf8' });
@@ -34,21 +34,22 @@ const binary = readFileSync(output);
 const module = await WebAssembly.compile(binary);
 if (WebAssembly.Module.imports(module).length) throw new Error('Decoder must have no host imports');
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
-const inputs = [...sources, 'web-player/scripts/build-lpx-wasm.mjs',
+const inputs = [...sources, 'web-player/lpx/native/workspace.h', 'web-player/scripts/build-lpx-wasm.mjs',
   ...['Lpx4HybridCore.h', 'Lpx4Math.h', 'Lpx4MemoryProfiles.h', 'Lpx4MultiplyC.h', 'cos_table.inc', 'scale_table.inc']
     .map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/src/' + name)];
 const manifest = { schema: 'micromusic-lpx-v9-wasm-v1', compiler: run(['--version']).split(/\r?\n/)[0],
   flags: flags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
   inputs: Object.fromEntries(inputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
-  bytes: binary.length, sha256: hash(binary), imports: [], memoryBytes: 262144,
+  bytes: binary.length, sha256: hash(binary), imports: [], initialMemoryBytes: 262144, maxMemoryBytes: 268435456,
+  maxSamples: 32000000, wideV9: true,
   output: 'PCM16', rates: [8000, 12000, 16000], profiles: [4, 6, 15] };
 writeFileSync(join(root, 'web-player/lpx/build.json'), JSON.stringify(manifest, null, 2) + '\n');
 console.log(`LPX V9 C → WebAssembly: ${binary.length} bytes, no host imports`);
 
 const encoderSources = ['Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp', 'web-player/lpx/native/encoder.cpp'];
-const encoderExports = ['enc_input', 'enc_output', 'enc_begin', 'enc_step', 'enc_finish'];
+const encoderExports = ['enc_reserve', 'enc_input', 'enc_output', 'enc_begin', 'enc_step', 'enc_finish'];
 const encoderFlags = flags.filter(flag => !flag.startsWith('-Wl,--export=') && !flag.startsWith('-Wl,--initial-memory=') && !flag.startsWith('-Wl,--max-memory='));
-encoderFlags.push('-Wl,--initial-memory=2097152', '-Wl,--max-memory=2097152', ...encoderExports.map(name => '-Wl,--export=' + name));
+encoderFlags.push('-Wl,--initial-memory=262144', '-Wl,--max-memory=1073741824', ...encoderExports.map(name => '-Wl,--export=' + name));
 const encoderOutput = join(root, 'web-player/lpx/encoder.wasm');
 run([...encoderFlags, ...encoderSources, '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins', '-o', encoderOutput]);
 const encoderBinary = readFileSync(encoderOutput);
@@ -58,6 +59,6 @@ const encoderInputs = [...new Set([...inputs.filter(path => !path.endsWith('nati
 writeFileSync(join(root, 'web-player/lpx/encoder-build.json'), JSON.stringify({ ...manifest,
   flags: encoderFlags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
   inputs: Object.fromEntries(encoderInputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
-  schema: 'micromusic-lpx-v9-encoder-wasm-v1', bytes: encoderBinary.length, sha256: hash(encoderBinary), memoryBytes: 2097152,
+  schema: 'micromusic-lpx-v9-encoder-wasm-v1', bytes: encoderBinary.length, sha256: hash(encoderBinary), maxMemoryBytes: 1073741824,
   profiles: [4, 6], output: 'LPX V9', algorithm: 'speech_v4 scalar closed-loop search, browser C++ port' }, null, 2) + '\n');
 console.log(`LPX V9 encoder C → WebAssembly: ${encoderBinary.length} bytes, no host imports`);

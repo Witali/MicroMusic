@@ -1,4 +1,4 @@
-import { encodeWav } from './codec.js';
+import { encodeWav, MAX_FILE_BYTES } from './codec.js';
 
 const $ = id => document.getElementById(id);
 const audio = $('audio'), canvas = $('wave'), context = canvas.getContext('2d');
@@ -49,7 +49,7 @@ async function load(file) {
   const id = ++loadId;
   $('open').textContent = 'Открыть файл';
   if (!worker) return;
-  if (!file.size || file.size > 65535) { message('Выберите LPX V9 размером от 13 до 65 535 байт.', true); return; }
+  if (!file.size || file.size > MAX_FILE_BYTES) { message('Выберите LPX V9 размером от 13 байт до 100 МБ.', true); return; }
   requestedName = file.name;
   $('open').textContent = 'Декодирование…';
   message('Читаем LPX V9 и декодируем звук на вашем устройстве…');
@@ -71,7 +71,7 @@ function install(result) {
   $('filename').textContent = clip.name;
   const profile = clip.profile === 15 ? 'Sparse80' : `P${clip.profile}`;
   $('profile-badge').textContent = profile;
-  $('file-summary').textContent = `LPX V9 · ${number(clip.sampleRate / 1000)} кГц · ${number(clip.bytes / 1024)} КБ`;
+  $('file-summary').textContent = `${clip.format} · ${number(clip.sampleRate / 1000)} кГц · ${number(clip.bytes / 1024)} КБ`;
   $('info-profile').textContent = profile + (clip.extraPulses ? ' + extra' : '');
   $('info-rate').textContent = `${number(clip.sampleRate / 1000)} кГц`;
   $('info-duration').textContent = `${number(clip.duration, 3)} с`;

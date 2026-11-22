@@ -1,7 +1,7 @@
-import { makeZip } from './zip.js';
+import { MAX_SAMPLES } from './codec.js';
 
 const $ = id => document.getElementById(id);
-let source = null, worker = null, running = false, job = 0, segments = [], urls = [], output = null;
+let source = null, worker = null, running = false, job = 0, urls = [], output = null;
 const status = (text, error = false) => { $('convert-status').textContent = text; $('convert-status').classList.toggle('error', error); };
 const baseName = name => name.replace(/\.[^.]+$/, '').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_').slice(0, 120) || 'audio';
 function select(file) {
@@ -28,28 +28,26 @@ function busy(value) {
   $('cancel-convert').hidden = !value;
 }
 function stop() { if (worker) worker.terminate(); worker = null; busy(false); }
-$('cancel-convert').onclick = () => { job++; stop(); status('Конвертация отменена. Готовые фрагменты можно скачать.'); };
+$('cancel-convert').onclick = () => { job++; stop(); status('Конвертация отменена.'); };
 function link(blob, name) {
   const url = URL.createObjectURL(blob); urls.push(url);
   const anchor = document.createElement('a'); anchor.href = url; anchor.download = name;
   return anchor;
 }
-function appendSegment(segment) {
-  const stem = output.stem, suffix = segment.parts > 1 ? `-${String(segment.index + 1).padStart(4, '0')}` : '';
-  const name = stem + suffix + '.lpx';
-  const item = { ...segment, name }; segments.push(item);
+function appendResult(result) {
+  const name = output.stem + '.lpx';
   const row = document.createElement('div'); row.className = 'result-row';
   const description = document.createElement('span');
   const title = document.createElement('b'); title.textContent = name;
-  const meta = document.createElement('small'); meta.textContent = `${(segment.samples / output.rate).toLocaleString('ru-RU', { maximumFractionDigits: 3 })} с · ${segment.bytes.length.toLocaleString('ru-RU')} Б`;
+  const meta = document.createElement('small'); meta.textContent = `${(result.samples / output.rate).toLocaleString('ru-RU', { maximumFractionDigits: 3 })} с · ${result.bytes.length.toLocaleString('ru-RU')} Б · ${result.long ? 'LPX V9 Long' : 'LPX V9'}`;
   description.append(title, meta);
   const actions = document.createElement('div'); actions.className = 'result-actions';
   const preview = document.createElement('button'); preview.className = 'button button-outline'; preview.textContent = 'Слушать';
   preview.onclick = () => {
-    document.dispatchEvent(new CustomEvent('lpx-open', { detail: { name, bytes: segment.bytes } }));
+    document.dispatchEvent(new CustomEvent('lpx-open', { detail: { name, bytes: result.bytes } }));
     $('player').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' });
   };
-  const download = link(new Blob([segment.bytes], { type: 'application/octet-stream' }), name);
+  const download = link(new Blob([result.bytes], { type: 'application/octet-stream' }), name);
   download.className = 'button button-outline'; download.textContent = 'Скачать LPX';
   actions.append(preview, download); row.append(description, actions); $('convert-results').append(row);
 }
@@ -57,8 +55,8 @@ $('convert').onclick = async () => {
   if (!source || running) return;
   const id = ++job, rate = Number($('encode-rate').value), profile = Number($('encode-profile').value);
   output = { stem: baseName(source.name), rate, profile };
-  segments = []; urls.forEach(url => URL.revokeObjectURL(url)); urls = [];
-  $('convert-results').replaceChildren(); $('download-all').hidden = true; $('convert-progress').value = 0;
+  urls.forEach(url => URL.revokeObjectURL(url)); urls = [];
+  $('convert-results').replaceChildren(); $('convert-progress').value = 0;
   busy(true); status('Читаем аудио и пересчитываем частоту…');
   try {
     const buffer = await source.arrayBuffer();
@@ -69,6 +67,7 @@ $('convert').onclick = async () => {
     catch { throw new Error('Браузер не смог прочитать этот формат. Попробуйте WAV, MP3, FLAC, OGG или M4A без DRM. Поддержка зависит от браузера.'); }
     if (id !== job) return;
     if (!audio.length || audio.sampleRate !== rate) throw new Error('Не удалось подготовить аудио в выбранной частоте.');
+    if (audio.length > MAX_SAMPLES) throw new Error('Запись превышает предел браузерного энкодера — 32 000 000 отсчётов. Выберите более короткую запись или меньшую частоту.');
     const channels = Array.from({ length: audio.numberOfChannels }, (_, index) => audio.getChannelData(index));
     const pcm = new Int16Array(audio.length); let clipped = 0;
     for (let i = 0; i < pcm.length; i++) {
@@ -85,23 +84,14 @@ $('convert').onclick = async () => {
       if (data.error) { stop(); status(data.error, true); return; }
       if (data.progress !== undefined) {
         const percent = Math.round(data.progress * 100); $('convert-progress').value = percent;
-        status(`Кодирование: ${percent}% · фрагмент ${data.index + 1} из ${data.parts}`);
+        status(`Кодирование: ${percent}%`);
       }
-      if (data.segment) appendSegment(data.segment);
-      if (data.done) {
+      if (data.result) {
+        appendResult(data.result);
         stop(); $('convert-progress').value = 100;
-        const bytes = segments.reduce((sum, segment) => sum + segment.bytes.length, 0);
-        status(`Готово. Файлов LPX: ${segments.length} · ${(bytes / 1024).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} КБ. Каждый поток проверен C-декодером.`);
-        $('download-all').hidden = segments.length < 2;
+        status(`Готово: один файл · ${(data.result.bytes.length / 1024).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} КБ.`);
       }
     };
     worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile }, [pcm.buffer]);
   } catch (error) { if (id === job) { stop(); status(error.message || 'Не удалось конвертировать аудио.', true); } }
-};
-$('download-all').onclick = () => {
-  if (!segments.length) return;
-  const manifest = { format: 'LPX V9', sampleRate: output.rate, profile: output.profile,
-    independentSegments: true, segments: segments.map(({ name, samples, start }) => ({ name, samples, startSample: start })) };
-  const files = [...segments.map(({ name, bytes }) => ({ name, bytes })), { name: 'playlist.json', bytes: new TextEncoder().encode(JSON.stringify(manifest, null, 2) + '\n') }];
-  const anchor = link(makeZip(files), output.stem + '-lpx-v9.zip'); document.body.append(anchor); anchor.click(); anchor.remove();
 };

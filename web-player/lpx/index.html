@@ -37,7 +37,7 @@
 
       <section id="drop-zone" class="drop-zone" aria-label="Загрузка LPX файла">
         <div class="drop-icon"><svg><use href="#file-icon"/></svg></div>
-        <div class="drop-copy"><h2>Перетащите ваш .lpx сюда</h2><p>или выберите файл на устройстве · до 65 535 байт</p></div>
+        <div class="drop-copy"><h2>Перетащите ваш .lpx сюда</h2><p>LPX V9 и V9 Long · до 100 МБ</p></div>
         <button id="open" class="button button-light" type="button">Открыть файл</button>
         <input id="file" class="visually-hidden" type="file" accept=".lpx" aria-label="Выбрать LPX V9 файл">
       </section>
@@ -78,8 +78,7 @@
         <progress id="convert-progress" max="100" value="0" aria-label="Прогресс конвертации"></progress>
         <p id="convert-status" class="message" role="status" aria-live="polite">Выберите аудиофайл для конвертации.</p>
         <div id="convert-results" class="convert-results" aria-label="Результаты конвертации"></div>
-        <button id="download-all" class="button button-outline download-all" hidden>Скачать всё в ZIP</button>
-        <p class="converter-note">LPX — речевой кодек с потерями. Стерео сводится в моно, громкость не нормализуется. Длинные записи делятся на самостоятельные файлы по 64 000 отсчётов (до 8 с при 8 кГц); границы фрагментов могут быть слышны. ZIP сохраняет порядок в playlist.json.</p>
+        <p class="converter-note">Вся запись сохраняется одним непрерывным файлом. Для длинного аудио используется LPX V9 Long — расширение для веб-плеера и ПК. LPX — речевой кодек с потерями; стерео сводится в моно, громкость не нормализуется.</p>
       </section>
     </main>
     <footer class="footer"><span>MicroMusic <span class="footer-separator">/</span> LPX V9 Player</span><span>C → WebAssembly <span class="footer-separator">·</span> Без установки</span></footer>

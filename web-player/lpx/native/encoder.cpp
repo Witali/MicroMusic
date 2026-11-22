@@ -2,6 +2,7 @@
 // analysis, q0_model.py fixed arithmetic, and speech_v9.py wire packing.
 // This is a bounded browser encoder, not firmware. No trained codebooks.
 #include "Lpx4HybridCore.h"
+#include "workspace.h"
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
@@ -15,11 +16,13 @@ static const int16_t cosine[] = {
 static const int16_t steps[] = {
 #include "scale_table.inc"
 };
-static int16_t source[64000], expected[64000], coefficients[3200][10];
-static double emphasized[64000], residual[64000], window[256];
-static uint8_t spectra[200][10], packed[65535];
-static uint16_t vectors[400][10];
-static int params[400][3], pulses[3200][2];
+static int16_t *source, *expected, (*coefficients)[10];
+static double *emphasized, *residual, window[256];
+static uint8_t (*spectra)[10], *packed;
+static uint16_t (*vectors)[10];
+static int (*params)[3], (*pulses)[2];
+static uint32_t reservedSamples, packedCapacity;
+static int headerBytes;
 static int count, padded, mode, rate, block, bits, failure;
 struct State { int h[10], ring[256], dd; };
 static State state;
@@ -138,8 +141,8 @@ double searchBlock(State& result, int scale, int lag, int gain, bool save) {
 }
 void put(int value, int width) {
     for (int bit = 0; bit < width; ++bit) {
-        if (13 + (bits >> 3) >= 65535) { failure = 1; return; }
-        packed[13 + (bits >> 3)] |= ((value >> bit) & 1) << (bits & 7); ++bits;
+        if (headerBytes + (bits >> 3) >= packedCapacity) { failure = 1; return; }
+        packed[headerBytes + (bits >> 3)] |= ((value >> bit) & 1) << (bits & 7); ++bits;
     }
 }
 int riceCost(int value, int k, int width) { return value >> k >= 8 ? 8 + width : (value >> k) + 1 + k; }
@@ -149,15 +152,35 @@ void rice(int value, int k, int width) {
     else { put(0, q); put(1, 1); put(value & ((1 << k) - 1), k); }
 }
 void word(int offset, int value) { packed[offset] = value; packed[offset + 1] = value >> 8; }
+void dword(int offset, uint32_t value) { word(offset, value & 65535); word(offset + 2, value >> 16); }
 }
 
 extern "C" {
+int enc_reserve(uint32_t samples) {
+    reservedSamples = 0;
+    if (!samples || samples > kLpxMaxSamples) return 0;
+    const uint32_t n = (samples + 319) / 320 * 320;
+    uint8_t* memory = static_cast<uint8_t*>(reserveWorkspace(n * 24 + 65536));
+    if (!memory) return 0;
+    uintptr_t at = reinterpret_cast<uintptr_t>(memory);
+    auto take = [&at](uint32_t bytes) -> void* { uintptr_t result = at; at += (bytes + 7) & ~uintptr_t(7); return reinterpret_cast<void*>(result); };
+    source = static_cast<int16_t*>(take(n * 2)); expected = static_cast<int16_t*>(take(n * 2));
+    coefficients = static_cast<int16_t(*)[10]>(take(n));
+    emphasized = static_cast<double*>(take(n * 8)); residual = static_cast<double*>(take(n * 8));
+    spectra = static_cast<uint8_t(*)[10]>(take(n / 320 * 10));
+    vectors = static_cast<uint16_t(*)[10]>(take(n / 160 * 20));
+    params = static_cast<int(*)[3]>(take(n / 160 * 12)); pulses = static_cast<int(*)[2]>(take(n / 20 * 8));
+    packedCapacity = 17 + n / 320 * 64; packed = static_cast<uint8_t*>(take(packedCapacity));
+    reservedSamples = samples;
+    return 1;
+}
 int16_t* enc_input() { return source; }
 uint8_t* enc_output() { return packed; }
 int enc_begin(int samples, int profile, int sampleRate) {
     failure = 0; block = 0;
-    if (samples < 1 || samples > 64000 || (profile != 4 && profile != 6) || (sampleRate != 8000 && sampleRate != 12000 && sampleRate != 16000)) return -1;
+    if (samples < 1 || uint32_t(samples) > reservedSamples || (profile != 4 && profile != 6) || (sampleRate != 8000 && sampleRate != 12000 && sampleRate != 16000)) return -1;
     count = samples; padded = (count + 319) / 320 * 320; mode = profile; rate = sampleRate;
+    headerBytes = count > 64000 ? 17 : 13;
     memset(source + count, 0, (padded - count) * sizeof(int16_t)); memset(&state, 0, sizeof(state));
     for (int j = 0; j < 256; ++j) window[j] = .54 - .46 * cos(2 * pi * j / 255);
     for (int j = 0; j < padded; ++j) emphasized[j] = source[j] / 2.0 - (j ? pre * (source[j - 1] / 2.0) / 16384 : 0);
@@ -206,7 +229,7 @@ int enc_step() {
 }
 int enc_finish() {
     if (block != padded / 160) return -1;
-    memset(packed, 0, sizeof(packed)); bits = 0;
+    memset(packed, 0, packedCapacity); bits = 0;
     int spectralBits = mode == 4 ? 5 : 6;
     for (int frame = 0; frame < padded / 320; ++frame) {
         bool repeat = frame && memcmp(spectra[frame], spectra[frame - 1], 10) == 0;
@@ -235,13 +258,15 @@ int enc_finish() {
             }
         }
     }
-    int size = 13 + (bits + 7) / 8;
+    int size = headerBytes + (bits + 7) / 8;
     if (failure) return -2;
-    packed[0] = 'L'; packed[1] = '9'; packed[2] = mode;
-    word(3, rate); word(5, count); word(7, pre); word(9, 0); word(11, size - 13);
-    // Validate every emitted sample against the unchanged C decoder.
+    packed[0] = 'L'; packed[1] = '9'; packed[2] = mode | (headerBytes == 17 ? 64 : 0);
+    word(3, rate);
+    if (headerBytes == 17) { dword(5, count); word(9, pre); word(11, 0); dword(13, size - 17); }
+    else { word(5, count); word(7, pre); word(9, 0); word(11, size - 13); }
+    // Validate the entire continuous stream against the shared C decoder.
     Lpx4HybridCore decoder;
-    if (!decoder.begin(packed, size)) return -3;
+    if (!decoder.beginWideV9(packed, size)) return -3;
     for (int j = 0; j < count; ++j) { int16_t sample; if (!decoder.nextS16(sample) || sample != expected[j]) return -4; }
     int16_t tail;
     if (decoder.nextS16(tail) || decoder.error() || !decoder.finished()) return -5;

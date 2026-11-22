@@ -429,7 +429,13 @@ bool Lpx4HybridCore::beginStream(ReadByte reader,void* context,uint16_t size){
  inputReader_=reader;inputContext_=context;data_=0;
  return beginSource(size);
 }
-bool Lpx4HybridCore::beginSource(uint16_t size){
+#if LPX4_ENABLE_WIDE_V9
+bool Lpx4HybridCore::beginWideV9(const uint8_t* input,uint32_t size){
+ inputReader_=0;inputContext_=0;data_=input;
+ return beginSource(size);
+}
+#endif
+bool Lpx4HybridCore::beginSource(Lpx4InputSize size){
  bytes_=size;
 #else
 #if LPX4_V9_ROM_HEADER_LAYOUT
@@ -442,7 +448,14 @@ __attribute__((noinline))
 #endif
 bool Lpx4HybridCore::beginRom(const uint8_t* input,uint16_t size,bool reset){
 #else
+#if LPX4_ENABLE_WIDE_V9
 bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
+ return beginWideV9(input,size);
+}
+bool Lpx4HybridCore::beginWideV9(const uint8_t* input,uint32_t size){
+#else
+bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
+#endif
 #endif
 #if !LPX4_AVR_V9_HEADER_COPY
  data_=input;bytes_=size;
@@ -470,7 +483,13 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
  const uint8_t flags=LP_READ_U8(input+2);
 #elif LPX4_COMPACT_VERSION == 9
  if(read16()!=0x394c){error_=BAD_HEADER;return false;}
+#if LPX4_ENABLE_WIDE_V9
+ const uint8_t wireFlags=readByte();
+ const bool wideHeader=(wireFlags&64)!=0;
+ const uint8_t flags=wireFlags&~64;
+#else
  const uint8_t flags=readByte();
+#endif
 #else
  if(readByte()!='L'||readByte()!='4'||readByte()!='H'||readByte()!='Y'){
   error_=BAD_HEADER;return false;
@@ -536,7 +555,11 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #else
  sampleRate_=read16();
 #if LPX4_COMPACT_VERSION == 9
+#if LPX4_ENABLE_WIDE_V9
+ sampleCount_=wideHeader?read32():read16();
+#else
  sampleCount_=read16();
+#endif
 #else
  sampleCount_=read32();
 #endif
@@ -572,11 +595,21 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #if LPX4_AVR_V9_HEADER_COPY
  const uint16_t payload=bytes_;
 #else
+#if LPX4_ENABLE_WIDE_V9
+ const uint32_t payload=wideHeader?read32():read16();
+#else
  const uint16_t payload=read16();
 #endif
+#endif
+#if LPX4_ENABLE_WIDE_V9
+ const uint8_t headerBytes=wideHeader?17:13;
+ if(!sampleCount_ || (!wideHeader&&(sampleCount_>64000||size>65535)) ||
+    size<headerBytes || payload!=size-headerBytes){
+#else
  const uint8_t headerBytes=LPX4_COMPACT_VERSION==9?13:22;
  // Subtract the header from the bounded input span; no untrusted wide sum.
  if(sampleCount_>64000 || !sampleCount_ || (size<headerBytes || payload!=(uint16_t)(size-headerBytes))){
+#endif
   error_=BAD_HEADER;return false;
  }
 #else
