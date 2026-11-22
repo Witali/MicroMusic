@@ -14,6 +14,12 @@
 #if LPX_ENCODER_ENABLE_PRUNING != 0 && LPX_ENCODER_ENABLE_PRUNING != 1
 #error LPX_ENCODER_ENABLE_PRUNING must be 0 or 1
 #endif
+#ifndef LPX_ENCODER_DEDUP_CANDIDATES
+#define LPX_ENCODER_DEDUP_CANDIDATES 1
+#endif
+#if LPX_ENCODER_DEDUP_CANDIDATES != 0 && LPX_ENCODER_DEDUP_CANDIDATES != 1
+#error LPX_ENCODER_DEDUP_CANDIDATES must be 0 or 1
+#endif
 
 namespace {
 constexpr double pi = 3.14159265358979323846;
@@ -232,7 +238,20 @@ int enc_step() {
     // Include zero and first nonzero step, as in allow_zero_scale=True.
     for (int scale = 0; scale <= 31; ++scale) {
         if (scale != 0 && scale != 6 && (scale < center - 2 || scale > center + 2)) continue;
+#if LPX_ENCODER_DEDUP_CANDIDATES
+        // Several wire codes have the same integer step. Retain the first
+        // admitted code, including its tie priority and stored ring history.
+        bool duplicate = false;
+        for (int previous = 0; previous < scale; ++previous) {
+            if (previous != 0 && previous != 6 && (previous < center - 2 || previous > center + 2)) continue;
+            if (steps[previous * 8] == steps[scale * 8]) duplicate = true;
+        }
+        if (duplicate) continue;
+#endif
         for (int choice = 0; choice < 3; ++choice) {
+#if LPX_ENCODER_DEDUP_CANDIDATES
+            if (choice == 2 && pitchgain == 14) continue;
+#endif
             int gain = choice == 0 ? 0 : choice == 1 ? pitchgain : 14;
             if (choice && !gain) continue;
             double error = searchBlock(trial, scale, lag, gain, false, best);
