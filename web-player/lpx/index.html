@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#101514">
-  <meta name="description" content="Проигрыватель LPX V9. Откройте файл, слушайте, изучайте волну и сохраняйте WAV. Декодирование в браузере через WebAssembly.">
+  <meta name="description" content="Проигрыватель и конвертер LPX V9. Одна запись — один файл, воспроизведение и экспорт WAV. Обработка в браузере через WebAssembly.">
   <title>LPX V9 — MicroMusic Player</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
@@ -47,12 +47,8 @@
       <div class="workspace">
         <section id="player" class="player panel" aria-label="Проигрыватель">
           <div class="player-heading">
-            <div class="file-heading"><span class="small-label">СЕЙЧАС В ПЛЕЕРЕ</span><h2 id="filename">Здесь будет ваш звук</h2><p id="file-summary">Загрузите файл, чтобы увидеть звуковую волну</p></div>
+            <div class="file-heading"><span class="small-label">СЕЙЧАС В ПЛЕЕРЕ</span><h2 id="filename">Здесь будет ваш звук</h2><p id="file-summary">Загрузите файл, чтобы начать прослушивание</p></div>
             <span id="profile-badge" class="profile-badge">.LPX</span>
-          </div>
-          <div class="wave-area">
-            <canvas id="wave" aria-label="Осциллограмма загруженного файла"></canvas>
-            <div id="wave-empty" class="wave-empty"><svg><use href="#wave-icon"/></svg><span>В ожидании звука</span></div>
           </div>
           <div class="timeline"><span id="elapsed">0:00.00</span><label class="visually-hidden" for="seek">Позиция воспроизведения</label><input id="seek" type="range" min="0" max="1" step="0.001" value="0" disabled><span id="duration">0:00.00</span></div>
           <div class="transport">
