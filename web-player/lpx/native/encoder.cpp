@@ -7,6 +7,14 @@
 #include <string.h>
 #include <math.h>
 
+// Set to 0 to retain the exhaustive search as a correctness/performance oracle.
+#ifndef LPX_ENCODER_ENABLE_PRUNING
+#define LPX_ENCODER_ENABLE_PRUNING 1
+#endif
+#if LPX_ENCODER_ENABLE_PRUNING != 0 && LPX_ENCODER_ENABLE_PRUNING != 1
+#error LPX_ENCODER_ENABLE_PRUNING must be 0 or 1
+#endif
+
 namespace {
 constexpr double pi = 3.14159265358979323846;
 constexpr int pre = 13926;
@@ -107,7 +115,7 @@ void prepareCoefficients() {
         }
     }
 }
-double trial20(State& out, const State& initial, int cursor, int scale, int lag, int gain, int pos, int amp, bool save) {
+double trial20(State& out, const State& initial, int cursor, int scale, int lag, int gain, int pos, int amp, bool save, double bound = HUGE_VAL) {
     out = initial; double loss = 0; const int16_t* co = coefficients[cursor / 20];
     for (int j = 0; j < 20; ++j) {
         int at = cursor + j, q = clip((gain * out.ring[(at - lag) & 255] + 8) >> 4, -32, 31);
@@ -119,18 +127,26 @@ double trial20(State& out, const State& initial, int cursor, int scale, int lag,
         int sample = clip(clip(out.dd, -16384, 16384) * 2, -32768, 32767);
         double delta = sample - source[at]; loss += delta * delta;
         if (save) expected[at] = sample;
+#if LPX_ENCODER_ENABLE_PRUNING
+        // Squared errors cannot decrease. Ties keep the earlier candidate;
+        // this partial state is discarded. Winner replay has an infinite bound.
+        if (loss >= bound) return loss;
+#endif
     }
     return loss;
 }
-double searchBlock(State& result, int scale, int lag, int gain, bool save) {
+double searchBlock(State& result, int scale, int lag, int gain, bool save, double bound = HUGE_VAL) {
     State current = state, trial, next; double loss = 0;
     for (int si = 0; si < 8; ++si) {
+#if LPX_ENCODER_ENABLE_PRUNING
+        if (loss >= bound) { result = current; return loss; }
+#endif
         int cursor = block * 160 + si * 20, bestpos = 0, bestamp = 0; double best = HUGE_VAL;
         for (int position = 0; position < (mode == 4 ? 16 : 20); ++position) {
             int pos = mode == 4 ? position + (position + 2) / 4 : position;
             for (int ai = 0; ai < (mode == 4 ? 2 : 16); ++ai) {
                 int amp = mode == 4 ? (ai ? 8 : -8) : ai - 8;
-                double error = trial20(trial, current, cursor, scale, lag, gain, pos, amp, false);
+                double error = trial20(trial, current, cursor, scale, lag, gain, pos, amp, false, best);
                 if (error < best) { best = error; bestpos = pos; bestamp = amp; }
             }
         }
@@ -219,7 +235,7 @@ int enc_step() {
         for (int choice = 0; choice < 3; ++choice) {
             int gain = choice == 0 ? 0 : choice == 1 ? pitchgain : 14;
             if (choice && !gain) continue;
-            double error = searchBlock(trial, scale, lag, gain, false);
+            double error = searchBlock(trial, scale, lag, gain, false, best);
             if (error < best) { best = error; bestscale = scale; bestgain = gain; }
         }
     }
