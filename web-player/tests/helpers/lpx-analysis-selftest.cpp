@@ -33,3 +33,31 @@ extern "C" int lpx_silence_selftest() {
     }
     return checks;
 }
+
+extern "C" int lpx_analysis_selftest() {
+    prepareAnalysis();
+    int checks = 0;
+    for (int j = 0; j < 256; ++j) {
+        const double reference = .54 - .46 * cos(2 * pi * j / 255);
+        if (memcmp(&reference, &window[j], sizeof(double))) return -1;
+        ++checks;
+    }
+    for (int part = 0; part < 2; ++part) for (int grid = 0; grid <= 640; ++grid) {
+        const double w = grid ? pi * grid / 641 : 1e-6;
+        for (int k = 0; k <= 10; ++k) {
+            const double reference = part ? sin(w * (5.5 - k)) : cos(w * (5.5 - k));
+            if (memcmp(&reference, &rootGrid[part][grid][k], sizeof(double))) return -2;
+            ++checks;
+        }
+        for (int pattern = 0; pattern < 5; ++pattern) {
+            double a[11];
+            for (int k = 0; k <= 10; ++k) a[k] = pattern == 0 ? (k == 0 ? 1 : 0)
+                : pattern == 1 ? 1 : pattern == 2 ? (k & 1 ? -1 : 1)
+                : pattern == 3 ? (k - 5) * .123456789 : (k & 1 ? -1 : 1) * (k + 1) * 1023.987654321;
+            const double reference = rootValue(a, w, part), actual = gridRootValue(a, grid, part);
+            if (memcmp(&reference, &actual, sizeof(double))) return -3;
+            ++checks;
+        }
+    }
+    return checks;
+}

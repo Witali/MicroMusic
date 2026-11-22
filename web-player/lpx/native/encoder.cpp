@@ -32,6 +32,12 @@
 #if LPX_ENCODER_FAST_SILENCE != 0 && LPX_ENCODER_FAST_SILENCE != 1
 #error LPX_ENCODER_FAST_SILENCE must be 0 or 1
 #endif
+#ifndef LPX_ENCODER_CACHE_ANALYSIS
+#define LPX_ENCODER_CACHE_ANALYSIS 1
+#endif
+#if LPX_ENCODER_CACHE_ANALYSIS != 0 && LPX_ENCODER_CACHE_ANALYSIS != 1
+#error LPX_ENCODER_CACHE_ANALYSIS must be 0 or 1
+#endif
 
 namespace {
 constexpr double pi = 3.14159265358979323846;
@@ -52,6 +58,10 @@ static int headerBytes;
 static int count, padded, mode, rate, block, bits, failure;
 struct State { int h[10], ring[256], dd; };
 static State state;
+#if LPX_ENCODER_CACHE_ANALYSIS
+static double rootGrid[2][641][11];
+static bool analysisPrepared;
+#endif
 #if LPX_ENCODER_REUSE_PREFIX
 // One cache per encoder instance, rebuilt for every subframe/scale/gain.
 // Keep it off the 32 KiB stack. Full ring snapshots preserve lags 18 and 19.
@@ -69,6 +79,28 @@ double rootValue(const double* a, double w, bool imaginary) {
     for (int k = 0; k <= 10; ++k) result += a[k] * (imaginary ? sin(w * (5.5 - k)) : cos(w * (5.5 - k)));
     return result;
 }
+void prepareAnalysis() {
+#if LPX_ENCODER_CACHE_ANALYSIS
+    if (analysisPrepared) return;
+#endif
+    for (int j = 0; j < 256; ++j) window[j] = .54 - .46 * cos(2 * pi * j / 255);
+#if LPX_ENCODER_CACHE_ANALYSIS
+    // Cache the original double expressions, without recurrence/interpolation.
+    // The bisection between grid points still calls the original rootValue.
+    for (int part = 0; part < 2; ++part) for (int grid = 0; grid <= 640; ++grid) {
+        const double w = grid ? pi * grid / 641 : 1e-6;
+        for (int k = 0; k <= 10; ++k) rootGrid[part][grid][k] = part ? sin(w * (5.5 - k)) : cos(w * (5.5 - k));
+    }
+    analysisPrepared = true;
+#endif
+}
+#if LPX_ENCODER_CACHE_ANALYSIS
+double gridRootValue(const double* a, int grid, int part) {
+    double result = 0;
+    for (int k = 0; k <= 10; ++k) result += a[k] * rootGrid[part][grid][k];
+    return result;
+}
+#endif
 void analyze(int frame) {
     double buf[256], r[11], a[11] = {1}, old[11], roots[10];
     double mean = 0;
@@ -89,9 +121,19 @@ void analyze(int frame) {
     for (int k = 0; k <= 10; ++k) { a[k] *= bandwidth; bandwidth *= .97; }
     int found = 0;
     for (int part = 0; part < 2; ++part) {
-        double left = 1e-6, fl = rootValue(a, left, part);
+        double left = 1e-6;
+#if LPX_ENCODER_CACHE_ANALYSIS
+        double fl = gridRootValue(a, 0, part);
+#else
+        double fl = rootValue(a, left, part);
+#endif
         for (int grid = 1; grid <= 640; ++grid) {
-            double right = pi * grid / 641, fr = rootValue(a, right, part);
+            double right = pi * grid / 641;
+#if LPX_ENCODER_CACHE_ANALYSIS
+            double fr = gridRootValue(a, grid, part);
+#else
+            double fr = rootValue(a, right, part);
+#endif
             if (fl * fr <= 0) {
                 double lo = left, hi = right, flo = fl;
                 for (int iteration = 0; iteration < 24; ++iteration) {
@@ -254,7 +296,7 @@ int enc_begin(int samples, int profile, int sampleRate) {
     count = samples; padded = (count + 319) / 320 * 320; mode = profile; rate = sampleRate;
     headerBytes = count > 64000 ? 17 : 13;
     memset(source + count, 0, (padded - count) * sizeof(int16_t)); memset(&state, 0, sizeof(state));
-    for (int j = 0; j < 256; ++j) window[j] = .54 - .46 * cos(2 * pi * j / 255);
+    prepareAnalysis();
     for (int j = 0; j < padded; ++j) emphasized[j] = source[j] / 2.0 - (j ? pre * (source[j - 1] / 2.0) / 16384 : 0);
     for (int fi = 0; fi < padded / 160; ++fi) analyze(fi);
     prepareCoefficients();
