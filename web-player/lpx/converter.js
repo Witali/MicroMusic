@@ -1,6 +1,11 @@
 import { MAX_SAMPLES } from './codec.js';
+import { supportsSimd } from './encoder-backend.js?v=20261122-simd-search';
 
 const $ = id => document.getElementById(id);
+if (!supportsSimd()) {
+  $('encode-backend').querySelector('option[value="simd"]').disabled = true;
+  $('backend-note').textContent = 'В этом браузере доступно обычное кодирование. Авто выберет его.';
+}
 let source = null, worker = null, running = false, job = 0, urls = [], output = null;
 const status = (text, error = false) => { $('convert-status').textContent = text; $('convert-status').classList.toggle('error', error); };
 const baseName = name => name.replace(/\.[^.]+$/, '').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_').slice(0, 120) || 'audio';
@@ -24,7 +29,7 @@ $('source-drop').addEventListener('drop', event => {
 });
 function busy(value) {
   running = value;
-  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
+  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
   $('cancel-convert').hidden = !value;
 }
 function stop() { if (worker) worker.terminate(); worker = null; busy(false); }
@@ -39,7 +44,8 @@ function appendResult(result) {
   const row = document.createElement('div'); row.className = 'result-row';
   const description = document.createElement('span');
   const title = document.createElement('b'); title.textContent = name;
-  const meta = document.createElement('small'); meta.textContent = `${(result.samples / output.rate).toLocaleString('ru-RU', { maximumFractionDigits: 3 })} с · ${result.bytes.length.toLocaleString('ru-RU')} Б · ${result.long ? 'LPX V9 Long' : 'LPX V9'}`;
+  const backend = result.backend === 'simd' ? 'SIMD' : 'Обычное';
+  const meta = document.createElement('small'); meta.textContent = `${(result.samples / output.rate).toLocaleString('ru-RU', { maximumFractionDigits: 3 })} с · ${result.bytes.length.toLocaleString('ru-RU')} Б · ${result.long ? 'LPX V9 Long' : 'LPX V9'} · ${backend}`;
   description.append(title, meta);
   const actions = document.createElement('div'); actions.className = 'result-actions';
   const preview = document.createElement('button'); preview.className = 'button button-outline'; preview.textContent = 'Слушать';
@@ -53,7 +59,7 @@ function appendResult(result) {
 }
 $('convert').onclick = async () => {
   if (!source || running) return;
-  const id = ++job, rate = Number($('encode-rate').value), profile = Number($('encode-profile').value);
+  const id = ++job, rate = Number($('encode-rate').value), profile = Number($('encode-profile').value), backend = $('encode-backend').value;
   output = { stem: baseName(source.name), rate, profile };
   urls.forEach(url => URL.revokeObjectURL(url)); urls = [];
   $('convert-results').replaceChildren(); $('convert-progress').value = 0;
@@ -77,7 +83,7 @@ $('convert').onclick = async () => {
       pcm[i] = Math.min(32767, Math.max(-32768, value));
     }
     $('source-summary').textContent = `${audio.duration.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} с · ${channels.length} кан. → моно · ${rate / 1000} кГц${clipped ? ` · насыщение ${clipped} отсч.` : ''}`;
-    worker = new Worker(new URL('./encode-worker.js?v=20261122-analysis-cache', import.meta.url), { type: 'module' });
+    worker = new Worker(new URL('./encode-worker.js?v=20261122-simd-search', import.meta.url), { type: 'module' });
     worker.onerror = event => { event.preventDefault(); if (id === job) { stop(); status('Не удалось запустить энкодер. Обновите страницу и повторите.', true); } };
     worker.onmessage = ({ data }) => {
       if (id !== job) return;
@@ -89,9 +95,11 @@ $('convert').onclick = async () => {
       if (data.result) {
         appendResult(data.result);
         stop(); $('convert-progress').value = 100;
-        status(`Готово: один файл · ${(data.result.bytes.length / 1024).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} КБ.`);
+        const name = data.result.backend === 'simd' ? 'SIMD' : 'Обычное';
+        const elapsed = (data.result.elapsedMs / 1000).toLocaleString('ru-RU', { maximumFractionDigits: 3 });
+        status(`Готово: один файл · ${(data.result.bytes.length / 1024).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} КБ · ${name} · кодирование ${elapsed} с.`);
       }
     };
-    worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile }, [pcm.buffer]);
+    worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile, backend }, [pcm.buffer]);
   } catch (error) { if (id === job) { stop(); status(error.message || 'Не удалось конвертировать аудио.', true); } }
 };
