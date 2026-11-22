@@ -42,6 +42,10 @@ retains complete filter/ring history, and winning trials still replay fully.
 The differential suite
 compares complete LPX bytes and PCM with the shipped exhaustive WASM at commit
 688fc4f6, including V9 Long, clipping, silent ties and partial packets.
+Strictly silent blocks directly commit the same winning pulses and ring state.
+The fixed LSF grid and Hamming window cache exact double trigonometric terms
+per instance; root bisection and scalar accumulation remain unchanged. The grid
+adds 112816 bytes of static memory, prepared on the first encode.
 
 ## C/C++ → WebAssembly and PC use
 
@@ -58,15 +62,17 @@ node --test web-player/tests/lpx-browser.test.mjs
 node web-player/scripts/decode-lpx.mjs input.lpx new-output.wav
 ```
 
-Build and check an explicitly selectable exhaustive C oracle with both
-`LPX_ENCODER_ENABLE_PRUNING=0`, `LPX_ENCODER_DEDUP_CANDIDATES=0` and
-`LPX_ENCODER_REUSE_PREFIX=0`:
+Build and check an explicitly selectable exhaustive C oracle with all five
+optimizations disabled (`LPX_ENCODER_ENABLE_PRUNING`,
+`LPX_ENCODER_DEDUP_CANDIDATES`, `LPX_ENCODER_REUSE_PREFIX`,
+`LPX_ENCODER_FAST_SILENCE` and `LPX_ENCODER_CACHE_ANALYSIS` set to zero):
 
 ```powershell
-node web-player/scripts/build-lpx-wasm.mjs --emsdk C:/path/to/emsdk --reference-encoder --prefix-selftest
+node web-player/scripts/build-lpx-wasm.mjs --emsdk C:/path/to/emsdk --reference-encoder --prefix-selftest --analysis-selftest
 $env:LPX_EXHAUSTIVE_WASM = (Resolve-Path build/lpx-encoder-exhaustive.wasm).Path
 $env:LPX_PREFIX_SELFTEST_WASM = (Resolve-Path build/lpx-prefix-selftest.wasm).Path
-node --test web-player/tests/lpx-encoder-exact.test.mjs web-player/tests/lpx-prefix.test.mjs
+$env:LPX_ANALYSIS_SELFTEST_WASM = (Resolve-Path build/lpx-analysis-selftest.wasm).Path
+node --test web-player/tests/lpx-encoder-exact.test.mjs web-player/tests/lpx-prefix.test.mjs web-player/tests/lpx-analysis.test.mjs
 node web-player/scripts/benchmark-lpx-encoder.mjs
 ```
 
@@ -80,6 +86,10 @@ pruning/deduplication build. The separate
 [prefix measurements](../../research/web-encoder-prefix-search-2026-11-22/README.md)
 retain that comparison. The direct compiled self-test exercises 918000
 candidate/state/bound cases, including lag 18/19 feedback and ring wrap.
+Use `--baseline 02a2fea5 --cold` to measure the silence/analysis changes after
+items 1-3 and include first encodes in fresh instances. The retained
+[analysis/backend experiments](../../research/web-encoder-analysis-cache-2026-11-22/README.md)
+also cover exact grid math and the measured SIMD/compact-cache alternatives.
 
 The PC command uses Node and the same C/WASM decoder; it refuses to overwrite an
 existing output. build.json and encoder-build.json retain source/compiler/flag

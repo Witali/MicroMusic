@@ -12,7 +12,7 @@ const baseline = readRecordedBuildFile(revision, 'web-player/lpx/encoder.wasm');
 assert.equal(createHash('sha256').update(baseline).digest('hex'),
   'f59002ca5e46f6bee2616f28edf3fe61ff91972df93ded823b6af21c64355a49');
 const reference = await createEncoder(baseline);
-const encode = await createEncoder(readFileSync(new URL('../lpx/encoder.wasm', import.meta.url)));
+const encode = await createEncoder(readFileSync(process.env.LPX_CANDIDATE_WASM || new URL('../lpx/encoder.wasm', import.meta.url)));
 const fallback = process.env.LPX_EXHAUSTIVE_WASM
   ? await createEncoder(readFileSync(process.env.LPX_EXHAUSTIVE_WASM)) : null;
 const decode = await createDecoder(readFileSync(new URL('../lpx/decoder.wasm', import.meta.url)));

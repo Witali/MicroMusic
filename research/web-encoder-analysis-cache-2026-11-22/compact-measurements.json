@@ -1,0 +1,727 @@
+{
+  "schema": "micromusic-lpx-encoder-benchmark-v1",
+  "method": "Whole synchronous createEncoder call, including reserve/input copy, analysis, search, packing, complete shared-C decode/model validation and output copy. Byte assertions and external decode are outside timing. Two warmups then five alternating-order paired runs; medians and all raw runs. Sequential local Node/V8 execution, not an in-browser/device/IRQ timing claim.",
+  "measuredAt": "2026-11-22T15:05:31.935Z",
+  "node": "v22.22.3",
+  "v8": "12.4.254.21-node.56",
+  "platform": "win32",
+  "arch": "x64",
+  "cpu": "AMD Ryzen 5 5600X 6-Core Processor             ",
+  "warmups": 2,
+  "rounds": 5,
+  "coldMethod": null,
+  "ffmpeg": "ffmpeg version 8.1.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers",
+  "baseline": {
+    "revision": "9db7939558b33630d26ae363ea38f37955b185e3",
+    "sha256": "72feb22c12b74df4dc7f60e37fa26dfdf78ef354e4d22e4cca91a02ab9a3c7ba",
+    "bytes": 43922,
+    "compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+    "flags": [
+      "--target=wasm32-unknown-unknown",
+      "-O3",
+      "-std=c++11",
+      "-ffreestanding",
+      "-nostdlib",
+      "-fno-exceptions",
+      "-fno-rtti",
+      "-fno-threadsafe-statics",
+      "--sysroot=<emsdk>/upstream/emscripten/cache/sysroot",
+      "-isystem",
+      "<emsdk>/upstream/emscripten/cache/sysroot\\include",
+      "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src",
+      "-DLPX4_ENABLE_ASM=0",
+      "-DLPX4_FLOAT_SYNTHESIS=0",
+      "-DLPX4_ENABLE_SPEECH=1",
+      "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+      "-DLPX4_COMPACT_ONLY=1",
+      "-DLPX4_COMPACT_VERSION=9",
+      "-DLPX4_SAMPLE_RATE=0",
+      "-DLPX4_EXTENDED_SAMPLE_RATES=1",
+      "-DLPX4_ENABLE_WIDE_V9=1",
+      "-Wl,--no-entry",
+      "-Wl,--export-memory",
+      "-Wl,-z,stack-size=32768",
+      "-Wl,--strip-all",
+      "-Wl,--initial-memory=262144",
+      "-Wl,--max-memory=1073741824",
+      "-Wl,--export=enc_reserve",
+      "-Wl,--export=enc_input",
+      "-Wl,--export=enc_output",
+      "-Wl,--export=enc_begin",
+      "-Wl,--export=enc_step",
+      "-Wl,--export=enc_finish"
+    ],
+    "inputs": {
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "5dbaa8d5d711139a81a9bd7b61618d11472a32073ded24722e9eb2e29cd2b57c",
+      "web-player/lpx/native/workspace.h": "6fbae763adff05f14b15532f28966efb47aff3f9ef82df8dfcb1dfff5d46baf7",
+      "web-player/scripts/build-lpx-wasm.mjs": "4429fc5434df5b3d64a479f20be758578de76fd357c9bd091937ca81aa7a0478",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "69faaacf5f23700809591a77e9a54259106b15e192c81f71ed0efc47b70fc10f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "4a4ced85102ae29ca605311ebbf21ed171a2b5cb96d569c5b6cdb27e7964f69e",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "web-player/lpx/native/encoder.cpp": "b3d4304f21ea0d4a47cf9910fabe9f65c1a81a84ecd6d32dd5d6fbb5c9b54b35",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "6aa98f754d4ea68f2f4d7fbd3f2414406bc9591b6489bc5fe3bc74c0a355c59d",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "e68c63a71b677cd031724ab75d6ba60c9d925675e2c497c41ff5b77475102b9d",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v9.py": "9fb30aadf63f5a5d79bef6b2cc02625c763b37e42822dc32fad334e4ffad4249",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9"
+    }
+  },
+  "optimized": {
+    "sha256": "9742cb1258f0bdac2b63bec555b9171b8c5385729ffa653033cc1c4260b8703a",
+    "bytes": 43175,
+    "compiler": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+    "flags": [
+      "--target=wasm32-unknown-unknown",
+      "-O3",
+      "-std=c++11",
+      "-ffreestanding",
+      "-nostdlib",
+      "-fno-exceptions",
+      "-fno-rtti",
+      "-fno-threadsafe-statics",
+      "--sysroot=<emsdk>/upstream/emscripten/cache/sysroot",
+      "-isystem",
+      "<emsdk>/upstream/emscripten/cache/sysroot\\include",
+      "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src",
+      "-DLPX4_ENABLE_ASM=0",
+      "-DLPX4_FLOAT_SYNTHESIS=0",
+      "-DLPX4_ENABLE_SPEECH=1",
+      "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+      "-DLPX4_COMPACT_ONLY=1",
+      "-DLPX4_COMPACT_VERSION=9",
+      "-DLPX4_SAMPLE_RATE=0",
+      "-DLPX4_EXTENDED_SAMPLE_RATES=1",
+      "-DLPX4_ENABLE_WIDE_V9=1",
+      "-Wl,--no-entry",
+      "-Wl,--export-memory",
+      "-Wl,-z,stack-size=32768",
+      "-Wl,--strip-all",
+      "-Wl,--initial-memory=262144",
+      "-Wl,--max-memory=1073741824",
+      "-Wl,--export=enc_reserve",
+      "-Wl,--export=enc_input",
+      "-Wl,--export=enc_output",
+      "-Wl,--export=enc_begin",
+      "-Wl,--export=enc_step",
+      "-Wl,--export=enc_finish",
+      "-Iweb-player/lpx/native"
+    ],
+    "inputs": {
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "5dbaa8d5d711139a81a9bd7b61618d11472a32073ded24722e9eb2e29cd2b57c",
+      "web-player/lpx/native/workspace.h": "6fbae763adff05f14b15532f28966efb47aff3f9ef82df8dfcb1dfff5d46baf7",
+      "web-player/scripts/build-lpx-wasm.mjs": "4429fc5434df5b3d64a479f20be758578de76fd357c9bd091937ca81aa7a0478",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "69faaacf5f23700809591a77e9a54259106b15e192c81f71ed0efc47b70fc10f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "4a4ced85102ae29ca605311ebbf21ed171a2b5cb96d569c5b6cdb27e7964f69e",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "web-player/lpx/native/encoder.cpp": "b3d4304f21ea0d4a47cf9910fabe9f65c1a81a84ecd6d32dd5d6fbb5c9b54b35",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v4.py": "6aa98f754d4ea68f2f4d7fbd3f2414406bc9591b6489bc5fe3bc74c0a355c59d",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/wav_lpc.py": "e68c63a71b677cd031724ab75d6ba60c9d925675e2c497c41ff5b77475102b9d",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/q0_model.py": "734d32075474e15b353fa3891f227fec329c4fb5fc29e36b21345ddd4f45c269",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v9.py": "9fb30aadf63f5a5d79bef6b2cc02625c763b37e42822dc32fad334e4ffad4249",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_compact.py": "6f9fbce459a274531240d6a85ceadbfd2c1c106d35fd43d58567eeca0583e0d9",
+      "build/lpx-backend-probes/compact-prefix.cpp": "0c9baf9d423fc538666f360346eaf646a56c3a44bf3d0c0f8c4d9d230cbabb5e",
+      "web-player/scripts/probe-lpx-backends.mjs": "30e806dfd611b7a8e9a8e95342ef2589c07233f44f677c91ee4204dccf01ca8a"
+    },
+    "experiment": {
+      "name": "compact-prefix",
+      "sourceRevision": "9db7939558b33630d26ae363ea38f37955b185e3",
+      "staticPrefixCacheBytes": 1120
+    }
+  },
+  "rows": [
+    {
+      "workload": "speech-chego",
+      "profile": 4,
+      "rate": 8000,
+      "samples": 9831,
+      "duration_s": 1.228875,
+      "source": {
+        "path": "web-player/audio/originals/chego.wav",
+        "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+        "ffmpegArgs": [
+          "-v",
+          "error",
+          "-i",
+          "web-player/audio/originals/chego.wav",
+          "-ac",
+          "1",
+          "-ar",
+          "8000",
+          "-f",
+          "s16le",
+          "pipe:1"
+        ]
+      },
+      "input_pcm_sha256": "df97c06d22427a64feb5b9d5a6b19d3ff58afe80671d0487c15cf8d7b6c8df25",
+      "lpx_sha256": "0fd90ee8d6d44371c15e9c904310ac2f94a6ac560b212203a8dd720fca86c94c",
+      "decoded_pcm_sha256": "9cc4001bc2a60e92375eb867e8a26d5d9a6db7062f5c7541d38beaefed7a49dd",
+      "median_ms": {
+        "baseline": 23.957700000000045,
+        "optimized": 29.675299999999993
+      },
+      "runs_ms": {
+        "baseline": [
+          24.387100000000032,
+          24.383500000000026,
+          23.924000000000092,
+          23.957700000000045,
+          23.773200000000088
+        ],
+        "optimized": [
+          29.698699999999974,
+          29.675299999999993,
+          29.491300000000024,
+          30.008000000000038,
+          29.59069999999997
+        ]
+      },
+      "speedup": 0.8073279798350834
+    },
+    {
+      "workload": "speech-chego",
+      "profile": 6,
+      "rate": 8000,
+      "samples": 9831,
+      "duration_s": 1.228875,
+      "source": {
+        "path": "web-player/audio/originals/chego.wav",
+        "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+        "ffmpegArgs": [
+          "-v",
+          "error",
+          "-i",
+          "web-player/audio/originals/chego.wav",
+          "-ac",
+          "1",
+          "-ar",
+          "8000",
+          "-f",
+          "s16le",
+          "pipe:1"
+        ]
+      },
+      "input_pcm_sha256": "df97c06d22427a64feb5b9d5a6b19d3ff58afe80671d0487c15cf8d7b6c8df25",
+      "lpx_sha256": "7cbbf7a4820c013df669ab0cf169f6c0df9153c7cb1c8b39c2f21de9fadf5a5f",
+      "decoded_pcm_sha256": "aafacebdbbdcfb9bfc1d94a3e3c9a3819b27112e0e39d4e903577e42aa78c92e",
+      "median_ms": {
+        "baseline": 167.77469999999994,
+        "optimized": 238.8780999999999
+      },
+      "runs_ms": {
+        "baseline": [
+          170.6579999999999,
+          166.92180000000008,
+          165.75390000000016,
+          170.26220000000012,
+          167.77469999999994
+        ],
+        "optimized": [
+          233.37750000000005,
+          233.13569999999982,
+          242.17450000000008,
+          243.24069999999983,
+          238.8780999999999
+        ]
+      },
+      "speedup": 0.7023444175083442
+    },
+    {
+      "workload": "speech-vinni",
+      "profile": 4,
+      "rate": 8000,
+      "samples": 23757,
+      "duration_s": 2.969625,
+      "source": {
+        "path": "web-player/audio/originals/vinni.wav",
+        "sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+        "ffmpegArgs": [
+          "-v",
+          "error",
+          "-i",
+          "web-player/audio/originals/vinni.wav",
+          "-ac",
+          "1",
+          "-ar",
+          "8000",
+          "-f",
+          "s16le",
+          "pipe:1"
+        ]
+      },
+      "input_pcm_sha256": "900512c4fe768f7b43e84416e5233f68cb9d6b50d07ff8f4fd99705daedf5f57",
+      "lpx_sha256": "9a3ae1a43e933777f54c7c077fa09b0fbaf83508c56fe018920354d635bb963e",
+      "decoded_pcm_sha256": "013c3ea4b55683a1e6a8c38a6291a46cad9d6ba7fd46fc4b679a632109f70db1",
+      "median_ms": {
+        "baseline": 66.5672999999997,
+        "optimized": 82.97670000000016
+      },
+      "runs_ms": {
+        "baseline": [
+          66.27719999999954,
+          69.5060999999996,
+          68.25049999999919,
+          66.5672999999997,
+          66.51240000000053
+        ],
+        "optimized": [
+          82.99199999999928,
+          82.57639999999992,
+          82.76170000000002,
+          82.97670000000016,
+          89.24200000000019
+        ]
+      },
+      "speedup": 0.802240870027364
+    },
+    {
+      "workload": "speech-vinni",
+      "profile": 6,
+      "rate": 8000,
+      "samples": 23757,
+      "duration_s": 2.969625,
+      "source": {
+        "path": "web-player/audio/originals/vinni.wav",
+        "sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+        "ffmpegArgs": [
+          "-v",
+          "error",
+          "-i",
+          "web-player/audio/originals/vinni.wav",
+          "-ac",
+          "1",
+          "-ar",
+          "8000",
+          "-f",
+          "s16le",
+          "pipe:1"
+        ]
+      },
+      "input_pcm_sha256": "900512c4fe768f7b43e84416e5233f68cb9d6b50d07ff8f4fd99705daedf5f57",
+      "lpx_sha256": "dc749de6445f673c1c51ed3fd1298ba6c268d3ac31e2a7af79630375221c6f3f",
+      "decoded_pcm_sha256": "f0ee72076b99c80224c65593139e57bb1ddbab05a0e97b3414f5360230275b5d",
+      "median_ms": {
+        "baseline": 481.2672999999995,
+        "optimized": 670.2357000000011
+      },
+      "runs_ms": {
+        "baseline": [
+          468.116399999999,
+          524.0442999999996,
+          483.40260000000126,
+          481.2672999999995,
+          477.9858999999997
+        ],
+        "optimized": [
+          658.9616999999998,
+          696.9222000000009,
+          670.2357000000011,
+          670.4660999999996,
+          666.4251000000004
+        ]
+      },
+      "speedup": 0.7180567970342355
+    },
+    {
+      "workload": "speech-chego",
+      "profile": 4,
+      "rate": 12000,
+      "samples": 14746,
+      "duration_s": 1.2288333333333334,
+      "source": {
+        "path": "web-player/audio/originals/chego.wav",
+        "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+        "ffmpegArgs": [
+          "-v",
+          "error",
+          "-i",
+          "web-player/audio/originals/chego.wav",
+          "-ac",
+          "1",
+          "-ar",
+          "12000",
+          "-f",
+          "s16le",
+          "pipe:1"
+        ]
+      },
+      "input_pcm_sha256": "aaf228b1e972746cb741b71d50c5fd99aea3f8c493a0f605e3cef682e0866315",
+      "lpx_sha256": "50b8dee521353e2582c5ce71c96f6307e4faa8d3860682aa35b2889a76cdc843",
+      "decoded_pcm_sha256": "ff6032d8dce4cb6b31b62353397635e46e103e465c74847623e721d007d886e7",
+      "median_ms": {
+        "baseline": 51.406699999999546,
+        "optimized": 65.48229999999967
+      },
+      "runs_ms": {
+        "baseline": [
+          51.498100000000704,
+          51.56660000000011,
+          51.23060000000078,
+          51.406699999999546,
+          50.841999999998734
+        ],
+        "optimized": [
+          65.07999999999993,
+          65.48229999999967,
+          65.75009999999929,
+          65.81390000000101,
+          65.30140000000029
+        ]
+      },
+      "speedup": 0.7850472570450305
+    },
+    {
+      "workload": "speech-chego",
+      "profile": 6,
+      "rate": 12000,
+      "samples": 14746,
+      "duration_s": 1.2288333333333334,
+      "source": {
+        "path": "web-player/audio/originals/chego.wav",
+        "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+        "ffmpegArgs": [
+          "-v",
+          "error",
+          "-i",
+          "web-player/audio/originals/chego.wav",
+          "-ac",
+          "1",
+          "-ar",
+          "12000",
+          "-f",
+          "s16le",
+          "pipe:1"
+        ]
+      },
+      "input_pcm_sha256": "aaf228b1e972746cb741b71d50c5fd99aea3f8c493a0f605e3cef682e0866315",
+      "lpx_sha256": "0b1d9354aacbcd7b5e972d4f47a5d36c351029777f65b2be9b0969f2aa0fa7e4",
+      "decoded_pcm_sha256": "db7000d1c75cb92305e878aae0c8367f78774fe47f1f306185aff88575e140f9",
+      "median_ms": {
+        "baseline": 376.36499999999796,
+        "optimized": 544.5633999999991
+      },
+      "runs_ms": {
+        "baseline": [
+          377.2095999999983,
+          374.69420000000173,
+          375.1765000000014,
+          377.55089999999836,
+          376.36499999999796
+        ],
+        "optimized": [
+          546.9234999999971,
+          545.804500000002,
+          532.8958999999995,
+          539.3423000000003,
+          544.5633999999991
+        ]
+      },
+      "speedup": 0.6911316478485308
+    },
+    {
+      "workload": "speech-chego",
+      "profile": 4,
+      "rate": 16000,
+      "samples": 19661,
+      "duration_s": 1.2288125,
+      "source": {
+        "path": "web-player/audio/originals/chego.wav",
+        "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+        "ffmpegArgs": [
+          "-v",
+          "error",
+          "-i",
+          "web-player/audio/originals/chego.wav",
+          "-ac",
+          "1",
+          "-ar",
+          "16000",
+          "-f",
+          "s16le",
+          "pipe:1"
+        ]
+      },
+      "input_pcm_sha256": "1e9eae2dbcd7a09507045ad27938d867b1ed3de0eefce837a51df728bf4c9693",
+      "lpx_sha256": "2857b3fd7e2a8bb69f28b83b097c9cf3a92ae9bbc7a51405368ef8c3cb2c7f72",
+      "decoded_pcm_sha256": "7cb77d611a460ebc9a6398176df02eef9292271a385262179eb16b420fa0b670",
+      "median_ms": {
+        "baseline": 46.72409999999945,
+        "optimized": 57.68890000000101
+      },
+      "runs_ms": {
+        "baseline": [
+          46.51100000000224,
+          48.696200000002136,
+          46.72409999999945,
+          47.5570000000007,
+          46.03700000000026
+        ],
+        "optimized": [
+          59.02419999999984,
+          57.40299999999843,
+          57.68890000000101,
+          58.14009999999689,
+          57.22570000000269
+        ]
+      },
+      "speedup": 0.8099322399976189
+    },
+    {
+      "workload": "speech-chego",
+      "profile": 6,
+      "rate": 16000,
+      "samples": 19661,
+      "duration_s": 1.2288125,
+      "source": {
+        "path": "web-player/audio/originals/chego.wav",
+        "sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+        "ffmpegArgs": [
+          "-v",
+          "error",
+          "-i",
+          "web-player/audio/originals/chego.wav",
+          "-ac",
+          "1",
+          "-ar",
+          "16000",
+          "-f",
+          "s16le",
+          "pipe:1"
+        ]
+      },
+      "input_pcm_sha256": "1e9eae2dbcd7a09507045ad27938d867b1ed3de0eefce837a51df728bf4c9693",
+      "lpx_sha256": "4bf9d3c41ac53c5dcb55e014004b81517b30d1aeb35d6bdb27c3e029d62b93d4",
+      "decoded_pcm_sha256": "0bf25844645bf24df46d1554113bb6780c009d6b64f083c6f19c089a2bbf502a",
+      "median_ms": {
+        "baseline": 300.16400000000067,
+        "optimized": 428.6326999999983
+      },
+      "runs_ms": {
+        "baseline": [
+          298.9824000000008,
+          302.4344000000019,
+          305.4560999999994,
+          300.16400000000067,
+          300.005000000001
+        ],
+        "optimized": [
+          437.1461999999992,
+          430.02030000000013,
+          428.6326999999983,
+          428.26450000000114,
+          428.1186999999991
+        ]
+      },
+      "speedup": 0.7002825496048292
+    },
+    {
+      "workload": "tone-1s",
+      "profile": 4,
+      "rate": 8000,
+      "samples": 8000,
+      "duration_s": 1,
+      "source": {
+        "generator": "round(6000*sin(i*.14)+1000*sin(i*.31))"
+      },
+      "input_pcm_sha256": "1eb6aafc9358371d934d67113469ae407e0bc2979d5e211dfaf1bbefbdd29e95",
+      "lpx_sha256": "bae71cb8b2ec8016e2754eabbaa226df8b9325e04ee8c2913694c4976f2c16c6",
+      "decoded_pcm_sha256": "47e7b5161573729731ad6bd61621386bef697a6a6ca8390954ff73d3e9fb673c",
+      "median_ms": {
+        "baseline": 17.677700000000186,
+        "optimized": 21.881499999999505
+      },
+      "runs_ms": {
+        "baseline": [
+          17.65139999999883,
+          17.783800000001065,
+          17.589200000002165,
+          17.995599999998376,
+          17.677700000000186
+        ],
+        "optimized": [
+          21.86869999999908,
+          21.983100000001286,
+          22.035900000002584,
+          21.881499999999505,
+          21.822700000000623
+        ]
+      },
+      "speedup": 0.8078833717981211
+    },
+    {
+      "workload": "tone-1s",
+      "profile": 6,
+      "rate": 8000,
+      "samples": 8000,
+      "duration_s": 1,
+      "source": {
+        "generator": "round(6000*sin(i*.14)+1000*sin(i*.31))"
+      },
+      "input_pcm_sha256": "1eb6aafc9358371d934d67113469ae407e0bc2979d5e211dfaf1bbefbdd29e95",
+      "lpx_sha256": "717f59715b5a69bf672abc2cf393de142aa2104f81b7e23276e451f291fd7445",
+      "decoded_pcm_sha256": "b4380d95cb318c2123df881ea8b1439e8b0e9cbd9d5c7f69f5fb50173f6265cd",
+      "median_ms": {
+        "baseline": 115.53410000000076,
+        "optimized": 164.91359999999986
+      },
+      "runs_ms": {
+        "baseline": [
+          115.27680000000328,
+          116.34800000000178,
+          115.53410000000076,
+          115.42369999999937,
+          117.3689000000013
+        ],
+        "optimized": [
+          164.91359999999986,
+          164.64080000000104,
+          168.1997999999985,
+          168.1385999999984,
+          164.6710000000021
+        ]
+      },
+      "speedup": 0.7005735124331823
+    },
+    {
+      "workload": "silence-2s",
+      "profile": 4,
+      "rate": 8000,
+      "samples": 16000,
+      "duration_s": 2,
+      "source": {
+        "generator": "zeros"
+      },
+      "input_pcm_sha256": "0c92bddb4e96f3ea9ec9f0f64a668255a6c15527ac09f6f119cafde60c7c4a39",
+      "lpx_sha256": "c662d776419856e0cc88588fbbc8db2ff34e6db39d5bef4e516fff78c514aae8",
+      "decoded_pcm_sha256": "0c92bddb4e96f3ea9ec9f0f64a668255a6c15527ac09f6f119cafde60c7c4a39",
+      "median_ms": {
+        "baseline": 3.9588000000003376,
+        "optimized": 3.9019999999982247
+      },
+      "runs_ms": {
+        "baseline": [
+          5.610399999997753,
+          3.8981000000021595,
+          4.159599999999045,
+          3.859200000002602,
+          3.9588000000003376
+        ],
+        "optimized": [
+          3.895700000000943,
+          4.108700000000681,
+          3.9019999999982247,
+          3.9301999999988766,
+          3.8642999999974563
+        ]
+      },
+      "speedup": 1.0145566376222805
+    },
+    {
+      "workload": "silence-2s",
+      "profile": 6,
+      "rate": 8000,
+      "samples": 16000,
+      "duration_s": 2,
+      "source": {
+        "generator": "zeros"
+      },
+      "input_pcm_sha256": "0c92bddb4e96f3ea9ec9f0f64a668255a6c15527ac09f6f119cafde60c7c4a39",
+      "lpx_sha256": "1d46bc22b5ade33d7da211ddef0fdd60c5c7ed3f2916936756cec93773174f96",
+      "decoded_pcm_sha256": "0c92bddb4e96f3ea9ec9f0f64a668255a6c15527ac09f6f119cafde60c7c4a39",
+      "median_ms": {
+        "baseline": 3.9417000000030384,
+        "optimized": 3.8614999999990687
+      },
+      "runs_ms": {
+        "baseline": [
+          3.9417000000030384,
+          4.022000000000844,
+          3.8715999999985797,
+          3.949300000000221,
+          3.873599999998987
+        ],
+        "optimized": [
+          3.8614999999990687,
+          3.872300000002724,
+          3.8567000000002736,
+          4.294000000001688,
+          3.8597000000008848
+        ]
+      },
+      "speedup": 1.020769131167678
+    },
+    {
+      "workload": "tone-long",
+      "profile": 4,
+      "rate": 8000,
+      "samples": 65537,
+      "duration_s": 8.192125,
+      "source": {
+        "generator": "round(6000*sin(i*.14)+1000*sin(i*.31))"
+      },
+      "input_pcm_sha256": "c5f97f0b14c65d8dd97658c837bc4d66b80a29a01ea59c24bd22b6d88570bd9a",
+      "lpx_sha256": "40e8657dda5c6030a061c7a2db936480912de0fc7403e9c10be46df32821f744",
+      "decoded_pcm_sha256": "9b605bd084af51da2c3b27063109202407425c18dcaa9b7316a600a1d137a5bc",
+      "median_ms": {
+        "baseline": 145.48709999999846,
+        "optimized": 182.5564000000013
+      },
+      "runs_ms": {
+        "baseline": [
+          146.58039999999892,
+          145.0043000000005,
+          156.20509999999922,
+          145.48709999999846,
+          145.09120000000257
+        ],
+        "optimized": [
+          185.98219999999856,
+          182.06589999999414,
+          179.6178,
+          182.5564000000013,
+          186.24199999999837
+        ]
+      },
+      "speedup": 0.796943300810037
+    },
+    {
+      "workload": "tone-long",
+      "profile": 6,
+      "rate": 8000,
+      "samples": 65537,
+      "duration_s": 8.192125,
+      "source": {
+        "generator": "round(6000*sin(i*.14)+1000*sin(i*.31))"
+      },
+      "input_pcm_sha256": "c5f97f0b14c65d8dd97658c837bc4d66b80a29a01ea59c24bd22b6d88570bd9a",
+      "lpx_sha256": "067ad44c0130b646e349d7d4c47dc68439f2917e6efa720632f0851ddd6a8290",
+      "decoded_pcm_sha256": "275fa1eba6e8642f438a016488a85e40aeb060f036487df19ba2bf5b9016e3f4",
+      "median_ms": {
+        "baseline": 947.7367999999988,
+        "optimized": 1361.7067000000025
+      },
+      "runs_ms": {
+        "baseline": [
+          947.7367999999988,
+          942.7375000000029,
+          940.6250999999975,
+          973.1039000000019,
+          1098.569500000005
+        ],
+        "optimized": [
+          1361.7067000000025,
+          1355.2488000000012,
+          1364.2268999999942,
+          1358.315800000004,
+          1407.975599999998
+        ]
+      },
+      "speedup": 0.6959918754897784
+    }
+  ]
+}

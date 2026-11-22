@@ -1,6 +1,6 @@
 import { createEncoder } from './encoder.js';
 
-const ready = fetch(new URL('./encoder.wasm?v=20261122-prefix-search', import.meta.url)).then(response => {
+const ready = fetch(new URL('./encoder.wasm?v=20261122-analysis-cache', import.meta.url)).then(response => {
   if (!response.ok) throw new Error('Не удалось загрузить WASM-энкодер.');
   return response.arrayBuffer();
 }).then(createEncoder);

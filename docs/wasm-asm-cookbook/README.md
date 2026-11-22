@@ -69,14 +69,61 @@ checks 918000 state/loss/bound cases, including lags 18/19, ring wrap, all pulse
 positions/amplitudes, saturation and exact ties. Full-stream differential tests
 and the shared-C decode/model validation remain enabled.
 
+### Commit strictly silent blocks without searching
+
+Keep the original guard: zero residual power, zero de-emphasis state and all
+ten LPC history values zero. With scale zero and gain zero, every pulse
+candidate synthesizes zero, so strict ties always select position zero and
+amplitude -8. Write those eight pulses and 160 expected zero samples directly.
+Overwrite only the block's 160 ring entries, preserving the other 96 entries;
+do not erase excitation history. The guard and parameter packing are unchanged.
+`LPX_ENCODER_FAST_SILENCE=0` selects the original search path.
+
+The direct harness compares the complete resulting state/PCM/pulses at all eight
+ring alignments, both profiles, and zero/tiny/full-scale sources. Stream tests
+also cover leading silence, decay into a pause and resumed excitation. The
+shortcut alone saves only 4-8% on the recorded silence workload after items 1-3;
+analysis dominates its remaining runtime.
+
+### Cache the exact fixed-grid trigonometric terms
+
+The 641 LSF grid points (including the original `1e-6` starting point) and the
+256-sample Hamming window are constant across frames/rates/profiles. Initialize
+the original double `sin`/`cos` expressions once per WASM instance. Cache all
+`2 * 641 * 11` terms and retain the original scalar multiply/add order for root
+values. Keep bisection between grid points on the original trigonometric code;
+use no recurrence, approximation or root interpolation.
+
+The table consumes 112816 bytes plus alignment/ready state, generated at runtime
+rather than embedded as a large download. The direct harness checks 20768
+Hamming values, grid terms and root sums bit for bit, including cancellation.
+`LPX_ENCODER_CACHE_ANALYSIS=0` selects per-call window preparation and direct
+grid evaluation. The [analysis/cache experiment](../../research/web-encoder-analysis-cache-2026-11-22/README.md)
+records first-encode and warm measurements, all output hashes and full checks.
+The first-encode measurements matter because the browser creates a new Worker
+for each conversion. This is an offline Web/PC optimization; existing firmware
+timing support is not changed.
+
+### Measured SIMD and compact-prefix alternatives
+
+On the same scalar source, `-msimd128` gave 0.98-1.02x whole-encode ratios and
+increased WASM from 43922 to 45670 bytes. A compact prefix cache reduced its
+21520 bytes to 1120 bytes but slowed non-silent cases by approximately 23-45%.
+Both passed the same direct state/math harnesses and 87-case stream suite. They
+are reproducible experiments, not selected production backends. Keep the
+simpler scalar/full-prefix implementation for these measured workloads; no
+general claim about explicit SIMD kernels or other CPUs follows from this test.
+
 ### Fallback and evidence
 
-`LPX_ENCODER_ENABLE_PRUNING=0`, `LPX_ENCODER_DEDUP_CANDIDATES=0` and
-`LPX_ENCODER_REUSE_PREFIX=0` independently disable these techniques. Setting all
-three to zero retains the exhaustive portable
+`LPX_ENCODER_ENABLE_PRUNING=0`, `LPX_ENCODER_DEDUP_CANDIDATES=0`,
+`LPX_ENCODER_REUSE_PREFIX=0`, `LPX_ENCODER_FAST_SILENCE=0` and
+`LPX_ENCODER_CACHE_ANALYSIS=0` independently disable these techniques. Setting all
+five to zero retains the exhaustive portable
 C++ path on the same architecture. The build helper's `--reference-encoder`
-produces this oracle separately from the production assets. In the recorded
-toolchain its binary SHA-256 equals the previously shipped encoder exactly.
+produces this oracle separately from the production assets. Complete LPX/PCM
+is checked against the pinned shipped exhaustive module. The experiments retain
+exact binary hashes; C code layout changes can change the oracle's WASM hash.
 
 [The retained experiment](../../research/web-encoder-exact-search-2026-11-22/README.md)
 contains workloads, before/after timings, raw runs, compiler flags, hashes and

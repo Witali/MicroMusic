@@ -12,15 +12,18 @@ import { parseArgs } from 'node:util';
 import { createEncoder } from '../lpx/encoder.js';
 import { createDecoder } from '../lpx/codec.js';
 
-const { values } = parseArgs({ options: { output: { type: 'string' }, baseline: { type: 'string' } } });
+const { values } = parseArgs({ options: { output: { type: 'string' }, baseline: { type: 'string' },
+  cold: { type: 'boolean', default: false }, candidate: { type: 'string' },
+  'candidate-manifest': { type: 'string' } } });
+if (!!values.candidate !== !!values['candidate-manifest']) throw new Error('Pass both --candidate and --candidate-manifest.');
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const revision = execFileSync('git', ['rev-parse', '--verify', `${values.baseline || '688fc4f618f9ed6176501e0f5d6e55bcb8fc80cf'}^{commit}`], { cwd: root, encoding: 'utf8' }).trim();
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const baseline = execFileSync('git', ['show', `${revision}:web-player/lpx/encoder.wasm`], { cwd: root });
 const baselineManifest = JSON.parse(execFileSync('git', ['show', `${revision}:web-player/lpx/encoder-build.json`], { cwd: root, encoding: 'utf8' }));
 assert.equal(hash(baseline), baselineManifest.sha256);
-const candidate = readFileSync(resolve(root, 'web-player/lpx/encoder.wasm'));
-const manifest = JSON.parse(readFileSync(resolve(root, 'web-player/lpx/encoder-build.json')));
+const candidate = readFileSync(resolve(root, values.candidate || 'web-player/lpx/encoder.wasm'));
+const manifest = JSON.parse(readFileSync(resolve(root, values['candidate-manifest'] || 'web-player/lpx/encoder-build.json')));
 assert.equal(hash(candidate), manifest.sha256);
 const encoders = { baseline: await createEncoder(baseline), optimized: await createEncoder(candidate) };
 const decode = await createDecoder(readFileSync(resolve(root, 'web-player/lpx/decoder.wasm')));
@@ -61,6 +64,22 @@ for (const work of workloads) for (const profile of [4, 6]) {
     input_pcm_sha256: hash(Buffer.from(work.pcm.buffer)), lpx_sha256: hash(expected),
     decoded_pcm_sha256: hash(Buffer.from(expectedPcm.buffer)), median_ms: times, runs_ms: runs,
     speedup: times.baseline / times.optimized };
+  if (values.cold) {
+    const cold = { baseline: [], optimized: [] };
+    for (let round = 0; round < rounds; round++) {
+      for (const name of (round & 1 ? ['optimized', 'baseline'] : ['baseline', 'optimized'])) {
+        // Module instantiation is outside timing; table preparation, memory
+        // growth and the very first encode in this fresh instance are inside.
+        const firstEncode = await createEncoder(name === 'baseline' ? baseline : candidate);
+        const start = performance.now();
+        const bytes = firstEncode(work.pcm, work.rate, profile);
+        cold[name].push(performance.now() - start);
+        assert.deepEqual(bytes, expected, `${work.name} cold ${name}`);
+      }
+    }
+    row.cold_first_encode_runs_ms = cold;
+    row.cold_first_encode_median_ms = Object.fromEntries(Object.entries(cold).map(([name, values]) => [name, median(values)]));
+  }
   rows.push(row);
   console.log(`${work.name} P${profile}/${work.rate}: ${times.baseline.toFixed(2)} → ${times.optimized.toFixed(2)} ms (${row.speedup.toFixed(2)}x), exact LPX/PCM`);
 }
@@ -68,11 +87,12 @@ const result = { schema: 'micromusic-lpx-encoder-benchmark-v1',
   method: 'Whole synchronous createEncoder call, including reserve/input copy, analysis, search, packing, complete shared-C decode/model validation and output copy. Byte assertions and external decode are outside timing. Two warmups then five alternating-order paired runs; medians and all raw runs. Sequential local Node/V8 execution, not an in-browser/device/IRQ timing claim.',
   measuredAt: new Date().toISOString(), node: process.version, v8: process.versions.v8, platform: process.platform,
   arch: process.arch, cpu: cpus()[0].model, warmups, rounds,
+  coldMethod: values.cold ? 'Five fresh-instance first encodes per module in alternating order, instantiation outside timing; includes cache initialization and memory growth.' : null,
   ffmpeg: execFileSync('ffmpeg', ['-version'], { encoding: 'utf8' }).split(/\r?\n/)[0],
   baseline: { revision, sha256: hash(baseline), bytes: baseline.length,
     compiler: baselineManifest.compiler, flags: baselineManifest.flags, inputs: baselineManifest.inputs },
   optimized: { sha256: hash(candidate), bytes: candidate.length, compiler: manifest.compiler,
-    flags: manifest.flags, inputs: manifest.inputs }, rows };
+    flags: manifest.flags, inputs: manifest.inputs, experiment: manifest.experiment ?? null }, rows };
 const output = resolve(root, values.output || 'build/lpx-encoder-benchmark.json');
 mkdirSync(dirname(output), { recursive: true });
 writeFileSync(output, JSON.stringify(result, null, 2) + '\n');
