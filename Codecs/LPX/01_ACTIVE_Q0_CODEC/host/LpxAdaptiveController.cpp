@@ -32,11 +32,14 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
     }
     QualityContext context(reference,speech);
     std::vector<Stream> seeds;seeds.push_back(fitSeed(reference,profile,rate,13926,false));
+    if(!seeds.back().samples) { report.error=-7;return Stream{}; }
     if(!cap)cap=int(int64_t(compactBytes(seeds[0]))*(100+sizeAllowancePercent)/100);report.cap=cap;
     auto originalPcm=render(seeds[0]);auto original=context.measure(originalPcm);
     Stream anchor=seeds[0];double selectedScore=original.voice[0];
     for(int pre:{0,8192,13926}) {
-        seeds.push_back(fitSeed(reference,profile,rate,pre,true));auto pcm=render(seeds.back());auto m=context.measure(pcm);
+        seeds.push_back(fitSeed(reference,profile,rate,pre,true));
+        if(!seeds.back().samples) { report.error=-7;return Stream{}; }
+        auto pcm=render(seeds.back());auto m=context.measure(pcm);
         if(compactBytes(seeds.back())<=cap && noRegression(m.quality,original.quality)
             && voiceGate(m.diagnostic[0],original.diagnostic[0]) && voiceGate(m.diagnostic[1],original.diagnostic[1])
             && m.voice[0]<selectedScore) { anchor=seeds.back();selectedScore=m.voice[0]; }

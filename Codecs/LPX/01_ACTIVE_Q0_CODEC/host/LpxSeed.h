@@ -7,6 +7,7 @@ struct LpxSeedView {
     const int (*params)[3];
     const int (*pulses)[2];
     const int16_t* pcm;
+    bool valid;
 };
 int lpxSeedBegin(int samples, int profile, int rate, int pre, bool zeroScale);
 LpxSeedView lpxSeedView();

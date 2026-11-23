@@ -14,6 +14,10 @@ uint8_t* enc_output(void);
 int enc_begin(int samples, int profile, int sampleRate);
 int enc_step(void);
 int enc_finish(void);
+// Explicit native arithmetic backend: 0 portable CPU (default), 1 CUDA.
+// Returns 0 on success, a negative value if unsupported/unavailable.
+int enc_set_backend(int backend);
+const char* enc_backend_error(void);
 #ifdef __cplusplus
 }
 #endif
