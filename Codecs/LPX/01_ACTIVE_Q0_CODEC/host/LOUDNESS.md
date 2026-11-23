@@ -1,34 +1,26 @@
-# Optional whole-file perceived-loudness normalization
+# Optional input perceived-loudness normalization
 
-The Web UI now defaults to one constant coefficient stored in the completed
-LPX file. Its switch enables/disables this feature; target mono LUFS and maximum
-boost are configurable. Measurement uses the final decoded recording. The
-payload is unchanged for P4/P6; 3/8 presets first reserve two metadata bytes.
-The decoder applies the coefficient at final output on Web, PC and MCU.
-See [the wire specification](../LPX9_GAIN_FORMAT.md). There is no intra-file AGC
-and no reaction-time parameter for a constant coefficient.
+The Web UI defaults to unchanged input level. Its normalization switch applies
+one constant gain to the complete mono PCM recording before codec analysis and
+candidate selection. Target loudness is adjustable from -30 to -9 LUFS, and
+maximum boost from0 to24 dB; defaults are -18 LUFS and +12 dB. Input sample
+peaks impose a -1 dBFS ceiling. The target may remain unreachable because of
+peak or maximum-boost limits; the UI reports the cause and actual prepared and
+decoded LUFS. Lossy coding can change the final level.
 
-The default settings are -18 LUFS and maximum +12 dB; the decoded sample-peak
-ceiling is -1 dBFS. The result reports the actual coefficient, resulting LUFS
-and any limiting constraint. Disabling normalization retains the original bytes.
-Short/below-gate audio uses unity. Source stereo is downmixed before encoding.
+The gain is already included in the encoded signal. No coefficient or new flag
+is stored in LPX, no decoder multiply is needed, and ordinary V9/Long headers
+remain13/17 bytes. All four Web profiles retain their existing final complete
+size budgets, with no extra metadata reservation. Normalization does not chunk
+the file, reset histories, compress dynamics or apply time-varying gain.
 
-`normalizeFileGain` and `enc_adaptive_file_gain` / `enc_bitrate_file_gain` implement
-the current policy. It uses the same independently checked meter described below,
-retains strict complete-stream verification, and changes no synthesis history.
-
-## Retained pre-encoding reference API
-
-The older `enc_adaptive_loudness` and `enc_bitrate_loudness` ABIs below remain
-selectable for compatibility/regression. The page uses the file-gain policy.
-
-The reference API preserves input level by default. Selecting **loudness**
-normalizes mono PCM16 before adaptive encoding toward **-18 LUFS**, with a
-**-1 dBFS sample-peak ceiling**. The target is a project choice, not an ITU or
-EBU programme-delivery recommendation. One constant gain applies to the entire
-recording; no compressor, limiter, gating of output samples, chunking, history
-reset, or time-varying gain is introduced. Lossy encoding can change loudness;
-the UI reports measured decoded LPX loudness separately.
+The current APIs are `enc_normalize_level`, `enc_adaptive_level` and
+`enc_bitrate_level`; they validate target/max settings and call the same portable
+C++ input normalizer on native/scalar/SIMD builds. Quality selection compares
+with normalized PCM. Original fixed-target `enc_normalize_loudness`,
+`enc_adaptive_loudness` and `enc_bitrate_loudness` wrappers remain only for
+regression/API compatibility and retain their previous unrestricted-boost policy.
+The page uses the configurable APIs.
 
 The shared `LpxLoudness.cpp` implements mono integrated measurement following
 [ITU-R BS.1770-5, Annex 1](https://www.itu.int/rec/R-REC-BS.1770-5-202311-I/en):
@@ -56,11 +48,11 @@ clipped source audio cannot be repaired by a constant gain.
 
 The normalizer is portable C++11, with no assembly, Python, JS audio DSP or
 architecture-specific backend. Native PC, scalar WASM and SIMD WASM compile
-the same source. The existing adaptive ABIs remain unchanged; the new
-`enc_adaptive_loudness` ABI opts in. Quality selection compares candidates
+the same source. The existing adaptive ABIs remain unchanged; the configurable
+`enc_adaptive_level` ABI opts in. Quality selection compares candidates
 against the normalized reference. Report getters expose source, prepared and
 decoded LUFS, applied dB gain, skip status and the peak constraint.
-The `enc_bitrate_loudness` ABI provides the same preprocessing for 3/8 kbit/s
+The `enc_bitrate_level` ABI provides the same preprocessing for 3/8 kbit/s
 presets at 8 kHz. Their exact complete-file caps remain unchanged; normalization
 happens before candidate selection and does not scale a finished LPX stream.
 

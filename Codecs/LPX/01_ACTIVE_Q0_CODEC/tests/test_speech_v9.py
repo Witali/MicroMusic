@@ -71,24 +71,6 @@ def sparse_fixture(n,style='changing',pre=8192,bright=11469,lag=145):
     return wrap(writers[0],8,15,320),wrap(writers[1],5,6,160)
 
 
-class FileGainRepackTests(unittest.TestCase):
-    def test_v9_retains_gain_and_legacy_refuses_to_drop_nonunity(self):
-        for profile in (4,6,15):
-            original=repack(sparse_fixture(641)[0] if profile==15 else fixture(profile,641,18))[0]
-            for gain in (1,4096,8192,65535):
-                marked=original[:2]+bytes([original[2]|32])+original[3:13]+struct.pack('<H',gain)+original[13:]
-                self.assertEqual(repack(marked)[0],marked)
-                version=8 if profile==15 else 5
-                if gain==4096:
-                    self.assertEqual(repack(marked,version)[0],repack(original,version)[0])
-                else:
-                    with self.assertRaisesRegex(ValueError,'gain'):
-                        repack(marked,version)
-            for word in (b'',b'\0',b'\0\0'):
-                with self.assertRaises(ValueError):
-                    repack(original[:2]+bytes([original[2]|32])+original[3:13]+word)
-
-
 class SpeechV9Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -142,26 +124,6 @@ class SpeechV9Tests(unittest.TestCase):
             self.assertEqual(expected[:2],(16000,(1,0,16000,16000,1)))
             for key in self.libs:
                 if key[0]==9:self.assertEqual(self.decode(key,new,domain),expected,key)
-
-    def test_file_gain_across_memory_callback_and_pwm_variants(self):
-        for profile in (4,6,15):
-            plain=repack(sparse_fixture(641)[0] if profile==15 else fixture(profile,641,18))[0]
-            raw=self.decode((9,0,1,1),plain)[2]
-            pcm=struct.unpack('<641h',raw)
-            for gain in (1,4096,8192,65535):
-                marked=plain[:2]+bytes([plain[2]|32])+plain[3:13]+struct.pack('<H',gain)+plain[13:]
-                def scale(x):
-                    q14=16384 if x==32767 else x//2
-                    return min(32767,max(-32768,2*min(16384,max(-16384,(q14*gain+2048)>>12))))
-                expected=struct.pack('<641h',*(scale(x) for x in pcm))
-                for domain in (0,1):
-                    reference=self.decode((9,0,1,1),marked,domain)
-                    self.assertEqual(reference[:2],(641,(1,0,641,641,1)))
-                    if domain==0:self.assertEqual(reference[2],expected)
-                    for key in self.libs:
-                        if key[0]==9:
-                            for mode in (0,1,2,3,5):
-                                self.assertEqual(self.decode(key,marked,domain,mode),reference,(key,profile,gain,domain,mode))
 
     def test_tails_coefficients_sources_and_repacking(self):
         for profile in (4,6):

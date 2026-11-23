@@ -22,10 +22,11 @@ const decode = await createDecoder(readFileSync(new URL('../lpx/decoder.wasm', i
 const reference = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive.wasm', import.meta.url)));
 
 test('shipped worker loads adaptive assets, forwards allowances and returns one validated file', async () => {
-  for (const backend of ['scalar', 'simd', 'auto']) for (const normalization of ['preserve', 'loudness', 'file']) {
+  for (const backend of ['scalar', 'simd', 'auto']) for (const normalization of ['preserve', 'loudness']) {
     const worker = new Worker(workerSource, { eval: true, workerData: new URL('../lpx/encode-worker.js', import.meta.url).href });
     const pcm = Int16Array.from({ length: 6001 }, (_, i) => Math.round(6000 * Math.sin(i * .14)));
-    const expected = reference(pcm, 12000, 6, () => {}, { sizeAllowancePercent: 25, normalization });
+    const settings = { targetLufs: -24, maxGainDb: 9 };
+    const expected = reference(pcm, 12000, 6, () => {}, { sizeAllowancePercent: 25, normalization, ...settings });
     const expectedLoudness = reference.loudness;
     const progress = [];
     try {
@@ -36,7 +37,7 @@ test('shipped worker loads adaptive assets, forwards allowances and returns one 
           if (data.progress !== undefined) progress.push(data.progress);
           if (data.result) resolve(data.result);
         });
-        worker.postMessage({ pcm: pcm.buffer, sampleRate: 12000, profile: 6, backend, sizeAllowancePercent: 25, normalization }, [pcm.buffer]);
+        worker.postMessage({ pcm: pcm.buffer, sampleRate: 12000, profile: 6, backend, sizeAllowancePercent: 25, normalization, ...settings }, [pcm.buffer]);
       });
       assert.deepEqual(result.bytes, expected);
       assert.deepEqual(progress, [0, 1]);

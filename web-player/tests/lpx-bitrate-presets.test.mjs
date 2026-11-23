@@ -115,7 +115,7 @@ test('converter pins bitrate settings through work/cancel and restores ordinary 
   assert.equal(workers[0].message.profile, 8);
   assert.equal(workers[0].message.sampleRate, 8000);
   assert.equal(workers[0].message.sizeAllowancePercent, 0);
-  assert.equal(workers[0].message.normalization, 'file');
+  assert.equal(workers[0].message.normalization, 'loudness');
   assert.equal(workers[0].message.targetLufs, -18);
   assert.equal(workers[0].message.maxGainDb, 12);
   assert.equal(element('encode-level').disabled, true);

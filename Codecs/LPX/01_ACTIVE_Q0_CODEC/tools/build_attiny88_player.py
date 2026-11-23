@@ -98,10 +98,9 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
         raise ValueError('Universal playback reads stream parameters without per-record specialization')
     if not isinstance(sparse80,bool):raise ValueError('Sparse80 selection must be boolean')
     version=9 if blob[:2]==b'L9' else blob[4] if len(blob)>=16 else 0
-    header_bytes=13+(2 if len(blob)>2 and blob[2]&32 else 0) if version==9 else 22
+    header_bytes=13 if version==9 else 22
     flags_at=2 if version==9 else 5
-    profile_flags=(blob[flags_at]&~32 if version==9 else blob[flags_at]) if len(blob)>flags_at else 0
-    if not header_bytes<=len(blob)<=65535 or not ((version==9 or blob[:5]==b'L4HY\x05') and (profile_flags&127 in (4,6) or version==9 and profile_flags==15) or
+    if not header_bytes<=len(blob)<=65535 or not ((version==9 or blob[:5]==b'L4HY\x05') and (blob[flags_at]&127 in (4,6) or version==9 and blob[flags_at]==15) or
             sparse80 and blob[:6]==b'L4HY\x08\x0f'):
         raise ValueError('Expected compact v5/v9, or sparse80 with its explicit enable')
     compact_version=9 if version==9 else 5
@@ -115,7 +114,7 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
         if not universal or compact_version!=9 or any(data[:2]!=b'L9' for data in blobs):
             raise ValueError('Multiple streams require universal LPX v9')
         for data in blobs:
-            if len(data)<13 or len(data)!=(15 if data[2]&32 else 13)+int.from_bytes(data[11:13],'little'):
+            if len(data)<13 or len(data)!=13+int.from_bytes(data[11:13],'little'):
                 raise ValueError('Incomplete LPX v9 segment')
     rates=[int.from_bytes(data[3:5] if compact_version==9 else data[6:8],'little') for data in blobs]
     # A continuous FIFO has one clock. Mixed-rate sequences need rate tags at
@@ -181,7 +180,7 @@ def build(source,output,*,assembly=False,queue=None,repeat=1,wsl=None,avr_bin=No
     else:
         flags += [f'-DLPX4_FIXED_PRE_Q14={int.from_bytes(blob[pre_at:pre_at+2],"little")}',
                   f'-DLPX4_FIXED_BRIGHT_Q14={int.from_bytes(blob[pre_at+2:pre_at+4],"little")}',
-                  f'-DLPX4_FIXED_SPEECH_FLAGS={profile_flags}']
+                  f'-DLPX4_FIXED_SPEECH_FLAGS={blob[flags_at]}']
     # Measured AVR25 ASM recipe: avoid repeated small reader bodies and reduce
     # foreground register pressure. The explicitly selected C recipe stays C.
     if assembly:flags+=['-finline-small-functions' if universal else '-fno-inline-small-functions']

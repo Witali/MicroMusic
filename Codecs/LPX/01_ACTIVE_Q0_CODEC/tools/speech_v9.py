@@ -50,7 +50,6 @@ def repack(blob, version=9):
     if version not in (5,8,9) or len(blob)<13:
         raise ValueError('Expected LPX v5, v8 or v9')
     source=9 if blob[:2]==b'L9' else blob[4] if blob[:4]==b'L4HY' and blob[4] in (5,8) else 0
-    file_gain=None
     if source in (5,8) and len(blob)>=22:
         _,_,flags,rate,n,pre,bright,frame,block,payload=struct.unpack('<4sBBHIHHHHH',blob[:22])
         if (frame,block)!=(320,320 if source==8 else 160):raise ValueError('Invalid packet geometry')
@@ -58,11 +57,6 @@ def repack(blob, version=9):
     elif source==9:
         _,flags,rate,n,pre,bright,payload=struct.unpack('<2sBHHHHH',blob[:13])
         header=13
-        if flags&32:
-            if len(blob)<15:raise ValueError('Truncated V9 gain header')
-            file_gain=struct.unpack_from('<H',blob,13)[0]
-            if not file_gain:raise ValueError('Invalid V9 file gain')
-            flags&=~32;header=15
     else:raise ValueError('Expected LPX v5, v8 or v9')
     sparse80=flags==15
     legal=sparse80 if source==8 else (flags&127) in (4,6) or (source==9 and sparse80)
@@ -74,8 +68,6 @@ def repack(blob, version=9):
         raise ValueError('Invalid bounded payload length')
     if rate!=8000 and version!=9:
         raise ValueError('Higher sample rates require LPX v9')
-    if file_gain not in (None,4096) and version!=9:
-        raise ValueError('File gain cannot be represented by legacy LPX v5/v8')
     if sparse80 and version==5 or not sparse80 and version==8:
         raise ValueError('Sparse80 uses legacy version8; P4/P6 use legacy version5')
     r=Bits(blob[header:]);w=Bits()
@@ -167,9 +159,7 @@ def repack(blob, version=9):
     payload=len(w.output)
     if version in (5,8):
         result=struct.pack('<4sBBHIHHHHH',b'L4HY',version,flags,rate,n,pre,bright,320,320 if sparse80 else 160,payload)
-    else:
-        result=struct.pack('<2sBHHHHH',b'L9',flags|(32 if file_gain is not None else 0),rate,n,pre,bright,payload)
-        if file_gain is not None:result+=struct.pack('<H',file_gain)
+    else:result=struct.pack('<2sBHHHHH',b'L9',flags,rate,n,pre,bright,payload)
     result+=w.output
     if len(result)>65535:raise ValueError('Stream exceeds bounded ROM API')
     return bytes(result),dict(source_version=source,version=version,samples=n,
