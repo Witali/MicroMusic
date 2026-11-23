@@ -3316,3 +3316,29 @@ Tiny ASM uses 3629/3630 B excluding the two audio streams, 418 B static SRAM and
 28 B observed stack. AVR-GCC 7.3.0, GNU ABI and simavr 1.6; explicit C and ASM
 backends remain separate. This fixed-input admission is not a general deadline
 bound or a physical-board measurement.
+
+**Measured: encoded parameters can activate existing filter work (2026-11-23).**
+Unchanged decoder code does not imply unchanged cycles. With MCU sources pinned
+to `ba02e453`, matched controls on an 8,466-sample public P4 prototype changed
+only brightness Q14 from 0 to 128: linked code and compressed payload stayed
+identical. AVR-GCC 7.3.0/GNU AVR ABI, simavr 1.6, 16 MHz/8 kHz,
+`-Os -flto -mcall-prologues -mrelax`, FIFO32/prefill24 and two LPC segments:
+
+| Target / arithmetic | Added active producer foreground cycles/sample |
+| --- | ---: |
+| ATtiny88 / AVR25 ASM without MUL | 101.000355 |
+| ATmega328P / AVR5 ASM with hardware MUL | 33.000355 |
+| ATmega328P / C | 71.421582 |
+
+Tiny producer work rises about 7.1%. Matched images preserve exact portable-C
+PWM, active IRQ/EOF and zero underruns; Flash, static SRAM and observed stack
+are unchanged. These measured filter/output-path means exclude IRQ time and
+cover one payload, not universal instruction costs, worst-case bounds or board
+measurements. [Prototype controls and scope](../../Codecs/LPX/research/lowrate-quality-next-2026-11-23/firmware-prototype-v3.md).
+
+The small objective gain had no listening confirmation, so selected strict-3k
+host header refinement preserves brightness 0 when the exact V3 incumbent had
+that filter disabled. [Selected input-bound validation](../../Codecs/LPX/research/lowrate-quality-next-2026-11-23/firmware-results.md)
+checks runtime separately. Retain the explicitly selectable C fallback on AVR;
+ASM requires a supported real target plus a separate enable, independently of
+hardware selection. This observation introduces no new arithmetic backend.
