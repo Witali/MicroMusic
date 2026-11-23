@@ -1,5 +1,6 @@
 #pragma once
 #include "LpxAdaptive.h"
+#include <initializer_list>
 
 // Selectable previous encoder for reproducible comparisons, independently of
 // CPU, CUDA, or SIMD arithmetic selection. The decoder is unaffected.
@@ -48,5 +49,10 @@ Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
     bool speech = true);
 // Same frozen whole-output safety/objective for a finalized streaming proposal.
 bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,
-                             const Pcm& candidate,int sampleRate,bool speech=true);
+                             const Pcm& candidate,int sampleRate,bool speech=true,bool strictlyBetter=false);
+// Compare completed proposals against one immutable floor, never a chain of
+// relative scores. A tie retains that floor, even if a proposal is smaller.
+Stream selectQualityProposals(const Stream& incumbent,const Pcm& reference,
+    std::initializer_list<const Stream*> proposals,ProfileQualityReport& report,
+    bool speech=true,int completeV9Budget=0);
 }

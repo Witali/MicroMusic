@@ -12,6 +12,7 @@ using Pcm = std::vector<int16_t>;
 struct SynthesisState { int h[10] = {}, ring[256] = {}, dd = 0, cc = 0; };
 struct Stream {
     int samples = 0, rate = 8000, profile = 6, pre = 13926, bright = 0;
+    int accuracy = 0; // Host-only policy; zero retains every legacy API.
     std::vector<Spectrum> spectra;
     std::vector<Parameters> parameters;
     std::vector<Pulse> pulses, extras;
@@ -29,6 +30,7 @@ std::vector<Coefficients> coefficientTrace(const Stream& stream);
 Pcm advance(const Stream& stream, const std::vector<Coefficients>& co, int start,
             int end, SynthesisState& state, std::vector<int>* lpc = nullptr);
 Pcm render(const Stream& stream);
+Stream canonicalAccuracy(const Stream& stream);
 double emphasizedAt(const Stream& stream,const Pcm& reference,int at);
 double residualBefore(const Stream& stream,const Pcm& reference,int at);
 uint64_t sse(const Pcm& reference, const Pcm& actual, int start = 0);

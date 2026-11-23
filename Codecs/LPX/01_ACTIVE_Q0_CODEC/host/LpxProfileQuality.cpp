@@ -121,13 +121,28 @@ public:
     }
 };
 }
-bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,const Pcm& candidate,int rate,bool speech) {
+Stream selectQualityProposals(const Stream& incumbent,const Pcm& reference,
+    std::initializer_list<const Stream*> proposals,ProfileQualityReport& report,bool speech,int completeV9Budget) {
+    report=ProfileQualityReport{};
+    QualitySelection selection(incumbent,reference,completeV9Budget?completeV9Budget:std::numeric_limits<int>::max(),true,
+        report,speech,LPX_ENCODER_JOINT_REFINEMENT!=0);
+    if(report.error)return Stream{};
+    for(const auto* candidate:proposals) {
+        if(!candidate||candidate->samples!=incumbent.samples||candidate->rate!=incumbent.rate
+            ||candidate->profile!=incumbent.profile)continue;
+        selection.add(*candidate);
+        if(report.error)return Stream{};
+    }
+    return report.finalObjective<report.initialObjective-1e-12?selection.selected:incumbent;
+}
+bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,const Pcm& candidate,int rate,bool speech,bool strictlyBetter) {
     if(reference.size()!=incumbent.size() || reference.size()!=candidate.size())return false;
     QualityContext quality(reference,speech,rate);FullBandContext spectrum(reference,rate);
     const auto baseline=quality.measure(incumbent),next=quality.measure(candidate);
     const auto spectralFloor=spectrum.measure(incumbent),proposal=spectrum.measure(candidate);
+    const double score=objective(next,proposal,baseline,spectralFloor),floor=objective(baseline,spectralFloor,baseline,spectralFloor);
     const bool admitted=safety(next,proposal,baseline,spectralFloor)
-        && objective(next,proposal,baseline,spectralFloor)<=objective(baseline,spectralFloor,baseline,spectralFloor)+1e-12;
+        && (strictlyBetter?score<floor-1e-12:score<=floor+1e-12);
 #if LPX_ENCODER_JOINT_REFINEMENT
     // Window-local guards cannot see every boundary-crossing pitch window.
     // The assembled continuous output gets the same source-frozen check.

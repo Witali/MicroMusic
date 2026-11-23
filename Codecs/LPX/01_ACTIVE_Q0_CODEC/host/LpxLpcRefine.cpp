@@ -40,7 +40,7 @@ double localScore(const FullBandContext& context,const Pcm& pcm) {
 }
 bool sameBytes(const Stream& a,const Stream& b) { return packV9(a)==packV9(b); }
 bool sameContinuation(const Stream& a,const Stream& b) {
-    return a.continuation==b.continuation&&a.allowExtras==b.allowExtras
+    return a.continuation==b.continuation&&a.allowExtras==b.allowExtras&&a.accuracy==b.accuracy
         &&a.previousSpectrum==b.previousSpectrum&&a.previousInput==b.previousInput
         &&a.previousCoefficients==b.previousCoefficients&&a.lookahead==b.lookahead
         &&a.initial.dd==b.initial.dd&&a.initial.cc==b.initial.cc

@@ -3,6 +3,7 @@
 // model and V9 packing originate in q0_model.py and speech_v9.py.
 #include "LpxEncoder.h"
 #include "LpxSeed.h"
+#include "LpxSpectrumQuantizer.h"
 #include "Lpx4HybridCore.h"
 #include "LpxHostWorkspace.h"
 #include <stdint.h>
@@ -194,6 +195,11 @@ void prepareCoefficients() {
         for (int j = 0; j < 10; ++j) spectra[fi / 2][j] = clip((int)nearbyint(((vectors[fi][j] + vectors[fi + 1][j]) * .5 - (1 << (shift - 1))) / (1 << shift)), 0, limit);
         for (int j = 1; j < 10; ++j) if (spectra[fi / 2][j] <= spectra[fi / 2][j - 1]) spectra[fi / 2][j] = spectra[fi / 2][j - 1] + 1;
         if (spectra[fi / 2][9] > limit) { spectra[fi / 2][9] = limit; for (int j = 8; j >= 0; --j) if (spectra[fi / 2][j] >= spectra[fi / 2][j + 1]) spectra[fi / 2][j] = spectra[fi / 2][j + 1] - 1; }
+        if(hasSeedContext && seedContext.accuracy==3){
+            int previous[10];bool hasPrevious=fi>0||seedContext.continuation;
+            if(hasPrevious)for(int j=0;j<10;++j)previous[j]=fi?spectra[fi/2-1][j]:(seedContext.previousVector[j]-(1<<(shift-1)))>>shift;
+            lpxQuantizeSpectrum(spectra[fi/2],hasPrevious?previous:nullptr,seedContext.accuracy);
+        }
         for (int j = 0; j < 10; ++j) vectors[fi][j] = vectors[fi + 1][j] = (spectra[fi / 2][j] << shift) + (1 << (shift - 1));
     }
     for (int fi = 0; fi < frames; ++fi) {

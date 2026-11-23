@@ -1,4 +1,4 @@
-import { createDecoder, MAX_SAMPLES } from './codec.js?v=20261123-stream-v1';
+import { createIncrementalDecoder, MAX_SAMPLES } from './codec.js?v=20261123-stream-v1';
 
 export function createStreamSession(api, settings) {
   const {samples,profile,sampleRate,sizeAllowancePercent=0,normalization='preserve',targetLufs=-18,maxGainDb=12,calls=4}=settings;
@@ -8,9 +8,12 @@ export function createStreamSession(api, settings) {
     ||!['preserve','loudness'].includes(normalization)||!Number.isInteger(targetLufs)||targetLufs<-30||targetLufs>-9
     ||!Number.isInteger(maxGainDb)||maxGainDb<0||maxGainDb>24||!Number.isInteger(calls)||calls<0||calls>4)
     throw Error('Некорректные настройки потокового кодирования.');
-  if((profile===3||profile===8)&&(sampleRate!==8000||sizeAllowancePercent!==0))throw Error('Профили 3/8 используют 8 кГц без допуска размера.');
+  if(settings.accuracy&&sizeAllowancePercent!==0)throw Error('Уровни точности не используют допуск размера.');
+  if(!settings.accuracy&&(profile===3||profile===8)&&(sampleRate!==8000||sizeAllowancePercent!==0))throw Error('Профили 3/8 используют 8 кГц без допуска размера.');
   const checked=(value,stage)=>{if(value<0)throw Error(`Потоковый энкодер: ${stage} (${value}).`);return value;};
-  checked(api.enc_stream_create(samples,profile,sampleRate,sizeAllowancePercent,calls,normalization==='loudness'?1:0,targetLufs,maxGainDb),'подготовка');
+  const create=settings.accuracy?api.enc_stream_create_accuracy:api.enc_stream_create;
+  if(!create)throw Error('Обновите страницу: выбранный энкодер недоступен.');
+  checked(create(samples,profile,sampleRate,sizeAllowancePercent,calls,normalization==='loudness'?1:0,targetLufs,maxGainDb),'подготовка');
   const window=api.enc_stream_window();
   const put=pcm=>{
     if(!(pcm instanceof Int16Array)||!pcm.length||pcm.length>window+48)throw Error('Некорректная порция PCM.');
@@ -40,10 +43,10 @@ export function createStreamSession(api, settings) {
 const yieldTurn=()=>new Promise(resolve=>setTimeout(resolve,0));
 // JS transports PCM/bytes and compares independently decoded output; all gain,
 // analysis, synthesis, search, packing and quality decisions stay in shared C++.
-export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},readBinary) {
+export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},readBinary,verification) {
   const session=encode.createStream(settings),n=settings.samples,window=session.window;
   const parts=[[],[]],expected=[[],[]];let windows=0,peakWorking=session.memoryBytes;
-  const append=rows=>rows.forEach((row,kind)=>{if(row.bytes.length)parts[kind].push(row.bytes);if(row.pcm.length)expected[kind].push(row.pcm);});
+  const append=rows=>rows.forEach((row,kind)=>{if(row.bytes.length)parts[kind].push(row.bytes);if(row.pcm.length){if(verification)verification.append(kind,row.pcm);else expected[kind].push(row.pcm);}});
   if(settings.normalization==='loudness') {
     for(let offset=0;offset<n;offset+=window) {
       const count=Math.min(window,n-offset);session.measure(await readPcm(offset,count));progress('measure',(offset+count)/n*.1);await yieldTurn();
@@ -59,18 +62,18 @@ export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},re
   }
   append(session.finish());
   const candidate=session.hasCandidate;
-  const decoder=await createDecoder(await readBinary(new URL('./decoder.wasm?v=20261123-stream-v1',import.meta.url)));
+  const decoder=await createIncrementalDecoder(await readBinary(new URL('./decoder.wasm?v=20261123-stream-v1',import.meta.url)));
   const output=[];let memoryFallback=false;
   for(const kind of candidate?[0,1]:[0]) {
     if(kind && memoryFallback)break;
-    const header=session.header(kind),blob=new Blob([header,...parts[kind]]),pcmBlob=new Blob(expected[kind]);
+    const header=session.header(kind),blob=new Blob([header,...parts[kind]]),pcmBlob=verification?null:new Blob(expected[kind]);
     parts[kind]=[];expected[kind]=[];
     const bytes=new Uint8Array(await blob.arrayBuffer()),decoded=decoder(bytes);
-    if(decoded.samples!==n||pcmBlob.size!==n*2)throw Error('Проверка непрерывного потока: неверная длина.');
-    if((settings.profile===3||settings.profile===8)&&bytes.length>Math.floor(n*settings.profile/64))throw Error('Превышен предел размера полного LPX.');
+    if(decoded.samples!==n||(verification?verification.size(kind)!==n:pcmBlob.size!==n*2))throw Error('Проверка непрерывного потока: неверная длина.');
+    if(!settings.accuracy&&(settings.profile===3||settings.profile===8)&&bytes.length>Math.floor(n*settings.profile/64))throw Error('Превышен предел размера полного LPX.');
     for(let offset=0;offset<n;offset+=window) {
-      const count=Math.min(window,n-offset),actual=decoded.pcm.subarray(offset,offset+count);
-      const wanted=new Int16Array(await pcmBlob.slice(offset*2,(offset+count)*2).arrayBuffer());
+      const count=Math.min(window,n-offset),actual=decoded.read(count);
+      const wanted=verification?await verification.read(kind,offset,count):new Int16Array(await pcmBlob.slice(offset*2,(offset+count)*2).arrayBuffer());
       for(let i=0;i<count;++i)if(actual[i]!==wanted[i])throw Error('Проверка непрерывного потока: звук не совпал с ожидаемым.');
       if(!memoryFallback)try{session.verify(kind+1,offset,actual);}catch(error){if(!session.allocationFailed)throw error;memoryFallback=true;}
       progress('verify',.8+kind*.07+(offset+count)/n*.07);await yieldTurn();
@@ -89,5 +92,5 @@ export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},re
   if(memoryFallback)choice=0; // The original, completely verified control remains admissible.
   progress('done',1);
   return {bytes:output[choice],samples:n,long:n>64000,processing:'stream',refinementRequested:settings.calls!==0,windows,workingMemoryBytes:peakWorking,
-    usedControl:choice===0,memoryFallback,loudness:session.loudness};
+    accuracyLevel:settings.accuracy?settings.profile:undefined,usedControl:choice===0,memoryFallback,loudness:session.loudness};
 }

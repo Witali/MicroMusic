@@ -225,3 +225,23 @@ and independently decode every final sample. Model memory is window-bounded;
 compressed-source browser decoding and final quality verification are not.
 Pinned tools, synthetic memory assertions and reproduction details are linked
 above. No AVR timing or speedup is inferred from these host checks.
+
+## Precision policies and incremental verification
+
+The [unified accuracy policy](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/ACCURACY.md)
+shares C++11 LPC/excitation search, quantization and packet state between native,
+scalar wasm32 and optional SIMD128. Quantize ordered LSF rank residuals rather
+than independently pruning coefficient magnitudes, preserving strict LSF
+ordering and stable synthesis constraints. Spend correction symbols according
+to reconstructed error reduction per added bit, then count complete packed
+bytes and evaluate whole output. A profile's own original seed remains
+admissible; intermediate relative scores are not transitive and must not be
+multiplied. This is an allocation/correctness technique, not a speed claim.
+
+The verification decoder exports static C++ state with explicit one-time
+`__wasm_call_ctors` startup, then retains synthesis/bitreader state across
+20480-sample output reads. Arbitrary read sizes, strict EOF corruption and
+repeated use match full decoding. This changes PCM working storage from a
+whole recording to a window; the compressed LPX file remains resident.
+The pinned Emscripten6.0.12/Clang24 standalone ABI has no imports or Python
+runtime. These host memory checks establish no MCU timing profile.

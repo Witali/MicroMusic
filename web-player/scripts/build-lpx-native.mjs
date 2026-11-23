@@ -21,7 +21,7 @@ for (let path = directory; path !== dirname(build); path = dirname(path)) {
 }
 mkdirSync(directory, { recursive: true });
 const src = 'Codecs/LPX/01_ACTIVE_Q0_CODEC';
-const sources = [`${src}/src/Lpx4HybridCore.cpp`, ...['LpxEncoder.cpp', 'LpxAdaptiveDsp.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp',
+const sources = [`${src}/src/Lpx4HybridCore.cpp`, ...['LpxEncoder.cpp', 'LpxAccuracy.cpp', 'LpxAdaptiveDsp.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp',
   'LpxQuality.cpp', 'LpxStoi.cpp', 'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxLoudness.cpp',
   'LpxBitrateProfiles.cpp', 'LpxProfileQuality.cpp', 'LpxPulseLookahead.cpp', 'LpxFullBand.cpp', 'LpxSpectralPulses.cpp', 'LpxLpcRefine.cpp', 'LpxPitchGuard.cpp', 'encode_lpx.cpp']
   .map(name => `${src}/host/${name}`)];
@@ -30,7 +30,7 @@ const defines = ['LPX4_ENABLE_ASM=0', 'LPX4_FLOAT_SYNTHESIS=0', 'LPX4_ENABLE_SPE
   'LPX4_SAMPLE_RATE=0', 'LPX4_EXTENDED_SAMPLE_RATES=1', 'LPX4_ENABLE_WIDE_V9=1'];
 const includes = [`${src}/src`, `${src}/host`];
 const hash = path => createHash('sha256').update(readFileSync(path)).digest('hex');
-const inputPaths = [...sources, ...['LpxEncoder.h', 'LpxSeed.h', 'LpxEncoderSimd.h', 'LpxAdaptive.h', 'LpxPacking.h', 'LpxStreaming.h',
+const inputPaths = [...sources, ...['LpxEncoder.h', 'LpxSeed.h', 'LpxEncoderSimd.h', 'LpxAdaptive.h', 'LpxAccuracy.h', 'LpxSpectrumQuantizer.h', 'LpxPacking.h', 'LpxStreaming.h',
   'LpxQuality.h', 'LpxAdaptiveController.h', 'LpxRefinement.h', 'LpxHostWorkspace.h', 'LpxLoudness.h',
   'LpxBitrateProfiles.h', 'LpxProfileQuality.h', 'LpxPulseLookahead.h', 'LpxFullBand.h', 'LpxSpectralPulses.h', 'LpxLpcRefine.h', 'LpxPitchGuard.h',
   'stoi-resample.inc', 'stoi-resample-12k.inc', 'stoi-resample-16k.inc',

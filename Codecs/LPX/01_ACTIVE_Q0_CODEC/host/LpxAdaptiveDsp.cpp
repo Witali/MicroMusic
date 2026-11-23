@@ -2,6 +2,7 @@
 #include "LpxAdaptive.h"
 #include "LpxEncoder.h"
 #include "LpxSeed.h"
+#include "LpxSpectrumQuantizer.h"
 #include <algorithm>
 #include <string.h>
 
@@ -18,7 +19,15 @@ static int polyMul(int value, int c) {
     int high = value / 16;
     return ((high * c) >> 8) + (((value - high * 16) * c) >> 12);
 }
+Stream canonicalAccuracy(const Stream& s){
+    if(s.accuracy!=3)return s;
+    Stream result=s;int previous[10];bool hasPrevious=s.continuation;
+    if(hasPrevious)std::copy(s.previousSpectrum.begin(),s.previousSpectrum.end(),previous);
+    for(auto& spectrum:result.spectra){lpxQuantizeSpectrum(spectrum.data(),hasPrevious?previous:nullptr,s.accuracy);std::copy(spectrum.begin(),spectrum.end(),previous);hasPrevious=true;}
+    return result;
+}
 std::vector<Coefficients> coefficientTrace(const Stream& s) {
+    if(s.accuracy==3){auto canonical=canonicalAccuracy(s);canonical.accuracy=0;return coefficientTrace(canonical);}
     const int frames = (s.samples + 159) / 160, shift = s.profile == 4 ? 5 : 4;
     std::vector<Coefficients> result((s.samples + 19) / 20);
     for (int fi = 0; fi < frames; ++fi) {
@@ -110,7 +119,7 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
             memcpy(enc_input()+reference.size(),s.lookahead.data(),s.lookahead.size()*2);
         }
         memcpy(history.h,s.initial.h,sizeof(history.h));memcpy(history.ring,s.initial.ring,sizeof(history.ring));history.dd=s.initial.dd;
-        history.continuation=s.continuation;history.lookahead=s.lookahead.empty()?0:48;history.lastSample=s.previousInput.back();
+        history.continuation=s.continuation;history.lookahead=s.lookahead.empty()?0:48;history.lastSample=s.previousInput.back();history.accuracy=s.accuracy;
         for(int at=-48;at<0;++at)history.emphasized[at+48]=emphasizedAt(s,reference,at);
         for(int at=-145;at<0;++at)history.residual[at+145]=residualBefore(s,reference,at);
         const int shift=profile==4?5:4;

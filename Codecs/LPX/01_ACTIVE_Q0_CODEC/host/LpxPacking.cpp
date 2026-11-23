@@ -29,6 +29,7 @@ static void spectrum(V9PacketWriter& w,const Spectrum& current,const Spectrum* o
 }
 static int active(const Stream& s) { int n=0;for(const auto& p:s.extras)n+=p[1]!=0;return n; }
 bool V9PacketWriter::append(const Stream& s) {
+    if(s.accuracy==3){auto canonical=canonicalAccuracy(s);canonical.accuracy=0;return append(canonical);}
     const int count=(s.samples+319)/320;
     if(finished || partialFrame || s.samples<1 || (s.profile!=4 && s.profile!=6)
        || (profile && profile!=s.profile) || int(s.spectra.size())!=count
@@ -57,6 +58,7 @@ std::vector<uint8_t> V9PacketWriter::finish() {
     finished=true;partial=0;used=0;return drain();
 }
 int spectralBits(const Stream& s) {
+    if(s.accuracy==3){auto canonical=canonicalAccuracy(s);canonical.accuracy=0;return spectralBits(canonical);}
     V9PacketWriter w(false);
     for(size_t f=0;f<s.spectra.size();++f)spectrum(w,s.spectra[f],f?&s.spectra[f-1]:nullptr,s.profile==4?5:6);
     return w.bits();

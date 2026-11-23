@@ -23,6 +23,7 @@ export function parseHeader(buffer) {
 export async function createDecoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);
   const api = instance.exports;
+  api.__wasm_call_ctors?.();
   return buffer => {
     const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
     const metadata = parseHeader(bytes);
@@ -31,6 +32,18 @@ export async function createDecoder(binary) {
     if (api.lpx_decode(bytes.length) !== 0) throw new Error('Повреждён поток LPX: декодер отклонил данные или окончание файла.');
     if (api.lpx_samples() !== metadata.samples || api.lpx_rate() !== metadata.sampleRate) throw new Error('Декодер вернул неверные параметры звука.');
     return { ...metadata, pcm: new Int16Array(api.memory.buffer, api.lpx_output(), metadata.samples).slice() };
+  };
+}
+
+export async function createIncrementalDecoder(binary){
+  const{instance}=await WebAssembly.instantiate(binary),api=instance.exports;
+  api.__wasm_call_ctors?.();
+  return bytes=>{
+    const metadata=parseHeader(bytes),window=20480;
+    if(!api.lpx_decode_begin||!api.lpx_reserve(bytes.length,window))throw Error('Не удалось подготовить потоковый декодер проверки.');
+    new Uint8Array(api.memory.buffer,api.lpx_input(),bytes.length).set(bytes);
+    if(api.lpx_decode_begin(bytes.length)!==0||api.lpx_samples()!==metadata.samples||api.lpx_rate()!==metadata.sampleRate)throw Error('Повреждён заголовок проверяемого LPX.');
+    return{...metadata,read(count){if(api.lpx_decode_read(count)!==count)throw Error('Повреждён поток LPX или окончание файла.');return new Int16Array(api.memory.buffer,api.lpx_output(),count).slice();}};
   };
 }
 

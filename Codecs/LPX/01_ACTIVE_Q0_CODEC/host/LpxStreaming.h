@@ -12,7 +12,7 @@ struct StreamingChunk {
 class StreamingEncoder {
     uint32_t total,done=0,measured=0;
     int profile,rate,allowance,calls,header,error=0;
-    bool normalize,planned=false,ended=false,candidateLive=true;
+    bool normalize,planned=false,ended=false,candidateLive=true,accuracy=false;
     Stream controlContext,candidateContext;
     V9PacketWriter controlWriter{false},candidateWriter{false};
     LoudnessMeter sourceMeter,preparedMeter,controlMeter,candidateMeter;
@@ -25,7 +25,7 @@ class StreamingEncoder {
     Pcm scaled(const Pcm& source) const;
 public:
     StreamingEncoder(uint32_t samples,int profile,int sampleRate,int allowance,
-                     int calls,bool normalize);
+                     int calls,bool normalize,bool accuracy=false);
     int measure(const Pcm& pcm);
     int plan(int targetLufs,int maxGainDb);
     int process(const Pcm& source,const Pcm& lookahead,StreamingChunk& output);

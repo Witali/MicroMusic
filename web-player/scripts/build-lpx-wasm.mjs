@@ -17,7 +17,7 @@ const upstream = join(resolve(sdk), 'upstream');
 const compiler = values.clang || join(upstream, 'bin', process.platform === 'win32' ? 'clang.exe' : 'clang');
 const sysroot = join(upstream, 'emscripten/cache/sysroot');
 const sources = ['Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp', 'web-player/lpx/native/decoder.cpp'];
-const exports = ['lpx_reserve', 'lpx_input', 'lpx_output', 'lpx_samples', 'lpx_rate', 'lpx_decode'];
+const exports = ['__wasm_call_ctors', 'lpx_reserve', 'lpx_input', 'lpx_output', 'lpx_samples', 'lpx_rate', 'lpx_decode', 'lpx_decode_begin', 'lpx_decode_read'];
 const flags = ['--target=wasm32-unknown-unknown', '-O3', '-std=c++11', '-ffreestanding', '-nostdlib',
   '-fno-exceptions', '-fno-rtti', '-fno-threadsafe-statics', '--sysroot=' + sysroot,
   '-isystem', join(sysroot, 'include'), '-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src',
@@ -61,7 +61,7 @@ const encoderBinary = readFileSync(encoderOutput);
 if (WebAssembly.Module.imports(await WebAssembly.compile(encoderBinary)).length) throw new Error('Encoder must have no host imports');
 const encoderInputs = [...new Set([...inputs.filter(path => !path.endsWith('native/decoder.cpp')), ...encoderSources,
   'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.h', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderSimd.h',
-  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSeed.h',
+  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSeed.h', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectrumQuantizer.h',
   ...['speech_v4.py', 'wav_lpc.py', 'q0_model.py', 'speech_v9.py', 'speech_compact.py'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/' + name)])];
 writeFileSync(join(root, 'web-player/lpx/encoder-build.json'), JSON.stringify({ ...manifest,
   flags: encoderFlags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
@@ -119,14 +119,14 @@ if (values['simd-selftest']) {
 
 // Same adaptive C++ translation units as the offline native executable.
 // Python source files below are provenance/test oracles, not runtime imports.
-const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
+const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxAccuracy.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
   'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxStreamingApi.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp',
   'LpxProfileQuality.cpp', 'LpxPulseLookahead.cpp', 'LpxFullBand.cpp', 'LpxSpectralPulses.cpp', 'LpxLpcRefine.cpp', 'LpxPitchGuard.cpp'];
 const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
 // Export the initializer explicitly so wasm-ld does not wrap every API export
 // with constructors. The host calls it once after instantiation; otherwise a
 // getter could reconstruct (and erase) the static output vector/report.
-const adaptiveExports = ['__wasm_call_ctors', 'enc_adaptive', 'enc_adaptive_extended', 'enc_bitrate', 'enc_bitrate_loudness', 'enc_adaptive_output', 'enc_adaptive_candidates', 'enc_adaptive_stages', 'enc_adaptive_gain',
+const adaptiveExports = ['__wasm_call_ctors', 'enc_accuracy', 'enc_stream_create_accuracy', 'enc_adaptive', 'enc_adaptive_extended', 'enc_bitrate', 'enc_bitrate_loudness', 'enc_adaptive_output', 'enc_adaptive_candidates', 'enc_adaptive_stages', 'enc_adaptive_gain',
   'enc_normalize_loudness', 'enc_adaptive_loudness', 'enc_loudness_status', 'enc_loudness_limited',
   'enc_loudness_input', 'enc_loudness_prepared', 'enc_loudness_decoded', 'enc_loudness_gain_db',
   'enc_adaptive_level', 'enc_bitrate_level', 'enc_normalize_level', 'enc_loudness_gain_limited'];
@@ -139,7 +139,7 @@ const adaptiveFlags = ['-isystem', join(sysroot, 'include/c++/v1'),
 adaptiveFlags.push('-Wl,--initial-memory=524288', '-Wl,-z,stack-size=262144', '-DLPX_ADAPTIVE_ENCODER=1',
   ...adaptiveExports.map(name => '-Wl,--export=' + name));
 const adaptiveInputs = [...new Set([...encoderInputs, ...adaptiveSources,
-  ...['LpxAdaptive.h', 'LpxPacking.h', 'LpxStreaming.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
+  ...['LpxAdaptive.h', 'LpxAccuracy.h', 'LpxSpectrumQuantizer.h', 'LpxPacking.h', 'LpxStreaming.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
     'stoi-resample.inc', 'stoi-resample-12k.inc', 'stoi-resample-16k.inc',
     'quality-resample-12k.inc', 'quality-resample-16k.inc',
     'LpxProfileQuality.h', 'LpxPulseLookahead.h', 'LpxFullBand.h', 'LpxSpectralPulses.h', 'LpxLpcRefine.h', 'LpxPitchGuard.h',

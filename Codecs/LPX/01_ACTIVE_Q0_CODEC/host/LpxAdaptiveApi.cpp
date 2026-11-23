@@ -3,6 +3,7 @@
 #include "LpxSeed.h"
 #include "LpxHostWorkspace.h"
 #include "LpxBitrateProfiles.h"
+#include "LpxAccuracy.h"
 #include <utility>
 
 static std::vector<uint8_t> qualityOutput;
@@ -22,6 +23,16 @@ static int encodeAdaptive(int samples,int profile,int rate,int autoQuiet,int max
     qualityOutput=lpx::packV9(result);return qualityOutput.size();
 }
 extern "C" {
+int enc_accuracy(int samples,int level,int rate,int calls,int normalize,int target,int maximum){
+    qualityOutput.clear();qualityReport=lpx::AdaptiveReport{};
+    if(samples<1||uint32_t(samples)>lpxSeedCapacity()||uint32_t(samples)>kLpxMaxSamples||(normalize!=0&&normalize!=1)||target<-30||target>-9||maximum<0||maximum>24)return -1;
+    lpx::Pcm reference(enc_input(),enc_input()+samples);lpx::LoudnessReport loudness;
+    if(normalize)loudness=lpx::normalizeLoudness(reference,rate,target,maximum);
+    const auto selected=lpx::encodeAccuracy(reference,level,rate,qualityReport,calls);
+    if(qualityReport.error)return qualityReport.error;
+    if(normalize){qualityReport.loudness=loudness;qualityReport.loudness.decoded=lpx::integratedLoudness(lpx::render(selected),rate);}
+    qualityOutput=lpx::packV9(selected);return qualityOutput.size();
+}
 int enc_normalize_loudness(int samples,int rate) {
     qualityReport=lpx::AdaptiveReport{};
     if(samples<1 || uint32_t(samples)>lpxSeedCapacity() || (rate!=8000 && rate!=12000 && rate!=16000))return -1;

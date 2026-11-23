@@ -3316,3 +3316,18 @@ Tiny ASM uses 3629/3630 B excluding the two audio streams, 418 B static SRAM and
 28 B observed stack. AVR-GCC 7.3.0, GNU ABI and simavr 1.6; explicit C and ASM
 backends remain separate. This fixed-input admission is not a general deadline
 bound or a physical-board measurement.
+
+[Archived correction-parameter activation](../../Codecs/LPX/research/unified-accuracy-2026-11-23/anonymous-fast-pair.md):
+
+one immutable 23757-sample/8 kHz FAST pair, pinned to the ba02 universal core,
+activates more existing V9 sparse correction fields without changing LPC order.
+Six AVR-GCC7.3.0/GNU ABI/simavr1.6 images at16 MHz produce142542 exact PWM
+samples with active interrupts, zero underruns/errors and positive stack
+margins. Producer cycles/sample rise by0.99% Tiny88 ASM,0.88% Mega328P ASM and
+0.58% Mega328P explicit C. Static SRAM remains418/417/428 B respectively.
+The linked Tiny P8 image is6116 B: it fits raw8192 B but exceeds the6012 B
+bootloader application region by104 B. Both Mega images fit30720 B.
+This is archived payload-activation evidence, not final direct-policy,
+arbitrary-stream or physical-board support. C remains explicitly selectable;
+ASM requires the real supported target and separate enable defines. Exact
+Flash/audio/stack/cycle definitions and scope are retained in the linked report.

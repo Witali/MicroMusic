@@ -17,7 +17,9 @@ export async function createEncoder(binary) {
     if (![8000, 12000, 16000].includes(sampleRate) || ![3, 4, 6, 8].includes(profile)) throw new Error('Некорректные параметры кодирования.');
     const allowance = options.sizeAllowancePercent ?? 0;
     if (!Number.isInteger(allowance) || allowance < 0 || allowance > 100) throw new Error('Некорректное ограничение размера.');
-    const bitratePreset = profile === 3 || profile === 8;
+    const accuracy=options.accuracy===true;
+    const bitratePreset = !accuracy && (profile === 3 || profile === 8);
+    if(accuracy&&(!api.enc_accuracy||allowance!==0))throw Error('Уровни точности требуют актуального энкодера и не используют допуск размера.');
     if (bitratePreset && (sampleRate !== 8000 || allowance !== 0)) throw new Error('Профили 3 и 8 кбит/с используют 8 кГц и точный предел размера без допуска.');
     if (bitratePreset && !api.enc_bitrate) throw new Error('Обновите страницу: этот кодировщик не поддерживает профили 3 и 8 кбит/с.');
     const normalization = options.normalization ?? 'preserve';
@@ -27,6 +29,12 @@ export async function createEncoder(binary) {
     if (normalization === 'loudness' && !(bitratePreset ? api.enc_bitrate_level : api.enc_adaptive_level)) throw new Error('Обновите страницу: этот энкодер не поддерживает настройки нормализации.');
     if (!api.enc_reserve(pcm.length)) throw new Error('Недостаточно памяти для кодирования этой записи.');
     new Int16Array(api.memory.buffer, api.enc_input(), pcm.length).set(pcm);
+    if(accuracy){
+      progress(0);const size=api.enc_accuracy(pcm.length,profile,sampleRate,options.calls??4,normalization==='loudness'?1:0,targetLufs,maxGainDb);
+      if(size<13)throw Error(`Энкодер уровня точности не прошёл проверку (${size}).`);
+      const bytes=new Uint8Array(api.memory.buffer,api.enc_adaptive_output(),size).slice();
+      if(normalization==='loudness')encode.loudness=loudnessReport();progress(1);return bytes;
+    }
     if (bitratePreset) {
       progress(0);
       const size = normalization === 'loudness'

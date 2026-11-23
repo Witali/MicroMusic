@@ -3,18 +3,20 @@
 #include "LpxProfileQuality.h"
 #include "LpxEncoder.h"
 #include "LpxHostWorkspace.h"
+#include "LpxAccuracy.h"
 #include <algorithm>
 #include <cmath>
 
 namespace lpx {
-StreamingEncoder::StreamingEncoder(uint32_t samples,int selected,int sampleRate,int sizeAllowance,int refinements,bool normalization)
+StreamingEncoder::StreamingEncoder(uint32_t samples,int selected,int sampleRate,int sizeAllowance,int refinements,bool normalization,bool accuracyMode)
     :total(samples),profile(selected),rate(sampleRate),allowance(sizeAllowance),calls(refinements),
-     header(samples>64000?17:13),normalize(normalization),sourceMeter(rate),preparedMeter(rate),controlMeter(rate),candidateMeter(rate) {
-    controlContext.allowExtras=false;candidateContext.allowExtras=false;
+     header(samples>64000?17:13),normalize(normalization),accuracy(accuracyMode),controlWriter(accuracyMode&&selected==8),candidateWriter(accuracyMode&&selected==8),sourceMeter(rate),preparedMeter(rate),controlMeter(rate),candidateMeter(rate) {
+    controlContext.allowExtras=candidateContext.allowExtras=accuracy&&profile==8;
+    if(accuracy)controlContext.accuracy=candidateContext.accuracy=profile;
     planned=!normalize;
     if(!total || total>kLpxMaxSamples || (profile!=3 && profile!=4 && profile!=6 && profile!=8)
        || (rate!=8000 && rate!=12000 && rate!=16000) || allowance<0 || allowance>100 || calls<0 || calls>4
-       || ((profile==3 || profile==8) && (rate!=8000 || allowance)))error=-1;
+       || (!accuracy && (profile==3 || profile==8) && (rate!=8000 || allowance)) || (accuracy&&allowance))error=-1;
     if(!error && !enc_reserve(kLpxStreamWindow+320))error=-2;
     if(!calls)candidateLive=false;
 }
@@ -35,12 +37,13 @@ Pcm StreamingEncoder::scaled(const Pcm& input) const {
     return pcm;
 }
 Stream StreamingEncoder::nextContext(const Stream& stream,const Pcm& input,const std::vector<Coefficients>& co,const SynthesisState& state) {
-    Stream context;context.allowExtras=false;context.continuation=true;context.pre=stream.pre;context.bright=stream.bright;
+    Stream context;context.allowExtras=stream.allowExtras;context.accuracy=stream.accuracy;context.continuation=true;context.pre=stream.pre;context.bright=stream.bright;
     context.initial=state;context.previousSpectrum=stream.spectra.back();
     std::copy(input.end()-172,input.end(),context.previousInput.begin());
     std::copy(co.end()-8,co.end(),context.previousCoefficients.begin());return context;
 }
 uint64_t StreamingEncoder::cap() const {
+    if(accuracy)return accuracyBudget(total,profile,header+int((controlWriter.bits()+7)/8));
     if(profile==3 || profile==8)return uint64_t(total)*profile/64;
     const int wire=profile==4?4:6;
     uint64_t bits=controlWriter.spectrumBits()+controlWriter.frameCount()*(wire==4?110:166);
@@ -56,7 +59,8 @@ int StreamingEncoder::process(const Pcm& input,const Pcm& future,StreamingChunk&
     controlContext.lookahead=lookahead;candidateContext.lookahead=lookahead;
     Stream control;
     const int wire=profile==3?4:profile==8?6:profile;
-    if(profile==3 || profile==8) {
+    if(accuracy){AdaptiveReport report;control=encodeAccuracy(reference,profile,rate,report,0,&controlContext);if(report.error)return error=report.error;}
+    else if(profile==3 || profile==8) {
         uint64_t cumulative=uint64_t(done+reference.size())*profile/64;
         int available=int(cumulative)-header-int((controlWriter.bits()+7)/8)-1+13;
         if(available<13)return error=-6;
@@ -79,10 +83,11 @@ int StreamingEncoder::process(const Pcm& input,const Pcm& future,StreamingChunk&
     if(!done) { controlContext.pre=control.pre;controlContext.bright=control.bright; }
     if(!last)controlContext=nextContext(control,reference,co,controlState);
     if(candidateLive) {
-        uint64_t cumulative=(profile==3 || profile==8)?uint64_t(done+reference.size())*profile/64:cap();
+        uint64_t cumulative=!accuracy&&(profile==3 || profile==8)?uint64_t(done+reference.size())*profile/64:cap();
         int available=int(cumulative)-header-int((candidateWriter.bits()+7)/8)-1+13;
         Stream candidate;int failed=0;
-        if(available<13)failed=-6;
+        if(accuracy){AdaptiveReport report;candidate=encodeAccuracy(reference,profile,rate,report,calls,&candidateContext);failed=report.error;available=accuracyPacketBound(reference.size(),profile);}
+        else if(available<13)failed=-6;
         else if(profile==3) {
             BitrateReport report;candidate=encodeThreeK(reference,available,report,.97,nullptr,&candidateContext);failed=report.error;
             if(!failed && calls) { ProfileQualityReport quality;candidate=refineProfileQuality(candidate,reference,available,true,quality,true);failed=quality.error; }
@@ -126,7 +131,7 @@ std::vector<uint8_t> StreamingEncoder::getHeader(bool candidate) const {
     if(!ended || error || (candidate && !candidateLive))return {};
     const auto& writer=candidate?candidateWriter:controlWriter;
     const auto& context=candidate?candidateContext:controlContext;
-    return v9Header(total,profile==3?4:profile==8?6:profile,rate,context.pre,context.bright,false,(writer.bits()+7)/8);
+    return v9Header(total,profile==3?4:profile==8?6:profile,rate,context.pre,context.bright,accuracy&&profile==8,(writer.bits()+7)/8);
 }
 int StreamingEncoder::verifyPut(int kind,uint32_t offset,const int16_t* pcm,int count) {
     if(!ended || error || kind<0 || kind>2 || count<1 || count>kLpxStreamWindow || offset!=received[kind]

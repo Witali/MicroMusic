@@ -2,6 +2,7 @@
 #include "LpxEncoder.h"
 #include "LpxAdaptiveController.h"
 #include "LpxHostWorkspace.h"
+#include "LpxAccuracy.h"
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
@@ -28,7 +29,7 @@ using Clock = std::chrono::steady_clock;
 struct Options {
     int profile = 6, rate = 8000, calls = 4, maxBytes = 0, repeat = 1, sizeAllowance = 0;
     bool cuda = false, adaptive = true, autoQuiet = false, speech = true, expandedSearch = true, normalize = false;
-    int targetLufs = -18, maxGainDb = 12;
+    int targetLufs = -18, maxGainDb = 12, accuracy = 0;
 };
 void jsonString(FILE* out, const char* value) {
     fputc('"', out);
@@ -54,7 +55,7 @@ int run(int argc, char** argv) {
     for (int i = 1; i < argc; ++i) {
         const char* name = argv[i];
         if (!strcmp(name, "--help")) {
-            puts("Usage: lpx-encode [--profile 4|6] [--rate 8000|12000|16000]"
+            puts("Usage: lpx-encode [--profile 4|6 | --accuracy 3|4|6|8] [--rate 8000|12000|16000]"
                  " [--backend cpu|cuda] [--quality fast|adaptive] [--calls 0..4]"
                  " [--search expanded|reference] [--size-allowance 0..100]"
                  " [--max-bytes N] [--repeat 1..20] [--auto-quiet] [--non-speech]"
@@ -86,6 +87,7 @@ int run(int argc, char** argv) {
             int number;
             if (!integer(value, number)) return fail("Expected a nonnegative integer option value");
             if (!strcmp(name, "--profile")) options.profile = number;
+            else if(!strcmp(name,"--accuracy"))options.accuracy=number;
             else if (!strcmp(name, "--rate")) options.rate = number;
             else if (!strcmp(name, "--calls")) options.calls = number;
             else if (!strcmp(name, "--max-bytes")) options.maxBytes = number;
@@ -96,6 +98,7 @@ int run(int argc, char** argv) {
         }
     }
     if (options.profile != 4 && options.profile != 6) return fail("Profile must be 4 or 6");
+    if(options.accuracy&&(!lpx::accuracyPolicy(options.accuracy).level||options.maxBytes||options.sizeAllowance||options.autoQuiet))return fail("Accuracy must be 3/4/6/8, without byte budgets, allowances or auto quiet");
     if (options.rate != 8000 && options.rate != 12000 && options.rate != 16000) return fail("Unsupported sample rate");
     if (options.calls < 0 || options.calls > 4) return fail("Refinement calls must be in 0..4");
     if(options.maxGainDb<0 || options.maxGainDb>24)return fail("Maximum gain must be 0..24 dB");
@@ -138,7 +141,11 @@ int run(int argc, char** argv) {
       const auto& reference=options.normalize?prepared:pcm;
       if (!enc_reserve(uint32_t(pcm.size()))) return fail("Cannot reserve encoder memory", 6);
       std::vector<uint8_t> current;
-      if (options.adaptive) {
+      if(options.accuracy){
+        auto stream=lpx::encodeAccuracy(reference,options.accuracy,options.rate,report,options.adaptive?options.calls:0);
+        if(report.error||!lpx::verifyStream(stream,lpx::render(stream)))return fail("Accuracy output failed native verification",7);
+        current=lpx::packV9(stream);
+      }else if (options.adaptive) {
         auto stream = lpx::adaptiveEncode(reference, options.profile, options.rate, report,
             options.autoQuiet, options.maxBytes, options.calls, options.speech, options.expandedSearch, options.sizeAllowance);
         if (report.error || stream.samples != int(pcm.size())) return fail("Adaptive encoding or complete-size admission failed", 7);
@@ -166,7 +173,7 @@ int run(int argc, char** argv) {
         options.cuda ? "cuda" : "cpu", options.adaptive ? "adaptive" : "fast",
         options.adaptive ? (options.expandedSearch ? "expanded" : "reference") : "fast",
         options.adaptive ? options.sizeAllowance : 0, report.expandedAccepted,
-        unsigned(pcm.size()), options.rate, options.profile, unsigned(bytes.size()),
+        unsigned(pcm.size()), options.rate, options.accuracy?lpx::accuracyPolicy(options.accuracy).wireProfile:options.profile, unsigned(bytes.size()),
         bytes[2] & 64 ? "true" : "false", initializationMs, timings[0], report.candidates, report.stages, report.gainExponent);
     for (size_t i = 0; i < timings.size(); ++i) fprintf(stderr, "%s%.6f", i ? "," : "", timings[i]);
     fprintf(stderr, "],\"qualitySearch\":{\"enabled\":%s,\"candidates\":%d,\"accepted\":%d,\"bandwidthCandidates\":%d,\"localEvaluations\":%d,\"fullEvaluations\":%d,\"initialObjective\":%.12g,\"finalObjective\":%.12g,\"spectralLocalEvaluations\":%llu,\"spectralProposals\":%d,\"spectralRegions\":%d},",
@@ -189,7 +196,7 @@ int run(int argc, char** argv) {
         std::vector<double> warm(timings.begin() + 1, timings.end()); std::sort(warm.begin(), warm.end());
         fprintf(stderr, "%.6f", (warm[(warm.size() - 1) / 2] + warm[warm.size() / 2]) / 2);
     } else fputs("null", stderr);
-    fprintf(stderr,",\"normalized\":%s,\"inputGainDb\":%.6f}",options.normalize?"true":"false",report.loudness.gainDb);fputc('\n',stderr);
+    fprintf(stderr,",\"normalized\":%s,\"inputGainDb\":%.6f,\"accuracyLevel\":%d}",options.normalize?"true":"false",report.loudness.gainDb,options.accuracy);fputc('\n',stderr);
     return 0;
 }
 }
