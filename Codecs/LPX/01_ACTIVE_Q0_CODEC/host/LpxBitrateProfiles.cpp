@@ -258,8 +258,7 @@ void fitExcitation(Stream& s, const Pcm& reference, const std::vector<int>& peri
 }
 
 Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
-                    double bandwidth, const Stream* incumbent,
-                    ThreeKCandidateVisitor visitor, void* visitorContext) {
+                    double bandwidth, const Stream* incumbent) {
     report = BitrateReport{};
     if (reference.empty() || reference.size() > lpxSeedCapacity() || maxBytes < 13
         || !(bandwidth > 0 && bandwidth <= 1)) {
@@ -273,7 +272,6 @@ Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
         if (int64_t(bytes.size()) > maxBytes) return;
         auto pcm = render(candidate);
         if (!verifyStream(candidate, pcm)) { report.error = -3; return; }
-        if (visitor) visitor(candidate, pcm, visitorContext);
         auto measurement = context.measure(pcm); int ordinal = report.candidates++;
         if (ordinal == 0) baseline = measurement;
         bool admissible = noRegression(measurement.quality, baseline.quality)
