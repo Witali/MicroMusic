@@ -1,6 +1,7 @@
 #pragma once
 #include "LpxQuality.h"
 #include "LpxLoudness.h"
+#include "LpxProfileQuality.h"
 
 namespace lpx {
 struct AdaptiveReport {
@@ -9,6 +10,7 @@ struct AdaptiveReport {
     int expandedLocalEvaluations=0,expandedFullEvaluations=0,expandedAccepted=0;
     Measurement baseline,measurement;
     LoudnessReport loudness;
+    ProfileQualityReport qualitySearch;
 };
 // Whole-input controller. Original input is retained; no reset-file splitting.
 // maxBytes=0 uses the original v5 control's actual complete size as the budget,

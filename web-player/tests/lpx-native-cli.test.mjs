@@ -96,6 +96,35 @@ test('CUDA executable keeps explicitly selectable CPU and identical CPU/CUDA byt
   }
 });
 
+test('full-band quality search matches native CPU/CUDA and scalar/SIMD on noisy high-band inputs', { skip: !enabled }, async () => {
+  const wrappers = await Promise.all(['encoder-adaptive', 'encoder-adaptive-simd'].map(name =>
+    createEncoder(readFileSync(new URL(`../lpx/${name}.wasm`, import.meta.url)))));
+  for (const rate of [8000, 12000, 16000]) {
+    let random = 0x45e2a17, previous = 0;
+    const pcm = Int16Array.from({ length: rate / 2 + 1 }, (_, i) => {
+      random ^= random << 13; random ^= random >>> 17; random ^= random << 5;
+      const noise = random >> 16, high = noise - previous; previous = noise;
+      const burst = i % 1600 >= 800 ? .035 * high : 0;
+      return Math.round(5000 * Math.sin(2 * Math.PI * 173 * i / rate)
+        + 1600 * Math.sin(2 * Math.PI * .38 * i) + burst);
+    });
+    for (const profile of [4, 6]) {
+      const expected = wrappers[0](pcm, rate, profile);
+      assert.deepEqual(wrappers[1](pcm, rate, profile), expected, `SIMD P${profile}/${rate}`);
+      const args = ['--profile', String(profile), '--rate', String(rate)];
+      const ordinary = success(native, pcm, args);
+      assert.deepEqual(ordinary.bytes, Buffer.from(expected), `CPU P${profile}/${rate}`);
+      assert.equal(ordinary.report.qualitySearch.enabled, true);
+      assert.ok(ordinary.report.qualitySearch.finalObjective <= ordinary.report.qualitySearch.initialObjective);
+      assert.ok(ordinary.report.qualitySearch.spectralRegions <= 4);
+      assert.ok(ordinary.report.qualitySearch.spectralProposals <= 3);
+      assert.ok(ordinary.report.qualitySearch.spectralLocalEvaluations <= 9632);
+      if (gpu) assert.deepEqual(success(cuda, pcm, [...args, '--backend', 'cuda']).bytes,
+        ordinary.bytes, `CUDA P${profile}/${rate}`);
+    }
+  }
+});
+
 test('native fast/adaptive CLI encodes retained speech in CPU and CUDA modes', { skip: !enabled }, () => {
   const pcm = decode(readFileSync(new URL('../audio/lpx-speech/chego/quality.v9.lpx', import.meta.url))).pcm;
   for (const profile of [4, 6]) for (const quality of ['fast', 'adaptive']) {

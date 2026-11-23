@@ -22,17 +22,24 @@ bool noRegression(const Quality& next, const Quality& baseline);
 bool voiceGate(const Diagnostic& next, const Diagnostic& baseline);
 class QualityContext {
 public:
-    explicit QualityContext(const Pcm& reference, bool speech = true);
+    // The default retains the original 8 kHz evaluator exactly. Other supported
+    // rates (12/16 kHz) use antialiased double analysis, never rounded PCM.
+    explicit QualityContext(const Pcm& reference, bool speech = true, int sampleRate = 8000);
     Quality quality(const Pcm& candidate) const;
     Measurement measure(const Pcm& candidate) const;
     const Pcm& reference;
 private:
     bool speech;
+    int sampleRate;
+    std::vector<double> analysisReference;
     std::vector<double> periods, rms;
     void assess(const Pcm& candidate, double& voice, double& noise, Diagnostic& diagnostic) const;
 };
 // Testable numerical primitives; no file/network/host dependencies.
 double estimatePeriod(const double* frame, int count, double& rms);
-double stoi(const Pcm& reference, const Pcm& candidate);
+double stoi(const Pcm& reference, const Pcm& candidate, int sampleRate = 8000);
+// PCM16-unit doubles, for source-frozen voice/noise analysis at 8 kHz.
+// Supported input rates are 8, 12 and 16 kHz; unsupported rates return empty.
+std::vector<double> qualityAnalysis8k(const Pcm& samples, int sampleRate);
 void periodogram(const double* input, int count, double* power, int fftSize);
 }

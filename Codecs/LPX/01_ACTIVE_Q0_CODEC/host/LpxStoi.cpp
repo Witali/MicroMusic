@@ -12,18 +12,43 @@ static constexpr double pi=3.14159265358979323846,eps=2.2204460492503131e-16;
 static const double filter[] = {
 #include "stoi-resample.inc"
 };
-static std::vector<double> resample(const Pcm& pcm) {
-    const int length=sizeof(filter)/sizeof(filter[0]),half=(length-1)/2;
-    const int pre=4-half%4,remove=(half+pre)/4;
-    std::vector<double> out((pcm.size()*5+3)/4);
+static const double filter12k[] = {
+#include "stoi-resample-12k.inc"
+};
+static const double filter16k[] = {
+#include "stoi-resample-16k.inc"
+};
+static const double analysis12k[] = {
+#include "quality-resample-12k.inc"
+};
+static const double analysis16k[] = {
+#include "quality-resample-16k.inc"
+};
+template<int Up,int Down,bool Normalize,size_t Length>
+static std::vector<double> resample(const Pcm& pcm,const double (&taps)[Length]) {
+    const int length=Length,half=(length-1)/2;
+    const int pre=Down-half%Down,remove=(half+pre)/Down;
+    std::vector<double> out((pcm.size()*Up+Down-1)/Down);
     for(int i=0;i<int(out.size());++i) {
-        int at=(i+remove)*4-pre;
+        int at=(i+remove)*Down-pre;
         // upfirdn sums taps in ascending input-sample order.
-        int first=std::max(0,(at-length+5)/5),last=std::min(int(pcm.size())-1,at/5);
-        double sum=0;for(int j=first;j<=last;++j) { int tap=at-j*5;if(tap>=0 && tap<length)sum+=pcm[j]/32768.0*filter[tap]; }
+        int first=std::max(0,(at-length+Up)/Up),last=std::min(int(pcm.size())-1,at/Up);
+        double sum=0;for(int j=first;j<=last;++j) { int tap=at-j*Up;if(tap>=0 && tap<length)sum+=(Normalize?pcm[j]/32768.0:double(pcm[j]))*taps[tap]; }
         out[i]=sum;
     }
     return out;
+}
+std::vector<double> qualityAnalysis8k(const Pcm& pcm,int rate) {
+    if(rate==8000)return std::vector<double>(pcm.begin(),pcm.end());
+    if(rate==12000)return resample<2,3,false>(pcm,analysis12k);
+    if(rate==16000)return resample<1,2,false>(pcm,analysis16k);
+    return {};
+}
+static std::vector<double> stoiSamples(const Pcm& pcm,int rate) {
+    if(rate==8000)return resample<5,4,true>(pcm,filter);
+    if(rate==12000)return resample<5,6,true>(pcm,filter12k);
+    if(rate==16000)return resample<5,8,true>(pcm,filter16k);
+    return {};
 }
 using Bands=std::array<double,15>;
 static std::vector<Bands> stft(const std::vector<double>& samples) {
@@ -42,10 +67,10 @@ static std::vector<Bands> stft(const std::vector<double>& samples) {
     }
     return frames;
 }
-double stoi(const Pcm& reference,const Pcm& candidate) {
+double stoi(const Pcm& reference,const Pcm& candidate,int rate) {
     double power=0;for(int x:reference)power+=double(x)*x;
-    if(!power || reference.size()*10000ULL<=4096ULL*8000)return std::numeric_limits<double>::quiet_NaN();
-    auto x=resample(reference),y=resample(candidate);double window[256];
+    if((rate!=8000 && rate!=12000 && rate!=16000) || !power || reference.size()*10000ULL<=4096ULL*rate)return std::numeric_limits<double>::quiet_NaN();
+    auto x=stoiSamples(reference,rate),y=stoiSamples(candidate,rate);double window[256];
     for(int i=0;i<256;++i)window[i]=.5-.5*std::cos(2*pi*(i+1)/257);
     std::vector<double> energies;double maximum=-1e300;
     for(int at=0;at+256<int(x.size());at+=128) {

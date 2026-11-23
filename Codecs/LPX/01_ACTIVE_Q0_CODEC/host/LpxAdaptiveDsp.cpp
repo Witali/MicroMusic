@@ -149,12 +149,12 @@ std::vector<uint8_t> packV9(const Stream& s) {
     else { word(5,s.samples);word(7,s.pre);word(9,s.bright);word(11,w.bytes.size()); }
     return bytes;
 }
-Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale) {
+Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,double bandwidth) {
     Stream s;s.samples=reference.size();s.profile=profile;s.rate=rate;s.pre=pre;
     // Workspace was reserved by the public entry point before any adaptive
     // allocations. Avoid moving it while callers retain views into WASM memory.
     memcpy(enc_input(),reference.data(),reference.size()*2);
-    int blocks=lpxSeedBegin(s.samples,profile,rate,pre,zeroScale);
+    int blocks=lpxSeedBegin(s.samples,profile,rate,pre,zeroScale,bandwidth);
     if(blocks<1)return Stream{};
     for(int i=0;i<blocks;++i)if(enc_step()<0)return Stream{};
     auto view=lpxSeedView();int frames=(s.samples+319)/320;

@@ -257,9 +257,11 @@ void fitExcitation(Stream& s, const Pcm& reference, const std::vector<int>& peri
 }
 }
 
-Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report) {
+Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
+                    double bandwidth, const Stream* incumbent) {
     report = BitrateReport{};
-    if (reference.empty() || reference.size() > lpxSeedCapacity() || maxBytes < 13) {
+    if (reference.empty() || reference.size() > lpxSeedCapacity() || maxBytes < 13
+        || !(bandwidth > 0 && bandwidth <= 1)) {
         report.error = -1; return Stream{};
     }
     const auto periods = sourcePeriods(reference);
@@ -281,8 +283,17 @@ Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report) {
             selected = candidate; selectedMeasurement = measurement; selectedBytes = bytes.size(); report.selected = ordinal;
         }
     };
+    if (incumbent) {
+        if (incumbent->samples != int(reference.size()) || incumbent->profile != 4
+            || incumbent->rate != 8000 || int64_t(packV9(*incumbent).size()) > maxBytes) {
+            report.error = -1; return Stream{};
+        }
+        add(*incumbent);
+        if (report.error) return Stream{};
+        if (!selectedMeasurement.quality.error[0] && !selectedMeasurement.quality.error[1]) return selected;
+    }
     for (int pre : {13926, 11469, 8192}) {
-        Stream seed = fitSeed(reference, 4, 8000, pre, true);
+        Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth);
         if (!seed.samples) { report.error = -7; return Stream{}; }
         // The complete existing seed is a legitimate candidate when V9's exact
         // zero-gain/tail omissions already place it under the requested cap.
@@ -304,7 +315,7 @@ Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report) {
         // Try this explicit bounded alternative before returning search no-fit;
         // it is not used to displace any already feasible ordinary candidate.
         for (int pre : {13926, 11469, 8192}) {
-            Stream seed = fitSeed(reference, 4, 8000, pre, true);
+            Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth);
             if (!seed.samples) { report.error = -7; return Stream{}; }
             auto plans = spectralPlans(seed, reference, maxBytes, true);
             for (const auto& spectra : plans) {

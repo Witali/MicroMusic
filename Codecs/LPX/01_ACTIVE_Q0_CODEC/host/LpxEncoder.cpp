@@ -60,6 +60,9 @@
 namespace {
 constexpr double pi = 3.14159265358979323846;
 static int pre = 13926;
+// Search-only LPC bandwidth expansion; all existing callers retain .97.
+// The cached root basis depends only on frequency, not these coefficients.
+static double analysisBandwidth = .97;
 static bool allowZeroScale = true;
 static bool referenceScaleOrder = false;
 static const int16_t cosine[] = {
@@ -144,7 +147,7 @@ void analyze(int frame) {
         a[m] = reflection; error *= fmax(1e-4, 1 - reflection * reflection);
     }
     double bandwidth = 1;
-    for (int k = 0; k <= 10; ++k) { a[k] *= bandwidth; bandwidth *= .97; }
+    for (int k = 0; k <= 10; ++k) { a[k] *= bandwidth; bandwidth *= analysisBandwidth; }
     int found = 0;
     for (int part = 0; part < 2; ++part) {
         double left = 1e-6;
@@ -345,10 +348,13 @@ int enc_reserve(uint32_t samples) {
 int16_t* enc_input() { return source; }
 uint8_t* enc_output() { return packed; }
 }
-int lpxSeedBegin(int samples, int profile, int sampleRate, int emphasis, bool zeroScale) {
+int lpxSeedBegin(int samples, int profile, int sampleRate, int emphasis, bool zeroScale,
+                 double bandwidth) {
     pre = emphasis; allowZeroScale = zeroScale; referenceScaleOrder = true;
     failure = 0; block = 0;
     if (samples < 1 || uint32_t(samples) > reservedSamples || (profile != 4 && profile != 6) || (sampleRate != 8000 && sampleRate != 12000 && sampleRate != 16000)) return -1;
+    if (!(bandwidth > 0 && bandwidth <= 1)) return -1;
+    analysisBandwidth = bandwidth;
     count = samples; padded = (count + 319) / 320 * 320; mode = profile; rate = sampleRate;
     headerBytes = count > 64000 ? 17 : 13;
     memset(source + count, 0, (padded - count) * sizeof(int16_t)); memset(&state, 0, sizeof(state));

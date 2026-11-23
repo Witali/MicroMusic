@@ -27,5 +27,6 @@ int spectralBits(const Stream& stream);
 int compactBytes(const Stream& stream);
 int extraCapacity(const Stream& stream, int maxBytes, int slots = -1);
 std::vector<uint8_t> packV9(const Stream& stream);
-Stream fitSeed(const Pcm& reference, int profile, int rate, int pre, bool zeroScale);
+Stream fitSeed(const Pcm& reference, int profile, int rate, int pre, bool zeroScale,
+               double bandwidth = .97);
 }

@@ -66,7 +66,8 @@ double estimatePeriod(const double* input,int count,double& rms) {
     }
     return nan;
 }
-static void centeredWindow(const Pcm& pcm,int start,int length,double* centered,double* power) {
+template<class Samples>
+static void centeredWindow(const Samples& pcm,int start,int length,double* centered,double* power) {
     double mean=0;for(int i=0;i<length;++i)mean+=pcm[start+i];mean/=length;
     double windowed[640]={};
     for(int i=0;i<640;++i)centered[i]=i<length?pcm[start+i]-mean:0;
@@ -95,15 +96,17 @@ static double coarseShape(const double* powerA,const double* powerB) {
     }
     return std::sqrt(sum/24);
 }
-QualityContext::QualityContext(const Pcm& ref,bool assessSpeech):reference(ref),speech(assessSpeech) {
-    for(int at=0;at+640<=int(ref.size());at+=160) {
-        double input[640],level;for(int j=0;j<640;++j)input[j]=ref[at+j];
+QualityContext::QualityContext(const Pcm& ref,bool assessSpeech,int rate):reference(ref),speech(assessSpeech),sampleRate(rate) {
+    if(rate!=8000)analysisReference=qualityAnalysis8k(ref,rate);
+    int count=rate==8000?int(ref.size()):int(analysisReference.size());
+    for(int at=0;at+640<=count;at+=160) {
+        double input[640],level;for(int j=0;j<640;++j)input[j]=rate==8000?ref[at+j]:analysisReference[at+j];
         periods.push_back(estimatePeriod(input,640,level));rms.push_back(level);
     }
 }
 Quality QualityContext::quality(const Pcm& candidate) const {
     Quality q;Pcm fixed=pwm(candidate);q.error[0]=sse(reference,candidate);q.error[1]=sse(reference,fixed);
-    if(speech) { q.stoi[0]=stoi(reference,candidate);q.stoi[1]=stoi(reference,fixed); }
+    if(speech) { q.stoi[0]=stoi(reference,candidate,sampleRate);q.stoi[1]=stoi(reference,fixed,sampleRate); }
     return q;
 }
 bool noRegression(const Quality& q,const Quality& baseline) {
@@ -115,13 +118,14 @@ bool voiceGate(const Diagnostic& q,const Diagnostic& baseline) {
     if(std::isfinite(baseline.period) && (!std::isfinite(q.period) || q.period>baseline.period+1e-12))return false;
     return !std::isfinite(baseline.shape) || (std::isfinite(q.shape) && q.shape<=baseline.shape+1e-12);
 }
-void QualityContext::assess(const Pcm& candidate,double& voice,double& noise,Diagnostic& diagnostic) const {
+template<class Samples>
+static void assess8k(const Samples& reference,const Samples& candidate,const std::vector<double>& periods,const std::vector<double>& rms,double& voice,double& noise,Diagnostic& diagnostic) {
     int frames=0,voiced=0,noiseFrames=0,shapeFrames=0;double waveform=0,spectral=0,periodicity=0,shape=0,periodError=0,noiseCost=0;
     for(int at=0;at<int(reference.size());at+=160) {
         int length=std::min(640,int(reference.size())-at),index=at/160;
         double x[640],y[640],px[321],py[321],sx[32],sy[32];
         centeredWindow(reference,at,length,x,px);centeredWindow(candidate,at,length,y,py);
-        double energy=0,loss=0;for(int i=0;i<length;++i) { energy+=double(reference[at+i])*reference[at+i];double d=int(candidate[at+i])-int(reference[at+i]);loss+=d*d; }
+        double energy=0,loss=0;for(int i=0;i<length;++i) { energy+=double(reference[at+i])*reference[at+i];double d=double(candidate[at+i])-double(reference[at+i]);loss+=d*d; }
         waveform+=loss/std::max(energy,double(length));bandShape(px,sx);bandShape(py,sy);
         for(int i=0;i<32;++i)spectral+=(sx[i]-sy[i])*(sx[i]-sy[i]);
         double period=index<int(periods.size())?periods[index]:nan;
@@ -161,6 +165,11 @@ void QualityContext::assess(const Pcm& candidate,double& voice,double& noise,Dia
     voice=.25*waveform/frames+spectral/frames+2*periodicity/std::max(1,voiced);
     noise=noiseFrames?std::max(0.,std::min(1.,noiseCost/noiseFrames)):0;
     diagnostic.period=voiced?periodError/voiced:nan;diagnostic.shape=shapeFrames?shape/shapeFrames:nan;
+}
+void QualityContext::assess(const Pcm& candidate,double& voice,double& noise,Diagnostic& diagnostic) const {
+    if(sampleRate==8000)assess8k(reference,candidate,periods,rms,voice,noise,diagnostic);
+    else if(!analysisReference.empty())assess8k(analysisReference,qualityAnalysis8k(candidate,sampleRate),periods,rms,voice,noise,diagnostic);
+    else voice=noise=nan;
 }
 Measurement QualityContext::measure(const Pcm& candidate) const {
     Measurement m;m.quality=quality(candidate);Pcm fixed=pwm(candidate);

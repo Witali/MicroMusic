@@ -165,7 +165,13 @@ int run(int argc, char** argv) {
         unsigned(pcm.size()), options.rate, options.profile, unsigned(bytes.size()),
         bytes[2] & 64 ? "true" : "false", initializationMs, timings[0], report.candidates, report.stages, report.gainExponent);
     for (size_t i = 0; i < timings.size(); ++i) fprintf(stderr, "%s%.6f", i ? "," : "", timings[i]);
-    fputs("],\"warmMedianMs\":", stderr);
+    fprintf(stderr, "],\"qualitySearch\":{\"enabled\":%s,\"candidates\":%d,\"accepted\":%d,\"bandwidthCandidates\":%d,\"localEvaluations\":%d,\"fullEvaluations\":%d,\"initialObjective\":%.12g,\"finalObjective\":%.12g,\"spectralLocalEvaluations\":%llu,\"spectralProposals\":%d,\"spectralRegions\":%d},\"warmMedianMs\":",
+        LPX_ENCODER_QUALITY_SEARCH && options.adaptive && options.expandedSearch ? "true" : "false",
+        report.qualitySearch.candidates, report.qualitySearch.accepted, report.qualitySearch.bandwidthCandidates,
+        report.qualitySearch.localEvaluations, report.qualitySearch.fullEvaluations,
+        report.qualitySearch.initialObjective, report.qualitySearch.finalObjective,
+        static_cast<unsigned long long>(report.qualitySearch.spectralLocalEvaluations),
+        report.qualitySearch.spectralProposals, report.qualitySearch.spectralRegions);
     if (timings.size() > 1) {
         std::vector<double> warm(timings.begin() + 1, timings.end()); std::sort(warm.begin(), warm.end());
         fprintf(stderr, "%.6f", (warm[(warm.size() - 1) / 2] + warm[warm.size() / 2]) / 2);
