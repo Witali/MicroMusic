@@ -86,3 +86,41 @@ The prospective corpus protocol and anonymous results live under
 in ignored build directories. Narrow tests cover exact prior 8 kHz evaluation,
 true-rate numerical oracles, tails, continuous Long output, strict budgets,
 quiet/silent/high-frequency controls and seed-state reset.
+
+## Appended joint refinement
+
+`refineJointQuality()` starts from the complete previous V3 winner. It freezes
+that winner as its own floor and uses the same complete-output admission and
+metric equations. Its relative report scores belong to this separate phase;
+they must not be multiplied by earlier phase scores.
+
+P4/P6 proposals change one legal quantized LSF coordinate across a whole existing
+run of identical spectra. Internal repeat coding is preserved. Four runs, at
+most twenty coordinate shapes per run, two shortlisted shapes, a 1280-sample
+local horizon and a 160-sample pulse neighborhood bound the local work. Exact
+prefix/interpolation synthesis supplies proposals; local spectral/time scores
+are only ranking approximations. Up to eight whole-output proposals pass to
+the common final gate. Individually safe score-improving edits from different
+runs can also be combined: one best edit per run, then all/top-two bundles.
+This adds at most two complete checks without rerunning the local shape search.
+Every single and the original complete winner remain available. This does not
+add decoder operations or format fields.
+
+Strict 3 kbit/s also proposes the existing header fits before and after those
+edits. A development ablation found no selected change in five paired jobs
+from regenerating three additional full seed searches, at roughly twice the
+API time. That extra search and its visitor API were removed from production.
+No new codebook or side information is introduced.
+
+The supplied complete cap is unchanged. An improved candidate can use spare
+bytes within that cap even when its actual file is slightly larger than the
+incumbent. Report both actual sizes, all metric tradeoffs and encoder runtime.
+This is bounded search, not a proof of a global optimum or an audible gain.
+
+`LPX_ENCODER_JOINT_REFINEMENT=0` restores the preceding V3 selection.
+`LPX_ENCODER_LPC_RUNS=0` omits the run operator for controlled ablation. These
+host switches do not affect MCU arithmetic selection. Native CPU/CUDA and
+scalar/SIMD WASM share the same phase and optional input normalization.
+
+The new prospective study is documented in
+[`lowrate-quality-next-2026-11-23`](../../research/lowrate-quality-next-2026-11-23/PROTOCOL.md).

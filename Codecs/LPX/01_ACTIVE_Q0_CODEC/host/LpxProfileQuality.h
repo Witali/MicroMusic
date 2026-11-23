@@ -9,6 +9,12 @@
 #ifndef LPX_ENCODER_SPECTRAL_PULSES
 #define LPX_ENCODER_SPECTRAL_PULSES 1
 #endif
+#ifndef LPX_ENCODER_JOINT_REFINEMENT
+#define LPX_ENCODER_JOINT_REFINEMENT 1
+#endif
+#ifndef LPX_ENCODER_LPC_RUNS
+#define LPX_ENCODER_LPC_RUNS 1
+#endif
 
 namespace lpx {
 struct ProfileQualityReport {
@@ -23,5 +29,20 @@ struct ProfileQualityReport {
 // selects the existing strict-3k spectral allocator, never a new wire format.
 Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
     int cap, bool finalV9Budget, ProfileQualityReport& report, bool threeK = false,
+    bool speech = true);
+struct JointQualityReport {
+    // This phase has its own frozen incumbent: the complete previous V3 winner.
+    // These relative scores must not be multiplied by earlier phase scores.
+    ProfileQualityReport selection;
+    int headerLocalEvaluations = 0;
+    int headerFullEvaluations = 0, lpcRuns = 0, lpcProposals = 0, lpcBundles = 0;
+    uint64_t lpcSpectralEvaluations = 0, lpcPulseEvaluations = 0;
+    uint64_t lpcSynthesizedSamples = 0;
+};
+// Protected continuation of the exact existing V3 quality phase. Generic
+// profiles get LPC-run proposals; strict3k also gets existing header proposals.
+// Budget semantics match refineProfileQuality; never adds decoder side data.
+Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
+    int cap, bool finalV9Budget, JointQualityReport& report, bool threeK = false,
     bool speech = true);
 }

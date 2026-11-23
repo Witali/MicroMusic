@@ -72,6 +72,11 @@ test('native default expanded search and size allowance match extended WASM in C
     assert.deepEqual(cpu.bytes, expected);
     assert.equal(cpu.report.search, 'expanded'); assert.equal(cpu.report.sizeAllowancePercent, allowance);
     assert.ok(cpu.report.expandedAccepted >= 0);
+    assert.equal(cpu.report.jointQuality.enabled, true);
+    assert.ok(cpu.report.jointQuality.initialObjective > 0);
+    assert.ok(cpu.report.jointQuality.finalObjective <= cpu.report.jointQuality.initialObjective + 1e-12);
+    assert.ok(cpu.report.jointQuality.lpcRuns > 0 && cpu.report.jointQuality.lpcRuns <= 4);
+    assert.ok(cpu.report.jointQuality.lpcProposals <= 8);
     const explicit = success(native, pcm, [...args, '--search', 'expanded']);
     assert.deepEqual(explicit.bytes, expected);
     if (gpu) {

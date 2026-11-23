@@ -4,6 +4,8 @@
 #include "LpxBitrateProfiles.h"
 #include "LpxFullBand.h"
 #include "LpxPulseLookahead.h"
+#include "LpxRefinement.h"
+#include "LpxLpcRefine.h"
 #include "LpxSpectralPulses.h"
 #include <cmath>
 #include <utility>
@@ -90,26 +92,26 @@ public:
         if(!verifyStream(incumbent,initialPcm)) { report.error=-3;return; }
         report.initialObjective=report.finalObjective=selectedObjective;
     }
-    void add(const Stream& candidate,const Pcm* verifiedPcm=nullptr) {
-        if(!candidate.samples || bytes(candidate)>cap)return;
+    bool add(const Stream& candidate,double* safeScore=nullptr) {
+        if(safeScore)*safeScore=std::numeric_limits<double>::infinity();
+        if(!candidate.samples || bytes(candidate)>cap)return false;
         auto packed=packV9(candidate);
-        for(const auto& old:seen)if(packed==old)return;
+        for(const auto& old:seen)if(packed==old)return false;
         seen.push_back(std::move(packed));++report.candidates;
-        Pcm rendered;
-        if(!verifiedPcm) {
-            rendered=render(candidate);
-            if(!verifyStream(candidate,rendered)) { report.error=-3;return; }
-            verifiedPcm=&rendered;
-        }
-        const auto measured=quality.measure(*verifiedPcm);
-        const auto spectral=spectrum.measure(*verifiedPcm);
-        if(!safety(measured,spectral,baseline,baselineSpectrum))return;
+        const auto pcm=render(candidate);
+        if(!verifyStream(candidate,pcm)) { report.error=-3;return false; }
+        const auto measured=quality.measure(pcm);
+        const auto spectral=spectrum.measure(pcm);
+        if(!safety(measured,spectral,baseline,baselineSpectrum))return false;
         const double score=objective(measured,spectral,baseline,baselineSpectrum);
+        const bool safeImprovement=score<report.initialObjective-1e-12;
+        if(safeScore&&safeImprovement)*safeScore=score;
         const int count=bytes(candidate);
         if(score<selectedObjective-1e-12 || (score==selectedObjective && count<selectedBytes)) {
             selected=candidate;selectedBytes=count;selectedObjective=score;
             report.finalObjective=score;++report.accepted;
         }
+        return safeImprovement;
     }
 };
 }
@@ -175,5 +177,53 @@ Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
 #endif
     }
     return selected;
+}
+Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
+    int cap, bool finalV9Budget, JointQualityReport& report, bool threeK, bool speech) {
+    report=JointQualityReport{};
+    if(incumbent.samples!=int(reference.size()) || reference.empty()
+        || (incumbent.profile!=4 && incumbent.profile!=6)
+        || (incumbent.rate!=8000 && incumbent.rate!=12000 && incumbent.rate!=16000)
+        || (threeK && (!finalV9Budget || incumbent.profile!=4 || incumbent.rate!=8000))) {
+        report.selection.error=-1;return Stream{};
+    }
+    if((finalV9Budget ? int64_t(packV9(incumbent).size()) : compactBytes(incumbent))>cap) {
+        report.selection.error=-6;return Stream{};
+    }
+    QualitySelection selection(incumbent,reference,cap,finalV9Budget,report.selection,speech);
+    if(report.selection.error)return Stream{};
+    if(!selection.baseline.quality.error[0] && !selection.baseline.quality.error[1])return incumbent;
+    auto header=[&]() {
+        // Header coefficients cost no additional payload bytes. This existing
+        // operator supplies proposals; the common full-band gate still decides.
+        const auto proposals=refineHeader(selection.selected,selection.quality);
+        report.headerLocalEvaluations+=proposals.localEvaluations;
+        report.headerFullEvaluations+=proposals.fullEvaluations;
+        selection.add(proposals.selected);selection.add(proposals.raw);
+        for(const auto& candidate:proposals.alternatives)selection.add(candidate);
+    };
+    if(threeK) {
+        header();
+        if(report.selection.error)return Stream{};
+    }
+#if LPX_ENCODER_LPC_RUNS
+    const Stream lpcAnchor=selection.selected;
+    const auto lpc=proposeLpcRuns(lpcAnchor,reference,cap,finalV9Budget);
+    report.lpcRuns=lpc.runs;report.lpcProposals=lpc.proposals.size();
+    report.lpcSpectralEvaluations=lpc.spectralEvaluations;
+    report.lpcPulseEvaluations=lpc.pulseEvaluations;
+    report.lpcSynthesizedSamples=lpc.synthesizedSamples;
+    std::vector<double> safeScores(lpc.proposals.size(),std::numeric_limits<double>::infinity());
+    for(size_t i=0;i<lpc.proposals.size();++i)selection.add(lpc.proposals[i],&safeScores[i]);
+    const auto bundles=composeLpcRuns(lpcAnchor,lpc.proposals,safeScores,cap,finalV9Budget);
+    report.lpcBundles=bundles.size();
+    for(const auto& bundle:bundles)selection.add(bundle);
+    if(report.selection.error)return Stream{};
+#endif
+    if(threeK) {
+        header();
+        if(report.selection.error)return Stream{};
+    }
+    return selection.selected;
 }
 }

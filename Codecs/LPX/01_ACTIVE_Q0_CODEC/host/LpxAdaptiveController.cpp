@@ -117,6 +117,10 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
         if(expandedSearch) {
             selected=refineProfileQuality(selected,reference,cap,false,report.qualitySearch,false,speech);
             if(report.qualitySearch.error) { report.error=report.qualitySearch.error;return Stream{}; }
+#if LPX_ENCODER_JOINT_REFINEMENT
+            selected=refineJointQuality(selected,reference,cap,false,report.jointQuality,false,speech);
+            if(report.jointQuality.selection.error) { report.error=report.jointQuality.selection.error;return Stream{}; }
+#endif
             // Legacy report fields keep their original evaluator semantics.
             report.measurement=context.measure(render(selected));
         }

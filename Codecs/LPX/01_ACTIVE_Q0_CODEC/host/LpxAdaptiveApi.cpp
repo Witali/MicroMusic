@@ -72,6 +72,12 @@ static int encodeBitrate(int samples,int kbps,int rate,int autoQuiet,int calls,b
         if(!qualityReport.error) {
             result=lpx::refineProfileQuality(result,reference,cap,true,qualityReport.qualitySearch,true);
             qualityReport.error=qualityReport.qualitySearch.error;
+#if LPX_ENCODER_JOINT_REFINEMENT
+            if(!qualityReport.error) {
+                result=lpx::refineJointQuality(result,reference,cap,true,qualityReport.jointQuality,true);
+                qualityReport.error=qualityReport.jointQuality.selection.error;
+            }
+#endif
         }
 #endif
     } else {

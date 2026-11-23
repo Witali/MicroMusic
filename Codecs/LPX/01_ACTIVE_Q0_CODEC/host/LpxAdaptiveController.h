@@ -11,6 +11,7 @@ struct AdaptiveReport {
     Measurement baseline,measurement;
     LoudnessReport loudness;
     ProfileQualityReport qualitySearch;
+    JointQualityReport jointQuality;
 };
 // Whole-input controller. Original input is retained; no reset-file splitting.
 // maxBytes=0 uses the original v5 control's actual complete size as the budget,
