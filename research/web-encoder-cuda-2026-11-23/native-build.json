@@ -1,0 +1,121 @@
+{
+  "schema": "lpx-native-build-v1",
+  "toolchains": {
+    "host": {
+      "compiler": "clang++.exe",
+      "version": "clang version 24.0.0git (https:/github.com/llvm/llvm-project 55ea1f4ebea23d0355d5cdb075f1e12f28ab82d0)",
+      "abi": "Microsoft x64",
+      "msvcToolset": "14.51.36231",
+      "windowsSdk": "10.0.26100.0"
+    },
+    "vendorHeaders": {
+      "<msvc>/include/yvals_core.h": "10b59d42bde2105e76cf16735e34dd0f1d45a943cb1b789c4a0406c67c2bd684",
+      "<msvc>/include/vcruntime.h": "8a6e89fe85c66162d62c772d02367ae2e6530f1faaaa8d099427698a689bac7f",
+      "<cuda>/include/cuda_runtime.h": "a87442de29a171eb3a1ec2f522ad43137885ce9b79142b1de04579dda408b081",
+      "<cuda>/include/cuda_runtime_api.h": "e7108bb0be448ae9d86d36c110178d76c19c33a6e7d96805912f51853317ee28",
+      "<cuda>/include/driver_types.h": "64d6a10b4410355a6e05f7db460657a2ab9b745219c7aa923b33c5e150741333"
+    },
+    "cuda": {
+      "compiler": "nvcc.exe",
+      "banner": "nvcc: NVIDIA (R) Cuda compiler driver",
+      "version": "Cuda compilation tools, release 13.3, V13.3.73",
+      "documentation": "https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/"
+    }
+  },
+  "inputs": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "5dbaa8d5d711139a81a9bd7b61618d11472a32073ded24722e9eb2e29cd2b57c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp": "cb10fc1648625a0f4e60488f08c43cc69fea761e2f5c155d1e81f865059f8554",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveDsp.cpp": "dcc6b342c14e41c45a03501334ec55b8c6e3a89c4d931e7ea0b2b7dd849ff9f4",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.cpp": "8cb24bade423c596c8bae5feb1bc3208f984abf74f9ecf12fa9e81349858d89a",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStoi.cpp": "a17931ecba27d94e0816de221a6182d0b45f57c9e668321297ba1af14827349c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.cpp": "25e9a2968af0815738696dfbe6538164d6811e4c10581fcb44fd80cb5fcf1839",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.cpp": "77e3c50be0fe8a515769ef68c783ecbfcb5b29224585cfd5da78fda370f7f804",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/encode_lpx.cpp": "5e712c5fb475da496d041926cfa7ab9cc4718e5dd81f61dddeb05244956abb47",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.h": "badfefaed30b224de8bf0761d4a58f7ea62be826f76a84001d350514ea1fbaa0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSeed.h": "adc3d78ccba0743dfa27ab76db0f9d400e414f662afe4dfdda920a7c3aca419e",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderSimd.h": "cc7724eb3cf1ea8a93e9859409c0d47fd09ad2a07de31a6166a0877516d0738f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptive.h": "23f9b170761f179a614518b227d3abf0e5e0cc5f25051d31e1b5fdf40d038887",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.h": "8fc3ee913c15ffeb70ce524b8bfb7e1a5aff597f49f5bfa43e8be1246aea4652",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.h": "8785e6792c654079f93614070819c64032d6550fd303c5dc7aad73b1538480a7",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.h": "db71eb87a28aaf08cb5e02ee8846d5f0c982480bd3ae1b61e769956d85a93898",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxHostWorkspace.h": "4d8de0666fbbcde6e42a10b05678cafe41fb50b44aec3c814e7b501b277251e9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample.inc": "73452977972395c88eb1879815d6c57fee4e391dad5f42a970c4000c04d8c23c",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "69faaacf5f23700809591a77e9a54259106b15e192c81f71ed0efc47b70fc10f",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "7c4b4105be4af701aa4d3c600f966c8b32aa0848cb6d56f16098487d9578a18d",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCuda.h": "d9a6877d407354998c289fa435f6a8fb3cdc3941eeb58777120443800038c3f9",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/cuda/LpxCuda.cu": "af975c6e41038a5d079120bf72cea79fc6cdeea2fa64023bd25a7f0767924a04",
+    "web-player/scripts/build-lpx-native.mjs": "9df1a1bb4c641eb960f6cab5316807b8311f27483286b3514e80745a3e1f3c94"
+  },
+  "artifacts": [
+    {
+      "backend": "cpu",
+      "path": "build/lpx-native-final/lpx-encode.exe",
+      "flags": [
+        "-O3",
+        "-std=c++17",
+        "-ffp-contract=off",
+        "-DNDEBUG",
+        "-DLPX4_ENABLE_ASM=0",
+        "-DLPX4_FLOAT_SYNTHESIS=0",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=1",
+        "-DLPX4_COMPACT_VERSION=9",
+        "-DLPX4_SAMPLE_RATE=0",
+        "-DLPX4_EXTENDED_SAMPLE_RATES=1",
+        "-DLPX4_ENABLE_WIDE_V9=1",
+        "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src",
+        "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/host"
+      ],
+      "sha256": "56d189aabb4daa12ebe78669aa58bdef52c8c84981d3db709ecafcd6dd69e493"
+    },
+    {
+      "backend": "cuda-and-explicit-cpu",
+      "path": "build/lpx-native-final/lpx-encode-cuda.exe",
+      "flags": [
+        "-O3",
+        "-std=c++17",
+        "--fmad=false",
+        "-arch=sm_120",
+        "-DLPX_ENCODER_ENABLE_CUDA=1",
+        "-DNDEBUG",
+        "-DLPX4_ENABLE_ASM=0",
+        "-DLPX4_FLOAT_SYNTHESIS=0",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=1",
+        "-DLPX4_COMPACT_VERSION=9",
+        "-DLPX4_SAMPLE_RATE=0",
+        "-DLPX4_EXTENDED_SAMPLE_RATES=1",
+        "-DLPX4_ENABLE_WIDE_V9=1",
+        "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src",
+        "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/host",
+        "-Xcompiler",
+        "/fp:strict,/EHsc"
+      ],
+      "hostFlags": [
+        "-O3",
+        "-std=c++17",
+        "-ffp-contract=off",
+        "-DNDEBUG",
+        "-DLPX4_ENABLE_ASM=0",
+        "-DLPX4_FLOAT_SYNTHESIS=0",
+        "-DLPX4_ENABLE_SPEECH=1",
+        "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+        "-DLPX4_COMPACT_ONLY=1",
+        "-DLPX4_COMPACT_VERSION=9",
+        "-DLPX4_SAMPLE_RATE=0",
+        "-DLPX4_EXTENDED_SAMPLE_RATES=1",
+        "-DLPX4_ENABLE_WIDE_V9=1",
+        "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src",
+        "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/host",
+        "-DLPX_ENCODER_ENABLE_CUDA=1"
+      ],
+      "sha256": "042abedc21168e7c41434a3eabef464bf358fc10643078c2b3ddc7ca3a64c243"
+    }
+  ]
+}

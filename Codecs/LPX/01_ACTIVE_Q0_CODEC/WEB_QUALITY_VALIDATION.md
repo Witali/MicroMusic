@@ -20,7 +20,7 @@ repacking. The original admissible candidate remains available.
 | Anonymous local corpus windows | 227/227 native/ordinary/SIMD exact bytes and complete PCM; 222 distinct windows |
 | Real audiobook Long excerpt | 128001 samples at 8 kHz; adaptive and expanded native/ordinary/SIMD agree; one 6539-byte file |
 | Expanded-search native gates | 68/68 checks; 34 changed synthetic outputs; public speech retained its reference candidate |
-| Node LPX regression suite | 78 passed; two conditional native checks subsequently passed in the 13/13 native-decoder run |
+| Integrated Node LPX regression suite | 94 passed, zero failures and zero skips, including actual CUDA and native decoder checks |
 | Shipped worker integration | 1/1; default adaptive downloads, allowance forwarding, all three backend choices, full decode |
 | WASM provenance and imports | Current normalized-source hashes; zero host imports |
 
@@ -48,9 +48,13 @@ for listening. No subjective listening result is claimed. The offline metrics
 follow the 8 kHz reference; retained 12/16 kHz choices have correctness coverage,
 not a new perceptual-quality guarantee.
 
-The background chat exposed no browser surface for visual QA. The actual worker,
-asset loader, WASM modules, output bytes and decoder were exercised automatically;
-no manual layout or browser audio-playback verification is claimed.
+The separate background chat initially lacked a browser surface. The parent
+chat subsequently verified the public page in the in-app browser: ordinary
+and SIMD adaptive conversion of the public `chego.wav` recording both produced
+773-byte files, and the result played to completion. A local screenshot retains
+the page, selected SIMD backend, result and completed playback. The observed
+3.233 s ordinary / 2.298 s SIMD times are single UI observations, not a paired
+performance benchmark.
 
 ## Reproduction
 

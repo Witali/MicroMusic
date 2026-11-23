@@ -1,0 +1,166 @@
+{
+  "schema": "lpx-cuda-aggregate-benchmark-v1",
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 5060 Ti",
+    "computeCapability": "12.0",
+    "driver": "621.14",
+    "memory": "16311 MiB"
+  },
+  "scope": "Measured host encoder only; each CPU/CUDA pair receives identical prepared PCM. No listening-quality, AVR timing or other-GPU speed claim.",
+  "timing": "First/warm encoding includes full LPX validation but excludes backend initialization, input conversion and process startup; cold process timings include initialization and I/O.",
+  "corpus": {
+    "quality": "fast",
+    "inputs": 227,
+    "profileCases": 454,
+    "totalInputSamples": 23258635,
+    "sampleRate": 8000,
+    "maxInputSamples": 4998606,
+    "continuousLongInputs": 12,
+    "allLpxBytesEqual": true,
+    "profiles": [
+      {
+        "profile": 4,
+        "cases": 227,
+        "firstEncodingTotalMs": {
+          "cpu": 56744.49670000001,
+          "cuda": 18730.936700000013
+        },
+        "firstEncodingTotalRatio": 3.0294532307078894,
+        "medianFirstEncodingRatio": 2.5687757203154926,
+        "coldProcessTotalMs": {
+          "cpu": 61233.64920000023,
+          "cuda": 48435.0031
+        },
+        "medianColdProcessRatio": 0.6179693028068889,
+        "warmCases": 0,
+        "medianWarmEncodingRatio": null,
+        "minWarmEncodingRatio": null,
+        "maxWarmEncodingRatio": null
+      },
+      {
+        "profile": 6,
+        "cases": 227,
+        "firstEncodingTotalMs": {
+          "cpu": 399215.1297999998,
+          "cuda": 21190.956000000002
+        },
+        "firstEncodingTotalRatio": 18.838939111571925,
+        "medianFirstEncodingRatio": 14.911338635463327,
+        "coldProcessTotalMs": {
+          "cpu": 403750.7750000004,
+          "cuda": 51127.931600000265
+        },
+        "medianColdProcessRatio": 3.2197514524261095,
+        "warmCases": 0,
+        "medianWarmEncodingRatio": null,
+        "minWarmEncodingRatio": null,
+        "maxWarmEncodingRatio": null
+      }
+    ]
+  },
+  "warmSubset": {
+    "quality": "fast",
+    "inputs": 3,
+    "profileCases": 6,
+    "totalInputSamples": 192000,
+    "sampleRate": 8000,
+    "maxInputSamples": 64000,
+    "continuousLongInputs": 0,
+    "allLpxBytesEqual": true,
+    "profiles": [
+      {
+        "profile": 4,
+        "cases": 3,
+        "firstEncodingTotalMs": {
+          "cpu": 481.99150000000003,
+          "cuda": 148.0454
+        },
+        "firstEncodingTotalRatio": 3.2557006161623394,
+        "medianFirstEncodingRatio": 3.329099838065246,
+        "coldProcessTotalMs": {
+          "cpu": 1566.8006,
+          "cuda": 851.9124000000004
+        },
+        "medianColdProcessRatio": 1.796653998750947,
+        "warmCases": 3,
+        "medianWarmEncodingRatio": 3.4803537524880723,
+        "minWarmEncodingRatio": 3.2227196543330976,
+        "maxWarmEncodingRatio": 3.6014148654782216
+      },
+      {
+        "profile": 6,
+        "cases": 3,
+        "firstEncodingTotalMs": {
+          "cpu": 3356.5792,
+          "cuda": 164.3922
+        },
+        "firstEncodingTotalRatio": 20.41811716127651,
+        "medianFirstEncodingRatio": 20.21520805815451,
+        "coldProcessTotalMs": {
+          "cpu": 10220.2618,
+          "cuda": 861.5670000000009
+        },
+        "medianColdProcessRatio": 11.810440826357423,
+        "warmCases": 3,
+        "medianWarmEncodingRatio": 20.3236547525891,
+        "minWarmEncodingRatio": 20.236792787270264,
+        "maxWarmEncodingRatio": 22.129869771116496
+      }
+    ]
+  },
+  "adaptiveSubset": {
+    "quality": "adaptive",
+    "inputs": 4,
+    "profileCases": 8,
+    "totalInputSamples": 320000,
+    "sampleRate": 8000,
+    "maxInputSamples": 128000,
+    "continuousLongInputs": 1,
+    "allLpxBytesEqual": true,
+    "profiles": [
+      {
+        "profile": 4,
+        "cases": 4,
+        "firstEncodingTotalMs": {
+          "cpu": 67573.7077,
+          "cuda": 61713.6186
+        },
+        "firstEncodingTotalRatio": 1.094956173903567,
+        "medianFirstEncodingRatio": 1.0228417937497993,
+        "coldProcessTotalMs": {
+          "cpu": 67656.88980000002,
+          "cuda": 62360.215300000025
+        },
+        "medianColdProcessRatio": 1.0119998186349175,
+        "warmCases": 0,
+        "medianWarmEncodingRatio": null,
+        "minWarmEncodingRatio": null,
+        "maxWarmEncodingRatio": null
+      },
+      {
+        "profile": 6,
+        "cases": 4,
+        "firstEncodingTotalMs": {
+          "cpu": 77070.7287,
+          "cuda": 66222.8904
+        },
+        "firstEncodingTotalRatio": 1.163807985946805,
+        "medianFirstEncodingRatio": 1.177008947943707,
+        "coldProcessTotalMs": {
+          "cpu": 77151.13579999999,
+          "cuda": 66867.5398
+        },
+        "medianColdProcessRatio": 1.167064670210097,
+        "warmCases": 0,
+        "medianWarmEncodingRatio": null,
+        "minWarmEncodingRatio": null,
+        "maxWarmEncodingRatio": null
+      }
+    ]
+  },
+  "limitations": [
+    "Cold CUDA initialization can outweigh encoding work on short or silent inputs.",
+    "The fast corpus run validates full continuous inputs; the adaptive subset has separate coverage.",
+    "The retained archive metadata does not substantiate hundreds of distinct speakers."
+  ]
+}

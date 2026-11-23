@@ -6,22 +6,77 @@
   "driver": "621.14",
   "cuda": "13.3.73",
   "hostToolset": "MSVC 14.51.36231",
-  "flags": ["-std=c++17", "-O3", "--fmad=false", "-arch=sm_120", "-DLPX_ENCODER_ENABLE_CUDA=1", "-Xcompiler", "/O2", "-Xcompiler", "/fp:strict"],
+  "flags": [
+    "-std=c++17",
+    "-O3",
+    "--fmad=false",
+    "-arch=sm_120",
+    "-DLPX_ENCODER_ENABLE_CUDA=1",
+    "-Xcompiler",
+    "/O2",
+    "-Xcompiler",
+    "/fp:strict"
+  ],
   "checks": 4461,
   "parameterTuples": 24741,
   "rejectedInvalidJobs": 10,
-  "profiles": [4, 6],
-  "lagSamples": [18, 19, 20, 145],
-  "gains": [0, 2, 14],
-  "scales": [0, 6, 10, 31],
-  "preQ14": [0, 8192, 13926],
-  "ringCursors": [0, 240, 260],
-  "tupleCounts": [1, 2, 7, 21, 32, 127, 320, 512],
-  "exact": ["selected tuple", "eight pulse positions and amplitudes", "double loss", "complete LPC/ring/deemphasis state"],
-  "timing": {"cpuReferenceMs": 9045.850, "gpuSearchMs": 547.397, "cudaInitializationIncluded": false, "observations": "One direct-kernel validation run under concurrent work; no full-encoder speed claim"},
+  "profiles": [
+    4,
+    6
+  ],
+  "lagSamples": [
+    18,
+    19,
+    20,
+    145
+  ],
+  "gains": [
+    0,
+    2,
+    14
+  ],
+  "scales": [
+    0,
+    6,
+    10,
+    31
+  ],
+  "preQ14": [
+    0,
+    8192,
+    13926
+  ],
+  "ringCursors": [
+    0,
+    240,
+    260
+  ],
+  "tupleCounts": [
+    1,
+    2,
+    7,
+    21,
+    32,
+    127,
+    320,
+    512
+  ],
+  "exact": [
+    "selected tuple",
+    "eight pulse positions and amplitudes",
+    "double loss",
+    "complete LPC/ring/deemphasis state"
+  ],
+  "timing": {
+    "cpuReferenceMs": 9045.85,
+    "gpuSearchMs": 547.397,
+    "cudaInitializationIncluded": false,
+    "observations": "One direct-kernel validation run under concurrent work; no full-encoder speed claim"
+  },
   "sourceSha256": {
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCuda.h": "d9a6877d407354998c289fa435f6a8fb3cdc3941eeb58777120443800038c3f9",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/cuda/LpxCuda.cu": "af975c6e41038a5d079120bf72cea79fc6cdeea2fa64023bd25a7f0767924a04",
     "web-player/tests/helpers/lpx-cuda-selftest.cpp": "d6fff7f0d5a6899a01028388d2eb3d92b2fd358389604649693d2175af5ed8a3"
-  }
+  },
+  "sourceHashNormalization": "CRLF to LF"
 }
