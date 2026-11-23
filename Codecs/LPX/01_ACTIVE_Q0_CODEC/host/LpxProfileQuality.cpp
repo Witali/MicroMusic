@@ -58,6 +58,60 @@ bool safety(const Measurement& m,const FullBandMeasurement& spectrum,
     }
     return true;
 }
+// One owner for complete-output admission. Each search phase supplies an
+// immutable incumbent and uses the same metric equations and tie ordering.
+class QualitySelection {
+    int cap;
+    bool finalV9Budget;
+    ProfileQualityReport& report;
+    FullBandContext spectrum;
+    Pcm initialPcm;
+    FullBandMeasurement baselineSpectrum;
+    double selectedObjective;
+    int selectedBytes;
+    std::vector<std::vector<uint8_t>> seen;
+    int bytes(const Stream& stream) const {
+        return finalV9Budget ? int(packV9(stream).size()) : compactBytes(stream);
+    }
+public:
+    QualityContext quality;
+    Measurement baseline;
+    Stream selected;
+    QualitySelection(const Stream& incumbent, const Pcm& reference, int cap,
+        bool finalV9Budget, ProfileQualityReport& report, bool speech)
+        : cap(cap), finalV9Budget(finalV9Budget), report(report),
+          spectrum(reference,incumbent.rate), initialPcm(render(incumbent)),
+          quality(reference,speech,incumbent.rate), selected(incumbent) {
+        baseline=quality.measure(initialPcm);
+        baselineSpectrum=spectrum.measure(initialPcm);
+        selectedObjective=objective(baseline,baselineSpectrum,baseline,baselineSpectrum);
+        selectedBytes=bytes(incumbent);
+        seen.push_back(packV9(incumbent));
+        if(!verifyStream(incumbent,initialPcm)) { report.error=-3;return; }
+        report.initialObjective=report.finalObjective=selectedObjective;
+    }
+    void add(const Stream& candidate,const Pcm* verifiedPcm=nullptr) {
+        if(!candidate.samples || bytes(candidate)>cap)return;
+        auto packed=packV9(candidate);
+        for(const auto& old:seen)if(packed==old)return;
+        seen.push_back(std::move(packed));++report.candidates;
+        Pcm rendered;
+        if(!verifiedPcm) {
+            rendered=render(candidate);
+            if(!verifyStream(candidate,rendered)) { report.error=-3;return; }
+            verifiedPcm=&rendered;
+        }
+        const auto measured=quality.measure(*verifiedPcm);
+        const auto spectral=spectrum.measure(*verifiedPcm);
+        if(!safety(measured,spectral,baseline,baselineSpectrum))return;
+        const double score=objective(measured,spectral,baseline,baselineSpectrum);
+        const int count=bytes(candidate);
+        if(score<selectedObjective-1e-12 || (score==selectedObjective && count<selectedBytes)) {
+            selected=candidate;selectedBytes=count;selectedObjective=score;
+            report.finalObjective=score;++report.accepted;
+        }
+    }
+};
 }
 Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
     int cap, bool finalV9Budget, ProfileQualityReport& report, bool threeK, bool speech) {
@@ -74,36 +128,11 @@ Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
     if (bytes(incumbent) > cap) { report.error = -6; return Stream{}; }
     // This context uses the actual sample rate. The old controller remains a
     // protected source of candidates, including at 12/16 kHz.
-    QualityContext quality(reference, speech, incumbent.rate);
-    FullBandContext spectrum(reference, incumbent.rate);
-    const Pcm initialPcm = render(incumbent);
-    const auto baseline = quality.measure(initialPcm);
-    const auto baselineSpectrum = spectrum.measure(initialPcm);
-    if (!verifyStream(incumbent, initialPcm)) { report.error = -3; return Stream{}; }
-    Stream selected = incumbent;
-    double selectedObjective=objective(baseline,baselineSpectrum,baseline,baselineSpectrum);
-    report.initialObjective=report.finalObjective=selectedObjective;
-    int selectedBytes = bytes(incumbent);
-    std::vector<std::vector<uint8_t>> seen{packV9(incumbent)};
-    auto add = [&](const Stream& candidate) {
-        if (!candidate.samples || bytes(candidate) > cap) return;
-        auto packed = packV9(candidate);
-        for (const auto& old : seen) if (packed == old) return;
-        seen.push_back(std::move(packed)); ++report.candidates;
-        const auto pcm = render(candidate);
-        if (!verifyStream(candidate, pcm)) { report.error = -3; return; }
-        const auto measured = quality.measure(pcm);
-        const auto spectral=spectrum.measure(pcm);
-        if(!safety(measured,spectral,baseline,baselineSpectrum))return;
-        const double score=objective(measured,spectral,baseline,baselineSpectrum);
-        const int count = bytes(candidate);
-        if (score < selectedObjective-1e-12
-            || (score == selectedObjective && count < selectedBytes)) {
-            selected = candidate;
-            selectedBytes = count;selectedObjective=score;
-            report.finalObjective=score;++report.accepted;
-        }
-    };
+    QualitySelection selection(incumbent,reference,cap,finalV9Budget,report,speech);
+    if(report.error)return Stream{};
+    auto& selected=selection.selected;
+    const auto& baseline=selection.baseline;
+    auto add=[&](const Stream& candidate) { selection.add(candidate); };
     // Fixed prospective proposals, not corpus-fitted coefficients. All other
     // seed callers retain .97 and the protected incumbent is always available.
     if (baseline.quality.error[0] || baseline.quality.error[1]) {
@@ -127,7 +156,7 @@ Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
                 if (report.error) return Stream{};
             }
         }
-        const auto pairs = refinePulseLookahead(selected, quality, cap, finalV9Budget);
+        const auto pairs = refinePulseLookahead(selected, selection.quality, cap, finalV9Budget);
         report.localEvaluations = pairs.localEvaluations;
         report.fullEvaluations = pairs.fullEvaluations;
         add(pairs.selected); add(pairs.raw);
