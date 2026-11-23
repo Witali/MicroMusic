@@ -2,6 +2,7 @@
 #include "LpxLpcRefine.cpp"
 #include "LpxAdaptiveController.h"
 #include <cstdio>
+#include <limits>
 
 static lpx::Stream fixture(int n,int profile,int rate) {
     lpx::Stream s;s.samples=n;s.profile=profile;s.rate=rate;s.pre=8192;s.bright=4096;
@@ -12,6 +13,59 @@ static lpx::Stream fixture(int n,int profile,int rate) {
     s.pulses.assign(frames*16,lpx::Pulse{{0,-8}});
     s.extras.assign(frames*8,lpx::Pulse{{-1,0}});s.extras[0]=lpx::Pulse{{7,2}};
     return s;
+}
+static int compositionContracts() {
+    int cases=0;
+    for(int profile:{4,6})for(int rate:{8000,12000,16000})for(bool finalBudget:{false,true}) {
+        const auto anchor=fixture(1920,profile,rate);const auto before=lpx::packV9(anchor);
+        auto edit=[&](int first,int delta,bool pulse) {
+            auto result=anchor;int last=first+1;while(last<int(anchor.spectra.size())&&anchor.spectra[last]==anchor.spectra[first])++last;
+            for(int f=first;f<last;++f)result.spectra[f][5]+=delta;
+            if(pulse)result.pulses[first*16]=lpx::Pulse{{5,profile==4?8:7}};
+            return result;
+        };
+        std::vector<lpx::Stream> singles{edit(0,1,false),edit(0,-1,true),edit(2,1,true),edit(4,-1,true)};
+        const std::vector<double> scores{.9,.8,.7,.75};
+        const int cost=finalBudget?int(before.size()):lpx::compactBytes(anchor),cap=cost+64;
+        const auto result=lpx::composeLpcRuns(anchor,singles,scores,cap,finalBudget);
+        if(result.size()!=2||lpx::packV9(anchor)!=before)return -1;
+        // All uses the best of the overlapping alternatives, never both.
+        for(int f=0;f<2;++f)if(result[0].spectra[f]!=singles[1].spectra[f])return -2;
+        if(result[0].pulses[0]!=singles[1].pulses[0])return -3;
+        // Top-two uses runs at frames 2 and 4; run zero remains the anchor.
+        if(result[1].spectra[0]!=anchor.spectra[0]||result[1].pulses[0]!=anchor.pulses[0])return -4;
+        for(const auto& bundle:result) {
+            if(bundle.parameters!=anchor.parameters||bundle.extras!=anchor.extras||bundle.pre!=anchor.pre
+                ||bundle.bright!=anchor.bright||bundle.rate!=rate||bundle.profile!=profile||bundle.samples!=anchor.samples)return -5;
+            if(!lpx::verifyStream(bundle,lpx::render(bundle)))return -6;
+        }
+        std::vector<double> ties{.8,.8,.7,.75};const auto tied=lpx::composeLpcRuns(anchor,singles,ties,cap,finalBudget);
+        auto reversed=singles;std::reverse(reversed.begin(),reversed.end());std::reverse(ties.begin(),ties.end());
+        const auto again=lpx::composeLpcRuns(anchor,reversed,ties,cap,finalBudget);
+        if(tied.size()!=2||again.size()!=2)return -7;
+        for(int i=0;i<2;++i)if(lpx::packV9(tied[i])!=lpx::packV9(again[i]))return -8;
+        const auto a=lpx::packV9(singles[0]),b=lpx::packV9(singles[1]);
+        const auto& preferred=a.size()<b.size()||(a.size()==b.size()&&a<b)?singles[0]:singles[1];
+        if(tied[0].spectra[0]!=preferred.spectra[0]||tied[0].pulses[0]!=preferred.pulses[0])return -9;
+        // Malformed alternatives must not reach serialization or rendering.
+        auto malformed=singles;auto eligible=scores;
+        auto bad=singles[0];bad.parameters.clear();malformed.push_back(bad);
+        bad=singles[0];++bad.pre;malformed.push_back(bad);
+        bad=anchor;++bad.spectra[1][5];malformed.push_back(bad);
+        bad=singles[0];bad.pulses[8]=lpx::Pulse{{1,profile==4?8:7}};malformed.push_back(bad);
+        eligible.resize(8,.1);const auto filtered=lpx::composeLpcRuns(anchor,malformed,eligible,cap,finalBudget);
+        if(filtered.size()!=result.size())return -10;
+        for(size_t i=0;i<result.size();++i)if(lpx::packV9(filtered[i])!=lpx::packV9(result[i]))return -11;
+        for(int tight=cost;tight<=cap;++tight)for(const auto& bundle:lpx::composeLpcRuns(anchor,singles,scores,tight,finalBudget))
+            if((finalBudget?int(lpx::packV9(bundle).size()):lpx::compactBytes(bundle))>tight)return -12;
+        if(!lpx::composeLpcRuns(anchor,singles,scores,cost-1,finalBudget).empty())return -13;
+        if(!lpx::composeLpcRuns(anchor,{}, {},cap,finalBudget).empty())return -14;
+        if(!lpx::composeLpcRuns(anchor,{singles[0]},{.8},cap,finalBudget).empty())return -15;
+        if(!lpx::composeLpcRuns(anchor,singles,std::vector<double>(4,std::numeric_limits<double>::infinity()),cap,finalBudget).empty())return -16;
+        if(!lpx::composeLpcRuns(anchor,singles,{.8},cap,finalBudget).empty())return -17;
+        ++cases;
+    }
+    return cases;
 }
 int main() {
     int cases=0,proposals=0,slices=0;
@@ -69,5 +123,6 @@ int main() {
         }
     }
     if(!proposals)return 15;
-    std::printf("PASS: %d LPC-run cap/profile/rate/tail/Long cases, %d exact coefficient/prefix slices, %d legal unguarded proposals.\n",cases,slices,proposals);
+    const int composed=compositionContracts();if(composed!=12)return 20-composed;
+    std::printf("PASS: %d LPC-run cases, %d exact coefficient/prefix slices, %d legal proposals, %d composition contract matrices.\n",cases,slices,proposals,composed);
 }

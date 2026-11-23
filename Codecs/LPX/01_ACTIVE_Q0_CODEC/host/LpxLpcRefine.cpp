@@ -3,6 +3,7 @@
 #include "LpxLpcRefine.h"
 #include "LpxFullBand.h"
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <tuple>
 #include <utility>
@@ -113,6 +114,72 @@ LpcRunProposals proposeLpcRuns(const Stream& input,const Pcm& reference,int cap,
             for(const auto& previous:result.proposals)duplicate|=sameBytes(previous,*candidate);
             if(!duplicate)result.proposals.push_back(*candidate);
         }
+    }
+    return result;
+}
+std::vector<Stream> composeLpcRuns(const Stream& anchor,const std::vector<Stream>& singles,
+    const std::vector<double>& safeScores,int cap,bool finalV9Budget) {
+    std::vector<Stream> result;
+    if(anchor.samples<1||(anchor.profile!=4&&anchor.profile!=6)
+        ||(anchor.rate!=8000&&anchor.rate!=12000&&anchor.rate!=16000)
+        ||singles.size()!=safeScores.size()||singles.size()>maxRuns*2)return result;
+    const int frames=(anchor.samples+319)/320;
+    if(anchor.spectra.size()!=size_t(frames)||anchor.parameters.size()!=size_t(frames*2)
+        ||anchor.pulses.size()!=size_t(frames*16)||anchor.extras.size()!=size_t(frames*8))return result;
+    for(const auto& spectrum:anchor.spectra)if(!legalSpectrum(spectrum,anchor.profile))return result;
+    const auto bytes=[&](const Stream& stream) {return finalV9Budget?int(packV9(stream).size()):compactBytes(stream);};
+    if(bytes(anchor)>cap)return result;
+    struct Edit {int first,last,index;double score;std::vector<uint8_t> packed;};
+    std::vector<Edit> edits;
+    std::vector<std::vector<uint8_t>> singleBytes;
+    for(int index=0;index<int(singles.size());++index) {
+        if(!std::isfinite(safeScores[index])||safeScores[index]<0)continue;
+        const auto& single=singles[index];
+        if(single.samples!=anchor.samples||single.rate!=anchor.rate||single.profile!=anchor.profile
+            ||single.pre!=anchor.pre||single.bright!=anchor.bright||single.parameters!=anchor.parameters
+            ||single.extras!=anchor.extras||single.spectra.size()!=anchor.spectra.size()
+            ||single.pulses.size()!=anchor.pulses.size())continue;
+        int first=0;while(first<frames&&single.spectra[first]==anchor.spectra[first])++first;
+        if(first==frames||(first&&anchor.spectra[first]==anchor.spectra[first-1]))continue;
+        int last=first+1;while(last<frames&&anchor.spectra[last]==anchor.spectra[first])++last;
+        if(!legalSpectrum(single.spectra[first],anchor.profile))continue;
+        int fields=0;for(int k=0;k<10;++k)if(single.spectra[first][k]!=anchor.spectra[first][k])
+            fields+=std::abs(single.spectra[first][k]-anchor.spectra[first][k])==1?1:100;
+        if(fields!=1)continue;
+        bool valid=true;
+        for(int f=0;f<frames;++f)
+            valid&=single.spectra[f]==(f>=first&&f<last?single.spectra[first]:anchor.spectra[f]);
+        for(int p=0;p<int(single.pulses.size());++p)if(single.pulses[p]!=anchor.pulses[p]) {
+            const auto& pulse=single.pulses[p];
+            valid&=p>=first*16&&p<first*16+8&&p*20<anchor.samples&&pulse[0]>=0&&pulse[0]<20
+                &&pulse[1]>=-8&&pulse[1]<=(anchor.profile==4?8:7);
+            if(anchor.profile==4)valid&=pulse[0]%5!=2&&(pulse[1]==-8||pulse[1]==8);
+        }
+        if(!valid||bytes(single)>cap)continue;
+        Edit edit{first,last,index,safeScores[index],packV9(single)};
+        singleBytes.push_back(edit.packed);
+        auto old=std::find_if(edits.begin(),edits.end(),[&](const Edit& item){return item.first==first;});
+        if(old==edits.end())edits.push_back(std::move(edit));
+        else if(edit.score<old->score||(edit.score==old->score
+            &&(edit.packed.size()<old->packed.size()||(edit.packed.size()==old->packed.size()&&edit.packed<old->packed))))*old=std::move(edit);
+    }
+    std::sort(edits.begin(),edits.end(),[](const Edit& a,const Edit& b) {return a.score!=b.score?a.score<b.score:a.first<b.first;});
+    std::vector<int> counts;
+    for(int count:{int(edits.size()),std::min(2,int(edits.size()))})
+        if(count>1&&std::find(counts.begin(),counts.end(),count)==counts.end())counts.push_back(count);
+    for(int count:counts) {
+        Stream bundle=anchor;bool overlap=false;
+        for(int i=0;i<count;++i) {
+            const auto& edit=edits[i];const auto& single=singles[edit.index];
+            for(int j=0;j<i;++j)overlap|=edit.first<edits[j].last&&edits[j].first<edit.last;
+            std::copy(single.spectra.begin()+edit.first,single.spectra.begin()+edit.last,bundle.spectra.begin()+edit.first);
+            std::copy(single.pulses.begin()+edit.first*16,single.pulses.begin()+edit.first*16+8,bundle.pulses.begin()+edit.first*16);
+        }
+        if(overlap||bytes(bundle)>cap)continue;
+        const auto packed=packV9(bundle);bool duplicate=packed==packV9(anchor);
+        for(const auto& single:singleBytes)duplicate|=packed==single;
+        for(const auto& previous:result)duplicate|=sameBytes(bundle,previous);
+        if(!duplicate)result.push_back(std::move(bundle));
     }
     return result;
 }

@@ -13,4 +13,9 @@ struct LpcRunProposals {
 // At most four runs and eight raw/joint proposals; no decoder/header extension.
 LpcRunProposals proposeLpcRuns(const Stream& incumbent, const Pcm& reference,
                              int cap, bool finalV9Budget = false);
+// The caller supplies complete safe, improving objective scores; nonfinite
+// entries are ineligible. This helper only combines existing edits, never
+// renders, scores or admits them. Keep every original single proposal too.
+std::vector<Stream> composeLpcRuns(const Stream& anchor, const std::vector<Stream>& singles,
+    const std::vector<double>& safeScores, int cap, bool finalV9Budget = false);
 }
