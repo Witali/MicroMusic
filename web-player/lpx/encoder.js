@@ -1,5 +1,5 @@
-import { MAX_SAMPLES } from './codec.js?v=20261123-precision-input-v1';
-import { createStreamSession } from './streaming.js?v=20261123-precision-input-v1';
+import { MAX_SAMPLES } from './codec.js?v=20261123-precision-input-v2';
+import { createStreamSession } from './streaming.js?v=20261123-precision-input-v2';
 
 export async function createEncoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);

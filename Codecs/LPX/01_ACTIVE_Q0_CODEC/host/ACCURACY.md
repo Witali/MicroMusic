@@ -32,9 +32,12 @@ The common controller generates LPC, pitch, gain and excitation proposals.
 P8 also tests legal positions/amplitudes around the largest local reconstruction
 residual over a 160-sample horizon. Proposals are ordered by reconstructed SSE
 reduction per added symbol bit, not coefficient magnitude. A new sparse symbol
-costs ten payload bits; replacing a present symbol adds none. The initial packed
-size already includes its global flag, presence bits, spectrum/repeats, header
-and padding. Padding is conservatively reserved during local allocation; final
+costs ten payload bits; replacing a present symbol adds none. The first active
+correction also enables a presence bit for every actual 40-sample group.
+Exact packing measures that first activation, including header flags, presence
+bits, spectrum/repeats and padding. A zero-amplitude symbol is inactive even
+when its position is nonnegative. Padding is conservatively reserved after
+activation during local allocation; final
 selection counts exact complete packed bytes. The greedy proposal pass is not
 a proof of a globally optimal coefficient subset.
 

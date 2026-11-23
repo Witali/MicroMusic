@@ -8,6 +8,13 @@ import{encodeStreaming}from'../lpx/streaming.js';
 const read=async url=>readFileSync(url),load=async name=>createEncoder(readFileSync(new URL(`../lpx/encoder-adaptive${name}.wasm`,import.meta.url)));
 const scalar=await load(''),simd=await load('-simd'),decoderBinary=readFileSync(new URL('../lpx/decoder.wasm',import.meta.url));
 const decode=await createDecoder(decoderBinary),tone=n=>Int16Array.from({length:n},(_,i)=>Math.round(2000*Math.sin(i*.15)+500*Math.sin(i*.31)));
+test('first correction charges all presence flags and retains a useful tight-budget subset',
+ {skip:!process.env.LPX_ACCURACY_ALLOCATION_SCALAR||!process.env.LPX_ACCURACY_ALLOCATION_SIMD},async()=>{
+ for(const file of[process.env.LPX_ACCURACY_ALLOCATION_SCALAR,process.env.LPX_ACCURACY_ALLOCATION_SIMD]){
+  const{instance}=await WebAssembly.instantiate(readFileSync(file));instance.exports.__wasm_call_ctors();
+  for(let i=0;i<3;i++)assert.equal(instance.exports.accuracy_allocation_selftest(),0);
+ }
+});
 test('one accuracy engine accepts four levels at all rates and never treats P3/P8 as hard caps',()=>{
   const pcm=tone(641);
   for(const rate of[8000,12000,16000])for(const level of[3,4,6,8]){

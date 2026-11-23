@@ -16,7 +16,7 @@ int accuracyBudget(int samples,int level,int originalBytes){
     auto p=accuracyPolicy(level);if(!p.level||samples<1)return 0;
     return std::max(originalBytes,(samples>64000?17:13)+int((int64_t((samples+319)/320)*p.detailBitsPerFrame+7)/8));
 }
-static Stream correctionLayer(const Stream& input,const Pcm& reference,int budget){
+Stream refineAccuracyCorrections(const Stream& input,const Pcm& reference,int budget){
     Stream work=input;auto co=coefficientTrace(work);auto state=work.initial;
     struct Proposal{int index,bits;uint64_t gain;Pulse value;};std::vector<Proposal> proposals;
     for(int at=0;at<work.samples;at+=40){
@@ -27,7 +27,7 @@ static Stream correctionLayer(const Stream& input,const Pcm& reference,int budge
             work.extras[index]=Pulse{{pos,amp}};auto trialState=state;auto pcm=advance(work,co,at,stop,trialState);uint64_t loss=sse(reference,pcm,at);
             if(loss<best){best=loss;chosen=work.extras[index];}
         }
-        if(chosen!=input.extras[index])proposals.push_back({index,input.extras[index][0]<0?10:0,sse(reference,baseline,at)-best,chosen});
+        if(chosen!=input.extras[index])proposals.push_back({index,input.extras[index][1]==0?10:0,sse(reference,baseline,at)-best,chosen});
         work.extras[index]=input.extras[index];advance(work,co,at,std::min(work.samples,at+40),state);
     }
     // Rank reconstructed benefit per extra symbol bit, never magnitude.
@@ -35,10 +35,19 @@ static Stream correctionLayer(const Stream& input,const Pcm& reference,int budge
         if(!a.bits||!b.bits)return a.bits==b.bits?a.gain>b.gain:a.bits<b.bits;
         return a.gain*uint64_t(b.bits)>b.gain*uint64_t(a.bits);
     });
-    // Header, spectrum/repeats and presence flags are already in these bytes.
-    // Padding is conservatively counted; a newly present extra costs ten bits.
+    // The first active extra enables a presence bit for every actual group.
+    // Exact-pack that first activation; subsequent new symbols cost ten bits.
+    // Existing padding is conservatively reserved, never borrowed twice.
     int64_t bits=int64_t(packV9(work).size())*8;
-    for(const auto& proposal:proposals)if((bits+proposal.bits+7)/8<=budget){work.extras[proposal.index]=proposal.value;bits+=proposal.bits;}
+    bool enhanced=std::any_of(work.extras.begin(),work.extras.end(),[](const Pulse&p){return p[1]!=0;});
+    for(const auto& proposal:proposals){
+        if(!enhanced){
+            const auto previous=work.extras[proposal.index];work.extras[proposal.index]=proposal.value;
+            const int bytes=packV9(work).size();
+            if(bytes>budget){work.extras[proposal.index]=previous;break;}
+            bits=int64_t(bytes)*8;enhanced=true;
+        }else if((bits+proposal.bits+7)/8<=budget){work.extras[proposal.index]=proposal.value;bits+=proposal.bits;}
+    }
     if(int(packV9(work).size())>budget)return input;
     return work;
 }
@@ -55,7 +64,7 @@ Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& re
     control=canonicalAccuracy(control);
     const auto originalControl=control;
     const int budget=accuracyBudget(reference.size(),level,packV9(control).size());
-    if(policy.corrections){auto corrected=correctionLayer(control,reference,budget);
+    if(policy.corrections){auto corrected=refineAccuracyCorrections(control,reference,budget);
         if(profileQualityAdmission(reference,render(control),render(corrected),rate,true,true))control=std::move(corrected);}
     if(!calls)return control;
     // Internal controller accounting is v5; independently enforce final V9
