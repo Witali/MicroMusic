@@ -70,6 +70,7 @@ function converterPage() {
     const options = [...match[2].matchAll(/<option value="([^"]+)"/g)].map(option => option[1]);
     elements.get(match[1]).value = options[0]; elements.get(match[1]).options = options;
   }
+  for (const match of html.matchAll(/<input[^>]+id="([^"]+)"[^>]*value="([^"]+)"[^>]*>/g)) elements.get(match[1]).value = match[2];
   const context = {
     MAX_SAMPLES: 32000000, supportsSimd: () => true, URL, Int16Array, Number, Math,
     document: { getElementById: id => {
@@ -107,14 +108,16 @@ test('converter pins bitrate settings through work/cancel and restores ordinary 
     assert.equal(element('bitrate-note').hidden, false);
   }
   element('source-file').files = [{ name: 'synthetic.wav', size: 10, arrayBuffer: async () => new ArrayBuffer(0) }];
-  element('encode-level').value = 'loudness';
+  element('encode-level').checked = true;
   element('source-file').onchange();
   await element('convert').onclick();
   assert.deepEqual(rates, [8000]);
   assert.equal(workers[0].message.profile, 8);
   assert.equal(workers[0].message.sampleRate, 8000);
   assert.equal(workers[0].message.sizeAllowancePercent, 0);
-  assert.equal(workers[0].message.normalization, 'loudness');
+  assert.equal(workers[0].message.normalization, 'file');
+  assert.equal(workers[0].message.targetLufs, -18);
+  assert.equal(workers[0].message.maxGainDb, 12);
   assert.equal(element('encode-level').disabled, true);
   element('cancel-convert').onclick();
   assert.equal(workers[0].terminated, true);

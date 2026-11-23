@@ -39,6 +39,7 @@ node web-player/scripts/encode-lpx-native.mjs input.wav new-output-cuda.lpx --qu
 node web-player/scripts/encode-lpx-native.mjs input.wav new-output-larger.lpx --size-allowance 25
 node web-player/scripts/encode-lpx-native.mjs reference.pcm new-reference-output.lpx --pcm --search reference
 node web-player/scripts/encode-lpx-native.mjs reference.pcm new-output.lpx --pcm --rate 8000 --profile 6 --repeat 5
+node web-player/scripts/encode-lpx-native.mjs input.wav normalized.lpx --normalize --target-lufs -18 --max-gain-db 12
 ```
 
 The Node wrapper uses FFmpeg/FFprobe for audio-file input. It explicitly averages
@@ -49,6 +50,15 @@ with `--pcm`, rather than attributing input-conversion differences to encoding.
 The wrapper accepts Unicode filenames, refuses to overwrite an existing output,
 and writes only after successful complete-stream verification. Cancellation or
 encoding failure leaves no successful output file.
+
+`--normalize` measures the completed decoded file and stores one constant output
+coefficient in the optional [V9 gain extension](../LPX9_GAIN_FORMAT.md). It does
+not change the input or refit the coded payload. `--target-lufs -30..-9` and
+`--max-gain-db 0..24` default to -18 and 12; decoded sample peaks cap gain at
+-1 dBFS. The target can remain unreachable. The updated decoder honors the word
+in Web playback, WAV export and MCU output; older readers reject marked files.
+Omit `--normalize` for unchanged level. It cannot be combined with pre-encoding
+`--auto-quiet`. No reaction-time setting applies to a whole-file coefficient.
 
 `--quality adaptive` uses the same expanded search as the Web UI by default:
 four adaptive refinement calls followed by the bounded pitch/gain extension.

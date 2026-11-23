@@ -1,4 +1,4 @@
-import { encodeWav, MAX_FILE_BYTES } from './codec.js';
+import { encodeWav, MAX_FILE_BYTES } from './codec.js?v=20261123-file-gain';
 
 const $ = id => document.getElementById(id);
 const audio = $('audio');
@@ -12,7 +12,7 @@ let worker, loadId = 0, clip = null, wavUrl = null, lastVolume = 0.75;
 audio.volume = 0.75;
 function message(text, error = false) { $('message').textContent = text; $('message').classList.toggle('error', error); }
 try {
-  worker = new Worker(new URL('./decode-worker.js', import.meta.url), { type: 'module' });
+  worker = new Worker(new URL('./decode-worker.js?v=20261123-file-gain', import.meta.url), { type: 'module' });
   worker.onmessage = ({ data }) => {
     if (data.id !== loadId) return;
     $('open').textContent = 'Открыть файл';
@@ -72,6 +72,7 @@ function install(result) {
   const profile = clip.profile === 15 ? 'Sparse80' : `P${clip.profile}`;
   $('profile-badge').textContent = profile;
   $('file-summary').textContent = `${clip.format} · ${number(clip.sampleRate / 1000)} кГц · ${number(clip.bytes / 1024)} КБ`;
+  if (clip.hasGain) $('file-summary').textContent += ` · усиление из файла ${clip.gainDb >= 0 ? '+' : ''}${number(clip.gainDb, 1)} дБ`;
   $('info-profile').textContent = profile + (clip.extraPulses ? ' + extra' : '');
   $('info-rate').textContent = `${number(clip.sampleRate / 1000)} кГц`;
   $('info-duration').textContent = `${number(clip.duration, 3)} с`;

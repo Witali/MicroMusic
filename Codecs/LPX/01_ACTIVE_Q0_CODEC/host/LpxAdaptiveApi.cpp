@@ -38,12 +38,12 @@ int enc_adaptive_extended(int samples,int profile,int rate,int autoQuiet,int max
     return encodeAdaptive(samples,profile,rate,autoQuiet,maxBytes,calls,true,allowancePercent);
 }
 // Bitrates are encoder budgets. The wire profile remains existing V9 P4/P6.
-static int encodeBitrate(int samples,int kbps,int rate,int autoQuiet,int calls,bool normalize) {
+static int encodeBitrate(int samples,int kbps,int rate,int autoQuiet,int calls,bool normalize,int reserveBytes=0) {
     qualityOutput.clear();qualityReport=lpx::AdaptiveReport{};
     if(samples<1 || uint32_t(samples)>lpxSeedCapacity() || uint32_t(samples)>kLpxMaxSamples
         || (kbps!=3 && kbps!=8) || rate!=8000 || (autoQuiet!=0 && autoQuiet!=1)
         || calls<0 || calls>4)return -1;
-    const int cap=int(int64_t(samples)*kbps*1000/(8*rate));
+    const int cap=int(int64_t(samples)*kbps*1000/(8*rate))-reserveBytes;
     const int header=samples>64000?17:13;
     if(cap<header)return -6;
     lpx::Pcm reference(enc_input(),enc_input()+samples);
@@ -77,12 +77,29 @@ int enc_bitrate(int samples,int kbps,int rate,int autoQuiet,int calls) {
 int enc_bitrate_loudness(int samples,int kbps,int rate,int calls) {
     return encodeBitrate(samples,kbps,rate,0,calls,true);
 }
+int enc_adaptive_file_gain(int samples,int profile,int rate,int maxBytes,int calls,int allowancePercent,int expanded,int targetLufs,int maxGainDb) {
+    if(targetLufs<-30 || targetLufs>-9 || maxGainDb<0 || maxGainDb>24 || (expanded!=0 && expanded!=1))return -1;
+    int size=encodeAdaptive(samples,profile,rate,0,maxBytes,calls,expanded!=0,allowancePercent);
+    if(size<0)return size;
+    if(!lpx::normalizeFileGain(qualityOutput,targetLufs,maxGainDb,qualityReport.loudness))return -3;
+    return qualityOutput.size();
+}
+int enc_bitrate_file_gain(int samples,int kbps,int rate,int calls,int targetLufs,int maxGainDb) {
+    if(targetLufs<-30 || targetLufs>-9 || maxGainDb<0 || maxGainDb>24)return -1;
+    int size=encodeBitrate(samples,kbps,rate,0,calls,false,2);
+    if(size<0)return size;
+    if(!lpx::normalizeFileGain(qualityOutput,targetLufs,maxGainDb,qualityReport.loudness))return -3;
+    if(qualityOutput.size()>size_t(int64_t(samples)*kbps*1000/(8*rate)))return -6;
+    return qualityOutput.size();
+}
 uint8_t* enc_adaptive_output() { return qualityOutput.data(); }
 int enc_adaptive_candidates() { return qualityReport.candidates; }
 int enc_adaptive_stages() { return qualityReport.stages; }
 int enc_adaptive_gain() { return qualityReport.gainExponent; }
 int enc_loudness_status() { return qualityReport.loudness.status; }
 int enc_loudness_limited() { return qualityReport.loudness.limited; }
+int enc_loudness_gain_limited() { return qualityReport.loudness.gainLimited; }
+int enc_loudness_gain_q12() { return qualityReport.loudness.gainQ12; }
 double enc_loudness_input() { return qualityReport.loudness.input; }
 double enc_loudness_prepared() { return qualityReport.loudness.prepared; }
 double enc_loudness_decoded() { return qualityReport.loudness.decoded; }

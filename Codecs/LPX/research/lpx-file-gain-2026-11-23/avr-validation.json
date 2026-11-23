@@ -1,0 +1,80 @@
+{
+  "schema": "lpx-file-gain-avr-validation-v1",
+  "physical_board_measured": false,
+  "compiler": "AVR-GCC 7.3.0",
+  "simulator": "simavr 1.6",
+  "cpu_hz": 16000000,
+  "sample_rate": 8000,
+  "sources_lf_sha256": {
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "d7324bc06b9776b91fe4a2e2a937e8c07f02a1a00dfd0ad1d7b63002601ab583",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "c8d3688a9b93ff8e0dbdd1da17f4625dfa368e9f33f5e67a2126bb25a5b14943",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4FileGain.h": "a0c39dd21e14961545a8357a88e343380c826a8a3ec67cd49d4951f9b8f06820",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/build_attiny88_player.py": "18033013940607adaf7060536dc0a7bd6c4c5b73017fa17586d6e922e8655ebc"
+  },
+  "cases": [
+    {
+      "accepted": true,
+      "pwm_exact": true,
+      "samples": 19200,
+      "underruns": 0,
+      "flash_bytes": 4748,
+      "static_ram_bytes": 420,
+      "stack_bytes": 28,
+      "stack_margin": 64,
+      "output_gap_min": 1998,
+      "output_gap_max": 2002,
+      "irq_entry_cycles": 4,
+      "irq_reti_complete": true,
+      "target": "attiny88",
+      "preset": 3
+    },
+    {
+      "accepted": true,
+      "pwm_exact": true,
+      "samples": 19200,
+      "underruns": 0,
+      "flash_bytes": 5864,
+      "static_ram_bytes": 420,
+      "stack_bytes": 28,
+      "stack_margin": 64,
+      "output_gap_min": 1997,
+      "output_gap_max": 2003,
+      "irq_entry_cycles": 4,
+      "irq_reti_complete": true,
+      "target": "attiny88",
+      "preset": 8
+    },
+    {
+      "accepted": true,
+      "pwm_exact": true,
+      "samples": 19200,
+      "underruns": 0,
+      "flash_bytes": 4094,
+      "static_ram_bytes": 419,
+      "stack_bytes": 24,
+      "stack_margin": 1605,
+      "output_gap_min": 1999,
+      "output_gap_max": 2001,
+      "irq_entry_cycles": 4,
+      "irq_reti_complete": true,
+      "target": "atmega328p",
+      "preset": 3
+    },
+    {
+      "accepted": true,
+      "pwm_exact": true,
+      "samples": 19200,
+      "underruns": 0,
+      "flash_bytes": 5210,
+      "static_ram_bytes": 419,
+      "stack_bytes": 24,
+      "stack_margin": 1605,
+      "output_gap_min": 1997,
+      "output_gap_max": 2003,
+      "irq_entry_cycles": 4,
+      "irq_reti_complete": true,
+      "target": "atmega328p",
+      "preset": 8
+    }
+  ]
+}

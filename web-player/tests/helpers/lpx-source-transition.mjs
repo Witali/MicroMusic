@@ -523,5 +523,22 @@ export function assertLpxRecordedSource(path,expected,encoding='text-lf'){
       recorded=change.current[field];
     }
   }
+  if(recorded!==actual){
+    // The gain extension changes linked default code. Keep old timing claims
+    // bound to archived source; the four new gain-enabled IRQ cases stand alone.
+    const directory='Codecs/LPX/research/lpx-file-gain-2026-11-23/';
+    const report=JSON.parse(read(directory+'source-transition.json')),change=report.sources[path];
+    if(change?.baseline?.[field]===recorded){
+      assert.equal(report.schema,'lpx-file-gain-source-transition-v1');
+      assert.equal(report.historical_timing_applies_to_new_decoder,false);
+      const archived=readRecordedBuildFile(report.baseline_revision,path);
+      assert.equal(sha(encoding==='raw'?archived:archived.toString('utf8').replaceAll('\r\n','\n')),recorded);
+      const evidence=read(directory+'avr-validation.json');
+      assert.equal(sha(evidence.toString('utf8').replaceAll('\r\n','\n')),report.measurements_sha256);
+      const measured=JSON.parse(evidence);assert.equal(measured.cases.length,4);
+      assert.ok(measured.cases.every(r=>r.accepted&&r.pwm_exact&&r.underruns===0&&r.samples===19200));
+      recorded=change.current[field];
+    }
+  }
   assert.equal(recorded,actual,path+' current source');
 }

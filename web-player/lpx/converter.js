@@ -1,5 +1,5 @@
-import { MAX_SAMPLES } from './codec.js';
-import { supportsSimd } from './encoder-backend.js?v=20261123-loudness';
+import { MAX_SAMPLES } from './codec.js?v=20261123-file-gain';
+import { supportsSimd } from './encoder-backend.js?v=20261123-file-gain';
 
 const $ = id => document.getElementById(id);
 if (!supportsSimd()) {
@@ -28,6 +28,17 @@ function applyProfileConstraints() {
 }
 $('encode-profile').onchange = applyProfileConstraints;
 applyProfileConstraints();
+function applyLevelSettings() {
+  const enabled = $('encode-level').checked;
+  $('encode-target').disabled = running || !enabled;
+  $('encode-max-gain').disabled = running || !enabled;
+  $('target-value').value = `${$('encode-target').value} LUFS`;
+  $('max-gain-value').value = `+${$('encode-max-gain').value} дБ`;
+}
+$('encode-level').onchange = applyLevelSettings;
+$('encode-target').oninput = applyLevelSettings;
+$('encode-max-gain').oninput = applyLevelSettings;
+applyLevelSettings();
 const status = (text, error = false) => { $('convert-status').textContent = text; $('convert-status').classList.toggle('error', error); };
 const baseName = name => name.replace(/\.[^.]+$/, '').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_').slice(0, 120) || 'audio';
 function select(file) {
@@ -52,6 +63,7 @@ function busy(value) {
   running = value;
   ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-allowance', 'encode-level', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
   applyProfileConstraints();
+  applyLevelSettings();
   $('cancel-convert').hidden = !value;
 }
 function stop() { if (worker) worker.terminate(); worker = null; busy(false); }
@@ -73,8 +85,11 @@ function appendResult(result) {
     const note = document.createElement('small'), level = result.loudness;
     const number = value => value.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
     if (level.status === 1) {
-      note.textContent = `Громкость до сжатия: ${number(level.input)} → ${number(level.prepared)} LUFS · усиление ${level.gainDb >= 0 ? '+' : ''}${number(level.gainDb)} дБ${level.limited ? ' · ограничено пиками' : ''}`;
-      if (Number.isFinite(level.decoded)) note.textContent += ` · после LPX: ${number(level.decoded)} LUFS`;
+      if (level.fileGain) note.textContent = `Громкость LPX: ${number(level.input)} → ${number(level.decoded)} LUFS · общий коэффициент ×${number(level.gainQ12 / 4096)} (${level.gainDb >= 0 ? '+' : ''}${number(level.gainDb)} дБ)${level.limited ? ' · ограничено пиками' : level.gainLimited ? ' · достигнут предел усиления' : ''}`;
+      else {
+        note.textContent = `Громкость до сжатия: ${number(level.input)} → ${number(level.prepared)} LUFS · усиление ${level.gainDb >= 0 ? '+' : ''}${number(level.gainDb)} дБ${level.limited ? ' · ограничено пиками' : ''}`;
+        if (Number.isFinite(level.decoded)) note.textContent += ` · после LPX: ${number(level.decoded)} LUFS`;
+      }
     } else note.textContent = level.status === 2 ? 'Громкость сохранена: запись короче 0,4 с.' : 'Громкость сохранена: тишина или уровень ниже порога измерения.';
     description.append(note);
   }
@@ -92,7 +107,8 @@ $('convert').onclick = async () => {
   if (!source || running) return;
   const id = ++job, rate = Number($('encode-rate').value), profile = Number($('encode-profile').value), backend = $('encode-backend').value;
   const sizeAllowancePercent = Number($('encode-allowance').value);
-  const normalization = $('encode-level').value;
+  const normalization = $('encode-level').checked ? 'file' : 'preserve';
+  const targetLufs = Number($('encode-target').value), maxGainDb = Number($('encode-max-gain').value);
   output = { stem: baseName(source.name), rate, profile };
   urls.forEach(url => URL.revokeObjectURL(url)); urls = [];
   $('convert-results').replaceChildren(); $('convert-progress').value = 0;
@@ -116,7 +132,7 @@ $('convert').onclick = async () => {
       pcm[i] = Math.min(32767, Math.max(-32768, value));
     }
     $('source-summary').textContent = `${audio.duration.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} с · ${channels.length} кан. → моно · ${rate / 1000} кГц${clipped ? ` · насыщение ${clipped} отсч.` : ''}`;
-    worker = new Worker(new URL('./encode-worker.js?v=20261123-loudness', import.meta.url), { type: 'module' });
+    worker = new Worker(new URL('./encode-worker.js?v=20261123-file-gain', import.meta.url), { type: 'module' });
     worker.onerror = event => { event.preventDefault(); if (id === job) { stop(); status('Не удалось запустить энкодер. Обновите страницу и повторите.', true); } };
     worker.onmessage = ({ data }) => {
       if (id !== job) return;
@@ -135,6 +151,6 @@ $('convert').onclick = async () => {
         status(`Готово: один файл · ${(data.result.bytes.length / 1024).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} КБ · ${name} · кодирование ${elapsed} с.`);
       }
     };
-    worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile, backend, sizeAllowancePercent, normalization }, [pcm.buffer]);
+    worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile, backend, sizeAllowancePercent, normalization, targetLufs, maxGainDb }, [pcm.buffer]);
   } catch (error) { if (id === job) { stop(); status(error.message || 'Не удалось конвертировать аудио.', true); } }
 };

@@ -107,6 +107,17 @@ typedef int16_t Lpx4SynthesisValue;
 #if LPX4_COMPACT_VERSION == 9 && !LPX4_COMPACT_ONLY
 #error Version9 requires compact-only decoding
 #endif
+// Optional V9 bit5 header extension: one whole-file output gain in Q4.12.
+// Select zero to retain the legacy reader/layout and reject gain-tagged files.
+#ifndef LPX4_ENABLE_FILE_GAIN
+#define LPX4_ENABLE_FILE_GAIN (LPX4_COMPACT_VERSION == 9)
+#endif
+#if LPX4_ENABLE_FILE_GAIN != 0 && LPX4_ENABLE_FILE_GAIN != 1
+#error LPX4_ENABLE_FILE_GAIN must be 0 or 1
+#endif
+#if LPX4_ENABLE_FILE_GAIN && LPX4_COMPACT_VERSION != 9
+#error File gain requires the V9 reader
+#endif
 // Host-only V9 Long header: bit6 selects uint32 sample/payload lengths.
 // Explicit opt-in; ordinary V9/AVR layouts and the bounded begin API stay intact.
 #ifndef LPX4_ENABLE_WIDE_V9
@@ -338,6 +349,13 @@ public:
 #endif
     }
     uint16_t sampleRate() const {return sampleRate_;}
+    uint16_t fileGainQ12() const {
+#if LPX4_ENABLE_FILE_GAIN
+        return fileGainQ12_;
+#else
+        return 4096;
+#endif
+    }
 #ifdef LPX3_Q_DIAG
     int8_t debugLastQ() const {return lastQ_;}
 #endif
@@ -347,6 +365,8 @@ public:
     uint32_t romByteCalls() const {return romByteCalls_;}
 #endif
 private:
+    // Stored after the hot fields/arrays to preserve existing ASM offsets.
+    // Declaration is at the class tail below.
     // The ROM player owns a static instance whose storage is zeroed by
     // startup. Keep automatic instances on the normal constructor.
     friend struct Lpx4RomPlayer;
@@ -524,6 +544,9 @@ private:
     // and arithmetic backend selection are unchanged.
     ReadByte inputReader_;
     void* inputContext_;
+#endif
+#if LPX4_ENABLE_FILE_GAIN
+    uint16_t fileGainQ12_;
 #endif
 };
 

@@ -1,5 +1,6 @@
 #include "Lpx4HybridCore.h"
 #include "Lpx4Math.h"
+#include "Lpx4FileGain.h"
 #if LPX4_FLOAT_SYNTHESIS
 #if LPX4_ENABLE_ASM
 #error Floating synthesis requires C arithmetic, including platform header selection
@@ -342,6 +343,9 @@ Lpx4HybridCore::Lpx4HybridCore(): data_(0),
 #endif
 #endif
  {
+#if LPX4_ENABLE_FILE_GAIN
+ fileGainQ12_=4096;
+#endif
 #if LPX4_ENABLE_INPUT_CALLBACK
  inputReader_=0;inputContext_=0;
 #endif
@@ -478,23 +482,30 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #else
  if(!input||size<(LPX4_COMPACT_VERSION==9?13:20)){error_=BAD_HEADER;return false;}
 #endif
+#if LPX4_ENABLE_FILE_GAIN
+ fileGainQ12_=4096;
+#endif
 #if LPX4_AVR_V9_HEADER_COPY
  if(LP_READ_U16(input)!=0x394c){error_=BAD_HEADER;return false;}
- const uint8_t flags=LP_READ_U8(input+2);
+ const uint8_t wireFlags=LP_READ_U8(input+2);
+ const uint8_t flags=wireFlags&~(LPX4_ENABLE_FILE_GAIN?32:0);
 #elif LPX4_COMPACT_VERSION == 9
  if(read16()!=0x394c){error_=BAD_HEADER;return false;}
-#if LPX4_ENABLE_WIDE_V9
  const uint8_t wireFlags=readByte();
+#if LPX4_ENABLE_WIDE_V9
  const bool wideHeader=(wireFlags&64)!=0;
- const uint8_t flags=wireFlags&~64;
+ const uint8_t flags=wireFlags&~(64|(LPX4_ENABLE_FILE_GAIN?32:0));
 #else
- const uint8_t flags=readByte();
+ const uint8_t flags=wireFlags&~(LPX4_ENABLE_FILE_GAIN?32:0);
 #endif
 #else
  if(readByte()!='L'||readByte()!='4'||readByte()!='H'||readByte()!='Y'){
   error_=BAD_HEADER;return false;
  }
  const uint8_t version=readByte(),flags=readByte();
+#endif
+#if LPX4_ENABLE_FILE_GAIN
+ const bool fileGainHeader=(wireFlags&32)!=0;
 #endif
 #ifdef LPX4_FIXED_SPEECH_FLAGS
  if(flags!=LPX4_FIXED_SPEECH_FLAGS){error_=UNSUPPORTED;return false;}
@@ -602,16 +613,30 @@ bool Lpx4HybridCore::begin(const uint8_t* input,uint16_t size){
 #endif
 #endif
 #if LPX4_ENABLE_WIDE_V9
- const uint8_t headerBytes=wideHeader?17:13;
+ const uint8_t headerBytes=(wideHeader?17:13)+(LPX4_ENABLE_FILE_GAIN && (wireFlags&32)?2:0);
  if(!sampleCount_ || (!wideHeader&&(sampleCount_>64000||size>65535)) ||
     size<headerBytes || payload!=size-headerBytes){
 #else
- const uint8_t headerBytes=LPX4_COMPACT_VERSION==9?13:22;
+ const uint8_t headerBytes=LPX4_COMPACT_VERSION==9?13
+#if LPX4_ENABLE_FILE_GAIN
+    +(fileGainHeader?2:0)
+#endif
+    :22;
  // Subtract the header from the bounded input span; no untrusted wide sum.
  if(sampleCount_>64000 || !sampleCount_ || (size<headerBytes || payload!=(uint16_t)(size-headerBytes))){
 #endif
   error_=BAD_HEADER;return false;
  }
+#if LPX4_ENABLE_FILE_GAIN
+ if(fileGainHeader){
+#if LPX4_AVR_V9_HEADER_COPY
+  fileGainQ12_=LP_READ_U16(input+13);data_+=2;
+#else
+  fileGainQ12_=read16();
+#endif
+  if(!fileGainQ12_ || error_){error_=BAD_HEADER;return false;}
+ }
+#endif
 #else
  bool geometry=frames==160 && blocks==80;
 #if LPX4_ENABLE_SPEECH
@@ -2569,6 +2594,15 @@ bool Lpx4HybridCore::nextCore(Lpx4SynthesisValue& postfilterQ14){
 #endif
     // Preserve the postfilter signal before final output conversion. Floating
     // mode retains fractional precision; fixed mode retains integer Q14.
+#if LPX4_ENABLE_FILE_GAIN
+    if(fileGainQ12_!=4096){
+#if LPX4_FLOAT_SYNTHESIS
+        b=b*fileGainQ12_/4096.;if(b<-16384)b=-16384;if(b>16384)b=16384;
+#else
+        b=lpx4FileGainQ14(b,fileGainQ12_);
+#endif
+    }
+#endif
 #if defined(__AVR__) && !defined(LPX4_ENABLE_PCM16)
     // Original PWM transfer function for the existing ATmega328P firmware.
 #if LPX4_PWM_ROUND

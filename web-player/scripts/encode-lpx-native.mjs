@@ -13,6 +13,7 @@ const { values, positionals } = parseArgs({ allowPositionals: true, options: {
   search: { type: 'string', default: 'expanded' }, 'size-allowance': { type: 'string', default: '0' },
   calls: { type: 'string', default: '4' }, 'max-bytes': { type: 'string', default: '0' },
   repeat: { type: 'string', default: '1' }, 'auto-quiet': { type: 'boolean', default: false },
+  normalize: { type: 'boolean', default: false }, 'target-lufs': { type: 'string', default: '-18' }, 'max-gain-db': { type: 'string', default: '12' },
   'non-speech': { type: 'boolean', default: false }, ffmpeg: { type: 'string', default: 'ffmpeg' },
   ffprobe: { type: 'string', default: 'ffprobe' }
 } });
@@ -85,7 +86,8 @@ try {
   const args = ['--profile', values.profile, '--rate', values.rate, '--backend', values.backend,
     '--quality', values.quality, '--search', values.search, '--size-allowance', values['size-allowance'],
     '--calls', values.calls, '--max-bytes', values['max-bytes'], '--repeat', values.repeat,
-    ...(values['auto-quiet'] ? ['--auto-quiet'] : []), ...(values['non-speech'] ? ['--non-speech'] : [])];
+    ...(values['auto-quiet'] ? ['--auto-quiet'] : []), ...(values['non-speech'] ? ['--non-speech'] : []),
+    ...(values.normalize ? ['--normalize','--target-lufs',values['target-lufs'],'--max-gain-db',values['max-gain-db']] : [])];
   const result = await collect(executable, args, pcm, 100 * 1024 * 1024);
   if (result.bytes.length < 13 || result.bytes.subarray(0, 2).toString() !== 'L9') throw new Error('Native encoder returned no LPX V9 stream.');
   if (cancellation.signal.aborted) throw new Error('Encoding cancelled; no output file was written.');

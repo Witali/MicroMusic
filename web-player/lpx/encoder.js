@@ -1,4 +1,4 @@
-import { MAX_SAMPLES } from './codec.js';
+import { MAX_SAMPLES } from './codec.js?v=20261123-file-gain';
 
 export async function createEncoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);
@@ -20,14 +20,19 @@ export async function createEncoder(binary) {
     if (bitratePreset && (sampleRate !== 8000 || allowance !== 0)) throw new Error('Профили 3 и 8 кбит/с используют 8 кГц и точный предел размера без допуска.');
     if (bitratePreset && !api.enc_bitrate) throw new Error('Обновите страницу: этот кодировщик не поддерживает профили 3 и 8 кбит/с.');
     const normalization = options.normalization ?? 'preserve';
-    if (!['preserve', 'loudness'].includes(normalization)) throw new Error('Неизвестный режим громкости.');
+    if (!['preserve', 'loudness', 'file'].includes(normalization)) throw new Error('Неизвестный режим громкости.');
+    const targetLufs = options.targetLufs ?? -18, maxGainDb = options.maxGainDb ?? 12;
+    if (normalization === 'file' && (!Number.isInteger(targetLufs) || targetLufs < -30 || targetLufs > -9 || !Number.isInteger(maxGainDb) || maxGainDb < 0 || maxGainDb > 24)) throw new Error('Некорректные настройки нормализации.');
+    if (normalization === 'file' && !(bitratePreset ? api.enc_bitrate_file_gain : api.enc_adaptive_file_gain)) throw new Error('Обновите страницу: усиление LPX из файла недоступно.');
     if (normalization === 'loudness' && !api.enc_adaptive_loudness) throw new Error('Обновите страницу: этот энкодер не поддерживает нормализацию.');
     if (normalization === 'loudness' && bitratePreset && !api.enc_bitrate_loudness) throw new Error('Обновите страницу: нормализация пресетов недоступна.');
     if (!api.enc_reserve(pcm.length)) throw new Error('Недостаточно памяти для кодирования этой записи.');
     new Int16Array(api.memory.buffer, api.enc_input(), pcm.length).set(pcm);
     if (bitratePreset) {
       progress(0);
-      const size = normalization === 'loudness'
+      const size = normalization === 'file'
+        ? api.enc_bitrate_file_gain(pcm.length, profile, sampleRate, 4, targetLufs, maxGainDb)
+        : normalization === 'loudness'
         ? api.enc_bitrate_loudness(pcm.length, profile, sampleRate, 4)
         : api.enc_bitrate(pcm.length, profile, sampleRate, 0, 4);
       if (size < 13) throw new Error(`Не удалось уложить полный поток в ${profile} кбит/с (${size}).`);
@@ -35,12 +40,15 @@ export async function createEncoder(binary) {
       if (size > cap) throw new Error('Кодировщик превысил предел размера полного файла.');
       const bytes = new Uint8Array(api.memory.buffer, api.enc_adaptive_output(), size).slice();
       if (normalization === 'loudness') encode.loudness = loudnessReport();
+      if (normalization === 'file') encode.loudness = { ...loudnessReport(), fileGain: true, gainQ12: api.enc_loudness_gain_q12(), gainLimited: !!api.enc_loudness_gain_limited() };
       progress(1);
       return bytes;
     }
     if (api.enc_adaptive) {
       progress(0);
-      const size = normalization === 'loudness'
+      const size = normalization === 'file'
+        ? api.enc_adaptive_file_gain(pcm.length, profile, sampleRate, 0, 4, allowance, options.extendedSearch !== false ? 1 : 0, targetLufs, maxGainDb)
+        : normalization === 'loudness'
         ? api.enc_adaptive_loudness(pcm.length, profile, sampleRate, 0, 4, allowance, options.extendedSearch !== false ? 1 : 0)
         : options.extendedSearch !== false && api.enc_adaptive_extended
         ? api.enc_adaptive_extended(pcm.length, profile, sampleRate, 0, 0, 4, allowance)
@@ -49,6 +57,7 @@ export async function createEncoder(binary) {
       // Memory can grow during the search. Construct the view only after it ends.
       const bytes = new Uint8Array(api.memory.buffer, api.enc_adaptive_output(), size).slice();
       if (normalization === 'loudness') encode.loudness = loudnessReport();
+      if (normalization === 'file') encode.loudness = { ...loudnessReport(), fileGain: true, gainQ12: api.enc_loudness_gain_q12(), gainLimited: !!api.enc_loudness_gain_limited() };
       progress(1);
       return bytes;
     }

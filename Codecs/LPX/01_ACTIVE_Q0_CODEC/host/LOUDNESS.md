@@ -1,6 +1,28 @@
-# Optional perceived-loudness normalization
+# Optional whole-file perceived-loudness normalization
 
-The Web/PC encoder preserves input level by default. Selecting **loudness**
+The Web UI now defaults to one constant coefficient stored in the completed
+LPX file. Its switch enables/disables this feature; target mono LUFS and maximum
+boost are configurable. Measurement uses the final decoded recording. The
+payload is unchanged for P4/P6; 3/8 presets first reserve two metadata bytes.
+The decoder applies the coefficient at final output on Web, PC and MCU.
+See [the wire specification](../LPX9_GAIN_FORMAT.md). There is no intra-file AGC
+and no reaction-time parameter for a constant coefficient.
+
+The default settings are -18 LUFS and maximum +12 dB; the decoded sample-peak
+ceiling is -1 dBFS. The result reports the actual coefficient, resulting LUFS
+and any limiting constraint. Disabling normalization retains the original bytes.
+Short/below-gate audio uses unity. Source stereo is downmixed before encoding.
+
+`normalizeFileGain` and `enc_adaptive_file_gain` / `enc_bitrate_file_gain` implement
+the current policy. It uses the same independently checked meter described below,
+retains strict complete-stream verification, and changes no synthesis history.
+
+## Retained pre-encoding reference API
+
+The older `enc_adaptive_loudness` and `enc_bitrate_loudness` ABIs below remain
+selectable for compatibility/regression. The page uses the file-gain policy.
+
+The reference API preserves input level by default. Selecting **loudness**
 normalizes mono PCM16 before adaptive encoding toward **-18 LUFS**, with a
 **-1 dBFS sample-peak ceiling**. The target is a project choice, not an ITU or
 EBU programme-delivery recommendation. One constant gain applies to the entire

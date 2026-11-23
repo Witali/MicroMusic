@@ -27,7 +27,8 @@ namespace {
 using Clock = std::chrono::steady_clock;
 struct Options {
     int profile = 6, rate = 8000, calls = 4, maxBytes = 0, repeat = 1, sizeAllowance = 0;
-    bool cuda = false, adaptive = true, autoQuiet = false, speech = true, expandedSearch = true;
+    bool cuda = false, adaptive = true, autoQuiet = false, speech = true, expandedSearch = true, fileGain = false;
+    int targetLufs = -18, maxGainDb = 12;
 };
 void jsonString(FILE* out, const char* value) {
     fputc('"', out);
@@ -56,13 +57,15 @@ int run(int argc, char** argv) {
             puts("Usage: lpx-encode [--profile 4|6] [--rate 8000|12000|16000]"
                  " [--backend cpu|cuda] [--quality fast|adaptive] [--calls 0..4]"
                  " [--search expanded|reference] [--size-allowance 0..100]"
-                 " [--max-bytes N] [--repeat 1..20] [--auto-quiet] [--non-speech]\n"
+                 " [--max-bytes N] [--repeat 1..20] [--auto-quiet] [--non-speech]"
+                 " [--normalize] [--target-lufs -30..-9] [--max-gain-db 0..24]\n"
                  "Input: mono PCM16 little-endian on stdin, 1..32000000 samples.\n"
                  "Output: one verified LPX V9/Long file on stdout; JSON diagnostics on stderr.\n"
                  "Use encode-lpx-native.mjs for binary-safe file conversion on Windows.");
             return 0;
         }
         if (!strcmp(name, "--auto-quiet")) { options.autoQuiet = true; continue; }
+        if (!strcmp(name, "--normalize")) { options.fileGain = true; continue; }
         if (!strcmp(name, "--non-speech")) { options.speech = false; continue; }
         if (i + 1 >= argc) return fail("Missing option value");
         const char* value = argv[++i];
@@ -75,6 +78,10 @@ int run(int argc, char** argv) {
         } else if (!strcmp(name, "--search")) {
             if (strcmp(value, "expanded") && strcmp(value, "reference")) return fail("Search must be expanded or reference");
             options.expandedSearch = !strcmp(value, "expanded");
+        } else if (!strcmp(name, "--target-lufs")) {
+            errno=0;char* end=nullptr;long level=strtol(value,&end,10);
+            if(errno || !*value || *end || level<-30 || level>-9)return fail("Target loudness must be -30..-9 LUFS");
+            options.targetLufs=int(level);
         } else {
             int number;
             if (!integer(value, number)) return fail("Expected a nonnegative integer option value");
@@ -84,12 +91,15 @@ int run(int argc, char** argv) {
             else if (!strcmp(name, "--max-bytes")) options.maxBytes = number;
             else if (!strcmp(name, "--repeat")) options.repeat = number;
             else if (!strcmp(name, "--size-allowance")) options.sizeAllowance = number;
+            else if (!strcmp(name, "--max-gain-db")) options.maxGainDb = number;
             else return fail("Unknown encoder option");
         }
     }
     if (options.profile != 4 && options.profile != 6) return fail("Profile must be 4 or 6");
     if (options.rate != 8000 && options.rate != 12000 && options.rate != 16000) return fail("Unsupported sample rate");
     if (options.calls < 0 || options.calls > 4) return fail("Refinement calls must be in 0..4");
+    if(options.maxGainDb<0 || options.maxGainDb>24)return fail("Maximum gain must be 0..24 dB");
+    if(options.fileGain && options.autoQuiet)return fail("File gain and pre-encoding auto quiet are separate level policies");
     if (options.repeat < 1 || options.repeat > 20) return fail("Repeat count must be in 1..20");
     if (options.sizeAllowance < 0 || options.sizeAllowance > 100) return fail("Size allowance must be in 0..100 percent");
     if (options.maxBytes && (options.maxBytes < 22 || options.maxBytes > int(kLpxMaxFileBytes))) return fail("Complete byte budget must be 22..104857600, or 0 for the control size");
@@ -140,6 +150,7 @@ int run(int argc, char** argv) {
         if (size < 13) return fail("Output failed native decoder verification", 7);
         current.assign(enc_output(), enc_output() + size);
       }
+      if(options.fileGain && !lpx::normalizeFileGain(current,options.targetLufs,options.maxGainDb,report.loudness))return fail("File loudness normalization failed",7);
       timings.push_back(std::chrono::duration<double, std::milli>(Clock::now() - started).count());
       if (!repetition) bytes = std::move(current);
       else if (current != bytes) return fail("Repeated encoding changed the LPX output", 7);
@@ -159,7 +170,7 @@ int run(int argc, char** argv) {
         std::vector<double> warm(timings.begin() + 1, timings.end()); std::sort(warm.begin(), warm.end());
         fprintf(stderr, "%.6f", (warm[(warm.size() - 1) / 2] + warm[warm.size() / 2]) / 2);
     } else fputs("null", stderr);
-    fputs("}\n", stderr);
+    fprintf(stderr,",\"fileGainQ12\":%u,\"fileGainDb\":%.6f}",unsigned(report.loudness.gainQ12),report.loudness.gainDb);fputc('\n',stderr);
     return 0;
 }
 }

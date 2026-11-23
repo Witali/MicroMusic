@@ -9,6 +9,7 @@ const { values } = parseArgs({ options: { emsdk: { type: 'string' }, clang: { ty
   'reference-encoder': { type: 'boolean', default: false },
   'prefix-selftest': { type: 'boolean', default: false },
   'analysis-selftest': { type: 'boolean', default: false },
+  'file-gain-selftest': { type: 'boolean', default: false },
   'simd-selftest': { type: 'boolean', default: false } } });
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const sdk = values.emsdk || process.env.EMSDK;
@@ -40,7 +41,7 @@ const module = await WebAssembly.compile(binary);
 if (WebAssembly.Module.imports(module).length) throw new Error('Decoder must have no host imports');
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const inputs = [...sources, 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxHostWorkspace.h', 'web-player/scripts/build-lpx-wasm.mjs',
-  ...['Lpx4HybridCore.h', 'Lpx4Math.h', 'Lpx4MemoryProfiles.h', 'Lpx4MultiplyC.h', 'cos_table.inc', 'scale_table.inc']
+  ...['Lpx4HybridCore.h', 'Lpx4Math.h', 'Lpx4FileGain.h', 'Lpx4MemoryProfiles.h', 'Lpx4MultiplyC.h', 'cos_table.inc', 'scale_table.inc']
     .map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/src/' + name)];
 const manifest = { schema: 'micromusic-lpx-v9-wasm-v1', compiler: run(['--version']).split(/\r?\n/)[0],
   flags: flags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
@@ -50,6 +51,12 @@ const manifest = { schema: 'micromusic-lpx-v9-wasm-v1', compiler: run(['--versio
   output: 'PCM16', rates: [8000, 12000, 16000], profiles: [4, 6, 15] };
 writeFileSync(join(root, 'web-player/lpx/build.json'), JSON.stringify(manifest, null, 2) + '\n');
 console.log(`LPX V9 C → WebAssembly: ${binary.length} bytes, no host imports`);
+if(values['file-gain-selftest']) {
+  mkdirSync(join(root,'build'),{recursive:true});
+  run([...flags.filter(flag=>!flag.startsWith('-Wl,--export=')), '-Wl,--export=lpx_file_gain_selftest',
+    'web-player/tests/helpers/lpx-file-gain-selftest.cpp', '-L'+join(sysroot,'lib/wasm32-emscripten'),
+    '-lc','-lclang_rt.builtins','-o',join(root,'build/lpx-file-gain-selftest.wasm')]);
+}
 
 const encoderSources = ['Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp'];
 const encoderExports = ['enc_reserve', 'enc_input', 'enc_output', 'enc_begin', 'enc_step', 'enc_finish'];
@@ -120,14 +127,15 @@ if (values['simd-selftest']) {
 // Same adaptive C++ translation units as the offline native executable.
 // Python source files below are provenance/test oracles, not runtime imports.
 const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
-  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp'];
+  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp', 'LpxFileGain.cpp'];
 const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
 // Export the initializer explicitly so wasm-ld does not wrap every API export
 // with constructors. The host calls it once after instantiation; otherwise a
 // getter could reconstruct (and erase) the static output vector/report.
 const adaptiveExports = ['__wasm_call_ctors', 'enc_adaptive', 'enc_adaptive_extended', 'enc_bitrate', 'enc_bitrate_loudness', 'enc_adaptive_output', 'enc_adaptive_candidates', 'enc_adaptive_stages', 'enc_adaptive_gain',
   'enc_normalize_loudness', 'enc_adaptive_loudness', 'enc_loudness_status', 'enc_loudness_limited',
-  'enc_loudness_input', 'enc_loudness_prepared', 'enc_loudness_decoded', 'enc_loudness_gain_db'];
+  'enc_loudness_input', 'enc_loudness_prepared', 'enc_loudness_decoded', 'enc_loudness_gain_db',
+  'enc_adaptive_file_gain', 'enc_bitrate_file_gain', 'enc_loudness_gain_limited', 'enc_loudness_gain_q12'];
 const adaptiveFlags = ['-isystem', join(sysroot, 'include/c++/v1'),
   ...encoderFlags.filter(flag => !flag.startsWith('-Wl,-z,stack-size=') && !flag.startsWith('-Wl,--initial-memory='))];
 adaptiveFlags.push('-Wl,--initial-memory=524288', '-Wl,-z,stack-size=262144', '-DLPX_ADAPTIVE_ENCODER=1',
