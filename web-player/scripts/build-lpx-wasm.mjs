@@ -122,7 +122,10 @@ if (values['simd-selftest']) {
 const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
   'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp'];
 const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
-const adaptiveExports = ['enc_adaptive', 'enc_adaptive_output', 'enc_adaptive_candidates', 'enc_adaptive_stages', 'enc_adaptive_gain'];
+// Export the initializer explicitly so wasm-ld does not wrap every API export
+// with constructors. The host calls it once after instantiation; otherwise a
+// getter could reconstruct (and erase) the static output vector/report.
+const adaptiveExports = ['__wasm_call_ctors', 'enc_adaptive', 'enc_adaptive_extended', 'enc_adaptive_output', 'enc_adaptive_candidates', 'enc_adaptive_stages', 'enc_adaptive_gain'];
 const adaptiveFlags = ['-isystem', join(sysroot, 'include/c++/v1'),
   ...encoderFlags.filter(flag => !flag.startsWith('-Wl,-z,stack-size=') && !flag.startsWith('-Wl,--initial-memory='))];
 adaptiveFlags.push('-Wl,--initial-memory=524288', '-Wl,-z,stack-size=262144', '-DLPX_ADAPTIVE_ENCODER=1',

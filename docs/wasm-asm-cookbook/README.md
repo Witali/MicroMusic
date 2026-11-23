@@ -172,3 +172,27 @@ reproduction commands. Differential tests compare LPX bytes and decoded PCM
 against the pinned pre-optimization module; every encode also performs the
 unchanged full shared-C model validation and strict EOF check. These host V8
 measurements do not establish another browser/CPU's speed or AVR audio timing.
+
+### Shared adaptive C++ in a standalone WASM module
+
+The LPX host pipeline compiles the same C++11 seed, integer synthesis, V9 packing,
+quality metrics and refinement sources for native PC, scalar wasm32 and wasm32
+SIMD128. The explicit SIMD define still selects only the existing supported
+pulse kernel; ordinary C++ remains selectable on every host. These encoders run
+offline and establish no interrupt-active real-time audio profile.
+
+The freestanding Clang/wasm-ld build exports `__wasm_call_ctors`; its JavaScript
+loader invokes it once immediately after instantiation. Without an explicit
+initializer export, linker-generated export wrappers can initialize static C++
+containers again before getters, clearing a previously generated output vector.
+A positive encode length or equality of two output buffers cannot detect that
+failure alone. The adaptive regression suite checks the `L9` signature, decodes
+the entire output, checks getters, and exercises repeated calls with a stable
+warmed heap. Construct memory views after the search because WASM memory may
+grow during it. This is a validated correctness technique for this standalone
+ABI and pinned Emscripten 6.0.12/Clang 24 build, not a performance claim or a
+replacement for another runtime's startup protocol.
+
+The [expanded-search notes](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/EXPANDED_SEARCH.md)
+describe bounded pitch/gain proposals and full-stream quality/size guards.
+Python remains an independent regression oracle; it is absent from the runtime.
