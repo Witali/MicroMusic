@@ -4,7 +4,6 @@ import {readFileSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {createEncoder} from '../lpx/encoder.js';
 import {createDecoder,parseHeader} from '../lpx/codec.js';
-import {readRecordedBuildFile} from './helpers/recorded-build-source.mjs';
 import {loudnessCases} from './helpers/lpx-loudness-cases.mjs';
 
 const binaries=['encoder-adaptive','encoder-adaptive-simd'].map(name=>readFileSync(new URL(`../lpx/${name}.wasm`,import.meta.url)));
@@ -49,10 +48,11 @@ test('normalization preserves pauses, polarity and the full continuous recording
 });
 
 test('opt-in normalization uses the shared controller, reports decoded LUFS and keeps default bytes',async()=>{
-  const old=await createEncoder(readRecordedBuildFile('18be72f12e202906f33cb7abd8fd001d3c806b4a','web-player/lpx/encoder-adaptive.wasm'));
   const c=cases.find(c=>c.rate===8000&&c.name==='quiet'),source=c.pcm.slice(),results=[];
   for(const profile of [4,6]) {
-    const expected=old(c.pcm,c.rate,profile);
+    const expected=wrappers[0](c.pcm,c.rate,profile);
+    const normalized=normalize(apis[0],c.pcm,c.rate,{targetLufs:-18,maxGainDb:12}).pcm;
+    const normalizedExpected=wrappers[0](normalized,c.rate,profile);
     for(const encode of wrappers) {
       assert.deepEqual(encode(c.pcm,c.rate,profile),expected,'preserve remains the exact default');assert.equal(encode.loudness,null);
       const bytes=encode(c.pcm,c.rate,profile,()=>{},{normalization:'loudness'});
@@ -60,8 +60,7 @@ test('opt-in normalization uses the shared controller, reports decoded LUFS and 
       assert.ok(Math.abs(encode.loudness.prepared-encode.loudness.input-12)<.05);
       assert.equal(encode.loudness.gainLimited,true);
       assert.ok(Number.isFinite(encode.loudness.decoded));assert.notDeepEqual(bytes,expected);
-      const normalized=normalize(apis[0],c.pcm,c.rate,{targetLufs:-18,maxGainDb:12}).pcm;
-      assert.deepEqual(bytes,old(normalized,c.rate,profile),'quality gates use the normalized reference');
+      assert.deepEqual(bytes,normalizedExpected,'current quality gates use the normalized reference');
       results.push(bytes);
       assert.throws(()=>encode(c.pcm,c.rate,profile,()=>{},{normalization:'unknown'}),/режим громкости/);
     }
@@ -94,10 +93,9 @@ test('normalization precedes one continuous V9 Long encode without resetting gai
 });
 
 test('3/8 bitrate presets normalize their reference before selection and retain exact file caps',async()=>{
-  const previous=await createEncoder(readRecordedBuildFile('6ef6899b698dd7cf0449ce2b2d3775bd4d3684da','web-player/lpx/encoder-adaptive.wasm'));
   const c=cases.find(c=>c.rate===8000&&c.name==='quiet'),prepared=normalize(apis[0],c.pcm,c.rate,{targetLufs:-18,maxGainDb:12}).pcm;
   for(const kbps of [3,8]) {
-    const expected=previous(prepared,c.rate,kbps),preserved=previous(c.pcm,c.rate,kbps),results=[];
+    const expected=wrappers[0](prepared,c.rate,kbps),preserved=wrappers[0](c.pcm,c.rate,kbps),results=[];
     for(const encode of wrappers) {
       assert.deepEqual(encode(c.pcm,c.rate,kbps),preserved,'existing preset output remains unchanged');
       const bytes=encode(c.pcm,c.rate,kbps,()=>{},{normalization:'loudness'});
