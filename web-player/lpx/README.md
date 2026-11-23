@@ -41,13 +41,26 @@ budget, so easy recordings can produce a smaller file. Imported legacy LPX8
 v2/v3 recordings require re-encoding from their original audio; a lossless
 bitstream conversion to these pulse modes is not promised.
 
-The entire recording is encoded in a single pass with continuous pitch history,
+The entire recording is encoded with continuous pitch history,
 LPC interpolation and output-filter state. Standard 13-byte V9 is retained for
 up to 64000 samples; longer recordings get one 17-byte V9 Long header and one
 continuous payload. The result is one .lpx download and one playable recording.
 [The Long specification](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/LPX9_LONG_FORMAT.md)
 defines the marker and uint32 lengths. Existing AVR players reject Long;
 ordinary V9 remains compatible with their previous limits.
+
+The processing selector offers Auto, fast streaming, streaming refinement and
+full search independently of the ordinary/SIMD backend selector. Auto uses fast
+streaming above128000 resampled samples. Streaming pulls20480-sample windows,
+carries analysis/synthesis state and unfinished output bits, and checks the
+entire decoded output before offering one file. Refinement keeps the original
+continuous control and requires a complete-output quality admission. Its search
+differs from full search and can take much longer than fast streaming.
+
+Initial compressed-audio decoding still uses a whole browser AudioBuffer.
+Output/verification storage also scales with duration; streaming refinement's
+final quality gate needs full PCM buffers. Existing input limits remain.
+See [streaming design, memory scope and validation](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/STREAMING.md).
 
 P4/P6 use a C++/WASM port of speech_v4.py, wav_lpc.py, q0_model.py,
 speech_compact.py and speech_v9.py. This is the scalar Hamming/autocorrelation/

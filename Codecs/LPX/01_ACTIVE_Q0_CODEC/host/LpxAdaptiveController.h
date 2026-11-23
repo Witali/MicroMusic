@@ -18,7 +18,8 @@ struct AdaptiveReport {
 // matching the Python reference before lossless V9 repacking.
 Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
                       bool autoQuiet=false,int maxBytes=0,int calls=4,bool speech=true,
-                      bool expandedSearch=false,int sizeAllowancePercent=0,bool normalize=false);
+                      bool expandedSearch=false,int sizeAllowancePercent=0,bool normalize=false,
+                      const Stream* prefix=nullptr);
 bool verifyStream(const Stream& stream,const Pcm& expected);
 // One whole-input gain decision shared by adaptive and bitrate presets.
 Pcm prepareInputLevel(const Pcm& input,bool autoQuiet,int& gainExponent);

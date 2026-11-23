@@ -23,7 +23,7 @@ std::vector<Coefficients> coefficientTrace(const Stream& s) {
     std::vector<Coefficients> result((s.samples + 19) / 20);
     for (int fi = 0; fi < frames; ++fi) {
         int endpoints[3][10];
-        const auto& previous = s.spectra[(fi ? fi - 1 : 0) / 2];
+        const auto& previous = fi==0 && s.continuation?s.previousSpectrum:s.spectra[(fi ? fi - 1 : 0) / 2];
         const auto& current = s.spectra[fi / 2];
         for (int point = 0; point < 3; ++point) {
             int t = point * 8, p[2][12] = {{4096,4096},{4096,-4096}};
@@ -68,7 +68,21 @@ Pcm advance(const Stream& s, const std::vector<Coefficients>& co, int start, int
     }
     return output;
 }
-Pcm render(const Stream& s) { auto co = coefficientTrace(s); SynthesisState state; return advance(s,co,0,s.samples,state); }
+Pcm render(const Stream& s) { auto co = coefficientTrace(s); auto state=s.initial; return advance(s,co,0,s.samples,state); }
+double emphasizedAt(const Stream& s,const Pcm& reference,int at) {
+    auto sample=[&](int i)->double {
+        if(i<0)return s.continuation && i>=-172?s.previousInput[172+i]:0;
+        if(i<int(reference.size()))return reference[i];
+        return i-int(reference.size())<int(s.lookahead.size())?s.lookahead[i-reference.size()]:0;
+    };
+    return sample(at)/2.0-s.pre*(sample(at-1)/2.0)/16384;
+}
+double residualBefore(const Stream& s,const Pcm& reference,int at) {
+    if(!s.continuation || at<-145 || at>=0)return 0;
+    double value=emphasizedAt(s,reference,at);
+    for(int k=0;k<10;++k)value+=s.previousCoefficients[(160+at)/20][k]*emphasizedAt(s,reference,at-k-1)/4096;
+    return value;
+}
 uint64_t sse(const Pcm& target, const Pcm& actual, int start) {
     uint64_t sum = 0;
     for (size_t j = 0; j < actual.size(); ++j) { int64_t d = int(target[start+j])-int(actual[j]); sum += d*d; }
@@ -82,79 +96,27 @@ Pcm pwm(const Pcm& input) {
     }
     return out;
 }
-struct Writer {
-    std::vector<uint8_t> bytes; int bits = 0;
-    void put(int value, int width) {
-        for (int i = 0; i < width; ++i, ++bits) {
-            if (!(bits&7)) bytes.push_back(0);
-            bytes.back() |= ((value>>i)&1)<<(bits&7);
-        }
-    }
-    void rice(int value,int k,int width) {
-        int q = value>>k;
-        if (q>=8) { put(0,8); put(value,width); }
-        else { put(0,q); put(1,1); put(value&((1<<k)-1),k); }
-    }
-};
-static int riceCost(int v,int k,int width) { return v>>k >= 8 ? 8+width : (v>>k)+1+k; }
-static void spectrum(Writer& w,const Spectrum& current,const Spectrum* old,int bits) {
-    if (old && current == *old) { w.put(0,1); return; }
-    int gaps[10],deltas[10],gc=0,dc=old?0:100000;
-    for (int j = 0; j < 10; ++j) {
-        gaps[j] = current[j]-(j?current[j-1]+1:0);
-        int delta = old?current[j]-(*old)[j]:0;
-        deltas[j] = delta>=0?2*delta:-2*delta-1;
-        gc += riceCost(gaps[j],bits==5?1:2,bits);
-        if (old) dc += riceCost(deltas[j],bits==5?0:1,bits+1);
-    }
-    bool useDelta = dc<gc; w.put(1,1); w.put(useDelta,1);
-    for (int j = 0; j < 10; ++j) w.rice(useDelta?deltas[j]:gaps[j],(bits==5?1:2)-int(useDelta),bits+int(useDelta));
-}
-int spectralBits(const Stream& s) {
-    Writer w;
-    for (size_t f = 0; f < s.spectra.size(); ++f) spectrum(w,s.spectra[f],f?&s.spectra[f-1]:nullptr,s.profile==4?5:6);
-    return w.bits;
-}
-static int active(const Stream& s) { int n=0; for (const auto& p:s.extras) n+=p[1]!=0; return n; }
-int compactBytes(const Stream& s) {
-    int n=active(s),frames=s.spectra.size();
-    int bits=spectralBits(s)+frames*(s.profile==4?110:166)+(n?frames*8+n*10:0);
-    return 22+(bits+7)/8;
-}
-int extraCapacity(const Stream& s,int cap,int slots) {
-    int f=s.spectra.size(); if(slots<0)slots=s.extras.size();
-    return std::max(0,std::min(slots,((cap-22)*8-spectralBits(s)-f*(s.profile==4?110:166)-f*8)/10));
-}
-std::vector<uint8_t> packV9(const Stream& s) {
-    Writer w; bool enhanced=active(s)>0;
-    for (size_t f=0; f<s.spectra.size(); ++f) {
-        spectrum(w,s.spectra[f],f?&s.spectra[f-1]:nullptr,s.profile==4?5:6);
-        for (int half=0; half<2; ++half) {
-            int base=f*320+half*160; if(base>=s.samples)break;
-            const auto& p=s.parameters[f*2+half]; w.put(p[0],5);w.put(p[2]/2,3);if(p[2])w.put(p[1]-18,7);
-            for(int group=0;group<4 && base+group*40<s.samples;++group) {
-                const auto& a=s.pulses[base/20+group*2];const auto& b=s.pulses[base/20+group*2+1];
-                if(s.profile==4) { for(const auto* pulse:{&a,&b}) { w.put((*pulse)[0]-((*pulse)[0]+2)/5,4);w.put((*pulse)[1]>0,1); } }
-                else { w.put((a[0]&3)|((b[0]&3)<<2),4);w.put((a[0]>>2)+5*(b[0]>>2),5);w.put(a[1]&15,4);w.put(b[1]&15,4); }
-                if(enhanced) { const auto& e=s.extras[base/40+group];w.put(e[1]!=0,1);if(e[1]) { w.put(e[0],6);w.put(e[1]&15,4); } }
-            }
-        }
-    }
-    bool wide=s.samples>64000; int header=wide?17:13;
-    std::vector<uint8_t> bytes(header,0);bytes.insert(bytes.end(),w.bytes.begin(),w.bytes.end());
-    auto word=[&](int at,uint32_t v) { bytes[at]=v;bytes[at+1]=v>>8; };
-    auto dword=[&](int at,uint32_t v) { word(at,v);word(at+2,v>>16); };
-    bytes[0]='L';bytes[1]='9';bytes[2]=s.profile|(wide?64:0)|(enhanced?128:0);word(3,s.rate);
-    if(wide) { dword(5,s.samples);word(9,s.pre);word(11,s.bright);dword(13,w.bytes.size()); }
-    else { word(5,s.samples);word(7,s.pre);word(9,s.bright);word(11,w.bytes.size()); }
-    return bytes;
-}
-Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,double bandwidth) {
-    Stream s;s.samples=reference.size();s.profile=profile;s.rate=rate;s.pre=pre;
+Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,double bandwidth,const Stream* context) {
+    Stream s=context?*context:Stream{};s.samples=reference.size();s.profile=profile;s.rate=rate;s.pre=pre;
     // Workspace was reserved by the public entry point before any adaptive
     // allocations. Avoid moving it while callers retain views into WASM memory.
     memcpy(enc_input(),reference.data(),reference.size()*2);
-    int blocks=lpxSeedBegin(s.samples,profile,rate,pre,zeroScale,bandwidth);
+    LpxSeedContext history;
+    if(context) {
+        if(s.lookahead.size()>48 || reference.size()+(s.lookahead.empty()?0:48)>lpxSeedCapacity()
+            || (!s.lookahead.empty() && reference.size()%320))return Stream{};
+        if(!s.lookahead.empty()) {
+            std::fill(enc_input()+reference.size(),enc_input()+reference.size()+48,0);
+            memcpy(enc_input()+reference.size(),s.lookahead.data(),s.lookahead.size()*2);
+        }
+        memcpy(history.h,s.initial.h,sizeof(history.h));memcpy(history.ring,s.initial.ring,sizeof(history.ring));history.dd=s.initial.dd;
+        history.continuation=s.continuation;history.lookahead=s.lookahead.empty()?0:48;history.lastSample=s.previousInput.back();
+        for(int at=-48;at<0;++at)history.emphasized[at+48]=emphasizedAt(s,reference,at);
+        for(int at=-145;at<0;++at)history.residual[at+145]=residualBefore(s,reference,at);
+        const int shift=profile==4?5:4;
+        for(int k=0;k<10;++k)history.previousVector[k]=(s.previousSpectrum[k]<<shift)+(1<<(shift-1));
+    }
+    int blocks=lpxSeedBeginContext(s.samples,profile,rate,pre,zeroScale,bandwidth,context?&history:nullptr);
     if(blocks<1)return Stream{};
     for(int i=0;i<blocks;++i)if(enc_step()<0)return Stream{};
     auto view=lpxSeedView();int frames=(s.samples+319)/320;

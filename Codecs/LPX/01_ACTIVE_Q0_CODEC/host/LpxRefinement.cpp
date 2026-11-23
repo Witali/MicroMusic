@@ -18,7 +18,8 @@ static Pcm filtered(const std::vector<int>& signal,int pre,int bright) {
 }
 RefinementResult refineHeader(const Stream& input,const QualityContext& context) {
     RefinementResult result;result.selected=result.raw=input;
-    auto co=coefficientTrace(input);SynthesisState state;std::vector<int> signal;
+    if(input.continuation)return result; // One fixed header for the whole file.
+    auto co=coefficientTrace(input);auto state=input.initial;std::vector<int> signal;
     auto pcm=advance(input,co,0,input.samples,state,&signal);auto before=context.quality(pcm),after=before;
     using Pair=std::pair<int,int>;using Errors=std::pair<uint64_t,uint64_t>;
     struct Row { Pair pair;Errors errors; };
@@ -69,7 +70,7 @@ RefinementResult enhanceExtras(const Stream& input,const QualityContext& context
     int capacity=extraCapacity(working,cap,(input.samples+39)/40);
     if(!capacity || !initial.error[0])return result;
     std::vector<Pulse> choices((input.samples+39)/40,Pulse{{-1,0}});
-    std::vector<uint64_t> benefits(choices.size());SynthesisState prefix;
+    std::vector<uint64_t> benefits(choices.size());auto prefix=input.initial;
     for(int index=0;index<int(choices.size());++index) {
         int at=index*40,stop=std::min(input.samples,at+320);Pcm baseline;
         uint64_t original=trialLoss(working,co,context.reference,at,stop,prefix,&baseline),best=original;
@@ -189,7 +190,7 @@ RefinementResult refineLpc(const Stream& input,const QualityContext& context,int
     for(int pass=0;pass<2 && before.error[0];++pass) {
         int changes=0;
         for(int frame:frameOrder(context.reference,pcm)) {
-            int start=frame*320,stop=std::min(input.samples,start+1280);SynthesisState prefix;
+            int start=frame*320,stop=std::min(input.samples,start+1280);auto prefix=input.initial;
             advance(working,co,0,start,prefix);
             struct Proposal { uint64_t loss;int field,delta; };
             std::vector<Proposal> proposals;
@@ -232,9 +233,13 @@ RefinementResult refinePitchGain(const Stream& input,const QualityContext& conte
     // trace. Autocorrelation only proposes periods; integer synthesis decides.
     std::vector<double> residual(input.samples),emphasized(input.samples);
     for(int at=0;at<input.samples;++at) {
-        emphasized[at]=double(context.reference[at])/2-input.pre*(at?double(context.reference[at-1])/2:0)/16384;
+        emphasized[at]=emphasizedAt(input,context.reference,at);
         residual[at]=emphasized[at];
-        for(int k=0;k<10 && k<at;++k)residual[at]+=co[at/20][k]*emphasized[at-k-1]/4096;
+        for(int k=0;k<10;++k) {
+            int index=at-k-1;
+            if(index>=0)residual[at]+=co[at/20][k]*emphasized[index]/4096;
+            else if(input.continuation)residual[at]+=co[at/20][k]*emphasizedAt(input,context.reference,index)/4096;
+        }
     }
     Stream working=input;uint64_t rawLoss=baseline.quality.error[0];
     for(int pass=0;pass<2;++pass) {
@@ -244,7 +249,7 @@ RefinementResult refinePitchGain(const Stream& input,const QualityContext& conte
         auto anchors=frameOrder(context.reference,pcm);
         for(int frame:anchors)for(int half=0;half<2;++half) {
             int at=frame*320+half*160;if(at>=input.samples)break;
-            int index=at/160,stop=std::min(input.samples,at+320);SynthesisState prefix;
+            int index=at/160,stop=std::min(input.samples,at+320);auto prefix=input.initial;
             advance(working,co,0,at,prefix);
             auto original=working.parameters[index];
             struct Period { double score;int lag; };

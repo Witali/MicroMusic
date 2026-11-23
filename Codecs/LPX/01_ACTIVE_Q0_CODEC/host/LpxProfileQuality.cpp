@@ -121,6 +121,23 @@ public:
     }
 };
 }
+bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,const Pcm& candidate,int rate,bool speech) {
+    if(reference.size()!=incumbent.size() || reference.size()!=candidate.size())return false;
+    QualityContext quality(reference,speech,rate);FullBandContext spectrum(reference,rate);
+    const auto baseline=quality.measure(incumbent),next=quality.measure(candidate);
+    const auto spectralFloor=spectrum.measure(incumbent),proposal=spectrum.measure(candidate);
+    const bool admitted=safety(next,proposal,baseline,spectralFloor)
+        && objective(next,proposal,baseline,spectralFloor)<=objective(baseline,spectralFloor,baseline,spectralFloor)+1e-12;
+#if LPX_ENCODER_JOINT_REFINEMENT
+    // Window-local guards cannot see every boundary-crossing pitch window.
+    // The assembled continuous output gets the same source-frozen check.
+    if(admitted) {
+        const PitchGuardContext pitch(reference,incumbent,rate);
+        return pitch.accepts(candidate);
+    }
+#endif
+    return admitted;
+}
 Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
     int cap, bool finalV9Budget, ProfileQualityReport& report, bool threeK, bool speech) {
     report = ProfileQualityReport{};
@@ -148,11 +165,13 @@ Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
             Stream proposal;
             if (threeK) {
                 BitrateReport search;
-                proposal = encodeThreeK(reference, cap, search, bandwidth, &incumbent);
+                proposal = encodeThreeK(reference, cap, search, bandwidth, &incumbent,
+                    incumbent.continuation || !incumbent.allowExtras?&incumbent:nullptr);
                 if (search.error) { report.error = search.error; return Stream{}; }
             } else {
                 proposal = fitSeed(reference, incumbent.profile, incumbent.rate,
-                    incumbent.pre, true, bandwidth);
+                    incumbent.pre, true, bandwidth,
+                    incumbent.continuation || !incumbent.allowExtras?&incumbent:nullptr);
                 if (!proposal.samples) { report.error = -7; return Stream{}; }
             }
             ++report.bandwidthCandidates;
@@ -200,6 +219,7 @@ Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
     if(report.selection.error)return Stream{};
     if(!selection.baseline.quality.error[0] && !selection.baseline.quality.error[1])return incumbent;
     auto header=[&]() {
+        if(incumbent.continuation)return; // A continuous file has one header.
         // Header coefficients cost no additional payload bytes. This existing
         // operator supplies proposals; the common full-band gate still decides.
         auto proposals=refineHeader(selection.selected,selection.quality);

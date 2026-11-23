@@ -28,7 +28,7 @@ void localCoefficients(const Stream& stream,int start,int end,std::vector<Coeffi
     local.spectra.resize((local.samples+319)/320);
     for(int i=0;i<int(local.spectra.size());++i) {
         int frame=clamp(start/320+i-1,0,int(stream.spectra.size())-1);
-        local.spectra[i]=stream.spectra[frame];
+        local.spectra[i]=i==0&&start==0&&stream.continuation?stream.previousSpectrum:stream.spectra[frame];
     }
     const auto coefficients=coefficientTrace(local);
     std::copy(coefficients.begin()+16,coefficients.end(),output.begin()+start/20);
@@ -39,6 +39,14 @@ double localScore(const FullBandContext& context,const Pcm& pcm) {
         +measured.balancedTemporalError[0]+measured.balancedTemporalError[1];
 }
 bool sameBytes(const Stream& a,const Stream& b) { return packV9(a)==packV9(b); }
+bool sameContinuation(const Stream& a,const Stream& b) {
+    return a.continuation==b.continuation&&a.allowExtras==b.allowExtras
+        &&a.previousSpectrum==b.previousSpectrum&&a.previousInput==b.previousInput
+        &&a.previousCoefficients==b.previousCoefficients&&a.lookahead==b.lookahead
+        &&a.initial.dd==b.initial.dd&&a.initial.cc==b.initial.cc
+        &&std::equal(a.initial.h,a.initial.h+10,b.initial.h)
+        &&std::equal(a.initial.ring,a.initial.ring+256,b.initial.ring);
+}
 }
 LpcRunProposals proposeLpcRuns(const Stream& input,const Pcm& reference,int cap,bool finalV9Budget) {
     LpcRunProposals result;
@@ -63,7 +71,7 @@ LpcRunProposals proposeLpcRuns(const Stream& input,const Pcm& reference,int cap,
     std::sort(order.begin(),order.end(),[](const Run& a,const Run& b) {return a.error!=b.error?a.error>b.error:a.first<b.first;});
     if(order.size()>maxRuns)order.resize(maxRuns);
     std::sort(order.begin(),order.end(),[](const Run& a,const Run& b) {return a.first<b.first;});
-    SynthesisState prefix;int cursor=0;
+    auto prefix=input.initial;int cursor=0;
     for(const auto& run:order) {
         const int start=run.first*320,end=std::min(input.samples,start+horizon);
         while(cursor<start) {int stop=std::min(start,cursor+4096);advance(input,baselineCo,cursor,stop,prefix);cursor=stop;}
@@ -138,7 +146,7 @@ std::vector<Stream> composeLpcRuns(const Stream& anchor,const std::vector<Stream
         if(single.samples!=anchor.samples||single.rate!=anchor.rate||single.profile!=anchor.profile
             ||single.pre!=anchor.pre||single.bright!=anchor.bright||single.parameters!=anchor.parameters
             ||single.extras!=anchor.extras||single.spectra.size()!=anchor.spectra.size()
-            ||single.pulses.size()!=anchor.pulses.size())continue;
+            ||single.pulses.size()!=anchor.pulses.size()||!sameContinuation(single,anchor))continue;
         int first=0;while(first<frames&&single.spectra[first]==anchor.spectra[first])++first;
         if(first==frames||(first&&anchor.spectra[first]==anchor.spectra[first-1]))continue;
         int last=first+1;while(last<frames&&anchor.spectra[last]==anchor.spectra[first])++last;

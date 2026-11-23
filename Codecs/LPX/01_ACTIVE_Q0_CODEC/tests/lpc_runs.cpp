@@ -14,10 +14,46 @@ static lpx::Stream fixture(int n,int profile,int rate) {
     s.extras.assign(frames*8,lpx::Pulse{{-1,0}});s.extras[0]=lpx::Pulse{{7,2}};
     return s;
 }
-static int compositionContracts() {
+static lpx::Stream carriedFixture(int n,int profile,int rate,lpx::Stream* complete=nullptr) {
+    const int cut=1280,future=n%1280==0?48:0,frames=(n+319)/320;
+    auto whole=fixture(cut+n+future,profile,rate);auto a=whole.spectra[0],b=a;++b[4];
+    for(int f=0;f<int(whole.spectra.size());++f)whole.spectra[f]=f<4?b:((f-4)/2)%2?b:a;
+    whole.allowExtras=false;whole.extras.assign(whole.extras.size(),lpx::Pulse{{-1,0}});
+    const auto co=lpx::coefficientTrace(whole);auto state=whole.initial;
+    const auto prefix=lpx::advance(whole,co,0,cut,state);const auto all=lpx::render(whole);
+    auto part=whole;part.samples=n;part.continuation=true;part.initial=state;part.previousSpectrum=whole.spectra[3];
+    part.spectra.assign(whole.spectra.begin()+4,whole.spectra.begin()+4+frames);
+    part.parameters.assign(whole.parameters.begin()+8,whole.parameters.begin()+8+frames*2);
+    part.pulses.assign(whole.pulses.begin()+64,whole.pulses.begin()+64+frames*16);
+    part.extras.assign(whole.extras.begin()+32,whole.extras.begin()+32+frames*8);
+    std::copy(prefix.end()-172,prefix.end(),part.previousInput.begin());
+    std::copy(co.begin()+56,co.begin()+64,part.previousCoefficients.begin());
+    part.lookahead.assign(all.begin()+cut+n,all.end());
+    if(complete)*complete=whole;
+    return part;
+}
+static lpx::Stream joinedWith(const lpx::Stream& whole,const lpx::Stream& part) {
+    auto joined=whole;
+    std::copy(part.spectra.begin(),part.spectra.end(),joined.spectra.begin()+4);
+    std::copy(part.parameters.begin(),part.parameters.end(),joined.parameters.begin()+8);
+    std::copy(part.pulses.begin(),part.pulses.end(),joined.pulses.begin()+64);
+    std::copy(part.extras.begin(),part.extras.end(),joined.extras.begin()+32);
+    return joined;
+}
+static bool completeSuffix(const lpx::Stream& whole,const lpx::Stream& part) {
+    const auto joined=joinedWith(whole,part);const auto co=lpx::coefficientTrace(joined);
+    const auto expected=lpx::render(joined);const auto partCo=lpx::coefficientTrace(part);auto state=part.initial;
+    const auto actual=lpx::advance(part,partCo,0,part.samples,state);
+    if(!std::equal(actual.begin(),actual.end(),expected.begin()+1280))return false;
+    const auto suffix=lpx::advance(joined,co,1280+part.samples,joined.samples,state);
+    if(!std::equal(suffix.begin(),suffix.end(),expected.begin()+1280+part.samples))return false;
+    return lpx::verifyStream(joined,expected);
+}
+static int compositionContracts(bool continued=false) {
     int cases=0;
     for(int profile:{4,6})for(int rate:{8000,12000,16000})for(bool finalBudget:{false,true}) {
-        const auto anchor=fixture(1920,profile,rate);const auto before=lpx::packV9(anchor);
+        lpx::Stream whole;const auto anchor=continued?carriedFixture(2560,profile,rate,&whole):fixture(1920,profile,rate);
+        const auto before=lpx::packV9(anchor);
         auto edit=[&](int first,int delta,bool pulse) {
             auto result=anchor;int last=first+1;while(last<int(anchor.spectra.size())&&anchor.spectra[last]==anchor.spectra[first])++last;
             for(int f=first;f<last;++f)result.spectra[f][5]+=delta;
@@ -38,6 +74,7 @@ static int compositionContracts() {
             if(bundle.parameters!=anchor.parameters||bundle.extras!=anchor.extras||bundle.pre!=anchor.pre
                 ||bundle.bright!=anchor.bright||bundle.rate!=rate||bundle.profile!=profile||bundle.samples!=anchor.samples)return -5;
             if(!lpx::verifyStream(bundle,lpx::render(bundle)))return -6;
+            if(!lpx::sameContinuation(bundle,anchor)||(continued&&!completeSuffix(whole,bundle)))return -18;
         }
         std::vector<double> ties{.8,.8,.7,.75};const auto tied=lpx::composeLpcRuns(anchor,singles,ties,cap,finalBudget);
         auto reversed=singles;std::reverse(reversed.begin(),reversed.end());std::reverse(ties.begin(),ties.end());
@@ -63,7 +100,49 @@ static int compositionContracts() {
         if(!lpx::composeLpcRuns(anchor,{singles[0]},{.8},cap,finalBudget).empty())return -15;
         if(!lpx::composeLpcRuns(anchor,singles,std::vector<double>(4,std::numeric_limits<double>::infinity()),cap,finalBudget).empty())return -16;
         if(!lpx::composeLpcRuns(anchor,singles,{.8},cap,finalBudget).empty())return -17;
+        for(int field=0;field<10;++field) {
+            auto changed=singles[0];
+            if(field==0)changed.continuation=!changed.continuation;
+            if(field==1)changed.allowExtras=!changed.allowExtras;
+            if(field==2)++changed.initial.h[0];
+            if(field==3)++changed.initial.ring[255];
+            if(field==4)++changed.previousSpectrum[0];
+            if(field==5)++changed.previousInput[0];
+            if(field==6)++changed.previousCoefficients[0][0];
+            if(field==7)changed.lookahead.push_back(1);
+            if(field==8)++changed.initial.dd;
+            if(field==9)++changed.initial.cc;
+            const auto rejected=lpx::composeLpcRuns(anchor,{changed,singles[2]},{.1,.2},cap,finalBudget);
+            if(!rejected.empty())return -19;
+        }
         ++cases;
+    }
+    return cases;
+}
+static int continuationContracts() {
+    int cases=0;
+    for(int profile:{4,6})for(int rate:{8000,12000,16000})for(int n:{1,41,321,1280,65537}) {
+        lpx::Stream whole;auto input=carriedFixture(n,profile,rate,&whole),target=input;
+        int last=1;while(last<int(input.spectra.size())&&input.spectra[last]==input.spectra[0])++last;
+        for(int f=0;f<last;++f)++target.spectra[f][5];
+        const auto targetPcm=lpx::render(joinedWith(whole,target));
+        std::copy(targetPcm.begin()+1280-172,targetPcm.begin()+1280,input.previousInput.begin());
+        input.lookahead.assign(targetPcm.begin()+1280+n,targetPcm.end());target.previousInput=input.previousInput;target.lookahead=input.lookahead;
+        const lpx::Pcm reference(targetPcm.begin()+1280,targetPcm.begin()+1280+n);
+        const auto originalCo=lpx::coefficientTrace(input),full=lpx::coefficientTrace(target);auto local=originalCo;
+        const int end=std::min(n,1280);lpx::localCoefficients(target,0,end,local);
+        for(int p=0;p<(end+19)/20;++p)if(local[p]!=full[p])return -1;
+        auto state=input.initial;const auto actual=lpx::advance(target,local,0,end,state);
+        if(!std::equal(actual.begin(),actual.end(),reference.begin())||!completeSuffix(whole,target))return -2;
+        for(bool finalBudget:{false,true}) {
+            const int cap=(finalBudget?int(lpx::packV9(input).size()):lpx::compactBytes(input))+8;
+            const auto result=lpx::proposeLpcRuns(input,reference,cap,finalBudget);
+            for(const auto& proposal:result.proposals) {
+                if(!lpx::sameContinuation(proposal,input)||proposal.extras!=input.extras||proposal.allowExtras)return -3;
+                if(!completeSuffix(whole,proposal))return -4;
+            }
+            ++cases;
+        }
     }
     return cases;
 }
@@ -124,5 +203,8 @@ int main() {
     }
     if(!proposals)return 15;
     const int composed=compositionContracts();if(composed!=12)return 20-composed;
-    std::printf("PASS: %d LPC-run cases, %d exact coefficient/prefix slices, %d legal proposals, %d composition contract matrices.\n",cases,slices,proposals,composed);
+    const int carriedComposed=compositionContracts(true);if(carriedComposed!=12)return 50-carriedComposed;
+    const int continued=continuationContracts();if(continued!=60)return 80-continued;
+    std::printf("PASS: %d default LPC cases, %d coefficient/prefix slices, %d proposals, %d default/%d continued composition matrices, %d carried-state cases.\n",cases,slices,proposals,composed,carriedComposed,continued);
+    return 0;
 }

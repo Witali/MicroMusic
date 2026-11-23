@@ -196,3 +196,32 @@ replacement for another runtime's startup protocol.
 The [expanded-search notes](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/EXPANDED_SEARCH.md)
 describe bounded pitch/gain proposals and full-stream quality/size guards.
 Python remains an independent regression oracle; it is absent from the runtime.
+## Two-pass metrics with frame rings
+
+[The STOI buffer refactoring](../../Codecs/LPX/research/wasm-stoi-streaming-2026-11-23/README.md)
+retains the global silence mask while processing resampling, overlap-add and
+STFT/correlation through small rings. It preserves FIR/reduction ordering and
+exclusive frame bounds; 48 native differential cases are bit-identical. In the
+documented 64 MiB scalar WASM probe it avoids the original allocation trap and
+uses about 29.2 MB including the unchanged seed workspace. This is portable C++11
+with Emscripten6.0.12/LLVM24, no ISA extension or handwritten assembly; scalar
+and SIMD builds share it. Caller PCM and energy summaries remain proportional
+to input length. The linked evidence states the workload and limits.
+
+## Continuous seed and packet state across windows
+
+The [offline streaming encoder](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/STREAMING.md)
+uses aligned20480-sample windows plus48-sample lookahead. Carry the raw,
+pre-emphasized and residual history, preceding spectrum/coefficient interpolation,
+LPC/pitch/de-emphasis state and partial output byte. Padding only at EOF avoids
+both waveform resets and invalid per-window byte alignment. At a short final
+lookahead, pre-emphasize the virtual-zero tail as whole-input analysis does.
+
+This is shared portable C++, without handwritten assembly or ISA requirements;
+scalar C remains explicitly selectable with native CPU and wasm32 SIMD builds.
+The retained24-case native helper checks complete seed parameters, bytes and PCM
+at8/12/16kHz against whole-input search. The Web tests compare scalar/SIMD/native
+and independently decode every final sample. Model memory is window-bounded;
+compressed-source browser decoding and final quality verification are not.
+Pinned tools, synthetic memory assertions and reproduction details are linked
+above. No AVR timing or speedup is inferred from these host checks.

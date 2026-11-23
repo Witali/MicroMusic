@@ -9,6 +9,13 @@
 
 namespace lpx {
 bool verifyStream(const Stream& stream,const Pcm& expected) {
+    if(stream.continuation) {
+        // The isolated candidate checks wire syntax and reset-state arithmetic.
+        // A streaming caller must additionally verify its assembled continuous
+        // file against all carried-state PCM before exposing that file.
+        Stream isolated=stream;isolated.continuation=false;isolated.initial=SynthesisState{};
+        return verifyStream(isolated,render(isolated));
+    }
     auto bytes=packV9(stream);Lpx4HybridCore decoder;
     if(!decoder.beginWideV9(bytes.data(),bytes.size()))return false;
     for(int value:expected) { int16_t actual;if(!decoder.nextS16(actual) || actual!=value)return false; }
@@ -30,19 +37,21 @@ Pcm prepareInputLevel(const Pcm& input,bool autoQuiet,int& gainExponent) {
     return reference;
 }
 Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
-                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize) {
+                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize,const Stream* prefix) {
     report=AdaptiveReport{};
-    if(sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize)) { report.error=-1;return Stream{}; }
+    if(sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize) || (prefix && (autoQuiet || normalize))) { report.error=-1;return Stream{}; }
     Pcm reference=prepareInputLevel(input,autoQuiet,report.gainExponent);
     if(normalize)report.loudness=normalizeLoudness(reference,rate);
     QualityContext context(reference,speech);
-    std::vector<Stream> seeds;seeds.push_back(fitSeed(reference,profile,rate,13926,false));
+    const int fixedPre=prefix && prefix->continuation?prefix->pre:13926;
+    std::vector<Stream> seeds;seeds.push_back(fitSeed(reference,profile,rate,fixedPre,false,.97,prefix));
     if(!seeds.back().samples) { report.error=-7;return Stream{}; }
     if(!cap)cap=int(int64_t(compactBytes(seeds[0]))*(100+sizeAllowancePercent)/100);report.cap=cap;
     auto originalPcm=render(seeds[0]);auto original=context.measure(originalPcm);
     Stream anchor=seeds[0];double selectedScore=original.voice[0];
     for(int pre:{0,8192,13926}) {
-        seeds.push_back(fitSeed(reference,profile,rate,pre,true));
+        if(prefix && prefix->continuation && pre!=prefix->pre)continue;
+        seeds.push_back(fitSeed(reference,profile,rate,pre,true,.97,prefix));
         if(!seeds.back().samples) { report.error=-7;return Stream{}; }
         auto pcm=render(seeds.back());auto m=context.measure(pcm);
         if(compactBytes(seeds.back())<=cap && noRegression(m.quality,original.quality)
@@ -77,6 +86,7 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
         for(int i:ranked(true)) {
             for(int op=0;op<3;++op) {
                 auto& c=pool[i];if(c.attempted[op])continue;c.attempted[op]=true;
+                if(op==1 && prefix && prefix->continuation)continue;
                 if(c.origin==op)continue;
                 if(op==0) {
                     bool extras=false;for(const auto& e:c.stream.extras)extras|=e[1]!=0;

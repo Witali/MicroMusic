@@ -87,6 +87,8 @@ struct State { int h[10], ring[256], dd; };
 #endif
 static const char* backendError = "";
 static State state;
+static LpxSeedContext seedContext;
+static bool hasSeedContext;
 #if LPX_ENCODER_CACHE_ANALYSIS
 static double rootGrid[2][641][11];
 static bool analysisPrepared;
@@ -134,7 +136,12 @@ void analyze(int frame) {
     double buf[256], r[11], a[11] = {1}, old[11], roots[10];
     double mean = 0;
     int start = frame * 160 + 80 - 128;
-    for (int j = 0; j < 256; ++j) { int at = start + j; buf[j] = at >= 0 && at < padded ? emphasized[at] / 16384.0 : 0; mean += buf[j]; }
+    for (int j = 0; j < 256; ++j) {
+        int at=start+j;double sample=0;
+        if(at>=0 && at<padded+(hasSeedContext?seedContext.lookahead:0))sample=emphasized[at];
+        else if(at>=-48 && at<0 && hasSeedContext && seedContext.continuation)sample=seedContext.emphasized[at+48];
+        buf[j]=sample/16384.0;mean+=buf[j];
+    }
     mean /= 256;
     for (int j = 0; j < 256; ++j) buf[j] = (buf[j] - mean) * window[j];
     for (int lag = 0; lag <= 10; ++lag) { r[lag] = 0; for (int j = lag; j < 256; ++j) r[lag] += buf[j] * buf[j - lag]; }
@@ -194,7 +201,8 @@ void prepareCoefficients() {
         for (int point = 0; point < 3; ++point) {
             int t = point * 8, polynomials[2][12] = {{4096, 4096}, {4096, -4096}};
             for (int j = 0; j < 10; ++j) {
-                int norm = (vectors[fi ? fi - 1 : 0][j] * (16 - t) + vectors[fi][j] * t) >> 2;
+                int previous=fi?vectors[fi-1][j]:hasSeedContext && seedContext.continuation?seedContext.previousVector[j]:vectors[0][j];
+                int norm = (previous * (16 - t) + vectors[fi][j] * t) >> 2;
                 int index = norm >> 4, frac = norm & 15;
                 int c = -(cosine[index] + ((cosine[index + 1] - cosine[index]) * frac >> 4));
                 int* p = polynomials[j & 1]; int n = 2 + (j / 2) * 2;
@@ -350,7 +358,11 @@ uint8_t* enc_output() { return packed; }
 }
 int lpxSeedBegin(int samples, int profile, int sampleRate, int emphasis, bool zeroScale,
                  double bandwidth) {
+    return lpxSeedBeginContext(samples,profile,sampleRate,emphasis,zeroScale,bandwidth,nullptr);
+}
+int lpxSeedBeginContext(int samples,int profile,int sampleRate,int emphasis,bool zeroScale,double bandwidth,const LpxSeedContext* context) {
     pre = emphasis; allowZeroScale = zeroScale; referenceScaleOrder = true;
+    hasSeedContext=context!=nullptr;if(context)seedContext=*context;
     failure = 0; block = 0;
     if (samples < 1 || uint32_t(samples) > reservedSamples || (profile != 4 && profile != 6) || (sampleRate != 8000 && sampleRate != 12000 && sampleRate != 16000)) return -1;
     if (!(bandwidth > 0 && bandwidth <= 1)) return -1;
@@ -358,13 +370,19 @@ int lpxSeedBegin(int samples, int profile, int sampleRate, int emphasis, bool ze
     count = samples; padded = (count + 319) / 320 * 320; mode = profile; rate = sampleRate;
     headerBytes = count > 64000 ? 17 : 13;
     memset(source + count, 0, (padded - count) * sizeof(int16_t)); memset(&state, 0, sizeof(state));
+    if(hasSeedContext) { memcpy(state.h,seedContext.h,sizeof(state.h));memcpy(state.ring,seedContext.ring,sizeof(state.ring));state.dd=seedContext.dd; }
     prepareAnalysis();
-    for (int j = 0; j < padded; ++j) emphasized[j] = source[j] / 2.0 - (j ? pre * (source[j - 1] / 2.0) / 16384 : 0);
+    for (int j = 0; j < padded+(hasSeedContext?seedContext.lookahead:0); ++j)
+        emphasized[j] = source[j] / 2.0 - (j ? pre * (source[j - 1] / 2.0) / 16384 : hasSeedContext && seedContext.continuation?pre*(seedContext.lastSample/2.0)/16384:0);
     for (int fi = 0; fi < padded / 160; ++fi) analyze(fi);
     prepareCoefficients();
     for (int j = 0; j < padded; ++j) {
         residual[j] = emphasized[j];
-        for (int k = 0; k < 10 && j > k; ++k) residual[j] += coefficients[j / 20][k] * emphasized[j - k - 1] / 4096;
+        for (int k = 0; k < 10; ++k) {
+            int at=j-k-1;
+            if(at>=0)residual[j] += coefficients[j / 20][k] * emphasized[at] / 4096;
+            else if(hasSeedContext && seedContext.continuation)residual[j] += coefficients[j / 20][k] * seedContext.emphasized[at+48] / 4096;
+        }
     }
     return padded / 160;
 }
@@ -397,7 +415,7 @@ int enc_step() {
     int center = clip((int)nearbyint((128 + 16 * log2(desired / 16.384)) / 8), 1, 31);
     for (int candidate = 18; candidate <= 145; ++candidate) {
         double dot = 0, energy = 0;
-        for (int j = start; j < start + 160; ++j) { double v = j >= candidate ? residual[j - candidate] : 0; dot += v * residual[j]; energy += v * v; }
+        for (int j = start; j < start + 160; ++j) { double v = j >= candidate ? residual[j - candidate] : hasSeedContext && seedContext.continuation?seedContext.residual[j-candidate+145]:0; dot += v * residual[j]; energy += v * v; }
         double positive = fmax(0, dot), score = positive * positive / (energy + 1);
         if (score > pitchscore) { pitchscore = score; lag = candidate; pitchgain = clip((int)nearbyint(8 * dot / (energy + 1)) * 2, 0, 14); }
     }

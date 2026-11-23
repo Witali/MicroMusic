@@ -11,5 +11,15 @@ struct LpxSeedView {
 };
 int lpxSeedBegin(int samples, int profile, int rate, int pre, bool zeroScale,
                  double bandwidth = .97);
+struct LpxSeedContext {
+    int h[10]={},ring[256]={},dd=0;
+    double emphasized[48]={},residual[145]={};
+    uint16_t previousVector[10]={};
+    int16_t lastSample=0;
+    bool continuation=false;
+    int lookahead=0;
+};
+int lpxSeedBeginContext(int samples,int profile,int rate,int pre,bool zeroScale,
+                         double bandwidth,const LpxSeedContext* context);
 LpxSeedView lpxSeedView();
 uint32_t lpxSeedCapacity();

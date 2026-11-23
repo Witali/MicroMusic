@@ -92,7 +92,7 @@ SpectralPulseProposals proposeSpectralPulses(const Stream& input,const Pcm& refe
         if(anchors.size()==maxRegions)break;
     }
     std::sort(anchors.begin(),anchors.end());result.regions=anchors.size();
-    SynthesisState prefix;int cursor=0;std::vector<Patch> patches;
+    auto prefix=input.initial;int cursor=0;std::vector<Patch> patches;
     for(int anchor:anchors) {
         const int start=anchor/20*20,stop=std::min(input.samples,start+pulseSpan);
         // Recover each original prefix once, with constant-sized gap buffers.

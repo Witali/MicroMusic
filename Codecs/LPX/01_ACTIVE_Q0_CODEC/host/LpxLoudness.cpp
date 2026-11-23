@@ -31,52 +31,65 @@ struct KWeighting {
 bool validRate(int rate) { return rate==8000 || rate==12000 || rate==16000; }
 double asLufs(double energy) { return energy>0?-0.691+10*std::log10(energy):-std::numeric_limits<double>::infinity(); }
 }
-double integratedLoudness(const Pcm& pcm,int rate) {
-    if(!validRate(rate) || pcm.size()<size_t(rate*4/10))return -std::numeric_limits<double>::infinity();
-    const int hop=rate/10;KWeighting filter(rate);
-    // Four 100-ms energy sums form each 400-ms block. Memory scales with the
-    // number of gating blocks, not the number of filtered audio samples.
-    double ring[4]={};int slot=0,used=0,within=0;double sum=0;
-    std::vector<double> blocks;blocks.reserve(pcm.size()/hop);
+struct LoudnessMeter::Impl {
+    int rate,hop,slot=0,used=0,within=0,peak=0;
+    uint64_t samples=0;
+    KWeighting filter;
+    double ring[4]={},sum=0;
+    std::vector<double> blocks;
+    explicit Impl(int sampleRate):rate(sampleRate),hop(sampleRate/10),filter(validRate(sampleRate)?sampleRate:8000) {}
+};
+LoudnessMeter::LoudnessMeter(int rate):state(new Impl(rate)) {}
+LoudnessMeter::~LoudnessMeter()=default;
+void LoudnessMeter::add(const int16_t* pcm,size_t count) {
+    auto& s=*state;if(!validRate(s.rate))return;
     const double absolute=std::pow(10.,(-70.+0.691)/10);
-    for(int16_t x:pcm) {
-        double y=filter.next(x);sum+=y*y;
-        if(++within!=hop)continue;
-        ring[slot]=sum;slot=(slot+1)%4;sum=0;within=0;
-        if(++used<4)continue;
-        double energy=(ring[0]+ring[1]+ring[2]+ring[3])/(4*hop);
-        if(energy>=absolute)blocks.push_back(energy);
+    for(size_t i=0;i<count;++i) {
+        int x=pcm[i];++s.samples;s.peak=std::max(s.peak,std::abs(x));
+        double y=s.filter.next(x);s.sum+=y*y;
+        if(++s.within!=s.hop)continue;
+        s.ring[s.slot]=s.sum;s.slot=(s.slot+1)%4;s.sum=0;s.within=0;
+        if(++s.used<4)continue;
+        double energy=(s.ring[0]+s.ring[1]+s.ring[2]+s.ring[3])/(4*s.hop);
+        if(energy>=absolute)s.blocks.push_back(energy);
     }
-    if(blocks.empty())return -std::numeric_limits<double>::infinity();
-    double total=0;for(double e:blocks)total+=e;
-    double threshold=std::max(absolute,total/blocks.size()/10);
-    total=0;size_t count=0;for(double e:blocks)if(e>=threshold) { total+=e;++count; }
+}
+double LoudnessMeter::measure() const {
+    const auto& s=*state;
+    if(!validRate(s.rate) || s.samples<uint64_t(s.rate*4/10) || s.blocks.empty())return -std::numeric_limits<double>::infinity();
+    const double absolute=std::pow(10.,(-70.+0.691)/10);
+    double total=0;for(double e:s.blocks)total+=e;
+    double threshold=std::max(absolute,total/s.blocks.size()/10);
+    total=0;size_t count=0;for(double e:s.blocks)if(e>=threshold) { total+=e;++count; }
     return count?asLufs(total/count):-std::numeric_limits<double>::infinity();
 }
-static LoudnessReport applyLoudness(Pcm& pcm,int rate,int targetLufs,double maximum) {
-    LoudnessReport report;
-    if(!validRate(rate) || pcm.size()<size_t(rate*4/10)) { report.status=2;return report; }
-    report.input=integratedLoudness(pcm,rate);report.prepared=report.input;
+LoudnessReport LoudnessMeter::plan(int target,int maxGain) const {
+    LoudnessReport report;const auto& s=*state;
+    if(target<-30 || target>-9 || maxGain<-1 || maxGain>24) { report.status=-1;return report; }
+    if(!validRate(s.rate) || s.samples<uint64_t(s.rate*4/10)) { report.status=2;return report; }
+    report.input=measure();report.prepared=report.input;
     if(!std::isfinite(report.input)) { report.status=3;return report; }
-    int peak=0;for(int x:pcm)peak=std::max(peak,std::abs(x));
     const int ceiling=int(std::floor(32768*std::pow(10.,-1./20)));
-    double wanted=std::pow(10.,(targetLufs-report.input)/20),allowed=double(ceiling)/peak;
-    double gain=std::min(wanted,std::min(allowed,maximum));report.status=1;
+    double wanted=std::pow(10.,(target-report.input)/20),allowed=double(ceiling)/s.peak;
+    double maximum=maxGain<0?std::numeric_limits<double>::infinity():std::pow(10.,maxGain/20.);
+    report.factor=std::min(wanted,std::min(allowed,maximum));report.status=1;
     report.limited=allowed<wanted && allowed<=maximum;
     report.gainLimited=maximum<wanted && maximum<=allowed;
-    report.gainDb=20*std::log10(gain);
-    for(auto& x:pcm)x=int16_t(std::max(-ceiling,std::min(ceiling,int(std::round(x*gain)))));
-    report.prepared=integratedLoudness(pcm,rate);
-    return report;
+    report.gainDb=20*std::log10(report.factor);return report;
 }
-LoudnessReport normalizeLoudness(Pcm& pcm,int rate) {
-    // Retained original ABI/oracle behavior: fixed -18 LUFS without a boost cap.
-    return applyLoudness(pcm,rate,-18,std::numeric_limits<double>::infinity());
+double integratedLoudness(const Pcm& pcm,int rate) {
+    LoudnessMeter meter(rate);meter.add(pcm.data(),pcm.size());return meter.measure();
 }
-LoudnessReport normalizeLoudness(Pcm& pcm,int rate,int targetLufs,int maxGainDb) {
-    if(targetLufs<-30 || targetLufs>-9 || maxGainDb<0 || maxGainDb>24) {
-        LoudnessReport report;report.status=-1;return report;
-    }
-    return applyLoudness(pcm,rate,targetLufs,std::pow(10.,maxGainDb/20.));
+static LoudnessReport applyLoudness(Pcm& pcm,int rate,int target,int maxGain) {
+    LoudnessMeter meter(rate);meter.add(pcm.data(),pcm.size());auto report=meter.plan(target,maxGain);
+    if(report.status!=1)return report;
+    const int ceiling=int(std::floor(32768*std::pow(10.,-1./20)));
+    for(auto& x:pcm)x=int16_t(std::max(-ceiling,std::min(ceiling,int(std::round(x*report.factor)))));
+    report.prepared=integratedLoudness(pcm,rate);return report;
+}
+LoudnessReport normalizeLoudness(Pcm& pcm,int rate) { return applyLoudness(pcm,rate,-18,-1); }
+LoudnessReport normalizeLoudness(Pcm& pcm,int rate,int target,int maxGain) {
+    if(target<-30 || target>-9 || maxGain<0 || maxGain>24) { LoudnessReport report;report.status=-1;return report; }
+    return applyLoudness(pcm,rate,target,maxGain);
 }
 }

@@ -46,4 +46,7 @@ struct JointQualityReport {
 Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
     int cap, bool finalV9Budget, JointQualityReport& report, bool threeK = false,
     bool speech = true);
+// Same frozen whole-output safety/objective for a finalized streaming proposal.
+bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,
+                             const Pcm& candidate,int sampleRate,bool speech=true);
 }
