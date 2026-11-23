@@ -36,6 +36,8 @@ host sources use the same compiler and floating-point flags as the CPU build.
 ```powershell
 node web-player/scripts/encode-lpx-native.mjs input.wav new-output.lpx --quality adaptive --backend cpu
 node web-player/scripts/encode-lpx-native.mjs input.wav new-output-cuda.lpx --quality adaptive --backend cuda
+node web-player/scripts/encode-lpx-native.mjs input.wav new-output-larger.lpx --size-allowance 25
+node web-player/scripts/encode-lpx-native.mjs reference.pcm new-reference-output.lpx --pcm --search reference
 node web-player/scripts/encode-lpx-native.mjs reference.pcm new-output.lpx --pcm --rate 8000 --profile 6 --repeat 5
 ```
 
@@ -48,12 +50,20 @@ The wrapper accepts Unicode filenames, refuses to overwrite an existing output,
 and writes only after successful complete-stream verification. Cancellation or
 encoding failure leaves no successful output file.
 
-`--quality adaptive` is the full offline-style search (default four refinement
-calls). `--quality fast` is the original bounded seed search. `--profile 4|6`,
+`--quality adaptive` uses the same expanded search as the Web UI by default:
+four adaptive refinement calls followed by the bounded pitch/gain extension.
+`--search reference` selects the original Python-reference adaptive search;
+`--search expanded` explicitly selects the default. Compare identical PCM,
+profile, rate, level, call count and size allowance when checking PC/Web parity.
+`--quality fast` is the unchanged original bounded seed search. `--profile 4|6`,
 `--rate 8000|12000|16000` and `--encoder path` are explicit. Adaptive-only options
-are `--calls 0..4`, `--max-bytes N`, `--auto-quiet` and `--non-speech`. The default
+are `--calls 0..4`, `--search expanded|reference`, `--size-allowance 0..100`,
+`--max-bytes N`, `--auto-quiet` and `--non-speech`. A percentage allowance
+enlarges the original control budget; zero is the default. The default
 byte budget is the complete v5 control size before lossless V9 repacking; an
-explicit budget uses that same accounting, rather than the shorter V9 file size.
+explicit budget uses that same accounting, rather than the shorter V9 file size,
+and overrides the percentage allowance. This permits additional pulses only
+within the declared budget; it does not promise audible improvement.
 Automatic quiet-input gain is opt-in and reported as a power-of-two exponent.
 Input is limited to 32000000 samples and is never silently truncated.
 
@@ -67,7 +77,10 @@ only to stderr and does not contain filenames, recording hashes or speaker data.
 `--repeat 1..20` encodes the same PCM repeatedly in one process and checks every
 complete output against the first. The JSON report includes backend setup time,
 `encodingMs` for the first encode, `repeatTimesMs` for every repetition, and
-`warmMedianMs` (null without warm repetitions). Encoding timings include shared
+`warmMedianMs` (null without warm repetitions). The report also identifies
+`search`, `sizeAllowancePercent` and the extension's local `expandedAccepted`
+count; that count alone is not a claim that the selected file sounds better.
+Encoding timings include shared
 search, allocation, packing and native output verification; they exclude input
 reading/conversion, GPU setup and process startup. Report end-to-end wall time
 as well when comparing short files. Repeated output is emitted only once.
@@ -78,6 +91,7 @@ node --test web-player/tests/lpx-native-cli.test.mjs
 
 These tests use built executables when present; `LPX_NATIVE_ENCODER` and
 `LPX_CUDA_ENCODER` can select others. They compare fast/adaptive native output
-with WASM, explicitly select CPU and CUDA, check repetition, invalid input,
+with reference and expanded WASM (including a 25% size allowance), explicitly
+select CPU and CUDA, check repetition, invalid input,
 continuous V9 Long, binary-safe file writing, no-overwrite and channel averaging.
 No real-time MCU or audible-quality claim follows from these host checks.

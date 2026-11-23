@@ -10,6 +10,7 @@ const { values, positionals } = parseArgs({ allowPositionals: true, options: {
   encoder: { type: 'string' }, pcm: { type: 'boolean', default: false },
   profile: { type: 'string', default: '6' }, rate: { type: 'string', default: '8000' },
   backend: { type: 'string', default: 'cpu' }, quality: { type: 'string', default: 'adaptive' },
+  search: { type: 'string', default: 'expanded' }, 'size-allowance': { type: 'string', default: '0' },
   calls: { type: 'string', default: '4' }, 'max-bytes': { type: 'string', default: '0' },
   repeat: { type: 'string', default: '1' }, 'auto-quiet': { type: 'boolean', default: false },
   'non-speech': { type: 'boolean', default: false }, ffmpeg: { type: 'string', default: 'ffmpeg' },
@@ -21,10 +22,14 @@ if (positionals.length !== 2 || !source || !destination || resolve(source) === r
   throw new Error('Usage: node web-player/scripts/encode-lpx-native.mjs input-audio new-output.lpx [--encoder executable] [--pcm] [--backend cpu|cuda] [--quality fast|adaptive]');
 }
 if (!['4', '6'].includes(values.profile) || !['8000', '12000', '16000'].includes(values.rate)
-    || !['cpu', 'cuda'].includes(values.backend) || !['fast', 'adaptive'].includes(values.quality)) throw new Error('Invalid encoding options.');
+    || !['cpu', 'cuda'].includes(values.backend) || !['fast', 'adaptive'].includes(values.quality)
+    || !['expanded', 'reference'].includes(values.search)) throw new Error('Invalid encoding options.');
 if (!/^[0-4]$/.test(values.calls) || !/^(?:[1-9]|1[0-9]|20)$/.test(values.repeat)
     || !/^\d+$/.test(values['max-bytes']) || Number(values['max-bytes']) > 104857600
     || (Number(values['max-bytes']) !== 0 && Number(values['max-bytes']) < 22)) throw new Error('Invalid refinement, repeat or byte budget.');
+if (!/^\d+$/.test(values['size-allowance']) || Number(values['size-allowance']) > 100) throw new Error('Size allowance must be in 0..100 percent.');
+if (values.quality === 'fast' && (values.search !== 'expanded' || Number(values['size-allowance']) !== 0
+    || values.calls !== '4' || Number(values['max-bytes']) !== 0 || values['auto-quiet'] || values['non-speech'])) throw new Error('Adaptive search options require --quality adaptive.');
 try { await stat(destination); throw new Error('Output already exists; choose a new output path.'); }
 catch (error) { if (error.code !== 'ENOENT') throw error; }
 const cancellation = new AbortController();
@@ -78,7 +83,8 @@ try {
   const executable = values.encoder || resolve(root, 'build/lpx-native',
     `lpx-encode${values.backend === 'cuda' ? '-cuda' : ''}${process.platform === 'win32' ? '.exe' : ''}`);
   const args = ['--profile', values.profile, '--rate', values.rate, '--backend', values.backend,
-    '--quality', values.quality, '--calls', values.calls, '--max-bytes', values['max-bytes'], '--repeat', values.repeat,
+    '--quality', values.quality, '--search', values.search, '--size-allowance', values['size-allowance'],
+    '--calls', values.calls, '--max-bytes', values['max-bytes'], '--repeat', values.repeat,
     ...(values['auto-quiet'] ? ['--auto-quiet'] : []), ...(values['non-speech'] ? ['--non-speech'] : [])];
   const result = await collect(executable, args, pcm, 100 * 1024 * 1024);
   if (result.bytes.length < 13 || result.bytes.subarray(0, 2).toString() !== 'L9') throw new Error('Native encoder returned no LPX V9 stream.');

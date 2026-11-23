@@ -20,11 +20,12 @@ const fast = await createEncoder(readFileSync(new URL('../lpx/encoder.wasm', imp
 const decode = await createDecoder(readFileSync(new URL('../lpx/decoder.wasm', import.meta.url)));
 const { instance } = await WebAssembly.instantiate(readFileSync(new URL('../lpx/encoder-adaptive.wasm', import.meta.url)));
 instance.exports.__wasm_call_ctors?.();
-function adaptive(pcm, profile, rate = 8000) {
+function adaptive(pcm, profile, rate = 8000, expanded = false, allowance = 0) {
   const a = instance.exports;
   assert.equal(a.enc_reserve(pcm.length), 1);
   new Int16Array(a.memory.buffer, a.enc_input(), pcm.length).set(pcm);
-  const size = a.enc_adaptive(pcm.length, profile, rate, 0, 0, 4);
+  const size = expanded ? a.enc_adaptive_extended(pcm.length, profile, rate, 0, 0, 4, allowance)
+    : a.enc_adaptive(pcm.length, profile, rate, 0, 0, 4);
   assert.ok(size >= 13, `adaptive WASM returned ${size}`);
   return Buffer.from(new Uint8Array(a.memory.buffer, a.enc_adaptive_output(), size));
 }
@@ -52,12 +53,31 @@ test('native fast CLI matches the browser encoder and checks repeat determinism'
   }
 });
 
-test('native adaptive CLI uses the same complete adaptive result as WASM', { skip: !enabled }, () => {
+test('native reference adaptive CLI uses the same Python-reference result as WASM', { skip: !enabled }, () => {
   const inputs = [new Int16Array(1), signal(161), signal(641)];
   for (const pcm of inputs) for (const profile of [4, 6]) {
-    const { bytes, report } = success(native, pcm, ['--profile', String(profile), '--quality', 'adaptive', '--repeat', '2']);
+    const { bytes, report } = success(native, pcm, ['--profile', String(profile), '--quality', 'adaptive', '--search', 'reference', '--repeat', '2']);
     assert.deepEqual(bytes, adaptive(pcm, profile));
     assert.equal(report.refinementCalls, 4); assert.ok(report.candidates >= 1);
+    assert.equal(report.search, 'reference'); assert.equal(report.sizeAllowancePercent, 0);
+  }
+});
+
+test('native default expanded search and size allowance match extended WASM in CPU/CUDA modes', { skip: !enabled }, () => {
+  const pcm = signal(641);
+  for (const profile of [4, 6]) for (const allowance of [0, 25]) {
+    const args = ['--profile', String(profile), '--quality', 'adaptive', '--size-allowance', String(allowance), '--repeat', '2'];
+    const expected = adaptive(pcm, profile, 8000, true, allowance);
+    const cpu = success(native, pcm, args);
+    assert.deepEqual(cpu.bytes, expected);
+    assert.equal(cpu.report.search, 'expanded'); assert.equal(cpu.report.sizeAllowancePercent, allowance);
+    assert.ok(cpu.report.expandedAccepted >= 0);
+    const explicit = success(native, pcm, [...args, '--search', 'expanded']);
+    assert.deepEqual(explicit.bytes, expected);
+    if (gpu) {
+      const accelerated = success(cuda, pcm, [...args, '--backend', 'cuda']);
+      assert.deepEqual(accelerated.bytes, expected); assert.equal(accelerated.report.search, 'expanded');
+    }
   }
 });
 
@@ -94,7 +114,8 @@ test('native input validation emits no successful stream', { skip: !enabled }, (
   const pcm = signal(1);
   for (const args of [['--profile', '5'], ['--rate', '7500'], ['--repeat', '0'], ['--repeat', '21'],
     ['--calls', '5'], ['--max-bytes', '21'], ['--max-bytes', '2147483647'], ['--quality', 'fast', '--auto-quiet'],
-    ['--unknown', '1'], ['--backend', 'cuda']]) {
+    ['--unknown', '1'], ['--backend', 'cuda'], ['--search', 'unknown'], ['--size-allowance', '101'],
+    ['--quality', 'fast', '--search', 'reference'], ['--quality', 'fast', '--size-allowance', '25']]) {
     const result = run(native, pcm, args);
     assert.notEqual(result.status, 0); assert.equal(result.stdout.length, 0); assert.ok(JSON.parse(result.stderr.toString()).error);
   }

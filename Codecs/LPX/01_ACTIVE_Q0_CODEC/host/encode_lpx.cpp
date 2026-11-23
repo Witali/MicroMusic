@@ -26,8 +26,8 @@ extern "C" const char* enc_backend_error(void);
 namespace {
 using Clock = std::chrono::steady_clock;
 struct Options {
-    int profile = 6, rate = 8000, calls = 4, maxBytes = 0, repeat = 1;
-    bool cuda = false, adaptive = true, autoQuiet = false, speech = true;
+    int profile = 6, rate = 8000, calls = 4, maxBytes = 0, repeat = 1, sizeAllowance = 0;
+    bool cuda = false, adaptive = true, autoQuiet = false, speech = true, expandedSearch = true;
 };
 void jsonString(FILE* out, const char* value) {
     fputc('"', out);
@@ -55,6 +55,7 @@ int run(int argc, char** argv) {
         if (!strcmp(name, "--help")) {
             puts("Usage: lpx-encode [--profile 4|6] [--rate 8000|12000|16000]"
                  " [--backend cpu|cuda] [--quality fast|adaptive] [--calls 0..4]"
+                 " [--search expanded|reference] [--size-allowance 0..100]"
                  " [--max-bytes N] [--repeat 1..20] [--auto-quiet] [--non-speech]\n"
                  "Input: mono PCM16 little-endian on stdin, 1..32000000 samples.\n"
                  "Output: one verified LPX V9/Long file on stdout; JSON diagnostics on stderr.\n"
@@ -71,6 +72,9 @@ int run(int argc, char** argv) {
         } else if (!strcmp(name, "--quality")) {
             if (strcmp(value, "fast") && strcmp(value, "adaptive")) return fail("Quality must be fast or adaptive");
             options.adaptive = !strcmp(value, "adaptive");
+        } else if (!strcmp(name, "--search")) {
+            if (strcmp(value, "expanded") && strcmp(value, "reference")) return fail("Search must be expanded or reference");
+            options.expandedSearch = !strcmp(value, "expanded");
         } else {
             int number;
             if (!integer(value, number)) return fail("Expected a nonnegative integer option value");
@@ -79,6 +83,7 @@ int run(int argc, char** argv) {
             else if (!strcmp(name, "--calls")) options.calls = number;
             else if (!strcmp(name, "--max-bytes")) options.maxBytes = number;
             else if (!strcmp(name, "--repeat")) options.repeat = number;
+            else if (!strcmp(name, "--size-allowance")) options.sizeAllowance = number;
             else return fail("Unknown encoder option");
         }
     }
@@ -86,8 +91,9 @@ int run(int argc, char** argv) {
     if (options.rate != 8000 && options.rate != 12000 && options.rate != 16000) return fail("Unsupported sample rate");
     if (options.calls < 0 || options.calls > 4) return fail("Refinement calls must be in 0..4");
     if (options.repeat < 1 || options.repeat > 20) return fail("Repeat count must be in 1..20");
+    if (options.sizeAllowance < 0 || options.sizeAllowance > 100) return fail("Size allowance must be in 0..100 percent");
     if (options.maxBytes && (options.maxBytes < 22 || options.maxBytes > int(kLpxMaxFileBytes))) return fail("Complete byte budget must be 22..104857600, or 0 for the control size");
-    if (!options.adaptive && (options.autoQuiet || options.maxBytes || options.calls != 4 || !options.speech)) return fail("Adaptive search options require --quality adaptive");
+    if (!options.adaptive && (options.autoQuiet || options.maxBytes || options.calls != 4 || !options.speech || !options.expandedSearch || options.sizeAllowance)) return fail("Adaptive search options require --quality adaptive");
 #ifdef _WIN32
     if (_setmode(_fileno(stdin), _O_BINARY) == -1 || _setmode(_fileno(stdout), _O_BINARY) == -1) return fail("Cannot open binary standard streams", 3);
 #endif
@@ -120,7 +126,7 @@ int run(int argc, char** argv) {
       std::vector<uint8_t> current;
       if (options.adaptive) {
         auto stream = lpx::adaptiveEncode(pcm, options.profile, options.rate, report,
-            options.autoQuiet, options.maxBytes, options.calls, options.speech);
+            options.autoQuiet, options.maxBytes, options.calls, options.speech, options.expandedSearch, options.sizeAllowance);
         if (report.error || stream.samples != int(pcm.size())) return fail("Adaptive encoding or complete-size admission failed", 7);
         auto expected = lpx::render(stream);
         if (!lpx::verifyStream(stream, expected)) return fail("Adaptive output failed native decoder verification", 7);
@@ -141,8 +147,11 @@ int run(int argc, char** argv) {
     // No output byte is emitted until encoding and complete-stream verification
     // succeed. The file wrapper also waits for process success before writing.
     if (fwrite(bytes.data(), 1, bytes.size(), stdout) != bytes.size() || fflush(stdout)) return fail("Cannot write LPX output", 8);
-    fprintf(stderr, "{\"schema\":\"lpx-native-encode-v1\",\"backend\":\"%s\",\"quality\":\"%s\",\"samples\":%u,\"sampleRate\":%d,\"profile\":%d,\"bytes\":%u,\"long\":%s,\"backendInitializationMs\":%.6f,\"encodingMs\":%.6f,\"candidates\":%d,\"refinementCalls\":%d,\"gainPower2Exponent\":%d,\"repeatTimesMs\":[",
-        options.cuda ? "cuda" : "cpu", options.adaptive ? "adaptive" : "fast", unsigned(pcm.size()), options.rate, options.profile, unsigned(bytes.size()),
+    fprintf(stderr, "{\"schema\":\"lpx-native-encode-v1\",\"backend\":\"%s\",\"quality\":\"%s\",\"search\":\"%s\",\"sizeAllowancePercent\":%d,\"expandedAccepted\":%d,\"samples\":%u,\"sampleRate\":%d,\"profile\":%d,\"bytes\":%u,\"long\":%s,\"backendInitializationMs\":%.6f,\"encodingMs\":%.6f,\"candidates\":%d,\"refinementCalls\":%d,\"gainPower2Exponent\":%d,\"repeatTimesMs\":[",
+        options.cuda ? "cuda" : "cpu", options.adaptive ? "adaptive" : "fast",
+        options.adaptive ? (options.expandedSearch ? "expanded" : "reference") : "fast",
+        options.adaptive ? options.sizeAllowance : 0, report.expandedAccepted,
+        unsigned(pcm.size()), options.rate, options.profile, unsigned(bytes.size()),
         bytes[2] & 64 ? "true" : "false", initializationMs, timings[0], report.candidates, report.stages, report.gainExponent);
     for (size_t i = 0; i < timings.size(); ++i) fprintf(stderr, "%s%.6f", i ? "," : "", timings[i]);
     fputs("],\"warmMedianMs\":", stderr);
