@@ -1,4 +1,4 @@
-import { encodeWav, MAX_FILE_BYTES } from './codec.js?v=20261123-input-level';
+import { encodeWav, MAX_FILE_BYTES } from './codec.js?v=20261123-quality-v3';
 
 const $ = id => document.getElementById(id);
 const audio = $('audio');
@@ -12,7 +12,7 @@ let worker, loadId = 0, clip = null, wavUrl = null, lastVolume = 0.75;
 audio.volume = 0.75;
 function message(text, error = false) { $('message').textContent = text; $('message').classList.toggle('error', error); }
 try {
-  worker = new Worker(new URL('./decode-worker.js?v=20261123-input-level', import.meta.url), { type: 'module' });
+  worker = new Worker(new URL('./decode-worker.js?v=20261123-quality-v3', import.meta.url), { type: 'module' });
   worker.onmessage = ({ data }) => {
     if (data.id !== loadId) return;
     $('open').textContent = 'Открыть файл';

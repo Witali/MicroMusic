@@ -1,4 +1,4 @@
-import { MAX_SAMPLES } from './codec.js?v=20261123-input-level';
+import { MAX_SAMPLES } from './codec.js?v=20261123-quality-v3';
 
 export async function createEncoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);
