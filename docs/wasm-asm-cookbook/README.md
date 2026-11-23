@@ -9,7 +9,7 @@ The techniques reduce search runtime. They do not reduce working memory or
 change the shared decoder, firmware arithmetic, or real-time IRQ support.
 
 The implementation is original project code in
-[encoder.cpp](../../web-player/lpx/native/encoder.cpp). It optimizes the existing
+[LpxEncoder.cpp](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp). It optimizes the existing
 speech_v4 closed-loop search; it does not adapt external assembly.
 
 ### Stop candidates that cannot win
@@ -116,7 +116,7 @@ general claim about explicit SIMD kernels or other CPUs follows from this test.
 
 ### Evaluate independent pulse candidates in SIMD lanes
 
-The [explicit four-candidate backend](../../web-player/lpx/native/pulse-search-simd.h)
+The [explicit four-candidate backend](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderSimd.h)
 uses wasm32 SIMD128 intrinsics from the pinned Emscripten 6.0.12/Clang 24 SDK.
 It is original project code; the compiler's LLVM header is included, not copied
 or adapted. [Emscripten's SIMD reference](https://emscripten.org/docs/porting/simd.html)

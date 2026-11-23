@@ -1,6 +1,6 @@
 // Browser ABI for the portable LPX V9 / host-only V9 Long C backend.
 #include "Lpx4HybridCore.h"
-#include "workspace.h"
+#include "LpxHostWorkspace.h"
 #include <stdint.h>
 
 static uint8_t* input;

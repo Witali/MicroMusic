@@ -1,4 +1,4 @@
-#include "../../lpx/native/encoder.cpp"
+#include "LpxEncoder.cpp"
 #if !LPX_ENCODER_HAS_SIMD_SEARCH
 #error Build this harness with the explicit WASM SIMD search enabled
 #endif

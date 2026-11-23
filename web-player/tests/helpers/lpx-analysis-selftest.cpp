@@ -1,5 +1,5 @@
 // Exercise private analysis/silence seams without exports in production WASM.
-#include "../../lpx/native/encoder.cpp"
+#include "LpxEncoder.cpp"
 #if !LPX_ENCODER_FAST_SILENCE
 #error Build this harness with the exact silent-block path enabled
 #endif

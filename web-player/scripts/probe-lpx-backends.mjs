@@ -13,9 +13,10 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 const git = (...args) => execFileSync('git', args, { cwd: root });
 const revision = git('rev-parse', '--verify', `${values['source-ref'] || 'HEAD'}^{commit}`).toString().trim();
 const recorded = path => git('show', `${revision}:${path}`);
-const sourcePath = 'web-player/lpx/native/encoder.cpp';
-const source = recorded(sourcePath).toString().replaceAll('\r\n', '\n');
 const manifest = JSON.parse(recorded('web-player/lpx/encoder-build.json'));
+const sharedSource = 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp';
+const sourcePath = manifest.inputs[sharedSource] ? sharedSource : 'web-player/lpx/native/encoder.cpp';
+const source = recorded(sourcePath).toString().replaceAll('\r\n', '\n');
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 for (const [path, digest] of Object.entries(manifest.inputs)) {
   assert.equal(hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n')), digest, `Use a checkout matching ${revision}: ${path}`);
@@ -66,8 +67,9 @@ for (const [name, text, extra] of [['control', source, []], ['simd', source, ['-
     experiment: { name, sourceRevision: revision, staticPrefixCacheBytes: name === 'compact-prefix' ? 1120 : 21520 }
   }, null, 2) + '\n');
   let harness = recorded('web-player/tests/helpers/lpx-prefix-selftest.cpp').toString();
-  harness = replaceOnce(harness, '#include "../../lpx/native/encoder.cpp"', `#include "${name}.cpp"`);
-  harness += '\n' + recorded('web-player/tests/helpers/lpx-analysis-selftest.cpp').toString().replace('#include "../../lpx/native/encoder.cpp"', '');
+  const include = sourcePath === sharedSource ? '#include "LpxEncoder.cpp"' : '#include "../../lpx/native/encoder.cpp"';
+  harness = replaceOnce(harness, include, `#include "${name}.cpp"`);
+  harness += '\n' + recorded('web-player/tests/helpers/lpx-analysis-selftest.cpp').toString().replace(include, '');
   const harnessCpp = `${directory}/${name}-selftest.cpp`, harnessWasm = `${directory}/${name}-selftest.wasm`;
   writeFileSync(join(root, harnessCpp), harness);
   compile([...extra, ...['lpx_prefix_selftest', 'lpx_silence_selftest', 'lpx_analysis_selftest'].map(name => '-Wl,--export=' + name)], [harnessCpp], harnessWasm);

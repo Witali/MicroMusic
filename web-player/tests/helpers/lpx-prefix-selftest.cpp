@@ -1,5 +1,5 @@
 // Test the private search seam without adding exports to the shipped module.
-#include "../../lpx/native/encoder.cpp"
+#include "LpxEncoder.cpp"
 #if !LPX_ENCODER_REUSE_PREFIX
 #error Build this harness with prefix reuse enabled
 #endif
