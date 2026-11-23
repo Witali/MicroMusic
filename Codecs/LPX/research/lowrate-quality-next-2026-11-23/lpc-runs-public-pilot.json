@@ -1,0 +1,1173 @@
+{
+  "schema": "lpx-lpc-runs-public-pilot-v1",
+  "baseline_commit": "ba02e453",
+  "scope": "Three previously public tuning phrases, 24 settings; no heldout evaluation or generalization claim",
+  "format": "Existing V9; unchanged complete caps, decoder and header fields",
+  "constants": {
+    "runs": 4,
+    "coordinate_step": 1,
+    "coordinates": 10,
+    "shapes_per_run_max": 20,
+    "shortlist_per_run": 2,
+    "local_horizon_samples": 1280,
+    "pulse_span_samples": 160,
+    "pulse_position_neighborhood": 2,
+    "p6_amplitude_neighborhood": 2,
+    "complete_proposals_max": 8
+  },
+  "selection": "Local FullBandContext magnitude+temporal ranking only; unchanged common whole-output V3 objective and safety admit complete outputs",
+  "validation": {
+    "native_cases": 144,
+    "exact_coefficient_prefix_slices": 102,
+    "legal_unguarded_proposals": 258,
+    "public_native_decoder_exact_jobs": 24,
+    "independently_verified_changed_jobs": 10
+  },
+  "code_sha256": {
+    "LpxLpcRefine.cpp": "3ba7dc345cd0ff7dfd063681eaa17e31fd857d27674fd7d5cd2173d00a6c52d2"
+  },
+  "timing": {
+    "method": "Single native runs on the same development host; standalone proposal and complete-gate times, not MCU measurements or paired performance benchmarks",
+    "proposal_seconds_min": 0.048263736,
+    "proposal_seconds_max": 0.178304363,
+    "complete_seconds_min": 0.16728868,
+    "complete_seconds_max": 0.553300058
+  },
+  "groups": {
+    "p4/8000": {
+      "cases": 3,
+      "changed": 2,
+      "samples": 37497,
+      "baseline_bytes": 1972,
+      "candidate_bytes": 1972,
+      "bytes_increased_cases": 0,
+      "bytes_decreased_cases": 0,
+      "candidate_score_sum": 2.995673961624698,
+      "candidate_score_min": 0.9971917927307958,
+      "proposal_seconds_sum": 0.21592678399999998,
+      "total_seconds_sum": 0.726123469,
+      "spectral_trials": 142,
+      "pulse_trials": 1144,
+      "trial_synthesized_samples": 1599200,
+      "full_proposals": 24,
+      "pcm16": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.9844821774723873,
+          "min_ratio": 0.9922334954683202,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.9862427482421205,
+          "min_ratio": 0.9924874125960104,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 2.9931160361752633,
+          "min_ratio": 0.9928304207257149,
+          "max_ratio": 1.0002856154495485,
+          "worsened_cases": 1
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0006306139439145,
+          "min_ratio": 0.9989245149872933,
+          "max_ratio": 1.0017060989566209,
+          "worsened_cases": 1
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.0003695032908455,
+          "min_ratio": 0.99846073798703,
+          "max_ratio": 1.0019087653038157,
+          "worsened_cases": 1
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.027924288544834,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0275121812321888,
+          "worsened_cases": 2
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 2.9990918180787,
+          "min_ratio": 0.9993881668255701,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.0012103781457789564,
+          "min_delta": 0.0,
+          "max_delta": 0.000805766850963785,
+          "worsened_cases": 0
+        },
+        "pcm_clips": {
+          "before": 1,
+          "after": 1
+        }
+      },
+      "pwm8": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.9828165767589256,
+          "min_ratio": 0.9906404464713662,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.984366753232039,
+          "min_ratio": 0.9919504731534652,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 2.9939742635563236,
+          "min_ratio": 0.9933617200738155,
+          "max_ratio": 1.000612543482508,
+          "worsened_cases": 1
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0021531982646312,
+          "min_ratio": 0.9977143940624811,
+          "max_ratio": 1.0044388042021501,
+          "worsened_cases": 1
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.000623506548179,
+          "min_ratio": 0.9987999765372239,
+          "max_ratio": 1.0018235300109553,
+          "worsened_cases": 1
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.0283857917156425,
+          "min_ratio": 1.0,
+          "max_ratio": 1.027829849513496,
+          "worsened_cases": 2
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 2.9984733025485903,
+          "min_ratio": 0.9986138667793713,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.00052685187914292,
+          "min_delta": 0.0,
+          "max_delta": 0.0004398589737021341,
+          "worsened_cases": 0
+        },
+        "pwm_rails": {
+          "before": 22,
+          "after": 22
+        }
+      }
+    },
+    "p6/8000": {
+      "cases": 3,
+      "changed": 2,
+      "samples": 37497,
+      "baseline_bytes": 2926,
+      "candidate_bytes": 2926,
+      "bytes_increased_cases": 0,
+      "bytes_decreased_cases": 0,
+      "candidate_score_sum": 2.9788034784779107,
+      "candidate_score_min": 0.9835783706108016,
+      "proposal_seconds_sum": 0.450516907,
+      "total_seconds_sum": 0.9549198219999999,
+      "spectral_trials": 157,
+      "pulse_trials": 3800,
+      "trial_synthesized_samples": 4834240,
+      "full_proposals": 24,
+      "pcm16": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.945469840784151,
+          "min_ratio": 0.9580918390251713,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.959787066937204,
+          "min_ratio": 0.965885155931135,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.001275773373119,
+          "min_ratio": 0.9976049858601453,
+          "max_ratio": 1.0036707875129733,
+          "worsened_cases": 1
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0024448580099437,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0018674158333458,
+          "worsened_cases": 2
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 2.994377130656219,
+          "min_ratio": 0.9942185603280134,
+          "max_ratio": 1.0001585703282054,
+          "worsened_cases": 1
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 2.9939375089561464,
+          "min_ratio": 0.9926660053389638,
+          "max_ratio": 1.0012715036171826,
+          "worsened_cases": 1
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 2.9981440134499007,
+          "min_ratio": 0.9978329484499421,
+          "max_ratio": 1.0003110649999585,
+          "worsened_cases": 1
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.003468521543891989,
+          "min_delta": 0.0,
+          "max_delta": 0.0019834597534404974,
+          "worsened_cases": 0
+        },
+        "pcm_clips": {
+          "before": 8,
+          "after": 7
+        }
+      },
+      "pwm8": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.944422614856265,
+          "min_ratio": 0.9583525737923068,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.9621035241534095,
+          "min_ratio": 0.9685770094390621,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.0030590046004235,
+          "min_ratio": 0.9971344360680054,
+          "max_ratio": 1.0059245685324179,
+          "worsened_cases": 1
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0013749842698743,
+          "min_ratio": 0.9990165203144136,
+          "max_ratio": 1.002358463955461,
+          "worsened_cases": 1
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 2.9955196488752986,
+          "min_ratio": 0.9958681662382461,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 2.9943527349124412,
+          "min_ratio": 0.9939565339646161,
+          "max_ratio": 1.0003962009478249,
+          "worsened_cases": 1
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 2.9984546911025896,
+          "min_ratio": 0.9982235974507031,
+          "max_ratio": 1.0002310936518866,
+          "worsened_cases": 1
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.0033429373375760685,
+          "min_delta": 0.0,
+          "max_delta": 0.0018834240796564705,
+          "worsened_cases": 0
+        },
+        "pwm_rails": {
+          "before": 11,
+          "after": 10
+        }
+      }
+    },
+    "k3/8000": {
+      "cases": 3,
+      "changed": 1,
+      "samples": 37497,
+      "baseline_bytes": 1730,
+      "candidate_bytes": 1730,
+      "bytes_increased_cases": 0,
+      "bytes_decreased_cases": 0,
+      "candidate_score_sum": 2.9923343449123854,
+      "candidate_score_min": 0.9923343449123854,
+      "proposal_seconds_sum": 0.15899382,
+      "total_seconds_sum": 0.653168284,
+      "spectral_trials": 196,
+      "pulse_trials": 1064,
+      "trial_synthesized_samples": 1574640,
+      "full_proposals": 24,
+      "pcm16": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.9788226459748013,
+          "min_ratio": 0.9788226459748013,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.9847250840922994,
+          "min_ratio": 0.9847250840922995,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.0033911324866076,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0033911324866076,
+          "worsened_cases": 1
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0018596324386975,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0018596324386972,
+          "worsened_cases": 1
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.0034898154977143,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0034898154977143,
+          "worsened_cases": 1
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 2.99906302388157,
+          "min_ratio": 0.9990630238815702,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 3.0060479522069965,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0060479522069965,
+          "worsened_cases": 1
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.002413182883888254,
+          "min_delta": 0.0,
+          "max_delta": 0.002413182883888254,
+          "worsened_cases": 0
+        },
+        "pcm_clips": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "pwm8": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.9782564815068957,
+          "min_ratio": 0.9782564815068956,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.983869014951773,
+          "min_ratio": 0.983869014951773,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.0035132173891728,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0035132173891728,
+          "worsened_cases": 1
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 2.999440871702712,
+          "min_ratio": 0.9994408717027122,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 2.9994205533880796,
+          "min_ratio": 0.9994205533880796,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 2.9996438059538053,
+          "min_ratio": 0.9996438059538053,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 2.999794153593266,
+          "min_ratio": 0.9997941535932661,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.002387630199419788,
+          "min_delta": 0.0,
+          "max_delta": 0.002387630199419788,
+          "worsened_cases": 0
+        },
+        "pwm_rails": {
+          "before": 3,
+          "after": 3
+        }
+      }
+    },
+    "k8/8000": {
+      "cases": 3,
+      "changed": 3,
+      "samples": 37497,
+      "baseline_bytes": 3310,
+      "candidate_bytes": 3311,
+      "bytes_increased_cases": 1,
+      "bytes_decreased_cases": 0,
+      "candidate_score_sum": 2.949211385127771,
+      "candidate_score_min": 0.9638428960709099,
+      "proposal_seconds_sum": 0.484631122,
+      "total_seconds_sum": 0.980796655,
+      "spectral_trials": 228,
+      "pulse_trials": 3934,
+      "trial_synthesized_samples": 5094240,
+      "full_proposals": 24,
+      "pcm16": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.8825742918017854,
+          "min_ratio": 0.9100940694649281,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.9202411293396997,
+          "min_ratio": 0.9428892301108894,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 2.9544878629568383,
+          "min_ratio": 0.9628319485741794,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 2.916291468686631,
+          "min_ratio": 0.935999694341042,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 2.9901350406438314,
+          "min_ratio": 0.9923447684060677,
+          "max_ratio": 1.0012175663369924,
+          "worsened_cases": 1
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.005906465852936,
+          "min_ratio": 0.9979484343836107,
+          "max_ratio": 1.009893607497165,
+          "worsened_cases": 1
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 2.9976267779775925,
+          "min_ratio": 0.9982304793346511,
+          "max_ratio": 1.0001090471465028,
+          "worsened_cases": 1
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.0038388921900939232,
+          "min_delta": 0.0,
+          "max_delta": 0.001493216054952673,
+          "worsened_cases": 0
+        },
+        "pcm_clips": {
+          "before": 4,
+          "after": 4
+        }
+      },
+      "pwm8": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.884014512652511,
+          "min_ratio": 0.9119467053098942,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.9250580984775887,
+          "min_ratio": 0.9464245882617904,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 2.9548435240113515,
+          "min_ratio": 0.9640684023930717,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 2.9786842259649675,
+          "min_ratio": 0.9808154834872566,
+          "max_ratio": 1.0000868388486766,
+          "worsened_cases": 1
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 2.9907925960797828,
+          "min_ratio": 0.9939295929046453,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.0065004055573827,
+          "min_ratio": 0.9978966719422745,
+          "max_ratio": 1.0104138829512226,
+          "worsened_cases": 1
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 2.997371010332937,
+          "min_ratio": 0.997587687159755,
+          "max_ratio": 1.0000701820160847,
+          "worsened_cases": 1
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.00396017610097632,
+          "min_delta": 0.0,
+          "max_delta": 0.0017884447638516487,
+          "worsened_cases": 0
+        },
+        "pwm_rails": {
+          "before": 9,
+          "after": 9
+        }
+      }
+    },
+    "p4/12000": {
+      "cases": 3,
+      "changed": 0,
+      "samples": 56246,
+      "baseline_bytes": 2901,
+      "candidate_bytes": 2901,
+      "bytes_increased_cases": 0,
+      "bytes_decreased_cases": 0,
+      "candidate_score_sum": 3.0,
+      "candidate_score_min": 1.0,
+      "proposal_seconds_sum": 0.15056863999999998,
+      "total_seconds_sum": 0.682022093,
+      "spectral_trials": 126,
+      "pulse_trials": 1092,
+      "trial_synthesized_samples": 1517200,
+      "full_proposals": 21,
+      "pcm16": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.0,
+          "min_delta": 0.0,
+          "max_delta": 0.0,
+          "worsened_cases": 0
+        },
+        "pcm_clips": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "pwm8": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.0,
+          "min_delta": 0.0,
+          "max_delta": 0.0,
+          "worsened_cases": 0
+        },
+        "pwm_rails": {
+          "before": 42,
+          "after": 42
+        }
+      }
+    },
+    "p6/12000": {
+      "cases": 3,
+      "changed": 0,
+      "samples": 56246,
+      "baseline_bytes": 4333,
+      "candidate_bytes": 4333,
+      "bytes_increased_cases": 0,
+      "bytes_decreased_cases": 0,
+      "candidate_score_sum": 3.0,
+      "candidate_score_min": 1.0,
+      "proposal_seconds_sum": 0.485893456,
+      "total_seconds_sum": 1.122877138,
+      "spectral_trials": 187,
+      "pulse_trials": 3676,
+      "trial_synthesized_samples": 4725040,
+      "full_proposals": 24,
+      "pcm16": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.0,
+          "min_delta": 0.0,
+          "max_delta": 0.0,
+          "worsened_cases": 0
+        },
+        "pcm_clips": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "pwm8": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.0,
+          "min_delta": 0.0,
+          "max_delta": 0.0,
+          "worsened_cases": 0
+        },
+        "pwm_rails": {
+          "before": 4,
+          "after": 4
+        }
+      }
+    },
+    "p4/16000": {
+      "cases": 3,
+      "changed": 1,
+      "samples": 74994,
+      "baseline_bytes": 3835,
+      "candidate_bytes": 3834,
+      "bytes_increased_cases": 0,
+      "bytes_decreased_cases": 1,
+      "candidate_score_sum": 2.999391068546656,
+      "candidate_score_min": 0.9993910685466562,
+      "proposal_seconds_sum": 0.169596725,
+      "total_seconds_sum": 0.7794583319999999,
+      "spectral_trials": 129,
+      "pulse_trials": 1128,
+      "trial_synthesized_samples": 1562960,
+      "full_proposals": 22,
+      "pcm16": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.9968355344853688,
+          "min_ratio": 0.9968355344853685,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.99981511743661,
+          "min_ratio": 0.9998151174366102,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.0036026361724737,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0036026361724735,
+          "worsened_cases": 1
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 2.9992835069741894,
+          "min_ratio": 0.9992835069741894,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.0068285064557383,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0068285064557383,
+          "worsened_cases": 1
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 3.000950167240777,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0009501672407768,
+          "worsened_cases": 1
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.0008914991824515717,
+          "min_delta": 0.0,
+          "max_delta": 0.0008914991824515717,
+          "worsened_cases": 0
+        },
+        "pcm_clips": {
+          "before": 0,
+          "after": 0
+        }
+      },
+      "pwm8": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.9963301150384014,
+          "min_ratio": 0.9963301150384013,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.9989784532843213,
+          "min_ratio": 0.9989784532843213,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 3.0039986078805736,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0039986078805736,
+          "worsened_cases": 1
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.0002313966008494,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0002313966008491,
+          "worsened_cases": 1
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 2.9982829883095397,
+          "min_ratio": 0.9982829883095395,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.0,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 2.9991477591548756,
+          "min_ratio": 0.9991477591548756,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.000779307611623592,
+          "min_delta": 0.0,
+          "max_delta": 0.000779307611623592,
+          "worsened_cases": 0
+        },
+        "pwm_rails": {
+          "before": 8,
+          "after": 8
+        }
+      }
+    },
+    "p6/16000": {
+      "cases": 3,
+      "changed": 1,
+      "samples": 74994,
+      "baseline_bytes": 5757,
+      "candidate_bytes": 5757,
+      "bytes_increased_cases": 0,
+      "bytes_decreased_cases": 0,
+      "candidate_score_sum": 2.994767370388849,
+      "candidate_score_min": 0.9947673703888487,
+      "proposal_seconds_sum": 0.461017821,
+      "total_seconds_sum": 1.206716921,
+      "spectral_trials": 166,
+      "pulse_trials": 3602,
+      "trial_synthesized_samples": 4606000,
+      "full_proposals": 24,
+      "pcm16": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.9875172520320987,
+          "min_ratio": 0.987517252032099,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.9716155719018102,
+          "min_ratio": 0.9716155719018102,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 2.979807146098294,
+          "min_ratio": 0.9798071460982941,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.017686882732148,
+          "min_ratio": 1.0,
+          "max_ratio": 1.017686882732148,
+          "worsened_cases": 1
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.028500370596782,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0285003705967821,
+          "worsened_cases": 1
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.004264873017929,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0042648730179293,
+          "worsened_cases": 1
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 3.004208016717019,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0042080167170193,
+          "worsened_cases": 1
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.0024761284000440753,
+          "min_delta": 0.0,
+          "max_delta": 0.0024761284000440753,
+          "worsened_cases": 0
+        },
+        "pcm_clips": {
+          "before": 3,
+          "after": 3
+        }
+      },
+      "pwm8": {
+        "spectral": {
+          "cases": 3,
+          "ratio_sum": 2.997835419614705,
+          "min_ratio": 0.9978354196147048,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "time": {
+          "cases": 3,
+          "ratio_sum": 2.9793633065980525,
+          "min_ratio": 0.9793633065980524,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "sse": {
+          "cases": 3,
+          "ratio_sum": 2.9785399655994915,
+          "min_ratio": 0.9785399655994916,
+          "max_ratio": 1.0,
+          "worsened_cases": 0
+        },
+        "voice": {
+          "cases": 3,
+          "ratio_sum": 3.011280233183471,
+          "min_ratio": 1.0,
+          "max_ratio": 1.011280233183471,
+          "worsened_cases": 1
+        },
+        "noise": {
+          "cases": 3,
+          "ratio_sum": 3.0228992203602045,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0228992203602043,
+          "worsened_cases": 1
+        },
+        "period": {
+          "cases": 3,
+          "ratio_sum": 3.0043487040015866,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0043487040015866,
+          "worsened_cases": 1
+        },
+        "shape": {
+          "cases": 3,
+          "ratio_sum": 3.005999129971027,
+          "min_ratio": 1.0,
+          "max_ratio": 1.0059991299710271,
+          "worsened_cases": 1
+        },
+        "stoi": {
+          "cases": 3,
+          "delta_sum": 0.00459969614222866,
+          "min_delta": 0.0,
+          "max_delta": 0.00459969614222866,
+          "worsened_cases": 0
+        },
+        "pwm_rails": {
+          "before": 3,
+          "after": 3
+        }
+      }
+    }
+  },
+  "limits": [
+    "Objective-score changes are not perceived-quality percentages",
+    "Nine admitted outputs change a one-frame run; one changes a two-frame run",
+    "This pilot does not establish a special held-run benefit at 3 kbit/s",
+    "Some waveform, voice, noise, period or shape components worsen; counts and maxima remain visible",
+    "Media, identities, source hashes, paths, labels and individual detailed receipts remain private"
+  ]
+}

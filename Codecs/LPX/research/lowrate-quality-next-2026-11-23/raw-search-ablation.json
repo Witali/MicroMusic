@@ -1,0 +1,35 @@
+{
+  "schema": "lpx-lowrate-raw-search-ablation-v1",
+  "scope": "Known development material only; strict 3 kbit/s at 8 kHz",
+  "cohort": {
+    "public_jobs": 3,
+    "known_development_jobs": 2,
+    "total_pairs": 5,
+    "new_primary_jobs_read": 0
+  },
+  "ablation": {
+    "additional_raw_regeneration_passes_removed": 3,
+    "header_passes_retained": 2,
+    "lpc_stage_retained": true,
+    "protected_v3_incumbent_unchanged": true,
+    "selection_gates_unchanged": true
+  },
+  "results": {
+    "exact_complete_lpx_identity_pairs": 5,
+    "exact_decoded_pcm_identity_pairs": 5,
+    "exact_decoded_pwm_identity_pairs": 5,
+    "identical_common_metric_pairs": 5,
+    "unchanged_complete_file_cap_pairs": 5,
+    "observed_selected_raw_search_benefit": false
+  },
+  "reported_api_seconds": {
+    "full_search_total": 114.7499,
+    "without_raw_regeneration_total": 58.9826,
+    "paired_difference_total": 55.7673,
+    "observations_per_variant_per_job": 1,
+    "pair_order_alternated": true,
+    "other_work_ran_concurrently": true,
+    "benchmark_or_speedup_bound": false
+  },
+  "decision": "Remove extra raw regeneration and its unused visitor API; retain header/LPC proposals. No universal equivalence claim."
+}
