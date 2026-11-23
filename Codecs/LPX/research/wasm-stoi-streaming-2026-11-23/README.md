@@ -14,6 +14,11 @@ eight lengths1,3277,3278,4096,16000,65537,192001,1048576 and six classes (silenc
 tone, deterministic noise, sparse near-gate noise, pauses and a loud prefix).
 All finite double results were bit-identical; NaN cases agreed.
 
+Integration with quality main `ba02e45376c0b343498abd7350b3175877e899f0`
+retains its rate-specific 12/16 kHz STOI FIRs and separate double analysis FIRs.
+The same 48 cases repeated at each of 8/12/16 kHz (144 comparisons total)
+remain bit-identical to that main revision, including all NaN decisions.
+
 A standalone scalar WASM allocation probe used the production allocator and
 seed workspace,1100000 generated tone samples, identical reference/candidate,
 and a64 MiB linear-memory limit. The original trapped with65208320 allocated

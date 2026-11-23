@@ -3307,3 +3307,12 @@ is disabled. It does not replace linked firmware timing or IRQ validation.
 the unchanged universal AVR25/AVR5 decoder plays both fixed phrase outputs with
 active IRQ and exact PWM; full linked Flash, SRAM/stack and bootloader limits
 are measured separately from the encoder's bitrate ceiling.
+
+[Keep full-band quality search on the host](../../Codecs/LPX/research/v9-quality-all-2026-11-23/firmware-results.md):
+LPC and fixed-width pulse proposals use the existing V9 alphabet without new
+decoder instructions or state. Six source-pinned Tiny88/AVR25 and Mega328P/AVR5
+images at 16 MHz/8 kHz retain exact host/C/AVR PWM, active IRQ and zero underruns.
+Tiny ASM uses 3629/3630 B excluding the two audio streams, 418 B static SRAM and
+28 B observed stack. AVR-GCC 7.3.0, GNU ABI and simavr 1.6; explicit C and ASM
+backends remain separate. This fixed-input admission is not a general deadline
+bound or a physical-board measurement.

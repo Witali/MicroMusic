@@ -60,6 +60,11 @@ level; it cannot be combined with pre-encoding `--auto-quiet`.
 
 `--quality adaptive` uses the same expanded search as the Web UI by default:
 four adaptive refinement calls followed by the bounded pitch/gain extension.
+It then retains that complete result while testing LPC bandwidth alternatives,
+pairwise pulse lookahead and bounded native-rate spectral/time pulse proposals.
+Their [shared multi-metric objective](PROFILE_QUALITY.md) compares completely
+decoded PCM and PWM under the same byte cap. Original noise is part of the
+reference; spectral/time fidelity does not require identical noise samples.
 `--search reference` selects the original Python-reference adaptive search;
 `--search expanded` explicitly selects the default. Compare identical PCM,
 profile, rate, level, call count and size allowance when checking PC/Web parity.

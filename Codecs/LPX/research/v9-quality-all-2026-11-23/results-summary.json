@@ -1,0 +1,175 @@
+{
+  "limits": [
+    "Small and uneven objective improvements; formal8kbit/s corpus unchanged, with a positive public tuning example.",
+    "Waveform, voice/noise/period/shape and individual noisy-burst peaks can regress; see all-metric tables.",
+    "Native-rate pitch observations show a one-match net loss in the wideband cohort and individual exchanged frames in narrowband; no newly observed half/double pitch.",
+    "No audible-quality, true-F0 or universal real-time profile claim.",
+    "API wall timings are from concurrent work, not an isolated benchmark."
+  ],
+  "main_studies": {
+    "genuine_wideband": {
+      "api_wall_seconds_after": 2072.1187099999997,
+      "api_wall_seconds_before": 1734.4047600000001,
+      "byte_growth_cases": 0,
+      "byte_shrink_cases": 0,
+      "bytes_after": 475666,
+      "bytes_before": 475666,
+      "changed_pcm": 12,
+      "changed_streams": 12,
+      "independent_admissions_passed": 96,
+      "jobs": 96,
+      "pitch": {
+        "after_within_tolerance_frames": 9113,
+        "before_within_tolerance_frames": 9114,
+        "gained_matches": 2,
+        "lost_matches": 3,
+        "new_double_pitch": 0,
+        "new_half_pitch": 0,
+        "new_missing_voicing": 3
+      },
+      "prepared_source_cases": 24,
+      "profiles": {
+        "p4/12000": {
+          "bytes_after": 81722,
+          "bytes_before": 81722,
+          "changed": 4,
+          "jobs": 24,
+          "score_after_mean": 0.9979812659114263,
+          "score_after_sum": 23.95155038187423,
+          "score_before_mean": 1.0,
+          "score_before_sum": 24.0,
+          "score_cases": 24
+        },
+        "p4/16000": {
+          "bytes_after": 108023,
+          "bytes_before": 108023,
+          "changed": 4,
+          "jobs": 24,
+          "score_after_mean": 0.9976786153989474,
+          "score_after_sum": 23.944286769574738,
+          "score_before_mean": 1.0,
+          "score_before_sum": 24.0,
+          "score_cases": 24
+        },
+        "p6/12000": {
+          "bytes_after": 122946,
+          "bytes_before": 122946,
+          "changed": 3,
+          "jobs": 24,
+          "score_after_mean": 0.9992002422198958,
+          "score_after_sum": 23.9808058132775,
+          "score_before_mean": 1.0,
+          "score_before_sum": 24.0,
+          "score_cases": 24
+        },
+        "p6/16000": {
+          "bytes_after": 162975,
+          "bytes_before": 162975,
+          "changed": 1,
+          "jobs": 24,
+          "score_after_mean": 0.9998314127062445,
+          "score_after_sum": 23.995953904949868,
+          "score_before_mean": 1.0,
+          "score_before_sum": 24.0,
+          "score_cases": 24
+        }
+      }
+    },
+    "narrowband_regression": {
+      "api_wall_seconds_after": 1351.9560117,
+      "api_wall_seconds_before": 900.9300017,
+      "byte_growth_cases": 0,
+      "byte_shrink_cases": 1,
+      "bytes_after": 223814,
+      "bytes_before": 223818,
+      "changed_pcm": 11,
+      "changed_streams": 11,
+      "independent_admissions_passed": 108,
+      "jobs": 108,
+      "pitch": {
+        "after_within_tolerance_frames": 11343,
+        "before_within_tolerance_frames": 11332,
+        "gained_matches": 27,
+        "lost_matches": 16,
+        "new_double_pitch": 0,
+        "new_half_pitch": 0,
+        "new_missing_voicing": 16
+      },
+      "prepared_source_cases": 27,
+      "profiles": {
+        "k3/8000": {
+          "bytes_after": 39942,
+          "bytes_before": 39946,
+          "changed": 5,
+          "jobs": 27,
+          "score_after_mean": 0.9571481123345701,
+          "score_after_sum": 25.842999033033394,
+          "score_before_mean": 0.9629629629629629,
+          "score_before_sum": 26.0,
+          "score_cases": 27
+        },
+        "k8/8000": {
+          "bytes_after": 75494,
+          "bytes_before": 75494,
+          "changed": 0,
+          "jobs": 27,
+          "score_after_mean": 0.9629629629629629,
+          "score_after_sum": 26.0,
+          "score_before_mean": 0.9629629629629629,
+          "score_before_sum": 26.0,
+          "score_cases": 27
+        },
+        "p4/8000": {
+          "bytes_after": 43261,
+          "bytes_before": 43261,
+          "changed": 4,
+          "jobs": 27,
+          "score_after_mean": 0.9615271887673086,
+          "score_after_sum": 25.96123409671733,
+          "score_before_mean": 0.9629629629629629,
+          "score_before_sum": 26.0,
+          "score_cases": 27
+        },
+        "p6/8000": {
+          "bytes_after": 65117,
+          "bytes_before": 65117,
+          "changed": 2,
+          "jobs": 27,
+          "score_after_mean": 0.9613766348574181,
+          "score_after_sum": 25.95716914115029,
+          "score_before_mean": 0.9629629629629629,
+          "score_before_sum": 26.0,
+          "score_cases": 27
+        }
+      }
+    }
+  },
+  "method": "Frozen source, complete budgets, no gain/alignment fitting; source-native 16/48k references prepared directly for12/16k. Objective metrics are not perceived-quality percentages.",
+  "schema": "lpx-v3-quality-study-summary-v1",
+  "separate_audits": {
+    "long": {
+      "changed_pcm": 0,
+      "continuous_state": true,
+      "independent_admissions_passed": 2,
+      "jobs": 2,
+      "samples_per_stream": 128001
+    },
+    "sparse80": {
+      "exact_pcm16_goldens": 27,
+      "exact_pwm8_goldens": 27,
+      "jobs": 27,
+      "lossless_v9_repack": true,
+      "samples_per_stream": 32000,
+      "shared_quality_improvement_claim": false
+    }
+  },
+  "verification": {
+    "final_supported_firmware_cases": 6,
+    "long_sample_frames_per_output_domain": 512004,
+    "long_streams_compared": 4,
+    "main_sample_frames_per_output_domain": 21944496,
+    "main_streams_compared_current_wasm_to_frozen_native": 408,
+    "quality_changes_host_encoder_only": true,
+    "zero_underruns": true
+  }
+}

@@ -12,23 +12,60 @@ static constexpr double pi=3.14159265358979323846,eps=2.2204460492503131e-16;
 static const double filter[] = {
 #include "stoi-resample.inc"
 };
+static const double filter12k[] = {
+#include "stoi-resample-12k.inc"
+};
+static const double filter16k[] = {
+#include "stoi-resample-16k.inc"
+};
+static const double analysis12k[] = {
+#include "quality-resample-12k.inc"
+};
+static const double analysis16k[] = {
+#include "quality-resample-16k.inc"
+};
+template<int Up,int Down,bool Normalize,size_t Length>
+static std::vector<double> resample(const Pcm& pcm,const double (&taps)[Length]) {
+    const int length=Length,half=(length-1)/2;
+    const int pre=Down-half%Down,remove=(half+pre)/Down;
+    std::vector<double> out((pcm.size()*Up+Down-1)/Down);
+    for(int i=0;i<int(out.size());++i) {
+        int at=(i+remove)*Down-pre;
+        // upfirdn sums taps in ascending input-sample order.
+        int first=std::max(0,(at-length+Up)/Up),last=std::min(int(pcm.size())-1,at/Up);
+        double sum=0;for(int j=first;j<=last;++j) { int tap=at-j*Up;if(tap>=0 && tap<length)sum+=(Normalize?pcm[j]/32768.0:double(pcm[j]))*taps[tap]; }
+        out[i]=sum;
+    }
+    return out;
+}
+std::vector<double> qualityAnalysis8k(const Pcm& pcm,int rate) {
+    if(rate==8000)return std::vector<double>(pcm.begin(),pcm.end());
+    if(rate==12000)return resample<2,3,false>(pcm,analysis12k);
+    if(rate==16000)return resample<1,2,false>(pcm,analysis16k);
+    return {};
+}
 namespace {
 using Bands=std::array<double,15>;
 class ResampledFrames {
     const Pcm& pcm;
+    int down,length;
+    const double* taps;
     int previous=-1000;
     double samples[256]={};
     double sample(int i) const {
-        const int length=sizeof(filter)/sizeof(filter[0]),half=(length-1)/2;
-        const int pre=4-half%4,remove=(half+pre)/4,at=(i+remove)*4-pre;
+        const int half=(length-1)/2;
+        const int pre=down-half%down,remove=(half+pre)/down,at=(i+remove)*down-pre;
         int first=std::max(0,(at-length+5)/5),last=std::min(int(pcm.size())-1,at/5);
         double sum=0;
-        for(int j=first;j<=last;++j) { int tap=at-j*5;if(tap>=0 && tap<length)sum+=pcm[j]/32768.0*filter[tap]; }
+        for(int j=first;j<=last;++j) { int tap=at-j*5;if(tap>=0 && tap<length)sum+=pcm[j]/32768.0*taps[tap]; }
         return sum;
     }
 public:
-    explicit ResampledFrames(const Pcm& input):pcm(input) {}
-    int size() const { return (pcm.size()*5+3)/4; }
+    ResampledFrames(const Pcm& input,int rate):pcm(input),down(rate==12000?6:rate==16000?8:4) {
+        taps=rate==12000?filter12k:rate==16000?filter16k:filter;
+        length=rate==12000?sizeof(filter12k)/sizeof(filter12k[0]):rate==16000?sizeof(filter16k)/sizeof(filter16k[0]):sizeof(filter)/sizeof(filter[0]);
+    }
+    int size() const { return (pcm.size()*5+down-1)/down; }
     const double* at(int start) {
         int keep=start==previous+128?128:0;
         if(keep)for(int i=0;i<128;++i)samples[i]=samples[i+128];
@@ -56,17 +93,17 @@ public:
     }
 };
 }
-double stoi(const Pcm& reference,const Pcm& candidate) {
+double stoi(const Pcm& reference,const Pcm& candidate,int rate) {
     double power=0;for(int x:reference)power+=double(x)*x;
-    if(!power || reference.size()*10000ULL<=4096ULL*8000)return std::numeric_limits<double>::quiet_NaN();
-    BandTransform transform;ResampledFrames firstPass(reference);
+    if((rate!=8000 && rate!=12000 && rate!=16000) || !power || reference.size()*10000ULL<=4096ULL*rate)return std::numeric_limits<double>::quiet_NaN();
+    BandTransform transform;ResampledFrames firstPass(reference,rate);
     std::vector<double> energies;double maximum=-1e300;
     for(int at=0;at+256<firstPass.size();at+=128) {
         const double* frame=firstPass.at(at);double energy=0;
         for(int i=0;i<256;++i) { double v=frame[i]*transform.window[i];energy+=v*v; }
         double db=20*std::log10(std::sqrt(energy)+eps);energies.push_back(db);maximum=std::max(maximum,db);
     }
-    ResampledFrames x(reference),y(candidate);
+    ResampledFrames x(reference,rate),y(candidate,rate);
     double tailX[128]={},tailY[128]={},previousX[128]={},previousY[128]={};
     Bands a[30],b[30];int accepted=0,frames=0;double correlations=0;
     for(int f=0;f<int(energies.size());++f)if(maximum-40-energies[f]<0) {

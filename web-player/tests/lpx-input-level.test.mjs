@@ -40,14 +40,18 @@ test('configured normalization encodes prepared PCM into ordinary files accepted
   for(const profile of [3,4,6,8])for(const rate of profile===3||profile===8?[8000]:[8000,12000,16000]) {
     const pcm=Int16Array.from({length:rate/2+1},(_,i)=>Math.round(800*Math.sin(i*.14))),source=pcm.slice();
     const options={normalization:'loudness',targetLufs:-24,maxGainDb:9};
-    const normalized=prepare(apis[0],pcm,rate,-24,9).pcm,expected=old(normalized,rate,profile);
+    // Normalization must feed the current quality search exactly the prepared
+    // PCM. The frozen encoder is a wire-reader reference, not a quality oracle
+    // after independently validated search improvements.
+    const preserved=encoders[0](pcm,rate,profile);
+    const normalized=prepare(apis[0],pcm,rate,-24,9).pcm,expected=encoders[0](normalized,rate,profile);
     for(const encode of encoders){
       const actual=encode(pcm,rate,profile,()=>{},options);
       assert.deepEqual(actual,expected,'same quality search and original complete budget');
       assert.equal(actual[2]&32,0);assert.equal(oldDecode(actual).samples,pcm.length);
       assert.equal(actual.length,13+new DataView(actual.buffer,actual.byteOffset).getUint16(11,true));
       if(profile===3||profile===8)assert.ok(actual.length<=Math.floor(pcm.length*profile/64));
-      assert.deepEqual(encode(pcm,rate,profile),old(pcm,rate,profile));assert.equal(encode.loudness,null);
+      assert.deepEqual(encode(pcm,rate,profile),preserved);assert.equal(encode.loudness,null);
     }
     assert.deepEqual(pcm,source);
   }

@@ -112,8 +112,17 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
     report.candidates=pool.size();
     for(int i:ranked(false))if(allowed(i)) {
         report.selected=i;report.measurement=pool[i].measured;
-        if(normalize)report.loudness.decoded=integratedLoudness(render(pool[i].stream),rate);
-        return pool[i].stream;
+        Stream selected=pool[i].stream;
+#if LPX_ENCODER_QUALITY_SEARCH
+        if(expandedSearch) {
+            selected=refineProfileQuality(selected,reference,cap,false,report.qualitySearch,false,speech);
+            if(report.qualitySearch.error) { report.error=report.qualitySearch.error;return Stream{}; }
+            // Legacy report fields keep their original evaluator semantics.
+            report.measurement=context.measure(render(selected));
+        }
+#endif
+        if(normalize)report.loudness.decoded=integratedLoudness(render(selected),rate);
+        return selected;
     }
     report.error=-6;return Stream{};
 }

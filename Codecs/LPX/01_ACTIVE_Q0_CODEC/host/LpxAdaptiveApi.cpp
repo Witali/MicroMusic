@@ -68,6 +68,12 @@ static int encodeBitrate(int samples,int kbps,int rate,int autoQuiet,int calls,b
         result=lpx::encodeThreeK(reference,cap,report);
         qualityReport.candidates=report.candidates;qualityReport.selected=report.selected;
         qualityReport.cap=cap;qualityReport.error=report.error;
+#if LPX_ENCODER_QUALITY_SEARCH
+        if(!qualityReport.error) {
+            result=lpx::refineProfileQuality(result,reference,cap,true,qualityReport.qualitySearch,true);
+            qualityReport.error=qualityReport.qualitySearch.error;
+        }
+#endif
     } else {
         // Existing operators budget their internal, complete 22-byte-header v5
         // representation. V9 removes at least 22-header bytes, never adds bits.
