@@ -156,7 +156,7 @@ test('native input validation emits no successful stream', { skip: !enabled }, (
   }
 });
 
-test('native whole-file gain matches WASM and preserves the original coded payload', { skip: !enabled }, async () => {
+test('native configurable input normalization matches WASM and uses ordinary V9', { skip: !enabled }, async () => {
   const encode = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive.wasm', import.meta.url)));
   const pcm = Int16Array.from(signal(4001), x => Math.round(x / 16));
   for (const profile of [4, 6]) {
@@ -164,12 +164,13 @@ test('native whole-file gain matches WASM and preserves the original coded paylo
     const original = success(native, pcm, common);
     const gained = success(native, pcm, [...common, '--normalize', '--target-lufs', '-21', '--max-gain-db', '9', '--repeat', '2']);
     const expected = encode(pcm, 8000, profile, () => {}, {
-      extendedSearch: false, normalization: 'file', targetLufs: -21, maxGainDb: 9
+      extendedSearch: false, normalization: 'loudness', targetLufs: -21, maxGainDb: 9
     });
     assert.deepEqual(gained.bytes, Buffer.from(expected));
-    assert.deepEqual(gained.bytes.subarray(15), original.bytes.subarray(13));
-    assert.equal(gained.report.fileGainQ12, decode(gained.bytes).gainQ12);
-    assert.ok(gained.report.fileGainDb <= 9);
+    assert.notDeepEqual(gained.bytes, original.bytes);
+    assert.equal(gained.bytes[2]&32,0);
+    assert.equal(gained.report.normalized,true);
+    assert.ok(gained.report.inputGainDb <= 9);
   }
 });
 

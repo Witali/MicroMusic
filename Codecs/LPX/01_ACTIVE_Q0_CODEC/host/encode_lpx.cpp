@@ -27,7 +27,7 @@ namespace {
 using Clock = std::chrono::steady_clock;
 struct Options {
     int profile = 6, rate = 8000, calls = 4, maxBytes = 0, repeat = 1, sizeAllowance = 0;
-    bool cuda = false, adaptive = true, autoQuiet = false, speech = true, expandedSearch = true, fileGain = false;
+    bool cuda = false, adaptive = true, autoQuiet = false, speech = true, expandedSearch = true, normalize = false;
     int targetLufs = -18, maxGainDb = 12;
 };
 void jsonString(FILE* out, const char* value) {
@@ -65,7 +65,7 @@ int run(int argc, char** argv) {
             return 0;
         }
         if (!strcmp(name, "--auto-quiet")) { options.autoQuiet = true; continue; }
-        if (!strcmp(name, "--normalize")) { options.fileGain = true; continue; }
+        if (!strcmp(name, "--normalize")) { options.normalize = true; continue; }
         if (!strcmp(name, "--non-speech")) { options.speech = false; continue; }
         if (i + 1 >= argc) return fail("Missing option value");
         const char* value = argv[++i];
@@ -99,7 +99,7 @@ int run(int argc, char** argv) {
     if (options.rate != 8000 && options.rate != 12000 && options.rate != 16000) return fail("Unsupported sample rate");
     if (options.calls < 0 || options.calls > 4) return fail("Refinement calls must be in 0..4");
     if(options.maxGainDb<0 || options.maxGainDb>24)return fail("Maximum gain must be 0..24 dB");
-    if(options.fileGain && options.autoQuiet)return fail("File gain and pre-encoding auto quiet are separate level policies");
+    if(options.normalize && options.autoQuiet)return fail("Select one input-level policy: normalization or auto quiet");
     if (options.repeat < 1 || options.repeat > 20) return fail("Repeat count must be in 1..20");
     if (options.sizeAllowance < 0 || options.sizeAllowance > 100) return fail("Size allowance must be in 0..100 percent");
     if (options.maxBytes && (options.maxBytes < 22 || options.maxBytes > int(kLpxMaxFileBytes))) return fail("Complete byte budget must be 22..104857600, or 0 for the control size");
@@ -132,17 +132,21 @@ int run(int argc, char** argv) {
     std::vector<uint8_t> bytes; lpx::AdaptiveReport report; std::vector<double> timings;
     for (int repetition = 0; repetition < options.repeat; ++repetition) {
       const auto started = Clock::now();
+      lpx::Pcm prepared;
+      lpx::LoudnessReport level;
+      if(options.normalize) { prepared=pcm;level=lpx::normalizeLoudness(prepared,options.rate,options.targetLufs,options.maxGainDb); }
+      const auto& reference=options.normalize?prepared:pcm;
       if (!enc_reserve(uint32_t(pcm.size()))) return fail("Cannot reserve encoder memory", 6);
       std::vector<uint8_t> current;
       if (options.adaptive) {
-        auto stream = lpx::adaptiveEncode(pcm, options.profile, options.rate, report,
+        auto stream = lpx::adaptiveEncode(reference, options.profile, options.rate, report,
             options.autoQuiet, options.maxBytes, options.calls, options.speech, options.expandedSearch, options.sizeAllowance);
         if (report.error || stream.samples != int(pcm.size())) return fail("Adaptive encoding or complete-size admission failed", 7);
         auto expected = lpx::render(stream);
         if (!lpx::verifyStream(stream, expected)) return fail("Adaptive output failed native decoder verification", 7);
         current = lpx::packV9(stream);
       } else {
-        memcpy(enc_input(), pcm.data(), pcm.size() * sizeof(int16_t));
+        memcpy(enc_input(), reference.data(), reference.size() * sizeof(int16_t));
         const int blocks = enc_begin(int(pcm.size()), options.profile, options.rate);
         if (blocks < 1) return fail("Cannot begin encoding", 7);
         for (int i = 0; i < blocks; ++i) if (enc_step() < 0) return fail("Encoding backend failed", 7);
@@ -150,7 +154,7 @@ int run(int argc, char** argv) {
         if (size < 13) return fail("Output failed native decoder verification", 7);
         current.assign(enc_output(), enc_output() + size);
       }
-      if(options.fileGain && !lpx::normalizeFileGain(current,options.targetLufs,options.maxGainDb,report.loudness))return fail("File loudness normalization failed",7);
+      if(options.normalize)report.loudness=level;
       timings.push_back(std::chrono::duration<double, std::milli>(Clock::now() - started).count());
       if (!repetition) bytes = std::move(current);
       else if (current != bytes) return fail("Repeated encoding changed the LPX output", 7);
@@ -176,7 +180,7 @@ int run(int argc, char** argv) {
         std::vector<double> warm(timings.begin() + 1, timings.end()); std::sort(warm.begin(), warm.end());
         fprintf(stderr, "%.6f", (warm[(warm.size() - 1) / 2] + warm[warm.size() / 2]) / 2);
     } else fputs("null", stderr);
-    fprintf(stderr,",\"fileGainQ12\":%u,\"fileGainDb\":%.6f}",unsigned(report.loudness.gainQ12),report.loudness.gainDb);fputc('\n',stderr);
+    fprintf(stderr,",\"normalized\":%s,\"inputGainDb\":%.6f}",options.normalize?"true":"false",report.loudness.gainDb);fputc('\n',stderr);
     return 0;
 }
 }

@@ -51,14 +51,12 @@ The wrapper accepts Unicode filenames, refuses to overwrite an existing output,
 and writes only after successful complete-stream verification. Cancellation or
 encoding failure leaves no successful output file.
 
-`--normalize` measures the completed decoded file and stores one constant output
-coefficient in the optional [V9 gain extension](../LPX9_GAIN_FORMAT.md). It does
-not change the input or refit the coded payload. `--target-lufs -30..-9` and
-`--max-gain-db 0..24` default to -18 and 12; decoded sample peaks cap gain at
--1 dBFS. The target can remain unreachable. The updated decoder honors the word
-in Web playback, WAV export and MCU output; older readers reject marked files.
-Omit `--normalize` for unchanged level. It cannot be combined with pre-encoding
-`--auto-quiet`. No reaction-time setting applies to a whole-file coefficient.
+`--normalize` applies one constant gain to the complete mono PCM recording before
+encoding. `--target-lufs -30..-9` and `--max-gain-db 0..24` default to -18 and 12.
+Input sample peaks cap gain at -1 dBFS; the target can remain unreachable.
+The output is ordinary LPX V9/Long with no stored gain word or decoder changes.
+Lossy coding can change the resulting loudness. Omit `--normalize` for unchanged
+level; it cannot be combined with pre-encoding `--auto-quiet`.
 
 `--quality adaptive` uses the same expanded search as the Web UI by default:
 four adaptive refinement calls followed by the bounded pitch/gain extension.

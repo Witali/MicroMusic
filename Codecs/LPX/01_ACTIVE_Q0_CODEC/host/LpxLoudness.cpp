@@ -53,18 +53,30 @@ double integratedLoudness(const Pcm& pcm,int rate) {
     total=0;size_t count=0;for(double e:blocks)if(e>=threshold) { total+=e;++count; }
     return count?asLufs(total/count):-std::numeric_limits<double>::infinity();
 }
-LoudnessReport normalizeLoudness(Pcm& pcm,int rate) {
+static LoudnessReport applyLoudness(Pcm& pcm,int rate,int targetLufs,double maximum) {
     LoudnessReport report;
     if(!validRate(rate) || pcm.size()<size_t(rate*4/10)) { report.status=2;return report; }
     report.input=integratedLoudness(pcm,rate);report.prepared=report.input;
     if(!std::isfinite(report.input)) { report.status=3;return report; }
     int peak=0;for(int x:pcm)peak=std::max(peak,std::abs(x));
     const int ceiling=int(std::floor(32768*std::pow(10.,-1./20)));
-    double wanted=std::pow(10.,(-18-report.input)/20),allowed=double(ceiling)/peak;
-    double gain=std::min(wanted,allowed);report.status=1;report.limited=allowed<wanted;
+    double wanted=std::pow(10.,(targetLufs-report.input)/20),allowed=double(ceiling)/peak;
+    double gain=std::min(wanted,std::min(allowed,maximum));report.status=1;
+    report.limited=allowed<wanted && allowed<=maximum;
+    report.gainLimited=maximum<wanted && maximum<=allowed;
     report.gainDb=20*std::log10(gain);
     for(auto& x:pcm)x=int16_t(std::max(-ceiling,std::min(ceiling,int(std::round(x*gain)))));
     report.prepared=integratedLoudness(pcm,rate);
     return report;
+}
+LoudnessReport normalizeLoudness(Pcm& pcm,int rate) {
+    // Retained original ABI/oracle behavior: fixed -18 LUFS without a boost cap.
+    return applyLoudness(pcm,rate,-18,std::numeric_limits<double>::infinity());
+}
+LoudnessReport normalizeLoudness(Pcm& pcm,int rate,int targetLufs,int maxGainDb) {
+    if(targetLufs<-30 || targetLufs>-9 || maxGainDb<0 || maxGainDb>24) {
+        LoudnessReport report;report.status=-1;return report;
+    }
+    return applyLoudness(pcm,rate,targetLufs,std::pow(10.,maxGainDb/20.));
 }
 }

@@ -3289,7 +3289,8 @@ algorithm/table provenance and BSD notices remain in the codec/vendor files.
 ## Keeping a host extension out of AVR builds
 
 [Apply a bounded signed product through unsigned magnitudes](../../Codecs/LPX/research/lpx-file-gain-2026-11-23/README.md):
-portable C avoids sign-extension work in AVR25's software multiply, then
+[Retained example](examples/lpx-bounded-gain.h); the output-gain feature is now
+retired. Portable C avoids sign-extension work in AVR25's software multiply, then
 restores the sign before rounding. On the recorded ATtiny88 gain-enabled
 8 kbit/s phrase, active producer work falls by about118 cycles/sample at a
 28-byte Flash cost and active-IRQ playback becomes underrun-free. The source

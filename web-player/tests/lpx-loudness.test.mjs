@@ -13,9 +13,9 @@ const wrappers=await Promise.all(binaries.map(createEncoder));
 const cases=loudnessCases();
 const reference=JSON.parse(readFileSync(new URL('./fixtures/lpx-loudness-reference.json',import.meta.url)));
 const decode=await createDecoder(readFileSync(new URL('../lpx/decoder.wasm',import.meta.url)));
-function normalize(api,pcm,rate) {
+function normalize(api,pcm,rate,settings) {
   assert.ok(api.enc_reserve(pcm.length));new Int16Array(api.memory.buffer,api.enc_input(),pcm.length).set(pcm);
-  const status=api.enc_normalize_loudness(pcm.length,rate);assert.ok(status>0);
+  const status=settings?api.enc_normalize_level(pcm.length,rate,settings.targetLufs,settings.maxGainDb):api.enc_normalize_loudness(pcm.length,rate);assert.ok(status>0);
   return {pcm:new Int16Array(api.memory.buffer,api.enc_input(),pcm.length).slice(),report:{status,limited:api.enc_loudness_limited(),input:api.enc_loudness_input(),prepared:api.enc_loudness_prepared(),gainDb:api.enc_loudness_gain_db()}};
 }
 
@@ -57,9 +57,10 @@ test('opt-in normalization uses the shared controller, reports decoded LUFS and 
       assert.deepEqual(encode(c.pcm,c.rate,profile),expected,'preserve remains the exact default');assert.equal(encode.loudness,null);
       const bytes=encode(c.pcm,c.rate,profile,()=>{},{normalization:'loudness'});
       assert.equal(decode(bytes).samples,c.pcm.length);assert.equal(encode.loudness.status,1);
-      assert.ok(Math.abs(encode.loudness.prepared+18)<.05);
+      assert.ok(Math.abs(encode.loudness.prepared-encode.loudness.input-12)<.05);
+      assert.equal(encode.loudness.gainLimited,true);
       assert.ok(Number.isFinite(encode.loudness.decoded));assert.notDeepEqual(bytes,expected);
-      const normalized=normalize(apis[0],c.pcm,c.rate).pcm;
+      const normalized=normalize(apis[0],c.pcm,c.rate,{targetLufs:-18,maxGainDb:12}).pcm;
       assert.deepEqual(bytes,old(normalized,c.rate,profile),'quality gates use the normalized reference');
       results.push(bytes);
       assert.throws(()=>encode(c.pcm,c.rate,profile,()=>{},{normalization:'unknown'}),/режим громкости/);
@@ -94,7 +95,7 @@ test('normalization precedes one continuous V9 Long encode without resetting gai
 
 test('3/8 bitrate presets normalize their reference before selection and retain exact file caps',async()=>{
   const previous=await createEncoder(readRecordedBuildFile('6ef6899b698dd7cf0449ce2b2d3775bd4d3684da','web-player/lpx/encoder-adaptive.wasm'));
-  const c=cases.find(c=>c.rate===8000&&c.name==='quiet'),prepared=normalize(apis[0],c.pcm,c.rate).pcm;
+  const c=cases.find(c=>c.rate===8000&&c.name==='quiet'),prepared=normalize(apis[0],c.pcm,c.rate,{targetLufs:-18,maxGainDb:12}).pcm;
   for(const kbps of [3,8]) {
     const expected=previous(prepared,c.rate,kbps),preserved=previous(c.pcm,c.rate,kbps),results=[];
     for(const encode of wrappers) {
@@ -103,7 +104,7 @@ test('3/8 bitrate presets normalize their reference before selection and retain 
       assert.deepEqual(bytes,expected,'preset quality gates use normalized PCM');
       assert.ok(bytes.length<=Math.floor(c.pcm.length*kbps*1000/(8*c.rate)));
       assert.equal(decode(bytes).samples,c.pcm.length);assert.equal(encode.loudness.status,1);
-      assert.ok(Math.abs(encode.loudness.prepared+18)<.05);assert.ok(Number.isFinite(encode.loudness.decoded));
+      assert.ok(Math.abs(encode.loudness.prepared-encode.loudness.input-12)<.05);assert.ok(Number.isFinite(encode.loudness.decoded));
       results.push(bytes);
     }
     assert.deepEqual(results[0],results[1]);

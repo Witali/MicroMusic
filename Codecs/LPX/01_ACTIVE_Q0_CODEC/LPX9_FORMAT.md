@@ -7,8 +7,6 @@ segment, with the same 16-bit bounded input API.
 
 For a single longer Web/PC stream, see the separately marked, opt-in
 [V9 Long extension](LPX9_LONG_FORMAT.md). Ordinary V9/AVR limits remain unchanged.
-The optional [whole-file gain extension](LPX9_GAIN_FORMAT.md) adds one output
-coefficient for updated Web/PC/MCU decoders; unmarked files retain this layout.
 
 ## Header
 

@@ -1,4 +1,4 @@
-import { createEncoderBackend } from './encoder-backend.js?v=20261123-file-gain';
+import { createEncoderBackend } from './encoder-backend.js?v=20261123-input-level';
 self.onmessage = async ({ data }) => {
   try {
     const { encode, backend } = await createEncoderBackend(data.backend ?? 'auto');

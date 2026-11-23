@@ -1,6 +1,14 @@
+# Archived output-gain experiment
+
+The user subsequently chose input normalization. The active decoder and V9
+format were restored; these measurements describe the historical experiment
+at commit `9d15e9f973df5d29f5b2806663b7236ed8db0a61`, not current firmware.
+The reusable portable multiply example is retained in
+[the AVR cookbook](../../../../docs/avr-asm-cookbook/examples/lpx-bounded-gain.h).
+
 # Constant V9 output gain: validation
 
-The optional [gain word](../../01_ACTIVE_Q0_CODEC/LPX9_GAIN_FORMAT.md) is applied
+The optional [historical gain word](https://github.com/Witali/MicroMusic/blob/9d15e9f973df5d29f5b2806663b7236ed8db0a61/Codecs/LPX/01_ACTIVE_Q0_CODEC/LPX9_GAIN_FORMAT.md) is applied
 after synthesis and postfilter history updates. Enabling Web normalization
 measures the complete decoded recording, then stores one Q4.12 coefficient.
 The original P4/P6 payload is retained. Strict 3/8 kbit/s presets reserve two
@@ -48,7 +56,7 @@ the selected form had zero. Increasing its queue alone did not fix the first
 implementation. These figures concern the new multiply implementation, not
 the old decoder without file gain.
 
-The reusable C functions are in `src/Lpx4FileGain.h`. The default selects the
+The reusable C functions are retained in the cookbook example linked above. The default selects the
 unsigned expression only for `__AVR__ && !__AVR_HAVE_MUL__`; explicitly define
 `LPX4_FILE_GAIN_UNSIGNED_MULTIPLY=0` to retain the direct C expression even on
 that target. No new assembly or hardware access is introduced. Both expressions
@@ -58,7 +66,7 @@ stored gain against seven samples and every Q14 sample against eight gains.
 
 ## Host and browser checks
 
-`web-player/tests/lpx-file-gain.test.mjs` checks complete PCM against independent
+The historical `web-player/tests/lpx-file-gain.test.mjs` checked complete PCM against independent
 post-decode scaling for P4/P6, actual Sparse80, Long and public speech, including
 minimum/maximum gain, saturation and error recovery. It also checks scalar/SIMD
 equality, native C equality when configured, unchanged ordinary payloads,
