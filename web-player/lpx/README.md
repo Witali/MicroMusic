@@ -15,7 +15,13 @@ listening speed and volume do not change it.
 The converter accepts browser-decodable WAV, MP3, FLAC, OGG, M4A/AAC and other
 supported audio, without DRM. OfflineAudioContext actually resamples to the
 selected 8/12/16 kHz. Channels are averaged to mono and rounded/saturated to
-PCM16 without gain normalization. Encoding runs in a cancellable Worker.
+PCM16 with the source level preserved by default. **Громкость → Выровнять ·
+−18 LUFS** optionally applies one constant gain before encoding, with a −1 dBFS
+sample-peak ceiling. High peaks can prevent reaching the target. The result
+shows source/prepared LUFS, applied gain and decoded LPX LUFS. The decoded level
+can differ from the pre-encoding target. Very short or below-gate audio
+keeps its level. See [normalization details](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LOUDNESS.md).
+Encoding runs in a cancellable Worker.
 
 The entire recording is encoded in a single pass with continuous pitch history,
 LPC interpolation and output-filter state. Standard 13-byte V9 is retained for

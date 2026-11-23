@@ -1,5 +1,5 @@
 import { MAX_SAMPLES } from './codec.js';
-import { supportsSimd } from './encoder-backend.js?v=20261123-adaptive-quality';
+import { supportsSimd } from './encoder-backend.js?v=20261123-loudness';
 
 const $ = id => document.getElementById(id);
 if (!supportsSimd()) {
@@ -29,7 +29,7 @@ $('source-drop').addEventListener('drop', event => {
 });
 function busy(value) {
   running = value;
-  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-allowance', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
+  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-allowance', 'encode-level', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
   $('cancel-convert').hidden = !value;
 }
 function stop() { if (worker) worker.terminate(); worker = null; busy(false); }
@@ -47,6 +47,15 @@ function appendResult(result) {
   const backend = result.backend === 'simd' ? 'SIMD' : 'Обычное';
   const meta = document.createElement('small'); meta.textContent = `${(result.samples / output.rate).toLocaleString('ru-RU', { maximumFractionDigits: 3 })} с · ${result.bytes.length.toLocaleString('ru-RU')} Б · ${result.long ? 'LPX V9 Long' : 'LPX V9'} · ${backend}`;
   description.append(title, meta);
+  if (result.loudness) {
+    const note = document.createElement('small'), level = result.loudness;
+    const number = value => value.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
+    if (level.status === 1) {
+      note.textContent = `Громкость до сжатия: ${number(level.input)} → ${number(level.prepared)} LUFS · усиление ${level.gainDb >= 0 ? '+' : ''}${number(level.gainDb)} дБ${level.limited ? ' · ограничено пиками' : ''}`;
+      if (Number.isFinite(level.decoded)) note.textContent += ` · после LPX: ${number(level.decoded)} LUFS`;
+    } else note.textContent = level.status === 2 ? 'Громкость сохранена: запись короче 0,4 с.' : 'Громкость сохранена: тишина или уровень ниже порога измерения.';
+    description.append(note);
+  }
   const actions = document.createElement('div'); actions.className = 'result-actions';
   const preview = document.createElement('button'); preview.className = 'button button-outline'; preview.textContent = 'Слушать';
   preview.onclick = () => {
@@ -61,6 +70,7 @@ $('convert').onclick = async () => {
   if (!source || running) return;
   const id = ++job, rate = Number($('encode-rate').value), profile = Number($('encode-profile').value), backend = $('encode-backend').value;
   const sizeAllowancePercent = Number($('encode-allowance').value);
+  const normalization = $('encode-level').value;
   output = { stem: baseName(source.name), rate, profile };
   urls.forEach(url => URL.revokeObjectURL(url)); urls = [];
   $('convert-results').replaceChildren(); $('convert-progress').value = 0;
@@ -84,7 +94,7 @@ $('convert').onclick = async () => {
       pcm[i] = Math.min(32767, Math.max(-32768, value));
     }
     $('source-summary').textContent = `${audio.duration.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} с · ${channels.length} кан. → моно · ${rate / 1000} кГц${clipped ? ` · насыщение ${clipped} отсч.` : ''}`;
-    worker = new Worker(new URL('./encode-worker.js?v=20261123-adaptive-quality', import.meta.url), { type: 'module' });
+    worker = new Worker(new URL('./encode-worker.js?v=20261123-loudness', import.meta.url), { type: 'module' });
     worker.onerror = event => { event.preventDefault(); if (id === job) { stop(); status('Не удалось запустить энкодер. Обновите страницу и повторите.', true); } };
     worker.onmessage = ({ data }) => {
       if (id !== job) return;
@@ -103,6 +113,6 @@ $('convert').onclick = async () => {
         status(`Готово: один файл · ${(data.result.bytes.length / 1024).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} КБ · ${name} · кодирование ${elapsed} с.`);
       }
     };
-    worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile, backend, sizeAllowancePercent }, [pcm.buffer]);
+    worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile, backend, sizeAllowancePercent, normalization }, [pcm.buffer]);
   } catch (error) { if (id === job) { stop(); status(error.message || 'Не удалось конвертировать аудио.', true); } }
 };

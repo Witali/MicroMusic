@@ -1,5 +1,6 @@
 #pragma once
 #include "LpxQuality.h"
+#include "LpxLoudness.h"
 
 namespace lpx {
 struct AdaptiveReport {
@@ -7,12 +8,13 @@ struct AdaptiveReport {
     int stageOperator[4]={},localEvaluations[4]={},fullEvaluations[4]={};
     int expandedLocalEvaluations=0,expandedFullEvaluations=0,expandedAccepted=0;
     Measurement baseline,measurement;
+    LoudnessReport loudness;
 };
 // Whole-input controller. Original input is retained; no reset-file splitting.
 // maxBytes=0 uses the original v5 control's actual complete size as the budget,
 // matching the Python reference before lossless V9 repacking.
 Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
                       bool autoQuiet=false,int maxBytes=0,int calls=4,bool speech=true,
-                      bool expandedSearch=false,int sizeAllowancePercent=0);
+                      bool expandedSearch=false,int sizeAllowancePercent=0,bool normalize=false);
 bool verifyStream(const Stream& stream,const Pcm& expected);
 }

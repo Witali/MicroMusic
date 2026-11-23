@@ -18,10 +18,11 @@ static bool sameStream(const Stream& a,const Stream& b) {
     return a.pre==b.pre && a.bright==b.bright && a.spectra==b.spectra && a.parameters==b.parameters && a.pulses==b.pulses && a.extras==b.extras;
 }
 Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
-                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent) {
+                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize) {
     report=AdaptiveReport{};
-    if(sizeAllowancePercent<0 || sizeAllowancePercent>100) { report.error=-1;return Stream{}; }
+    if(sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize)) { report.error=-1;return Stream{}; }
     Pcm reference=input;
+    if(normalize)report.loudness=normalizeLoudness(reference,rate);
     if(autoQuiet) {
         double mean=0,energy=0,peak=0;
         for(int x:reference) { mean+=x;peak=std::max(peak,std::abs(double(x))); } mean/=reference.size();
@@ -101,7 +102,11 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
         }
     }
     report.candidates=pool.size();
-    for(int i:ranked(false))if(allowed(i)) { report.selected=i;report.measurement=pool[i].measured;return pool[i].stream; }
+    for(int i:ranked(false))if(allowed(i)) {
+        report.selected=i;report.measurement=pool[i].measured;
+        if(normalize)report.loudness.decoded=integratedLoudness(render(pool[i].stream),rate);
+        return pool[i].stream;
+    }
     report.error=-6;return Stream{};
 }
 }

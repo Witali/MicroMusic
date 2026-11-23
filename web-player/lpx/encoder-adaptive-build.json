@@ -46,12 +46,20 @@
     "-Wl,--export=enc_adaptive_output",
     "-Wl,--export=enc_adaptive_candidates",
     "-Wl,--export=enc_adaptive_stages",
-    "-Wl,--export=enc_adaptive_gain"
+    "-Wl,--export=enc_adaptive_gain",
+    "-Wl,--export=enc_normalize_loudness",
+    "-Wl,--export=enc_adaptive_loudness",
+    "-Wl,--export=enc_loudness_status",
+    "-Wl,--export=enc_loudness_limited",
+    "-Wl,--export=enc_loudness_input",
+    "-Wl,--export=enc_loudness_prepared",
+    "-Wl,--export=enc_loudness_decoded",
+    "-Wl,--export=enc_loudness_gain_db"
   ],
   "inputs": {
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "5dbaa8d5d711139a81a9bd7b61618d11472a32073ded24722e9eb2e29cd2b57c",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxHostWorkspace.h": "4d8de0666fbbcde6e42a10b05678cafe41fb50b44aec3c814e7b501b277251e9",
-    "web-player/scripts/build-lpx-wasm.mjs": "2099eb5108751dec7743daf5ab8f41ea98206d17b59dd9addd7c4931d592bb0a",
+    "web-player/scripts/build-lpx-wasm.mjs": "db6a0728ded22b4cad3c6354a261a4a3cfda7a84b7b8975d4a75f11827db8cc2",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "69faaacf5f23700809591a77e9a54259106b15e192c81f71ed0efc47b70fc10f",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
@@ -71,15 +79,18 @@
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.cpp": "8cb24bade423c596c8bae5feb1bc3208f984abf74f9ecf12fa9e81349858d89a",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStoi.cpp": "a17931ecba27d94e0816de221a6182d0b45f57c9e668321297ba1af14827349c",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.cpp": "25e9a2968af0815738696dfbe6538164d6811e4c10581fcb44fd80cb5fcf1839",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.cpp": "037776c4c59d19644d4fd12c2088ed59a5bf54f204d9fa351b83d2b16be17cd8",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveApi.cpp": "1ec364dd07d6c4f53ee1ce8cf9ef27b8af2cc10e554c1db45cc8014b328b4b27",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.cpp": "70f7ced251e949b7fbf269da7b58b633ad8b25fd98420c7565b61e51696ba203",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveApi.cpp": "fd1aee710ffa1c1bb68c07503c1ea37a2a4694e11941b2ada2b9cb473c61d1c5",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxWasmMemory.cpp": "3a51a38d73e352653d65a3d76c411618b89e8b1d4592718a7017331c1138f04b",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.cpp": "3b59b228fc904cff6b7bc59ffd34011cd6764589fcc04307972953f9c538d5b3",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptive.h": "23f9b170761f179a614518b227d3abf0e5e0cc5f25051d31e1b5fdf40d038887",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.h": "8fc3ee913c15ffeb70ce524b8bfb7e1a5aff597f49f5bfa43e8be1246aea4652",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.h": "db71eb87a28aaf08cb5e02ee8846d5f0c982480bd3ae1b61e769956d85a93898",
-    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.h": "8785e6792c654079f93614070819c64032d6550fd303c5dc7aad73b1538480a7",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.h": "da5adb54f804c908ae630afe51e1e4238186022f2c0fd3369a0786d292e1e448",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample.inc": "73452977972395c88eb1879815d6c57fee4e391dad5f42a970c4000c04d8c23c",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LICENSE-pystoi.txt": "35c25f6087c4e1857ba6d4bc0b7957b7bc523c9ff190a9e2cccb4b5ecba018ab",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.h": "acee8da2e4a75bebb72a2a85ad6c5a976a27b8de2f89e057bdba28f16ad624f0",
+    "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LICENSE-libebur128.txt": "d6b4754bb67bdd08b97d5d11b2d7434997a371585a78fe77007149df3af8d09c",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/adaptive_speech_voice.py": "bedb808b38707c4effcb8401a600014a1acb8ab7fae97796723f467760fb0f6d",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/encode_speech_voice.py": "f9195e57b3b73f2339fb9214ba1ed247f0ee85134d03f10efabd462382b28595",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/refine_speech_compact.py": "c1ff35367b77ce5b4729ba93b104be776cd3c8f9ea91d748c5a387bd31325da2",
@@ -93,8 +104,8 @@
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/standard_metrics.py": "1f2d5cd776fb146ec38a93e5526a99db4547f0deae07e966a65a0c9aeb50dc29",
     "Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/voice_input.py": "2e8b8938470e77b1b0f36b652b707549915c5a5b8cac663689b3e19f37e915d7"
   },
-  "bytes": 213742,
-  "sha256": "6bf5690263fa36bdac25061a4efbc646ce93f7db12607ae38b8c64e7257c0912",
+  "bytes": 217938,
+  "sha256": "67dc27eea91316d9f731ff4c6b8e2e3d4272a3314d10d0a1af19c2c717dae176",
   "imports": [],
   "initialMemoryBytes": 524288,
   "maxMemoryBytes": 1073741824,
@@ -138,6 +149,6 @@
     "extraFullEvaluations": 128,
     "ranking": "mean of PCM16/PWM voice + noise",
     "budget": "actual complete v5 control bytes, before lossless V9 repacking",
-    "levelPolicy": "preserve"
+    "levelPolicy": "preserve by default; optional -18 LUFS, -1 dBFS sample-peak ceiling"
   }
 }

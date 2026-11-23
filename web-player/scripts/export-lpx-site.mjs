@@ -14,6 +14,7 @@ const files = ['index.html', 'styles.css', 'app.js', 'codec.js', 'decode-worker.
   'converter.js', 'encoder.js', 'encoder-backend.js', 'encode-worker.js', 'encoder-adaptive.wasm', 'encoder-adaptive-simd.wasm'];
 for (const name of files) copyFileSync(join(root, 'web-player/lpx', name), join(destination, 'dist', name));
 copyFileSync(join(root, 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LICENSE-pystoi.txt'), join(destination, 'dist/LICENSE-pystoi.txt'));
+copyFileSync(join(root, 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LICENSE-libebur128.txt'), join(destination, 'dist/LICENSE-libebur128.txt'));
 for (const name of ['encoder.wasm', 'encoder-simd.wasm']) {
   const old = join(destination, 'dist', name);
   if (lstatSync(old, { throwIfNoEntry: false })?.isFile()) rmSync(old);
