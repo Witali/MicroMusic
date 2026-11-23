@@ -1,5 +1,5 @@
-import { MAX_SAMPLES } from './codec.js?v=20261123-quality-v3';
-import { supportsSimd } from './encoder-backend.js?v=20261123-quality-v3';
+import { MAX_SAMPLES } from './codec.js?v=20261123-stream-v1';
+import { supportsSimd } from './encoder-backend.js?v=20261123-stream-v1';
 
 const $ = id => document.getElementById(id);
 if (!supportsSimd()) {
@@ -61,7 +61,7 @@ $('source-drop').addEventListener('drop', event => {
 });
 function busy(value) {
   running = value;
-  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-allowance', 'encode-level', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
+  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-processing', 'encode-allowance', 'encode-level', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
   applyProfileConstraints();
   applyLevelSettings();
   $('cancel-convert').hidden = !value;
@@ -79,8 +79,13 @@ function appendResult(result) {
   const description = document.createElement('span');
   const title = document.createElement('b'); title.textContent = name;
   const backend = result.backend === 'simd' ? 'SIMD' : 'Обычное';
-  const meta = document.createElement('small'); meta.textContent = `${(result.samples / output.rate).toLocaleString('ru-RU', { maximumFractionDigits: 3 })} с · ${result.bytes.length.toLocaleString('ru-RU')} Б · ${result.long ? 'LPX V9 Long' : 'LPX V9'} · ${backend}`;
+  const meta = document.createElement('small'); meta.textContent = `${(result.samples / output.rate).toLocaleString('ru-RU', { maximumFractionDigits: 3 })} с · ${result.bytes.length.toLocaleString('ru-RU')} Б · ${result.long ? 'LPX V9 Long' : 'LPX V9'} · ${backend}${result.processing === 'stream' ? ' · потоковая обработка' : ''}`;
   description.append(title, meta);
+  if (result.memoryFallback) {
+    const note = document.createElement('small');
+    note.textContent = 'Сохранён полностью проверенный контрольный вариант: для финального сравнения качества не хватило памяти.';
+    description.append(note);
+  }
   if (result.loudness) {
     const note = document.createElement('small'), level = result.loudness;
     const number = value => value.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
@@ -104,6 +109,7 @@ $('convert').onclick = async () => {
   if (!source || running) return;
   const id = ++job, rate = Number($('encode-rate').value), profile = Number($('encode-profile').value), backend = $('encode-backend').value;
   const sizeAllowancePercent = Number($('encode-allowance').value);
+  const processing = $('encode-processing').value;
   const normalization = $('encode-level').checked ? 'loudness' : 'preserve';
   const targetLufs = Number($('encode-target').value), maxGainDb = Number($('encode-max-gain').value);
   output = { stem: baseName(source.name), rate, profile };
@@ -121,21 +127,39 @@ $('convert').onclick = async () => {
     if (!audio.length || audio.sampleRate !== rate) throw new Error('Не удалось подготовить аудио в выбранной частоте.');
     if (audio.length > MAX_SAMPLES) throw new Error('Запись превышает предел браузерного энкодера — 32 000 000 отсчётов. Выберите более короткую запись или меньшую частоту.');
     const channels = Array.from({ length: audio.numberOfChannels }, (_, index) => audio.getChannelData(index));
-    const pcm = new Int16Array(audio.length); let clipped = 0;
-    for (let i = 0; i < pcm.length; i++) {
-      let sample = 0; for (const channel of channels) sample += channel[i] / channels.length;
-      if (!Number.isFinite(sample)) throw new Error('Исходник содержит некорректные аудиосэмплы.');
-      const value = Math.round(sample * 32768); if (value < -32768 || value > 32767) clipped++;
-      pcm[i] = Math.min(32767, Math.max(-32768, value));
-    }
+    const streaming = processing === 'stream' || processing === 'stream-refine' || processing === 'auto' && audio.length > 128000;
+    let clipped = 0;
+    const pcmRange = (offset, count, trackClipping = false) => {
+      if (!Number.isInteger(offset) || !Number.isInteger(count) || offset < 0 || count < 1 || offset + count > audio.length) throw new Error('Некорректный запрос порции аудио.');
+      const pcm = new Int16Array(count);
+      for (let i = 0; i < count; i++) {
+        let sample = 0; for (const channel of channels) sample += channel[offset + i] / channels.length;
+        if (!Number.isFinite(sample)) throw new Error('Исходник содержит некорректные аудиосэмплы.');
+        const value = Math.round(sample * 32768); if (trackClipping && (value < -32768 || value > 32767)) clipped++;
+        pcm[i] = Math.min(32767, Math.max(-32768, value));
+      }
+      return pcm;
+    };
+    const pcm = streaming ? null : pcmRange(0, audio.length, true);
     $('source-summary').textContent = `${audio.duration.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} с · ${channels.length} кан. → моно · ${rate / 1000} кГц${clipped ? ` · насыщение ${clipped} отсч.` : ''}`;
-    worker = new Worker(new URL('./encode-worker.js?v=20261123-quality-v3', import.meta.url), { type: 'module' });
+    worker = new Worker(new URL('./encode-worker.js?v=20261123-stream-v1', import.meta.url), { type: 'module' });
     worker.onerror = event => { event.preventDefault(); if (id === job) { stop(); status('Не удалось запустить энкодер. Обновите страницу и повторите.', true); } };
     worker.onmessage = ({ data }) => {
       if (id !== job) return;
+      if (data.read) {
+        try {
+          const portion = pcmRange(data.read.offset, data.read.samples);
+          worker.postMessage({ readReply: data.read.id, pcm: portion.buffer }, [portion.buffer]);
+        } catch (error) { worker.postMessage({ readReply: data.read.id, error: error.message }); }
+        return;
+      }
       if (data.error) { stop(); status(data.error, true); return; }
       if (data.progress !== undefined) {
-        if (data.progress < 1) {
+        if (data.phase) {
+          $('convert-progress').value = Math.round(data.progress * 100);
+          const phases = { measure: 'Измеряем громкость всей записи', encode: 'Кодируем по порциям', verify: 'Проверяем непрерывный файл', quality: 'Проверяем итоговое качество', done: 'Готовим результат' };
+          status(`${phases[data.phase] || 'Обрабатываем запись'}… ${(data.progress * 100).toLocaleString('ru-RU', { maximumFractionDigits: 1 })}%`);
+        } else if (data.progress < 1) {
           $('convert-progress').removeAttribute('value');
           status('Адаптивный поиск и проверка качества… Для длинных записей это может занять несколько минут.');
         }
@@ -148,6 +172,8 @@ $('convert').onclick = async () => {
         status(`Готово: один файл · ${(data.result.bytes.length / 1024).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} КБ · ${name} · кодирование ${elapsed} с.`);
       }
     };
-    worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile, backend, sizeAllowancePercent, normalization, targetLufs, maxGainDb }, [pcm.buffer]);
+    const settings = { sampleRate: rate, profile, backend, sizeAllowancePercent, normalization, targetLufs, maxGainDb };
+    if (streaming) worker.postMessage({ ...settings, processing: 'stream', samples: audio.length, calls: processing === 'stream-refine' ? 4 : 0 });
+    else worker.postMessage({ ...settings, pcm: pcm.buffer }, [pcm.buffer]);
   } catch (error) { if (id === job) { stop(); status(error.message || 'Не удалось конвертировать аудио.', true); } }
 };

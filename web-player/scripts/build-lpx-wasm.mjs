@@ -119,8 +119,8 @@ if (values['simd-selftest']) {
 
 // Same adaptive C++ translation units as the offline native executable.
 // Python source files below are provenance/test oracles, not runtime imports.
-const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
-  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp',
+const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
+  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxStreamingApi.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp',
   'LpxProfileQuality.cpp', 'LpxPulseLookahead.cpp', 'LpxFullBand.cpp', 'LpxSpectralPulses.cpp'];
 const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
 // Export the initializer explicitly so wasm-ld does not wrap every API export
@@ -130,12 +130,16 @@ const adaptiveExports = ['__wasm_call_ctors', 'enc_adaptive', 'enc_adaptive_exte
   'enc_normalize_loudness', 'enc_adaptive_loudness', 'enc_loudness_status', 'enc_loudness_limited',
   'enc_loudness_input', 'enc_loudness_prepared', 'enc_loudness_decoded', 'enc_loudness_gain_db',
   'enc_adaptive_level', 'enc_bitrate_level', 'enc_normalize_level', 'enc_loudness_gain_limited'];
+adaptiveExports.push('enc_stream_create','enc_stream_input','enc_stream_window','enc_stream_measure','enc_stream_plan',
+ 'enc_stream_process','enc_stream_finish','enc_stream_bytes','enc_stream_size','enc_stream_pcm','enc_stream_pcm_size',
+ 'enc_stream_header','enc_stream_header_size','enc_stream_candidate','enc_stream_processed','enc_stream_verify_put',
+ 'enc_stream_admit','enc_stream_loudness','enc_allocation_failed');
 const adaptiveFlags = ['-isystem', join(sysroot, 'include/c++/v1'),
   ...encoderFlags.filter(flag => !flag.startsWith('-Wl,-z,stack-size=') && !flag.startsWith('-Wl,--initial-memory='))];
 adaptiveFlags.push('-Wl,--initial-memory=524288', '-Wl,-z,stack-size=262144', '-DLPX_ADAPTIVE_ENCODER=1',
   ...adaptiveExports.map(name => '-Wl,--export=' + name));
 const adaptiveInputs = [...new Set([...encoderInputs, ...adaptiveSources,
-  ...['LpxAdaptive.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
+  ...['LpxAdaptive.h', 'LpxPacking.h', 'LpxStreaming.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
     'stoi-resample.inc', 'stoi-resample-12k.inc', 'stoi-resample-16k.inc',
     'quality-resample-12k.inc', 'quality-resample-16k.inc',
     'LpxProfileQuality.h', 'LpxPulseLookahead.h', 'LpxFullBand.h', 'LpxSpectralPulses.h',

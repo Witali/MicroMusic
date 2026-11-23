@@ -13,13 +13,47 @@ const workerSource = `
   globalThis.self = { postMessage: (message, transfer) => parentPort.postMessage(message, transfer) };
   globalThis.fetch = async url => {
     const target = new URL(url); target.search = '';
-    if (!/encoder-adaptive(?:-simd)?\\.wasm$/.test(target.pathname)) throw Error('Unexpected asset');
+    if (!/(?:encoder-adaptive(?:-simd)?|decoder)\\.wasm$/.test(target.pathname)) throw Error('Unexpected asset');
     return new Response(await readFile(target));
   };
   import(workerData).then(() => parentPort.on('message', data => self.onmessage({ data })));
 `;
 const decode = await createDecoder(readFileSync(new URL('../lpx/decoder.wasm', import.meta.url)));
 const reference = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive.wasm', import.meta.url)));
+
+test('shipped streaming worker pulls bounded portions, reports progress and permits cancellation', async () => {
+  const pcm=Int16Array.from({length:40961},(_,i)=>Math.round((i<20000?500:2500)*Math.sin(i*.14)));
+  const worker=new Worker(workerSource,{eval:true,workerData:new URL('../lpx/encode-worker.js',import.meta.url).href});
+  const reads=[],phases=[];
+  try {
+    const result=await new Promise((resolve,reject)=>{
+      worker.on('error',reject);worker.on('message',data=>{
+        if(data.error)return reject(Error(data.error));
+        if(data.read){
+          const {id,offset,samples}=data.read;assert.ok(samples<=20528);reads.push([offset,samples]);
+          const part=pcm.slice(offset,offset+samples);worker.postMessage({readReply:id,pcm:part.buffer},[part.buffer]);
+        }
+        if(data.phase)phases.push(data.phase);
+        if(data.result)resolve(data.result);
+      });
+      worker.postMessage({processing:'stream',samples:pcm.length,profile:6,sampleRate:8000,backend:'auto',normalization:'loudness',targetLufs:-24,maxGainDb:9});
+    });
+    assert.equal(result.processing,'stream');assert.equal(result.windows,3);assert.equal(result.memoryFallback,false);
+    assert.equal(decode(result.bytes).samples,pcm.length);assert.equal(result.loudness.status,1);
+    for(const phase of ['measure','encode','verify','done'])assert.ok(phases.includes(phase));
+    assert.ok(reads.length>=6);
+  } finally {await worker.terminate();}
+  const cancelled=new Worker(workerSource,{eval:true,workerData:new URL('../lpx/encode-worker.js',import.meta.url).href});
+  let resultAfterCancel=false;
+  await new Promise((resolve,reject)=>{
+    cancelled.on('error',reject);cancelled.on('message',async data=>{
+      if(data.result)resultAfterCancel=true;
+      if(data.read){await cancelled.terminate();resolve();}
+    });
+    cancelled.postMessage({processing:'stream',samples:1048577,profile:6,sampleRate:8000,backend:'scalar',normalization:'loudness'});
+  });
+  assert.equal(resultAfterCancel,false);
+});
 
 test('shipped worker loads adaptive assets, forwards allowances and returns one validated file', async () => {
   for (const backend of ['scalar', 'simd', 'auto']) for (const normalization of ['preserve', 'loudness']) {

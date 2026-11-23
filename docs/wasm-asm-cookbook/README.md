@@ -207,3 +207,21 @@ uses about 29.2 MB including the unchanged seed workspace. This is portable C++1
 with Emscripten6.0.12/LLVM24, no ISA extension or handwritten assembly; scalar
 and SIMD builds share it. Caller PCM and energy summaries remain proportional
 to input length. The linked evidence states the workload and limits.
+
+## Continuous seed and packet state across windows
+
+The [offline streaming encoder](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/STREAMING.md)
+uses aligned20480-sample windows plus48-sample lookahead. Carry the raw,
+pre-emphasized and residual history, preceding spectrum/coefficient interpolation,
+LPC/pitch/de-emphasis state and partial output byte. Padding only at EOF avoids
+both waveform resets and invalid per-window byte alignment. At a short final
+lookahead, pre-emphasize the virtual-zero tail as whole-input analysis does.
+
+This is shared portable C++, without handwritten assembly or ISA requirements;
+scalar C remains explicitly selectable with native CPU and wasm32 SIMD builds.
+The retained24-case native helper checks complete seed parameters, bytes and PCM
+at8/12/16kHz against whole-input search. The Web tests compare scalar/SIMD/native
+and independently decode every final sample. Model memory is window-bounded;
+compressed-source browser decoding and final quality verification are not.
+Pinned tools, synthetic memory assertions and reproduction details are linked
+above. No AVR timing or speedup is inferred from these host checks.

@@ -54,7 +54,7 @@ test('3 kbit short gain-zero fallback and continuous silent Long streams retain 
   }
 });
 
-function converterPage() {
+function converterPage(sampleCount = 8193) {
   const html = readFileSync(new URL('lpx/index.html', root), 'utf8');
   const elements = new Map(), workers = [], rates = [];
   class Element {
@@ -78,8 +78,8 @@ function converterPage() {
     } },
     OfflineAudioContext: class {
       constructor(channels, length, rate) { this.rate = rate; rates.push(rate); }
-      async decodeAudioData() { return { length: 8193, sampleRate: this.rate, duration: 8193 / this.rate,
-        numberOfChannels: 1, getChannelData: () => new Float32Array(8193) }; }
+      async decodeAudioData() { return { length: sampleCount, sampleRate: this.rate, duration: sampleCount / this.rate,
+        numberOfChannels: 1, getChannelData: () => new Float32Array(sampleCount) }; }
     },
     Worker: class {
       constructor() { workers.push(this); }
@@ -131,4 +131,23 @@ test('converter pins bitrate settings through work/cancel and restores ordinary 
   assert.equal(element('encode-rate').disabled, false);
   assert.equal(element('encode-allowance').disabled, false);
   assert.equal(element('bitrate-note').hidden, true);
+});
+
+test('converter auto streams long input without a whole PCM transfer and keeps explicit search choices',async()=>{
+  const {elements,workers}=converterPage(131073),element=id=>elements.get(id);
+  element('source-file').files=[{name:'synthetic.wav',size:100,arrayBuffer:async()=>new ArrayBuffer(0)}];
+  element('source-file').onchange();await element('convert').onclick();
+  assert.equal(workers[0].message.processing,'stream');assert.equal(workers[0].message.samples,131073);
+  assert.equal(workers[0].message.calls,0);assert.equal(workers[0].message.pcm,undefined);
+  assert.equal(element('encode-processing').disabled,true);
+  workers[0].onmessage({data:{read:{id:7,offset:20460,samples:20528}}});
+  assert.equal(workers[0].message.readReply,7);assert.equal(workers[0].message.pcm.byteLength,41056);
+  workers[0].onmessage({data:{phase:'encode',progress:.123}});
+  assert.equal(element('convert-progress').value,12);assert.match(element('convert-status').textContent,/12,3%/);
+  element('cancel-convert').onclick();assert.equal(workers[0].terminated,true);
+  element('encode-processing').value='stream-refine';await element('convert').onclick();
+  assert.equal(workers[1].message.calls,4);element('cancel-convert').onclick();
+  element('encode-processing').value='full';await element('convert').onclick();
+  assert.equal(workers[2].message.processing,undefined);assert.equal(workers[2].message.pcm.byteLength,131073*2);
+  element('cancel-convert').onclick();assert.equal(element('encode-processing').disabled,false);
 });

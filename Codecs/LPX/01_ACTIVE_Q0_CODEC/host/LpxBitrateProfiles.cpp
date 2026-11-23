@@ -206,14 +206,18 @@ void fitExcitation(Stream& s, const Pcm& reference, const std::vector<int>& peri
     const int n = s.samples;
     std::vector<double> emphasized(n), residual(n);
     for (int at = 0; at < n; ++at) {
-        emphasized[at] = reference[at] / 2. - (at ? s.pre * (reference[at - 1] / 2.) / 16384 : 0);
+        emphasized[at] = emphasizedAt(s,reference,at);
         residual[at] = emphasized[at];
-        for (int k = 0; k < 10 && at > k; ++k) residual[at] += co[at / 20][k] * emphasized[at - k - 1] / 4096;
+        for (int k = 0; k < 10; ++k) {
+            int index=at-k-1;
+            if(index>=0)residual[at] += co[at / 20][k] * emphasized[index] / 4096;
+            else if(s.continuation)residual[at] += co[at / 20][k] * emphasizedAt(s,reference,index) / 4096;
+        }
     }
     s.parameters.assign(s.spectra.size() * 2, Parameters{{0, 18, 0}});
     s.pulses.assign(s.spectra.size() * 16, Pulse{{0, -8}});
     s.extras.assign(s.spectra.size() * 8, Pulse{{-1, 0}});
-    SynthesisState prefix;
+    auto prefix=s.initial;
     for (int start = 0; start < n; start += 160) {
         int stop = std::min(n, start + 160), bi = start / 160;
         double power = 0, scores[128];
@@ -223,7 +227,7 @@ void fitExcitation(Stream& s, const Pcm& reference, const std::vector<int>& peri
         for (int lag = 18; lag <= 145; ++lag) {
             double dot = 0, energy = 0;
             for (int at = start; at < stop; ++at) {
-                double old = at >= lag ? residual[at - lag] : 0;
+                double old = at >= lag ? residual[at - lag] : residualBefore(s,reference,at-lag);
                 dot += old * residual[at]; energy += old * old;
             }
             scores[lag - 18] = std::max(0., dot) * std::max(0., dot) / (energy + 1);
@@ -258,7 +262,7 @@ void fitExcitation(Stream& s, const Pcm& reference, const std::vector<int>& peri
 }
 
 Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
-                    double bandwidth, const Stream* incumbent) {
+                    double bandwidth, const Stream* incumbent,const Stream* prefix) {
     report = BitrateReport{};
     if (reference.empty() || reference.size() > lpxSeedCapacity() || maxBytes < 13
         || !(bandwidth > 0 && bandwidth <= 1)) {
@@ -293,7 +297,8 @@ Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
         if (!selectedMeasurement.quality.error[0] && !selectedMeasurement.quality.error[1]) return selected;
     }
     for (int pre : {13926, 11469, 8192}) {
-        Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth);
+        if(prefix && prefix->continuation && pre!=prefix->pre)continue;
+        Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth,prefix);
         if (!seed.samples) { report.error = -7; return Stream{}; }
         // The complete existing seed is a legitimate candidate when V9's exact
         // zero-gain/tail omissions already place it under the requested cap.
@@ -315,7 +320,8 @@ Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
         // Try this explicit bounded alternative before returning search no-fit;
         // it is not used to displace any already feasible ordinary candidate.
         for (int pre : {13926, 11469, 8192}) {
-            Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth);
+            if(prefix && prefix->continuation && pre!=prefix->pre)continue;
+            Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth,prefix);
             if (!seed.samples) { report.error = -7; return Stream{}; }
             auto plans = spectralPlans(seed, reference, maxBytes, true);
             for (const auto& spectra : plans) {

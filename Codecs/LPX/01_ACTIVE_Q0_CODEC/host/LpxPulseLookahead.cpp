@@ -98,7 +98,7 @@ RefinementResult refinePulseLookahead(const Stream& input,
     if (!baseline.quality.error[0]) return result;
 
     Stream working = input;
-    SynthesisState prefix;
+    auto prefix=input.initial;
     int cursor = 0;
     std::vector<Patch> patches;
     for (int frame : anchors(context.reference, originalPcm)) {

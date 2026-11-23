@@ -10,12 +10,14 @@ namespace {
 struct Block { size_t size;Block* next; };
 static Block* freeList;
 static uintptr_t heapEnd;
+static bool allocationFailed;
 static bool grow(uintptr_t end) {
     size_t current=__builtin_wasm_memory_size(0),pages=(end+65535)/65536;
     return pages<=current || __builtin_wasm_memory_grow(0,pages-current)!=size_t(-1);
 }
 }
 extern "C" {
+int enc_allocation_failed() { return allocationFailed?1:0; }
 // libc++'s fatal allocation diagnostics may reference stdio. This standalone
 // module has no descriptors: fail writes locally rather than importing WASI.
 uint16_t __wasi_fd_write(int32_t,const void*,size_t,size_t* written) { if(written)*written=0;return 8; }
@@ -55,7 +57,7 @@ void* realloc(void* pointer,size_t size) {
 }
 __attribute__((noreturn)) void abort() { __builtin_trap(); }
 }
-void* operator new(size_t size) { void* p=malloc(size);if(!p)abort();return p; }
+void* operator new(size_t size) { void* p=malloc(size);if(!p) { allocationFailed=true;abort(); }return p; }
 void* operator new[](size_t size) { return ::operator new(size); }
 void operator delete(void* p) noexcept { free(p); }
 void operator delete[](void* p) noexcept { free(p); }

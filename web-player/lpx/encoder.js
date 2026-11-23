@@ -1,4 +1,5 @@
-import { MAX_SAMPLES } from './codec.js?v=20261123-quality-v3';
+import { MAX_SAMPLES } from './codec.js?v=20261123-stream-v1';
+import { createStreamSession } from './streaming.js?v=20261123-stream-v1';
 
 export async function createEncoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);
@@ -63,5 +64,6 @@ export async function createEncoder(binary) {
     if (size < 13) throw new Error(`Энкодер не прошёл внутреннюю проверку C-декодером (${size}).`);
     return new Uint8Array(api.memory.buffer, api.enc_output(), size).slice();
   };
+  encode.createStream=settings=>createStreamSession(api,settings);
   return encode;
 }
