@@ -14,6 +14,9 @@ uint8_t* enc_output(void);
 int enc_begin(int samples, int profile, int sampleRate);
 int enc_step(void);
 int enc_finish(void);
+// Complete-file 3/8 kbit/s presets, currently calibrated for 8000 Hz.
+// Read bytes with enc_adaptive_output(); -6 means bounded search found no fit.
+int enc_bitrate(int samples, int kbps, int sampleRate, int autoQuiet, int calls);
 #ifdef __cplusplus
 }
 #endif

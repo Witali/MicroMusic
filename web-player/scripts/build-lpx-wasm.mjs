@@ -120,18 +120,18 @@ if (values['simd-selftest']) {
 // Same adaptive C++ translation units as the offline native executable.
 // Python source files below are provenance/test oracles, not runtime imports.
 const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
-  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp'];
+  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxBitrateProfiles.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp'];
 const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
 // Export the initializer explicitly so wasm-ld does not wrap every API export
 // with constructors. The host calls it once after instantiation; otherwise a
 // getter could reconstruct (and erase) the static output vector/report.
-const adaptiveExports = ['__wasm_call_ctors', 'enc_adaptive', 'enc_adaptive_extended', 'enc_adaptive_output', 'enc_adaptive_candidates', 'enc_adaptive_stages', 'enc_adaptive_gain'];
+const adaptiveExports = ['__wasm_call_ctors', 'enc_adaptive', 'enc_adaptive_extended', 'enc_bitrate', 'enc_adaptive_output', 'enc_adaptive_candidates', 'enc_adaptive_stages', 'enc_adaptive_gain'];
 const adaptiveFlags = ['-isystem', join(sysroot, 'include/c++/v1'),
   ...encoderFlags.filter(flag => !flag.startsWith('-Wl,-z,stack-size=') && !flag.startsWith('-Wl,--initial-memory='))];
 adaptiveFlags.push('-Wl,--initial-memory=524288', '-Wl,-z,stack-size=262144', '-DLPX_ADAPTIVE_ENCODER=1',
   ...adaptiveExports.map(name => '-Wl,--export=' + name));
 const adaptiveInputs = [...new Set([...encoderInputs, ...adaptiveSources,
-  ...['LpxAdaptive.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
+  ...['LpxAdaptive.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h', 'LpxBitrateProfiles.h',
     'stoi-resample.inc', 'LICENSE-pystoi.txt'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name),
   ...['adaptive_speech_voice.py', 'encode_speech_voice.py', 'refine_speech_compact.py', 'enhance_speech_compact.py',
     'refine_speech_lpc.py', 'refine_speech_extras.py', 'speech_rate_allocation.py', 'speech_voice_objective.py',
@@ -152,6 +152,8 @@ for (const simd of [false, true]) {
     inputs: Object.fromEntries(adaptiveInputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
     bytes: bytes.length, sha256: hash(bytes), initialMemoryBytes: 524288, stackBytes: 262144, backend: simd ? 'wasm-simd128-pulse4' : 'scalar',
     algorithm: 'shared C++ adaptive voice controller; Python-free runtime',
+    bitratePresets: [3, 8], bitratePresetSampleRate: 8000,
+    bitratePresetBudget: 'exact complete V9 file bytes, including its header',
     quality: { seedPre: [0, 8192, 13926], refinementCalls: 4, lpcPreset: 'expanded',
       headerTrials: 256, headerFinalists: 16, extraHorizon: 320, extraFinalists: 6,
       extraFullEvaluations: 128, ranking: 'mean of PCM16/PWM voice + noise',

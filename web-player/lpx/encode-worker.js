@@ -1,4 +1,4 @@
-import { createEncoderBackend } from './encoder-backend.js?v=20261123-adaptive-quality';
+import { createEncoderBackend } from './encoder-backend.js?v=20261123-bitrate-profiles';
 self.onmessage = async ({ data }) => {
   try {
     const { encode, backend } = await createEncoderBackend(data.backend ?? 'auto');
