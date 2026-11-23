@@ -1,5 +1,5 @@
 import { MAX_SAMPLES } from './codec.js';
-import { supportsSimd } from './encoder-backend.js?v=20261123-adaptive-quality';
+import { supportsSimd } from './encoder-backend.js?v=20261123-bitrate-profiles';
 
 const $ = id => document.getElementById(id);
 if (!supportsSimd()) {
@@ -7,6 +7,27 @@ if (!supportsSimd()) {
   $('backend-note').textContent = 'В этом браузере доступно обычное кодирование. Авто выберет его.';
 }
 let source = null, worker = null, running = false, job = 0, urls = [], output = null;
+let presetActive = false, ordinaryRate = $('encode-rate').value, ordinaryAllowance = $('encode-allowance').value;
+function applyProfileConstraints() {
+  const preset = ['3', '8'].includes($('encode-profile').value);
+  if (preset) {
+    if (!presetActive) {
+      ordinaryRate = $('encode-rate').value;
+      ordinaryAllowance = $('encode-allowance').value;
+    }
+    $('encode-rate').value = '8000';
+    $('encode-allowance').value = '0';
+  } else if (presetActive) {
+    $('encode-rate').value = ordinaryRate;
+    $('encode-allowance').value = ordinaryAllowance;
+  }
+  presetActive = preset;
+  $('encode-rate').disabled = running || preset;
+  $('encode-allowance').disabled = running || preset;
+  $('bitrate-note').hidden = !preset;
+}
+$('encode-profile').onchange = applyProfileConstraints;
+applyProfileConstraints();
 const status = (text, error = false) => { $('convert-status').textContent = text; $('convert-status').classList.toggle('error', error); };
 const baseName = name => name.replace(/\.[^.]+$/, '').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_').slice(0, 120) || 'audio';
 function select(file) {
@@ -30,6 +51,7 @@ $('source-drop').addEventListener('drop', event => {
 function busy(value) {
   running = value;
   ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-allowance', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
+  applyProfileConstraints();
   $('cancel-convert').hidden = !value;
 }
 function stop() { if (worker) worker.terminate(); worker = null; busy(false); }
@@ -84,7 +106,7 @@ $('convert').onclick = async () => {
       pcm[i] = Math.min(32767, Math.max(-32768, value));
     }
     $('source-summary').textContent = `${audio.duration.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} с · ${channels.length} кан. → моно · ${rate / 1000} кГц${clipped ? ` · насыщение ${clipped} отсч.` : ''}`;
-    worker = new Worker(new URL('./encode-worker.js?v=20261123-adaptive-quality', import.meta.url), { type: 'module' });
+    worker = new Worker(new URL('./encode-worker.js?v=20261123-bitrate-profiles', import.meta.url), { type: 'module' });
     worker.onerror = event => { event.preventDefault(); if (id === job) { stop(); status('Не удалось запустить энкодер. Обновите страницу и повторите.', true); } };
     worker.onmessage = ({ data }) => {
       if (id !== job) return;
