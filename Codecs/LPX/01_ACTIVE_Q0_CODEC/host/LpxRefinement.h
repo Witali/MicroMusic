@@ -10,4 +10,7 @@ struct RefinementResult {
 RefinementResult refineHeader(const Stream& stream,const QualityContext& context);
 RefinementResult enhanceExtras(const Stream& stream,const QualityContext& context,int cap);
 RefinementResult refineLpc(const Stream& stream,const QualityContext& context,int cap);
+// Optional extension beyond the Python-parity operators. It keeps the input
+// candidate and evaluates the complete continuous output before acceptance.
+RefinementResult refinePitchGain(const Stream& stream,const QualityContext& context,int cap);
 }

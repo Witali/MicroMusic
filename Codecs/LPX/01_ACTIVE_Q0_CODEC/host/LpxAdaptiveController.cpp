@@ -18,8 +18,9 @@ static bool sameStream(const Stream& a,const Stream& b) {
     return a.pre==b.pre && a.bright==b.bright && a.spectra==b.spectra && a.parameters==b.parameters && a.pulses==b.pulses && a.extras==b.extras;
 }
 Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
-                      bool autoQuiet,int cap,int calls,bool speech) {
+                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent) {
     report=AdaptiveReport{};
+    if(sizeAllowancePercent<0 || sizeAllowancePercent>100) { report.error=-1;return Stream{}; }
     Pcm reference=input;
     if(autoQuiet) {
         double mean=0,energy=0,peak=0;
@@ -30,7 +31,7 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
     }
     QualityContext context(reference,speech);
     std::vector<Stream> seeds;seeds.push_back(fitSeed(reference,profile,rate,13926,false));
-    if(!cap)cap=compactBytes(seeds[0]);report.cap=cap;
+    if(!cap)cap=int(int64_t(compactBytes(seeds[0]))*(100+sizeAllowancePercent)/100);report.cap=cap;
     auto originalPcm=render(seeds[0]);auto original=context.measure(originalPcm);
     Stream anchor=seeds[0];double selectedScore=original.voice[0];
     for(int pre:{0,8192,13926}) {
@@ -86,6 +87,18 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
         if(report.error)return Stream{};
         report.stageOperator[stage]=operation;report.localEvaluations[stage]=result.localEvaluations;report.fullEvaluations[stage]=result.fullEvaluations;
         ++report.stages;
+    }
+    if(expandedSearch) {
+        int parent=-1;for(int i:ranked(false))if(allowed(i)) { parent=i;break; }
+        if(parent>=0) {
+            auto extension=refinePitchGain(pool[parent].stream,context,cap);
+            add(extension.selected,3);add(extension.raw,3);
+            for(const auto& alternative:extension.alternatives)add(alternative,3);
+            report.expandedLocalEvaluations=extension.localEvaluations;
+            report.expandedFullEvaluations=extension.fullEvaluations;
+            report.expandedAccepted=extension.accepted;
+            if(report.error)return Stream{};
+        }
     }
     report.candidates=pool.size();
     for(int i:ranked(false))if(allowed(i)) { report.selected=i;report.measurement=pool[i].measured;return pool[i].stream; }

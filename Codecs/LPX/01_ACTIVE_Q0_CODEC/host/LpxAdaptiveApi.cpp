@@ -5,16 +5,23 @@
 
 static std::vector<uint8_t> qualityOutput;
 static lpx::AdaptiveReport qualityReport;
-extern "C" {
-int enc_adaptive(int samples,int profile,int rate,int autoQuiet,int maxBytes,int calls) {
+static int encodeAdaptive(int samples,int profile,int rate,int autoQuiet,int maxBytes,int calls,bool expanded,int allowance) {
     qualityOutput.clear();qualityReport=lpx::AdaptiveReport{};
     if(samples<1 || uint32_t(samples)>lpxSeedCapacity() || uint32_t(samples)>kLpxMaxSamples
         || (profile!=4 && profile!=6) || (rate!=8000 && rate!=12000 && rate!=16000)
-        || (autoQuiet!=0 && autoQuiet!=1) || maxBytes<0 || (maxBytes>0 && maxBytes<22) || calls<0 || calls>4)return -1;
+        || (autoQuiet!=0 && autoQuiet!=1) || maxBytes<0 || (maxBytes>0 && maxBytes<22) || calls<0 || calls>4
+        || allowance<0 || allowance>100)return -1;
     lpx::Pcm reference(enc_input(),enc_input()+samples);
-    auto result=lpx::adaptiveEncode(reference,profile,rate,qualityReport,autoQuiet!=0,maxBytes,calls);
+    auto result=lpx::adaptiveEncode(reference,profile,rate,qualityReport,autoQuiet!=0,maxBytes,calls,true,expanded,allowance);
     if(qualityReport.error)return qualityReport.error;
     qualityOutput=lpx::packV9(result);return qualityOutput.size();
+}
+extern "C" {
+int enc_adaptive(int samples,int profile,int rate,int autoQuiet,int maxBytes,int calls) {
+    return encodeAdaptive(samples,profile,rate,autoQuiet,maxBytes,calls,false,0);
+}
+int enc_adaptive_extended(int samples,int profile,int rate,int autoQuiet,int maxBytes,int calls,int allowancePercent) {
+    return encodeAdaptive(samples,profile,rate,autoQuiet,maxBytes,calls,true,allowancePercent);
 }
 uint8_t* enc_adaptive_output() { return qualityOutput.data(); }
 int enc_adaptive_candidates() { return qualityReport.candidates; }
