@@ -21,7 +21,19 @@ test('direct full P8 is deterministic and preserves perfect silence',()=>{
   for(const pcm of[tone(641),new Int16Array(641)]){
     const options={accuracy:true,calls:4},b=scalar(pcm,8000,8,()=>{},options);
     assert.deepEqual(b,simd(pcm,8000,8,()=>{},options));assert.equal(decode(b).samples,pcm.length);
+    if(process.env.LPX_ACCURACY_CUDA)for(const backend of['cpu','cuda']){const native=spawnSync(process.env.LPX_ACCURACY_CUDA,['--accuracy','8','--rate','8000','--calls','4','--backend',backend],{input:Buffer.from(pcm.buffer),maxBuffer:1024*1024});assert.equal(native.status,0,native.stderr?.toString());assert.deepEqual(native.stdout,Buffer.from(b));}
     if(!pcm.some(x=>x!==0))assert.deepEqual(decode(b).pcm,pcm);
+  }
+});
+
+test('every accuracy level keeps one continuous Long file, with exact P4/P6 fast compatibility',async()=>{
+  const pcm=tone(65537),source=async(at,n)=>pcm.slice(at,at+n);
+  for(const profile of[3,4,6,8]){
+    const settings={samples:pcm.length,sampleRate:8000,profile,calls:0,accuracy:true};
+    const result=await encodeStreaming(scalar,settings,source,()=>{},read);
+    assert.deepEqual(result.bytes,(await encodeStreaming(simd,settings,source,()=>{},read)).bytes);
+    assert.equal(decode(result.bytes).samples,pcm.length);assert.equal(result.long,true);
+    if(profile===4||profile===6)assert.deepEqual(result.bytes,(await encodeStreaming(scalar,{...settings,accuracy:false},source,()=>{},read)).bytes);
   }
 });
 test('P4/P6 retain wire names while accuracy allocation uses the common pipeline',()=>{
