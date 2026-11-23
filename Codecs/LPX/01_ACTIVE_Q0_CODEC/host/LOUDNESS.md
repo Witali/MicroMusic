@@ -38,6 +38,9 @@ the same source. The existing adaptive ABIs remain unchanged; the new
 `enc_adaptive_loudness` ABI opts in. Quality selection compares candidates
 against the normalized reference. Report getters expose source, prepared and
 decoded LUFS, applied dB gain, skip status and the peak constraint.
+The `enc_bitrate_loudness` ABI provides the same preprocessing for 3/8 kbit/s
+presets at 8 kHz. Their exact complete-file caps remain unchanged; normalization
+happens before candidate selection and does not scale a finished LPX stream.
 
 The reference fixture uses independently built libebur128 v1.2.6 on 42
 deterministic PCM16 cases at 8/12/16 kHz: tones at several frequencies, quiet

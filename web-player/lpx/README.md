@@ -23,6 +23,21 @@ can differ from the pre-encoding target. Very short or below-gate audio
 keeps its level. See [normalization details](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LOUDNESS.md).
 Encoding runs in a cancellable Worker.
 
+The profile selector also offers **3 kbit/s** and **8 kbit/s** presets at 8 kHz.
+They bound the complete file, including its header and final packets:
+`floor(samples * kbps * 1000 / (8 * 8000))` bytes. Their rate and size-allowance
+controls are fixed to 8 kHz and zero allowance; ordinary P4/P6 choices retain
+their selectable rates and allowances. A recording too short for the complete
+header and legal payload returns a no-fit error rather than padding the budget,
+truncating audio or lowering the playback rate.
+
+Both presets use the shared native/WASM `enc_bitrate` entry point and the same
+existing `L9` header and decoder. The 3 kbit/s preset emits P4; the 8 kbit/s
+preset uses P6 with budgeted extra pulses. A preset's bitrate is an encoder
+budget, so easy recordings can produce a smaller file. Imported legacy LPX8
+v2/v3 recordings require re-encoding from their original audio; a lossless
+bitstream conversion to these pulse modes is not promised.
+
 The entire recording is encoded in a single pass with continuous pitch history,
 LPC interpolation and output-filter state. Standard 13-byte V9 is retained for
 up to 64000 samples; longer recordings get one 17-byte V9 Long header and one

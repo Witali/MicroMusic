@@ -110,6 +110,45 @@ Use `tools/speech_v9_audio.py encode --sample-rate 12000` or `16000`, and its
 
 ## Tools and selection
 
+### Encoder bitrate presets
+
+The shared C++ encoder offers **3 and 8 kbit/s complete-file ceilings** at
+8000 Hz through `enc_bitrate(samples, kbps, rate, autoQuiet, calls)`. These
+are encoder settings, not new wire-profile numbers or codec versions:
+
+| Encoder preset | Existing V9 wire mode | Budget allocation |
+| --- | --- | --- |
+| 3 kbit/s | P4 (profile byte 4) | Energy-weighted spectral holding and closed-loop excitation search |
+| 8 kbit/s | P6 (optionally extra-pulse bit 128) | Shared adaptive search with budgeted existing extra pulses |
+
+The cap is `floor(samples * kbps * 1000 / (8 * 8000))` bytes, counting the
+ordinary 13-byte or Long 17-byte header and every stored payload/tail bit.
+The chosen file may be smaller; no filler is added to meet a nominal rate.
+Very short inputs may have no candidate under the cap. The search returns an
+explicit no-fit error without truncating samples or changing playback rate.
+The ordinary P4/P6 modes retain their existing rate and allowance settings.
+
+The new presets use the same decoder, fields, rounding, final-padding/EOF
+validation and continuous state as every other V9 stream. For input over
+64000 samples, the existing V9 Long host marker is used; AVR limits stay as
+documented in [LPX9_LONG_FORMAT.md](LPX9_LONG_FORMAT.md).
+
+Native C++ and scalar/SIMD WASM execute the same preset code. The browser
+selector includes both presets. Prepared mono PCM16/8000 Hz WAV can also be
+encoded locally on a PC, without Python:
+
+```text
+node web-player/scripts/encode-lpx.mjs input-8khz.wav new-3k.lpx --kbps 3
+node web-player/scripts/encode-lpx.mjs input-8khz.wav new-8k.lpx --kbps 8 --backend simd
+```
+
+Previously selected v5 3 kbit/s streams can still use the lossless repacker
+below and retain every decoded sample. The new bounded C++ search is not a
+claim of identical candidate selection to the older Python search. Legacy
+v2/v3 LPX8 must be re-encoded from its source audio; the presets do not wrap
+another decoder or promise lossless conversion from arbitrary legacy data.
+See [validation and measured AVR costs](../research/v9-bitrate-presets-2026-11-23/README.md).
+
 ```sh
 python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/speech_v9.py input.lpx build/voice-v9.lpx
 python3 Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/verify_attiny88_player.py \

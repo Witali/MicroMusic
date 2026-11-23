@@ -17,19 +17,24 @@ bool verifyStream(const Stream& stream,const Pcm& expected) {
 static bool sameStream(const Stream& a,const Stream& b) {
     return a.pre==b.pre && a.bright==b.bright && a.spectra==b.spectra && a.parameters==b.parameters && a.pulses==b.pulses && a.extras==b.extras;
 }
-Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
-                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize) {
-    report=AdaptiveReport{};
-    if(sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize)) { report.error=-1;return Stream{}; }
+Pcm prepareInputLevel(const Pcm& input,bool autoQuiet,int& gainExponent) {
+    gainExponent=0;
     Pcm reference=input;
-    if(normalize)report.loudness=normalizeLoudness(reference,rate);
     if(autoQuiet) {
         double mean=0,energy=0,peak=0;
         for(int x:reference) { mean+=x;peak=std::max(peak,std::abs(double(x))); } mean/=reference.size();
         for(int x:reference) { double d=x-mean;energy+=d*d; }double rms=std::sqrt(energy/reference.size());
-        if(rms && rms<256)while(std::ldexp(rms,report.gainExponent)<1024 && std::ldexp(peak,report.gainExponent+1)<=29490)++report.gainExponent;
-        for(auto& x:reference)x=int(x)*(1<<report.gainExponent);
+        if(rms && rms<256)while(std::ldexp(rms,gainExponent)<1024 && std::ldexp(peak,gainExponent+1)<=29490)++gainExponent;
+        for(auto& x:reference)x=int(x)*(1<<gainExponent);
     }
+    return reference;
+}
+Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
+                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize) {
+    report=AdaptiveReport{};
+    if(sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize)) { report.error=-1;return Stream{}; }
+    Pcm reference=prepareInputLevel(input,autoQuiet,report.gainExponent);
+    if(normalize)report.loudness=normalizeLoudness(reference,rate);
     QualityContext context(reference,speech);
     std::vector<Stream> seeds;seeds.push_back(fitSeed(reference,profile,rate,13926,false));
     if(!seeds.back().samples) { report.error=-7;return Stream{}; }

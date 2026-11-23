@@ -7,6 +7,27 @@ if (!supportsSimd()) {
   $('backend-note').textContent = 'В этом браузере доступно обычное кодирование. Авто выберет его.';
 }
 let source = null, worker = null, running = false, job = 0, urls = [], output = null;
+let presetActive = false, ordinaryRate = $('encode-rate').value, ordinaryAllowance = $('encode-allowance').value;
+function applyProfileConstraints() {
+  const preset = ['3', '8'].includes($('encode-profile').value);
+  if (preset) {
+    if (!presetActive) {
+      ordinaryRate = $('encode-rate').value;
+      ordinaryAllowance = $('encode-allowance').value;
+    }
+    $('encode-rate').value = '8000';
+    $('encode-allowance').value = '0';
+  } else if (presetActive) {
+    $('encode-rate').value = ordinaryRate;
+    $('encode-allowance').value = ordinaryAllowance;
+  }
+  presetActive = preset;
+  $('encode-rate').disabled = running || preset;
+  $('encode-allowance').disabled = running || preset;
+  $('bitrate-note').hidden = !preset;
+}
+$('encode-profile').onchange = applyProfileConstraints;
+applyProfileConstraints();
 const status = (text, error = false) => { $('convert-status').textContent = text; $('convert-status').classList.toggle('error', error); };
 const baseName = name => name.replace(/\.[^.]+$/, '').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_').slice(0, 120) || 'audio';
 function select(file) {
@@ -30,6 +51,7 @@ $('source-drop').addEventListener('drop', event => {
 function busy(value) {
   running = value;
   ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-allowance', 'encode-level', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
+  applyProfileConstraints();
   $('cancel-convert').hidden = !value;
 }
 function stop() { if (worker) worker.terminate(); worker = null; busy(false); }

@@ -120,12 +120,12 @@ if (values['simd-selftest']) {
 // Same adaptive C++ translation units as the offline native executable.
 // Python source files below are provenance/test oracles, not runtime imports.
 const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
-  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxLoudness.cpp'];
+  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp'];
 const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
 // Export the initializer explicitly so wasm-ld does not wrap every API export
 // with constructors. The host calls it once after instantiation; otherwise a
 // getter could reconstruct (and erase) the static output vector/report.
-const adaptiveExports = ['__wasm_call_ctors', 'enc_adaptive', 'enc_adaptive_extended', 'enc_adaptive_output', 'enc_adaptive_candidates', 'enc_adaptive_stages', 'enc_adaptive_gain',
+const adaptiveExports = ['__wasm_call_ctors', 'enc_adaptive', 'enc_adaptive_extended', 'enc_bitrate', 'enc_bitrate_loudness', 'enc_adaptive_output', 'enc_adaptive_candidates', 'enc_adaptive_stages', 'enc_adaptive_gain',
   'enc_normalize_loudness', 'enc_adaptive_loudness', 'enc_loudness_status', 'enc_loudness_limited',
   'enc_loudness_input', 'enc_loudness_prepared', 'enc_loudness_decoded', 'enc_loudness_gain_db'];
 const adaptiveFlags = ['-isystem', join(sysroot, 'include/c++/v1'),
@@ -134,7 +134,7 @@ adaptiveFlags.push('-Wl,--initial-memory=524288', '-Wl,-z,stack-size=262144', '-
   ...adaptiveExports.map(name => '-Wl,--export=' + name));
 const adaptiveInputs = [...new Set([...encoderInputs, ...adaptiveSources,
   ...['LpxAdaptive.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
-    'stoi-resample.inc', 'LICENSE-pystoi.txt', 'LpxLoudness.h', 'LICENSE-libebur128.txt'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name),
+    'stoi-resample.inc', 'LICENSE-pystoi.txt', 'LpxLoudness.h', 'LpxBitrateProfiles.h', 'LICENSE-libebur128.txt'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name),
   ...['adaptive_speech_voice.py', 'encode_speech_voice.py', 'refine_speech_compact.py', 'enhance_speech_compact.py',
     'refine_speech_lpc.py', 'refine_speech_extras.py', 'speech_rate_allocation.py', 'speech_voice_objective.py',
     'speech_noise_objective.py', 'voice_character.py', 'standard_metrics.py', 'voice_input.py']
@@ -154,6 +154,8 @@ for (const simd of [false, true]) {
     inputs: Object.fromEntries(adaptiveInputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
     bytes: bytes.length, sha256: hash(bytes), initialMemoryBytes: 524288, stackBytes: 262144, backend: simd ? 'wasm-simd128-pulse4' : 'scalar',
     algorithm: 'shared C++ adaptive voice controller; Python-free runtime',
+    bitratePresets: [3, 8], bitratePresetSampleRate: 8000,
+    bitratePresetBudget: 'exact complete V9 file bytes, including its header',
     quality: { seedPre: [0, 8192, 13926], refinementCalls: 4, lpcPreset: 'expanded',
       headerTrials: 256, headerFinalists: 16, extraHorizon: 320, extraFinalists: 6,
       extraFullEvaluations: 128, ranking: 'mean of PCM16/PWM voice + noise',

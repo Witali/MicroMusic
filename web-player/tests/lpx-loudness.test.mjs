@@ -91,3 +91,21 @@ test('normalization precedes one continuous V9 Long encode without resetting gai
   }
   assert.deepEqual(results[0],results[1]);
 });
+
+test('3/8 bitrate presets normalize their reference before selection and retain exact file caps',async()=>{
+  const previous=await createEncoder(readRecordedBuildFile('6ef6899b698dd7cf0449ce2b2d3775bd4d3684da','web-player/lpx/encoder-adaptive.wasm'));
+  const c=cases.find(c=>c.rate===8000&&c.name==='quiet'),prepared=normalize(apis[0],c.pcm,c.rate).pcm;
+  for(const kbps of [3,8]) {
+    const expected=previous(prepared,c.rate,kbps),preserved=previous(c.pcm,c.rate,kbps),results=[];
+    for(const encode of wrappers) {
+      assert.deepEqual(encode(c.pcm,c.rate,kbps),preserved,'existing preset output remains unchanged');
+      const bytes=encode(c.pcm,c.rate,kbps,()=>{},{normalization:'loudness'});
+      assert.deepEqual(bytes,expected,'preset quality gates use normalized PCM');
+      assert.ok(bytes.length<=Math.floor(c.pcm.length*kbps*1000/(8*c.rate)));
+      assert.equal(decode(bytes).samples,c.pcm.length);assert.equal(encode.loudness.status,1);
+      assert.ok(Math.abs(encode.loudness.prepared+18)<.05);assert.ok(Number.isFinite(encode.loudness.decoded));
+      results.push(bytes);
+    }
+    assert.deepEqual(results[0],results[1]);
+  }
+});

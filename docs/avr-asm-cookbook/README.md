@@ -3293,3 +3293,8 @@ compares complete AVR-GCC 7.3 object bytes before and after an opt-in host heade
 extension: AVR25/AVR5, C/explicit ASM, both memory profiles, and all three rates.
 This is a reusable guard for code size and generated instructions when the flag
 is disabled. It does not replace linked firmware timing or IRQ validation.
+
+[V9 3/8 kbit/s encoder preset admission](../../Codecs/LPX/research/v9-bitrate-presets-2026-11-23/FIRMWARE.md):
+the unchanged universal AVR25/AVR5 decoder plays both fixed phrase outputs with
+active IRQ and exact PWM; full linked Flash, SRAM/stack and bootloader limits
+are measured separately from the encoder's bitrate ceiling.

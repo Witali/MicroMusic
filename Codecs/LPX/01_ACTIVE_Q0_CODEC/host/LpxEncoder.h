@@ -18,6 +18,9 @@ int enc_finish(void);
 // Returns 0 on success, a negative value if unsupported/unavailable.
 int enc_set_backend(int backend);
 const char* enc_backend_error(void);
+// Complete-file 3/8 kbit/s presets, currently calibrated for 8000 Hz.
+// Read bytes with enc_adaptive_output(); -6 means bounded search found no fit.
+int enc_bitrate(int samples, int kbps, int sampleRate, int autoQuiet, int calls);
 #ifdef __cplusplus
 }
 #endif
