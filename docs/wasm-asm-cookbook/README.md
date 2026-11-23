@@ -196,3 +196,14 @@ replacement for another runtime's startup protocol.
 The [expanded-search notes](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/EXPANDED_SEARCH.md)
 describe bounded pitch/gain proposals and full-stream quality/size guards.
 Python remains an independent regression oracle; it is absent from the runtime.
+## Two-pass metrics with frame rings
+
+[The STOI buffer refactoring](../../Codecs/LPX/research/wasm-stoi-streaming-2026-11-23/README.md)
+retains the global silence mask while processing resampling, overlap-add and
+STFT/correlation through small rings. It preserves FIR/reduction ordering and
+exclusive frame bounds; 48 native differential cases are bit-identical. In the
+documented 64 MiB scalar WASM probe it avoids the original allocation trap and
+uses about 29.2 MB including the unchanged seed workspace. This is portable C++11
+with Emscripten6.0.12/LLVM24, no ISA extension or handwritten assembly; scalar
+and SIMD builds share it. Caller PCM and energy summaries remain proportional
+to input length. The linked evidence states the workload and limits.
