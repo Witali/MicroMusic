@@ -47,6 +47,15 @@
 #error LPX_ENCODER_SIMD_SEARCH must be 0 or 1
 #endif
 #include "LpxEncoderSimd.h"
+#ifndef LPX_ENCODER_ENABLE_CUDA
+#define LPX_ENCODER_ENABLE_CUDA 0
+#endif
+#if LPX_ENCODER_ENABLE_CUDA != 0 && LPX_ENCODER_ENABLE_CUDA != 1
+#error LPX_ENCODER_ENABLE_CUDA must be 0 or 1
+#endif
+#if LPX_ENCODER_ENABLE_CUDA
+#include "LpxCuda.h"
+#endif
 
 namespace {
 constexpr double pi = 3.14159265358979323846;
@@ -67,7 +76,13 @@ static int (*params)[3], (*pulses)[2];
 static uint32_t reservedSamples, packedCapacity;
 static int headerBytes;
 static int count, padded, mode, rate, block, bits, failure;
+#if LPX_ENCODER_ENABLE_CUDA
+using State = LpxCudaState;
+static bool cudaEnabled;
+#else
 struct State { int h[10], ring[256], dd; };
+#endif
+static const char* backendError = "";
 static State state;
 #if LPX_ENCODER_CACHE_ANALYSIS
 static double rootGrid[2][641][11];
@@ -296,6 +311,19 @@ void dword(int offset, uint32_t value) { word(offset, value & 65535); word(offse
 }
 
 extern "C" {
+int enc_set_backend(int backend) {
+    backendError = "";
+    if (backend != 0 && backend != 1) { backendError = "Unknown encoding backend"; return -1; }
+#if LPX_ENCODER_ENABLE_CUDA
+    if (backend && !lpxCudaAvailable()) { backendError = lpxCudaError(); return -1; }
+    cudaEnabled = backend != 0;
+    return 0;
+#else
+    if (backend) { backendError = "CUDA backend was not enabled in this build"; return -1; }
+    return 0;
+#endif
+}
+const char* enc_backend_error() { return backendError; }
 int enc_reserve(uint32_t samples) {
     reservedSamples = 0;
     if (!samples || samples > kLpxMaxSamples) return 0;
@@ -334,7 +362,7 @@ int lpxSeedBegin(int samples, int profile, int sampleRate, int emphasis, bool ze
     }
     return padded / 160;
 }
-LpxSeedView lpxSeedView() { return {spectra, params, pulses, expected}; }
+LpxSeedView lpxSeedView() { return {spectra, params, pulses, expected, failure == 0 && block == padded / 160}; }
 uint32_t lpxSeedCapacity() { return reservedSamples; }
 extern "C" {
 int enc_begin(int samples, int profile, int sampleRate) {
@@ -343,6 +371,7 @@ int enc_begin(int samples, int profile, int sampleRate) {
     return result;
 }
 int enc_step() {
+    if (failure) return failure < 0 ? failure : -2;
     if (block >= padded / 160) return 100;
     int start = block * 160, lag = 18, pitchgain = 0; double power = 0, pitchscore = -1;
     for (int j = start; j < start + 160; ++j) power += residual[j] * residual[j];
@@ -379,6 +408,51 @@ int enc_step() {
         }
     } else for (int scale=0;scale<=31;++scale)
         if ((allowZeroScale && (scale==0 || scale==6)) || (scale>=center-2 && scale<=center+2)) codes[codeCount++]=scale;
+#if LPX_ENCODER_ENABLE_CUDA
+    if (cudaEnabled) {
+        static LpxCudaJob job;
+        job.initial = state; job.cursor = start; job.profile = mode; job.pre = pre; job.count = 0;
+        memcpy(job.samples, source + start, sizeof(job.samples));
+        memcpy(job.coefficients, coefficients + start / 20, sizeof(job.coefficients));
+        for (int ci = 0; ci < codeCount; ++ci) {
+            int scale = codes[ci]; bool duplicate = false;
+#if LPX_ENCODER_DEDUP_CANDIDATES
+            for (int p = 0; p < ci; ++p) duplicate |= steps[codes[p] * 8] == steps[scale * 8];
+#endif
+            if (duplicate) continue;
+            for (int choice = 0; choice < 3; ++choice) {
+#if LPX_ENCODER_DEDUP_CANDIDATES
+                if (choice == 2 && pitchgain == 14) continue;
+#endif
+                int gain = choice == 0 ? 0 : choice == 1 ? pitchgain : 14;
+                if (choice && !gain) continue;
+                job.choices[job.count++] = {scale, lag, gain, steps[scale * 8]};
+            }
+        }
+        LpxCudaResult result;
+        if (!lpxCudaSearch(job, result)) { backendError = lpxCudaError(); failure = -7; return failure; }
+        if (result.choice < 0 || result.choice >= job.count) { backendError = "Invalid CUDA winner"; failure = -7; return failure; }
+        const auto& selected = job.choices[result.choice];
+        // Reconstruct the GPU winner through portable C arithmetic. This is a
+        // full state/PCM check, independent of GPU arithmetic and reductions.
+        State current = state, next; double loss = 0;
+        for (int si = 0; si < 8; ++si) {
+            int position = result.pulses[si][0], amplitude = result.pulses[si][1];
+            if (position < 0 || position >= 20 || (mode == 4 ? (position % 5 == 2 || (amplitude != -8 && amplitude != 8)) : (amplitude < -8 || amplitude > 7))) {
+                backendError = "Invalid CUDA pulse"; failure = -7; return failure;
+            }
+            loss += trial20(next,current,start+si*20,selected.scale,selected.lag,selected.gain,position,amplitude,true);
+            current = next;
+            pulses[start / 20 + si][0] = position; pulses[start / 20 + si][1] = amplitude;
+        }
+        if (loss != result.loss || memcmp(&current,&result.finalState,sizeof(current))) {
+            backendError = "CUDA winner differs from portable synthesis"; failure = -7; return failure;
+        }
+        state = current;
+        params[block][0] = selected.scale; params[block][1] = selected.lag; params[block][2] = selected.gain;
+        ++block; return block * 100 / (padded / 160);
+    }
+#endif
     for (int codeIndex=0;codeIndex<codeCount;++codeIndex) {
         int scale=codes[codeIndex];
 #if LPX_ENCODER_DEDUP_CANDIDATES
@@ -405,6 +479,7 @@ int enc_step() {
     ++block; return block * 100 / (padded / 160);
 }
 int enc_finish() {
+    if (failure) return failure < 0 ? failure : -2;
     if (block != padded / 160) return -1;
     memset(packed, 0, packedCapacity); bits = 0;
     int spectralBits = mode == 4 ? 5 : 6;

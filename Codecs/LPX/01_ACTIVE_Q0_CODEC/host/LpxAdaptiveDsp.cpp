@@ -155,8 +155,10 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale)
     // allocations. Avoid moving it while callers retain views into WASM memory.
     memcpy(enc_input(),reference.data(),reference.size()*2);
     int blocks=lpxSeedBegin(s.samples,profile,rate,pre,zeroScale);
-    for(int i=0;i<blocks;++i)enc_step();
+    if(blocks<1)return Stream{};
+    for(int i=0;i<blocks;++i)if(enc_step()<0)return Stream{};
     auto view=lpxSeedView();int frames=(s.samples+319)/320;
+    if(!view.valid)return Stream{};
     s.spectra.resize(frames);s.parameters.resize(frames*2);s.pulses.resize(frames*16);s.extras.assign(frames*8,Pulse{{-1,0}});
     for(int f=0;f<frames;++f)for(int k=0;k<10;++k)s.spectra[f][k]=view.spectra[f][k];
     for(int b=0;b<frames*2;++b)for(int k=0;k<3;++k)s.parameters[b][k]=view.params[b][k];
