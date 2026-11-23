@@ -1,5 +1,32 @@
-import { createEncoderBackend } from './encoder-backend.js?v=20261123-stream-v1';
-import { encodeStreaming } from './streaming.js?v=20261123-stream-v1';
+import { createEncoderBackend } from './encoder-backend.js?v=20261123-precision-input-v1';
+import { encodeStreaming } from './streaming.js?v=20261123-precision-input-v1';
+import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261123-precision-input-v1';
+const readBinary=async url=>{const response=await fetch(url);if(!response.ok)throw Error('Не удалось загрузить модуль обработки звука.');return response.arrayBuffer();};
+async function encodeSource(data){
+  if(!validTemporaryName(data.temporaryName)||!navigator.locks?.request)throw Error('Браузер не поддерживает безопасную временную обработку аудио.');
+  return navigator.locks.request('lpx-input-'+data.temporaryName,async()=>{
+    let source;
+    try{
+      self.postMessage({phase:'source',progress:0});
+      source=await prepareAudio(data.source,data.sampleRate,data.temporaryName,p=>self.postMessage({phase:'source',progress:p*.2}),readBinary);
+      self.postMessage({sourceInfo:{samples:source.samples,channels:source.channels,duration:source.duration,sourceRate:source.sourceRate,kind:source.kind}});
+      const{encode,backend}=await createEncoderBackend(data.backend??'auto'),started=performance.now();
+      const stream=['stream','stream-refine'].includes(data.processingSelection)||data.processingSelection==='auto'&&source.samples>128000;
+      let result;
+      if(stream)result=await encodeStreaming(encode,{...data,samples:source.samples,calls:data.processingSelection==='stream-refine'?4:0},
+        (offset,count)=>source.read(offset,count),(phase,p)=>self.postMessage({phase,progress:.2+.8*p}),readBinary,source.verification);
+      else{
+        const pcm=new Int16Array(source.samples);
+        for(let at=0;at<pcm.length;at+=20480)pcm.set(await source.read(at,Math.min(20480,pcm.length-at)),at);
+        const bytes=encode(pcm,data.sampleRate,data.profile,p=>self.postMessage({progress:p}),data);
+        result={bytes,samples:source.samples,long:!!(bytes[2]&64),loudness:encode.loudness};
+      }
+      result.backend=backend;result.elapsedMs=performance.now()-started;result.sourceStreaming=true;
+      result.inputMemoryBytes=source.modelMemoryBytes;result.inputMaxRead=source.maxCompressedRead;
+      return result;
+    }finally{await source?.dispose();}
+  });
+}
 let nextRead=0;
 const reads=new Map();
 function readPcm(offset,samples) {
@@ -15,6 +42,7 @@ self.onmessage = async ({ data }) => {
     return;
   }
   try {
+    if(data.source){const result=await encodeSource(data);self.postMessage({result},[result.bytes.buffer]);return;}
     const { encode, backend } = await createEncoderBackend(data.backend ?? 'auto');
     if(data.processing==='stream') {
       const started=performance.now();
@@ -28,7 +56,7 @@ self.onmessage = async ({ data }) => {
     const started = performance.now();
     const bytes = encode(pcm, data.sampleRate, data.profile, progress => self.postMessage({ progress }),
       { sizeAllowancePercent: data.sizeAllowancePercent ?? 0, normalization: data.normalization ?? 'preserve',
-        targetLufs: data.targetLufs ?? -18, maxGainDb: data.maxGainDb ?? 12 });
+        targetLufs: data.targetLufs ?? -18, maxGainDb: data.maxGainDb ?? 12,accuracy:data.accuracy===true });
     const elapsedMs = performance.now() - started;
     self.postMessage({ result: { bytes, samples: pcm.length, long: !!(bytes[2] & 64), backend, elapsedMs, loudness: encode.loudness } }, [bytes.buffer]);
   } catch (error) {

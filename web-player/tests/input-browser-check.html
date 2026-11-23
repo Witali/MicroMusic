@@ -1,0 +1,19 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><title>Проверка потокового аудиоввода</title>
+<h1>Проверка потокового аудиоввода</h1><p>Только короткие синтетические файлы до 1 МБ и 10 секунд. Сравнение двух способов декодирования без подгонки усиления или задержки: Web Audio в частоте исходника и AudioDecoder. Затем к обоим применяется один C++ FIR; пересчёт частоты проверяется отдельно.</p>
+<input id="input" type="file" accept="audio/*" multiple><button id="run">Проверить</button><pre id="result">Ожидание файла</pre>
+<button id="storage">Проверить временное хранилище</button><pre id="storage-result">Не проверено</pre>
+<script type="module">
+import{openAudio}from'../lpx/audio-demux.js';
+const status=document.querySelector('#result'),button=document.querySelector('#run');
+document.querySelector('#storage').onclick=async()=>{let count=0;try{const folder=await(await navigator.storage.getDirectory()).getDirectoryHandle('micromusic-lpx-input-v1');for await(const[name]of folder.entries())if(/^pcm-[a-f0-9-]{36}\.tmp$/.test(name))count++;}catch(e){if(e.name!=='NotFoundError')throw e;}document.querySelector('#storage-result').textContent='Временных файлов приложения: '+count;};
+button.onclick=async()=>{button.disabled=true;let worker;
+ try{const results=[],files=Array.from(document.querySelector('#input').files);if(!files.length)throw Error('Выберите синтетические файлы.');
+ for(const file of files){if(file.size>1024*1024)throw Error('Нужен синтетический файл до 1 МБ.');
+ const track=await openAudio(file),nativeRate=track.rate??track.config.sampleRate;
+ const reference=await new OfflineAudioContext(1,1,nativeRate).decodeAudioData(await file.arrayBuffer());if(reference.duration>10)throw Error('Только короткие проверки.');
+ worker=new Worker('./helpers/input-browser-worker.js',{type:'module'});
+ const stats=await new Promise((resolve,reject)=>{worker.onmessage=({data})=>data.error?reject(Error(data.error)):resolve(data);worker.onerror=e=>reject(Error(e.message));worker.postMessage({file,referenceRate:reference.sampleRate,channels:Array.from({length:reference.numberOfChannels},(_,c)=>reference.getChannelData(c))});});
+ worker.terminate();worker=null;results.push(stats);status.textContent=JSON.stringify(results,null,2);}
+ }catch(error){status.textContent=error.message;}finally{worker?.terminate();button.disabled=false;}
+};
+</script></html>

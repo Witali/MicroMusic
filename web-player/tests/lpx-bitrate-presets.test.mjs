@@ -73,6 +73,7 @@ function converterPage(sampleCount = 8193) {
   for (const match of html.matchAll(/<input[^>]+id="([^"]+)"[^>]*value="([^"]+)"[^>]*>/g)) elements.get(match[1]).value = match[2];
   const context = {
     MAX_SAMPLES: 32000000, supportsSimd: () => true, URL, Int16Array, Number, Math,
+    recoverTemporaryInputs:async()=>{},removeTemporaryInput:async()=>{},crypto,
     document: { getElementById: id => {
       assert.ok(elements.has(id), `page has #${id}`); return elements.get(id);
     } },
@@ -93,7 +94,7 @@ function converterPage(sampleCount = 8193) {
   return { elements, workers, rates };
 }
 
-test('converter pins bitrate settings through work/cancel and restores ordinary profile choices', async () => {
+test('converter uses accuracy levels at every rate without a complete-file bitrate cap', async () => {
   const { elements, workers, rates } = converterPage();
   const element = id => elements.get(id);
   assert.ok(element('encode-profile').options.includes('3'));
@@ -101,19 +102,20 @@ test('converter pins bitrate settings through work/cancel and restores ordinary 
   element('encode-rate').value = '16000'; element('encode-allowance').value = '25';
   for (const kbps of ['3', '8']) {
     element('encode-profile').value = kbps; element('encode-profile').onchange();
-    assert.equal(element('encode-rate').value, '8000');
+    assert.equal(element('encode-rate').value, '16000');
     assert.equal(element('encode-allowance').value, '0');
-    assert.equal(element('encode-rate').disabled, true);
+    assert.equal(element('encode-rate').disabled, false);
     assert.equal(element('encode-allowance').disabled, true);
     assert.equal(element('bitrate-note').hidden, false);
   }
-  element('source-file').files = [{ name: 'synthetic.wav', size: 10, arrayBuffer: async () => new ArrayBuffer(0) }];
+  element('source-file').files = [{ name: 'synthetic.ogg', size: 10, arrayBuffer: async () => new ArrayBuffer(0) }];
   element('encode-level').checked = true;
   element('source-file').onchange();
   await element('convert').onclick();
-  assert.deepEqual(rates, [8000]);
+  assert.deepEqual(rates, [16000]);
   assert.equal(workers[0].message.profile, 8);
-  assert.equal(workers[0].message.sampleRate, 8000);
+  assert.equal(workers[0].message.sampleRate, 16000);
+  assert.equal(workers[0].message.accuracy,true);
   assert.equal(workers[0].message.sizeAllowancePercent, 0);
   assert.equal(workers[0].message.normalization, 'loudness');
   assert.equal(workers[0].message.targetLufs, -18);
@@ -123,19 +125,19 @@ test('converter pins bitrate settings through work/cancel and restores ordinary 
   assert.equal(workers[0].terminated, true);
   assert.equal(element('encode-profile').disabled, false);
   assert.equal(element('encode-level').disabled, false);
-  assert.equal(element('encode-rate').disabled, true, 'cancel retains the preset constraints');
+  assert.equal(element('encode-rate').disabled, false);
   assert.equal(element('encode-allowance').disabled, true);
   element('encode-profile').value = '6'; element('encode-profile').onchange();
   assert.equal(element('encode-rate').value, '16000');
-  assert.equal(element('encode-allowance').value, '25');
+  assert.equal(element('encode-allowance').value, '0');
   assert.equal(element('encode-rate').disabled, false);
-  assert.equal(element('encode-allowance').disabled, false);
-  assert.equal(element('bitrate-note').hidden, true);
+  assert.equal(element('encode-allowance').disabled, true);
+  assert.equal(element('bitrate-note').hidden, false);
 });
 
 test('converter auto streams long input without a whole PCM transfer and keeps explicit search choices',async()=>{
   const {elements,workers}=converterPage(131073),element=id=>elements.get(id);
-  element('source-file').files=[{name:'synthetic.wav',size:100,arrayBuffer:async()=>new ArrayBuffer(0)}];
+  element('source-file').files=[{name:'synthetic.ogg',size:100,arrayBuffer:async()=>new ArrayBuffer(0)}];
   element('source-file').onchange();await element('convert').onclick();
   assert.equal(workers[0].message.processing,'stream');assert.equal(workers[0].message.samples,131073);
   assert.equal(workers[0].message.calls,0);assert.equal(workers[0].message.pcm,undefined);
@@ -150,4 +152,14 @@ test('converter auto streams long input without a whole PCM transfer and keeps e
   element('encode-processing').value='full';await element('convert').onclick();
   assert.equal(workers[2].message.processing,undefined);assert.equal(workers[2].message.pcm.byteLength,131073*2);
   element('cancel-convert').onclick();assert.equal(element('encode-processing').disabled,false);
+});
+
+test('MP3/AAC/M4A/WAV are sent as File objects without whole-input decoding',async()=>{
+  for(const extension of['mp3','aac','m4a','wav']){
+    const{elements,workers,rates}=converterPage(),element=id=>elements.get(id);
+    const file={name:'synthetic.'+extension,size:100,arrayBuffer(){throw Error('Whole input decoding forbidden');}};
+    element('source-file').files=[file];element('source-file').onchange();await element('convert').onclick();
+    assert.deepEqual(rates,[]);assert.equal(workers[0].message.source,file);assert.equal(workers[0].message.pcm,undefined);
+    assert.match(workers[0].message.temporaryName,/^pcm-/);assert.equal(workers[0].message.accuracy,true);element('cancel-convert').onclick();
+  }
 });

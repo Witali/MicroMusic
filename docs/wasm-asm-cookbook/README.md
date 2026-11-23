@@ -245,3 +245,18 @@ repeated use match full decoding. This changes PCM working storage from a
 whole recording to a window; the compressed LPX file remains resident.
 The pinned Emscripten6.0.12/Clang24 standalone ABI has no imports or Python
 runtime. These host memory checks establish no MCU timing profile.
+
+## Backpressure without codec-state resets
+
+The [bounded audio input](../../web-player/lpx/AUDIO_INPUT.md) uses WebCodecs
+dequeue events to cap pending packets at eight, closes each AudioData, and
+flushes only at true EOF. Repeated intermediate flushes lost AAC overlap/MP3
+synthesis history in actual in-app browser checks; native-rate Web Audio versus
+AudioDecoder comparisons with the same FIR then matched MP3/AAC exactly.
+The shared portable C++ FIR retains rational phase and history in a fixed1 MiB
+wasm32 module (Emscripten6.0.12/Clang24), independent of input packet boundaries.
+Mono/stereo PCM and verification output go to a local OPFS file, leaving only
+short views in JS/WASM. Native/WASM tests cover passband/alias response and exact
+packet independence; this is a working-memory/correctness result, not an
+architecture speedup. Scalar C++ is always selectable; no handwritten assembly
+or additional ISA is required. Refined/global quality buffers remain separate.

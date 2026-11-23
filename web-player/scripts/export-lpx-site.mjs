@@ -11,7 +11,8 @@ for (const path of [resolve(root, 'build'), destination, join(destination, 'dist
 mkdirSync(join(destination, 'dist'), { recursive: true });
 mkdirSync(join(destination, '.openai'), { recursive: true });
 const files = ['index.html', 'styles.css', 'app.js', 'codec.js', 'decode-worker.js', 'decoder.wasm', 'favicon.svg',
-  'converter.js', 'encoder.js', 'streaming.js', 'encoder-backend.js', 'encode-worker.js', 'encoder-adaptive.wasm', 'encoder-adaptive-simd.wasm'];
+  'converter.js', 'encoder.js', 'streaming.js', 'encoder-backend.js', 'encode-worker.js', 'encoder-adaptive.wasm', 'encoder-adaptive-simd.wasm',
+  'audio-source.js', 'audio-demux.js', 'm4a-demux.js', 'input-resampler.wasm'];
 for (const name of files) copyFileSync(join(root, 'web-player/lpx', name), join(destination, 'dist', name));
 copyFileSync(join(root, 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LICENSE-pystoi.txt'), join(destination, 'dist/LICENSE-pystoi.txt'));
 copyFileSync(join(root, 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LICENSE-libebur128.txt'), join(destination, 'dist/LICENSE-libebur128.txt'));
