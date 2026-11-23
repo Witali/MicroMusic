@@ -121,7 +121,7 @@ if (values['simd-selftest']) {
 // Python source files below are provenance/test oracles, not runtime imports.
 const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
   'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp',
-  'LpxProfileQuality.cpp', 'LpxPulseLookahead.cpp', 'LpxFullBand.cpp', 'LpxSpectralPulses.cpp', 'LpxLpcRefine.cpp'];
+  'LpxProfileQuality.cpp', 'LpxPulseLookahead.cpp', 'LpxFullBand.cpp', 'LpxSpectralPulses.cpp', 'LpxLpcRefine.cpp', 'LpxPitchGuard.cpp'];
 const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
 // Export the initializer explicitly so wasm-ld does not wrap every API export
 // with constructors. The host calls it once after instantiation; otherwise a
@@ -138,7 +138,7 @@ const adaptiveInputs = [...new Set([...encoderInputs, ...adaptiveSources,
   ...['LpxAdaptive.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
     'stoi-resample.inc', 'stoi-resample-12k.inc', 'stoi-resample-16k.inc',
     'quality-resample-12k.inc', 'quality-resample-16k.inc',
-    'LpxProfileQuality.h', 'LpxPulseLookahead.h', 'LpxFullBand.h', 'LpxSpectralPulses.h', 'LpxLpcRefine.h',
+    'LpxProfileQuality.h', 'LpxPulseLookahead.h', 'LpxFullBand.h', 'LpxSpectralPulses.h', 'LpxLpcRefine.h', 'LpxPitchGuard.h',
     'LICENSE-pystoi.txt', 'LpxLoudness.h', 'LpxBitrateProfiles.h', 'LICENSE-libebur128.txt'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name),
   ...['adaptive_speech_voice.py', 'encode_speech_voice.py', 'refine_speech_compact.py', 'enhance_speech_compact.py',
     'refine_speech_lpc.py', 'refine_speech_extras.py', 'speech_rate_allocation.py', 'speech_voice_objective.py',

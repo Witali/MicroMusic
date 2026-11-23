@@ -46,25 +46,38 @@ void periodogram(const double* input,int count,double* power,int n) {
         fftPower2(data,n);for(int i=0;i<=n/2;++i)power[i]=std::norm(data[i]);
     }
 }
-double estimatePeriod(const double* input,int count,double& rms) {
-    double x[640],mean=0,maximum=0,energy=0;
+static double estimatePeriodScratch(const double* input,int count,double& rms,int rate,int last,
+                                    double* x,double* difference,double* cmnd) {
+    double mean=0,maximum=0,energy=0;
     for(int i=0;i<count;++i)mean+=input[i];mean/=count;
     for(int i=0;i<count;++i) { x[i]=input[i]-mean;energy+=x[i]*x[i];maximum=std::max(maximum,std::abs(x[i])); }
     rms=std::sqrt(energy/count);if(rms<.5)return nan;
     for(int i=0;i<count;++i)x[i]/=maximum;
-    double difference[162]={},cmnd[162]={1},denominator=0;
-    for(int lag=1;lag<=161;++lag) {
-        for(int i=0;i<count-161;++i) { double d=x[i]-x[i+lag];difference[lag]+=d*d; }
+    double denominator=0;
+    for(int lag=1;lag<=last+1;++lag) {
+        for(int i=0;i<count-last-1;++i) { double d=x[i]-x[i+lag];difference[lag]+=d*d; }
         denominator+=difference[lag];cmnd[lag]=denominator>std::numeric_limits<double>::min()?difference[lag]*lag/denominator:1;
     }
-    for(int lag=10;lag<=160;++lag)if(cmnd[lag]<=cmnd[lag-1] && cmnd[lag]<cmnd[lag+1] && cmnd[lag]<.15) {
+    for(int lag=std::max(2,rate/800);lag<=last;++lag)if(cmnd[lag]<=cmnd[lag-1] && cmnd[lag]<cmnd[lag+1] && cmnd[lag]<.15) {
         double left=difference[lag-1],middle=difference[lag],right=difference[lag+1];
         double curvature=left-2*middle+right;
         double offset=curvature>0?(left-right)/(2*curvature):0;
-        double period=lag+std::max(-.5,std::min(.5,offset));double hz=8000/period;
+        double period=lag+std::max(-.5,std::min(.5,offset));double hz=rate/period;
         return hz>=50 && hz<=800?period:nan;
     }
     return nan;
+}
+double estimatePeriod(const double* input,int count,double& rms) {
+    double x[640],difference[162]={},cmnd[162]={1};
+    return estimatePeriodScratch(input,count,rms,8000,160,x,difference,cmnd);
+}
+double estimatePeriod(const double* input,int count,double& rms,int rate) {
+    if(rate!=8000&&rate!=12000&&rate!=16000) {rms=0;return nan;}
+    const int last=(rate+49)/50;
+    if(count<=last+1||count>1280) {rms=0;return nan;}
+    if(rate==8000&&count<=640)return estimatePeriod(input,count,rms);
+    std::vector<double> x(count),difference(last+2),cmnd(last+2);cmnd[0]=1;
+    return estimatePeriodScratch(input,count,rms,rate,last,x.data(),difference.data(),cmnd.data());
 }
 template<class Samples>
 static void centeredWindow(const Samples& pcm,int start,int length,double* centered,double* power) {

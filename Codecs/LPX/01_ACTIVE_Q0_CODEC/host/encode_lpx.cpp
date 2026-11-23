@@ -176,9 +176,9 @@ int run(int argc, char** argv) {
         report.qualitySearch.initialObjective, report.qualitySearch.finalObjective,
         static_cast<unsigned long long>(report.qualitySearch.spectralLocalEvaluations),
         report.qualitySearch.spectralProposals, report.qualitySearch.spectralRegions);
-    fprintf(stderr,"\"jointQuality\":{\"enabled\":%s,\"candidates\":%d,\"accepted\":%d,\"initialObjective\":%.12g,\"finalObjective\":%.12g,\"headerLocalEvaluations\":%d,\"headerFullEvaluations\":%d,\"lpcRuns\":%d,\"lpcProposals\":%d,\"lpcBundles\":%d,\"lpcSpectralEvaluations\":%llu,\"lpcPulseEvaluations\":%llu,\"lpcSynthesizedSamples\":%llu},\"warmMedianMs\":",
+    fprintf(stderr,"\"jointQuality\":{\"enabled\":%s,\"candidates\":%d,\"accepted\":%d,\"octaveRejected\":%d,\"initialObjective\":%.12g,\"finalObjective\":%.12g,\"headerLocalEvaluations\":%d,\"headerFullEvaluations\":%d,\"lpcRuns\":%d,\"lpcProposals\":%d,\"lpcBundles\":%d,\"lpcSpectralEvaluations\":%llu,\"lpcPulseEvaluations\":%llu,\"lpcSynthesizedSamples\":%llu},\"warmMedianMs\":",
         LPX_ENCODER_QUALITY_SEARCH&&LPX_ENCODER_JOINT_REFINEMENT&&options.adaptive&&options.expandedSearch?"true":"false",
-        report.jointQuality.selection.candidates,report.jointQuality.selection.accepted,
+        report.jointQuality.selection.candidates,report.jointQuality.selection.accepted,report.jointQuality.selection.octaveRejected,
         report.jointQuality.selection.initialObjective,report.jointQuality.selection.finalObjective,
         report.jointQuality.headerLocalEvaluations,report.jointQuality.headerFullEvaluations,
         report.jointQuality.lpcRuns,report.jointQuality.lpcProposals,report.jointQuality.lpcBundles,

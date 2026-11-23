@@ -93,6 +93,13 @@ quiet/silent/high-frequency controls and seed-state reset.
 that winner as its own floor and uses the same complete-output admission and
 metric equations. Its relative report scores belong to this separate phase;
 they must not be multiplied by earlier phase scores.
+The joint phase additionally rejects newly observed half/double pitch in each
+source-frozen native-rate 80-ms/20-ms window on PCM and PWM. It uses the same
+50–800-Hz period estimator, RMS floor .5, YIN threshold .15 and 100-cent bands
+as the existing independent diagnostic, with exact V3 masks as its floor.
+Previously ambiguous-to-octave transitions are rejected too; removal of old
+errors is allowed. This is a conservative observation guard, not true-F0 proof.
+The historical V3 phase and all loss weights remain unchanged.
 
 P4/P6 proposals change one legal quantized LSF coordinate across a whole existing
 run of identical spectra. Internal repeat coding is preserved. Four runs, at
@@ -111,6 +118,10 @@ edits. A development ablation found no selected change in five paired jobs
 from regenerating three additional full seed searches, at roughly twice the
 API time. That extra search and its visitor API were removed from production.
 No new codebook or side information is introduced.
+When V3 has brightness disabled, header proposals retain that zero value.
+Matched Tiny88 measurements found activation cost about 101 foreground cycles
+per sample on one public input; a small unvalidated score gain did not justify
+that extra work. Existing nonzero brightness remains supported.
 
 The supplied complete cap is unchanged. An improved candidate can use spare
 bytes within that cap even when its actual file is slightly larger than the

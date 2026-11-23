@@ -37,6 +37,9 @@ private:
 };
 // Testable numerical primitives; no file/network/host dependencies.
 double estimatePeriod(const double* frame, int count, double& rms);
+// Actual-rate version of the same estimator. Supports 8/12/16 kHz and at most
+// 1280 samples; the three-argument legacy 8 kHz path remains unchanged.
+double estimatePeriod(const double* frame, int count, double& rms, int sampleRate);
 double stoi(const Pcm& reference, const Pcm& candidate, int sampleRate = 8000);
 // PCM16-unit doubles, for source-frozen voice/noise analysis at 8 kHz.
 // Supported input rates are 8, 12 and 16 kHz; unsupported rates return empty.

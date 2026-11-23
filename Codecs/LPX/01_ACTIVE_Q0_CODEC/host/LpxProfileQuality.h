@@ -18,7 +18,7 @@
 
 namespace lpx {
 struct ProfileQualityReport {
-    int candidates = 0, accepted = 0, error = 0;
+    int candidates = 0, accepted = 0, error = 0, octaveRejected = 0;
     int bandwidthCandidates = 0, localEvaluations = 0, fullEvaluations = 0;
     uint64_t spectralLocalEvaluations = 0;
     int spectralProposals = 0, spectralRegions = 0;
@@ -42,6 +42,7 @@ struct JointQualityReport {
 // Protected continuation of the exact existing V3 quality phase. Generic
 // profiles get LPC-run proposals; strict3k also gets existing header proposals.
 // Budget semantics match refineProfileQuality; never adds decoder side data.
+// A disabled incumbent brightness filter stays disabled.
 Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
     int cap, bool finalV9Budget, JointQualityReport& report, bool threeK = false,
     bool speech = true);

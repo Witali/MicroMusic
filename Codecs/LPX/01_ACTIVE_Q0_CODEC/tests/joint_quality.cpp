@@ -4,6 +4,7 @@
 #include "LpxBitrateProfiles.h"
 #include "LpxEncoder.h"
 #include "LpxFullBand.h"
+#include "LpxPitchGuard.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -36,9 +37,12 @@ void check(const lpx::Stream& input,const lpx::Pcm& reference,int cap,bool final
     require(!report.selection.error&&selected.samples==input.samples,"valid joint search failed");
     require(lpx::packV9(input)==frozen,"joint search mutated incumbent");
     require(selected.rate==input.rate&&selected.profile==input.profile,"joint search changed format");
+    require(input.bright||!selected.bright,"joint search activated a disabled brightness filter");
     require((final?int(lpx::packV9(selected).size()):lpx::compactBytes(selected))<=cap,"joint cap exceeded");
     const auto pcm=lpx::render(selected);
     require(lpx::verifyStream(selected,pcm),"complete C decoder mismatch");
+    const lpx::PitchGuardContext pitch(reference,beforePcm,input.rate);
+    require(pitch.accepts(pcm),"new native-rate octave observation was admitted");
     const auto after=context.measure(pcm);
     const auto nextBands=spectrum.measure(pcm);
     require(after.clipped<=before.clipped,"PCM clipping floor failed");

@@ -6,9 +6,11 @@
 #include "LpxPulseLookahead.h"
 #include "LpxRefinement.h"
 #include "LpxLpcRefine.h"
+#include "LpxPitchGuard.h"
 #include "LpxSpectralPulses.h"
 #include <cmath>
 #include <utility>
+#include <memory>
 
 namespace lpx {
 namespace {
@@ -72,6 +74,7 @@ class QualitySelection {
     double selectedObjective;
     int selectedBytes;
     std::vector<std::vector<uint8_t>> seen;
+    std::unique_ptr<PitchGuardContext> pitchGuard;
     int bytes(const Stream& stream) const {
         return finalV9Budget ? int(packV9(stream).size()) : compactBytes(stream);
     }
@@ -80,7 +83,7 @@ public:
     Measurement baseline;
     Stream selected;
     QualitySelection(const Stream& incumbent, const Pcm& reference, int cap,
-        bool finalV9Budget, ProfileQualityReport& report, bool speech)
+        bool finalV9Budget, ProfileQualityReport& report, bool speech, bool protectOctaves=false)
         : cap(cap), finalV9Budget(finalV9Budget), report(report),
           spectrum(reference,incumbent.rate), initialPcm(render(incumbent)),
           quality(reference,speech,incumbent.rate), selected(incumbent) {
@@ -90,6 +93,7 @@ public:
         selectedBytes=bytes(incumbent);
         seen.push_back(packV9(incumbent));
         if(!verifyStream(incumbent,initialPcm)) { report.error=-3;return; }
+        if(protectOctaves)pitchGuard.reset(new PitchGuardContext(reference,initialPcm,incumbent.rate));
         report.initialObjective=report.finalObjective=selectedObjective;
     }
     bool add(const Stream& candidate,double* safeScore=nullptr) {
@@ -105,8 +109,10 @@ public:
         if(!safety(measured,spectral,baseline,baselineSpectrum))return false;
         const double score=objective(measured,spectral,baseline,baselineSpectrum);
         const bool safeImprovement=score<report.initialObjective-1e-12;
-        if(safeScore&&safeImprovement)*safeScore=score;
         const int count=bytes(candidate);
+        if(pitchGuard&&(safeImprovement||(score==selectedObjective&&count<selectedBytes))
+            &&!pitchGuard->accepts(pcm)) {++report.octaveRejected;return false;}
+        if(safeScore&&safeImprovement)*safeScore=score;
         if(score<selectedObjective-1e-12 || (score==selectedObjective && count<selectedBytes)) {
             selected=candidate;selectedBytes=count;selectedObjective=score;
             report.finalObjective=score;++report.accepted;
@@ -190,15 +196,22 @@ Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
     if((finalV9Budget ? int64_t(packV9(incumbent).size()) : compactBytes(incumbent))>cap) {
         report.selection.error=-6;return Stream{};
     }
-    QualitySelection selection(incumbent,reference,cap,finalV9Budget,report.selection,speech);
+    QualitySelection selection(incumbent,reference,cap,finalV9Budget,report.selection,speech,true);
     if(report.selection.error)return Stream{};
     if(!selection.baseline.quality.error[0] && !selection.baseline.quality.error[1])return incumbent;
     auto header=[&]() {
         // Header coefficients cost no additional payload bytes. This existing
         // operator supplies proposals; the common full-band gate still decides.
-        const auto proposals=refineHeader(selection.selected,selection.quality);
+        auto proposals=refineHeader(selection.selected,selection.quality);
         report.headerLocalEvaluations+=proposals.localEvaluations;
         report.headerFullEvaluations+=proposals.fullEvaluations;
+        // A tiny numerical gain has not justified activating an extra
+        // per-sample brightness multiply. Keep the V3 disabled-filter state;
+        // the pre-emphasis candidates are still evaluated completely.
+        if(!incumbent.bright) {
+            proposals.selected.bright=proposals.raw.bright=0;
+            for(auto& candidate:proposals.alternatives)candidate.bright=0;
+        }
         selection.add(proposals.selected);selection.add(proposals.raw);
         for(const auto& candidate:proposals.alternatives)selection.add(candidate);
     };
