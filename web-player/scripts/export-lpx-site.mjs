@@ -11,8 +11,13 @@ for (const path of [resolve(root, 'build'), destination, join(destination, 'dist
 mkdirSync(join(destination, 'dist'), { recursive: true });
 mkdirSync(join(destination, '.openai'), { recursive: true });
 const files = ['index.html', 'styles.css', 'app.js', 'codec.js', 'decode-worker.js', 'decoder.wasm', 'favicon.svg',
-  'converter.js', 'encoder.js', 'encoder-backend.js', 'encode-worker.js', 'encoder.wasm', 'encoder-simd.wasm'];
+  'converter.js', 'encoder.js', 'encoder-backend.js', 'encode-worker.js', 'encoder-adaptive.wasm', 'encoder-adaptive-simd.wasm'];
 for (const name of files) copyFileSync(join(root, 'web-player/lpx', name), join(destination, 'dist', name));
+copyFileSync(join(root, 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LICENSE-pystoi.txt'), join(destination, 'dist/LICENSE-pystoi.txt'));
+for (const name of ['encoder.wasm', 'encoder-simd.wasm']) {
+  const old = join(destination, 'dist', name);
+  if (lstatSync(old, { throwIfNoEntry: false })?.isFile()) rmSync(old);
+}
 // Retire only the obsolete asset from this application's earlier ZIP export.
 const obsolete = join(destination, 'dist/zip.js');
 if (lstatSync(obsolete, { throwIfNoEntry: false })?.isFile()) rmSync(obsolete);

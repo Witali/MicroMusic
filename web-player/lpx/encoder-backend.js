@@ -7,8 +7,8 @@ export function supportsSimd() {
   try { return WebAssembly.validate(simdProbe); } catch { return false; }
 }
 async function fetchBinary(backend) {
-  const name = backend === 'simd' ? 'encoder-simd.wasm' : 'encoder.wasm';
-  const response = await fetch(new URL(`./${name}?v=20261122-simd-search`, import.meta.url));
+  const name = backend === 'simd' ? 'encoder-adaptive-simd.wasm' : 'encoder-adaptive.wasm';
+  const response = await fetch(new URL(`./${name}?v=20261123-adaptive-quality`, import.meta.url));
   if (!response.ok) throw new Error('Не удалось загрузить WASM-кодировщик.');
   return response.arrayBuffer();
 }

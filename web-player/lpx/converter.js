@@ -1,5 +1,5 @@
 import { MAX_SAMPLES } from './codec.js';
-import { supportsSimd } from './encoder-backend.js?v=20261122-simd-search';
+import { supportsSimd } from './encoder-backend.js?v=20261123-adaptive-quality';
 
 const $ = id => document.getElementById(id);
 if (!supportsSimd()) {
@@ -29,7 +29,7 @@ $('source-drop').addEventListener('drop', event => {
 });
 function busy(value) {
   running = value;
-  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
+  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-allowance', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
   $('cancel-convert').hidden = !value;
 }
 function stop() { if (worker) worker.terminate(); worker = null; busy(false); }
@@ -60,6 +60,7 @@ function appendResult(result) {
 $('convert').onclick = async () => {
   if (!source || running) return;
   const id = ++job, rate = Number($('encode-rate').value), profile = Number($('encode-profile').value), backend = $('encode-backend').value;
+  const sizeAllowancePercent = Number($('encode-allowance').value);
   output = { stem: baseName(source.name), rate, profile };
   urls.forEach(url => URL.revokeObjectURL(url)); urls = [];
   $('convert-results').replaceChildren(); $('convert-progress').value = 0;
@@ -83,14 +84,16 @@ $('convert').onclick = async () => {
       pcm[i] = Math.min(32767, Math.max(-32768, value));
     }
     $('source-summary').textContent = `${audio.duration.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} с · ${channels.length} кан. → моно · ${rate / 1000} кГц${clipped ? ` · насыщение ${clipped} отсч.` : ''}`;
-    worker = new Worker(new URL('./encode-worker.js?v=20261122-simd-search', import.meta.url), { type: 'module' });
+    worker = new Worker(new URL('./encode-worker.js?v=20261123-adaptive-quality', import.meta.url), { type: 'module' });
     worker.onerror = event => { event.preventDefault(); if (id === job) { stop(); status('Не удалось запустить энкодер. Обновите страницу и повторите.', true); } };
     worker.onmessage = ({ data }) => {
       if (id !== job) return;
       if (data.error) { stop(); status(data.error, true); return; }
       if (data.progress !== undefined) {
-        const percent = Math.round(data.progress * 100); $('convert-progress').value = percent;
-        status(`Кодирование: ${percent}%`);
+        if (data.progress < 1) {
+          $('convert-progress').removeAttribute('value');
+          status('Адаптивный поиск и проверка качества… Для длинных записей это может занять несколько минут.');
+        }
       }
       if (data.result) {
         appendResult(data.result);
@@ -100,6 +103,6 @@ $('convert').onclick = async () => {
         status(`Готово: один файл · ${(data.result.bytes.length / 1024).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} КБ · ${name} · кодирование ${elapsed} с.`);
       }
     };
-    worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile, backend }, [pcm.buffer]);
+    worker.postMessage({ pcm: pcm.buffer, sampleRate: rate, profile, backend, sizeAllowancePercent }, [pcm.buffer]);
   } catch (error) { if (id === job) { stop(); status(error.message || 'Не удалось конвертировать аудио.', true); } }
 };
