@@ -1,4 +1,4 @@
-import { createDecoder, MAX_SAMPLES } from './codec.js?v=20261123-stream-v1';
+import { createDecoder, MAX_SAMPLES } from './codec.js?v=20261123-quality-joint';
 
 export function createStreamSession(api, settings) {
   const {samples,profile,sampleRate,sizeAllowancePercent=0,normalization='preserve',targetLufs=-18,maxGainDb=12,calls=4}=settings;
@@ -59,7 +59,7 @@ export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},re
   }
   append(session.finish());
   const candidate=session.hasCandidate;
-  const decoder=await createDecoder(await readBinary(new URL('./decoder.wasm?v=20261123-stream-v1',import.meta.url)));
+  const decoder=await createDecoder(await readBinary(new URL('./decoder.wasm?v=20261123-quality-joint',import.meta.url)));
   const output=[];let memoryFallback=false;
   for(const kind of candidate?[0,1]:[0]) {
     if(kind && memoryFallback)break;

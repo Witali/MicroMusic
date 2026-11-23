@@ -1,5 +1,5 @@
-import { createEncoderBackend } from './encoder-backend.js?v=20261123-stream-v1';
-import { encodeStreaming } from './streaming.js?v=20261123-stream-v1';
+import { createEncoderBackend } from './encoder-backend.js?v=20261123-quality-joint';
+import { encodeStreaming } from './streaming.js?v=20261123-quality-joint';
 let nextRead=0;
 const reads=new Map();
 function readPcm(offset,samples) {
