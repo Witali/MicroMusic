@@ -1,0 +1,299 @@
+{
+  "baseline_commit": "f282950c44f01793f55e2fad6c4fe5cf66cdfd2f",
+  "complete_public_clips": 3,
+  "jobs_per_encoder": 24,
+  "schema": "lpx-public-quality-pilot-summary-v1",
+  "scope": "Public tuning only; most source signals are narrowband. Not heldout or a genuine wideband corpus result.",
+  "separate_v1_genuine_source_control": {
+    "baseline_api_wall_seconds": 27.97457,
+    "candidate_api_wall_seconds": 33.08583,
+    "changed_streams": 0,
+    "jobs": 4,
+    "original_rate": 44100,
+    "whole_seconds": 2.4
+  },
+  "settings_per_clip": 8,
+  "timing_limit": "API wall time, with other bounded numerical work running; not an isolated performance benchmark.",
+  "v1": {
+    "baseline_api_wall_seconds": 84.06726,
+    "candidate_api_wall_seconds": 114.31077,
+    "changed_streams": 0,
+    "exact_incumbents": 24
+  },
+  "v2": {
+    "all_metrics_improved": false,
+    "audible_improvement_validated": false,
+    "baseline_api_wall_seconds": 84.06726,
+    "candidate_api_wall_seconds": 129.00752,
+    "changed_anonymous_jobs": [
+      {
+        "bytes_after": 1480,
+        "bytes_before": 1480,
+        "legacy_waveform_failures": [
+          "pwm8_clipping"
+        ],
+        "mode": "k8",
+        "paths": {
+          "pcm16": {
+            "balanced_after": 0.25755663449664074,
+            "balanced_before": 0.2679078685925005,
+            "components": {
+              "intelligibility": 0.9390629734984979,
+              "noise": 0.9894613164869142,
+              "period": 0.9353388759609258,
+              "shape": 0.9980327736464298,
+              "spectral": 0.9613627096873201,
+              "temporal": 0.9752766767892084,
+              "voice": 0.9821263295358071,
+              "waveform": 0.9236989020752979
+            },
+            "noisy_mag_after": 173483504.15036458,
+            "noisy_mag_before": 184393844.11701706,
+            "sse_after": 181229708222.0,
+            "sse_before": 196199982283.0,
+            "stoi_after": 0.8071376188782128,
+            "stoi_before": 0.7946225263218775,
+            "time_after": 0.41788754604333167,
+            "time_before": 0.4284810208105201,
+            "total_mag_after": 0.15332455009025817,
+            "total_mag_before": 0.16071050298915193
+          },
+          "pwm8": {
+            "balanced_after": 0.25657088352996776,
+            "balanced_before": 0.2671736398725213,
+            "components": {
+              "intelligibility": 0.9370665286128245,
+              "noise": 0.9958798147794489,
+              "period": 0.9352949303679162,
+              "shape": 0.9986109441262458,
+              "spectral": 0.9603151106238905,
+              "temporal": 0.9751554352462465,
+              "voice": 0.9774859542094749,
+              "waveform": 0.9228404212138829
+            },
+            "noisy_mag_after": 171560513.90192628,
+            "noisy_mag_before": 182141859.19045755,
+            "sse_after": 181116992644.0,
+            "sse_before": 196260359300.0,
+            "stoi_after": 0.8072744305951556,
+            "stoi_before": 0.7943309642164431,
+            "time_after": 0.4187265047196118,
+            "time_before": 0.4293946273435628,
+            "total_mag_after": 0.15143540046275902,
+            "total_mag_before": 0.15882377492340782
+          }
+        },
+        "rate": 8000,
+        "score_after": 0.96395598146035,
+        "score_before": 1.0,
+        "v2_passed": true
+      },
+      {
+        "bytes_after": 2192,
+        "bytes_before": 2192,
+        "legacy_waveform_failures": [],
+        "mode": "p6",
+        "paths": {
+          "pcm16": {
+            "balanced_after": 0.2343528108974053,
+            "balanced_before": 0.24410666289269733,
+            "components": {
+              "intelligibility": 0.9527682155042908,
+              "noise": 1.0156922524267011,
+              "period": 0.9833794266743096,
+              "shape": 0.9915321102569684,
+              "spectral": 0.9600426638105345,
+              "temporal": 0.9346569442221255,
+              "voice": 1.090663229813529,
+              "waveform": 0.9099460550618507
+            },
+            "noisy_mag_after": 138643523.8594909,
+            "noisy_mag_before": 149667521.9989712,
+            "sse_after": 200893915677.0,
+            "sse_before": 220775632313.0,
+            "stoi_after": 0.8374872722746893,
+            "stoi_before": 0.8294309937288428,
+            "time_after": 0.36317087994871894,
+            "time_before": 0.3885606180896354,
+            "total_mag_after": 0.1054633558470866,
+            "total_mag_before": 0.11499698243486065
+          },
+          "pwm8": {
+            "balanced_after": 0.2761667663217527,
+            "balanced_before": 0.29313427795958297,
+            "components": {
+              "intelligibility": 0.9511530192856885,
+              "noise": 0.9827097779226888,
+              "period": 0.9831006132479703,
+              "shape": 0.9844673771411606,
+              "spectral": 0.9421169309985312,
+              "temporal": 0.9106814374814439,
+              "voice": 0.9666369164073186,
+              "waveform": 0.910802696082479
+            },
+            "noisy_mag_after": 136642959.47639635,
+            "noisy_mag_before": 147066483.05598474,
+            "sse_after": 200897495741.0,
+            "sse_before": 220571915965.0,
+            "stoi_after": 0.8378064196195274,
+            "stoi_before": 0.8294768800689092,
+            "time_after": 0.3814753801996106,
+            "time_before": 0.41889003607519293,
+            "total_mag_after": 0.10416351558444767,
+            "total_mag_before": 0.11339962316983841
+          }
+        },
+        "rate": 12000,
+        "score_after": 0.9608923821425114,
+        "score_before": 1.0,
+        "v2_passed": true
+      }
+    ],
+    "changed_streams": 2,
+    "complete_budget_preserved_jobs": 24,
+    "decoder_algorithm_changed": false,
+    "exact_incumbents": 22,
+    "exact_sample_rate_and_count_jobs": 24,
+    "independent_admissions_passed": 24
+  },
+  "v3": {
+    "all_metrics_improved": false,
+    "audible_improvement_validated": false,
+    "baseline_api_wall_seconds": 84.06726,
+    "candidate_api_wall_seconds": 127.32562,
+    "changed_anonymous_jobs": [
+      {
+        "bytes_after": 887,
+        "bytes_before": 887,
+        "mode": "k3",
+        "paths": {
+          "pcm16": {
+            "rails_or_clips_after": 0,
+            "rails_or_clips_before": 0,
+            "relative_components": {
+              "intelligibility": 0.9980782719103982,
+              "noise": 1.0016003412554615,
+              "period": 1.0,
+              "shape": 0.9993081106786323,
+              "spectral": 0.9745572580454441,
+              "temporal": 0.9746634049724108,
+              "voice": 1.001009353743678,
+              "waveform": 1.0114847047298967
+            },
+            "stoi_after": 0.7637264227806234,
+            "stoi_before": 0.7632714949628842
+          },
+          "pwm8": {
+            "rails_or_clips_after": 2,
+            "rails_or_clips_before": 2,
+            "relative_components": {
+              "intelligibility": 0.9976381096716632,
+              "noise": 1.0009024898995795,
+              "period": 1.0,
+              "shape": 0.9996837830366578,
+              "spectral": 0.9747030463801231,
+              "temporal": 0.9743778608182049,
+              "voice": 1.0019110083612885,
+              "waveform": 1.011572392806052
+            },
+            "stoi_after": 0.7638395135484951,
+            "stoi_before": 0.7632804078332286
+          }
+        },
+        "rate": 8000,
+        "score": 0.9909895853262836,
+        "v2_pass": true
+      },
+      {
+        "bytes_after": 1480,
+        "bytes_before": 1480,
+        "mode": "k8",
+        "paths": {
+          "pcm16": {
+            "rails_or_clips_after": 4,
+            "rails_or_clips_before": 5,
+            "relative_components": {
+              "intelligibility": 0.9503838931900535,
+              "noise": 1.0014076456317278,
+              "period": 0.9353388759609258,
+              "shape": 0.9980009258877501,
+              "spectral": 0.886451392722837,
+              "temporal": 0.9203745519675565,
+              "voice": 0.9891388424311666,
+              "waveform": 0.9661586760011889
+            },
+            "stoi_after": 0.8048125569922482,
+            "stoi_before": 0.7946225263218775
+          },
+          "pwm8": {
+            "rails_or_clips_after": 8,
+            "rails_or_clips_before": 6,
+            "relative_components": {
+              "intelligibility": 0.9486120495262226,
+              "noise": 1.0015676032137049,
+              "period": 0.9352949303679162,
+              "shape": 0.9986931873133228,
+              "spectral": 0.887848387006519,
+              "temporal": 0.9216956442353651,
+              "voice": 0.9892267332387259,
+              "waveform": 0.9665664168586896
+            },
+            "stoi_after": 0.8048998744412781,
+            "stoi_before": 0.7943309642164431
+          }
+        },
+        "rate": 8000,
+        "score": 0.9456564865742975,
+        "v2_pass": true
+      },
+      {
+        "bytes_after": 2192,
+        "bytes_before": 2192,
+        "mode": "p6",
+        "paths": {
+          "pcm16": {
+            "rails_or_clips_after": 0,
+            "rails_or_clips_before": 0,
+            "relative_components": {
+              "intelligibility": 0.9649230110399006,
+              "noise": 1.016681996284914,
+              "period": 1.023825588381225,
+              "shape": 0.9924971460140777,
+              "spectral": 0.9444296649951153,
+              "temporal": 0.8835902988052639,
+              "voice": 1.0990285161378326,
+              "waveform": 0.9500146174630605
+            },
+            "stoi_after": 0.8354140408787513,
+            "stoi_before": 0.8294309937288428
+          },
+          "pwm8": {
+            "rails_or_clips_after": 4,
+            "rails_or_clips_before": 7,
+            "relative_components": {
+              "intelligibility": 0.9639071771294838,
+              "noise": 0.9824968964012198,
+              "period": 1.0234874205246902,
+              "shape": 0.984549376262557,
+              "spectral": 0.9255505540752532,
+              "temporal": 0.8547257520296064,
+              "voice": 0.9653113977829951,
+              "waveform": 0.9486566718774977
+            },
+            "stoi_after": 0.8356315408319098,
+            "stoi_before": 0.8294768800689092
+          }
+        },
+        "rate": 12000,
+        "score": 0.9565986177554967,
+        "v2_pass": true
+      }
+    ],
+    "changed_streams": 3,
+    "complete_budgets_preserved_jobs": 24,
+    "decoder_algorithm_changed": false,
+    "exact_decoded_geometries": 24,
+    "exact_incumbents": 21,
+    "independent_v2_admissions_passed": 24
+  }
+}

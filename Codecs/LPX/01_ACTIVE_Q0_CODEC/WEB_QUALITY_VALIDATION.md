@@ -1,5 +1,13 @@
 # Shared LPX V9 Web encoder validation
 
+Current encoder builds also include the protected native-rate spectral/time
+search described in [PROFILE_QUALITY.md](host/PROFILE_QUALITY.md). Its separate
+[prospective corpus study](../research/v9-quality-all-2026-11-23/README.md)
+records real wideband sources, multi-metric tradeoffs and explicitly scoped
+AVR admission. Use the current native/WASM build helpers in
+[host/README.md](host/README.md); the commands and numbers below document the
+original shared-port validation and its source context.
+
 Validated on 23 November 2026. The browser now selects the shared C++ adaptive
 pipeline, followed by the guarded expanded pitch/gain operator. Python is an
 independent test oracle and is absent from both shipped WASM modules.
