@@ -119,7 +119,7 @@ if (values['simd-selftest']) {
 
 // Same adaptive C++ translation units as the offline native executable.
 // Python source files below are provenance/test oracles, not runtime imports.
-const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxAccuracy.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp',
+const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxAccuracy.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp', 'LpxCandidateEvaluation.cpp',
   'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxStreamingApi.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp',
   'LpxProfileQuality.cpp', 'LpxPulseLookahead.cpp', 'LpxFullBand.cpp', 'LpxSpectralPulses.cpp', 'LpxLpcRefine.cpp', 'LpxPitchGuard.cpp'];
 const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
@@ -139,7 +139,7 @@ const adaptiveFlags = ['-isystem', join(sysroot, 'include/c++/v1'),
 adaptiveFlags.push('-Wl,--initial-memory=524288', '-Wl,-z,stack-size=262144', '-DLPX_ADAPTIVE_ENCODER=1',
   ...adaptiveExports.map(name => '-Wl,--export=' + name));
 const adaptiveInputs = [...new Set([...encoderInputs, ...adaptiveSources,
-  ...['LpxAdaptive.h', 'LpxAccuracy.h', 'LpxEncodingPolicy.h', 'LpxSpectrumQuantizer.h', 'LpxPacking.h', 'LpxStreaming.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
+  ...['LpxAdaptive.h', 'LpxAccuracy.h', 'LpxEncodingPolicy.h', 'LpxCandidateEvaluation.h', 'LpxSpectrumQuantizer.h', 'LpxPacking.h', 'LpxStreaming.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
     'stoi-resample.inc', 'stoi-resample-12k.inc', 'stoi-resample-16k.inc',
     'quality-resample-12k.inc', 'quality-resample-16k.inc',
     'LpxProfileQuality.h', 'LpxPulseLookahead.h', 'LpxFullBand.h', 'LpxSpectralPulses.h', 'LpxLpcRefine.h', 'LpxPitchGuard.h',

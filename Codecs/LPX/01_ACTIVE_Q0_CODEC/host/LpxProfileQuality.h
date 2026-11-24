@@ -18,6 +18,7 @@
 #endif
 
 namespace lpx {
+class CandidateEvaluation;
 struct ProfileQualityReport {
     int candidates = 0, accepted = 0, error = 0, octaveRejected = 0;
     int bandwidthCandidates = 0, localEvaluations = 0, fullEvaluations = 0;
@@ -30,7 +31,7 @@ struct ProfileQualityReport {
 // selects the existing strict-3k spectral allocator, never a new wire format.
 Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
     int cap, bool finalV9Budget, ProfileQualityReport& report, bool threeK = false,
-    bool speech = true);
+    bool speech = true,CandidateEvaluation* evaluation=nullptr);
 struct JointQualityReport {
     // This phase has its own frozen incumbent: the complete previous V3 winner.
     // These relative scores must not be multiplied by earlier phase scores.
@@ -46,7 +47,7 @@ struct JointQualityReport {
 // A disabled incumbent brightness filter stays disabled.
 Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
     int cap, bool finalV9Budget, JointQualityReport& report, bool threeK = false,
-    bool speech = true);
+    bool speech = true,CandidateEvaluation* evaluation=nullptr);
 // Same frozen whole-output safety/objective for a finalized streaming proposal.
 bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,
                              const Pcm& candidate,int sampleRate,bool speech=true,bool strictlyBetter=false);
@@ -54,5 +55,5 @@ bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,
 // relative scores. A tie retains that floor, even if a proposal is smaller.
 Stream selectQualityProposals(const Stream& incumbent,const Pcm& reference,
     std::initializer_list<const Stream*> proposals,ProfileQualityReport& report,
-    bool speech=true,int completeV9Budget=0);
+    bool speech=true,int completeV9Budget=0,CandidateEvaluation* evaluation=nullptr);
 }

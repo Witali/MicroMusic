@@ -3,6 +3,8 @@
 #include "LpxAdaptiveController.h"
 #include "LpxRefinement.h"
 #include "Lpx4HybridCore.h"
+#include "LpxCandidateEvaluation.h"
+#include <memory>
 #include <algorithm>
 #include <cmath>
 #include <tuple>
@@ -37,13 +39,15 @@ Pcm prepareInputLevel(const Pcm& input,bool autoQuiet,int& gainExponent) {
     return reference;
 }
 Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
-                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize,const Stream* prefix,const Stream* preparedSeed) {
+                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize,const Stream* prefix,const Stream* preparedSeed,CandidateEvaluation* evaluation) {
     report=AdaptiveReport{};
     if(sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize) || (prefix && (autoQuiet || normalize))
         || (preparedSeed && (autoQuiet || normalize || preparedSeed->samples!=int(input.size())
             || preparedSeed->profile!=profile || preparedSeed->rate!=rate))) { report.error=-1;return Stream{}; }
-    Pcm reference=prepareInputLevel(input,autoQuiet,report.gainExponent);
-    if(normalize)report.loudness=normalizeLoudness(reference,rate);
+    Pcm prepared;
+    if(autoQuiet || normalize)prepared=prepareInputLevel(input,autoQuiet,report.gainExponent);
+    if(normalize)report.loudness=normalizeLoudness(prepared,rate);
+    const Pcm& reference=autoQuiet || normalize?prepared:input;
     QualityContext context(reference,speech);
     const int fixedPre=prefix && prefix->continuation?prefix->pre:13926;
     std::vector<Stream> seeds;seeds.push_back(preparedSeed?*preparedSeed:fitSeed(reference,profile,rate,fixedPre,false,.97,prefix));
@@ -127,10 +131,12 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
         Stream selected=pool[i].stream;
 #if LPX_ENCODER_QUALITY_SEARCH
         if(expandedSearch) {
-            selected=refineProfileQuality(selected,reference,cap,false,report.qualitySearch,false,speech);
+            std::unique_ptr<CandidateEvaluation> owned;
+            if(!evaluation) { owned.reset(new CandidateEvaluation(reference,rate,speech));evaluation=owned.get(); }
+            selected=refineProfileQuality(selected,reference,cap,false,report.qualitySearch,false,speech,evaluation);
             if(report.qualitySearch.error) { report.error=report.qualitySearch.error;return Stream{}; }
 #if LPX_ENCODER_JOINT_REFINEMENT
-            selected=refineJointQuality(selected,reference,cap,false,report.jointQuality,false,speech);
+            selected=refineJointQuality(selected,reference,cap,false,report.jointQuality,false,speech,evaluation);
             if(report.jointQuality.selection.error) { report.error=report.jointQuality.selection.error;return Stream{}; }
 #endif
             // Legacy report fields keep their original evaluator semantics.

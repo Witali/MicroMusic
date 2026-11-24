@@ -13,6 +13,15 @@ const scalar = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive
 const simd = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive-simd.wasm', import.meta.url)));
 const decode = await createDecoder(readFileSync(new URL('../lpx/decoder.wasm', import.meta.url)));
 
+test('candidate cache retains continuation state and a bounded packet-key budget',
+  {skip:!process.env.LPX_UNIFICATION_SELFTEST},async()=>{
+    for(const mode of ['scalar','simd']) {
+      const binary=readFileSync(new URL(`../../build/lpx-unification-${mode}.wasm`,import.meta.url));
+      const {instance}=await WebAssembly.instantiate(binary);instance.exports.__wasm_call_ctors();
+      for(let i=0;i<3;++i)assert.equal(instance.exports.unification_selftest(),0);
+    }
+  });
+
 test('precision, strict bitrate and legacy control budgets remain distinct', () => {
   for(const level of [3,4,6,8]) {
     const accuracy=encodingPolicy(level,true);

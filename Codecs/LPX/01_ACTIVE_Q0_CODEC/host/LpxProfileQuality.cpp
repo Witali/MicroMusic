@@ -8,6 +8,7 @@
 #include "LpxLpcRefine.h"
 #include "LpxPitchGuard.h"
 #include "LpxSpectralPulses.h"
+#include "LpxCandidateEvaluation.h"
 #include <cmath>
 #include <utility>
 #include <memory>
@@ -68,50 +69,50 @@ class QualitySelection {
     int cap;
     bool finalV9Budget;
     ProfileQualityReport& report;
-    FullBandContext spectrum;
+    std::unique_ptr<CandidateEvaluation> ownedEvaluation;
+    CandidateEvaluation& evaluation;
     Pcm initialPcm;
     FullBandMeasurement baselineSpectrum;
     double selectedObjective;
     int selectedBytes;
     std::vector<std::vector<uint8_t>> seen;
     std::unique_ptr<PitchGuardContext> pitchGuard;
-    int bytes(const Stream& stream) const {
-        return finalV9Budget ? int(packV9(stream).size()) : compactBytes(stream);
-    }
 public:
-    QualityContext quality;
+    QualityContext& quality;
     Measurement baseline;
     Stream selected;
     QualitySelection(const Stream& incumbent, const Pcm& reference, int cap,
-        bool finalV9Budget, ProfileQualityReport& report, bool speech, bool protectOctaves=false)
+        bool finalV9Budget, ProfileQualityReport& report, bool speech, bool protectOctaves=false,CandidateEvaluation* shared=nullptr)
         : cap(cap), finalV9Budget(finalV9Budget), report(report),
-          spectrum(reference,incumbent.rate), initialPcm(render(incumbent)),
-          quality(reference,speech,incumbent.rate), selected(incumbent) {
-        baseline=quality.measure(initialPcm);
-        baselineSpectrum=spectrum.measure(initialPcm);
+          ownedEvaluation(shared?nullptr:new CandidateEvaluation(reference,incumbent.rate,speech)),
+          evaluation(shared?*shared:*ownedEvaluation),initialPcm(render(incumbent)),
+          quality(evaluation.quality), selected(incumbent) {
+        if(!evaluation.matches(reference,incumbent.rate,speech)) { report.error=-1;return; }
+        auto packed=packV9(incumbent);
+        if(!evaluation.measure(incumbent,packed,baseline,baselineSpectrum,&initialPcm)) { report.error=-3;return; }
         selectedObjective=objective(baseline,baselineSpectrum,baseline,baselineSpectrum);
-        selectedBytes=bytes(incumbent);
-        seen.push_back(packV9(incumbent));
-        if(!verifyStream(incumbent,initialPcm)) { report.error=-3;return; }
+        selectedBytes=finalV9Budget?int(packed.size()):compactBytes(incumbent);
+        seen.push_back(std::move(packed));
         if(protectOctaves)pitchGuard.reset(new PitchGuardContext(reference,initialPcm,incumbent.rate));
         report.initialObjective=report.finalObjective=selectedObjective;
     }
     bool add(const Stream& candidate,double* safeScore=nullptr) {
         if(safeScore)*safeScore=std::numeric_limits<double>::infinity();
-        if(!candidate.samples || bytes(candidate)>cap)return false;
+        if(!candidate.samples)return false;
         auto packed=packV9(candidate);
+        const int count=finalV9Budget?int(packed.size()):compactBytes(candidate);
+        if(count>cap)return false;
         for(const auto& old:seen)if(packed==old)return false;
         seen.push_back(std::move(packed));++report.candidates;
-        const auto pcm=render(candidate);
-        if(!verifyStream(candidate,pcm)) { report.error=-3;return false; }
-        const auto measured=quality.measure(pcm);
-        const auto spectral=spectrum.measure(pcm);
+        Measurement measured;FullBandMeasurement spectral;Pcm pcm;
+        if(!evaluation.measure(candidate,seen.back(),measured,spectral,&pcm)) { report.error=-3;return false; }
         if(!safety(measured,spectral,baseline,baselineSpectrum))return false;
         const double score=objective(measured,spectral,baseline,baselineSpectrum);
         const bool safeImprovement=score<report.initialObjective-1e-12;
-        const int count=bytes(candidate);
-        if(pitchGuard&&(safeImprovement||(score==selectedObjective&&count<selectedBytes))
-            &&!pitchGuard->accepts(pcm)) {++report.octaveRejected;return false;}
+        if(pitchGuard&&(safeImprovement||(score==selectedObjective&&count<selectedBytes))) {
+            if(pcm.empty())pcm=render(candidate);
+            if(!pitchGuard->accepts(pcm)) {++report.octaveRejected;return false;}
+        }
         if(safeScore&&safeImprovement)*safeScore=score;
         if(score<selectedObjective-1e-12 || (score==selectedObjective && count<selectedBytes)) {
             selected=candidate;selectedBytes=count;selectedObjective=score;
@@ -122,10 +123,10 @@ public:
 };
 }
 Stream selectQualityProposals(const Stream& incumbent,const Pcm& reference,
-    std::initializer_list<const Stream*> proposals,ProfileQualityReport& report,bool speech,int completeV9Budget) {
+    std::initializer_list<const Stream*> proposals,ProfileQualityReport& report,bool speech,int completeV9Budget,CandidateEvaluation* evaluation) {
     report=ProfileQualityReport{};
     QualitySelection selection(incumbent,reference,completeV9Budget?completeV9Budget:std::numeric_limits<int>::max(),true,
-        report,speech,LPX_ENCODER_JOINT_REFINEMENT!=0);
+        report,speech,LPX_ENCODER_JOINT_REFINEMENT!=0,evaluation);
     if(report.error)return Stream{};
     for(const auto* candidate:proposals) {
         if(!candidate||candidate->samples!=incumbent.samples||candidate->rate!=incumbent.rate
@@ -154,7 +155,7 @@ bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,const Pcm
     return admitted;
 }
 Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
-    int cap, bool finalV9Budget, ProfileQualityReport& report, bool threeK, bool speech) {
+    int cap, bool finalV9Budget, ProfileQualityReport& report, bool threeK, bool speech,CandidateEvaluation* evaluation) {
     report = ProfileQualityReport{};
     if (incumbent.samples != int(reference.size()) || reference.empty()
         || (incumbent.profile != 4 && incumbent.profile != 6)
@@ -168,7 +169,7 @@ Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
     if (bytes(incumbent) > cap) { report.error = -6; return Stream{}; }
     // This context uses the actual sample rate. The old controller remains a
     // protected source of candidates, including at 12/16 kHz.
-    QualitySelection selection(incumbent,reference,cap,finalV9Budget,report,speech);
+    QualitySelection selection(incumbent,reference,cap,finalV9Budget,report,speech,false,evaluation);
     if(report.error)return Stream{};
     auto& selected=selection.selected;
     const auto& baseline=selection.baseline;
@@ -219,7 +220,7 @@ Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
     return selected;
 }
 Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
-    int cap, bool finalV9Budget, JointQualityReport& report, bool threeK, bool speech) {
+    int cap, bool finalV9Budget, JointQualityReport& report, bool threeK, bool speech,CandidateEvaluation* evaluation) {
     report=JointQualityReport{};
     if(incumbent.samples!=int(reference.size()) || reference.empty()
         || (incumbent.profile!=4 && incumbent.profile!=6)
@@ -230,7 +231,7 @@ Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
     if((finalV9Budget ? int64_t(packV9(incumbent).size()) : compactBytes(incumbent))>cap) {
         report.selection.error=-6;return Stream{};
     }
-    QualitySelection selection(incumbent,reference,cap,finalV9Budget,report.selection,speech,true);
+    QualitySelection selection(incumbent,reference,cap,finalV9Budget,report.selection,speech,true,evaluation);
     if(report.selection.error)return Stream{};
     if(!selection.baseline.quality.error[0] && !selection.baseline.quality.error[1])return incumbent;
     auto header=[&]() {

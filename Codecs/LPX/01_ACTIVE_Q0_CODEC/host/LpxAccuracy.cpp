@@ -1,5 +1,6 @@
 #include "LpxAccuracy.h"
 #include "LpxEncodingPolicy.h"
+#include "LpxCandidateEvaluation.h"
 #include "LpxProfileQuality.h"
 #include <algorithm>
 namespace lpx{
@@ -72,13 +73,14 @@ Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& re
     if(!calls)return control;
     // Internal controller accounting is v5; independently enforce final V9
     // bytes below, including its header, flags, repeats and padding.
-    Stream candidate=adaptiveEncode(reference,policy.wireProfile,rate,report,false,budget+9,calls,true,true,0,false,&context,&seed);
+    CandidateEvaluation evaluation(reference,rate,true);
+    Stream candidate=adaptiveEncode(reference,policy.wireProfile,rate,report,false,budget+9,calls,true,true,0,false,&context,&seed,&evaluation);
     if(report.error)return Stream{};
     candidate=canonicalAccuracy(candidate);
     // Retain the complete original admissible quantized control. All levels
     // share the same actual-rate, whole-output metric and octave guard.
     ProfileQualityReport selection;
-    candidate=selectQualityProposals(originalControl,reference,{&control,&candidate},selection,true,budget);
+    candidate=selectQualityProposals(originalControl,reference,{&control,&candidate},selection,true,budget,&evaluation);
     if(selection.error){report.error=selection.error;return Stream{};}
     if(!verifyStream(candidate,render(candidate))){report.error=-3;return Stream{};}
     return candidate;
