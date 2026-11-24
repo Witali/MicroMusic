@@ -1,5 +1,13 @@
 # LPX V9 browser player and converter
 
+The published Web UI is
+**[GitHub Pages](https://witali.github.io/MicroMusic/web-player/lpx/)**,
+served from `web-player/lpx/` in the `main` branch of `Witali/MicroMusic`.
+To update it, commit the application and matching WASM/build manifests, merge
+into `main`, push `main` to `origin`, and verify that the live assets match the
+commit. The tracked files are the production source; the optional
+`export-lpx-site.mjs` script only creates a standalone static bundle.
+
 Run `node web-player/scripts/serve.mjs` from the repository root and open
 `http://127.0.0.1:8133/web-player/lpx/`. The retained WASM modules need no npm
 installation or build. Use HTTP(S), not file URLs.
@@ -169,5 +177,6 @@ strict default build. Build tests/helpers/lpx-browser-reference.cpp with the
 active core and matching LPX defines; only the wide driver enables the Long
 flag. No new AVR timing or IRQ support is claimed.
 
-The private Site exports only application assets and its hosting manifest,
-without enclosing repository history, recordings or temporary test data.
+The optional standalone export contains application assets and licenses,
+without repository history, recordings or temporary test data. No separate
+hosting manifest is needed for the GitHub Pages publication.

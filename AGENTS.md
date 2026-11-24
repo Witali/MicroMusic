@@ -6,6 +6,12 @@
 - Commit each logically complete change separately and stage only files belonging to that change.
 - Prefer official device definition files, register headers, and device family packs from the microcontroller manufacturer's official website whenever they are available. Reuse those definitions instead of manually duplicating register addresses. Pin the source URL and version, retain licensing and provenance, and keep project-specific adaptations separate from the original vendor files.
 
+## Web UI hosting
+
+- The production Web UI uses GitHub Pages from `main` in `Witali/MicroMusic`: `https://witali.github.io/MicroMusic/`.
+- The LPX player/converter is served directly from `web-player/lpx/`. When a publication is authorized, update it by pushing the verified `main` branch to `origin` and checking the live assets.
+- `web-player/scripts/export-lpx-site.mjs` only exports optional static application files. Do not recreate the removed ChatGPT Sites hosting configuration.
+
 ## Architecture optimization cookbooks
 
 - While working on any processor architecture, preserve useful newly discovered references, reusable code examples and original optimization techniques in that architecture's folder: `docs/<architecture>-asm-cookbook/` (for example, `docs/avr-asm-cookbook/`). Create folders as needed and use consistent architecture names.
