@@ -3,6 +3,7 @@
 #include "LpxEncoder.h"
 #include "LpxSeed.h"
 #include "LpxSpectrumQuantizer.h"
+#include "LpxEncoderContext.h"
 #include <algorithm>
 #include <string.h>
 
@@ -105,18 +106,20 @@ Pcm pwm(const Pcm& input) {
     }
     return out;
 }
-Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,double bandwidth,const Stream* context) {
+Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,double bandwidth,const Stream* context,SeedEncoder* encoder) {
+    auto& kernel=encoder?*encoder:defaultSeedEncoder();
+    if(reference.size()>kernel.reservedSamples)return Stream{};
     Stream s=context?*context:Stream{};s.samples=reference.size();s.profile=profile;s.rate=rate;s.pre=pre;
     // Workspace was reserved by the public entry point before any adaptive
     // allocations. Avoid moving it while callers retain views into WASM memory.
-    memcpy(enc_input(),reference.data(),reference.size()*2);
+    memcpy(kernel.source,reference.data(),reference.size()*2);
     LpxSeedContext history;
     if(context) {
-        if(s.lookahead.size()>48 || reference.size()+(s.lookahead.empty()?0:48)>lpxSeedCapacity()
+        if(s.lookahead.size()>48 || reference.size()+(s.lookahead.empty()?0:48)>kernel.reservedSamples
             || (!s.lookahead.empty() && reference.size()%320))return Stream{};
         if(!s.lookahead.empty()) {
-            std::fill(enc_input()+reference.size(),enc_input()+reference.size()+48,0);
-            memcpy(enc_input()+reference.size(),s.lookahead.data(),s.lookahead.size()*2);
+            std::fill(kernel.source+reference.size(),kernel.source+reference.size()+48,0);
+            memcpy(kernel.source+reference.size(),s.lookahead.data(),s.lookahead.size()*2);
         }
         memcpy(history.h,s.initial.h,sizeof(history.h));memcpy(history.ring,s.initial.ring,sizeof(history.ring));history.dd=s.initial.dd;
         history.continuation=s.continuation;history.lookahead=s.lookahead.empty()?0:48;history.lastSample=s.previousInput.back();history.accuracy=s.accuracy;
@@ -125,10 +128,10 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
         const int shift=profile==4?5:4;
         for(int k=0;k<10;++k)history.previousVector[k]=(s.previousSpectrum[k]<<shift)+(1<<(shift-1));
     }
-    int blocks=lpxSeedBeginContext(s.samples,profile,rate,pre,zeroScale,bandwidth,context?&history:nullptr);
+    int blocks=kernel.seedBegin(s.samples,profile,rate,pre,zeroScale,bandwidth,context?&history:nullptr);
     if(blocks<1)return Stream{};
-    for(int i=0;i<blocks;++i)if(enc_step()<0)return Stream{};
-    auto view=lpxSeedView();int frames=(s.samples+319)/320;
+    for(int i=0;i<blocks;++i)if(kernel.step()<0)return Stream{};
+    auto view=kernel.view();int frames=(s.samples+319)/320;
     if(!view.valid)return Stream{};
     s.spectra.resize(frames);s.parameters.resize(frames*2);s.pulses.resize(frames*16);s.extras.assign(frames*8,Pulse{{-1,0}});
     for(int f=0;f<frames;++f)for(int k=0;k<10;++k)s.spectra[f][k]=view.spectra[f][k];

@@ -51,7 +51,8 @@ const manifest = { schema: 'micromusic-lpx-v9-wasm-v1', compiler: run(['--versio
 writeFileSync(join(root, 'web-player/lpx/build.json'), JSON.stringify(manifest, null, 2) + '\n');
 console.log(`LPX V9 C → WebAssembly: ${binary.length} bytes, no host imports`);
 
-const encoderSources = ['Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp'];
+const encoderSources = ['Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp',
+  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxWasmMemory.cpp'];
 const encoderExports = ['enc_reserve', 'enc_input', 'enc_output', 'enc_begin', 'enc_step', 'enc_finish'];
 const encoderFlags = flags.filter(flag => !flag.startsWith('-Wl,--export=') && !flag.startsWith('-Wl,--initial-memory=') && !flag.startsWith('-Wl,--max-memory='));
 encoderFlags.push('-Wl,--initial-memory=262144', '-Wl,--max-memory=1073741824', ...encoderExports.map(name => '-Wl,--export=' + name));
@@ -60,7 +61,8 @@ run([...encoderFlags, ...encoderSources, '-L' + join(sysroot, 'lib/wasm32-emscri
 const encoderBinary = readFileSync(encoderOutput);
 if (WebAssembly.Module.imports(await WebAssembly.compile(encoderBinary)).length) throw new Error('Encoder must have no host imports');
 const encoderInputs = [...new Set([...inputs.filter(path => !path.endsWith('native/decoder.cpp')), ...encoderSources,
-  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.h', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderSimd.h',
+  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.h', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderContext.h',
+  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderOptions.h', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderSimd.h',
   'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSeed.h', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectrumQuantizer.h',
   ...['speech_v4.py', 'wav_lpc.py', 'q0_model.py', 'speech_v9.py', 'speech_compact.py'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/' + name)])];
 writeFileSync(join(root, 'web-player/lpx/encoder-build.json'), JSON.stringify({ ...manifest,
@@ -82,7 +84,7 @@ if (values['reference-encoder']) {
 
 if (values['prefix-selftest']) {
   mkdirSync(join(root, 'build'), { recursive: true });
-  run([...encoderFlags, '-Wl,--export=lpx_prefix_selftest', encoderSources[0],
+  run([...encoderFlags, '-Wl,--export=lpx_prefix_selftest', encoderSources[0], encoderSources[2],
     'web-player/tests/helpers/lpx-prefix-selftest.cpp',
     '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins',
     '-o', join(root, 'build/lpx-prefix-selftest.wasm')]);
@@ -91,7 +93,7 @@ if (values['prefix-selftest']) {
 
 if (values['analysis-selftest']) {
   mkdirSync(join(root, 'build'), { recursive: true });
-  run([...encoderFlags, '-Wl,--export=lpx_silence_selftest', '-Wl,--export=lpx_analysis_selftest', encoderSources[0],
+  run([...encoderFlags, '-Wl,--export=lpx_silence_selftest', '-Wl,--export=lpx_analysis_selftest', encoderSources[0], encoderSources[2],
     'web-player/tests/helpers/lpx-analysis-selftest.cpp',
     '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins',
     '-o', join(root, 'build/lpx-analysis-selftest.wasm')]);
@@ -112,7 +114,7 @@ const simdFlags = [...encoderFlags, '-msimd128', '-DLPX_ENCODER_SIMD_SEARCH=1'];
 }
 if (values['simd-selftest']) {
   mkdirSync(join(root, 'build'), { recursive: true });
-  run([...simdFlags, '-Wl,--export=lpx_simd_selftest', encoderSources[0], 'web-player/tests/helpers/lpx-simd-selftest.cpp',
+  run([...simdFlags, '-Wl,--export=lpx_simd_selftest', encoderSources[0], encoderSources[2], 'web-player/tests/helpers/lpx-simd-selftest.cpp',
     '-L' + join(sysroot, 'lib/wasm32-emscripten'), '-lc', '-lclang_rt.builtins', '-o', join(root, 'build/lpx-simd-selftest.wasm')]);
   console.log('Four-candidate SIMD self-test: build/lpx-simd-selftest.wasm');
 }
@@ -120,7 +122,7 @@ if (values['simd-selftest']) {
 // Same adaptive C++ translation units as the offline native executable.
 // Python source files below are provenance/test oracles, not runtime imports.
 const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxAccuracy.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp', 'LpxCandidateEvaluation.cpp',
-  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxWasmMemory.cpp', 'LpxStreamingApi.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp',
+  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxStreamingApi.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp',
   'LpxProfileQuality.cpp', 'LpxPulseLookahead.cpp', 'LpxFullBand.cpp', 'LpxSpectralPulses.cpp', 'LpxLpcRefine.cpp', 'LpxPitchGuard.cpp'];
 const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
 // Export the initializer explicitly so wasm-ld does not wrap every API export

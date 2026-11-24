@@ -30,7 +30,7 @@ const defines = ['LPX4_ENABLE_ASM=0', 'LPX4_FLOAT_SYNTHESIS=0', 'LPX4_ENABLE_SPE
   'LPX4_SAMPLE_RATE=0', 'LPX4_EXTENDED_SAMPLE_RATES=1', 'LPX4_ENABLE_WIDE_V9=1'];
 const includes = [`${src}/src`, `${src}/host`];
 const hash = path => createHash('sha256').update(readFileSync(path)).digest('hex');
-const inputPaths = [...sources, ...['LpxEncoder.h', 'LpxSeed.h', 'LpxEncoderSimd.h', 'LpxAdaptive.h', 'LpxAccuracy.h', 'LpxSpectrumQuantizer.h', 'LpxPacking.h', 'LpxStreaming.h',
+const inputPaths = [...sources, ...['LpxEncoder.h', 'LpxEncoderContext.h', 'LpxEncoderOptions.h', 'LpxSeed.h', 'LpxEncoderSimd.h', 'LpxAdaptive.h', 'LpxAccuracy.h', 'LpxSpectrumQuantizer.h', 'LpxPacking.h', 'LpxStreaming.h',
   'LpxQuality.h', 'LpxCandidateEvaluation.h', 'LpxAdaptiveController.h', 'LpxRefinement.h', 'LpxHostWorkspace.h', 'LpxLoudness.h', 'LpxEncodingPolicy.h',
   'LpxBitrateProfiles.h', 'LpxProfileQuality.h', 'LpxPulseLookahead.h', 'LpxFullBand.h', 'LpxSpectralPulses.h', 'LpxLpcRefine.h', 'LpxPitchGuard.h',
   'stoi-resample.inc', 'stoi-resample-12k.inc', 'stoi-resample-16k.inc',

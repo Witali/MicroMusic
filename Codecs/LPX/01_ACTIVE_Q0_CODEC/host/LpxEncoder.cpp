@@ -10,95 +10,31 @@
 #include <string.h>
 #include <math.h>
 
-// Set to 0 to retain the exhaustive search as a correctness/performance oracle.
-#ifndef LPX_ENCODER_ENABLE_PRUNING
-#define LPX_ENCODER_ENABLE_PRUNING 1
-#endif
-#if LPX_ENCODER_ENABLE_PRUNING != 0 && LPX_ENCODER_ENABLE_PRUNING != 1
-#error LPX_ENCODER_ENABLE_PRUNING must be 0 or 1
-#endif
-#ifndef LPX_ENCODER_DEDUP_CANDIDATES
-#define LPX_ENCODER_DEDUP_CANDIDATES 1
-#endif
-#if LPX_ENCODER_DEDUP_CANDIDATES != 0 && LPX_ENCODER_DEDUP_CANDIDATES != 1
-#error LPX_ENCODER_DEDUP_CANDIDATES must be 0 or 1
-#endif
-#ifndef LPX_ENCODER_REUSE_PREFIX
-#define LPX_ENCODER_REUSE_PREFIX 1
-#endif
-#if LPX_ENCODER_REUSE_PREFIX != 0 && LPX_ENCODER_REUSE_PREFIX != 1
-#error LPX_ENCODER_REUSE_PREFIX must be 0 or 1
-#endif
-#ifndef LPX_ENCODER_FAST_SILENCE
-#define LPX_ENCODER_FAST_SILENCE 1
-#endif
-#if LPX_ENCODER_FAST_SILENCE != 0 && LPX_ENCODER_FAST_SILENCE != 1
-#error LPX_ENCODER_FAST_SILENCE must be 0 or 1
-#endif
-#ifndef LPX_ENCODER_CACHE_ANALYSIS
-#define LPX_ENCODER_CACHE_ANALYSIS 1
-#endif
-#if LPX_ENCODER_CACHE_ANALYSIS != 0 && LPX_ENCODER_CACHE_ANALYSIS != 1
-#error LPX_ENCODER_CACHE_ANALYSIS must be 0 or 1
-#endif
-#ifndef LPX_ENCODER_SIMD_SEARCH
-#define LPX_ENCODER_SIMD_SEARCH 0
-#endif
-#if LPX_ENCODER_SIMD_SEARCH != 0 && LPX_ENCODER_SIMD_SEARCH != 1
-#error LPX_ENCODER_SIMD_SEARCH must be 0 or 1
-#endif
+#include "LpxEncoderContext.h"
 #include "LpxEncoderSimd.h"
-#ifndef LPX_ENCODER_ENABLE_CUDA
-#define LPX_ENCODER_ENABLE_CUDA 0
-#endif
-#if LPX_ENCODER_ENABLE_CUDA != 0 && LPX_ENCODER_ENABLE_CUDA != 1
-#error LPX_ENCODER_ENABLE_CUDA must be 0 or 1
-#endif
-#if LPX_ENCODER_ENABLE_CUDA
-#include "LpxCuda.h"
-#endif
 
 namespace {
-constexpr double pi = 3.14159265358979323846;
-static int pre = 13926;
-// Search-only LPC bandwidth expansion; all existing callers retain .97.
-// The cached root basis depends only on frequency, not these coefficients.
-static double analysisBandwidth = .97;
-static bool allowZeroScale = true;
-static bool referenceScaleOrder = false;
+constexpr double pi=3.14159265358979323846;
 static const int16_t cosine[] = {
 #include "cos_table.inc"
 };
 static const int16_t steps[] = {
 #include "scale_table.inc"
 };
-static int16_t *source, *expected, (*coefficients)[10];
-static double *emphasized, *residual, window[256];
-static uint8_t (*spectra)[10], *packed;
-static uint16_t (*vectors)[10];
-static int (*params)[3], (*pulses)[2];
-static uint32_t reservedSamples, packedCapacity;
-static int headerBytes;
-static int count, padded, mode, rate, block, bits, failure;
-#if LPX_ENCODER_ENABLE_CUDA
-using State = LpxCudaState;
-static bool cudaEnabled;
-#else
-struct State { int h[10], ring[256], dd; };
-#endif
-static const char* backendError = "";
-static State state;
-static LpxSeedContext seedContext;
-static bool hasSeedContext;
+using State=lpx::SeedEncoder::State;
+
 #if LPX_ENCODER_CACHE_ANALYSIS
-static double rootGrid[2][641][11];
-static bool analysisPrepared;
-#endif
-#if LPX_ENCODER_REUSE_PREFIX
-// One cache per encoder instance, rebuilt for every subframe/scale/gain.
-// Keep it off the 32 KiB stack. Full ring snapshots preserve lags 18 and 19.
-static State prefixState[20];
-static double prefixLoss[20];
+struct AnalysisTables {
+    double window[256],rootGrid[2][641][11];
+    AnalysisTables() {
+        for(int j=0;j<256;++j)window[j]=.54-.46*cos(2*pi*j/255);
+        for(int part=0;part<2;++part)for(int grid=0;grid<=640;++grid) {
+            const double w=grid?pi*grid/641:1e-6;
+            for(int k=0;k<=10;++k)rootGrid[part][grid][k]=part?sin(w*(5.5-k)):cos(w*(5.5-k));
+        }
+    }
+};
+const AnalysisTables& analysisTables() { static const AnalysisTables tables;return tables; }
 #endif
 int clip(int value, int low = -32767, int high = 32767) { return value < low ? low : value > high ? high : value; }
 int polyMul(int value, int c) {
@@ -111,29 +47,27 @@ double rootValue(const double* a, double w, bool imaginary) {
     for (int k = 0; k <= 10; ++k) result += a[k] * (imaginary ? sin(w * (5.5 - k)) : cos(w * (5.5 - k)));
     return result;
 }
-void prepareAnalysis() {
+}
+
+void lpx::SeedEncoder::prepareAnalysis() {
 #if LPX_ENCODER_CACHE_ANALYSIS
-    if (analysisPrepared) return;
-#endif
-    for (int j = 0; j < 256; ++j) window[j] = .54 - .46 * cos(2 * pi * j / 255);
-#if LPX_ENCODER_CACHE_ANALYSIS
-    // Cache the original double expressions, without recurrence/interpolation.
-    // The bisection between grid points still calls the original rootValue.
-    for (int part = 0; part < 2; ++part) for (int grid = 0; grid <= 640; ++grid) {
-        const double w = grid ? pi * grid / 641 : 1e-6;
-        for (int k = 0; k <= 10; ++k) rootGrid[part][grid][k] = part ? sin(w * (5.5 - k)) : cos(w * (5.5 - k));
-    }
-    analysisPrepared = true;
+    (void)analysisTables();
+#else
+    for(int j=0;j<256;++j)window[j]=.54-.46*cos(2*pi*j/255);
 #endif
 }
 #if LPX_ENCODER_CACHE_ANALYSIS
-double gridRootValue(const double* a, int grid, int part) {
-    double result = 0;
-    for (int k = 0; k <= 10; ++k) result += a[k] * rootGrid[part][grid][k];
+static double gridRootValue(const double* a,int grid,int part) {
+    double result=0;
+    const auto& basis=analysisTables().rootGrid[part][grid];
+    for(int k=0;k<=10;++k)result+=a[k]*basis[k];
     return result;
 }
 #endif
-void analyze(int frame) {
+void lpx::SeedEncoder::analyze(int frame) {
+#if LPX_ENCODER_CACHE_ANALYSIS
+    const double* window=analysisTables().window;
+#endif
     double buf[256], r[11], a[11] = {1}, old[11], roots[10];
     double mean = 0;
     int start = frame * 160 + 80 - 128;
@@ -189,7 +123,7 @@ void analyze(int frame) {
     for (int j = 1; j < 10; ++j) if (vectors[frame][j] < vectors[frame][j - 1] + 12) vectors[frame][j] = vectors[frame][j - 1] + 12;
     if (vectors[frame][9] > 1011) { vectors[frame][9] = 1011; for (int j = 8; j >= 0; --j) if (vectors[frame][j] > vectors[frame][j + 1] - 12) vectors[frame][j] = vectors[frame][j + 1] - 12; }
 }
-void prepareCoefficients() {
+void lpx::SeedEncoder::prepareCoefficients() {
     int frames = padded / 160, shift = mode == 4 ? 5 : 4, limit = mode == 4 ? 31 : 63;
     for (int fi = 0; fi < frames; fi += 2) {
         for (int j = 0; j < 10; ++j) spectra[fi / 2][j] = clip((int)nearbyint(((vectors[fi][j] + vectors[fi + 1][j]) * .5 - (1 << (shift - 1))) / (1 << shift)), 0, limit);
@@ -224,7 +158,7 @@ void prepareCoefficients() {
         }
     }
 }
-double trial20(State& out, const State& initial, int cursor, int scale, int lag, int gain, int pos, int amp, bool save, double bound = HUGE_VAL, bool reusePrefix = false, bool recordPrefix = false) {
+double lpx::SeedEncoder::trial20(State& out, const State& initial, int cursor, int scale, int lag, int gain, int pos, int amp, bool save, double bound, bool reusePrefix, bool recordPrefix) {
 #if LPX_ENCODER_REUSE_PREFIX
     const int first = reusePrefix ? pos : 0;
     double loss = reusePrefix ? prefixLoss[pos] : 0;
@@ -257,7 +191,7 @@ double trial20(State& out, const State& initial, int cursor, int scale, int lag,
     }
     return loss;
 }
-double searchBlock(State& result, int scale, int lag, int gain, bool save, double bound = HUGE_VAL) {
+double lpx::SeedEncoder::searchBlock(State& result, int scale, int lag, int gain, bool save, double bound) {
     State current = state, trial, next; double loss = 0;
     for (int si = 0; si < 8; ++si) {
 #if LPX_ENCODER_ENABLE_PRUNING
@@ -297,7 +231,7 @@ double searchBlock(State& result, int scale, int lag, int gain, bool save, doubl
     result = current; return loss;
 }
 #if LPX_ENCODER_FAST_SILENCE
-void commitSilentBlock(int start) {
+void lpx::SeedEncoder::commitSilentBlock(int start) {
     // Under the existing zero-residual/zero-filter guard, scale=0/gain=0
     // synthesizes zero for every candidate. Strict ties choose pos=0, amp=-8.
     // Preserve those excitation pulses, including the untouched ring entries.
@@ -311,24 +245,22 @@ void commitSilentBlock(int start) {
     }
 }
 #endif
-void put(int value, int width) {
+void lpx::SeedEncoder::put(int value, int width) {
     for (int bit = 0; bit < width; ++bit) {
         if (headerBytes + (bits >> 3) >= packedCapacity) { failure = 1; return; }
         packed[headerBytes + (bits >> 3)] |= ((value >> bit) & 1) << (bits & 7); ++bits;
     }
 }
-int riceCost(int value, int k, int width) { return value >> k >= 8 ? 8 + width : (value >> k) + 1 + k; }
-void rice(int value, int k, int width) {
+static int riceCost(int value, int k, int width) { return value >> k >= 8 ? 8 + width : (value >> k) + 1 + k; }
+void lpx::SeedEncoder::rice(int value, int k, int width) {
     int q = value >> k;
     if (q >= 8) { put(0, 8); put(value, width); }
     else { put(0, q); put(1, 1); put(value & ((1 << k) - 1), k); }
 }
-void word(int offset, int value) { packed[offset] = value; packed[offset + 1] = value >> 8; }
-void dword(int offset, uint32_t value) { word(offset, value & 65535); word(offset + 2, value >> 16); }
-}
+void lpx::SeedEncoder::word(int offset, int value) { packed[offset] = value; packed[offset + 1] = value >> 8; }
+void lpx::SeedEncoder::dword(int offset, uint32_t value) { word(offset, value & 65535); word(offset + 2, value >> 16); }
 
-extern "C" {
-int enc_set_backend(int backend) {
+int lpx::SeedEncoder::setBackend(int backend) {
     backendError = "";
     if (backend != 0 && backend != 1) { backendError = "Unknown encoding backend"; return -1; }
 #if LPX_ENCODER_ENABLE_CUDA
@@ -340,12 +272,11 @@ int enc_set_backend(int backend) {
     return 0;
 #endif
 }
-const char* enc_backend_error() { return backendError; }
-int enc_reserve(uint32_t samples) {
+int lpx::SeedEncoder::reserve(uint32_t samples) {
     reservedSamples = 0;
     if (!samples || samples > kLpxMaxSamples) return 0;
     const uint32_t n = (samples + 319) / 320 * 320;
-    uint8_t* memory = static_cast<uint8_t*>(reserveWorkspace(n * 24 + 65536));
+    uint8_t* memory = static_cast<uint8_t*>(reserveWorkspace(n * 24 + 65536,&workspace));
     if (!memory) return 0;
     uintptr_t at = reinterpret_cast<uintptr_t>(memory);
     auto take = [&at](uint32_t bytes) -> void* { uintptr_t result = at; at += (bytes + 7) & ~uintptr_t(7); return reinterpret_cast<void*>(result); };
@@ -359,14 +290,7 @@ int enc_reserve(uint32_t samples) {
     reservedSamples = samples;
     return 1;
 }
-int16_t* enc_input() { return source; }
-uint8_t* enc_output() { return packed; }
-}
-int lpxSeedBegin(int samples, int profile, int sampleRate, int emphasis, bool zeroScale,
-                 double bandwidth) {
-    return lpxSeedBeginContext(samples,profile,sampleRate,emphasis,zeroScale,bandwidth,nullptr);
-}
-int lpxSeedBeginContext(int samples,int profile,int sampleRate,int emphasis,bool zeroScale,double bandwidth,const LpxSeedContext* context) {
+int lpx::SeedEncoder::seedBegin(int samples,int profile,int sampleRate,int emphasis,bool zeroScale,double bandwidth,const LpxSeedContext* context) {
     pre = emphasis; allowZeroScale = zeroScale; referenceScaleOrder = true;
     hasSeedContext=context!=nullptr;if(context)seedContext=*context;
     failure = 0; block = 0;
@@ -392,15 +316,13 @@ int lpxSeedBeginContext(int samples,int profile,int sampleRate,int emphasis,bool
     }
     return padded / 160;
 }
-LpxSeedView lpxSeedView() { return {spectra, params, pulses, expected, failure == 0 && block == padded / 160}; }
-uint32_t lpxSeedCapacity() { return reservedSamples; }
-extern "C" {
-int enc_begin(int samples, int profile, int sampleRate) {
-    int result = lpxSeedBegin(samples, profile, sampleRate, 13926, true);
+LpxSeedView lpx::SeedEncoder::view() const { return {spectra, params, pulses, expected, failure == 0 && block == padded / 160}; }
+int lpx::SeedEncoder::begin(int samples, int profile, int sampleRate) {
+    int result = seedBegin(samples, profile, sampleRate, 13926, true,.97);
     referenceScaleOrder = false;
     return result;
 }
-int enc_step() {
+int lpx::SeedEncoder::step() {
     if (failure) return failure < 0 ? failure : -2;
     if (block >= padded / 160) return 100;
     int start = block * 160, lag = 18, pitchgain = 0; double power = 0, pitchscore = -1;
@@ -440,7 +362,7 @@ int enc_step() {
         if ((allowZeroScale && (scale==0 || scale==6)) || (scale>=center-2 && scale<=center+2)) codes[codeCount++]=scale;
 #if LPX_ENCODER_ENABLE_CUDA
     if (cudaEnabled) {
-        static LpxCudaJob job;
+        auto& job=cudaJob;
         job.initial = state; job.cursor = start; job.profile = mode; job.pre = pre; job.count = 0;
         memcpy(job.samples, source + start, sizeof(job.samples));
         memcpy(job.coefficients, coefficients + start / 20, sizeof(job.coefficients));
@@ -508,7 +430,7 @@ int enc_step() {
     params[block][0] = bestscale; params[block][1] = lag; params[block][2] = bestgain;
     ++block; return block * 100 / (padded / 160);
 }
-int enc_finish() {
+int lpx::SeedEncoder::finish() {
     if (failure) return failure < 0 ? failure : -2;
     if (block != padded / 160) return -1;
     memset(packed, 0, packedCapacity); bits = 0;
@@ -554,4 +476,33 @@ int enc_finish() {
     if (decoder.nextS16(tail) || decoder.error() || !decoder.finished()) return -5;
     return size;
 }
+
+namespace lpx {
+SeedEncoder& defaultSeedEncoder() { static SeedEncoder encoder;return encoder; }
+void SeedEncoder::release() {
+    free(workspace.memory);workspace=LpxWorkspace{};reservedSamples=0;
+    source=expected=nullptr;coefficients=nullptr;emphasized=residual=nullptr;
+    spectra=nullptr;packed=nullptr;vectors=nullptr;params=nullptr;pulses=nullptr;
 }
+#if !defined(__wasm__) || defined(LPX_ADAPTIVE_ENCODER)
+SeedEncoder::~SeedEncoder() { release(); }
+#endif
+}
+extern "C" {
+int enc_set_backend(int backend) { return lpx::defaultSeedEncoder().setBackend(backend); }
+const char* enc_backend_error() { return lpx::defaultSeedEncoder().backendError; }
+int enc_reserve(uint32_t samples) { return lpx::defaultSeedEncoder().reserve(samples); }
+int16_t* enc_input() { return lpx::defaultSeedEncoder().source; }
+uint8_t* enc_output() { return lpx::defaultSeedEncoder().packed; }
+int enc_begin(int samples,int profile,int rate) { return lpx::defaultSeedEncoder().begin(samples,profile,rate); }
+int enc_step() { return lpx::defaultSeedEncoder().step(); }
+int enc_finish() { return lpx::defaultSeedEncoder().finish(); }
+}
+int lpxSeedBegin(int samples,int profile,int rate,int pre,bool zeroScale,double bandwidth) {
+    return lpx::defaultSeedEncoder().seedBegin(samples,profile,rate,pre,zeroScale,bandwidth);
+}
+int lpxSeedBeginContext(int samples,int profile,int rate,int pre,bool zeroScale,double bandwidth,const LpxSeedContext* context) {
+    return lpx::defaultSeedEncoder().seedBegin(samples,profile,rate,pre,zeroScale,bandwidth,context);
+}
+LpxSeedView lpxSeedView() { return lpx::defaultSeedEncoder().view(); }
+uint32_t lpxSeedCapacity() { return lpx::defaultSeedEncoder().reservedSamples; }

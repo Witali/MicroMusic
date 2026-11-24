@@ -1,0 +1,33 @@
+#pragma once
+// Search switches affect context layout as well as implementation. Every host
+// translation unit must see the same explicitly selected backend/options.
+#ifndef LPX_ENCODER_ENABLE_PRUNING
+#define LPX_ENCODER_ENABLE_PRUNING 1
+#endif
+#ifndef LPX_ENCODER_DEDUP_CANDIDATES
+#define LPX_ENCODER_DEDUP_CANDIDATES 1
+#endif
+#ifndef LPX_ENCODER_REUSE_PREFIX
+#define LPX_ENCODER_REUSE_PREFIX 1
+#endif
+#ifndef LPX_ENCODER_FAST_SILENCE
+#define LPX_ENCODER_FAST_SILENCE 1
+#endif
+#ifndef LPX_ENCODER_CACHE_ANALYSIS
+#define LPX_ENCODER_CACHE_ANALYSIS 1
+#endif
+#ifndef LPX_ENCODER_SIMD_SEARCH
+#define LPX_ENCODER_SIMD_SEARCH 0
+#endif
+#ifndef LPX_ENCODER_ENABLE_CUDA
+#define LPX_ENCODER_ENABLE_CUDA 0
+#endif
+#if (LPX_ENCODER_ENABLE_PRUNING != 0 && LPX_ENCODER_ENABLE_PRUNING != 1) \
+ || (LPX_ENCODER_DEDUP_CANDIDATES != 0 && LPX_ENCODER_DEDUP_CANDIDATES != 1) \
+ || (LPX_ENCODER_REUSE_PREFIX != 0 && LPX_ENCODER_REUSE_PREFIX != 1) \
+ || (LPX_ENCODER_FAST_SILENCE != 0 && LPX_ENCODER_FAST_SILENCE != 1) \
+ || (LPX_ENCODER_CACHE_ANALYSIS != 0 && LPX_ENCODER_CACHE_ANALYSIS != 1) \
+ || (LPX_ENCODER_SIMD_SEARCH != 0 && LPX_ENCODER_SIMD_SEARCH != 1) \
+ || (LPX_ENCODER_ENABLE_CUDA != 0 && LPX_ENCODER_ENABLE_CUDA != 1)
+#error LPX encoder switches must be 0 or 1
+#endif

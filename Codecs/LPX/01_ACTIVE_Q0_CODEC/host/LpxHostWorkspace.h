@@ -1,10 +1,23 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 // Browser resource limits, independent of the uint32 V9 Long wire fields.
 static constexpr uint32_t kLpxMaxSamples = 32000000;
 static constexpr uint32_t kLpxMaxFileBytes = 100 * 1024 * 1024;
+
+// An explicit encoder context owns its allocation; unrelated contexts cannot
+// invalidate its views. The decoder's existing one-arena API remains below.
+struct LpxWorkspace { void* memory=nullptr;uint32_t capacity=0; };
+static void* reserveWorkspace(uint32_t bytes,LpxWorkspace* workspace) {
+    if(bytes>workspace->capacity) {
+        void* grown=realloc(workspace->memory,bytes);
+        if(!grown)return nullptr;
+        workspace->memory=grown;workspace->capacity=bytes;
+    }
+    return workspace->memory;
+}
 
 #if defined(__wasm__) && !defined(LPX_ADAPTIVE_ENCODER)
 extern "C" unsigned char __heap_base;
@@ -16,7 +29,6 @@ static void* reserveWorkspace(uint32_t bytes) {
     return reinterpret_cast<void*>(base);
 }
 #else
-#include <stdlib.h>
 static void* reserveWorkspace(uint32_t bytes) {
     static void* workspace = nullptr;
     static uint32_t capacity = 0;

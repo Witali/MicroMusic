@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 namespace lpx {
+struct SeedEncoder;
 using Spectrum = std::array<int, 10>;
 using Coefficients = std::array<int16_t, 10>;
 using Parameters = std::array<int, 3>;
@@ -40,5 +41,5 @@ int compactBytes(const Stream& stream);
 int extraCapacity(const Stream& stream, int maxBytes, int slots = -1);
 std::vector<uint8_t> packV9(const Stream& stream);
 Stream fitSeed(const Pcm& reference, int profile, int rate, int pre, bool zeroScale,
-               double bandwidth = .97,const Stream* context = nullptr);
+               double bandwidth = .97,const Stream* context = nullptr,SeedEncoder* encoder=nullptr);
 }

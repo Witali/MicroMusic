@@ -1,6 +1,9 @@
 #include "LpxCandidateEvaluation.h"
 #include "LpxEncoder.h"
+#include "LpxEncoderContext.h"
 #include <cmath>
+#include <algorithm>
+#include <cstring>
 
 extern "C" int unification_selftest() {
     using namespace lpx;
@@ -33,6 +36,46 @@ extern "C" int unification_selftest() {
         || evaluation.matches(reference,8000,false))return 7;
     return 0;
 }
+extern "C" int seed_context_selftest() {
+    using namespace lpx;
+    SeedEncoder a,b;
+    Pcm x(641),y(4097);
+    for(size_t i=0;i<x.size();++i)x[i]=int(5000*std::sin(i*.17));
+    for(size_t i=0;i<y.size();++i)y[i]=int(7000*std::sin(i*.23));
+    auto begin=[](SeedEncoder& encoder,const Pcm& pcm,int profile) {
+        if(!encoder.reserve(pcm.size()))return -1;
+        std::copy(pcm.begin(),pcm.end(),encoder.source);
+        return encoder.begin(pcm.size(),profile,8000);
+    };
+    auto finish=[](SeedEncoder& encoder) {
+        const int size=encoder.finish();
+        return size>0?std::vector<uint8_t>(encoder.packed,encoder.packed+size):std::vector<uint8_t>{};
+    };
+    int n=begin(a,x,4);if(n<1)return 101;
+    for(int i=0;i<n;++i)if(a.step()<0)return 102;
+    const auto expectedA=finish(a);
+    n=begin(b,y,6);if(n<1)return 103;
+    for(int i=0;i<n;++i)if(b.step()<0)return 104;
+    const auto expectedB=finish(b);
+    if(expectedA.empty() || expectedB.empty())return 105;
+    const int na=begin(a,x,4);if(na<1 || a.step()<0)return 106;
+    const auto inputA=a.source;
+    b.release();const int nb=begin(b,y,6);
+    if(nb<1 || a.source!=inputA || a.source==b.source)return 107;
+    for(int i=0;i<std::max(na,nb);++i) {
+        if(i>0 && i<na && a.step()<0)return 108;
+        if(i<nb && b.step()<0)return 109;
+    }
+    if(finish(a)!=expectedA || finish(b)!=expectedB)return 110;
+    // The owning Stream API can also use an explicit workspace without
+    // changing its existing default-context entry point.
+    auto local=fitSeed(x,4,8000,13926,false,.97,nullptr,&a);
+    if(!enc_reserve(x.size()))return 111;
+    auto legacy=fitSeed(x,4,8000,13926,false);
+    if(packV9(local)!=packV9(legacy))return 112;
+    a.release();if(a.source || a.reservedSamples)return 113;
+    return 0;
+}
 #if !defined(__wasm__)
-int main() { return unification_selftest(); }
+int main() { int error=unification_selftest();return error?error:seed_context_selftest(); }
 #endif

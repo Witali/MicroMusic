@@ -1,7 +1,8 @@
 #pragma once
 #include <stdint.h>
 
-// One encoder instance per process/WASM instance. Call reserve before writing
+// Compatibility adapter for the default seed context. C++ host callers may
+// own independent SeedEncoder contexts (LpxEncoderContext.h). Call reserve before writing
 // PCM16 to input; begin then consumes the copied input. Each step encodes one
 // 160-sample block. Finish verifies every output sample with Lpx4HybridCore.
 // Output remains valid until the next reserve/begin. No files or host callbacks.

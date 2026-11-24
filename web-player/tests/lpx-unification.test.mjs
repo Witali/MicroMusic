@@ -18,7 +18,10 @@ test('candidate cache retains continuation state and a bounded packet-key budget
     for(const mode of ['scalar','simd']) {
       const binary=readFileSync(new URL(`../../build/lpx-unification-${mode}.wasm`,import.meta.url));
       const {instance}=await WebAssembly.instantiate(binary);instance.exports.__wasm_call_ctors();
-      for(let i=0;i<3;++i)assert.equal(instance.exports.unification_selftest(),0);
+      for(let i=0;i<3;++i) {
+        assert.equal(instance.exports.unification_selftest(),0);
+        assert.equal(instance.exports.seed_context_selftest(),0);
+      }
     }
   });
 
