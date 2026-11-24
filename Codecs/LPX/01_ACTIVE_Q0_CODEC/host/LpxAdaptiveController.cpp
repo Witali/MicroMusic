@@ -37,14 +37,16 @@ Pcm prepareInputLevel(const Pcm& input,bool autoQuiet,int& gainExponent) {
     return reference;
 }
 Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
-                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize,const Stream* prefix) {
+                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize,const Stream* prefix,const Stream* preparedSeed) {
     report=AdaptiveReport{};
-    if(sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize) || (prefix && (autoQuiet || normalize))) { report.error=-1;return Stream{}; }
+    if(sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize) || (prefix && (autoQuiet || normalize))
+        || (preparedSeed && (autoQuiet || normalize || preparedSeed->samples!=int(input.size())
+            || preparedSeed->profile!=profile || preparedSeed->rate!=rate))) { report.error=-1;return Stream{}; }
     Pcm reference=prepareInputLevel(input,autoQuiet,report.gainExponent);
     if(normalize)report.loudness=normalizeLoudness(reference,rate);
     QualityContext context(reference,speech);
     const int fixedPre=prefix && prefix->continuation?prefix->pre:13926;
-    std::vector<Stream> seeds;seeds.push_back(fitSeed(reference,profile,rate,fixedPre,false,.97,prefix));
+    std::vector<Stream> seeds;seeds.push_back(preparedSeed?*preparedSeed:fitSeed(reference,profile,rate,fixedPre,false,.97,prefix));
     if(!seeds.back().samples) { report.error=-7;return Stream{}; }
     if(!cap)cap=int(int64_t(compactBytes(seeds[0]))*(100+sizeAllowancePercent)/100);report.cap=cap;
     auto originalPcm=render(seeds[0]);auto original=context.measure(originalPcm);

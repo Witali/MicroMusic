@@ -59,7 +59,8 @@ Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& re
     // existing no-extras syntax; P8 carries explicit correction parameters.
     context.allowExtras=policy.corrections||(!prefix&&(level==4||level==6));
     const int pre=context.continuation?context.pre:13926;
-    Stream control=fitSeed(reference,policy.wireProfile,rate,pre,false,.97,&context);
+    const Stream seed=fitSeed(reference,policy.wireProfile,rate,pre,false,.97,&context);
+    Stream control=seed;
     if(control.samples!=int(reference.size())){report.error=-7;return Stream{};}
     control=canonicalAccuracy(control);
     const auto originalControl=control;
@@ -69,7 +70,7 @@ Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& re
     if(!calls)return control;
     // Internal controller accounting is v5; independently enforce final V9
     // bytes below, including its header, flags, repeats and padding.
-    Stream candidate=adaptiveEncode(reference,policy.wireProfile,rate,report,false,budget+9,calls,true,true,0,false,&context);
+    Stream candidate=adaptiveEncode(reference,policy.wireProfile,rate,report,false,budget+9,calls,true,true,0,false,&context,&seed);
     if(report.error)return Stream{};
     candidate=canonicalAccuracy(candidate);
     // Retain the complete original admissible quantized control. All levels
