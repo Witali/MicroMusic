@@ -1,4 +1,4 @@
-import{openAudio}from'./audio-demux.js?v=20261123-precision-input-v2';
+import{openAudio}from'./audio-demux.js?v=20261124-encoder-unification';
 const MAX_SAMPLES=32000000,folderName='micromusic-lpx-input-v1';
 export const validTemporaryName=name=>/^pcm-[a-f0-9-]{36}\.tmp$/.test(name);
 export async function removeTemporaryInput(name,storage=navigator.storage){
@@ -82,7 +82,7 @@ export async function prepareAudio(file,rate,name,onProgress,readBinary,runtime=
   if(!validTemporaryName(name)||!runtime.navigator?.storage?.getDirectory)throw Error('Для потоковой обработки требуется локальное хранилище OPFS (HTTPS и современный браузер).');
   const track=await openAudio(file);
   if(![8000,12000,16000].includes(rate)||Math.ceil(track.duration*rate)>MAX_SAMPLES)throw Error('Запись превышает 32 000 000 отсчётов в выбранной частоте.');
-  const resampler=await createInputResampler(await readBinary(new URL('./input-resampler.wasm?v=20261123-precision-input-v2',import.meta.url)));
+  const resampler=await createInputResampler(await readBinary(new URL('./input-resampler.wasm?v=20261124-encoder-unification',import.meta.url)));
   let handle,folder,disposed=false;
   const dispose=async()=>{if(disposed)return;disposed=true;try{handle?.close();}finally{if(folder)await folder.removeEntry(name).catch(e=>{if(e.name!=='NotFoundError')throw e;});}};
   try{

@@ -1,6 +1,6 @@
-import { createEncoderBackend } from './encoder-backend.js?v=20261123-precision-input-v2';
-import { encodeStreaming } from './streaming.js?v=20261123-precision-input-v2';
-import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261123-precision-input-v2';
+import { createEncoderBackend } from './encoder-backend.js?v=20261124-encoder-unification';
+import { encodeStreaming } from './streaming.js?v=20261124-encoder-unification';
+import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261124-encoder-unification';
 const readBinary=async url=>{const response=await fetch(url);if(!response.ok)throw Error('Не удалось загрузить модуль обработки звука.');return response.arrayBuffer();};
 async function encodeSource(data){
   if(!validTemporaryName(data.temporaryName)||!navigator.locks?.request)throw Error('Браузер не поддерживает безопасную временную обработку аудио.');

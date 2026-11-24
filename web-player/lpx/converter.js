@@ -1,6 +1,6 @@
-import { MAX_SAMPLES } from './codec.js?v=20261123-precision-input-v2';
-import { supportsSimd } from './encoder-backend.js?v=20261123-precision-input-v2';
-import { removeTemporaryInput, recoverTemporaryInputs } from './audio-source.js?v=20261123-precision-input-v2';
+import { MAX_SAMPLES } from './codec.js?v=20261124-encoder-unification';
+import { supportsSimd } from './encoder-backend.js?v=20261124-encoder-unification';
+import { removeTemporaryInput, recoverTemporaryInputs } from './audio-source.js?v=20261124-encoder-unification';
 
 const $ = id => document.getElementById(id);
 if (!supportsSimd()) {
@@ -141,7 +141,7 @@ $('convert').onclick = async () => {
     };
     pcm = streaming ? null : pcmRange(0, audio.length, true);
     $('source-summary').textContent = streamingAudio ? 'Читаем аудио по порциям…' : `${audio.duration.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} с · ${channels.length} кан. → моно · ${rate / 1000} кГц${clipped ? ` · насыщение ${clipped} отсч.` : ''}`;
-    worker = new Worker(new URL('./encode-worker.js?v=20261123-precision-input-v2', import.meta.url), { type: 'module' });
+    worker = new Worker(new URL('./encode-worker.js?v=20261124-encoder-unification', import.meta.url), { type: 'module' });
     worker.onerror = event => { event.preventDefault(); if (id === job) { stop(); status('Не удалось запустить энкодер. Обновите страницу и повторите.', true); } };
     worker.onmessage = ({ data }) => {
       if (id !== job) return;

@@ -1,6 +1,6 @@
-import { MAX_SAMPLES } from './codec.js?v=20261123-precision-input-v2';
-import { createStreamSession } from './streaming.js?v=20261123-precision-input-v2';
-import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-unification';
+import { MAX_SAMPLES } from './codec.js?v=20261124-encoder-unification';
+import { createStreamSession } from './streaming.js?v=20261124-encoder-unification';
+import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-encoder-unification';
 
 export async function createEncoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);

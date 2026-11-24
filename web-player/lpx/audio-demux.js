@@ -1,4 +1,4 @@
-import{BlobRangeReader,openM4a}from'./m4a-demux.js?v=20261123-precision-input-v2';
+import{BlobRangeReader,openM4a}from'./m4a-demux.js?v=20261124-encoder-unification';
 const fail=message=>{throw Error(`Аудиофайл: ${message}`);};
 const text=(b,p,n)=>String.fromCharCode(...b.subarray(p,p+n));
 function mp3Header(b){
