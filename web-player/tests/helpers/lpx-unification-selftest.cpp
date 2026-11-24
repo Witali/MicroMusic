@@ -1,6 +1,7 @@
 #include "LpxCandidateEvaluation.h"
 #include "LpxEncoder.h"
 #include "LpxEncoderContext.h"
+#include "LpxAdaptive.h"
 #include <cmath>
 #include <algorithm>
 #include <cstring>
@@ -76,6 +77,41 @@ extern "C" int seed_context_selftest() {
     a.release();if(a.source || a.reservedSamples)return 113;
     return 0;
 }
+extern "C" int spectrum_safety_selftest() {
+    using namespace lpx;
+    const double tau=6.28318530717958647692;
+    Pcm edge(512),quantized(512),centered(512),unrelated(512),inverted(512),aboveFloor(512),aboveFloorUnrelated(512);
+    double rawPower=0,weightedPower=0,windowPower=0,aboveFloorPower=0;
+    for(int i=0;i<512;++i) {
+        // A short onset is loud in raw PCM but nearly absent under the Hann
+        // window. Quiet periodic quantization error dominates that spectrum.
+        if(i<32)edge[i]=int(1000*std::sin(tau*3*i/32));
+        quantized[i]=edge[i]+(i%4<2?12:-12);
+        const double w=.5-.5*std::cos(tau*i/511);
+        rawPower+=double(edge[i])*edge[i];
+        weightedPower+=double(edge[i])*edge[i]*w*w;windowPower+=w*w;
+        centered[i]=int(3000*std::sin(tau*3*i/32));
+        unrelated[i]=int(3000*std::sin(tau*10*i/32));
+        inverted[i]=-centered[i];
+        aboveFloor[i]=int(128*std::sin(tau*3*i/32));
+        aboveFloorUnrelated[i]=int(128*std::sin(tau*10*i/32));
+        aboveFloorPower+=double(aboveFloor[i])*aboveFloor[i]*w*w;
+    }
+    // Establish the physical fixture on both sides of the eligibility floor.
+    if(rawPower<=512.*64*64 || weightedPower>=windowPower*64*64)return 201;
+    if(!safeSynthesisSpectrum(edge,quantized))return 202;
+    if(!safeSynthesisSpectrum(centered,centered))return 203;
+    if(!safeSynthesisSpectrum(centered,inverted))return 204;
+    if(safeSynthesisSpectrum(centered,unrelated))return 205;
+    // Above 64 Hann RMS must remain eligible: a raw 512-sample denominator
+    // would incorrectly skip this still-significant centered source.
+    if(aboveFloorPower<=windowPower*64*64 || aboveFloorPower>=512.*64*64)return 206;
+    if(safeSynthesisSpectrum(aboveFloor,aboveFloorUnrelated))return 207;
+    return 0;
+}
 #if !defined(__wasm__)
-int main() { int error=unification_selftest();return error?error:seed_context_selftest(); }
+int main() {
+    int error=unification_selftest();if(error)return error;
+    error=seed_context_selftest();return error?error:spectrum_safety_selftest();
+}
 #endif

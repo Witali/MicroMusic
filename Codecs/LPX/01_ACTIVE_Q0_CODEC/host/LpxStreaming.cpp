@@ -84,8 +84,13 @@ int StreamingEncoder::process(const Pcm& input,const Pcm& future,StreamingChunk&
     if(candidateLive) {
         uint64_t cumulative=policy.targetBitrate?bitrateBudget(done+reference.size(),policy.targetBitrate,rate):cap();
         int available=int(cumulative)-header-int((candidateWriter.bits()+7)/8)-1+13;
-        Stream candidate;int failed=0;
-        if(accuracy){AdaptiveReport report;candidate=encodeAccuracy(reference,profile,rate,report,calls,&candidateContext);failed=report.error;available=accuracyPacketBound(reference.size(),profile);}
+        Stream candidate;int failed=0;bool unsafeSeed=false;
+        if(accuracy){
+            AdaptiveReport report;candidate=encodeAccuracy(reference,profile,rate,report,calls,&candidateContext);
+            failed=report.error;
+            unsafeSeed=failed==-7 && report.originalSeedStatus==SeedFitStatus::Unsafe;
+            available=accuracyPacketBound(reference.size(),profile);
+        }
         else if(available<13)failed=-6;
         else if(profile==3) {
             BitrateReport report;candidate=encodeThreeK(reference,available,report,.97,nullptr,&candidateContext);failed=report.error;
@@ -101,7 +106,10 @@ int StreamingEncoder::process(const Pcm& input,const Pcm& future,StreamingChunk&
             AdaptiveReport report;
             candidate=adaptiveEncode(reference,wire,rate,report,false,available+9,calls,true,true,0,false,&candidateContext);failed=report.error;
         }
-        if(failed==-6 || available<13)candidateLive=false;
+        // A separately carried candidate may reject its seed while the complete
+        // continuous control remains admissible. Keep that entire control;
+        // argument, backend and decoder failures still abort the encode.
+        if(unsafeSeed || failed==-6 || available<13)candidateLive=false;
         else if(failed)return error=failed;
         else if(candidate.samples!=int(reference.size()) || packV9(candidate).size()>size_t(available))candidateLive=false;
         if(candidateLive) {

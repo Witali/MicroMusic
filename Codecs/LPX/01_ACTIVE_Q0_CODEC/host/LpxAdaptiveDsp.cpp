@@ -119,16 +119,22 @@ bool safeSynthesisSpectrum(const Pcm& reference,const Pcm& actual,int* firstBad)
     // Detect source energy replaced by unrelated bands, independently of gain
     // and phase. Broad bands and a generous joint gate tolerate ordinary lossy
     // noise while catching moderate-level off-band oscillation as well.
-    double window[512];
-    for(int i=0;i<512;++i)window[i]=.5-.5*std::cos(6.28318530717958647692*i/511);
+    double window[512],windowPower=0;
+    for(int i=0;i<512;++i) {
+        window[i]=.5-.5*std::cos(6.28318530717958647692*i/511);
+        windowPower+=window[i]*window[i];
+    }
     for(int start=0;start+512<=int(reference.size());start+=256) {
         double source[512],output[512],a[257],b[257],x[32]={},y[32]={};
         double energy=0;
         for(int i=0;i<512;++i) {
-            energy+=double(reference[start+i])*reference[start+i];
             source[i]=reference[start+i]*window[i];output[i]=actual[start+i]*window[i];
+            energy+=source[i]*source[i];
         }
-        if(energy<=512.*64*64)continue;
+        // Eligibility must use the same Hann weighting as the compared
+        // spectra. An onset at a window edge must not turn near-silence
+        // inside the analysis window into a normalized spectral mismatch.
+        if(energy<=windowPower*64*64)continue;
         periodogram(source,512,a,512);periodogram(output,512,b,512);
         double totalSource=0,totalOutput=0;
         for(int k=0;k<=256;++k) {
@@ -207,6 +213,7 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
     std::vector<uint8_t> orders(s.accuracy?frames:0,10);
     Stream bestRecovery;double bestRecoveryScore=HUGE_VAL;
     std::unique_ptr<FullBandContext> recoveryQuality;
+    bool bestSpectrumSafe=false;
     bool expandedRecovery=false;int recoveryPass=0;
     for(int attempt=0,fits=0;fits<(s.accuracy?32:1);++attempt,++fits) {
         history.spectralSafety=s.accuracy?safety.data():nullptr;
@@ -226,9 +233,10 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
         if(!s.accuracy) {if(status)*status=SeedFitStatus::Success;return s;}
         int bad=0;
         const auto output=render(s);
-        const bool safe=safeSynthesisLevel(s,reference,output,&bad)&&safeSynthesisSpectrum(reference,output,&bad);
-        if(safe) {
-            if(attempt==0||attempt>=5) {if(status)*status=SeedFitStatus::Success;return s;}
+        const bool levelSafe=safeSynthesisLevel(s,reference,output,&bad);
+        const bool spectrumSafe=levelSafe&&safeSynthesisSpectrum(reference,output,&bad);
+        if(spectrumSafe&&(attempt==0||attempt>=5)) {if(status)*status=SeedFitStatus::Success;return s;}
+        if(levelSafe) {
             // A two-pole recovery can retain a single ring yet lose another
             // legal partial. Compare every bounded model-order alternative,
             // with actual-rate magnitude and temporal errors, before choosing.
@@ -236,7 +244,9 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
             const auto measured=recoveryQuality->measure(output);
             const double score=measured.balancedError[0]+measured.balancedTemporalError[0]
                 +measured.balancedError[1]+measured.balancedTemporalError[1];
-            if(score<bestRecoveryScore) {bestRecovery=s;bestRecoveryScore=score;}
+            if((spectrumSafe&&!bestSpectrumSafe)||(spectrumSafe==bestSpectrumSafe&&score<bestRecoveryScore)) {
+                bestRecovery=s;bestRecoveryScore=score;bestSpectrumSafe=spectrumSafe;
+            }
         }
         if(attempt<4) {
             // A simple resonator must not be forced into a poorly quantized
@@ -244,14 +254,14 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
             // retain the same ten-LSF syntax and original carried state.
             const int nextOrder=2*(attempt+1);
             for(auto& order:orders)if(order!=10)order=nextOrder;
-            if(!safe)for(int f=std::max(0,bad/320-8);f<=std::min(frames-1,bad/320+8);++f) {
+            if(!spectrumSafe)for(int f=std::max(0,bad/320-8);f<=std::min(frames-1,bad/320+8);++f) {
                 if(attempt>0&&orders[f]==10)expandedRecovery=true;
                 orders[f]=nextOrder;
             }
             continue;
         }
         if(attempt==4) {
-            if(!safe)for(int f=std::max(0,bad/320-8);f<=std::min(frames-1,bad/320+8);++f) {
+            if(!spectrumSafe)for(int f=std::max(0,bad/320-8);f<=std::min(frames-1,bad/320+8);++f) {
                 if(orders[f]==10)expandedRecovery=true;
                 orders[f]=8;
             }
@@ -263,7 +273,7 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
                 for(auto& order:orders)if(order!=10)order=2;
                 attempt=0;continue;
             }
-            if(bestRecovery.samples) {if(status)*status=SeedFitStatus::Success;return bestRecovery;}
+            if(bestSpectrumSafe&&bestRecovery.samples) {if(status)*status=SeedFitStatus::Success;return bestRecovery;}
             std::fill(orders.begin(),orders.end(),10);continue;
         }
         // Replay from the exact original carried state; never splice a reset
@@ -272,6 +282,12 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
         for(int f=std::max(0,bad/320-8);f<=std::min(frames-1,bad/320+2);++f)
             if(!safety[f])safety[f]=1;
     }
+    // A local normalized spectrum target can be unattainable at a legal lossy
+    // allocation. It must not invalidate every bounded, source-level-safe
+    // reconstruction. Prefer target-compliant models above; after the complete
+    // bounded search, retain the least actual magnitude/temporal-error model.
+    // Q12 stability and rendered level/clipping safety are never waived.
+    if(bestRecovery.samples) {if(status)*status=SeedFitStatus::Success;return bestRecovery;}
     if(status)*status=SeedFitStatus::Unsafe;
     return Stream{};
 }

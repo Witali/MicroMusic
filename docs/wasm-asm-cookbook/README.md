@@ -304,3 +304,21 @@ splice reset waveforms or globally flatten every spectrum to hide oscillation:
 independent partial/envelope/tail controls must also pass. This does not certify
 arbitrary audio or establish interrupt-active MCU timing. Reproduction and
 quality/cost evidence are in the [common-timbre report](../../Codecs/LPX/research/common-timbre-2026-11-24/README.md).
+
+## Match spectral eligibility to its analysis window
+
+For an RMS floor `r` and an FFT window `w`, use
+`sum((x*w)^2) / sum(w^2) > r^2` to decide whether a normalized windowed
+spectrum contains significant reference energy. An unwindowed RMS test is
+inconsistent with a Hann-windowed comparison: an attack at the window edge
+can pass that test while almost disappearing from the compared spectrum.
+Normalizing such near-silence produces a false source-shape rejection.
+
+The portable LPX guard retains its64-count floor and existing shape/off-band
+thresholds, but applies this consistent weighting. A narrow scalar/SIMD
+contract checks edge attacks, significant off-band replacement and polarity;
+the source-generated tone-burst regression checks complete whole/streaming
+output across all levels/rates and search depths. No assembly, ISA extension
+or MCU timing claim is introduced. This is a correctness/quality technique,
+not a measured speedup. The portable C++11 wasm32/C++17 native build and
+explicit CPU/SIMD/CUDA selection remain unchanged.

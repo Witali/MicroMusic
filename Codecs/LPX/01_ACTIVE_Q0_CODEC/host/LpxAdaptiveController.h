@@ -6,6 +6,7 @@
 namespace lpx {
 struct AdaptiveReport {
     int candidates=0,stages=0,selected=0,cap=0,gainExponent=0,error=0;
+    SeedFitStatus originalSeedStatus=SeedFitStatus::Failure;
     int stageOperator[4]={},localEvaluations[4]={},fullEvaluations[4]={};
     int expandedLocalEvaluations=0,expandedFullEvaluations=0,expandedAccepted=0;
     Measurement baseline,measurement;

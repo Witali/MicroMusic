@@ -80,11 +80,14 @@ retains its separately pinned byte contract.
 
 A frozen-polynomial test does not certify a switched integer filter. The seed
 therefore also renders from the original carried state and rejects catastrophic
-source-relative level growth, added clipping and strong off-band replacement.
-The latter compares normalized32-band Hann spectra in512-sample windows,
+source-relative level growth and added clipping. Its off-band recovery target
+compares normalized32-band Hann spectra in512-sample windows,
 jointly requiring more than.5 Hellinger error and35% output power in bands
 holding less than.5% of source power. It is a generous recovery trigger, not a
-general perceptual-quality score. On failure, a shared bounded
+general perceptual-quality score. Eligibility uses the same Hann-weighted
+source energy as the spectra, normalized by the sum of squared window weights,
+with the existing64-PCM-count RMS floor. Raw energy at a window edge cannot
+make near-silent windowed spectra eligible. On failure, a shared bounded
 recovery tries effective analysis orders2/4/6/8 near the first failing region,
 then unexpanded analysis and localized spectral regularization. Ten LSFs are
 still transmitted; no new decoder, tone detector or profile-specific fix is
@@ -96,7 +99,17 @@ all four orders are reconsidered on the enlarged mask, up to three passes and
 32 total fits. This avoids accepting the first safe low-order
 filter when another legal partial requires a more complex model. It is bounded
 analysis through synthesis of transmitted parameters, not a global optimum.
-An unrecoverable seed reports an error.
+Target-compliant models remain preferred. If no model meets this local
+perceptual target after the bounded search, retain the least actual
+magnitude/temporal-error model among all Q12- and source-level-safe attempts,
+including the ordinary analysis. A heuristic target is not a file-validity
+test for arbitrary lossy audio. A seed with no hard-safe reconstruction still
+reports an error. Refinement admission retains the unchanged spectrum gate.
+
+An optional continuously carried refinement can independently lose its safe
+seed while the complete control remains valid. Explicit unsafe-seed status
+then discards the entire optional candidate; it never splices contexts.
+Generic argument, kernel, CUDA and verification failures remain fatal.
 
 Residual and adaptive proposals must pass source-level safety and existing
 whole-output quality admission. Independent synthetic tests check harmonic and

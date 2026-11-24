@@ -74,7 +74,9 @@ Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& re
     // The exact bit budget decides how many ranked residual symbols survive.
     context.allowExtras=true;
     const int pre=context.continuation?context.pre:13926;
-    const Stream seed=fitSeed(reference,policy.wireProfile,rate,pre,false,.97,&context);
+    SeedFitStatus seedStatus;
+    const Stream seed=fitSeed(reference,policy.wireProfile,rate,pre,false,.97,&context,nullptr,&seedStatus);
+    report.originalSeedStatus=seedStatus;
     Stream control=seed;
     if(control.samples!=int(reference.size())){report.error=-7;return Stream{};}
     control=canonicalAccuracy(control);
@@ -91,6 +93,7 @@ Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& re
     // bytes below, including its header, flags, repeats and padding.
     CandidateEvaluation evaluation(reference,rate,true);
     Stream candidate=adaptiveEncode(reference,policy.wireProfile,rate,report,false,std::max(budget+9,compactBytes(seed)),calls,true,true,0,false,&context,&seed,&evaluation);
+    report.originalSeedStatus=seedStatus;
     if(report.error==-6) {
         // The complete common control already fits this profile. Internal
         // legacy-v5 proposal accounting cannot invalidate that legal floor.
