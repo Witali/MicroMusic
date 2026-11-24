@@ -1,7 +1,9 @@
 import { createIncrementalDecoder, MAX_SAMPLES } from './codec.js?v=20261123-precision-input-v2';
+import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-unification';
 
 export function createStreamSession(api, settings) {
   const {samples,profile,sampleRate,sizeAllowancePercent=0,normalization='preserve',targetLufs=-18,maxGainDb=12,calls=4}=settings;
+  const policy=encodingPolicy(profile,!!settings.accuracy);
   if(!api.enc_stream_create)throw Error('Обновите страницу: потоковое кодирование недоступно.');
   if(!Number.isInteger(samples)||samples<1||samples>MAX_SAMPLES||![3,4,6,8].includes(profile)||![8000,12000,16000].includes(sampleRate)
     ||!Number.isInteger(sizeAllowancePercent)||sizeAllowancePercent<0||sizeAllowancePercent>100
@@ -9,7 +11,7 @@ export function createStreamSession(api, settings) {
     ||!Number.isInteger(maxGainDb)||maxGainDb<0||maxGainDb>24||!Number.isInteger(calls)||calls<0||calls>4)
     throw Error('Некорректные настройки потокового кодирования.');
   if(settings.accuracy&&sizeAllowancePercent!==0)throw Error('Уровни точности не используют допуск размера.');
-  if(!settings.accuracy&&(profile===3||profile===8)&&(sampleRate!==8000||sizeAllowancePercent!==0))throw Error('Профили 3/8 используют 8 кГц без допуска размера.');
+  if(policy.targetBitrate&&(sampleRate!==8000||sizeAllowancePercent!==0))throw Error('Профили 3/8 используют 8 кГц без допуска размера.');
   const checked=(value,stage)=>{if(value<0)throw Error(`Потоковый энкодер: ${stage} (${value}).`);return value;};
   const create=settings.accuracy?api.enc_stream_create_accuracy:api.enc_stream_create;
   if(!create)throw Error('Обновите страницу: выбранный энкодер недоступен.');
@@ -70,7 +72,8 @@ export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},re
     parts[kind]=[];expected[kind]=[];
     const bytes=new Uint8Array(await blob.arrayBuffer()),decoded=decoder(bytes);
     if(decoded.samples!==n||(verification?verification.size(kind)!==n:pcmBlob.size!==n*2))throw Error('Проверка непрерывного потока: неверная длина.');
-    if(!settings.accuracy&&(settings.profile===3||settings.profile===8)&&bytes.length>Math.floor(n*settings.profile/64))throw Error('Превышен предел размера полного LPX.');
+    const policy=encodingPolicy(settings.profile,!!settings.accuracy);
+    if(policy.targetBitrate&&bytes.length>bitrateBudget(n,policy,settings.sampleRate))throw Error('Превышен предел размера полного LPX.');
     for(let offset=0;offset<n;offset+=window) {
       const count=Math.min(window,n-offset),actual=decoded.read(count);
       const wanted=verification?await verification.read(kind,offset,count):new Int16Array(await pcmBlob.slice(offset*2,(offset+count)*2).arrayBuffer());

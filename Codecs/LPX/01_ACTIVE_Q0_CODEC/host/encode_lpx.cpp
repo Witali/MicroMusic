@@ -3,6 +3,7 @@
 #include "LpxAdaptiveController.h"
 #include "LpxHostWorkspace.h"
 #include "LpxAccuracy.h"
+#include "LpxEncodingPolicy.h"
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
@@ -98,6 +99,7 @@ int run(int argc, char** argv) {
         }
     }
     if (options.profile != 4 && options.profile != 6) return fail("Profile must be 4 or 6");
+    const auto policy=lpx::encodingPolicy(options.accuracy?options.accuracy:options.profile,options.accuracy!=0);
     if(options.accuracy&&(!lpx::accuracyPolicy(options.accuracy).level||options.maxBytes||options.sizeAllowance||options.autoQuiet))return fail("Accuracy must be 3/4/6/8, without byte budgets, allowances or auto quiet");
     if (options.rate != 8000 && options.rate != 12000 && options.rate != 16000) return fail("Unsupported sample rate");
     if (options.calls < 0 || options.calls > 4) return fail("Refinement calls must be in 0..4");
@@ -173,7 +175,7 @@ int run(int argc, char** argv) {
         options.cuda ? "cuda" : "cpu", options.adaptive ? "adaptive" : "fast",
         options.adaptive ? (options.expandedSearch ? "expanded" : "reference") : "fast",
         options.adaptive ? options.sizeAllowance : 0, report.expandedAccepted,
-        unsigned(pcm.size()), options.rate, options.accuracy?lpx::accuracyPolicy(options.accuracy).wireProfile:options.profile, unsigned(bytes.size()),
+        unsigned(pcm.size()), options.rate, policy.wireProfile, unsigned(bytes.size()),
         bytes[2] & 64 ? "true" : "false", initializationMs, timings[0], report.candidates, report.stages, report.gainExponent);
     for (size_t i = 0; i < timings.size(); ++i) fprintf(stderr, "%s%.6f", i ? "," : "", timings[i]);
     fprintf(stderr, "],\"qualitySearch\":{\"enabled\":%s,\"candidates\":%d,\"accepted\":%d,\"bandwidthCandidates\":%d,\"localEvaluations\":%d,\"fullEvaluations\":%d,\"initialObjective\":%.12g,\"finalObjective\":%.12g,\"spectralLocalEvaluations\":%llu,\"spectralProposals\":%d,\"spectralRegions\":%d},",

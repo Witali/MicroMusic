@@ -10,13 +10,11 @@
 namespace lpx {
 StreamingEncoder::StreamingEncoder(uint32_t samples,int selected,int sampleRate,int sizeAllowance,int refinements,bool normalization,bool accuracyMode)
     :total(samples),profile(selected),rate(sampleRate),allowance(sizeAllowance),calls(refinements),
-     header(samples>64000?17:13),normalize(normalization),accuracy(accuracyMode),controlWriter(accuracyMode&&selected==8),candidateWriter(accuracyMode&&selected==8),sourceMeter(rate),preparedMeter(rate),controlMeter(rate),candidateMeter(rate) {
+     header(v9HeaderBytes(samples)),policy(encodingPolicy(selected,accuracyMode)),normalize(normalization),accuracy(accuracyMode),controlWriter(policy.corrections),candidateWriter(policy.corrections),sourceMeter(rate),preparedMeter(rate),controlMeter(rate),candidateMeter(rate) {
     controlContext.allowExtras=candidateContext.allowExtras=accuracy&&profile==8;
     if(accuracy)controlContext.accuracy=candidateContext.accuracy=profile;
     planned=!normalize;
-    if(!total || total>kLpxMaxSamples || (profile!=3 && profile!=4 && profile!=6 && profile!=8)
-       || (rate!=8000 && rate!=12000 && rate!=16000) || allowance<0 || allowance>100 || calls<0 || calls>4
-       || (!accuracy && (profile==3 || profile==8) && (rate!=8000 || allowance)) || (accuracy&&allowance))error=-1;
+    if(!total || total>kLpxMaxSamples || !policy.supports(rate,allowance) || calls<0 || calls>4)error=-1;
     if(!error && !enc_reserve(kLpxStreamWindow+320))error=-2;
     if(!calls)candidateLive=false;
 }
@@ -44,8 +42,8 @@ Stream StreamingEncoder::nextContext(const Stream& stream,const Pcm& input,const
 }
 uint64_t StreamingEncoder::cap() const {
     if(accuracy)return accuracyBudget(total,profile,header+int((controlWriter.bits()+7)/8));
-    if(profile==3 || profile==8)return uint64_t(total)*profile/64;
-    const int wire=profile==4?4:6;
+    if(policy.targetBitrate)return bitrateBudget(total,policy.targetBitrate,rate);
+    const int wire=policy.wireProfile;
     uint64_t bits=controlWriter.spectrumBits()+controlWriter.frameCount()*(wire==4?110:166);
     return (22+(bits+7)/8)*(100+allowance)/100;
 }
@@ -58,10 +56,10 @@ int StreamingEncoder::process(const Pcm& input,const Pcm& future,StreamingChunk&
     auto reference=scaled(input),lookahead=scaled(future);
     controlContext.lookahead=lookahead;candidateContext.lookahead=lookahead;
     Stream control;
-    const int wire=profile==3?4:profile==8?6:profile;
+    const int wire=policy.wireProfile;
     if(accuracy){AdaptiveReport report;control=encodeAccuracy(reference,profile,rate,report,0,&controlContext);if(report.error)return error=report.error;}
-    else if(profile==3 || profile==8) {
-        uint64_t cumulative=uint64_t(done+reference.size())*profile/64;
+    else if(policy.targetBitrate) {
+        uint64_t cumulative=bitrateBudget(done+reference.size(),policy.targetBitrate,rate);
         int available=int(cumulative)-header-int((controlWriter.bits()+7)/8)-1+13;
         if(available<13)return error=-6;
         if(profile==3) {
@@ -83,7 +81,7 @@ int StreamingEncoder::process(const Pcm& input,const Pcm& future,StreamingChunk&
     if(!done) { controlContext.pre=control.pre;controlContext.bright=control.bright; }
     if(!last)controlContext=nextContext(control,reference,co,controlState);
     if(candidateLive) {
-        uint64_t cumulative=!accuracy&&(profile==3 || profile==8)?uint64_t(done+reference.size())*profile/64:cap();
+        uint64_t cumulative=policy.targetBitrate?bitrateBudget(done+reference.size(),policy.targetBitrate,rate):cap();
         int available=int(cumulative)-header-int((candidateWriter.bits()+7)/8)-1+13;
         Stream candidate;int failed=0;
         if(accuracy){AdaptiveReport report;candidate=encodeAccuracy(reference,profile,rate,report,calls,&candidateContext);failed=report.error;available=accuracyPacketBound(reference.size(),profile);}

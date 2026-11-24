@@ -1,10 +1,12 @@
 #include "LpxAccuracy.h"
+#include "LpxEncodingPolicy.h"
 #include "LpxProfileQuality.h"
 #include <algorithm>
 namespace lpx{
 AccuracyPolicy accuracyPolicy(int level){
-    AccuracyPolicy p;if(level!=3&&level!=4&&level!=6&&level!=8)return p;
-    p.level=level;p.wireProfile=level<=4?4:6;p.detailBitsPerFrame=40*level;p.corrections=level==8;return p;
+    AccuracyPolicy p;const auto selected=encodingPolicy(level,true);if(!selected.valid())return p;
+    p.level=selected.accuracyLevel;p.wireProfile=selected.wireProfile;
+    p.detailBitsPerFrame=40*level;p.corrections=selected.corrections;return p;
 }
 int accuracyPacketBound(int samples,int level){
     auto p=accuracyPolicy(level);if(!p.level||samples<1)return 0;
@@ -14,7 +16,7 @@ int accuracyPacketBound(int samples,int level){
 }
 int accuracyBudget(int samples,int level,int originalBytes){
     auto p=accuracyPolicy(level);if(!p.level||samples<1)return 0;
-    return std::max(originalBytes,(samples>64000?17:13)+int((int64_t((samples+319)/320)*p.detailBitsPerFrame+7)/8));
+    return std::max(originalBytes,v9HeaderBytes(samples)+int((int64_t((samples+319)/320)*p.detailBitsPerFrame+7)/8));
 }
 Stream refineAccuracyCorrections(const Stream& input,const Pcm& reference,int budget){
     Stream work=input;auto co=coefficientTrace(work);auto state=work.initial;

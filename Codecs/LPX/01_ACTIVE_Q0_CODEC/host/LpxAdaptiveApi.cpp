@@ -4,6 +4,7 @@
 #include "LpxHostWorkspace.h"
 #include "LpxBitrateProfiles.h"
 #include "LpxAccuracy.h"
+#include "LpxEncodingPolicy.h"
 #include <utility>
 
 static std::vector<uint8_t> qualityOutput;
@@ -66,8 +67,9 @@ static int encodeBitrate(int samples,int kbps,int rate,int autoQuiet,int calls,b
     if(samples<1 || uint32_t(samples)>lpxSeedCapacity() || uint32_t(samples)>kLpxMaxSamples
         || (kbps!=3 && kbps!=8) || rate!=8000 || (autoQuiet!=0 && autoQuiet!=1)
         || calls<0 || calls>4)return -1;
-    const int cap=int(int64_t(samples)*kbps*1000/(8*rate));
-    const int header=samples>64000?17:13;
+    const auto policy=lpx::encodingPolicy(kbps,false);
+    const int cap=int(lpx::bitrateBudget(samples,policy.targetBitrate,rate));
+    const int header=lpx::v9HeaderBytes(samples);
     if(cap<header)return -6;
     lpx::Pcm reference(enc_input(),enc_input()+samples);
     lpx::LoudnessReport loudness;

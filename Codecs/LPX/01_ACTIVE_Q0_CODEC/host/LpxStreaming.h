@@ -1,6 +1,7 @@
 #pragma once
 #include "LpxAdaptiveController.h"
 #include "LpxPacking.h"
+#include "LpxEncodingPolicy.h"
 #include <memory>
 
 namespace lpx {
@@ -12,6 +13,7 @@ struct StreamingChunk {
 class StreamingEncoder {
     uint32_t total,done=0,measured=0;
     int profile,rate,allowance,calls,header,error=0;
+    EncodingPolicy policy;
     bool normalize,planned=false,ended=false,candidateLive=true,accuracy=false;
     Stream controlContext,candidateContext;
     V9PacketWriter controlWriter{false},candidateWriter{false};

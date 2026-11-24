@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createEncoder } from '../lpx/encoder.js';
 import { createDecoder } from '../lpx/codec.js';
 import { readRecordedBuildFile } from './helpers/recorded-build-source.mjs';
+import { encodingPolicy, bitrateBudget } from '../lpx/encoding-policy.js';
 
 // Pin the pre-refactoring production artifact, independently of current builds.
 const baselineRevision = 'b428477f5e4f39797dc7c91b53c01469d7b4944f';
@@ -11,6 +12,20 @@ const baseline = await createEncoder(readRecordedBuildFile(baselineRevision, 'we
 const scalar = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive.wasm', import.meta.url)));
 const simd = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive-simd.wasm', import.meta.url)));
 const decode = await createDecoder(readFileSync(new URL('../lpx/decoder.wasm', import.meta.url)));
+
+test('precision, strict bitrate and legacy control budgets remain distinct', () => {
+  for(const level of [3,4,6,8]) {
+    const accuracy=encodingPolicy(level,true);
+    assert.equal(accuracy.accuracyLevel,level);assert.equal(accuracy.targetBitrate,0);
+    assert.equal(accuracy.budgetKind,'accuracy-allocation');
+  }
+  for(const kbps of [3,8]) {
+    const strict=encodingPolicy(kbps);
+    assert.equal(strict.accuracyLevel,0);assert.equal(strict.budgetKind,'complete-v9');
+    assert.equal(bitrateBudget(65537,strict,8000),Math.floor(65537*kbps/64));
+  }
+  for(const profile of [4,6])assert.equal(encodingPolicy(profile).budgetKind,'v5-control');
+});
 
 test('shared encoder refactoring retains complete accuracy bytes and PCM', () => {
   const signals = [new Int16Array(41),

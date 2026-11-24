@@ -1,5 +1,6 @@
 import { MAX_SAMPLES } from './codec.js?v=20261123-precision-input-v2';
 import { createStreamSession } from './streaming.js?v=20261123-precision-input-v2';
+import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-unification';
 
 export async function createEncoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);
@@ -18,7 +19,8 @@ export async function createEncoder(binary) {
     const allowance = options.sizeAllowancePercent ?? 0;
     if (!Number.isInteger(allowance) || allowance < 0 || allowance > 100) throw new Error('Некорректное ограничение размера.');
     const accuracy=options.accuracy===true;
-    const bitratePreset = !accuracy && (profile === 3 || profile === 8);
+    const policy = encodingPolicy(profile, accuracy);
+    const bitratePreset = policy.targetBitrate !== 0;
     if(accuracy&&(!api.enc_accuracy||allowance!==0))throw Error('Уровни точности требуют актуального энкодера и не используют допуск размера.');
     if (bitratePreset && (sampleRate !== 8000 || allowance !== 0)) throw new Error('Профили 3 и 8 кбит/с используют 8 кГц и точный предел размера без допуска.');
     if (bitratePreset && !api.enc_bitrate) throw new Error('Обновите страницу: этот кодировщик не поддерживает профили 3 и 8 кбит/с.');
@@ -41,7 +43,7 @@ export async function createEncoder(binary) {
         ? api.enc_bitrate_level(pcm.length, profile, sampleRate, 4, targetLufs, maxGainDb)
         : api.enc_bitrate(pcm.length, profile, sampleRate, 0, 4);
       if (size < 13) throw new Error(`Не удалось уложить полный поток в ${profile} кбит/с (${size}).`);
-      const cap = Math.floor(pcm.length * profile * 1000 / (8 * sampleRate));
+      const cap = bitrateBudget(pcm.length, policy, sampleRate);
       if (size > cap) throw new Error('Кодировщик превысил предел размера полного файла.');
       const bytes = new Uint8Array(api.memory.buffer, api.enc_adaptive_output(), size).slice();
       if (normalization === 'loudness') encode.loudness = loudnessReport();
