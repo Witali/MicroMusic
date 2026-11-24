@@ -17,11 +17,13 @@ records their measured scope.
 
 ## Seed reuse and context lifetime
 
-`encodeAccuracy` passes its original, unmodified fixed-pre/.97 seed into the
+`encodeAccuracy` passes its original admissible fixed-pre/.97 seed into the
 adaptive controller. This seed belongs to the exact prepared PCM and prefix;
 level preparation must not run again. Canonicalization/correction proposals do
 not replace the protected original seed. Seed candidates, first-winner ties,
 integer synthesis and decoder verification retain their original semantics.
+Accuracy-mode safety recovery may change an unsafe seed before it becomes
+the protected control; see [the shared recovery contract](ACCURACY.md).
 
 The C ABI uses one default `SeedEncoder`. C++ host callers can own contexts and
 pass one to `fitSeed(..., prefix, &encoder)` after reserving its input size.

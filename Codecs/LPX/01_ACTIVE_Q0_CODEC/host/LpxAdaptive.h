@@ -31,6 +31,9 @@ std::vector<Coefficients> coefficientTrace(const Stream& stream);
 Pcm advance(const Stream& stream, const std::vector<Coefficients>& co, int start,
             int end, SynthesisState& state, std::vector<int>* lpc = nullptr);
 Pcm render(const Stream& stream);
+bool stableLpcStream(const Stream& stream);
+bool safeSynthesisLevel(const Stream& stream,const Pcm& reference,const Pcm& actual,int* firstBad=nullptr);
+bool safeSynthesisSpectrum(const Pcm& reference,const Pcm& actual,int* firstBad=nullptr);
 Stream canonicalAccuracy(const Stream& stream);
 double emphasizedAt(const Stream& stream,const Pcm& reference,int at);
 double residualBefore(const Stream& stream,const Pcm& reference,int at);
@@ -40,6 +43,10 @@ int spectralBits(const Stream& stream);
 int compactBytes(const Stream& stream);
 int extraCapacity(const Stream& stream, int maxBytes, int slots = -1);
 std::vector<uint8_t> packV9(const Stream& stream);
+// Unsafe rejects a quantized synthesis proposal; Failure retains allocation,
+// argument and backend failures. Optional accuracy proposals may skip only Unsafe.
+enum class SeedFitStatus { Success, Unsafe, Failure };
 Stream fitSeed(const Pcm& reference, int profile, int rate, int pre, bool zeroScale,
-               double bandwidth = .97,const Stream* context = nullptr,SeedEncoder* encoder=nullptr);
+               double bandwidth = .97,const Stream* context = nullptr,SeedEncoder* encoder=nullptr,
+               SeedFitStatus* status=nullptr);
 }

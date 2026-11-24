@@ -280,3 +280,27 @@ with strict floating-point contraction disabled. SIMD128 remains explicitly
 selected; the same C++ fallback is available without it. No handwritten assembly
 is introduced. [Paired results and reproduction](../../Codecs/LPX/research/encoder-unification-2026-11-24/README.md)
 separate synthetic host measurements from MCU timing and listening claims.
+
+## Checking quantized and switched LPC synthesis
+
+The portable [Schur guard](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcStability.h)
+checks the actual signed Q12 polynomial after coefficient rounding and every
+linear interpolation step. Stable ordered LSF endpoints alone are insufficient.
+The standalone [C++ example](examples/lpx-lpc-stability.cpp) uses the production
+header; its [independent Python check](examples/lpx-lpc-stability.py) compares
+30,015 synthetic vectors with NumPy roots and resolves near-unit cases with
+exact integer Schur recursion. Generated inputs stay under ignored `build/`.
+
+This is portable C++11 on wasm32 (Emscripten6.0.12/Clang24, no imports,
+`-ffp-contract=off`) and native C++17, without ISA extensions or handwritten
+assembly. Fixed stack arrays avoid allocations. The benefit is correctness;
+there is no speed claim. Scalar C++ is always available with SIMD/CUDA builds.
+
+A frozen-polynomial check does not prove stability of changing integer IIRs.
+LPX also renders from the original carried state and checks source-relative
+energy/clipping in local blocks. Failed seeds retry localized lower-order
+analysis through the same ten-LSF syntax, then bounded regularization. Never
+splice reset waveforms or globally flatten every spectrum to hide oscillation:
+independent partial/envelope/tail controls must also pass. This does not certify
+arbitrary audio or establish interrupt-active MCU timing. Reproduction and
+quality/cost evidence are in the [common-timbre report](../../Codecs/LPX/research/common-timbre-2026-11-24/README.md).

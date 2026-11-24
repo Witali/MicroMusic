@@ -4,7 +4,12 @@
 #include "LpxSeed.h"
 #include "LpxSpectrumQuantizer.h"
 #include "LpxEncoderContext.h"
+#include "LpxLpcStability.h"
+#include "LpxQuality.h"
+#include "LpxFullBand.h"
 #include <algorithm>
+#include <cmath>
+#include <memory>
 #include <string.h>
 
 namespace lpx {
@@ -79,6 +84,70 @@ Pcm advance(const Stream& s, const std::vector<Coefficients>& co, int start, int
     return output;
 }
 Pcm render(const Stream& s) { auto co = coefficientTrace(s); auto state=s.initial; return advance(s,co,0,s.samples,state); }
+bool stableLpcStream(const Stream& s) {
+    const auto co=coefficientTrace(s);
+    for(const auto& frame:co)if(!lpxStableLpc(frame.data()))return false;
+    return !co.empty();
+}
+bool safeSynthesisLevel(const Stream& s,const Pcm& reference,const Pcm& actual,int* firstBad) {
+    if(reference.empty()||reference.size()!=actual.size())return false;
+    // Catastrophic growth only, with fixed PCM units and no fitted gain/delay.
+    // A frozen-polynomial Schur test cannot certify the changing integer IIR.
+    auto input=[&](int at)->int {
+        if(at<0)return s.previousInput[172+at];
+        return at<int(reference.size())?reference[at]:s.lookahead[at-reference.size()];
+    };
+    for(int at=0;at<int(reference.size());at+=160) {
+        const int end=std::min(int(reference.size()),at+160),n=end-at;
+        const int begin=std::max(s.continuation?-160:0,at-160);
+        const int stop=std::min(int(reference.size()+s.lookahead.size()),end+160),m=stop-begin;
+        uint64_t source=0,output=0;int originalClips=0,clips=0;
+        for(int i=begin;i<stop;++i){int64_t x=input(i);source+=x*x;}
+        for(int i=at;i<end;++i) {
+            const int64_t x=reference[i],y=actual[i];output+=y*y;
+            originalClips+=std::abs(x)>=32766;clips+=std::abs(y)>=32766;
+        }
+        source=std::max(source,uint64_t(m)*64*64);
+        if(output*uint64_t(m)>16*source*n || (clips>originalClips&&output*uint64_t(m)>4*source*n)) {
+            if(firstBad)*firstBad=at;return false;
+        }
+    }
+    return true;
+}
+bool safeSynthesisSpectrum(const Pcm& reference,const Pcm& actual,int* firstBad) {
+    if(reference.empty()||reference.size()!=actual.size())return false;
+    // Detect source energy replaced by unrelated bands, independently of gain
+    // and phase. Broad bands and a generous joint gate tolerate ordinary lossy
+    // noise while catching moderate-level off-band oscillation as well.
+    double window[512];
+    for(int i=0;i<512;++i)window[i]=.5-.5*std::cos(6.28318530717958647692*i/511);
+    for(int start=0;start+512<=int(reference.size());start+=256) {
+        double source[512],output[512],a[257],b[257],x[32]={},y[32]={};
+        double energy=0;
+        for(int i=0;i<512;++i) {
+            energy+=double(reference[start+i])*reference[start+i];
+            source[i]=reference[start+i]*window[i];output[i]=actual[start+i]*window[i];
+        }
+        if(energy<=512.*64*64)continue;
+        periodogram(source,512,a,512);periodogram(output,512,b,512);
+        double totalSource=0,totalOutput=0;
+        for(int k=0;k<=256;++k) {
+            const int band=std::min(31,k/8);const double weight=k==0||k==256?1:2;
+            x[band]+=a[k]*weight;y[band]+=b[k]*weight;
+            totalSource+=a[k]*weight;totalOutput+=b[k]*weight;
+        }
+        if(totalSource<=0||totalOutput<=0)continue;
+        double overlap=0,unsupported=0;
+        for(int k=0;k<32;++k) {
+            overlap+=std::sqrt(x[k]/totalSource*y[k]/totalOutput);
+            if(x[k]<.005*totalSource)unsupported+=y[k];
+        }
+        if(1-overlap>.5&&unsupported>.35*totalOutput) {
+            if(firstBad)*firstBad=start;return false;
+        }
+    }
+    return true;
+}
 double emphasizedAt(const Stream& s,const Pcm& reference,int at) {
     auto sample=[&](int i)->double {
         if(i<0)return s.continuation && i>=-172?s.previousInput[172+i]:0;
@@ -106,8 +175,13 @@ Pcm pwm(const Pcm& input) {
     }
     return out;
 }
-Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,double bandwidth,const Stream* context,SeedEncoder* encoder) {
+Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,double bandwidth,const Stream* context,SeedEncoder* encoder,SeedFitStatus* status) {
+    if(status)*status=SeedFitStatus::Failure;
     auto& kernel=encoder?*encoder:defaultSeedEncoder();
+    auto rejected=[&]() {
+        if(status && kernel.failure==-8)*status=SeedFitStatus::Unsafe;
+        return Stream{};
+    };
     if(reference.size()>kernel.reservedSamples)return Stream{};
     Stream s=context?*context:Stream{};s.samples=reference.size();s.profile=profile;s.rate=rate;s.pre=pre;
     // Workspace was reserved by the public entry point before any adaptive
@@ -128,15 +202,77 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
         const int shift=profile==4?5:4;
         for(int k=0;k<10;++k)history.previousVector[k]=(s.previousSpectrum[k]<<shift)+(1<<(shift-1));
     }
-    int blocks=kernel.seedBegin(s.samples,profile,rate,pre,zeroScale,bandwidth,context?&history:nullptr);
-    if(blocks<1)return Stream{};
-    for(int i=0;i<blocks;++i)if(kernel.step()<0)return Stream{};
-    auto view=kernel.view();int frames=(s.samples+319)/320;
-    if(!view.valid)return Stream{};
-    s.spectra.resize(frames);s.parameters.resize(frames*2);s.pulses.resize(frames*16);s.extras.assign(frames*8,Pulse{{-1,0}});
-    for(int f=0;f<frames;++f)for(int k=0;k<10;++k)s.spectra[f][k]=view.spectra[f][k];
-    for(int b=0;b<frames*2;++b)for(int k=0;k<3;++k)s.parameters[b][k]=view.params[b][k];
-    for(int p=0;p<frames*16;++p)for(int k=0;k<2;++k)s.pulses[p][k]=view.pulses[p][k];
-    return s;
+    const int frames=(s.samples+319)/320;
+    std::vector<uint8_t> safety(s.accuracy?frames:0,0);
+    std::vector<uint8_t> orders(s.accuracy?frames:0,10);
+    Stream bestRecovery;double bestRecoveryScore=HUGE_VAL;
+    std::unique_ptr<FullBandContext> recoveryQuality;
+    bool expandedRecovery=false;int recoveryPass=0;
+    for(int attempt=0,fits=0;fits<(s.accuracy?32:1);++attempt,++fits) {
+        history.spectralSafety=s.accuracy?safety.data():nullptr;
+        history.analysisOrder=s.accuracy?orders.data():nullptr;
+        // The same safety recovery for every accuracy alphabet: retain the
+        // ordinary analysis when safe, otherwise retry the unexpanded stable
+        // predictor before sacrificing spectral detail through regularization.
+        const double analysis=attempt>=5?1.0:bandwidth;
+        const int blocks=kernel.seedBegin(s.samples,profile,rate,pre,zeroScale,analysis,context?&history:nullptr);
+        if(blocks<1)return rejected();
+        for(int i=0;i<blocks;++i)if(kernel.step()<0)return rejected();
+        const auto view=kernel.view();if(!view.valid)return rejected();
+        s.spectra.resize(frames);s.parameters.resize(frames*2);s.pulses.resize(frames*16);s.extras.assign(frames*8,Pulse{{-1,0}});
+        for(int f=0;f<frames;++f)for(int k=0;k<10;++k)s.spectra[f][k]=view.spectra[f][k];
+        for(int b=0;b<frames*2;++b)for(int k=0;k<3;++k)s.parameters[b][k]=view.params[b][k];
+        for(int p=0;p<frames*16;++p)for(int k=0;k<2;++k)s.pulses[p][k]=view.pulses[p][k];
+        if(!s.accuracy) {if(status)*status=SeedFitStatus::Success;return s;}
+        int bad=0;
+        const auto output=render(s);
+        const bool safe=safeSynthesisLevel(s,reference,output,&bad)&&safeSynthesisSpectrum(reference,output,&bad);
+        if(safe) {
+            if(attempt==0||attempt>=5) {if(status)*status=SeedFitStatus::Success;return s;}
+            // A two-pole recovery can retain a single ring yet lose another
+            // legal partial. Compare every bounded model-order alternative,
+            // with actual-rate magnitude and temporal errors, before choosing.
+            if(!recoveryQuality)recoveryQuality.reset(new FullBandContext(reference,rate));
+            const auto measured=recoveryQuality->measure(output);
+            const double score=measured.balancedError[0]+measured.balancedTemporalError[0]
+                +measured.balancedError[1]+measured.balancedTemporalError[1];
+            if(score<bestRecoveryScore) {bestRecovery=s;bestRecoveryScore=score;}
+        }
+        if(attempt<4) {
+            // A simple resonator must not be forced into a poorly quantized
+            // high-order model. Change only the source-error neighborhood;
+            // retain the same ten-LSF syntax and original carried state.
+            const int nextOrder=2*(attempt+1);
+            for(auto& order:orders)if(order!=10)order=nextOrder;
+            if(!safe)for(int f=std::max(0,bad/320-8);f<=std::min(frames-1,bad/320+8);++f) {
+                if(attempt>0&&orders[f]==10)expandedRecovery=true;
+                orders[f]=nextOrder;
+            }
+            continue;
+        }
+        if(attempt==4) {
+            if(!safe)for(int f=std::max(0,bad/320-8);f<=std::min(frames-1,bad/320+8);++f) {
+                if(orders[f]==10)expandedRecovery=true;
+                orders[f]=8;
+            }
+            // Enlarging the source-error region changes every model-order
+            // candidate. Revisit the complete bounded set on the enlarged
+            // mask, rather than retaining an obsolete rejection of order2.
+            if(expandedRecovery&&++recoveryPass<3) {
+                expandedRecovery=false;
+                for(auto& order:orders)if(order!=10)order=2;
+                attempt=0;continue;
+            }
+            if(bestRecovery.samples) {if(status)*status=SeedFitStatus::Success;return bestRecovery;}
+            std::fill(orders.begin(),orders.end(),10);continue;
+        }
+        // Replay from the exact original carried state; never splice a reset
+        // waveform. First localize repairs around the first growth transition.
+        for(auto& strength:safety)if(strength)strength=std::min(4,int(strength)+1);
+        for(int f=std::max(0,bad/320-8);f<=std::min(frames-1,bad/320+2);++f)
+            if(!safety[f])safety[f]=1;
+    }
+    if(status)*status=SeedFitStatus::Unsafe;
+    return Stream{};
 }
 }

@@ -20,13 +20,25 @@ int accuracyBudget(int samples,int level,int originalBytes){
     return std::max(originalBytes,v9HeaderBytes(samples)+int((int64_t((samples+319)/320)*p.detailBitsPerFrame+7)/8));
 }
 Stream refineAccuracyCorrections(const Stream& input,const Pcm& reference,int budget){
-    Stream work=input;auto co=coefficientTrace(work);auto state=work.initial;
+    Stream work=input;
+    const bool hasDetails=std::any_of(work.extras.begin(),work.extras.end(),[](const Pulse&p){return p[1]!=0;});
+    if(!hasDetails) {
+        // Low budgets use this same operator, but cannot pay to activate a
+        // detail layer. Avoid expensive proposals that can never fit.
+        if(work.extras.empty())return input;
+        const auto old=work.extras[0];work.extras[0]=Pulse{{0,1}};
+        const bool fits=int(packV9(work).size())<=budget;work.extras[0]=old;
+        if(!fits)return input;
+    }
+    auto co=coefficientTrace(work);auto state=work.initial;
     struct Proposal{int index,bits;uint64_t gain;Pulse value;};std::vector<Proposal> proposals;
     for(int at=0;at<work.samples;at+=40){
         int stop=std::min(work.samples,at+160),index=at/40,valid=std::min(40,work.samples-at);
         auto initial=state;auto baseline=advance(work,co,at,stop,initial);uint64_t best=sse(reference,baseline,at);Pulse chosen=work.extras[index];
         int peak=0;for(int i=1;i<valid;++i)if(std::abs(int(reference[at+i])-int(baseline[i]))>std::abs(int(reference[at+peak])-int(baseline[peak])))peak=i;
-        for(int pos=std::max(0,peak-1);pos<=std::min(valid-1,peak+1);++pos)for(int amp=-8;amp<=7;++amp)if(amp){
+        // Integer SSE has an exact zero lower bound. Preserve the incumbent
+        // and its usual state advance without evaluating impossible gains.
+        if(best)for(int pos=std::max(0,peak-1);pos<=std::min(valid-1,peak+1);++pos)for(int amp=-8;amp<=7;++amp)if(amp){
             work.extras[index]=Pulse{{pos,amp}};auto trialState=state;auto pcm=advance(work,co,at,stop,trialState);uint64_t loss=sse(reference,pcm,at);
             if(loss<best){best=loss;chosen=work.extras[index];}
         }
@@ -58,9 +70,9 @@ Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& re
     report=AdaptiveReport{};const auto policy=accuracyPolicy(level);
     if(!policy.level||reference.empty()||(rate!=8000&&rate!=12000&&rate!=16000)||calls<0||calls>4){report.error=-1;return Stream{};}
     Stream context=prefix?*prefix:Stream{};context.accuracy=level;
-    // One policy drives the common search. Windowed P4/P6 preserve their
-    // existing no-extras syntax; P8 carries explicit correction parameters.
-    context.allowExtras=policy.corrections||(!prefix&&(level==4||level==6));
+    // One base model and one detail operator for every level and transport.
+    // The exact bit budget decides how many ranked residual symbols survive.
+    context.allowExtras=true;
     const int pre=context.continuation?context.pre:13926;
     const Stream seed=fitSeed(reference,policy.wireProfile,rate,pre,false,.97,&context);
     Stream control=seed;
@@ -68,13 +80,22 @@ Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& re
     control=canonicalAccuracy(control);
     const auto originalControl=control;
     const int budget=accuracyBudget(reference.size(),level,packV9(control).size());
-    if(policy.corrections){auto corrected=refineAccuracyCorrections(control,reference,budget);
-        if(profileQualityAdmission(reference,render(control),render(corrected),rate,true,true))control=std::move(corrected);}
+    auto corrected=refineAccuracyCorrections(control,reference,budget);
+    if(packV9(corrected)!=packV9(control)) {
+        const auto originalPcm=render(control),detailPcm=render(corrected);
+        if(safeSynthesisLevel(corrected,reference,detailPcm)&&safeSynthesisSpectrum(reference,detailPcm)
+            &&profileQualityAdmission(reference,originalPcm,detailPcm,rate,true,true))control=std::move(corrected);
+    }
     if(!calls)return control;
     // Internal controller accounting is v5; independently enforce final V9
     // bytes below, including its header, flags, repeats and padding.
     CandidateEvaluation evaluation(reference,rate,true);
-    Stream candidate=adaptiveEncode(reference,policy.wireProfile,rate,report,false,budget+9,calls,true,true,0,false,&context,&seed,&evaluation);
+    Stream candidate=adaptiveEncode(reference,policy.wireProfile,rate,report,false,std::max(budget+9,compactBytes(seed)),calls,true,true,0,false,&context,&seed,&evaluation);
+    if(report.error==-6) {
+        // The complete common control already fits this profile. Internal
+        // legacy-v5 proposal accounting cannot invalidate that legal floor.
+        report.error=0;report.cap=budget;report.selected=-1;return control;
+    }
     if(report.error)return Stream{};
     candidate=canonicalAccuracy(candidate);
     // Retain the complete original admissible quantized control. All levels

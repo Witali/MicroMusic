@@ -1,0 +1,3305 @@
+{
+  "baselineRevision": "f1f9a0d9fc76fdc52f5787b54f2ba5471bd3db8c",
+  "encoderBaselineSha256": "cbf158e2221301c1154ef7d3f736c1830832a8ae08cc02cad90cbb1c4cefd5c6",
+  "encoderCurrentSha256": "1df1d89aae04349b260a0c8d5409a44c7746702d55e63b87d287f96e5e4e7cdd",
+  "decoderSha256": "03099fd8b6c4b41911e746151483a1598ff183351eb16abfcb0b20e2bf76fa6d",
+  "method": "7 deterministic synthetic families x 3 actual rates x 4 levels; scalar accuracy, calls=0. Three warm calls per case, alternating old/current order. Same-rate metrics, no gain or delay fitting.",
+  "summary": {
+    "cases": 84,
+    "baselineBounded": 65,
+    "currentBounded": 84,
+    "substantialRegressions": [],
+    "totals": {
+      "old": {
+        "bytes": 29742,
+        "sumMedianEncodeMs": 4254.480100000011,
+        "stableMeanSpectralError": 0.08566288739088523,
+        "stableMeanEnvelopeError": 0.056767461736287494
+      },
+      "current": {
+        "bytes": 30308,
+        "sumMedianEncodeMs": 8109.678199999997,
+        "stableMeanSpectralError": 0.07871881193367934,
+        "stableMeanEnvelopeError": 0.05135106897816732
+      }
+    }
+  },
+  "rows": [
+    {
+      "name": "inharmonic-bell",
+      "rate": 8000,
+      "level": 3,
+      "samples": 3840,
+      "sourceTailRms": 882.8975479682415,
+      "old": {
+        "bytes": 177,
+        "encodeMillisecondsAll": [
+          6.805099999999982,
+          5.919799999999981,
+          6.365400000000022
+        ],
+        "spectralShapeError": 0.1341126882811175,
+        "envelopeError": 0.03330163522903637,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.3999647820699374,
+        "energyRatio": 0.6877399966424314,
+        "tailRms": 716.8308697547375,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 177,
+        "encodeMillisecondsAll": [
+          40.36410000000001,
+          38.30600000000001,
+          33.11389999999997
+        ],
+        "spectralShapeError": 0.1341126882811175,
+        "envelopeError": 0.03330163522903637,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.3999647820699374,
+        "energyRatio": 0.6877399966424314,
+        "tailRms": 716.8308697547375,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 8000,
+      "level": 4,
+      "samples": 3840,
+      "sourceTailRms": 882.8975479682415,
+      "old": {
+        "bytes": 187,
+        "encodeMillisecondsAll": [
+          7.315399999999954,
+          5.907700000000034,
+          6.307999999999993
+        ],
+        "spectralShapeError": 0.07936835233677873,
+        "envelopeError": 0.02419797596655473,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.5783756001859085,
+        "energyRatio": 0.7832074190226481,
+        "tailRms": 781.794444957667,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 187,
+        "encodeMillisecondsAll": [
+          33.61869999999999,
+          35.27769999999998,
+          37.39359999999999
+        ],
+        "spectralShapeError": 0.07936835233677873,
+        "envelopeError": 0.02419797596655473,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.5783756001859085,
+        "energyRatio": 0.7832074190226481,
+        "tailRms": 781.794444957667,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 8000,
+      "level": 6,
+      "samples": 3840,
+      "sourceTailRms": 882.8975479682415,
+      "old": {
+        "bytes": 282,
+        "encodeMillisecondsAll": [
+          47.55850000000004,
+          47.141200000000026,
+          53.082700000000045
+        ],
+        "spectralShapeError": 0.06217698448161402,
+        "envelopeError": 0.04271439644526557,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.5594929639710166,
+        "energyRatio": 0.6573681209337381,
+        "tailRms": 731.3924419671471,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 282,
+        "encodeMillisecondsAll": [
+          84.40160000000003,
+          73.9882,
+          80.6703
+        ],
+        "spectralShapeError": 0.06217698448161402,
+        "envelopeError": 0.04271439644526557,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.5594929639710166,
+        "energyRatio": 0.6573681209337381,
+        "tailRms": 731.3924419671471,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 8000,
+      "level": 8,
+      "samples": 3840,
+      "sourceTailRms": 882.8975479682415,
+      "old": {
+        "bytes": 282,
+        "encodeMillisecondsAll": [
+          81.9550999999999,
+          78.87350000000015,
+          91.65409999999997
+        ],
+        "spectralShapeError": 0.06217698448161402,
+        "envelopeError": 0.04271439644526557,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.5594929639710166,
+        "energyRatio": 0.6573681209337381,
+        "tailRms": 731.3924419671471,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 282,
+        "encodeMillisecondsAll": [
+          73.94399999999996,
+          75.40060000000005,
+          73.53010000000006
+        ],
+        "spectralShapeError": 0.06217698448161402,
+        "envelopeError": 0.04271439644526557,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.5594929639710166,
+        "energyRatio": 0.6573681209337381,
+        "tailRms": 731.3924419671471,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 8000,
+      "level": 3,
+      "samples": 3200,
+      "sourceTailRms": 446.6845867052052,
+      "old": {
+        "bytes": 146,
+        "encodeMillisecondsAll": [
+          4.738900000000058,
+          5.235899999999901,
+          4.109000000000151
+        ],
+        "spectralShapeError": 0.634193406401229,
+        "envelopeError": 0.17284890453246887,
+        "sourcePartials": 3,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 0.1089658420708168,
+        "energyRatio": 0.3551141417682026,
+        "tailRms": 346.506421296922,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 159,
+        "encodeMillisecondsAll": [
+          23.349899999999934,
+          79.38990000000013,
+          88.84960000000001
+        ],
+        "spectralShapeError": 0.18635221659903145,
+        "envelopeError": 0.0417226964669399,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.4826983872534268,
+        "energyRatio": 0.7286879394761728,
+        "tailRms": 448.74261553812784,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 8000,
+      "level": 4,
+      "samples": 3200,
+      "sourceTailRms": 446.6845867052052,
+      "old": {
+        "bytes": 161,
+        "encodeMillisecondsAll": [
+          10.465400000000045,
+          6.901299999999992,
+          5.439499999999953
+        ],
+        "spectralShapeError": 0.07504327264298868,
+        "envelopeError": 0.05001800361204332,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.5938526833465803,
+        "energyRatio": 0.6975472007592666,
+        "tailRms": 419.5472857736062,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 161,
+        "encodeMillisecondsAll": [
+          38.085199999999986,
+          57.57020000000011,
+          53.26610000000005
+        ],
+        "spectralShapeError": 0.07504327264298868,
+        "envelopeError": 0.05001800361204332,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.5938526833465803,
+        "energyRatio": 0.6975472007592666,
+        "tailRms": 419.5472857736062,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 8000,
+      "level": 6,
+      "samples": 3200,
+      "sourceTailRms": 446.6845867052052,
+      "old": {
+        "bytes": 247,
+        "encodeMillisecondsAll": [
+          25.371200000000044,
+          22.61180000000013,
+          24.298700000000053
+        ],
+        "spectralShapeError": 0.03851841743327106,
+        "envelopeError": 0.021545068191720747,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7673207277341084,
+        "energyRatio": 0.7700759255557815,
+        "tailRms": 408.1481471230759,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 247,
+        "encodeMillisecondsAll": [
+          37.48109999999997,
+          41.34349999999995,
+          41.425899999999956
+        ],
+        "spectralShapeError": 0.03851841743327106,
+        "envelopeError": 0.021545068191720747,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7673207277341084,
+        "energyRatio": 0.7700759255557815,
+        "tailRms": 408.1481471230759,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 8000,
+      "level": 8,
+      "samples": 3200,
+      "sourceTailRms": 446.6845867052052,
+      "old": {
+        "bytes": 247,
+        "encodeMillisecondsAll": [
+          46.147399999999834,
+          49.67650000000003,
+          48.181800000000294
+        ],
+        "spectralShapeError": 0.03851841743327106,
+        "envelopeError": 0.021545068191720747,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7673207277341084,
+        "energyRatio": 0.7700759255557815,
+        "tailRms": 408.1481471230759,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 247,
+        "encodeMillisecondsAll": [
+          43.08999999999992,
+          42.837600000000066,
+          45.33029999999985
+        ],
+        "spectralShapeError": 0.03851841743327106,
+        "envelopeError": 0.021545068191720747,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7673207277341084,
+        "energyRatio": 0.7700759255557815,
+        "tailRms": 408.1481471230759,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 8000,
+      "level": 3,
+      "samples": 3200,
+      "sourceTailRms": 2699.8673205826244,
+      "old": {
+        "bytes": 159,
+        "encodeMillisecondsAll": [
+          5.910499999999956,
+          6.824699999999666,
+          5.947000000000116
+        ],
+        "spectralShapeError": 0.08939149768039913,
+        "envelopeError": 0.00972992446048423,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7423226913551046,
+        "energyRatio": 0.8469498596661844,
+        "tailRms": 2422.607477491969,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 159,
+        "encodeMillisecondsAll": [
+          6.362999999999829,
+          6.501199999999699,
+          6.774399999999787
+        ],
+        "spectralShapeError": 0.08939149768039913,
+        "envelopeError": 0.00972992446048423,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7423226913551046,
+        "energyRatio": 0.8469498596661844,
+        "tailRms": 2422.607477491969,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 8000,
+      "level": 4,
+      "samples": 3200,
+      "sourceTailRms": 2699.8673205826244,
+      "old": {
+        "bytes": 176,
+        "encodeMillisecondsAll": [
+          7.6305999999999585,
+          7.099700000000212,
+          7.7664999999997235
+        ],
+        "spectralShapeError": 0.11553284579480239,
+        "envelopeError": 0.02768395285324364,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6833162809361165,
+        "energyRatio": 0.7946706203998333,
+        "tailRms": 2160.916070790349,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 176,
+        "encodeMillisecondsAll": [
+          31.32410000000027,
+          31.753600000000006,
+          40.63169999999991
+        ],
+        "spectralShapeError": 0.11553284579480239,
+        "envelopeError": 0.02768395285324364,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6833162809361165,
+        "energyRatio": 0.7946706203998333,
+        "tailRms": 2160.916070790349,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 8000,
+      "level": 6,
+      "samples": 3200,
+      "sourceTailRms": 2699.8673205826244,
+      "old": {
+        "bytes": 257,
+        "encodeMillisecondsAll": [
+          39.96199999999999,
+          41.63979999999992,
+          43.5586000000003
+        ],
+        "spectralShapeError": 0.055925495024209404,
+        "envelopeError": 0.02492661143966115,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7705688031675977,
+        "energyRatio": 0.752489405414143,
+        "tailRms": 2334.311088951085,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 257,
+        "encodeMillisecondsAll": [
+          73.1253999999999,
+          77.76749999999993,
+          64.39030000000002
+        ],
+        "spectralShapeError": 0.055925495024209404,
+        "envelopeError": 0.02492661143966115,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7705688031675977,
+        "energyRatio": 0.752489405414143,
+        "tailRms": 2334.311088951085,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 8000,
+      "level": 8,
+      "samples": 3200,
+      "sourceTailRms": 2699.8673205826244,
+      "old": {
+        "bytes": 257,
+        "encodeMillisecondsAll": [
+          57.44939999999997,
+          64.02570000000014,
+          59.08010000000013
+        ],
+        "spectralShapeError": 0.055925495024209404,
+        "envelopeError": 0.02492661143966115,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7705688031675977,
+        "energyRatio": 0.752489405414143,
+        "tailRms": 2334.311088951085,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 257,
+        "encodeMillisecondsAll": [
+          65.91200000000026,
+          63.07470000000012,
+          63.52019999999993
+        ],
+        "spectralShapeError": 0.055925495024209404,
+        "envelopeError": 0.02492661143966115,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7705688031675977,
+        "energyRatio": 0.752489405414143,
+        "tailRms": 2334.311088951085,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 8000,
+      "level": 3,
+      "samples": 3200,
+      "sourceTailRms": 90.02877317835672,
+      "old": {
+        "bytes": 152,
+        "encodeMillisecondsAll": [
+          5.7630999999996675,
+          5.819899999999961,
+          4.675600000000031
+        ],
+        "spectralShapeError": 0.08806802695222644,
+        "envelopeError": 0.0989226926294043,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.5090253642275336,
+        "tailRms": 67.32273018825069,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 152,
+        "encodeMillisecondsAll": [
+          32.917199999999866,
+          32.63980000000038,
+          29.66319999999996
+        ],
+        "spectralShapeError": 0.08806802695222644,
+        "envelopeError": 0.0989226926294043,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.5090253642275336,
+        "tailRms": 67.32273018825069,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 8000,
+      "level": 4,
+      "samples": 3200,
+      "sourceTailRms": 90.02877317835672,
+      "old": {
+        "bytes": 175,
+        "encodeMillisecondsAll": [
+          8.050400000000081,
+          7.921599999999671,
+          6.952800000000025
+        ],
+        "spectralShapeError": 0.08526315152832212,
+        "envelopeError": 0.24426590332174228,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.26228155909356654,
+        "tailRms": 59.498025177311554,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 212,
+        "encodeMillisecondsAll": [
+          34.7492000000002,
+          31.701600000000326,
+          32.20820000000003
+        ],
+        "spectralShapeError": 0.06900850076214617,
+        "envelopeError": 0.18303728055587726,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.33266334353899013,
+        "tailRms": 59.61384067479632,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 8000,
+      "level": 6,
+      "samples": 3200,
+      "sourceTailRms": 90.02877317835672,
+      "old": {
+        "bytes": 251,
+        "encodeMillisecondsAll": [
+          52.61020000000008,
+          56.74339999999984,
+          51.640899999999874
+        ],
+        "spectralShapeError": 0.062125026458509695,
+        "envelopeError": 0.2423141271575035,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.26076060259398115,
+        "tailRms": 52.8433534136508,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 251,
+        "encodeMillisecondsAll": [
+          75.30529999999999,
+          67.20989999999983,
+          70.66130000000021
+        ],
+        "spectralShapeError": 0.062125026458509695,
+        "envelopeError": 0.2423141271575035,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.26076060259398115,
+        "tailRms": 52.8433534136508,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 8000,
+      "level": 8,
+      "samples": 3200,
+      "sourceTailRms": 90.02877317835672,
+      "old": {
+        "bytes": 251,
+        "encodeMillisecondsAll": [
+          66.5925000000002,
+          65.89339999999993,
+          63.34140000000025
+        ],
+        "spectralShapeError": 0.062125026458509695,
+        "envelopeError": 0.2423141271575035,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.26076060259398115,
+        "tailRms": 52.8433534136508,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 251,
+        "encodeMillisecondsAll": [
+          68.12940000000026,
+          68.21579999999994,
+          71.98769999999968
+        ],
+        "spectralShapeError": 0.062125026458509695,
+        "envelopeError": 0.2423141271575035,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.26076060259398115,
+        "tailRms": 52.8433534136508,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 8000,
+      "level": 3,
+      "samples": 3200,
+      "sourceTailRms": 1728.3761699930951,
+      "old": {
+        "bytes": 159,
+        "encodeMillisecondsAll": [
+          5.547499999999673,
+          5.952299999999923,
+          4.935800000000199
+        ],
+        "spectralShapeError": 0.038740465336379384,
+        "envelopeError": 0.00376913911662093,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.7344973996129469,
+        "energyRatio": 0.9774283032846386,
+        "tailRms": 1764.4037363936861,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 159,
+        "encodeMillisecondsAll": [
+          5.982300000000578,
+          4.962000000000444,
+          6.153599999999642
+        ],
+        "spectralShapeError": 0.038740465336379384,
+        "envelopeError": 0.00376913911662093,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.7344973996129469,
+        "energyRatio": 0.9774283032846386,
+        "tailRms": 1764.4037363936861,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 8000,
+      "level": 4,
+      "samples": 3200,
+      "sourceTailRms": 1728.3761699930951,
+      "old": {
+        "bytes": 159,
+        "encodeMillisecondsAll": [
+          9.94879999999921,
+          8.309400000000096,
+          9.380200000000514
+        ],
+        "spectralShapeError": 0.9102915624835598,
+        "envelopeError": 130.83248425987912,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.708093673720726,
+        "energyRatio": 152.58823684237566,
+        "tailRms": 26994.882466937135,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 171,
+        "encodeMillisecondsAll": [
+          27.114799999999377,
+          26.54610000000048,
+          26.703599999999824
+        ],
+        "spectralShapeError": 0.032815441725728416,
+        "envelopeError": 0.004629460254497583,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.5611026575033068,
+        "energyRatio": 0.9871598817246937,
+        "tailRms": 1679.9850326714222,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 8000,
+      "level": 6,
+      "samples": 3200,
+      "sourceTailRms": 1728.3761699930951,
+      "old": {
+        "bytes": 241,
+        "encodeMillisecondsAll": [
+          65.32729999999992,
+          66.16160000000036,
+          69.2528000000002
+        ],
+        "spectralShapeError": 0.9452575760418223,
+        "envelopeError": 131.24654621419887,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.4058238306538138,
+        "energyRatio": 152.89849473913867,
+        "tailRms": 27342.830607217682,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 254,
+        "encodeMillisecondsAll": [
+          46.793400000000474,
+          44.087499999999636,
+          42.10750000000007
+        ],
+        "spectralShapeError": 0.00999216836632756,
+        "envelopeError": 0.001448444971588024,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.8971919762269507,
+        "energyRatio": 0.9589708233673981,
+        "tailRms": 1713.8011553269532,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 8000,
+      "level": 8,
+      "samples": 3200,
+      "sourceTailRms": 1728.3761699930951,
+      "old": {
+        "bytes": 241,
+        "encodeMillisecondsAll": [
+          85.57070000000022,
+          76.61499999999978,
+          79.91149999999925
+        ],
+        "spectralShapeError": 0.9452575760418223,
+        "envelopeError": 131.24654621419887,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.4058238306538138,
+        "energyRatio": 152.89849473913867,
+        "tailRms": 27342.830607217682,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 254,
+        "encodeMillisecondsAll": [
+          44.18279999999959,
+          41.285400000000664,
+          43.56550000000061
+        ],
+        "spectralShapeError": 0.00999216836632756,
+        "envelopeError": 0.001448444971588024,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.8971919762269507,
+        "energyRatio": 0.9589708233673981,
+        "tailRms": 1713.8011553269532,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 8000,
+      "level": 3,
+      "samples": 5120,
+      "sourceTailRms": 0.44017042154147523,
+      "old": {
+        "bytes": 246,
+        "encodeMillisecondsAll": [
+          7.894899999999325,
+          36.38670000000002,
+          30.312799999999697
+        ],
+        "spectralShapeError": 0.964288299913482,
+        "envelopeError": 32.39249470879055,
+        "sourcePartials": 1,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 0.1626945989919953,
+        "energyRatio": 39.5665810067939,
+        "tailRms": 8.043048240561534,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 239,
+        "encodeMillisecondsAll": [
+          49.35699999999997,
+          43.758600000000115,
+          45.884900000000016
+        ],
+        "spectralShapeError": 0.024349655106914236,
+        "envelopeError": 0.007366932197221253,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.9330513334819551,
+        "energyRatio": 0.9349861641149166,
+        "tailRms": 4.861198411914494,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 8000,
+      "level": 4,
+      "samples": 5120,
+      "sourceTailRms": 0.44017042154147523,
+      "old": {
+        "bytes": 244,
+        "encodeMillisecondsAll": [
+          12.807200000000194,
+          14.69250000000011,
+          14.809000000000196
+        ],
+        "spectralShapeError": 0.970360407543983,
+        "envelopeError": 448.4678394667185,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.2020319874912831,
+        "energyRatio": 462.40250493242127,
+        "tailRms": 7.454444982693212,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 252,
+        "encodeMillisecondsAll": [
+          90.97109999999975,
+          82.6210000000001,
+          88.72510000000057
+        ],
+        "spectralShapeError": 0.019868629461613142,
+        "envelopeError": 0.002372424439535105,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.9597876843656639,
+        "energyRatio": 0.9600085203763297,
+        "tailRms": 10.193441518937556,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 8000,
+      "level": 6,
+      "samples": 5120,
+      "sourceTailRms": 0.44017042154147523,
+      "old": {
+        "bytes": 372,
+        "encodeMillisecondsAll": [
+          52.04190000000017,
+          51.407100000000355,
+          54.235099999999875
+        ],
+        "spectralShapeError": 0.9513211362848328,
+        "envelopeError": 187.5706895136447,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.3875130512992252,
+        "energyRatio": 193.6836731437927,
+        "tailRms": 4.5692586926108705,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 369,
+        "encodeMillisecondsAll": [
+          282.35130000000026,
+          325.6818000000003,
+          291.2641000000003
+        ],
+        "spectralShapeError": 0.010344767973841219,
+        "envelopeError": 0.0017870917551069735,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.9564593389216098,
+        "energyRatio": 0.9331500665714262,
+        "tailRms": 3.941367148591971,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 8000,
+      "level": 8,
+      "samples": 5120,
+      "sourceTailRms": 0.44017042154147523,
+      "old": {
+        "bytes": 372,
+        "encodeMillisecondsAll": [
+          202.71079999999984,
+          153.39680000000044,
+          143.29300000000057
+        ],
+        "spectralShapeError": 0.9513211362848328,
+        "envelopeError": 187.5706895136447,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.3875130512992252,
+        "energyRatio": 193.6836731437927,
+        "tailRms": 4.5692586926108705,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 369,
+        "encodeMillisecondsAll": [
+          355.71600000000035,
+          369.53580000000056,
+          364.40689999999995
+        ],
+        "spectralShapeError": 0.010344767973841219,
+        "envelopeError": 0.0017870917551069735,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.9564593389216098,
+        "energyRatio": 0.9331500665714262,
+        "tailRms": 3.941367148591971,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 8000,
+      "level": 3,
+      "samples": 5120,
+      "sourceTailRms": 0.40019526483955303,
+      "old": {
+        "bytes": 250,
+        "encodeMillisecondsAll": [
+          12.775300000001153,
+          13.157800000000861,
+          9.957400000001144
+        ],
+        "spectralShapeError": 0.05412206507689911,
+        "envelopeError": 0.031806300327286534,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.7492316708102061,
+        "energyRatio": 0.7294645570911794,
+        "tailRms": 9.440603794249602,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 250,
+        "encodeMillisecondsAll": [
+          14.055299999999988,
+          12.118799999998373,
+          13.161799999999857
+        ],
+        "spectralShapeError": 0.05412206507689911,
+        "envelopeError": 0.031806300327286534,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.7492316708102061,
+        "energyRatio": 0.7294645570911794,
+        "tailRms": 9.440603794249602,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 8000,
+      "level": 4,
+      "samples": 5120,
+      "sourceTailRms": 0.40019526483955303,
+      "old": {
+        "bytes": 269,
+        "encodeMillisecondsAll": [
+          9.894500000000335,
+          9.901499999999942,
+          10.859699999999066
+        ],
+        "spectralShapeError": 0.04596538272421622,
+        "envelopeError": 0.02794999549993517,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.7113454029748845,
+        "energyRatio": 0.7207680317551267,
+        "tailRms": 8.799147685997776,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 269,
+        "encodeMillisecondsAll": [
+          68.64559999999983,
+          65.38849999999911,
+          57.54570000000058
+        ],
+        "spectralShapeError": 0.04596538272421622,
+        "envelopeError": 0.02794999549993517,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.7113454029748845,
+        "energyRatio": 0.7207680317551267,
+        "tailRms": 8.799147685997776,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 8000,
+      "level": 6,
+      "samples": 5120,
+      "sourceTailRms": 0.40019526483955303,
+      "old": {
+        "bytes": 393,
+        "encodeMillisecondsAll": [
+          39.10729999999967,
+          36.700699999999415,
+          44.914199999999255
+        ],
+        "spectralShapeError": 0.0174090603991461,
+        "envelopeError": 0.0024859287133445138,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.9123879912269915,
+        "energyRatio": 0.9276687222082853,
+        "tailRms": 1.0338036564067667,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 393,
+        "encodeMillisecondsAll": [
+          90.48890000000029,
+          88.63450000000012,
+          81.47910000000047
+        ],
+        "spectralShapeError": 0.0174090603991461,
+        "envelopeError": 0.0024859287133445138,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.9123879912269915,
+        "energyRatio": 0.9276687222082853,
+        "tailRms": 1.0338036564067667,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 8000,
+      "level": 8,
+      "samples": 5120,
+      "sourceTailRms": 0.40019526483955303,
+      "old": {
+        "bytes": 393,
+        "encodeMillisecondsAll": [
+          81.39379999999983,
+          76.92460000000028,
+          74.97609999999986
+        ],
+        "spectralShapeError": 0.0174090603991461,
+        "envelopeError": 0.0024859287133445138,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.9123879912269915,
+        "energyRatio": 0.9276687222082853,
+        "tailRms": 1.0338036564067667,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 393,
+        "encodeMillisecondsAll": [
+          80.27249999999913,
+          79.92879999999968,
+          95.65409999999974
+        ],
+        "spectralShapeError": 0.0174090603991461,
+        "envelopeError": 0.0024859287133445138,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.9123879912269915,
+        "energyRatio": 0.9276687222082853,
+        "tailRms": 1.0338036564067667,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 12000,
+      "level": 3,
+      "samples": 5760,
+      "sourceTailRms": 882.8330147567232,
+      "old": {
+        "bytes": 261,
+        "encodeMillisecondsAll": [
+          11.606499999999869,
+          8.84439999999995,
+          10.050400000000081
+        ],
+        "spectralShapeError": 0.31302018441094326,
+        "envelopeError": 0.07778939807508799,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.23465111964382684,
+        "energyRatio": 0.5504658444554035,
+        "tailRms": 744.2507511286472,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 261,
+        "encodeMillisecondsAll": [
+          55.96240000000034,
+          41.86039999999957,
+          50.19830000000002
+        ],
+        "spectralShapeError": 0.31302018441094326,
+        "envelopeError": 0.07778939807508799,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.23465111964382684,
+        "energyRatio": 0.5504658444554035,
+        "tailRms": 744.2507511286472,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 12000,
+      "level": 4,
+      "samples": 5760,
+      "sourceTailRms": 882.8330147567232,
+      "old": {
+        "bytes": 283,
+        "encodeMillisecondsAll": [
+          9.664099999999962,
+          11.21270000000004,
+          9.759099999999307
+        ],
+        "spectralShapeError": 0.1714262813125886,
+        "envelopeError": 0.03106704387808585,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.21448061345702818,
+        "energyRatio": 0.7114654412142025,
+        "tailRms": 734.8062272917035,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 283,
+        "encodeMillisecondsAll": [
+          57.60540000000037,
+          56.257400000000416,
+          56.48500000000058
+        ],
+        "spectralShapeError": 0.1714262813125886,
+        "envelopeError": 0.03106704387808585,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.21448061345702818,
+        "energyRatio": 0.7114654412142025,
+        "tailRms": 734.8062272917035,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 12000,
+      "level": 6,
+      "samples": 5760,
+      "sourceTailRms": 882.8330147567232,
+      "old": {
+        "bytes": 433,
+        "encodeMillisecondsAll": [
+          67.82790000000023,
+          69.30029999999897,
+          71.20949999999903
+        ],
+        "spectralShapeError": 0.08296780552363141,
+        "envelopeError": 0.026888868830117527,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.21075690450011622,
+        "energyRatio": 0.708346891778881,
+        "tailRms": 747.5013229271088,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 433,
+        "encodeMillisecondsAll": [
+          130.90500000000065,
+          114.3757999999998,
+          116.72149999999965
+        ],
+        "spectralShapeError": 0.08296780552363141,
+        "envelopeError": 0.026888868830117527,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.21075690450011622,
+        "energyRatio": 0.708346891778881,
+        "tailRms": 747.5013229271088,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 12000,
+      "level": 8,
+      "samples": 5760,
+      "sourceTailRms": 882.8330147567232,
+      "old": {
+        "bytes": 433,
+        "encodeMillisecondsAll": [
+          198.28139999999985,
+          109.45520000000033,
+          106.64630000000034
+        ],
+        "spectralShapeError": 0.08296780552363141,
+        "envelopeError": 0.026888868830117527,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.21075690450011622,
+        "energyRatio": 0.708346891778881,
+        "tailRms": 747.5013229271088,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 433,
+        "encodeMillisecondsAll": [
+          124.92169999999896,
+          116.03579999999965,
+          109.23759999999857
+        ],
+        "spectralShapeError": 0.08296780552363141,
+        "envelopeError": 0.026888868830117527,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.21075690450011622,
+        "energyRatio": 0.708346891778881,
+        "tailRms": 747.5013229271088,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 12000,
+      "level": 3,
+      "samples": 4800,
+      "sourceTailRms": 446.6431106972695,
+      "old": {
+        "bytes": 228,
+        "encodeMillisecondsAll": [
+          7.725800000000163,
+          7.534499999999753,
+          8.857199999998556
+        ],
+        "spectralShapeError": 0.10163666369195466,
+        "envelopeError": 0.028944937188585793,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6443593536861756,
+        "energyRatio": 0.752121843499087,
+        "tailRms": 372.0476537577769,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 228,
+        "encodeMillisecondsAll": [
+          6.582800000000134,
+          8.148699999999735,
+          10.603900000000067
+        ],
+        "spectralShapeError": 0.10163666369195466,
+        "envelopeError": 0.028944937188585793,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6443593536861756,
+        "energyRatio": 0.752121843499087,
+        "tailRms": 372.0476537577769,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 12000,
+      "level": 4,
+      "samples": 4800,
+      "sourceTailRms": 446.6431106972695,
+      "old": {
+        "bytes": 251,
+        "encodeMillisecondsAll": [
+          7.111499999999069,
+          9.637699999999313,
+          9.788899999999558
+        ],
+        "spectralShapeError": 0.06703810199637018,
+        "envelopeError": 0.02543523162125651,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7007748530972563,
+        "energyRatio": 0.7515670155246954,
+        "tailRms": 372.82443142405066,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 251,
+        "encodeMillisecondsAll": [
+          36.67939999999908,
+          38.6846000000005,
+          35.917999999999665
+        ],
+        "spectralShapeError": 0.06703810199637018,
+        "envelopeError": 0.02543523162125651,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7007748530972563,
+        "energyRatio": 0.7515670155246954,
+        "tailRms": 372.82443142405066,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 12000,
+      "level": 6,
+      "samples": 4800,
+      "sourceTailRms": 446.6431106972695,
+      "old": {
+        "bytes": 362,
+        "encodeMillisecondsAll": [
+          44.397899999999936,
+          52.451100000000224,
+          49.45089999999982
+        ],
+        "spectralShapeError": 0.039462699447058804,
+        "envelopeError": 0.017612064926478613,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6902476497311427,
+        "energyRatio": 0.7770974228563303,
+        "tailRms": 406.60231184783,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 362,
+        "encodeMillisecondsAll": [
+          63.48539999999957,
+          65.39860000000044,
+          69.66599999999926
+        ],
+        "spectralShapeError": 0.039462699447058804,
+        "envelopeError": 0.017612064926478613,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6902476497311427,
+        "energyRatio": 0.7770974228563303,
+        "tailRms": 406.60231184783,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 12000,
+      "level": 8,
+      "samples": 4800,
+      "sourceTailRms": 446.6431106972695,
+      "old": {
+        "bytes": 362,
+        "encodeMillisecondsAll": [
+          78.15899999999965,
+          73.47299999999996,
+          77.80030000000079
+        ],
+        "spectralShapeError": 0.039462699447058804,
+        "envelopeError": 0.017612064926478613,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6902476497311427,
+        "energyRatio": 0.7770974228563303,
+        "tailRms": 406.60231184783,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 362,
+        "encodeMillisecondsAll": [
+          67.54299999999967,
+          71.19300000000112,
+          75.33820000000014
+        ],
+        "spectralShapeError": 0.039462699447058804,
+        "envelopeError": 0.017612064926478613,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6902476497311427,
+        "energyRatio": 0.7770974228563303,
+        "tailRms": 406.60231184783,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 12000,
+      "level": 3,
+      "samples": 4800,
+      "sourceTailRms": 2699.548100299999,
+      "old": {
+        "bytes": 238,
+        "encodeMillisecondsAll": [
+          12.959200000001147,
+          13.01679999999942,
+          11.81420000000071
+        ],
+        "spectralShapeError": 0.08149076349340031,
+        "envelopeError": 0.015434024716803723,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7261540764271865,
+        "energyRatio": 0.846623395260997,
+        "tailRms": 2373.5981525944953,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 238,
+        "encodeMillisecondsAll": [
+          11.650099999998929,
+          14.284700000000157,
+          13.083800000000338
+        ],
+        "spectralShapeError": 0.08149076349340031,
+        "envelopeError": 0.015434024716803723,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7261540764271865,
+        "energyRatio": 0.846623395260997,
+        "tailRms": 2373.5981525944953,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 12000,
+      "level": 4,
+      "samples": 4800,
+      "sourceTailRms": 2699.548100299999,
+      "old": {
+        "bytes": 251,
+        "encodeMillisecondsAll": [
+          15.714600000001155,
+          13.169499999999971,
+          15.161299999999756
+        ],
+        "spectralShapeError": 0.08049651211686563,
+        "envelopeError": 0.010022498570733148,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7555920516689888,
+        "energyRatio": 0.9150710703356106,
+        "tailRms": 2408.7271140583775,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 251,
+        "encodeMillisecondsAll": [
+          45.3737000000001,
+          44.31579999999849,
+          44.21230000000105
+        ],
+        "spectralShapeError": 0.08049651211686563,
+        "envelopeError": 0.010022498570733148,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7555920516689888,
+        "energyRatio": 0.9150710703356106,
+        "tailRms": 2408.7271140583775,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 12000,
+      "level": 6,
+      "samples": 4800,
+      "sourceTailRms": 2699.548100299999,
+      "old": {
+        "bytes": 372,
+        "encodeMillisecondsAll": [
+          91.2416000000012,
+          60.7512999999999,
+          56.573200000000725
+        ],
+        "spectralShapeError": 0.07175025863275185,
+        "envelopeError": 0.024445508336053547,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6999561654919385,
+        "energyRatio": 0.8102375326400866,
+        "tailRms": 2210.0087971167295,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 373,
+        "encodeMillisecondsAll": [
+          135.49239999999918,
+          123.0030999999999,
+          109.25039999999899
+        ],
+        "spectralShapeError": 0.08250828790633848,
+        "envelopeError": 0.014760527456080872,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6698557035787346,
+        "energyRatio": 0.8318205783247613,
+        "tailRms": 2237.4251950251505,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 12000,
+      "level": 8,
+      "samples": 4800,
+      "sourceTailRms": 2699.548100299999,
+      "old": {
+        "bytes": 372,
+        "encodeMillisecondsAll": [
+          85.78340000000026,
+          97.8632000000016,
+          99.76059999999961
+        ],
+        "spectralShapeError": 0.07175025863275185,
+        "envelopeError": 0.024445508336053547,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6999561654919385,
+        "energyRatio": 0.8102375326400866,
+        "tailRms": 2210.0087971167295,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 373,
+        "encodeMillisecondsAll": [
+          100.34389999999985,
+          95.9439999999995,
+          97.07840000000033
+        ],
+        "spectralShapeError": 0.08250828790633848,
+        "envelopeError": 0.014760527456080872,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6698557035787346,
+        "energyRatio": 0.8318205783247613,
+        "tailRms": 2237.4251950251505,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 12000,
+      "level": 3,
+      "samples": 4800,
+      "sourceTailRms": 90.89309196339768,
+      "old": {
+        "bytes": 214,
+        "encodeMillisecondsAll": [
+          11.168299999999363,
+          10.836100000000442,
+          10.45010000000002
+        ],
+        "spectralShapeError": 0.09498717426673906,
+        "envelopeError": 0.04752383416361399,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.6364804158973049,
+        "tailRms": 78.99059015688725,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 214,
+        "encodeMillisecondsAll": [
+          47.46780000000035,
+          47.33640000000014,
+          47.811499999999796
+        ],
+        "spectralShapeError": 0.09498717426673906,
+        "envelopeError": 0.04752383416361399,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.6364804158973049,
+        "tailRms": 78.99059015688725,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 12000,
+      "level": 4,
+      "samples": 4800,
+      "sourceTailRms": 90.89309196339768,
+      "old": {
+        "bytes": 246,
+        "encodeMillisecondsAll": [
+          15.026200000000244,
+          18.087600000000748,
+          16.04610000000139
+        ],
+        "spectralShapeError": 0.050641170006104574,
+        "envelopeError": 0.2146342285337642,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.2924165753377325,
+        "tailRms": 49.73168004401219,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 312,
+        "encodeMillisecondsAll": [
+          67.2494000000006,
+          60.82769999999982,
+          62.56390000000101
+        ],
+        "spectralShapeError": 0.04704094860671082,
+        "envelopeError": 0.14670816020638497,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.38561524913150486,
+        "tailRms": 49.81281628925097,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 12000,
+      "level": 6,
+      "samples": 4800,
+      "sourceTailRms": 90.89309196339768,
+      "old": {
+        "bytes": 365,
+        "encodeMillisecondsAll": [
+          115.5576000000001,
+          91.41630000000077,
+          85.3814999999995
+        ],
+        "spectralShapeError": 0.04777257012508787,
+        "envelopeError": 0.19562103971081213,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.3121665675245445,
+        "tailRms": 51.798423399430476,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 365,
+        "encodeMillisecondsAll": [
+          123.61149999999907,
+          121.24909999999909,
+          129.52560000000085
+        ],
+        "spectralShapeError": 0.04777257012508787,
+        "envelopeError": 0.19562103971081213,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.3121665675245445,
+        "tailRms": 51.798423399430476,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 12000,
+      "level": 8,
+      "samples": 4800,
+      "sourceTailRms": 90.89309196339768,
+      "old": {
+        "bytes": 365,
+        "encodeMillisecondsAll": [
+          125.78160000000025,
+          138.5742999999984,
+          117.51610000000073
+        ],
+        "spectralShapeError": 0.04777257012508787,
+        "envelopeError": 0.19562103971081213,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.3121665675245445,
+        "tailRms": 51.798423399430476,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 365,
+        "encodeMillisecondsAll": [
+          130.45199999999932,
+          127.12039999999979,
+          128.64840000000004
+        ],
+        "spectralShapeError": 0.04777257012508787,
+        "envelopeError": 0.19562103971081213,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.3121665675245445,
+        "tailRms": 51.798423399430476,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 12000,
+      "level": 3,
+      "samples": 4800,
+      "sourceTailRms": 1728.3547918950746,
+      "old": {
+        "bytes": 254,
+        "encodeMillisecondsAll": [
+          11.283500000001368,
+          9.491700000000492,
+          10.573300000000017
+        ],
+        "spectralShapeError": 0.02015757820664932,
+        "envelopeError": 0.011044583817430184,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9590577551428818,
+        "energyRatio": 1.010780879306412,
+        "tailRms": 1735.7138080148275,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 229,
+        "encodeMillisecondsAll": [
+          9.759700000000521,
+          10.117700000000696,
+          9.615600000000995
+        ],
+        "spectralShapeError": 0.012657099182533136,
+        "envelopeError": 0.0036649135912682792,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9228631755957732,
+        "energyRatio": 0.9350462748215035,
+        "tailRms": 1669.6708418128408,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 12000,
+      "level": 4,
+      "samples": 4800,
+      "sourceTailRms": 1728.3547918950746,
+      "old": {
+        "bytes": 262,
+        "encodeMillisecondsAll": [
+          11.867300000001705,
+          12.016399999998612,
+          12.324099999999817
+        ],
+        "spectralShapeError": 0.019688470458775635,
+        "envelopeError": 0.005980819729306408,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9515861210465929,
+        "energyRatio": 1.0919529732368125,
+        "tailRms": 1745.0842405645255,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 260,
+        "encodeMillisecondsAll": [
+          44.6843000000008,
+          44.72110000000066,
+          46.09810000000107
+        ],
+        "spectralShapeError": 0.028531262523824322,
+        "envelopeError": 0.012027853841752775,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.8942185992602227,
+        "energyRatio": 1.062532574192788,
+        "tailRms": 1747.7396592933017,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 12000,
+      "level": 6,
+      "samples": 4800,
+      "sourceTailRms": 1728.3547918950746,
+      "old": {
+        "bytes": 359,
+        "encodeMillisecondsAll": [
+          124.17479999999887,
+          142.4291000000012,
+          189.66910000000098
+        ],
+        "spectralShapeError": 0.952862354989908,
+        "envelopeError": 120.06410150451913,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.21392455641918418,
+        "energyRatio": 142.77209726786717,
+        "tailRms": 24190.46938879029,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 375,
+        "encodeMillisecondsAll": [
+          91.81630000000041,
+          93.97509999999966,
+          97.74369999999908
+        ],
+        "spectralShapeError": 0.005556652622351285,
+        "envelopeError": 0.0013174929971057265,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9837862159187241,
+        "energyRatio": 1.0110912629834894,
+        "tailRms": 1743.6480627313147,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 12000,
+      "level": 8,
+      "samples": 4800,
+      "sourceTailRms": 1728.3547918950746,
+      "old": {
+        "bytes": 359,
+        "encodeMillisecondsAll": [
+          149.59519999999975,
+          156.686099999999,
+          134.4767000000029
+        ],
+        "spectralShapeError": 0.952862354989908,
+        "envelopeError": 120.06410150451913,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.21392455641918418,
+        "energyRatio": 142.77209726786717,
+        "tailRms": 24190.46938879029,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 375,
+        "encodeMillisecondsAll": [
+          93.78979999999865,
+          91.1923999999999,
+          102.90079999999944
+        ],
+        "spectralShapeError": 0.005556652622351285,
+        "envelopeError": 0.0013174929971057265,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9837862159187241,
+        "energyRatio": 1.0110912629834894,
+        "tailRms": 1743.6480627313147,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 12000,
+      "level": 3,
+      "samples": 7680,
+      "sourceTailRms": 0.4407616513869297,
+      "old": {
+        "bytes": 359,
+        "encodeMillisecondsAll": [
+          12.132300000001123,
+          12.549199999997654,
+          12.73189999999886
+        ],
+        "spectralShapeError": 0.9491602737817295,
+        "envelopeError": 51.25955177398474,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.30835308511249376,
+        "energyRatio": 62.88917220971312,
+        "tailRms": 8.337165785405334,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 352,
+        "encodeMillisecondsAll": [
+          106.00110000000132,
+          143.18700000000172,
+          114.38820000000123
+        ],
+        "spectralShapeError": 0.14197997546875585,
+        "envelopeError": 0.08966164244082717,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.6244197271850264,
+        "energyRatio": 0.5338243452442533,
+        "tailRms": 3.7699469492288618,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 12000,
+      "level": 4,
+      "samples": 7680,
+      "sourceTailRms": 0.4407616513869297,
+      "old": {
+        "bytes": 356,
+        "encodeMillisecondsAll": [
+          21.215700000000652,
+          24.284199999998236,
+          19.861300000000483
+        ],
+        "spectralShapeError": 0.9749252316376741,
+        "envelopeError": 476.27935137553976,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.2053364279592217,
+        "energyRatio": 494.85669026324325,
+        "tailRms": 9.461324783911959,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 363,
+        "encodeMillisecondsAll": [
+          215.79889999999796,
+          179.00079999999798,
+          157.75690000000031
+        ],
+        "spectralShapeError": 0.033849113271779495,
+        "envelopeError": 0.017995704455859192,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.8740019361603987,
+        "energyRatio": 0.8127248932766741,
+        "tailRms": 16.739611206158084,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 12000,
+      "level": 6,
+      "samples": 7680,
+      "sourceTailRms": 0.4407616513869297,
+      "old": {
+        "bytes": 532,
+        "encodeMillisecondsAll": [
+          60.806000000000495,
+          74.6072000000022,
+          101.98120000000199
+        ],
+        "spectralShapeError": 0.9696277484002049,
+        "envelopeError": 154.48695802353797,
+        "sourcePartials": 1,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 0.19200472897266543,
+        "energyRatio": 162.92104344180927,
+        "tailRms": 0,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 562,
+        "encodeMillisecondsAll": [
+          523.4537999999993,
+          507.44260000000213,
+          488.1788000000015
+        ],
+        "spectralShapeError": 0.0320815139804685,
+        "envelopeError": 0.04006122904034081,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.8796123435203763,
+        "energyRatio": 0.8012441185572196,
+        "tailRms": 5.514564050463705,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 12000,
+      "level": 8,
+      "samples": 7680,
+      "sourceTailRms": 0.4407616513869297,
+      "old": {
+        "bytes": 532,
+        "encodeMillisecondsAll": [
+          98.14199999999983,
+          91.2045999999973,
+          92.23289999999906
+        ],
+        "spectralShapeError": 0.9696277484002049,
+        "envelopeError": 154.48695802353797,
+        "sourcePartials": 1,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 0.19200472897266543,
+        "energyRatio": 162.92104344180927,
+        "tailRms": 0,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 562,
+        "encodeMillisecondsAll": [
+          486.18299999999726,
+          530.046199999997,
+          579.0427000000018
+        ],
+        "spectralShapeError": 0.0320815139804685,
+        "envelopeError": 0.04006122904034081,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.8796123435203763,
+        "energyRatio": 0.8012441185572196,
+        "tailRms": 5.514564050463705,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 12000,
+      "level": 3,
+      "samples": 7680,
+      "sourceTailRms": 0.3972562145517676,
+      "old": {
+        "bytes": 361,
+        "encodeMillisecondsAll": [
+          12.53559999999925,
+          9.990100000002712,
+          9.354400000000169
+        ],
+        "spectralShapeError": 0.12231827036480801,
+        "envelopeError": 0.012719467767441029,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.5716300779630218,
+        "energyRatio": 0.8373348501167757,
+        "tailRms": 4.130425724627749,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 361,
+        "encodeMillisecondsAll": [
+          10.67280000000028,
+          10.425500000001193,
+          12.030600000001868
+        ],
+        "spectralShapeError": 0.12231827036480801,
+        "envelopeError": 0.012719467767441029,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.5716300779630218,
+        "energyRatio": 0.8373348501167757,
+        "tailRms": 4.130425724627749,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 12000,
+      "level": 4,
+      "samples": 7680,
+      "sourceTailRms": 0.3972562145517676,
+      "old": {
+        "bytes": 398,
+        "encodeMillisecondsAll": [
+          10.455500000000029,
+          13.265200000001641,
+          10.316299999998591
+        ],
+        "spectralShapeError": 0.11640449843052164,
+        "envelopeError": 0.05916380216489746,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.5853646873642249,
+        "energyRatio": 0.6227512299652749,
+        "tailRms": 10.681857672396378,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 398,
+        "encodeMillisecondsAll": [
+          52.09979999999996,
+          65.08729999999923,
+          62.844099999998434
+        ],
+        "spectralShapeError": 0.11640449843052164,
+        "envelopeError": 0.05916380216489746,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.5853646873642249,
+        "energyRatio": 0.6227512299652749,
+        "tailRms": 10.681857672396378,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 12000,
+      "level": 6,
+      "samples": 7680,
+      "sourceTailRms": 0.3972562145517676,
+      "old": {
+        "bytes": 581,
+        "encodeMillisecondsAll": [
+          44.705699999998615,
+          47.73819999999978,
+          56.52899999999863
+        ],
+        "spectralShapeError": 0.04888919901694462,
+        "envelopeError": 0.013621987051327774,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.7073620767013921,
+        "energyRatio": 0.8027637604330581,
+        "tailRms": 0,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 581,
+        "encodeMillisecondsAll": [
+          176.59159999999974,
+          105.76000000000204,
+          91.47039999999834
+        ],
+        "spectralShapeError": 0.04888919901694462,
+        "envelopeError": 0.013621987051327774,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.7073620767013921,
+        "energyRatio": 0.8027637604330581,
+        "tailRms": 0,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 12000,
+      "level": 8,
+      "samples": 7680,
+      "sourceTailRms": 0.3972562145517676,
+      "old": {
+        "bytes": 581,
+        "encodeMillisecondsAll": [
+          90.52019999999902,
+          85.47270000000208,
+          98.58109999999942
+        ],
+        "spectralShapeError": 0.04888919901694462,
+        "envelopeError": 0.013621987051327774,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.7073620767013921,
+        "energyRatio": 0.8027637604330581,
+        "tailRms": 0,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 581,
+        "encodeMillisecondsAll": [
+          100.2564999999995,
+          95.21979999999894,
+          99.52540000000226
+        ],
+        "spectralShapeError": 0.04888919901694462,
+        "envelopeError": 0.013621987051327774,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.7073620767013921,
+        "energyRatio": 0.8027637604330581,
+        "tailRms": 0,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 16000,
+      "level": 3,
+      "samples": 7680,
+      "sourceTailRms": 882.8007690961006,
+      "old": {
+        "bytes": 349,
+        "encodeMillisecondsAll": [
+          15.154599999998027,
+          17.405800000000454,
+          10.292600000000675
+        ],
+        "spectralShapeError": 0.24917515521209554,
+        "envelopeError": 0.006475528189507111,
+        "sourcePartials": 4,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.1088788920639385,
+        "energyRatio": 0.9631659822548497,
+        "tailRms": 818.1509513327395,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 349,
+        "encodeMillisecondsAll": [
+          14.732600000003004,
+          15.618800000000192,
+          16.704900000000634
+        ],
+        "spectralShapeError": 0.24917515521209554,
+        "envelopeError": 0.006475528189507111,
+        "sourcePartials": 4,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.1088788920639385,
+        "energyRatio": 0.9631659822548497,
+        "tailRms": 818.1509513327395,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 16000,
+      "level": 4,
+      "samples": 7680,
+      "sourceTailRms": 882.8007690961006,
+      "old": {
+        "bytes": 390,
+        "encodeMillisecondsAll": [
+          14.462900000002264,
+          15.447100000001228,
+          14.882900000000518
+        ],
+        "spectralShapeError": 0.15035940611048312,
+        "envelopeError": 0.040120303181716215,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.34128048490667073,
+        "energyRatio": 0.6702531629906453,
+        "tailRms": 752.0466810090094,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 390,
+        "encodeMillisecondsAll": [
+          62.53050000000076,
+          66.4845000000023,
+          69.36869999999908
+        ],
+        "spectralShapeError": 0.15035940611048312,
+        "envelopeError": 0.040120303181716215,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.34128048490667073,
+        "energyRatio": 0.6702531629906453,
+        "tailRms": 752.0466810090094,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 16000,
+      "level": 6,
+      "samples": 7680,
+      "sourceTailRms": 882.8007690961006,
+      "old": {
+        "bytes": 584,
+        "encodeMillisecondsAll": [
+          73.91210000000137,
+          76.34429999999702,
+          67.43289999999979
+        ],
+        "spectralShapeError": 0.1246129408501292,
+        "envelopeError": 0.034444542914494905,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.3028243319987643,
+        "energyRatio": 0.6771958868167754,
+        "tailRms": 762.6309696264199,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 584,
+        "encodeMillisecondsAll": [
+          128.17809999999736,
+          123.3132000000005,
+          121.76770000000033
+        ],
+        "spectralShapeError": 0.1246129408501292,
+        "envelopeError": 0.034444542914494905,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.3028243319987643,
+        "energyRatio": 0.6771958868167754,
+        "tailRms": 762.6309696264199,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "inharmonic-bell",
+      "rate": 16000,
+      "level": 8,
+      "samples": 7680,
+      "sourceTailRms": 882.8007690961006,
+      "old": {
+        "bytes": 584,
+        "encodeMillisecondsAll": [
+          185.71880000000237,
+          274.28440000000046,
+          217.1742000000013
+        ],
+        "spectralShapeError": 0.1246129408501292,
+        "envelopeError": 0.034444542914494905,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.3028243319987643,
+        "energyRatio": 0.6771958868167754,
+        "tailRms": 762.6309696264199,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 584,
+        "encodeMillisecondsAll": [
+          135.45999999999913,
+          142.83959999999934,
+          243.1359999999986
+        ],
+        "spectralShapeError": 0.1246129408501292,
+        "envelopeError": 0.034444542914494905,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.3028243319987643,
+        "energyRatio": 0.6771958868167754,
+        "tailRms": 762.6309696264199,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 16000,
+      "level": 3,
+      "samples": 6400,
+      "sourceTailRms": 446.57463262034935,
+      "old": {
+        "bytes": 297,
+        "encodeMillisecondsAll": [
+          15.668799999999464,
+          12.480800000001182,
+          14.69840000000113
+        ],
+        "spectralShapeError": 0.17178018388840227,
+        "envelopeError": 0.047606580610659525,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.5011431087293591,
+        "energyRatio": 0.6510408504833286,
+        "tailRms": 396.0465124199429,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 297,
+        "encodeMillisecondsAll": [
+          12.383099999999104,
+          12.043000000001484,
+          13.368599999997969
+        ],
+        "spectralShapeError": 0.17178018388840227,
+        "envelopeError": 0.047606580610659525,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.5011431087293591,
+        "energyRatio": 0.6510408504833286,
+        "tailRms": 396.0465124199429,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 16000,
+      "level": 4,
+      "samples": 6400,
+      "sourceTailRms": 446.57463262034935,
+      "old": {
+        "bytes": 321,
+        "encodeMillisecondsAll": [
+          11.794599999997445,
+          28.031699999999546,
+          14.067699999999604
+        ],
+        "spectralShapeError": 0.08240843222974144,
+        "envelopeError": 0.019849258393481832,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.4778082418643959,
+        "energyRatio": 0.7557676018282684,
+        "tailRms": 408.1895638058376,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 321,
+        "encodeMillisecondsAll": [
+          55.32259999999951,
+          49.48329999999987,
+          64.4474999999984
+        ],
+        "spectralShapeError": 0.08240843222974144,
+        "envelopeError": 0.019849258393481832,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.4778082418643959,
+        "energyRatio": 0.7557676018282684,
+        "tailRms": 408.1895638058376,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 16000,
+      "level": 6,
+      "samples": 6400,
+      "sourceTailRms": 446.57463262034935,
+      "old": {
+        "bytes": 470,
+        "encodeMillisecondsAll": [
+          64.5541000000012,
+          51.42870000000039,
+          52.06189999999697
+        ],
+        "spectralShapeError": 0.02543502892228421,
+        "envelopeError": 0.010142783130775167,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7394972253926232,
+        "energyRatio": 0.8235045621651135,
+        "tailRms": 409.3365638444726,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 470,
+        "encodeMillisecondsAll": [
+          83.70409999999902,
+          112.97989999999845,
+          105.73089999999866
+        ],
+        "spectralShapeError": 0.02543502892228421,
+        "envelopeError": 0.010142783130775167,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7394972253926232,
+        "energyRatio": 0.8235045621651135,
+        "tailRms": 409.3365638444726,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "short-chime",
+      "rate": 16000,
+      "level": 8,
+      "samples": 6400,
+      "sourceTailRms": 446.57463262034935,
+      "old": {
+        "bytes": 470,
+        "encodeMillisecondsAll": [
+          83.90880000000107,
+          100.88420000000042,
+          95.77070000000094
+        ],
+        "spectralShapeError": 0.02543502892228421,
+        "envelopeError": 0.010142783130775167,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7394972253926232,
+        "energyRatio": 0.8235045621651135,
+        "tailRms": 409.3365638444726,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 470,
+        "encodeMillisecondsAll": [
+          116.15779999999722,
+          92.18429999999717,
+          80.29100000000108
+        ],
+        "spectralShapeError": 0.02543502892228421,
+        "envelopeError": 0.010142783130775167,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7394972253926232,
+        "energyRatio": 0.8235045621651135,
+        "tailRms": 409.3365638444726,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 16000,
+      "level": 3,
+      "samples": 6400,
+      "sourceTailRms": 2699.39153873146,
+      "old": {
+        "bytes": 317,
+        "encodeMillisecondsAll": [
+          16.279200000000856,
+          15.956899999997404,
+          13.772899999999936
+        ],
+        "spectralShapeError": 0.1498598482889606,
+        "envelopeError": 0.0686295686934074,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6395343087577187,
+        "energyRatio": 0.6383879127397838,
+        "tailRms": 2347.6373122780274,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 317,
+        "encodeMillisecondsAll": [
+          16.118099999999686,
+          16.92699999999968,
+          18.63509999999951
+        ],
+        "spectralShapeError": 0.1498598482889606,
+        "envelopeError": 0.0686295686934074,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.6395343087577187,
+        "energyRatio": 0.6383879127397838,
+        "tailRms": 2347.6373122780274,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 16000,
+      "level": 4,
+      "samples": 6400,
+      "sourceTailRms": 2699.39153873146,
+      "old": {
+        "bytes": 337,
+        "encodeMillisecondsAll": [
+          16.928500000001804,
+          15.784500000001572,
+          15.63090000000011
+        ],
+        "spectralShapeError": 0.11926339152780203,
+        "envelopeError": 0.015418648823617436,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7476240844244849,
+        "energyRatio": 0.9022313683473528,
+        "tailRms": 2804.8949213829737,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 337,
+        "encodeMillisecondsAll": [
+          39.73769999999786,
+          33.62879999999859,
+          43.27230000000054
+        ],
+        "spectralShapeError": 0.11926339152780203,
+        "envelopeError": 0.015418648823617436,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.7476240844244849,
+        "energyRatio": 0.9022313683473528,
+        "tailRms": 2804.8949213829737,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 16000,
+      "level": 6,
+      "samples": 6400,
+      "sourceTailRms": 2699.39153873146,
+      "old": {
+        "bytes": 503,
+        "encodeMillisecondsAll": [
+          80.70129999999699,
+          64.80719999999928,
+          146.26109999999971
+        ],
+        "spectralShapeError": 0.042673251513142885,
+        "envelopeError": 0.015284297410610694,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.8351531565827011,
+        "energyRatio": 0.8246091475406073,
+        "tailRms": 2724.1839640523544,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 503,
+        "encodeMillisecondsAll": [
+          92.45660000000134,
+          84.69930000000022,
+          91.33309999999983
+        ],
+        "spectralShapeError": 0.042673251513142885,
+        "envelopeError": 0.015284297410610694,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.8351531565827011,
+        "energyRatio": 0.8246091475406073,
+        "tailRms": 2724.1839640523544,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "three-tone",
+      "rate": 16000,
+      "level": 8,
+      "samples": 6400,
+      "sourceTailRms": 2699.39153873146,
+      "old": {
+        "bytes": 503,
+        "encodeMillisecondsAll": [
+          96.60789999999906,
+          87.57760000000053,
+          89.47389999999723
+        ],
+        "spectralShapeError": 0.042673251513142885,
+        "envelopeError": 0.015284297410610694,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.8351531565827011,
+        "energyRatio": 0.8246091475406073,
+        "tailRms": 2724.1839640523544,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 503,
+        "encodeMillisecondsAll": [
+          92.84760000000097,
+          86.04500000000189,
+          98.29910000000018
+        ],
+        "spectralShapeError": 0.042673251513142885,
+        "envelopeError": 0.015284297410610694,
+        "sourcePartials": 3,
+        "retainedPartials": 3,
+        "minimumPartialRetention": 0.8351531565827011,
+        "energyRatio": 0.8246091475406073,
+        "tailRms": 2724.1839640523544,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 16000,
+      "level": 3,
+      "samples": 6400,
+      "sourceTailRms": 91.61782031897506,
+      "old": {
+        "bytes": 285,
+        "encodeMillisecondsAll": [
+          14.922899999997753,
+          10.612600000000384,
+          14.008499999999913
+        ],
+        "spectralShapeError": 0.08426425446157113,
+        "envelopeError": 0.15376990469680688,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.3723003453540715,
+        "tailRms": 56.01160594019779,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 285,
+        "encodeMillisecondsAll": [
+          39.20089999999982,
+          40.3666000000012,
+          41.87719999999899
+        ],
+        "spectralShapeError": 0.08426425446157113,
+        "envelopeError": 0.15376990469680688,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.3723003453540715,
+        "tailRms": 56.01160594019779,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 16000,
+      "level": 4,
+      "samples": 6400,
+      "sourceTailRms": 91.61782031897506,
+      "old": {
+        "bytes": 323,
+        "encodeMillisecondsAll": [
+          10.902500000000146,
+          12.018299999999726,
+          12.014599999998609
+        ],
+        "spectralShapeError": 0.052859684685606666,
+        "envelopeError": 0.22719741888683795,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.27630847753622706,
+        "tailRms": 47.35768153108849,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 413,
+        "encodeMillisecondsAll": [
+          48.21889999999985,
+          48.579099999999016,
+          53.21140000000014
+        ],
+        "spectralShapeError": 0.04633247034688462,
+        "envelopeError": 0.15611538664146,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.3692872939785372,
+        "tailRms": 47.53701189599531,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 16000,
+      "level": 6,
+      "samples": 6400,
+      "sourceTailRms": 91.61782031897506,
+      "old": {
+        "bytes": 475,
+        "encodeMillisecondsAll": [
+          89.63639999999941,
+          89.39849999999933,
+          86.70530000000144
+        ],
+        "spectralShapeError": 0.05460230515534751,
+        "envelopeError": 0.20510358911145088,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.30005200576442176,
+        "tailRms": 51.25395106721042,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 475,
+        "encodeMillisecondsAll": [
+          119.21719999999914,
+          126.83419999999751,
+          136.34790000000066
+        ],
+        "spectralShapeError": 0.05460230515534751,
+        "envelopeError": 0.20510358911145088,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.30005200576442176,
+        "tailRms": 51.25395106721042,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "noise-attack",
+      "rate": 16000,
+      "level": 8,
+      "samples": 6400,
+      "sourceTailRms": 91.61782031897506,
+      "old": {
+        "bytes": 475,
+        "encodeMillisecondsAll": [
+          174.09429999999702,
+          129.3644000000022,
+          139.24169999999867
+        ],
+        "spectralShapeError": 0.05460230515534751,
+        "envelopeError": 0.20510358911145088,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.30005200576442176,
+        "tailRms": 51.25395106721042,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 475,
+        "encodeMillisecondsAll": [
+          131.90389999999752,
+          131.8595000000023,
+          142.95929999999862
+        ],
+        "spectralShapeError": 0.05460230515534751,
+        "envelopeError": 0.20510358911145088,
+        "sourcePartials": 0,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 1,
+        "energyRatio": 0.30005200576442176,
+        "tailRms": 51.25395106721042,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 16000,
+      "level": 3,
+      "samples": 6400,
+      "sourceTailRms": 1728.3389317853716,
+      "old": {
+        "bytes": 299,
+        "encodeMillisecondsAll": [
+          10.777200000000448,
+          15.260200000000623,
+          10.39770000000135
+        ],
+        "spectralShapeError": 0.014832576619334724,
+        "envelopeError": 0.001921876602049219,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9118598477702065,
+        "energyRatio": 0.9697861578213899,
+        "tailRms": 1710.643849549052,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 299,
+        "encodeMillisecondsAll": [
+          12.152799999999843,
+          10.730800000001182,
+          12.636000000002241
+        ],
+        "spectralShapeError": 0.014832576619334724,
+        "envelopeError": 0.001921876602049219,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9118598477702065,
+        "energyRatio": 0.9697861578213899,
+        "tailRms": 1710.643849549052,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 16000,
+      "level": 4,
+      "samples": 6400,
+      "sourceTailRms": 1728.3389317853716,
+      "old": {
+        "bytes": 326,
+        "encodeMillisecondsAll": [
+          12.474999999998545,
+          13.418099999998958,
+          15.119399999999587
+        ],
+        "spectralShapeError": 0.06773292399580039,
+        "envelopeError": 0.03038648926408207,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9639790158066687,
+        "energyRatio": 1.3094820494741133,
+        "tailRms": 1984.6294824223487,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 326,
+        "encodeMillisecondsAll": [
+          52.72140000000218,
+          49.35599999999977,
+          49.34940000000279
+        ],
+        "spectralShapeError": 0.06773292399580039,
+        "envelopeError": 0.03038648926408207,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9639790158066687,
+        "energyRatio": 1.3094820494741133,
+        "tailRms": 1984.6294824223487,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 16000,
+      "level": 6,
+      "samples": 6400,
+      "sourceTailRms": 1728.3389317853716,
+      "old": {
+        "bytes": 473,
+        "encodeMillisecondsAll": [
+          124.9326000000001,
+          120.78380000000107,
+          111.27439999999842
+        ],
+        "spectralShapeError": 0.8895111217073128,
+        "envelopeError": 142.73296839499415,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9484712065343208,
+        "energyRatio": 166.07657205627277,
+        "tailRms": 26704.371499168912,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 480,
+        "encodeMillisecondsAll": [
+          81.11030000000028,
+          84.90970000000016,
+          80.744200000001
+        ],
+        "spectralShapeError": 0.01502045911402917,
+        "envelopeError": 0.008182642289174586,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.986188065558321,
+        "energyRatio": 1.0474348341700779,
+        "tailRms": 1712.531054462955,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "harmonic-control",
+      "rate": 16000,
+      "level": 8,
+      "samples": 6400,
+      "sourceTailRms": 1728.3389317853716,
+      "old": {
+        "bytes": 473,
+        "encodeMillisecondsAll": [
+          134.01310000000012,
+          139.15999999999985,
+          151.34630000000107
+        ],
+        "spectralShapeError": 0.8895111217073128,
+        "envelopeError": 142.73296839499415,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.9484712065343208,
+        "energyRatio": 166.07657205627277,
+        "tailRms": 26704.371499168912,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 480,
+        "encodeMillisecondsAll": [
+          81.83489999999802,
+          87.88420000000042,
+          87.7567999999992
+        ],
+        "spectralShapeError": 0.01502045911402917,
+        "envelopeError": 0.008182642289174586,
+        "sourcePartials": 4,
+        "retainedPartials": 4,
+        "minimumPartialRetention": 0.986188065558321,
+        "energyRatio": 1.0474348341700779,
+        "tailRms": 1712.531054462955,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 16000,
+      "level": 3,
+      "samples": 10240,
+      "sourceTailRms": 0.44105696910943376,
+      "old": {
+        "bytes": 439,
+        "encodeMillisecondsAll": [
+          29.18970000000263,
+          25.56920000000173,
+          28.90440000000308
+        ],
+        "spectralShapeError": 0.9859016043710901,
+        "envelopeError": 483.855350990051,
+        "sourcePartials": 1,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 0.07181486472318532,
+        "energyRatio": 505.9436358368992,
+        "tailRms": 9.119004879919737,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 468,
+        "encodeMillisecondsAll": [
+          85.84419999999955,
+          144.28240000000005,
+          92.20780000000013
+        ],
+        "spectralShapeError": 0.08145273862704172,
+        "envelopeError": 0.014705605163286043,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.8187304998753668,
+        "energyRatio": 0.7986248325537875,
+        "tailRms": 9.119004879919737,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 16000,
+      "level": 4,
+      "samples": 10240,
+      "sourceTailRms": 0.44105696910943376,
+      "old": {
+        "bytes": 462,
+        "encodeMillisecondsAll": [
+          20.74550000000454,
+          18.796900000001187,
+          18.870300000002317
+        ],
+        "spectralShapeError": 0.9831822369355196,
+        "envelopeError": 485.0743086606479,
+        "sourcePartials": 1,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 0.13602261074564093,
+        "energyRatio": 507.49730032585575,
+        "tailRms": 9.485762357343768,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 653,
+        "encodeMillisecondsAll": [
+          260.66270000000077,
+          212.71500000000015,
+          200.13739999999962
+        ],
+        "spectralShapeError": 0.02765751424221538,
+        "envelopeError": 0.003299646592996245,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 1,
+        "energyRatio": 1.0937223288961548,
+        "tailRms": 33.86616582224802,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 16000,
+      "level": 6,
+      "samples": 10240,
+      "sourceTailRms": 0.44105696910943376,
+      "old": {
+        "bytes": 690,
+        "encodeMillisecondsAll": [
+          125.14459999999963,
+          197.81329999999434,
+          152.72030000000086
+        ],
+        "spectralShapeError": 0.981122759221129,
+        "envelopeError": 481.8926423172607,
+        "sourcePartials": 1,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 0.17547347959692555,
+        "energyRatio": 503.2371362061275,
+        "tailRms": 0.42389562394532926,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 703,
+        "encodeMillisecondsAll": [
+          527.1444999999949,
+          605,
+          552.2445000000007
+        ],
+        "spectralShapeError": 0.017180209742220107,
+        "envelopeError": 0.0033594271960438573,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.957602851014004,
+        "energyRatio": 0.9324876052983476,
+        "tailRms": 0.42389562394532926,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-ring",
+      "rate": 16000,
+      "level": 8,
+      "samples": 10240,
+      "sourceTailRms": 0.44105696910943376,
+      "old": {
+        "bytes": 690,
+        "encodeMillisecondsAll": [
+          170.58750000000146,
+          184.99369999999908,
+          186.95720000000438
+        ],
+        "spectralShapeError": 0.981122759221129,
+        "envelopeError": 481.8926423172607,
+        "sourcePartials": 1,
+        "retainedPartials": 0,
+        "minimumPartialRetention": 0.17547347959692555,
+        "energyRatio": 503.2371362061275,
+        "tailRms": 0.42389562394532926,
+        "boundedGainAndTail": false
+      },
+      "current": {
+        "bytes": 703,
+        "encodeMillisecondsAll": [
+          559.7676999999967,
+          558.3283999999985,
+          522.6372000000047
+        ],
+        "spectralShapeError": 0.017180209742220107,
+        "envelopeError": 0.0033594271960438573,
+        "sourcePartials": 1,
+        "retainedPartials": 1,
+        "minimumPartialRetention": 0.957602851014004,
+        "energyRatio": 0.9324876052983476,
+        "tailRms": 0.42389562394532926,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 16000,
+      "level": 3,
+      "samples": 10240,
+      "sourceTailRms": 0.39970692388298706,
+      "old": {
+        "bytes": 463,
+        "encodeMillisecondsAll": [
+          12.13520000000426,
+          10.533000000003085,
+          13.242099999995844
+        ],
+        "spectralShapeError": 0.07344972181550971,
+        "envelopeError": 0.005890609463027595,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.8283860642727009,
+        "energyRatio": 0.8981251512205005,
+        "tailRms": 6.865903072429729,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 463,
+        "encodeMillisecondsAll": [
+          11.241300000001502,
+          11.415600000000268,
+          12.25959999999759
+        ],
+        "spectralShapeError": 0.07344972181550971,
+        "envelopeError": 0.005890609463027595,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.8283860642727009,
+        "energyRatio": 0.8981251512205005,
+        "tailRms": 6.865903072429729,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 16000,
+      "level": 4,
+      "samples": 10240,
+      "sourceTailRms": 0.39970692388298706,
+      "old": {
+        "bytes": 516,
+        "encodeMillisecondsAll": [
+          11.96639999999752,
+          11.227599999998347,
+          11.302999999999884
+        ],
+        "spectralShapeError": 0.04939194020703333,
+        "envelopeError": 0.03188921926702743,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.8007564146644531,
+        "energyRatio": 0.7621007817726357,
+        "tailRms": 10.310946852738597,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 516,
+        "encodeMillisecondsAll": [
+          67.9577000000063,
+          71.63380000000325,
+          62.20789999999397
+        ],
+        "spectralShapeError": 0.04939194020703333,
+        "envelopeError": 0.03188921926702743,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.8007564146644531,
+        "energyRatio": 0.7621007817726357,
+        "tailRms": 10.310946852738597,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 16000,
+      "level": 6,
+      "samples": 10240,
+      "sourceTailRms": 0.39970692388298706,
+      "old": {
+        "bytes": 756,
+        "encodeMillisecondsAll": [
+          46.70180000000255,
+          47.54590000000462,
+          48.15189999999711
+        ],
+        "spectralShapeError": 0.03748062594393301,
+        "envelopeError": 0.011086841135703771,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.8974582402462635,
+        "energyRatio": 0.8637256275004105,
+        "tailRms": 0,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 756,
+        "encodeMillisecondsAll": [
+          93.17130000000179,
+          98.00759999999718,
+          92.54130000000441
+        ],
+        "spectralShapeError": 0.03748062594393301,
+        "envelopeError": 0.011086841135703771,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.8974582402462635,
+        "energyRatio": 0.8637256275004105,
+        "tailRms": 0,
+        "boundedGainAndTail": true
+      }
+    },
+    {
+      "name": "high-two-tone",
+      "rate": 16000,
+      "level": 8,
+      "samples": 10240,
+      "sourceTailRms": 0.39970692388298706,
+      "old": {
+        "bytes": 756,
+        "encodeMillisecondsAll": [
+          88.70100000000093,
+          87.86639999999898,
+          89.15440000000672
+        ],
+        "spectralShapeError": 0.03748062594393301,
+        "envelopeError": 0.011086841135703771,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.8974582402462635,
+        "energyRatio": 0.8637256275004105,
+        "tailRms": 0,
+        "boundedGainAndTail": true
+      },
+      "current": {
+        "bytes": 756,
+        "encodeMillisecondsAll": [
+          98.87350000000151,
+          94.30679999999847,
+          94.03620000000228
+        ],
+        "spectralShapeError": 0.03748062594393301,
+        "envelopeError": 0.011086841135703771,
+        "sourcePartials": 2,
+        "retainedPartials": 2,
+        "minimumPartialRetention": 0.8974582402462635,
+        "energyRatio": 0.8637256275004105,
+        "tailRms": 0,
+        "boundedGainAndTail": true
+      }
+    }
+  ]
+}

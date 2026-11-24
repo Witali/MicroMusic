@@ -18,6 +18,9 @@ struct LpxSeedContext {
     int16_t lastSample=0;
     bool continuation=false;
     int lookahead=0,accuracy=0;
+    // Borrowed only during seedBegin: per-320-sample spectral safety strength.
+    const uint8_t* spectralSafety=nullptr;
+    const uint8_t* analysisOrder=nullptr;
 };
 int lpxSeedBeginContext(int samples,int profile,int rate,int pre,bool zeroScale,
                          double bandwidth,const LpxSeedContext* context);

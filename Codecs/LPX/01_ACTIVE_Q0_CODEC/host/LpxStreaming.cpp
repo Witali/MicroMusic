@@ -11,10 +11,11 @@ namespace lpx {
 StreamingEncoder::StreamingEncoder(uint32_t samples,int selected,int sampleRate,int sizeAllowance,int refinements,bool normalization,bool accuracyMode)
     :total(samples),profile(selected),rate(sampleRate),allowance(sizeAllowance),calls(refinements),
      header(v9HeaderBytes(samples)),policy(encodingPolicy(selected,accuracyMode)),normalize(normalization),accuracy(accuracyMode),controlWriter(policy.corrections),candidateWriter(policy.corrections),sourceMeter(rate),preparedMeter(rate),controlMeter(rate),candidateMeter(rate) {
-    controlContext.allowExtras=candidateContext.allowExtras=accuracy&&profile==8;
+    controlContext.allowExtras=candidateContext.allowExtras=accuracy;
     if(accuracy)controlContext.accuracy=candidateContext.accuracy=profile;
     planned=!normalize;
-    if(!total || total>kLpxMaxSamples || !policy.supports(rate,allowance) || calls<0 || calls>4)error=-1;
+    const uint32_t sampleLimit=accuracyMode && !refinements?kLpxMaxStreamingSamples:kLpxMaxSamples;
+    if(!total || total>sampleLimit || !policy.supports(rate,allowance) || calls<0 || calls>4)error=-1;
     if(!error && !enc_reserve(kLpxStreamWindow+320))error=-2;
     if(!calls)candidateLive=false;
 }

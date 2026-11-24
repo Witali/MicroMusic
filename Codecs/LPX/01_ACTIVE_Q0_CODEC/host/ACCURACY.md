@@ -8,15 +8,17 @@ adaptive proposals, whole-output admission and packet writer.
 
 | Preset | Existing V9 alphabet | Spectral precision | Extra detail search |
 | --- | --- | --- | --- |
-| P3 | P4 | Even rank-residual grid and temporal dead zone | No sparse correction layer |
-| P4 | P4 | Established 5-bit LSF grid | Common adaptive LPC/excitation search |
-| P6 | P6 | Established 6-bit LSF grid | Common adaptive LPC/excitation search |
-| P8 | P6 | Same stable 10-LPC model | Additional legal sparse correction parameters |
+| P3 | P4 | Even rank-residual grid and temporal dead zone | Common budgeted residual corrections |
+| P4 | P4 | Established 5-bit LSF grid | Common budgeted residual corrections |
+| P6 | P6 | Established 6-bit LSF grid | Common budgeted residual corrections |
+| P8 | P6 | Same spectral grid as P6 | Common budgeted residual corrections |
 
 P4/P6 names and wire syntax are retained. Their new accuracy-mode search may
 improve; exact legacy API behavior is independently retained. All four presets
 write the existing V9/V9 Long structure. P8 does not recursively finish P6 or
-produce a companion file. LPC order and spectral refresh cadence are unchanged.
+produce a companion file. The decoder retains ten LSFs and the same spectral
+refresh cadence. The existing P4/P6 alphabets are not literal bit-prefix layers;
+truncating a P8 packet does not produce a valid lower-level packet.
 
 ## Allocation and significance
 
@@ -29,7 +31,7 @@ seed requirements, source-dependent repeats and sample rate affect the result.
 At 12/16 kHz the same parameter cadence spends more bits per second.
 
 The common controller generates LPC, pitch, gain and excitation proposals.
-P8 also tests legal positions/amplitudes around the largest local reconstruction
+Every level also tests legal positions/amplitudes around the largest local reconstruction
 residual over a 160-sample horizon. Proposals are ordered by reconstructed SSE
 reduction per added symbol bit, not coefficient magnitude. A new sparse symbol
 costs ten payload bits; replacing a present symbol adds none. The first active
@@ -41,7 +43,8 @@ activation during local allocation; final
 selection counts exact complete packed bytes. The greedy proposal pass is not
 a proof of a globally optimal coefficient subset.
 
-The internal legacy controller still accounts v5 bytes. Its `budget+9` search
+The internal legacy controller still accounts v5 bytes. Its
+`max(budget+9, compactBytes(seed))` search
 allowance does not admit a file by itself: the common V9 selector independently
 requires the complete output to fit the effective current-profile budget.
 It freezes each profile's own original admissible seed, checks full decoded
@@ -54,12 +57,63 @@ profile encode and cannot promise a strict quality increase for every source.
 ## Continuation and memory
 
 The same policy, quantizer history, complete synthesis state and partial output
-byte carry across 20480-sample windows. Only EOF pads the final packet. P8's
-correction-fields flag is known from the first header. Final assembled quality
+byte carry across 20480-sample windows. Only EOF pads the final packet. The
+correction-fields flag is known from the first header at every accuracy level.
+Final assembled quality
 admission protects the current profile's continuous fast control, including
 boundary-crossing pitch windows. An allocation failure retains a completely
 decoded and verified control. Full/refined admission can still hold whole-file
 PCM in WASM; only the fast window path has bounded model working memory.
+
+Fast accuracy streaming accepts up to 64 million samples; whole-input and
+streaming-refinement searches retain their 32-million-sample cap. Verification
+decoding accepts 64 million samples. Compressed input remains capped at100 MiB;
+output storage and optional whole-output quality buffers still grow with length.
+
+## Source-aware synthesis recovery
+
+Accuracy mode checks the actual rounded Q12 LPC vectors, including every
+interpolated vector, with a portable Schur step-down test. Ordered LSF endpoints
+alone do not guarantee stable interpolated LPC coefficients. Unsafe transitions
+are regularized toward the preceding transmitted spectrum. Legacy C ABI search
+retains its separately pinned byte contract.
+
+A frozen-polynomial test does not certify a switched integer filter. The seed
+therefore also renders from the original carried state and rejects catastrophic
+source-relative level growth, added clipping and strong off-band replacement.
+The latter compares normalized32-band Hann spectra in512-sample windows,
+jointly requiring more than.5 Hellinger error and35% output power in bands
+holding less than.5% of source power. It is a generous recovery trigger, not a
+general perceptual-quality score. On failure, a shared bounded
+recovery tries effective analysis orders2/4/6/8 near the first failing region,
+then unexpanded analysis and localized spectral regularization. Ten LSFs are
+still transmitted; no new decoder, tone detector or profile-specific fix is
+introduced. It never resets or splices synthesis history. Ordinary safe seeds
+retain their original analysis. Safe order alternatives are ranked by the sum
+of actual-rate balanced magnitude and temporal errors on both PCM and PWM;
+the source analysis is reused. When a candidate expands the failing region,
+all four orders are reconsidered on the enlarged mask, up to three passes and
+32 total fits. This avoids accepting the first safe low-order
+filter when another legal partial requires a more complex model. It is bounded
+analysis through synthesis of transmitted parameters, not a global optimum.
+An unrecoverable seed reports an error.
+
+Residual and adaptive proposals must pass source-level safety and existing
+whole-output quality admission. Independent synthetic tests check harmonic and
+inharmonic partial retention, spectral shape, attacks and decaying tails at the
+same actual sample rate. These are bounded regression checks, not a guarantee
+of transparent coding for arbitrary audio. The browser defaults to16 kHz;
+8 kHz necessarily discards source content above4 kHz before LPX search.
+
+The search minimizes reconstructed distortion subject to legal quantized
+symbols, complete packed-byte allocation and synthesis safety. Continuous
+Levinson analysis supplies an initial estimate; its prediction-error optimum
+does not certify the rounded transmitted filter or the nonlinear integer
+decoder output. Candidate evaluation uses those actual transmitted parameters.
+The [Opus specification's LPC stability discussion](https://www.rfc-editor.org/rfc/rfc6716.html#section-4.2.7.5.8)
+also describes why rounded LPC requires explicit checking and why near-unit
+classification is numerically difficult. LPX retains its own interpolation,
+integer synthesis and independently tested guard.
 
 The incremental verification decoder keeps only a compressed file plus a
 20480-sample PCM window. Its exported static C++ state is initialized exactly

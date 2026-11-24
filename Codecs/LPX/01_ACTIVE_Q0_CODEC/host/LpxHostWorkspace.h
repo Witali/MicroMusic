@@ -5,6 +5,10 @@
 
 // Browser resource limits, independent of the uint32 V9 Long wire fields.
 static constexpr uint32_t kLpxMaxSamples = 32000000;
+// Only bounded accuracy streaming without refinement uses the larger input
+// limit. Whole-input seed/search and the retained native CLI stay at 32M.
+static constexpr uint32_t kLpxMaxStreamingSamples = 64000000;
+static constexpr uint32_t kLpxMaxDecodedSamples = kLpxMaxStreamingSamples;
 static constexpr uint32_t kLpxMaxFileBytes = 100 * 1024 * 1024;
 
 // An explicit encoder context owns its allocation; unrelated contexts cannot

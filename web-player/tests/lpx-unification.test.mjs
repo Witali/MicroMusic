@@ -6,7 +6,7 @@ import { createDecoder } from '../lpx/codec.js';
 import { readRecordedBuildFile } from './helpers/recorded-build-source.mjs';
 import { encodingPolicy, bitrateBudget } from '../lpx/encoding-policy.js';
 
-// Pin the pre-refactoring production artifact, independently of current builds.
+// Pin the legacy API independently of changes to the opt-in accuracy model.
 const baselineRevision = 'b428477f5e4f39797dc7c91b53c01469d7b4944f';
 const baseline = await createEncoder(readRecordedBuildFile(baselineRevision, 'web-player/lpx/encoder-adaptive.wasm'));
 const scalar = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive.wasm', import.meta.url)));
@@ -39,12 +39,13 @@ test('precision, strict bitrate and legacy control budgets remain distinct', () 
   for(const profile of [4,6])assert.equal(encodingPolicy(profile).budgetKind,'v5-control');
 });
 
-test('shared encoder refactoring retains complete accuracy bytes and PCM', () => {
+test('legacy adaptive and strict-bitrate APIs retain pinned complete bytes and PCM', {timeout:60000}, () => {
   const signals = [new Int16Array(41),
     Int16Array.from({length:321}, (_,i)=>Math.round(7000*Math.sin(i*.17)+2000*Math.sin(i*.037))),
     Int16Array.from({length:161}, (_,i)=>i&1?32767:-32768)];
   for (const pcm of signals) for (const rate of [8000,12000,16000]) for (const level of [3,4,6,8]) {
-    const options={accuracy:true,calls:4};
+    if((level===3||level===8)&&rate!==8000)continue;
+    const options={accuracy:false,calls:4};
     let expected, failure;
     try { expected=baseline(pcm,rate,level,()=>{},options); }
     catch(error) { failure=error.message; }
@@ -54,5 +55,20 @@ test('shared encoder refactoring retains complete accuracy bytes and PCM', () =>
       assert.deepEqual(actual,expected,`P${level}/${rate}/${pcm.length}`);
       assert.deepEqual(decode(actual).pcm,decode(expected).pcm);
     }
+  }
+});
+
+test('the current accuracy model is deterministic across backends, levels, rates and session reuse', {timeout:60000}, () => {
+  const signals=[new Int16Array(41),
+    Int16Array.from({length:321},(_,i)=>Math.round(7000*Math.sin(i*.17)+2000*Math.sin(i*.037))),
+    Int16Array.from({length:161},(_,i)=>i&1?32767:-32768)];
+  for(const pcm of signals)for(const rate of [8000,12000,16000])for(const level of [3,4,6,8])for(const calls of [0,4]) {
+    const options={accuracy:true,calls},actual=scalar(pcm,rate,level,()=>{},options);
+    assert.deepEqual(actual,simd(pcm,rate,level,()=>{},options),`P${level}/${rate}/${pcm.length}/${calls}`);
+    scalar(signals[(signals.indexOf(pcm)+1)%signals.length],rate,level,()=>{},options);
+    assert.deepEqual(scalar(pcm,rate,level,()=>{},options),actual,'a previous session cannot change the next result');
+    const result=decode(actual);
+    assert.equal(result.sampleRate,rate);assert.equal(result.samples,pcm.length);
+    assert.equal(result.profile,level<=4?4:6);
   }
 });

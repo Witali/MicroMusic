@@ -14,10 +14,13 @@ static bool reading;
 extern "C" {
 int lpx_reserve(uint32_t bytes, uint32_t samples) {
     inputCapacity = outputCapacity = 0;
-    if (bytes < 13 || bytes > kLpxMaxFileBytes || !samples || samples > kLpxMaxSamples) return 0;
-    uint8_t* memory = static_cast<uint8_t*>(reserveWorkspace(((bytes + 7) & ~7u) + samples * 2));
+    if (bytes < 13 || bytes > kLpxMaxFileBytes || !samples || samples > kLpxMaxDecodedSamples) return 0;
+    const uint64_t inputBytes=(uint64_t(bytes)+7)&~uint64_t(7);
+    const uint64_t required=inputBytes+uint64_t(samples)*sizeof(int16_t);
+    if(required>UINT32_MAX)return 0;
+    uint8_t* memory = static_cast<uint8_t*>(reserveWorkspace(uint32_t(required)));
     if (!memory) return 0;
-    input = memory; output = reinterpret_cast<int16_t*>(memory + ((bytes + 7) & ~7u));
+    input = memory; output = reinterpret_cast<int16_t*>(memory + uint32_t(inputBytes));
     inputCapacity = bytes; outputCapacity = samples;
     return 1;
 }

@@ -68,6 +68,7 @@ bool safety(const Measurement& m,const FullBandMeasurement& spectrum,
 class QualitySelection {
     int cap;
     bool finalV9Budget;
+    bool requireStable;
     ProfileQualityReport& report;
     std::unique_ptr<CandidateEvaluation> ownedEvaluation;
     CandidateEvaluation& evaluation;
@@ -83,7 +84,7 @@ public:
     Stream selected;
     QualitySelection(const Stream& incumbent, const Pcm& reference, int cap,
         bool finalV9Budget, ProfileQualityReport& report, bool speech, bool protectOctaves=false,CandidateEvaluation* shared=nullptr)
-        : cap(cap), finalV9Budget(finalV9Budget), report(report),
+        : cap(cap), finalV9Budget(finalV9Budget), requireStable(incumbent.accuracy!=0),report(report),
           ownedEvaluation(shared?nullptr:new CandidateEvaluation(reference,incumbent.rate,speech)),
           evaluation(shared?*shared:*ownedEvaluation),initialPcm(render(incumbent)),
           quality(evaluation.quality), selected(incumbent) {
@@ -99,12 +100,17 @@ public:
     bool add(const Stream& candidate,double* safeScore=nullptr) {
         if(safeScore)*safeScore=std::numeric_limits<double>::infinity();
         if(!candidate.samples)return false;
+        if(requireStable&&!stableLpcStream(candidate))return false;
         auto packed=packV9(candidate);
         const int count=finalV9Budget?int(packed.size()):compactBytes(candidate);
         if(count>cap)return false;
         for(const auto& old:seen)if(packed==old)return false;
         seen.push_back(std::move(packed));++report.candidates;
         Measurement measured;FullBandMeasurement spectral;Pcm pcm;
+        if(requireStable) {
+            pcm=render(candidate);
+            if(!safeSynthesisLevel(candidate,quality.reference,pcm)||!safeSynthesisSpectrum(quality.reference,pcm))return false;
+        }
         if(!evaluation.measure(candidate,seen.back(),measured,spectral,&pcm)) { report.error=-3;return false; }
         if(!safety(measured,spectral,baseline,baselineSpectrum))return false;
         const double score=objective(measured,spectral,baseline,baselineSpectrum);
@@ -182,13 +188,18 @@ Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
             if (threeK) {
                 BitrateReport search;
                 proposal = encodeThreeK(reference, cap, search, bandwidth, &incumbent,
-                    incumbent.continuation || !incumbent.allowExtras?&incumbent:nullptr);
+                    incumbent.continuation || !incumbent.allowExtras || incumbent.accuracy?&incumbent:nullptr);
                 if (search.error) { report.error = search.error; return Stream{}; }
             } else {
+                SeedFitStatus fitStatus;
                 proposal = fitSeed(reference, incumbent.profile, incumbent.rate,
                     incumbent.pre, true, bandwidth,
-                    incumbent.continuation || !incumbent.allowExtras?&incumbent:nullptr);
-                if (!proposal.samples) { report.error = -7; return Stream{}; }
+                    incumbent.continuation || !incumbent.allowExtras || incumbent.accuracy?&incumbent:nullptr,
+                    nullptr, &fitStatus);
+                if (!proposal.samples) {
+                    if(incumbent.accuracy && fitStatus==SeedFitStatus::Unsafe)continue;
+                    report.error = -7; return Stream{};
+                }
             }
             ++report.bandwidthCandidates;
             add(proposal);

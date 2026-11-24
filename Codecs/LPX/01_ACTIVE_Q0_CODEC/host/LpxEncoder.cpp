@@ -12,6 +12,7 @@
 
 #include "LpxEncoderContext.h"
 #include "LpxEncoderSimd.h"
+#include "LpxLpcStability.h"
 
 namespace {
 constexpr double pi=3.14159265358979323846;
@@ -47,6 +48,34 @@ double rootValue(const double* a, double w, bool imaginary) {
     for (int k = 0; k <= 10; ++k) result += a[k] * (imaginary ? sin(w * (5.5 - k)) : cos(w * (5.5 - k)));
     return result;
 }
+// Match the decoder's three Q12 polynomial anchors and its linear LPC
+// interpolation exactly. Ordered/stable LSF anchors alone are insufficient.
+void lpcFrame(const uint16_t* previous,const uint16_t* current,int16_t out[8][10]) {
+    int endpoints[3][10];
+    for(int point=0;point<3;++point) {
+        const int t=point*8;int polynomials[2][12]={{4096,4096},{4096,-4096}};
+        for(int j=0;j<10;++j) {
+            const int norm=(previous[j]*(16-t)+current[j]*t)>>2;
+            const int index=norm>>4,frac=norm&15;
+            const int c=-(cosine[index]+((cosine[index+1]-cosine[index])*frac>>4));
+            int* p=polynomials[j&1];const int n=2+(j/2)*2;
+            p[n+1]=p[n-1];p[n]=p[n-2]+polyMul(p[n-1],c);
+            for(int k=n-1;k>1;--k)p[k]=p[k-2]+polyMul(p[k-1],c)+p[k];
+            p[1]=polyMul(p[0],c)+p[1];
+        }
+        for(int j=0;j<10;++j)endpoints[point][j]=clip((polynomials[0][j+1]+polynomials[1][j+1])/2);
+    }
+    for(int sub=0;sub<8;++sub)for(int j=0;j<10;++j) {
+        const int a=endpoints[sub/4][j],b=endpoints[sub/4+1][j];
+        out[sub][j]=clip(a+(b-a)*((sub*2+1)%8)/8);
+    }
+}
+bool stableSpectrum(const uint16_t* previous,const uint16_t* current) {
+    int16_t co[8][10];lpcFrame(previous,current,co);
+    for(int sub=0;sub<8;++sub)if(!lpxStableLpc(co[sub]))return false;
+    lpcFrame(current,current,co);
+    return lpxStableLpc(co[0]);
+}
 }
 
 void lpx::SeedEncoder::prepareAnalysis() {
@@ -81,7 +110,9 @@ void lpx::SeedEncoder::analyze(int frame) {
     for (int j = 0; j < 256; ++j) buf[j] = (buf[j] - mean) * window[j];
     for (int lag = 0; lag <= 10; ++lag) { r[lag] = 0; for (int j = lag; j < 256; ++j) r[lag] += buf[j] * buf[j - lag]; }
     double error = fmax(r[0], 1e-10);
-    for (int m = 1; m <= 10; ++m) {
+    const int order=hasSeedContext&&seedContext.accuracy&&seedContext.analysisOrder
+        ?clip(seedContext.analysisOrder[frame/2],2,10):10;
+    for (int m = 1; m <= order; ++m) {
         double sum = r[m]; for (int k = 1; k < m; ++k) sum += a[k] * r[m - k];
         double reflection = fmax(-.98, fmin(.98, -sum / fmax(error, 1e-12)));
         memcpy(old, a, sizeof(a));
@@ -129,33 +160,45 @@ void lpx::SeedEncoder::prepareCoefficients() {
         for (int j = 0; j < 10; ++j) spectra[fi / 2][j] = clip((int)nearbyint(((vectors[fi][j] + vectors[fi + 1][j]) * .5 - (1 << (shift - 1))) / (1 << shift)), 0, limit);
         for (int j = 1; j < 10; ++j) if (spectra[fi / 2][j] <= spectra[fi / 2][j - 1]) spectra[fi / 2][j] = spectra[fi / 2][j - 1] + 1;
         if (spectra[fi / 2][9] > limit) { spectra[fi / 2][9] = limit; for (int j = 8; j >= 0; --j) if (spectra[fi / 2][j] >= spectra[fi / 2][j + 1]) spectra[fi / 2][j] = spectra[fi / 2][j + 1] - 1; }
+        if(hasSeedContext&&seedContext.accuracy&&seedContext.spectralSafety) {
+            const int weights[5]={0,2,4,8,16};
+            const int weight=weights[clip(seedContext.spectralSafety[fi/2],0,4)];
+            for(int j=0;j<10;++j) {
+                const int neutral=clip(int(nearbyint(((j+1)*1023.0/11-(1<<(shift-1)))/(1<<shift))),0,limit);
+                spectra[fi/2][j]=(spectra[fi/2][j]*(16-weight)+neutral*weight+8)/16;
+            }
+        }
         if(hasSeedContext && seedContext.accuracy==3){
             int previous[10];bool hasPrevious=fi>0||seedContext.continuation;
             if(hasPrevious)for(int j=0;j<10;++j)previous[j]=fi?spectra[fi/2-1][j]:(seedContext.previousVector[j]-(1<<(shift-1)))>>shift;
             lpxQuantizeSpectrum(spectra[fi/2],hasPrevious?previous:nullptr,seedContext.accuracy);
         }
+        if(hasSeedContext && seedContext.accuracy) {
+            const bool continued=fi>0||seedContext.continuation;
+            uint16_t previous[10],current[10];int original[10],base[10],old[10];
+            for(int j=0;j<10;++j) {
+                original[j]=spectra[fi/2][j];
+                previous[j]=fi?vectors[fi-1][j]:seedContext.previousVector[j];
+                old[j]=(int(previous[j])-(1<<(shift-1)))>>shift;
+                base[j]=continued?old[j]:clip(int(nearbyint(((j+1)*1023.0/11-(1<<(shift-1)))/(1<<shift))),0,limit);
+                current[j]=(original[j]<<shift)+(1<<(shift-1));
+            }
+            if(!stableSpectrum(continued?previous:current,current)) {
+                bool accepted=false;
+                for(int weight=15;weight>=0;--weight) {
+                    for(int j=0;j<10;++j)spectra[fi/2][j]=(original[j]*weight+base[j]*(16-weight)+8)/16;
+                    lpxQuantizeSpectrum(spectra[fi/2],continued?old:nullptr,seedContext.accuracy);
+                    for(int j=0;j<10;++j)current[j]=(spectra[fi/2][j]<<shift)+(1<<(shift-1));
+                    if(stableSpectrum(continued?previous:current,current)) {accepted=true;break;}
+                }
+                if(!accepted) {failure=-8;return;}
+            }
+        }
         for (int j = 0; j < 10; ++j) vectors[fi][j] = vectors[fi + 1][j] = (spectra[fi / 2][j] << shift) + (1 << (shift - 1));
     }
     for (int fi = 0; fi < frames; ++fi) {
-        int endpoints[3][10];
-        for (int point = 0; point < 3; ++point) {
-            int t = point * 8, polynomials[2][12] = {{4096, 4096}, {4096, -4096}};
-            for (int j = 0; j < 10; ++j) {
-                int previous=fi?vectors[fi-1][j]:hasSeedContext && seedContext.continuation?seedContext.previousVector[j]:vectors[0][j];
-                int norm = (previous * (16 - t) + vectors[fi][j] * t) >> 2;
-                int index = norm >> 4, frac = norm & 15;
-                int c = -(cosine[index] + ((cosine[index + 1] - cosine[index]) * frac >> 4));
-                int* p = polynomials[j & 1]; int n = 2 + (j / 2) * 2;
-                p[n + 1] = p[n - 1]; p[n] = p[n - 2] + polyMul(p[n - 1], c);
-                for (int k = n - 1; k > 1; --k) p[k] = p[k - 2] + polyMul(p[k - 1], c) + p[k];
-                p[1] = polyMul(p[0], c) + p[1];
-            }
-            for (int j = 0; j < 10; ++j) endpoints[point][j] = clip((polynomials[0][j + 1] + polynomials[1][j + 1]) / 2);
-        }
-        for (int sub = 0; sub < 8; ++sub) for (int j = 0; j < 10; ++j) {
-            int a = endpoints[sub / 4][j], b = endpoints[sub / 4 + 1][j];
-            coefficients[fi * 8 + sub][j] = clip(a + (b - a) * ((sub * 2 + 1) % 8) / 8);
-        }
+        const auto* previous=fi?vectors[fi-1]:hasSeedContext&&seedContext.continuation?seedContext.previousVector:vectors[0];
+        lpcFrame(previous,vectors[fi],coefficients+fi*8);
     }
 }
 double lpx::SeedEncoder::trial20(State& out, const State& initial, int cursor, int scale, int lag, int gain, int pos, int amp, bool save, double bound, bool reusePrefix, bool recordPrefix) {
@@ -306,6 +349,9 @@ int lpx::SeedEncoder::seedBegin(int samples,int profile,int sampleRate,int empha
         emphasized[j] = source[j] / 2.0 - (j ? pre * (source[j - 1] / 2.0) / 16384 : hasSeedContext && seedContext.continuation?pre*(seedContext.lastSample/2.0)/16384:0);
     for (int fi = 0; fi < padded / 160; ++fi) analyze(fi);
     prepareCoefficients();
+    seedContext.spectralSafety=nullptr;
+    seedContext.analysisOrder=nullptr;
+    if(failure)return failure;
     for (int j = 0; j < padded; ++j) {
         residual[j] = emphasized[j];
         for (int k = 0; k < 10; ++k) {

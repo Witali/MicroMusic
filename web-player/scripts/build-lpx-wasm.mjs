@@ -44,7 +44,7 @@ const manifest = { schema: 'micromusic-lpx-v9-wasm-v1', compiler: run(['--versio
   flags: flags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
   inputs: Object.fromEntries(inputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
   bytes: binary.length, sha256: hash(binary), imports: [], initialMemoryBytes: 262144, maxMemoryBytes: 268435456,
-  maxSamples: 32000000, wideV9: true,
+  maxSamples: 64000000, wideV9: true,
   output: 'PCM16', rates: [8000, 12000, 16000], profiles: [4, 6, 15] };
 writeFileSync(join(root, 'web-player/lpx/build.json'), JSON.stringify(manifest, null, 2) + '\n');
 console.log(`LPX V9 C → WebAssembly: ${binary.length} bytes, no host imports`);
@@ -64,6 +64,7 @@ writeFileSync(join(root, 'web-player/lpx/encoder-build.json'), JSON.stringify({ 
   flags: encoderFlags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
   inputs: Object.fromEntries(encoderInputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
   schema: 'micromusic-lpx-v9-encoder-wasm-v1', bytes: encoderBinary.length, sha256: hash(encoderBinary), maxMemoryBytes: 1073741824,
+  maxSamples: 32000000,
   profiles: [4, 6], output: 'LPX V9', algorithm: 'speech_v4 closed-loop search, shared native/WASM C++ core',
   searchOptimizations: { nonnegativeLossPruning: true, duplicateCandidates: true, commonPrefixes: true, exactSilentBlocks: true },
   analysisOptimizations: { exactGridCache: true, cacheBytes: 112816 } }, null, 2) + '\n');
@@ -149,6 +150,7 @@ for (const simd of [false, true]) {
   const parent = JSON.parse(readFileSync(join(root, 'web-player/lpx/encoder-build.json')));
   writeFileSync(join(root, `web-player/lpx/${name}-build.json`), JSON.stringify({ ...parent,
     schema: 'micromusic-lpx-v9-adaptive-wasm-v1',
+    maxSamples: 32000000, maxFastAccuracyStreamSamples: 64000000,
     flags: buildFlags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
     inputs: Object.fromEntries(adaptiveInputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
     bytes: bytes.length, sha256: hash(bytes), initialMemoryBytes: 524288, stackBytes: 262144, backend: simd ? 'wasm-simd128-pulse4' : 'scalar',

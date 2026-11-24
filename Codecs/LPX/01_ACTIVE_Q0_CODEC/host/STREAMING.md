@@ -17,9 +17,10 @@ The WebUI processing selector is separate from its Auto/ordinary/SIMD backend:
 
 Windowed refinement is a different search from whole-recording refinement.
 Neither mode is claimed to be audibly better from metric scores alone. Streaming
-does not add optional extra pulses; full search retains that option. P4/P6 size
-allowances still apply to their original v5 complete control accounting before
-V9 repacking. The 3/8 presets retain their complete final V9 file budgets at8k.
+uses the same budgeted residual-detail operator at every accuracy level;
+the larger budget determines which additional parameters fit. The explicit
+legacy APIs retain their original pulse and strict-bitrate behavior. Accuracy
+budgets include the complete admissible control and final V9 packing.
 
 ## State and packing
 
@@ -52,11 +53,14 @@ gain is applied to every window and lookahead sample before encoding. Defaults
 and short/below-gate behavior are unchanged. No gain field is written to LPX.
 
 Model/search working storage is bounded by the window. This is not an unlimited
-or constant-memory browser converter: the browser initially decodes the compressed
-source into a whole AudioBuffer; output bytes, verification PCM and loudness
-energy summaries still scale with duration. Streaming refinement's final complete
-quality gate also requires whole PCM/analysis buffers. Existing100MiB source and
-32million resampled-sample limits remain in force.
+or constant-memory browser converter: supported MP3/AAC/PCM16 WAV input and
+verification PCM use local temporary storage, while other formats use a whole
+AudioBuffer. Output bytes and loudness energy summaries still scale with
+duration. Streaming refinement's final complete quality gate also requires
+whole PCM/analysis buffers. Input is capped at100 MiB. Fast accuracy streaming
+and decoding accept64 million samples; whole-input search, legacy streaming
+and streaming refinement retain their32-million-sample caps. At16 kHz the
+fast cap is about66 minutes. See [source input](../../../../web-player/lpx/AUDIO_INPUT.md).
 
 ## Reproduction and evidence
 

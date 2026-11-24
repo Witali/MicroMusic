@@ -19,7 +19,7 @@ export const coreInputs=['Lpx4HybridCore.h','Lpx4Math.h','Lpx4MemoryProfiles.h',
   'Lpx4MultiplyC.h','cos_table.inc','scale_table.inc'].map(name=>`${base}/src/${name}`);
 export const workspaceHeader=`${base}/host/LpxHostWorkspace.h`;
 export const seedInputs=host(['LpxEncoder.h','LpxEncoderContext.h','LpxEncoderOptions.h',
-  'LpxEncoderSimd.h','LpxSeed.h','LpxSpectrumQuantizer.h']);
+  'LpxEncoderSimd.h','LpxSeed.h','LpxSpectrumQuantizer.h','LpxLpcStability.h']);
 export const hostInputs=host([
   'LpxAdaptive.h','LpxAccuracy.h','LpxEncodingPolicy.h','LpxCandidateEvaluation.h',
   'LpxPacking.h','LpxStreaming.h','LpxQuality.h','LpxRefinement.h','LpxAdaptiveController.h',

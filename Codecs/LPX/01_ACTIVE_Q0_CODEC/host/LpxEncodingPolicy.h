@@ -22,7 +22,7 @@ inline EncodingPolicy encodingPolicy(int selected,bool accuracy) {
     if(selected!=3 && selected!=4 && selected!=6 && selected!=8)return p;
     p.wireProfile=selected<=4?4:6;
     if(accuracy) {
-        p.accuracyLevel=selected;p.corrections=selected==8;
+        p.accuracyLevel=selected;p.corrections=true;
         p.budgetKind=BudgetKind::AccuracyAllocation;
     } else if(selected==3 || selected==8) {
         p.targetBitrate=selected*1000;p.budgetKind=BudgetKind::CompleteV9;

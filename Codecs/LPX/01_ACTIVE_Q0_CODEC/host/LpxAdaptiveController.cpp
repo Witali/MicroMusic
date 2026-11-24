@@ -57,8 +57,13 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
     Stream anchor=seeds[0];double selectedScore=original.voice[0];
     for(int pre:{0,8192,13926}) {
         if(prefix && prefix->continuation && pre!=prefix->pre)continue;
-        seeds.push_back(fitSeed(reference,profile,rate,pre,true,.97,prefix));
-        if(!seeds.back().samples) { report.error=-7;return Stream{}; }
+        SeedFitStatus fitStatus;
+        auto alternative=fitSeed(reference,profile,rate,pre,true,.97,prefix,nullptr,&fitStatus);
+        if(!alternative.samples) {
+            if(seeds[0].accuracy && fitStatus==SeedFitStatus::Unsafe)continue;
+            report.error=-7;return Stream{};
+        }
+        seeds.push_back(std::move(alternative));
         auto pcm=render(seeds.back());auto m=context.measure(pcm);
         if(compactBytes(seeds.back())<=cap && noRegression(m.quality,original.quality)
             && voiceGate(m.diagnostic[0],original.diagnostic[0]) && voiceGate(m.diagnostic[1],original.diagnostic[1])
