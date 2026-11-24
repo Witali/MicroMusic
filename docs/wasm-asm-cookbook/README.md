@@ -157,6 +157,13 @@ for local V8 workloads and do not establish performance on another CPU/browser.
 
 ### Fallback and evidence
 
+The [archived WebGPU experiment](../../research/web-encoder-webgpu-batch-2026-11-24/README.md)
+keeps an exact GPU alternative on `codex/lpx-webgpu-batch`. Batching up to 128
+sequential search blocks removes most CPU/GPU round trips, but measured gains
+over SIMD remain modest and workload-dependent. Main retains WASM selection;
+the [WebGPU cookbook](../webgpu-asm-cookbook/README.md) preserves the technique,
+correctness constraints and reasons for leaving it experimental.
+
 `LPX_ENCODER_ENABLE_PRUNING=0`, `LPX_ENCODER_DEDUP_CANDIDATES=0`,
 `LPX_ENCODER_REUSE_PREFIX=0`, `LPX_ENCODER_FAST_SILENCE=0` and
 `LPX_ENCODER_CACHE_ANALYSIS=0` independently disable these techniques. Setting all

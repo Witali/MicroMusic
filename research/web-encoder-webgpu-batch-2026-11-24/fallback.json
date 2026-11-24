@@ -1,0 +1,418 @@
+{
+  "schema": "micromusic-lpx-webgpu-batch-experiment-v1",
+  "complete": true,
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/158.0.0.0 Safari/537.36",
+  "method": "Same shared C++ encoder, synthetic PCM, complete input copy, search, adaptive decisions, packing, portable winner replay and final decoder validation. Alternating paired wall timings; loading/compilation separately. Exact comparisons and external decode outside timing.",
+  "initializationMs": {
+    "scalar": 11.400000095367432,
+    "simd": 10.200000047683716,
+    "webgpu": 19
+  },
+  "coldFirstEncodeMs": {
+    "scalar": 26.600000023841858,
+    "simd": 21.100000023841858,
+    "webgpu": 24
+  },
+  "parity": [
+    {
+      "label": "accuracy 3/8000",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 3,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 34,
+      "sha256": "d6b1b5966b01162d9dcdd28656c5a7497b6b722c3d9251a64634c28b8043448b"
+    },
+    {
+      "label": "accuracy 4/8000",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 4,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 37,
+      "sha256": "f7963c99923d2c1558014f868b71016219a9220f6fa37ac4cdcd45c7b86550df"
+    },
+    {
+      "label": "accuracy 6/8000",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 6,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 48,
+      "sha256": "2a4a4a1c3d4ece68d628c525832f0ba795708b37a006f718a6c2ab89c6c07613"
+    },
+    {
+      "label": "accuracy 8/8000",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 8,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 48,
+      "sha256": "2a4a4a1c3d4ece68d628c525832f0ba795708b37a006f718a6c2ab89c6c07613"
+    },
+    {
+      "label": "accuracy 3/12000",
+      "samples": 321,
+      "rate": 12000,
+      "profile": 3,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 34,
+      "sha256": "545b4c8b44e678b60b45256728b70172734c30d5218db9f09c7bf6c34902f94d"
+    },
+    {
+      "label": "accuracy 4/12000",
+      "samples": 321,
+      "rate": 12000,
+      "profile": 4,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 37,
+      "sha256": "890de727b8bb6e2e2ee5e0da867ed3bb19051025b48c80e9dedbcdf54b78c9f2"
+    },
+    {
+      "label": "accuracy 6/12000",
+      "samples": 321,
+      "rate": 12000,
+      "profile": 6,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 48,
+      "sha256": "67a72c39267255633fdd0c8fdc03370b8669088e6dd106f52e8c71a7addff76b"
+    },
+    {
+      "label": "accuracy 8/12000",
+      "samples": 321,
+      "rate": 12000,
+      "profile": 8,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 48,
+      "sha256": "67a72c39267255633fdd0c8fdc03370b8669088e6dd106f52e8c71a7addff76b"
+    },
+    {
+      "label": "accuracy 3/16000",
+      "samples": 321,
+      "rate": 16000,
+      "profile": 3,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 34,
+      "sha256": "3c05018bc2a9a70cb5e231752fc2755736355010e8d189bba5dc988262c1b756"
+    },
+    {
+      "label": "accuracy 4/16000",
+      "samples": 321,
+      "rate": 16000,
+      "profile": 4,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 37,
+      "sha256": "10d1114998f4e9ada499ae77e680b9bc46a5b47ca2f6033c1eed38e06592ae10"
+    },
+    {
+      "label": "accuracy 6/16000",
+      "samples": 321,
+      "rate": 16000,
+      "profile": 6,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 48,
+      "sha256": "d644c1e3fef30cb40d00d172b007b48ff7732d784457721c45832ecb87ce9d34"
+    },
+    {
+      "label": "accuracy 8/16000",
+      "samples": 321,
+      "rate": 16000,
+      "profile": 8,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 48,
+      "sha256": "d644c1e3fef30cb40d00d172b007b48ff7732d784457721c45832ecb87ce9d34"
+    },
+    {
+      "label": "silence 4",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 4,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 47,
+      "sha256": "968eab12fe57bbd81e9fc325a031364531813bf5fb890206279aa863b34be3d0"
+    },
+    {
+      "label": "silence 6",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 6,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 41,
+      "sha256": "0966818f66292c1c50bad039309f4d99c2dfa7e34e0355892112bbe7cc9fc9f5"
+    },
+    {
+      "label": "clipping 4",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 4,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 36,
+      "sha256": "452c37cb3580e35ab5299ca43691b4367b39e605df67e6bcffac043576ea32f8"
+    },
+    {
+      "label": "clipping 6",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 6,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 47,
+      "sha256": "b2389b30a104ee76e291e7d6672380e0ddc42491205e75f7c81644ace6a599db"
+    },
+    {
+      "label": "noise 4",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 4,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 35,
+      "sha256": "6d96eb190064cb6ff538613b17a09f5c5228a5dd64ea8af674bf85199b0d4fc7"
+    },
+    {
+      "label": "noise 6",
+      "samples": 321,
+      "rate": 8000,
+      "profile": 6,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 54,
+      "sha256": "8cc7a080525d8eba411f036dd4b1daaf4ddea900c5c8a9b9f97b873710962880"
+    },
+    {
+      "label": "tail 1",
+      "samples": 1,
+      "rate": 12000,
+      "profile": 6,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 22,
+      "sha256": "7fe774a4a4f50746a3ff014d2cd54f7c4ca0a5713c98860c7460c2114d4c6ad6"
+    },
+    {
+      "label": "tail 159",
+      "samples": 159,
+      "rate": 12000,
+      "profile": 6,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 29,
+      "sha256": "943fe54ca46abb31d1b063b196da15d17025b35acfda03bae59768e0a5f4a311"
+    },
+    {
+      "label": "tail 161",
+      "samples": 161,
+      "rate": 12000,
+      "profile": 6,
+      "options": {
+        "accuracy": true,
+        "calls": 0
+      },
+      "bytes": 32,
+      "sha256": "3bfd6947f91222b75db098545be663131caa401a8cf722dcd4ff129dbd171095"
+    },
+    {
+      "label": "full adaptive P8",
+      "samples": 641,
+      "rate": 8000,
+      "profile": 8,
+      "options": {
+        "accuracy": true,
+        "calls": 4
+      },
+      "bytes": 72,
+      "sha256": "7454c788851a2b82b3e0a2eff0c4f1b373e71fd8b50e535369b72cc4e213d867"
+    },
+    {
+      "label": "normalization",
+      "samples": 641,
+      "rate": 16000,
+      "profile": 4,
+      "options": {
+        "accuracy": true,
+        "calls": 0,
+        "normalization": "loudness"
+      },
+      "bytes": 53,
+      "sha256": "57ee37606585c2eb3a4ae83871d8095cec57af273740432b520884a3b10f7b2c"
+    },
+    {
+      "label": "continuous windows",
+      "samples": 20501,
+      "bytes": 977,
+      "sha256": "f6165945905eac9e23c1e6f914cabf4325c3830d2a4f44e4f952271c087db73c"
+    }
+  ],
+  "timings": [
+    {
+      "name": "P4 fast 8k",
+      "samples": 2560,
+      "rate": 8000,
+      "profile": 4,
+      "calls": 0,
+      "timingBackend": "simd",
+      "runsMs": {
+        "simd": [
+          14.200000047683716,
+          14.299999952316284,
+          14.100000023841858
+        ],
+        "webgpu": [
+          14.100000023841858,
+          14,
+          14.100000023841858
+        ]
+      },
+      "medianMs": {
+        "simd": 14.200000047683716,
+        "webgpu": 14.100000023841858
+      },
+      "gpuJobs": 0,
+      "gpuSubmissions": 0,
+      "gpuInputBytes": 0,
+      "bytes": 132,
+      "sha256": "9c641a1586430516983253f04be5db56ea17ef6d3e76501eb0ecf5a3a9c6dcf7",
+      "simdOverGpu": 1.0070922002604799
+    },
+    {
+      "name": "P6 fast 16k",
+      "samples": 2560,
+      "rate": 16000,
+      "profile": 6,
+      "calls": 0,
+      "timingBackend": "simd",
+      "runsMs": {
+        "simd": [
+          14.799999952316284,
+          14.799999952316284,
+          14.800000071525574
+        ],
+        "webgpu": [
+          14.800000071525574,
+          14.799999952316284,
+          14.899999976158142
+        ]
+      },
+      "medianMs": {
+        "simd": 14.799999952316284,
+        "webgpu": 14.800000071525574
+      },
+      "gpuJobs": 0,
+      "gpuSubmissions": 0,
+      "gpuInputBytes": 0,
+      "bytes": 191,
+      "sha256": "5f2cc90f08256298bab479a79eae5fdb3ff5392e658704d4811f9650d97acc31",
+      "simdOverGpu": 0.9999999919453183
+    },
+    {
+      "name": "P8 full 8k",
+      "samples": 640,
+      "rate": 8000,
+      "profile": 8,
+      "calls": 4,
+      "timingBackend": "simd",
+      "runsMs": {
+        "simd": [
+          247,
+          251.39999997615814,
+          243.60000002384186
+        ],
+        "webgpu": [
+          266.7999999523163,
+          287.8000000715256,
+          244.09999990463257
+        ]
+      },
+      "medianMs": {
+        "simd": 247,
+        "webgpu": 266.7999999523163
+      },
+      "gpuJobs": 0,
+      "gpuSubmissions": 0,
+      "gpuInputBytes": 0,
+      "bytes": 63,
+      "sha256": "0c2a1be294bfdafa4695169b14968717b6bf558aa86560bfa562936dc456d0ab",
+      "simdOverGpu": 0.9257871066122375
+    }
+  ],
+  "actualBackend": "simd",
+  "fallbackReason": "Аппаратный WebGPU недоступен.",
+  "worker": {
+    "backend": "simd"
+  },
+  "sourceWorker": {
+    "backend": "simd",
+    "samples": 20501
+  },
+  "assetsSha256": {
+    "web-player/lpx/encoder.js": "cd628a3fcf3442a0c020398191f6303879760472cf590a92ff2a34ed63f790e3",
+    "web-player/lpx/encoder-backend.js": "07e376a7314a90ea7bb2ebef63f50250a5a4170ba0ae01c7a516953f71b962f9",
+    "web-player/lpx/encoder-webgpu.js": "e711524d10a0969ae7e30d275672ae13f2f039cd0adbf4b1a31c6d4d13835a97",
+    "web-player/lpx/streaming.js": "0063bd07fab355daaf9f2d4cf911dc94d47a8cd867aff84480ef912b7cb5c8e2",
+    "web-player/lpx/encode-worker.js": "c72c91a93b2cbad433fe268cded5b67d420d813269676926831f599227293f74",
+    "web-player/lpx/webgpu-search.js": "b546b10bfffe14ca0e8ac4829869c970e7ac28b4b697b19370338ef7422c2369",
+    "web-player/lpx/webgpu-search.wgsl": "d9be48ec3f143590424af10be3d20b9cdbc7ee833b421ac7e959f5103070a0cd",
+    "web-player/lpx/encoder-webgpu.wasm": "4ab44ddc2ac8be06c4bc54e89fab3854d743c9107e69c55923b7fb7db17ff36e",
+    "web-player/lpx/encoder-adaptive.wasm": "34c33d5058a9a80f2b3b5cd18144801b7e9d84c4e54f8eee3cb45c99df0b63a9",
+    "web-player/lpx/encoder-adaptive-simd.wasm": "1ad0aa1f37af91f304ef29384a7e269239fc8a216ac73212a9f8147375bd022a",
+    "web-player/lpx/decoder.wasm": "03099fd8b6c4b41911e746151483a1598ff183351eb16abfcb0b20e2bf76fa6d",
+    "web-player/tests/lpx-webgpu-browser.mjs": "f11dedadb9b0611b1191dc94cdcfe4cdb6d3bfb4baa942275b841da5e19b3f39",
+    "web-player/tests/helpers/lpx-webgpu-oracle.mjs": "d62de0548f6289cf1937a7b36ea62459a5f3fa9ea4b9bf81cee873f865419c40",
+    "web-player/scripts/benchmark-lpx-webgpu.mjs": "4364b53f6c2fe60f1a46d5fb4d3cfb3d612276a74f1f5a6d93d190850b2ad7f8"
+  }
+}

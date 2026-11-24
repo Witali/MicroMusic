@@ -1,0 +1,131 @@
+{
+  "complete": true,
+  "cases": [
+    {
+      "kind": "pauses",
+      "profile": 4,
+      "rate": 8000,
+      "samples": 9601,
+      "bytes": 454,
+      "gpuJobs": 58,
+      "exact": true
+    },
+    {
+      "kind": "pauses",
+      "profile": 4,
+      "rate": 12000,
+      "samples": 9601,
+      "bytes": 454,
+      "gpuJobs": 58,
+      "exact": true
+    },
+    {
+      "kind": "pauses",
+      "profile": 4,
+      "rate": 16000,
+      "samples": 9601,
+      "bytes": 454,
+      "gpuJobs": 58,
+      "exact": true
+    },
+    {
+      "kind": "pauses",
+      "profile": 6,
+      "rate": 8000,
+      "samples": 9601,
+      "bytes": 681,
+      "gpuJobs": 58,
+      "exact": true
+    },
+    {
+      "kind": "pauses",
+      "profile": 6,
+      "rate": 12000,
+      "samples": 9601,
+      "bytes": 681,
+      "gpuJobs": 58,
+      "exact": true
+    },
+    {
+      "kind": "pauses",
+      "profile": 6,
+      "rate": 16000,
+      "samples": 9601,
+      "bytes": 681,
+      "gpuJobs": 58,
+      "exact": true
+    },
+    {
+      "kind": "tone",
+      "profile": 4,
+      "rate": 8000,
+      "samples": 961,
+      "bytes": 66,
+      "gpuJobs": 8,
+      "exact": true
+    },
+    {
+      "kind": "tone",
+      "profile": 4,
+      "rate": 12000,
+      "samples": 961,
+      "bytes": 66,
+      "gpuJobs": 8,
+      "exact": true
+    },
+    {
+      "kind": "tone",
+      "profile": 4,
+      "rate": 16000,
+      "samples": 961,
+      "bytes": 66,
+      "gpuJobs": 8,
+      "exact": true
+    },
+    {
+      "kind": "tone",
+      "profile": 6,
+      "rate": 8000,
+      "samples": 961,
+      "bytes": 94,
+      "gpuJobs": 8,
+      "exact": true
+    },
+    {
+      "kind": "tone",
+      "profile": 6,
+      "rate": 12000,
+      "samples": 961,
+      "bytes": 94,
+      "gpuJobs": 8,
+      "exact": true
+    },
+    {
+      "kind": "tone",
+      "profile": 6,
+      "rate": 16000,
+      "samples": 961,
+      "bytes": 94,
+      "gpuJobs": 8,
+      "exact": true
+    }
+  ],
+  "stats": {
+    "jobs": 396,
+    "tuples": 3915,
+    "submissions": 234,
+    "inputBytes": 508968,
+    "readbackBytes": 456192,
+    "maxBatchBlocks": 14,
+    "elapsedMs": 745.100001335144
+  },
+  "explicitCpuFallback": true,
+  "assetsSha256": {
+    "web-player/tests/helpers/lpx-webgpu-seed.mjs": "51723438318354e63ebb2e8847ae29f62b7d0b718305c02c108b4d17edf507d0",
+    "web-player/lpx/encoder-webgpu.wasm": "4ab44ddc2ac8be06c4bc54e89fab3854d743c9107e69c55923b7fb7db17ff36e",
+    "web-player/lpx/encoder.wasm": "ecc2dd30e11839217b80931c76968de3897f524f05b8c48aae1ff14ce2146ab1",
+    "web-player/lpx/encoder-simd.wasm": "9420281dd8cb96694457bca39c4ede58452d95ad444db7c9d3f084f9a62f7881",
+    "web-player/lpx/webgpu-search.js": "b546b10bfffe14ca0e8ac4829869c970e7ac28b4b697b19370338ef7422c2369",
+    "web-player/lpx/webgpu-search.wgsl": "d9be48ec3f143590424af10be3d20b9cdbc7ee833b421ac7e959f5103070a0cd"
+  }
+}
