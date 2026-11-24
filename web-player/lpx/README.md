@@ -21,8 +21,9 @@ listening speed and volume do not change it.
 ## One audio recording → one LPX file
 
 The converter accepts browser-decodable WAV, MP3, FLAC, OGG, M4A/AAC and other
-supported audio, without DRM. OfflineAudioContext actually resamples to the
-selected 8/12/16 kHz. Channels are averaged to mono and rounded/saturated to
+supported audio, without DRM. MP3, ordinary AAC/M4A and PCM16 WAV are decoded
+in portions and resampled by the shared FIR; other formats use Web Audio.
+The default is16 kHz, with8/12 kHz selectable. Channels are averaged to mono and rounded/saturated to
 PCM16 with the source level preserved by default. **Нормализация громкости**
 applies one constant gain to the entire PCM recording before encoding. Target
 LUFS and maximum boost are adjustable; defaults are -18 LUFS and +12 dB. The
@@ -34,20 +35,15 @@ final loudness. Short/below-gate recordings retain their input level. See
 [normalization details](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LOUDNESS.md).
 Encoding runs in a cancellable Worker.
 
-The profile selector also offers **3 kbit/s** and **8 kbit/s** presets at 8 kHz.
-They bound the complete file, including its header and final packets:
-`floor(samples * kbps * 1000 / (8 * 8000))` bytes. Their rate and size-allowance
-controls are fixed to 8 kHz and zero allowance; ordinary P4/P6 choices retain
-their selectable rates and allowances. A recording too short for the complete
-header and legal payload returns a no-fit error rather than padding the budget,
-truncating audio or lowering the playback rate.
-
-Both presets use the shared native/WASM `enc_bitrate` entry point and the same
-existing `L9` header and decoder. The 3 kbit/s preset emits P4; the 8 kbit/s
-preset uses P6 with budgeted extra pulses. A preset's bitrate is an encoder
-budget, so easy recordings can produce a smaller file. Imported legacy LPX8
-v2/v3 recordings require re-encoding from their original audio; a lossless
-bitstream conversion to these pulse modes is not promised.
+The profile selector offers **P3/P4/P6/P8**, four allocations of the same
+accuracy encoder. All use common analysis, safety recovery and residual-detail
+proposals. Larger budgets can admit additional parameters; final decoded quality
+and complete packed size decide admission. Levels are approximate speech-rate
+targets at8 kHz, not strict complete-file bitrate limits. Higher sample rates
+usually cost more bytes. P3/P4 retain the existing P4 wire alphabet and P6/P8
+the P6 alphabet; packets are not literal truncatable bit-prefix layers.
+See [allocation and quality rules](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/ACCURACY.md).
+Explicit legacy APIs retain strict3/8 kbit/s modes and their byte contracts.
 
 The entire recording is encoded with continuous pitch history,
 LPC interpolation and output-filter state. Standard 13-byte V9 is retained for
@@ -65,16 +61,27 @@ entire decoded output before offering one file. Refinement keeps the original
 continuous control and requires a complete-output quality admission. Its search
 differs from full search and can take much longer than fast streaming.
 
-Initial compressed-audio decoding still uses a whole browser AudioBuffer.
-Output/verification storage also scales with duration; streaming refinement's
-final quality gate needs full PCM buffers. Existing input limits remain.
+Supported MP3/AAC/PCM16 WAV input and verification PCM use temporary local
+storage; other formats use a whole browser AudioBuffer. Output storage also
+scales with duration; streaming refinement's final quality gate needs full PCM
+buffers. Fast accuracy streaming supports64 million samples; full search and
+streaming refinement support32 million. Input files remain capped at100 MiB.
 See [streaming design, memory scope and validation](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/STREAMING.md).
 
-P4/P6 use a C++/WASM port of speech_v4.py, wav_lpc.py, q0_model.py,
+The shared encoder builds on a C++/WASM port of speech_v4.py, wav_lpc.py, q0_model.py,
 speech_compact.py and speech_v9.py. This is the scalar Hamming/autocorrelation/
 Levinson/LSF and closed-loop integer pulse/scale/pitch search, with bandwidth
-.97 and pre-emphasis 13926. It does not claim the quality of later offline
-multi-pass optimizers. LPX is lossy and intended for speech; music may degrade.
+.97 and pre-emphasis13926. Accuracy mode validates actual interpolated Q12
+predictors and rendered level growth; a shared localized recovery handles
+unsafe models without resetting continuous history. Additional detail is
+admitted under the same source-quality guards at all levels. LPX remains lossy
+and optimized for speech; music can degrade. At8 kHz source content above4 kHz
+is removed before encoding. The16 kHz default retains more bright partials,
+but does not preserve content above8 kHz.
+Quality within the selected bandwidth is compared with the source prepared at
+that same rate, without fitted gain or delay. Legal source partials, attacks,
+decay and level remain fidelity targets; removing out-of-band source content
+does not excuse replacing in-band sound with an unrelated tone.
 Every complete emitted file is decoded through the shared C core and checked
 sample by sample against the encoder's model, including strict final EOF.
 
@@ -165,7 +172,8 @@ The PC command uses Node and the same C/WASM decoder; it refuses to overwrite an
 existing output. build.json and encoder-build.json retain source/compiler/flag
 provenance and binary hashes. Both modules have no host imports. Linear memory
 grows from 256 KiB as needed, capped at 256 MiB for decoding and 1 GiB for
-encoding. Application limits are 32 million samples and 100 MiB of input;
+encoding. Decoder and fast accuracy streaming support64 million samples;
+whole-input/refined search retains32 million. Input is capped at100 MiB;
 browser audio and copied PCM require additional memory. Allocation failures
 are reported, and recordings are never silently truncated.
 

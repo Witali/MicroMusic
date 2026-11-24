@@ -1,6 +1,6 @@
-import { MAX_SAMPLES } from './codec.js?v=20261124-encoder-unification';
-import { createStreamSession } from './streaming.js?v=20261124-encoder-unification';
-import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-encoder-unification';
+import { MAX_SAMPLES } from './codec.js?v=20261124-common-timbre';
+import { createStreamSession } from './streaming.js?v=20261124-common-timbre';
+import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-common-timbre';
 
 export async function createEncoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);

@@ -72,7 +72,7 @@ function converterPage(sampleCount = 8193) {
   }
   for (const match of html.matchAll(/<input[^>]+id="([^"]+)"[^>]*value="([^"]+)"[^>]*>/g)) elements.get(match[1]).value = match[2];
   const context = {
-    MAX_SAMPLES: 32000000, supportsSimd: () => true, URL, Int16Array, Number, Math,
+    MAX_SAMPLES: 32000000, MAX_STREAM_SAMPLES:64000000, supportsSimd: () => true, URL, Int16Array, Number, Math,
     recoverTemporaryInputs:async()=>{},removeTemporaryInput:async()=>{},crypto,
     document: { getElementById: id => {
       assert.ok(elements.has(id), `page has #${id}`); return elements.get(id);

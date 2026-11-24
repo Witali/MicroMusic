@@ -46,7 +46,10 @@ jobs and unrelated origin files. Quota errors report the local storage problem.
 A crash may leave temporary data until the next page load; clearing this site's
 browser data removes it. No source, PCM, metadata or filenames are uploaded.
 
-The current100 MiB input and32-million output-sample limits remain. Explicit
+The100 MiB input limit remains. Fast accuracy streaming accepts64 million
+output samples; full search and streaming refinement accept32 million. The
+default16 kHz rate preserves source partials below8 kHz, whereas8 kHz removes
+everything above4 kHz before compression. Explicit
 full search loads whole prepared PCM into WASM; refined whole-output quality
 admission can also require whole-file buffers. The fast window path avoids
 those buffers. This is bounded source decoding, not a claim that every optional

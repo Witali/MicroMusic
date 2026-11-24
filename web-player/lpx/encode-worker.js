@@ -1,6 +1,7 @@
-import { createEncoderBackend } from './encoder-backend.js?v=20261124-encoder-unification';
-import { encodeStreaming } from './streaming.js?v=20261124-encoder-unification';
-import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261124-encoder-unification';
+import { createEncoderBackend } from './encoder-backend.js?v=20261124-common-timbre';
+import { encodeStreaming } from './streaming.js?v=20261124-common-timbre';
+import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261124-common-timbre';
+import { MAX_SAMPLES, MAX_STREAM_SAMPLES } from './codec.js?v=20261124-common-timbre';
 const readBinary=async url=>{const response=await fetch(url);if(!response.ok)throw Error('Не удалось загрузить модуль обработки звука.');return response.arrayBuffer();};
 async function encodeSource(data){
   if(!validTemporaryName(data.temporaryName)||!navigator.locks?.request)throw Error('Браузер не поддерживает безопасную временную обработку аудио.');
@@ -8,7 +9,9 @@ async function encodeSource(data){
     let source;
     try{
       self.postMessage({phase:'source',progress:0});
-      source=await prepareAudio(data.source,data.sampleRate,data.temporaryName,p=>self.postMessage({phase:'source',progress:p*.2}),readBinary);
+      const extendedFast=data.accuracy===true&&['auto','stream'].includes(data.processingSelection);
+      const inputLimit=extendedFast?MAX_STREAM_SAMPLES:MAX_SAMPLES;
+      source=await prepareAudio(data.source,data.sampleRate,data.temporaryName,p=>self.postMessage({phase:'source',progress:p*.2}),readBinary,globalThis,inputLimit);
       self.postMessage({sourceInfo:{samples:source.samples,channels:source.channels,duration:source.duration,sourceRate:source.sourceRate,kind:source.kind}});
       const{encode,backend}=await createEncoderBackend(data.backend??'auto'),started=performance.now();
       const stream=['stream','stream-refine'].includes(data.processingSelection)||data.processingSelection==='auto'&&source.samples>128000;
@@ -16,6 +19,7 @@ async function encodeSource(data){
       if(stream)result=await encodeStreaming(encode,{...data,samples:source.samples,calls:data.processingSelection==='stream-refine'?4:0},
         (offset,count)=>source.read(offset,count),(phase,p)=>self.postMessage({phase,progress:.2+.8*p}),readBinary,source.verification);
       else{
+        if(source.samples>MAX_SAMPLES)throw Error('Полный поиск поддерживает до 32 000 000 отсчётов. Выберите быструю потоковую обработку.');
         const pcm=new Int16Array(source.samples);
         for(let at=0;at<pcm.length;at+=20480)pcm.set(await source.read(at,Math.min(20480,pcm.length-at)),at);
         const bytes=encode(pcm,data.sampleRate,data.profile,p=>self.postMessage({progress:p}),data);

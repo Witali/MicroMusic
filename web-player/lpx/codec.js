@@ -1,5 +1,9 @@
 export const MAX_SAMPLES = 32000000;
+export const MAX_STREAM_SAMPLES = 64000000;
+export const MAX_DECODE_SAMPLES = MAX_STREAM_SAMPLES;
 export const MAX_FILE_BYTES = 100 * 1024 * 1024;
+
+export const streamingSampleLimit=(accuracy,calls)=>accuracy===true&&calls===0?MAX_STREAM_SAMPLES:MAX_SAMPLES;
 
 export function parseHeader(buffer) {
   const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
@@ -14,7 +18,7 @@ export function parseHeader(buffer) {
   const pre = view.getUint16(long ? 9 : 7, true), brightness = view.getUint16(long ? 11 : 9, true);
   if (![8000, 12000, 16000].includes(sampleRate)) throw new Error('Поддерживаются частоты 8, 12 и 16 кГц.');
   if (!samples || (!long && samples > 64000) || pre > 16384 || brightness > 11469) throw new Error('Некорректные параметры заголовка LPX V9.');
-  if (samples > MAX_SAMPLES) throw new Error('Для этого браузерного плеера предел — 32 000 000 отсчётов на файл.');
+  if (samples > MAX_DECODE_SAMPLES) throw new Error('Для этого браузерного плеера предел — 64 000 000 отсчётов на файл.');
   if ((long ? view.getUint32(13, true) : view.getUint16(11, true)) !== bytes.length - headerBytes) throw new Error('Размер данных не совпадает с заголовком: файл повреждён или обрезан.');
   return { profile, long, format: long ? 'LPX V9 Long' : 'LPX V9', extraPulses: !!(bytes[2] & 128), sampleRate, samples, bytes: bytes.length,
     duration: samples / sampleRate, bitrate: bytes.length * 8 * sampleRate / samples };

@@ -1,5 +1,8 @@
-import{openAudio}from'./audio-demux.js?v=20261124-encoder-unification';
-const MAX_SAMPLES=32000000,folderName='micromusic-lpx-input-v1';
+import{openAudio}from'./audio-demux.js?v=20261124-common-timbre';
+import{MAX_SAMPLES,MAX_STREAM_SAMPLES}from'./codec.js?v=20261124-common-timbre';
+const folderName='micromusic-lpx-input-v1';
+const validSampleLimit=limit=>Number.isInteger(limit)&&limit>0&&limit<=MAX_STREAM_SAMPLES;
+const sampleLimitError=limit=>Error(`Запись превышает ${limit.toLocaleString('ru-RU')} отсчётов в выбранной частоте.`);
 export const validTemporaryName=name=>/^pcm-[a-f0-9-]{36}\.tmp$/.test(name);
 export async function removeTemporaryInput(name,storage=navigator.storage){
   if(!validTemporaryName(name)||!storage?.getDirectory)return;
@@ -24,12 +27,13 @@ export async function createInputResampler(binary){
 }
 // Runtime injection makes the actual queue/lifetime/storage protocol testable
 // without a JavaScript implementation of AAC or the C++ FIR.
-export async function decodePackets(track,resampler,target,sink,onProgress=()=>{},runtime=globalThis){
+export async function decodePackets(track,resampler,target,sink,onProgress=()=>{},runtime=globalThis,maxSamples=MAX_SAMPLES){
+  if(!validSampleLimit(maxSamples))throw Error('Некорректный предел подготовленного PCM.');
   const Decoder=runtime.AudioDecoder,Chunk=runtime.EncodedAudioChunk;
   if(!Decoder||!Chunk||(await Decoder.isConfigSupported(track.config)).supported!==true)
     throw Error('Браузер не поддерживает потоковое декодирование этого формата. Используйте актуальный браузер с AudioDecoder и поддержкой MP3/AAC.');
   let decoder,error,wake,sourceRate=0,channels=0,expected=0,end=0,written=0,outputs=0,peakQueue=0;
-  const save=pcm=>{if(!pcm.length)return;if(written+pcm.length>MAX_SAMPLES)throw Error('Запись превышает 32 000 000 отсчётов в выбранной частоте.');sink(pcm,written);written+=pcm.length;};
+  const save=pcm=>{if(!pcm.length)return;if(written+pcm.length>maxSamples)throw sampleLimitError(maxSamples);sink(pcm,written);written+=pcm.length;};
   const silence=frames=>{while(frames>0){const count=Math.min(frames,resampler.capacity);resampler.input.fill(0);save(resampler.push(count));frames-=count;}};
   decoder=new Decoder({error:e=>{error=e;wake?.();},output:frame=>{
     try{
@@ -71,25 +75,26 @@ export async function decodePackets(track,resampler,target,sink,onProgress=()=>{
     onProgress(1);return {samples:written,sampleRate:target,sourceRate,channels,outputs,peakDecodeQueue:peakQueue,modelMemoryBytes:resampler.memoryBytes};
   }finally{if(decoder.state!=='closed')decoder.close();}
 }
-async function decodeWav(track,resampler,target,sink,onProgress){
+async function decodeWav(track,resampler,target,sink,onProgress,runtime,maxSamples){
   resampler.init(track.rate,target,track.channels);let written=0;
-  const save=pcm=>{sink(pcm,written);written+=pcm.length;};
+  const save=pcm=>{if(written+pcm.length>maxSamples)throw sampleLimitError(maxSamples);sink(pcm,written);written+=pcm.length;};
   for(let at=0;at<track.frames;at+=resampler.capacity){const frames=Math.min(resampler.capacity,track.frames-at);const bytes=await track.reader.read(track.at+at*track.align,frames*track.align);save(resampler.pcm16(bytes,frames));onProgress((at+frames)/track.frames);}
   save(resampler.push(0,true));if(written!==Math.round(track.frames*target/track.rate))throw Error('Неверная длина подготовленного WAV.');
   return{samples:written,sampleRate:target,sourceRate:track.rate,channels:track.channels,modelMemoryBytes:resampler.memoryBytes};
 }
-export async function prepareAudio(file,rate,name,onProgress,readBinary,runtime=globalThis){
+export async function prepareAudio(file,rate,name,onProgress,readBinary,runtime=globalThis,maxSamples=MAX_SAMPLES){
+  if(!validSampleLimit(maxSamples))throw Error('Некорректный предел подготовленного PCM.');
   if(!validTemporaryName(name)||!runtime.navigator?.storage?.getDirectory)throw Error('Для потоковой обработки требуется локальное хранилище OPFS (HTTPS и современный браузер).');
   const track=await openAudio(file);
-  if(![8000,12000,16000].includes(rate)||Math.ceil(track.duration*rate)>MAX_SAMPLES)throw Error('Запись превышает 32 000 000 отсчётов в выбранной частоте.');
-  const resampler=await createInputResampler(await readBinary(new URL('./input-resampler.wasm?v=20261124-encoder-unification',import.meta.url)));
+  if(![8000,12000,16000].includes(rate)||Math.ceil(track.duration*rate)>maxSamples)throw sampleLimitError(maxSamples);
+  const resampler=await createInputResampler(await readBinary(new URL('./input-resampler.wasm?v=20261124-common-timbre',import.meta.url)));
   let handle,folder,disposed=false;
   const dispose=async()=>{if(disposed)return;disposed=true;try{handle?.close();}finally{if(folder)await folder.removeEntry(name).catch(e=>{if(e.name!=='NotFoundError')throw e;});}};
   try{
     const root=await runtime.navigator.storage.getDirectory();folder=await root.getDirectoryHandle(folderName,{create:true});
     handle=await(await folder.getFileHandle(name,{create:true})).createSyncAccessHandle();handle.truncate(0);
     const decode=track.kind==='wav'?decodeWav:decodePackets;
-    const stats=await decode(track,resampler,rate,(pcm,offset)=>{const bytes=new Uint8Array(pcm.buffer,pcm.byteOffset,pcm.byteLength);if(handle.write(bytes,{at:offset*2})!==bytes.length)throw Error('Не удалось записать временный PCM.');},onProgress,runtime);
+    const stats=await decode(track,resampler,rate,(pcm,offset)=>{const bytes=new Uint8Array(pcm.buffer,pcm.byteOffset,pcm.byteLength);if(handle.write(bytes,{at:offset*2})!==bytes.length)throw Error('Не удалось записать временный PCM.');},onProgress,runtime,maxSamples);
     handle.flush();if(handle.getSize()!==stats.samples*2)throw Error('Неверная длина временного PCM.');
     const expectedPosition=[0,0];
     return{...stats,kind:track.kind,duration:stats.samples/rate,metadataBytes:track.metadataBytes,maxCompressedRead:track.reader.maxRead,dispose,

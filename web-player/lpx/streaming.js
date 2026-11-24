@@ -1,10 +1,10 @@
-import { createIncrementalDecoder, MAX_SAMPLES } from './codec.js?v=20261124-encoder-unification';
-import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-encoder-unification';
+import { createIncrementalDecoder, streamingSampleLimit } from './codec.js?v=20261124-common-timbre';
+import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-common-timbre';
 
 export function createStreamSession(api, settings) {
   const {samples,profile,sampleRate,sizeAllowancePercent=0,normalization='preserve',targetLufs=-18,maxGainDb=12,calls=4}=settings;
   if(!api.enc_stream_create)throw Error('Обновите страницу: потоковое кодирование недоступно.');
-  if(!Number.isInteger(samples)||samples<1||samples>MAX_SAMPLES||![3,4,6,8].includes(profile)||![8000,12000,16000].includes(sampleRate)
+  if(!Number.isInteger(samples)||samples<1||samples>streamingSampleLimit(settings.accuracy,calls)||![3,4,6,8].includes(profile)||![8000,12000,16000].includes(sampleRate)
     ||!Number.isInteger(sizeAllowancePercent)||sizeAllowancePercent<0||sizeAllowancePercent>100
     ||!['preserve','loudness'].includes(normalization)||!Number.isInteger(targetLufs)||targetLufs<-30||targetLufs>-9
     ||!Number.isInteger(maxGainDb)||maxGainDb<0||maxGainDb>24||!Number.isInteger(calls)||calls<0||calls>4)
@@ -64,7 +64,7 @@ export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},re
   }
   append(session.finish());
   const candidate=session.hasCandidate;
-  const decoder=await createIncrementalDecoder(await readBinary(new URL('./decoder.wasm?v=20261124-encoder-unification',import.meta.url)));
+  const decoder=await createIncrementalDecoder(await readBinary(new URL('./decoder.wasm?v=20261124-common-timbre',import.meta.url)));
   const output=[];let memoryFallback=false;
   for(const kind of candidate?[0,1]:[0]) {
     if(kind && memoryFallback)break;
