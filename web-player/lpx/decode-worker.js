@@ -1,6 +1,6 @@
-import { createDecoder } from './codec.js?v=20261124-common-timbre';
+import { createDecoder } from './codec.js?v=20261124-stream-quality';
 
-const ready = fetch(new URL('./decoder.wasm?v=20261124-common-timbre', import.meta.url)).then(response => {
+const ready = fetch(new URL('./decoder.wasm?v=20261124-stream-quality', import.meta.url)).then(response => {
   if (!response.ok) throw new Error('Не удалось загрузить WASM-декодер. Обновите страницу.');
   return response.arrayBuffer();
 }).then(createDecoder);

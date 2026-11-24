@@ -1,5 +1,5 @@
-import{openAudio}from'./audio-demux.js?v=20261124-common-timbre';
-import{MAX_SAMPLES,MAX_STREAM_SAMPLES}from'./codec.js?v=20261124-common-timbre';
+import{openAudio}from'./audio-demux.js?v=20261124-stream-quality';
+import{MAX_SAMPLES,MAX_STREAM_SAMPLES}from'./codec.js?v=20261124-stream-quality';
 const folderName='micromusic-lpx-input-v1';
 const validSampleLimit=limit=>Number.isInteger(limit)&&limit>0&&limit<=MAX_STREAM_SAMPLES;
 const sampleLimitError=limit=>Error(`Запись превышает ${limit.toLocaleString('ru-RU')} отсчётов в выбранной частоте.`);
@@ -87,7 +87,7 @@ export async function prepareAudio(file,rate,name,onProgress,readBinary,runtime=
   if(!validTemporaryName(name)||!runtime.navigator?.storage?.getDirectory)throw Error('Для потоковой обработки требуется локальное хранилище OPFS (HTTPS и современный браузер).');
   const track=await openAudio(file);
   if(![8000,12000,16000].includes(rate)||Math.ceil(track.duration*rate)>maxSamples)throw sampleLimitError(maxSamples);
-  const resampler=await createInputResampler(await readBinary(new URL('./input-resampler.wasm?v=20261124-common-timbre',import.meta.url)));
+  const resampler=await createInputResampler(await readBinary(new URL('./input-resampler.wasm?v=20261124-stream-quality',import.meta.url)));
   let handle,folder,disposed=false;
   const dispose=async()=>{if(disposed)return;disposed=true;try{handle?.close();}finally{if(folder)await folder.removeEntry(name).catch(e=>{if(e.name!=='NotFoundError')throw e;});}};
   try{

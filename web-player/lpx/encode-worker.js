@@ -1,7 +1,7 @@
-import { createEncoderBackend } from './encoder-backend.js?v=20261124-common-timbre';
-import { encodeStreaming } from './streaming.js?v=20261124-common-timbre';
-import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261124-common-timbre';
-import { MAX_SAMPLES, MAX_STREAM_SAMPLES } from './codec.js?v=20261124-common-timbre';
+import { createEncoderBackend } from './encoder-backend.js?v=20261124-stream-quality';
+import { encodeStreaming } from './streaming.js?v=20261124-stream-quality';
+import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261124-stream-quality';
+import { MAX_SAMPLES, MAX_STREAM_SAMPLES } from './codec.js?v=20261124-stream-quality';
 const readBinary=async url=>{const response=await fetch(url);if(!response.ok)throw Error('Не удалось загрузить модуль обработки звука.');return response.arrayBuffer();};
 async function encodeSource(data){
   if(!validTemporaryName(data.temporaryName)||!navigator.locks?.request)throw Error('Браузер не поддерживает безопасную временную обработку аудио.');
