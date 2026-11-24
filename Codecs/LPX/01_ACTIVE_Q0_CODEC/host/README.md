@@ -3,7 +3,9 @@
 The PC executable and browser WASM compile the same C++ search, adaptive
 controller, quality metrics, fixed integer model and V9 packing. Python is
 needed only for the independent regression oracle, never for encoding here.
-P4/P6 and 8/12/16 kHz are supported. Recordings over 64000 samples use one
+Accuracy levels P3/P4/P6/P8 and 8/12/16 kHz are supported. All levels use
+the same production accuracy engine as the Web UI, with P4/P6 wire syntax.
+Recordings over 64000 samples use one
 continuous V9 Long stream; no reset-file segmentation is performed.
 
 See [shared policies and context ownership](ENCODER_UNIFICATION.md) for the
@@ -40,8 +42,10 @@ host sources use the same compiler and floating-point flags as the CPU build.
 ```powershell
 node web-player/scripts/encode-lpx-native.mjs input.wav new-output.lpx --quality adaptive --backend cpu
 node web-player/scripts/encode-lpx-native.mjs input.wav new-output-cuda.lpx --quality adaptive --backend cuda
-node web-player/scripts/encode-lpx-native.mjs input.wav new-output-larger.lpx --size-allowance 25
-node web-player/scripts/encode-lpx-native.mjs reference.pcm new-reference-output.lpx --pcm --search reference
+node web-player/scripts/encode-lpx-native.mjs input.wav new-output-p4.lpx --profile 4
+node web-player/scripts/encode-lpx-native.mjs input.wav new-output-p8.lpx --accuracy 8 --rate 16000
+node web-player/scripts/encode-lpx-native.mjs input.wav new-output-larger.lpx --legacy --profile 6 --size-allowance 25
+node web-player/scripts/encode-lpx-native.mjs reference.pcm new-reference-output.lpx --legacy --profile 6 --pcm --search reference
 node web-player/scripts/encode-lpx-native.mjs reference.pcm new-output.lpx --pcm --rate 8000 --profile 6 --repeat 5
 node web-player/scripts/encode-lpx-native.mjs input.wav normalized.lpx --normalize --target-lufs -18 --max-gain-db 12
 ```
@@ -62,26 +66,34 @@ The output is ordinary LPX V9/Long with no stored gain word or decoder changes.
 Lossy coding can change the resulting loudness. Omit `--normalize` for unchanged
 level; it cannot be combined with pre-encoding `--auto-quiet`.
 
-`--quality adaptive` uses the same expanded search as the Web UI by default:
-four adaptive refinement calls followed by the bounded pitch/gain extension.
-It then retains that complete result while testing LPC bandwidth alternatives,
-pairwise pulse lookahead and bounded native-rate spectral/time pulse proposals.
-Their [shared multi-metric objective](PROFILE_QUALITY.md) compares completely
-decoded PCM and PWM under the same byte cap. Original noise is part of the
-reference; spectral/time fidelity does not require identical noise samples.
-`--search reference` selects the original Python-reference adaptive search;
-`--search expanded` explicitly selects the default. Compare identical PCM,
-profile, rate, level, call count and size allowance when checking PC/Web parity.
-`--quality fast` is the unchanged original bounded seed search. `--profile 4|6`,
-`--rate 8000|12000|16000` and `--encoder path` are explicit. Adaptive-only options
-are `--calls 0..4`, `--search expanded|reference`, `--size-allowance 0..100`,
-`--max-bytes N`, `--auto-quiet` and `--non-speech`. A percentage allowance
-enlarges the original control budget; zero is the default. The default
-byte budget is the complete v5 control size before lossless V9 repacking; an
-explicit budget uses that same accounting, rather than the shorter V9 file size,
-and overrides the percentage allowance. This permits additional pulses only
-within the declared budget; it does not promise audible improvement.
-Automatic quiet-input gain is opt-in and reported as a power-of-two exponent.
+The default is `--accuracy 6`; `--profile 3|4|6|8` is an alias for the same
+accuracy level. These are precision/detail budgets, not bitrate promises.
+Every level uses the common analysis, quantization, safety checks and residual
+detail allocation. `--quality adaptive` adds up to `--calls 0..4` refinement
+calls (four by default); `--quality fast` uses zero refinement calls in this
+same engine. `--rate 8000|12000|16000` and `--encoder path` are explicit.
+Compare identical prepared PCM, accuracy level, rate, normalization and call
+count when checking native/Web parity.
+
+`--legacy --profile 4|6` explicitly selects the historical encoder for oracle
+and benchmark compatibility. Its `--quality fast` is the original bounded
+seed search. Legacy adaptive mode defaults to expanded search: four refinement
+calls, bounded pitch/gain extension, LPC bandwidth alternatives, pairwise pulse
+lookahead and bounded spectral/time pulse proposals. Its
+[shared multi-metric objective](PROFILE_QUALITY.md) compares completely decoded
+PCM and PWM under the same byte cap. Original noise is part of the reference;
+spectral/time fidelity does not require identical noise samples.
+
+`--search expanded|reference`, `--size-allowance 0..100`, `--max-bytes N`,
+`--auto-quiet` and `--non-speech` require explicit `--legacy`, including when
+passing a zero allowance or budget. `--search reference` selects the original
+Python-reference adaptive search. A percentage allowance enlarges the legacy
+control budget; zero is the default. The legacy byte budget uses the complete
+v5 control accounting before lossless V9 repacking, rather than the shorter
+V9 file size. An explicit budget overrides the percentage allowance. Additional
+pulses must fit that budget; extra size does not promise audible improvement.
+Legacy automatic quiet-input gain is opt-in and reported as a power-of-two
+exponent. `--accuracy` cannot be combined with `--legacy`.
 Input is limited to 32000000 samples and is never silently truncated.
 
 The native executable also accepts raw mono signed PCM16 little-endian on stdin
@@ -95,20 +107,24 @@ only to stderr and does not contain filenames, recording hashes or speaker data.
 complete output against the first. The JSON report includes backend setup time,
 `encodingMs` for the first encode, `repeatTimesMs` for every repetition, and
 `warmMedianMs` (null without warm repetitions). The report also identifies
-`search`, `sizeAllowancePercent` and the extension's local `expandedAccepted`
-count; that count alone is not a claim that the selected file sounds better.
+`engine` (`accuracy` or `legacy`) and `accuracyLevel`. Production mode reports
+`search: "accuracy"`; legacy mode reports its search, `sizeAllowancePercent`
+and the extension's local `expandedAccepted` count. That count alone is not a
+claim that the selected file sounds better.
 Encoding timings include shared
 search, allocation, packing and native output verification; they exclude input
 reading/conversion, GPU setup and process startup. Report end-to-end wall time
 as well when comparing short files. Repeated output is emitted only once.
 
 ```powershell
-node --test web-player/tests/lpx-native-cli.test.mjs
+node --test web-player/tests/lpx-common-cli.test.mjs web-player/tests/lpx-native-cli.test.mjs
 ```
 
 These tests use built executables when present; `LPX_NATIVE_ENCODER` and
-`LPX_CUDA_ENCODER` can select others. They compare fast/adaptive native output
-with reference and expanded WASM (including a 25% size allowance), explicitly
-select CPU and CUDA, check repetition, invalid input,
+`LPX_CUDA_ENCODER` can select others. Common CLI tests compare all four accuracy
+levels and all three rates with scalar/SIMD WASM and native CPU/CUDA. Legacy
+tests explicitly use `--legacy` to preserve the historical reference/expanded
+comparisons, including a 25% size allowance. Together they check repetition,
+invalid input,
 continuous V9 Long, binary-safe file writing, no-overwrite and channel averaging.
 No real-time MCU or audible-quality claim follows from these host checks.

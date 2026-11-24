@@ -6,9 +6,10 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
 const MAX_PCM_BYTES = 32_000_000 * 2;
-const { values, positionals } = parseArgs({ allowPositionals: true, options: {
+const { values, positionals, tokens } = parseArgs({ allowPositionals: true, tokens: true, options: {
   encoder: { type: 'string' }, pcm: { type: 'boolean', default: false },
   profile: { type: 'string', default: '6' }, rate: { type: 'string', default: '8000' },
+  accuracy: { type: 'string' }, legacy: { type: 'boolean', default: false }, help: { type: 'boolean', default: false },
   backend: { type: 'string', default: 'cpu' }, quality: { type: 'string', default: 'adaptive' },
   search: { type: 'string', default: 'expanded' }, 'size-allowance': { type: 'string', default: '0' },
   calls: { type: 'string', default: '4' }, 'max-bytes': { type: 'string', default: '0' },
@@ -19,17 +20,34 @@ const { values, positionals } = parseArgs({ allowPositionals: true, options: {
 } });
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const [source, destination] = positionals;
-if (positionals.length !== 2 || !source || !destination || resolve(source) === resolve(destination)) {
-  throw new Error('Usage: node web-player/scripts/encode-lpx-native.mjs input-audio new-output.lpx [--encoder executable] [--pcm] [--backend cpu|cuda] [--quality fast|adaptive]');
+const usage = 'Usage: node web-player/scripts/encode-lpx-native.mjs input-audio new-output.lpx [--accuracy 3|4|6|8 | --profile 3|4|6|8] [--encoder executable] [--pcm] [--backend cpu|cuda] [--quality fast|adaptive]';
+if (values.help) {
+  console.log(`${usage}\nDefault: the shared Web UI accuracy engine, level 6; --profile is an alias.\nLegacy compatibility: --legacy --profile 4|6 [--search expanded|reference] [--size-allowance 0..100] [--max-bytes N] [--auto-quiet] [--non-speech].`);
+  process.exit(0);
 }
-if (!['4', '6'].includes(values.profile) || !['8000', '12000', '16000'].includes(values.rate)
+if (positionals.length !== 2 || !source || !destination || resolve(source) === resolve(destination)) {
+  throw new Error(usage);
+}
+const specified = new Set(tokens.filter(token => token.kind === 'option').map(token => token.name));
+const level = values.accuracy ?? values.profile;
+if (values.legacy) {
+  if (specified.has('accuracy')) throw new Error('--accuracy cannot be combined with --legacy; use --legacy --profile 4|6.');
+  if (!['4', '6'].includes(values.profile)) throw new Error('Legacy profile must be 4 or 6.');
+} else {
+  if (['search', 'size-allowance', 'max-bytes', 'auto-quiet', 'non-speech'].some(name => specified.has(name)))
+    throw new Error('--search, --size-allowance, --max-bytes, --auto-quiet and --non-speech require --legacy.');
+  if (specified.has('profile') && specified.has('accuracy') && values.profile !== values.accuracy)
+    throw new Error('--profile and --accuracy must select the same accuracy level.');
+  if (!['3', '4', '6', '8'].includes(level)) throw new Error('Accuracy level must be 3, 4, 6 or 8.');
+}
+if (!['8000', '12000', '16000'].includes(values.rate)
     || !['cpu', 'cuda'].includes(values.backend) || !['fast', 'adaptive'].includes(values.quality)
     || !['expanded', 'reference'].includes(values.search)) throw new Error('Invalid encoding options.');
 if (!/^[0-4]$/.test(values.calls) || !/^(?:[1-9]|1[0-9]|20)$/.test(values.repeat)
     || !/^\d+$/.test(values['max-bytes']) || Number(values['max-bytes']) > 104857600
     || (Number(values['max-bytes']) !== 0 && Number(values['max-bytes']) < 22)) throw new Error('Invalid refinement, repeat or byte budget.');
 if (!/^\d+$/.test(values['size-allowance']) || Number(values['size-allowance']) > 100) throw new Error('Size allowance must be in 0..100 percent.');
-if (values.quality === 'fast' && (values.search !== 'expanded' || Number(values['size-allowance']) !== 0
+if (values.legacy && values.quality === 'fast' && (values.search !== 'expanded' || Number(values['size-allowance']) !== 0
     || values.calls !== '4' || Number(values['max-bytes']) !== 0 || values['auto-quiet'] || values['non-speech'])) throw new Error('Adaptive search options require --quality adaptive.');
 try { await stat(destination); throw new Error('Output already exists; choose a new output path.'); }
 catch (error) { if (error.code !== 'ENOENT') throw error; }
@@ -83,10 +101,11 @@ try {
   }
   const executable = values.encoder || resolve(root, 'build/lpx-native',
     `lpx-encode${values.backend === 'cuda' ? '-cuda' : ''}${process.platform === 'win32' ? '.exe' : ''}`);
-  const args = ['--profile', values.profile, '--rate', values.rate, '--backend', values.backend,
-    '--quality', values.quality, '--search', values.search, '--size-allowance', values['size-allowance'],
-    '--calls', values.calls, '--max-bytes', values['max-bytes'], '--repeat', values.repeat,
-    ...(values['auto-quiet'] ? ['--auto-quiet'] : []), ...(values['non-speech'] ? ['--non-speech'] : []),
+  const args = [...(values.legacy ? ['--legacy', '--profile', values.profile] : ['--accuracy', level]),
+    '--rate', values.rate, '--backend', values.backend, '--quality', values.quality,
+    '--calls', values.calls, '--repeat', values.repeat,
+    ...(values.legacy ? ['--search', values.search, '--size-allowance', values['size-allowance'], '--max-bytes', values['max-bytes'],
+      ...(values['auto-quiet'] ? ['--auto-quiet'] : []), ...(values['non-speech'] ? ['--non-speech'] : [])] : []),
     ...(values.normalize ? ['--normalize','--target-lufs',values['target-lufs'],'--max-gain-db',values['max-gain-db']] : [])];
   const result = await collect(executable, args, pcm, 100 * 1024 * 1024);
   if (result.bytes.length < 13 || result.bytes.subarray(0, 2).toString() !== 'L9') throw new Error('Native encoder returned no LPX V9 stream.');

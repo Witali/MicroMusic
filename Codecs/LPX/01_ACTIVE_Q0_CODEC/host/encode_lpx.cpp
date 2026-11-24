@@ -30,6 +30,7 @@ using Clock = std::chrono::steady_clock;
 struct Options {
     int profile = 6, rate = 8000, calls = 4, maxBytes = 0, repeat = 1, sizeAllowance = 0;
     bool cuda = false, adaptive = true, autoQuiet = false, speech = true, expandedSearch = true, normalize = false;
+    bool legacy = false, profileSpecified = false, accuracySpecified = false, legacyOptions = false;
     int targetLufs = -18, maxGainDb = 12, accuracy = 0;
 };
 void jsonString(FILE* out, const char* value) {
@@ -56,19 +57,22 @@ int run(int argc, char** argv) {
     for (int i = 1; i < argc; ++i) {
         const char* name = argv[i];
         if (!strcmp(name, "--help")) {
-            puts("Usage: lpx-encode [--profile 4|6 | --accuracy 3|4|6|8] [--rate 8000|12000|16000]"
+            puts("Usage: lpx-encode [--accuracy 3|4|6|8 | --profile 3|4|6|8] [--rate 8000|12000|16000]"
                  " [--backend cpu|cuda] [--quality fast|adaptive] [--calls 0..4]"
-                 " [--search expanded|reference] [--size-allowance 0..100]"
-                 " [--max-bytes N] [--repeat 1..20] [--auto-quiet] [--non-speech]"
+                 " [--repeat 1..20]"
                  " [--normalize] [--target-lufs -30..-9] [--max-gain-db 0..24]\n"
+                 "Default: the shared Web UI accuracy engine, level 6; --profile is an alias.\n"
+                 "Legacy compatibility: --legacy --profile 4|6 [--search expanded|reference]"
+                 " [--size-allowance 0..100] [--max-bytes N] [--auto-quiet] [--non-speech].\n"
                  "Input: mono PCM16 little-endian on stdin, 1..32000000 samples.\n"
                  "Output: one verified LPX V9/Long file on stdout; JSON diagnostics on stderr.\n"
                  "Use encode-lpx-native.mjs for binary-safe file conversion on Windows.");
             return 0;
         }
-        if (!strcmp(name, "--auto-quiet")) { options.autoQuiet = true; continue; }
+        if (!strcmp(name, "--legacy")) { options.legacy = true; continue; }
+        if (!strcmp(name, "--auto-quiet")) { options.autoQuiet = true; options.legacyOptions = true; continue; }
         if (!strcmp(name, "--normalize")) { options.normalize = true; continue; }
-        if (!strcmp(name, "--non-speech")) { options.speech = false; continue; }
+        if (!strcmp(name, "--non-speech")) { options.speech = false; options.legacyOptions = true; continue; }
         if (i + 1 >= argc) return fail("Missing option value");
         const char* value = argv[++i];
         if (!strcmp(name, "--backend")) {
@@ -80,6 +84,7 @@ int run(int argc, char** argv) {
         } else if (!strcmp(name, "--search")) {
             if (strcmp(value, "expanded") && strcmp(value, "reference")) return fail("Search must be expanded or reference");
             options.expandedSearch = !strcmp(value, "expanded");
+            options.legacyOptions = true;
         } else if (!strcmp(name, "--target-lufs")) {
             errno=0;char* end=nullptr;long level=strtol(value,&end,10);
             if(errno || !*value || *end || level<-30 || level>-9)return fail("Target loudness must be -30..-9 LUFS");
@@ -87,20 +92,28 @@ int run(int argc, char** argv) {
         } else {
             int number;
             if (!integer(value, number)) return fail("Expected a nonnegative integer option value");
-            if (!strcmp(name, "--profile")) options.profile = number;
-            else if(!strcmp(name,"--accuracy"))options.accuracy=number;
+            if (!strcmp(name, "--profile")) { options.profile = number; options.profileSpecified = true; }
+            else if (!strcmp(name, "--accuracy")) { options.accuracy = number; options.accuracySpecified = true; }
             else if (!strcmp(name, "--rate")) options.rate = number;
             else if (!strcmp(name, "--calls")) options.calls = number;
-            else if (!strcmp(name, "--max-bytes")) options.maxBytes = number;
+            else if (!strcmp(name, "--max-bytes")) { options.maxBytes = number; options.legacyOptions = true; }
             else if (!strcmp(name, "--repeat")) options.repeat = number;
-            else if (!strcmp(name, "--size-allowance")) options.sizeAllowance = number;
+            else if (!strcmp(name, "--size-allowance")) { options.sizeAllowance = number; options.legacyOptions = true; }
             else if (!strcmp(name, "--max-gain-db")) options.maxGainDb = number;
             else return fail("Unknown encoder option");
         }
     }
-    if (options.profile != 4 && options.profile != 6) return fail("Profile must be 4 or 6");
-    const auto policy=lpx::encodingPolicy(options.accuracy?options.accuracy:options.profile,options.accuracy!=0);
-    if(options.accuracy&&(!lpx::accuracyPolicy(options.accuracy).level||options.maxBytes||options.sizeAllowance||options.autoQuiet))return fail("Accuracy must be 3/4/6/8, without byte budgets, allowances or auto quiet");
+    if (options.legacy) {
+        if (options.accuracySpecified) return fail("--accuracy cannot be combined with --legacy; use --legacy --profile 4|6");
+        if (options.profile != 4 && options.profile != 6) return fail("Legacy profile must be 4 or 6");
+    } else {
+        if (options.legacyOptions) return fail("--search, --size-allowance, --max-bytes, --auto-quiet and --non-speech require --legacy");
+        if (options.profileSpecified && options.accuracySpecified && options.profile != options.accuracy)
+            return fail("--profile and --accuracy must select the same accuracy level");
+        if (!options.accuracySpecified) options.accuracy = options.profile;
+        if (!lpx::accuracyPolicy(options.accuracy).level) return fail("Accuracy level must be 3, 4, 6 or 8");
+    }
+    const auto policy=lpx::encodingPolicy(options.legacy?options.profile:options.accuracy,!options.legacy);
     if (options.rate != 8000 && options.rate != 12000 && options.rate != 16000) return fail("Unsupported sample rate");
     if (options.calls < 0 || options.calls > 4) return fail("Refinement calls must be in 0..4");
     if(options.maxGainDb<0 || options.maxGainDb>24)return fail("Maximum gain must be 0..24 dB");
@@ -108,7 +121,7 @@ int run(int argc, char** argv) {
     if (options.repeat < 1 || options.repeat > 20) return fail("Repeat count must be in 1..20");
     if (options.sizeAllowance < 0 || options.sizeAllowance > 100) return fail("Size allowance must be in 0..100 percent");
     if (options.maxBytes && (options.maxBytes < 22 || options.maxBytes > int(kLpxMaxFileBytes))) return fail("Complete byte budget must be 22..104857600, or 0 for the control size");
-    if (!options.adaptive && (options.autoQuiet || options.maxBytes || options.calls != 4 || !options.speech || !options.expandedSearch || options.sizeAllowance)) return fail("Adaptive search options require --quality adaptive");
+    if (options.legacy && !options.adaptive && (options.autoQuiet || options.maxBytes || options.calls != 4 || !options.speech || !options.expandedSearch || options.sizeAllowance)) return fail("Adaptive search options require --quality adaptive");
 #ifdef _WIN32
     if (_setmode(_fileno(stdin), _O_BINARY) == -1 || _setmode(_fileno(stdout), _O_BINARY) == -1) return fail("Cannot open binary standard streams", 3);
 #endif
@@ -143,7 +156,7 @@ int run(int argc, char** argv) {
       const auto& reference=options.normalize?prepared:pcm;
       if (!enc_reserve(uint32_t(pcm.size()))) return fail("Cannot reserve encoder memory", 6);
       std::vector<uint8_t> current;
-      if(options.accuracy){
+      if(!options.legacy){
         auto stream=lpx::encodeAccuracy(reference,options.accuracy,options.rate,report,options.adaptive?options.calls:0);
         if(report.error||!lpx::verifyStream(stream,lpx::render(stream)))return fail("Accuracy output failed native verification",7);
         current=lpx::packV9(stream);
@@ -171,9 +184,9 @@ int run(int argc, char** argv) {
     // No output byte is emitted until encoding and complete-stream verification
     // succeed. The file wrapper also waits for process success before writing.
     if (fwrite(bytes.data(), 1, bytes.size(), stdout) != bytes.size() || fflush(stdout)) return fail("Cannot write LPX output", 8);
-    fprintf(stderr, "{\"schema\":\"lpx-native-encode-v1\",\"backend\":\"%s\",\"quality\":\"%s\",\"search\":\"%s\",\"sizeAllowancePercent\":%d,\"expandedAccepted\":%d,\"samples\":%u,\"sampleRate\":%d,\"profile\":%d,\"bytes\":%u,\"long\":%s,\"backendInitializationMs\":%.6f,\"encodingMs\":%.6f,\"candidates\":%d,\"refinementCalls\":%d,\"gainPower2Exponent\":%d,\"repeatTimesMs\":[",
-        options.cuda ? "cuda" : "cpu", options.adaptive ? "adaptive" : "fast",
-        options.adaptive ? (options.expandedSearch ? "expanded" : "reference") : "fast",
+    fprintf(stderr, "{\"schema\":\"lpx-native-encode-v1\",\"engine\":\"%s\",\"backend\":\"%s\",\"quality\":\"%s\",\"search\":\"%s\",\"sizeAllowancePercent\":%d,\"expandedAccepted\":%d,\"samples\":%u,\"sampleRate\":%d,\"profile\":%d,\"bytes\":%u,\"long\":%s,\"backendInitializationMs\":%.6f,\"encodingMs\":%.6f,\"candidates\":%d,\"refinementCalls\":%d,\"gainPower2Exponent\":%d,\"repeatTimesMs\":[",
+        options.legacy ? "legacy" : "accuracy", options.cuda ? "cuda" : "cpu", options.adaptive ? "adaptive" : "fast",
+        options.legacy ? (options.adaptive ? (options.expandedSearch ? "expanded" : "reference") : "fast") : "accuracy",
         options.adaptive ? options.sizeAllowance : 0, report.expandedAccepted,
         unsigned(pcm.size()), options.rate, policy.wireProfile, unsigned(bytes.size()),
         bytes[2] & 64 ? "true" : "false", initializationMs, timings[0], report.candidates, report.stages, report.gainExponent);

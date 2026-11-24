@@ -42,10 +42,10 @@ function success(executable, pcm, args) {
 }
 const signal = length => Int16Array.from({ length }, (_, i) => Math.round(15000 * Math.sin(i * .17) + 4000 * Math.sin(i * .051)));
 
-test('native fast CLI matches the browser encoder and checks repeat determinism', { skip: !enabled }, () => {
+test('legacy native fast CLI matches the browser encoder and checks repeat determinism', { skip: !enabled }, () => {
   for (const profile of [4, 6]) for (const rate of [8000, 12000, 16000]) {
     const pcm = signal(641);
-    const { bytes, report } = success(native, pcm, ['--profile', String(profile), '--rate', String(rate), '--quality', 'fast', '--repeat', '3']);
+    const { bytes, report } = success(native, pcm, ['--legacy', '--profile', String(profile), '--rate', String(rate), '--quality', 'fast', '--repeat', '3']);
     assert.deepEqual(bytes, Buffer.from(fast(pcm, rate, profile)));
     assert.equal(report.backend, 'cpu'); assert.equal(report.quality, 'fast');
     assert.equal(report.repeatTimesMs.length, 3); assert.ok(report.warmMedianMs >= 0);
@@ -53,20 +53,20 @@ test('native fast CLI matches the browser encoder and checks repeat determinism'
   }
 });
 
-test('native reference adaptive CLI uses the same Python-reference result as WASM', { skip: !enabled }, () => {
+test('legacy native reference adaptive CLI uses the same Python-reference result as WASM', { skip: !enabled }, () => {
   const inputs = [new Int16Array(1), signal(161), signal(641)];
   for (const pcm of inputs) for (const profile of [4, 6]) {
-    const { bytes, report } = success(native, pcm, ['--profile', String(profile), '--quality', 'adaptive', '--search', 'reference', '--repeat', '2']);
+    const { bytes, report } = success(native, pcm, ['--legacy', '--profile', String(profile), '--quality', 'adaptive', '--search', 'reference', '--repeat', '2']);
     assert.deepEqual(bytes, adaptive(pcm, profile));
     assert.equal(report.refinementCalls, 4); assert.ok(report.candidates >= 1);
     assert.equal(report.search, 'reference'); assert.equal(report.sizeAllowancePercent, 0);
   }
 });
 
-test('native default expanded search and size allowance match extended WASM in CPU/CUDA modes', { skip: !enabled }, () => {
+test('legacy native default expanded search and size allowance match extended WASM in CPU/CUDA modes', { skip: !enabled }, () => {
   const pcm = signal(641);
   for (const profile of [4, 6]) for (const allowance of [0, 25]) {
-    const args = ['--profile', String(profile), '--quality', 'adaptive', '--size-allowance', String(allowance), '--repeat', '2'];
+    const args = ['--legacy', '--profile', String(profile), '--quality', 'adaptive', '--size-allowance', String(allowance), '--repeat', '2'];
     const expected = adaptive(pcm, profile, 8000, true, allowance);
     const cpu = success(native, pcm, args);
     assert.deepEqual(cpu.bytes, expected);
@@ -86,9 +86,9 @@ test('native default expanded search and size allowance match extended WASM in C
   }
 });
 
-test('CUDA executable keeps explicitly selectable CPU and identical CPU/CUDA bytes', { skip: !gpu }, () => {
+test('legacy CUDA executable keeps explicitly selectable CPU and identical CPU/CUDA bytes', { skip: !gpu }, () => {
   for (const profile of [4, 6]) for (const quality of ['fast', 'adaptive']) {
-    const pcm = signal(641), common = ['--profile', String(profile), '--quality', quality, '--repeat', '3'];
+    const pcm = signal(641), common = ['--legacy', '--profile', String(profile), '--quality', quality, '--repeat', '3'];
     const ordinary = success(native, pcm, common);
     const defaultCpu = success(cuda, pcm, common);
     const cpu = success(cuda, pcm, [...common, '--backend', 'cpu']);
@@ -101,7 +101,7 @@ test('CUDA executable keeps explicitly selectable CPU and identical CPU/CUDA byt
   }
 });
 
-test('full-band quality search matches native CPU/CUDA and scalar/SIMD on noisy high-band inputs', { skip: !enabled }, async () => {
+test('legacy full-band quality search matches native CPU/CUDA and scalar/SIMD on noisy high-band inputs', { skip: !enabled }, async () => {
   const wrappers = await Promise.all(['encoder-adaptive', 'encoder-adaptive-simd'].map(name =>
     createEncoder(readFileSync(new URL(`../lpx/${name}.wasm`, import.meta.url)))));
   for (const rate of [8000, 12000, 16000]) {
@@ -116,7 +116,7 @@ test('full-band quality search matches native CPU/CUDA and scalar/SIMD on noisy 
     for (const profile of [4, 6]) {
       const expected = wrappers[0](pcm, rate, profile);
       assert.deepEqual(wrappers[1](pcm, rate, profile), expected, `SIMD P${profile}/${rate}`);
-      const args = ['--profile', String(profile), '--rate', String(rate)];
+      const args = ['--legacy', '--profile', String(profile), '--rate', String(rate)];
       const ordinary = success(native, pcm, args);
       assert.deepEqual(ordinary.bytes, Buffer.from(expected), `CPU P${profile}/${rate}`);
       assert.equal(ordinary.report.qualitySearch.enabled, true);
@@ -130,10 +130,10 @@ test('full-band quality search matches native CPU/CUDA and scalar/SIMD on noisy 
   }
 });
 
-test('native fast/adaptive CLI encodes retained speech in CPU and CUDA modes', { skip: !enabled }, () => {
+test('legacy native fast/adaptive CLI encodes retained speech in CPU and CUDA modes', { skip: !enabled }, () => {
   const pcm = decode(readFileSync(new URL('../audio/lpx-speech/chego/quality.v9.lpx', import.meta.url))).pcm;
   for (const profile of [4, 6]) for (const quality of ['fast', 'adaptive']) {
-    const args = ['--profile', String(profile), '--quality', quality];
+    const args = ['--legacy', '--profile', String(profile), '--quality', quality];
     const ordinary = success(native, pcm, args);
     assert.equal(decode(ordinary.bytes).pcm.length, pcm.length);
     if (quality === 'fast') assert.deepEqual(ordinary.bytes, Buffer.from(fast(pcm, 8000, profile)));
@@ -144,7 +144,7 @@ test('native fast/adaptive CLI encodes retained speech in CPU and CUDA modes', {
   }
 });
 
-test('native input validation emits no successful stream', { skip: !enabled }, () => {
+test('legacy native input validation emits no successful stream', { skip: !enabled }, () => {
   const pcm = signal(1);
   for (const args of [['--profile', '5'], ['--rate', '7500'], ['--repeat', '0'], ['--repeat', '21'],
     ['--calls', '5'], ['--max-bytes', '21'], ['--max-bytes', '2147483647'], ['--quality', 'fast', '--auto-quiet'],
@@ -152,7 +152,7 @@ test('native input validation emits no successful stream', { skip: !enabled }, (
     ['--quality', 'fast', '--search', 'reference'], ['--quality', 'fast', '--size-allowance', '25'],
     ['--normalize', '--auto-quiet'], ['--normalize', '--target-lufs', '-31'],
     ['--normalize', '--target-lufs', '-8'], ['--normalize', '--max-gain-db', '25']]) {
-    const result = run(native, pcm, args);
+    const result = run(native, pcm, ['--legacy', ...args]);
     assert.notEqual(result.status, 0); assert.equal(result.stdout.length, 0); assert.ok(JSON.parse(result.stderr.toString()).error);
   }
   for (const input of [Buffer.alloc(0), Buffer.from([1])]) {
@@ -161,11 +161,11 @@ test('native input validation emits no successful stream', { skip: !enabled }, (
   }
 });
 
-test('native configurable input normalization matches WASM and uses ordinary V9', { skip: !enabled }, async () => {
+test('legacy native configurable input normalization matches WASM and uses ordinary V9', { skip: !enabled }, async () => {
   const encode = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive.wasm', import.meta.url)));
   const pcm = Int16Array.from(signal(4001), x => Math.round(x / 16));
   for (const profile of [4, 6]) {
-    const common = ['--profile', String(profile), '--search', 'reference'];
+    const common = ['--legacy', '--profile', String(profile), '--search', 'reference'];
     const original = success(native, pcm, common);
     const gained = success(native, pcm, [...common, '--normalize', '--target-lufs', '-21', '--max-gain-db', '9', '--repeat', '2']);
     const expected = encode(pcm, 8000, profile, () => {}, {
@@ -179,21 +179,21 @@ test('native configurable input normalization matches WASM and uses ordinary V9'
   }
 });
 
-test('native V9 Long retains one continuous output', { skip: !enabled }, () => {
+test('legacy native V9 Long retains one continuous output', { skip: !enabled }, () => {
   const pcm = new Int16Array(65537);
-  const { bytes, report } = success(native, pcm, ['--profile', '6', '--quality', 'fast']);
+  const { bytes, report } = success(native, pcm, ['--legacy', '--profile', '6', '--quality', 'fast']);
   assert.equal(report.long, true); assert.equal(decode(bytes).pcm.length, pcm.length);
   assert.deepEqual(bytes, Buffer.from(fast(pcm, 8000, 6)));
 });
 
-test('file wrapper is binary safe and refuses overwrites or failed output', { skip: !enabled }, () => {
+test('legacy file wrapper is binary safe and refuses overwrites or failed output', { skip: !enabled }, () => {
   mkdirSync(join(root, 'build'), { recursive: true });
   const directory = mkdtempSync(join(root, 'build/lpx-cli-test-'));
   try {
     const input = join(directory, 'source.pcm'), output = join(directory, 'результат.lpx');
     const pcm = signal(321); writeFileSync(input, Buffer.from(pcm.buffer));
     const wrapper = join(root, 'web-player/scripts/encode-lpx-native.mjs');
-    const args = [wrapper, input, output, '--pcm', '--encoder', native, '--quality', 'fast'];
+    const args = [wrapper, input, output, '--pcm', '--encoder', native, '--legacy', '--quality', 'fast'];
     let result = spawnSync(process.execPath, args, { cwd: root, encoding: 'utf8' });
     assert.equal(result.status, 0, result.stderr);
     const expected = Buffer.from(fast(pcm, 8000, 6)); assert.deepEqual(readFileSync(output), expected);
@@ -205,7 +205,7 @@ test('file wrapper is binary safe and refuses overwrites or failed output', { sk
   } finally { removeTemporary(directory); }
 });
 
-test('file wrapper averages every channel before encoding', { skip: !enabled || spawnSync('ffmpeg', ['-version']).status !== 0 }, () => {
+test('legacy file wrapper averages every channel before encoding', { skip: !enabled || spawnSync('ffmpeg', ['-version']).status !== 0 }, () => {
   const directory = mkdtempSync(join(root, 'build/lpx-cli-audio-'));
   try {
     const input = join(directory, 'three-channel.wav'), output = join(directory, 'out.lpx'), n = 321;
@@ -216,7 +216,7 @@ test('file wrapper averages every channel before encoding', { skip: !enabled || 
     for (let i = 0; i < n; i++) bytes.writeInt16LE(3000, 44 + i * 6 + 4);
     writeFileSync(input, bytes);
     const result = spawnSync(process.execPath, [join(root, 'web-player/scripts/encode-lpx-native.mjs'), input, output,
-      '--encoder', native, '--quality', 'fast'], { cwd: root, encoding: 'utf8' });
+      '--encoder', native, '--legacy', '--quality', 'fast'], { cwd: root, encoding: 'utf8' });
     assert.equal(result.status, 0, result.stderr);
     assert.deepEqual(readFileSync(output), Buffer.from(fast(new Int16Array(n).fill(1000), 8000, 6)));
   } finally { removeTemporary(directory); }

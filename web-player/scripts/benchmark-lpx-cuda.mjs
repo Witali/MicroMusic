@@ -1,3 +1,4 @@
+// Historical --legacy encoder benchmark; production accuracy parity has its own tests.
 // Local-only corpus driver. Media, fingerprints and per-case rows stay ignored.
 import { readFileSync, writeFileSync, mkdirSync, lstatSync } from 'node:fs';
 import { spawnSync, execFileSync } from 'node:child_process';
@@ -42,7 +43,7 @@ if (selected?.some(x => !Number.isInteger(x) || x < 0 || x >= manifest.cases.len
 const cases = manifest.cases.map((input, ordinal) => ({ input, ordinal }))
   .filter(x => !selected || selected.includes(x.ordinal)).slice(0, limit), rows = [];
 const gpu = execFileSync('nvidia-smi', ['--query-gpu=name,compute_cap,driver_version,memory.total', '--format=csv,noheader'], { encoding: 'utf8' }).trim();
-const saved = { schema: 'lpx-cuda-private-benchmark-v1', quality: values.quality,
+const saved = { schema: 'lpx-cuda-private-benchmark-v1', engine: 'legacy', quality: values.quality,
   executableSha256: hash(readFileSync(executable)), gpu, rows };
 const median = a => [...a].sort((x, y) => x-y)[Math.floor(a.length/2)];
 for (let index = 0; index < cases.length; ++index) {
@@ -57,7 +58,7 @@ for (let index = 0; index < cases.length; ++index) {
     // repeats and verifies all repeated output bytes before writing stdout.
     for (const backend of (index & 1 ? ['cuda', 'cpu'] : ['cpu', 'cuda'])) {
       const started = performance.now();
-      const result = spawnSync(executable, ['--backend', backend, '--profile', String(profile),
+      const result = spawnSync(executable, ['--legacy', '--backend', backend, '--profile', String(profile),
         '--rate', '8000', '--quality', values.quality, '--repeat', String(repeat),
         ...(values.quality === 'adaptive' && input.kind !== 'speech' ? ['--non-speech'] : [])],
       { input: pcm, maxBuffer: 120*1024*1024, windowsHide: true });
