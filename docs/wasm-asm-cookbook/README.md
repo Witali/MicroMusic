@@ -260,3 +260,23 @@ short views in JS/WASM. Native/WASM tests cover passband/alias response and exac
 packet independence; this is a working-memory/correctness result, not an
 architecture speedup. Scalar C++ is always selectable; no handwritten assembly
 or additional ISA is required. Refined/global quality buffers remain separate.
+
+## Reusing seed and candidate evaluation across search stages
+
+The [encoder ownership and policy refactoring](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/ENCODER_UNIFICATION.md)
+passes a prepared seed to the adaptive controller and shares actual-rate source
+analysis across quality stages. Cache exact packet keys together with the
+continuation flag, preceding LPC spectrum and full synthesis state. Equal wire
+bytes can render differently at window boundaries. Bound both entry count and
+retained key bytes; keep scalar metric summaries instead of every candidate PCM.
+Each quality stage must retain its own frozen incumbent and denominator, while
+the selected output still receives independent complete decoder verification.
+
+`SeedEncoder` separates per-search buffers/state from shared immutable analysis
+tables. Interleaving two seed contexts verifies ownership without assuming the
+legacy default C ABI or the single CUDA stream is concurrent. These are portable
+host C++11 techniques for wasm32 and native builds, using Emscripten6.0.12/Clang24
+with strict floating-point contraction disabled. SIMD128 remains explicitly
+selected; the same C++ fallback is available without it. No handwritten assembly
+is introduced. [Paired results and reproduction](../../Codecs/LPX/research/encoder-unification-2026-11-24/README.md)
+separate synthetic host measurements from MCU timing and listening claims.

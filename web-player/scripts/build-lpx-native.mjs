@@ -5,6 +5,8 @@ import { join, resolve, relative, dirname, basename, isAbsolute } from 'node:pat
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createHash } from 'node:crypto';
+import { seedSources, hostSources, nativeEntry, coreInputs, seedInputs, hostInputs,
+  workspaceHeader, portableDefines, includes, floatingPoint, buildConfigPath } from './lib/lpx-build.mjs';
 
 const { values } = parseArgs({ options: {
   cuda: { type: 'boolean', default: false }, compiler: { type: 'string' },
@@ -21,24 +23,12 @@ for (let path = directory; path !== dirname(build); path = dirname(path)) {
 }
 mkdirSync(directory, { recursive: true });
 const src = 'Codecs/LPX/01_ACTIVE_Q0_CODEC';
-const sources = [`${src}/src/Lpx4HybridCore.cpp`, ...['LpxEncoder.cpp', 'LpxAccuracy.cpp', 'LpxAdaptiveDsp.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp',
-  'LpxQuality.cpp', 'LpxStoi.cpp', 'LpxCandidateEvaluation.cpp', 'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxLoudness.cpp',
-  'LpxBitrateProfiles.cpp', 'LpxProfileQuality.cpp', 'LpxPulseLookahead.cpp', 'LpxFullBand.cpp', 'LpxSpectralPulses.cpp', 'LpxLpcRefine.cpp', 'LpxPitchGuard.cpp', 'encode_lpx.cpp']
-  .map(name => `${src}/host/${name}`)];
-const defines = ['LPX4_ENABLE_ASM=0', 'LPX4_FLOAT_SYNTHESIS=0', 'LPX4_ENABLE_SPEECH=1',
-  'LPX4_ENABLE_SPEECH_COMPACT=1', 'LPX4_COMPACT_ONLY=1', 'LPX4_COMPACT_VERSION=9',
-  'LPX4_SAMPLE_RATE=0', 'LPX4_EXTENDED_SAMPLE_RATES=1', 'LPX4_ENABLE_WIDE_V9=1'];
-const includes = [`${src}/src`, `${src}/host`];
+const sources = [...seedSources,...hostSources,nativeEntry];
+const defines = portableDefines;
 const hash = path => createHash('sha256').update(readFileSync(path)).digest('hex');
-const inputPaths = [...sources, ...['LpxEncoder.h', 'LpxEncoderContext.h', 'LpxEncoderOptions.h', 'LpxSeed.h', 'LpxEncoderSimd.h', 'LpxAdaptive.h', 'LpxAccuracy.h', 'LpxSpectrumQuantizer.h', 'LpxPacking.h', 'LpxStreaming.h',
-  'LpxQuality.h', 'LpxCandidateEvaluation.h', 'LpxAdaptiveController.h', 'LpxRefinement.h', 'LpxHostWorkspace.h', 'LpxLoudness.h', 'LpxEncodingPolicy.h',
-  'LpxBitrateProfiles.h', 'LpxProfileQuality.h', 'LpxPulseLookahead.h', 'LpxFullBand.h', 'LpxSpectralPulses.h', 'LpxLpcRefine.h', 'LpxPitchGuard.h',
-  'stoi-resample.inc', 'stoi-resample-12k.inc', 'stoi-resample-16k.inc',
-  'quality-resample-12k.inc', 'quality-resample-16k.inc']
-  .map(name => `${src}/host/${name}`), ...['Lpx4HybridCore.h', 'Lpx4Math.h', 'Lpx4MemoryProfiles.h',
-  'Lpx4MultiplyC.h', 'cos_table.inc', 'scale_table.inc'].map(name => `${src}/src/${name}`),
+const inputPaths = [...new Set([...sources,...seedInputs,...hostInputs,workspaceHeader,...coreInputs,
   ...(values.cuda ? [`${src}/host/LpxCuda.h`, `${src}/host/cuda/LpxCuda.cu`] : []),
-  'web-player/scripts/build-lpx-native.mjs'];
+  'web-player/scripts/build-lpx-native.mjs',buildConfigPath])];
 const inputHashes = Object.fromEntries(inputPaths.map(path => [path, hash(join(root, path))]));
 function run(command, args, env = process.env, windowsVerbatimArguments = false) {
   const result = spawnSync(command, args, { cwd: root, env, encoding: 'utf8', windowsVerbatimArguments, maxBuffer: 8 * 1024 * 1024 });
@@ -82,8 +72,8 @@ if (process.platform === 'win32') {
 const artifacts = [];
 const cpuOutput = join(directory, process.platform === 'win32' ? 'lpx-encode.exe' : 'lpx-encode');
 const cpuFlags = msvc
-  ? ['/nologo', '/O2', '/EHsc', '/std:c++17', '/fp:strict', '/DNDEBUG', ...defines.map(x => '/D' + x), ...includes.map(x => '/I' + x)]
-  : ['-O3', process.platform === 'win32' ? '-std=c++17' : '-std=c++11', '-ffp-contract=off', '-DNDEBUG', ...defines.map(x => '-D' + x), ...includes.map(x => '-I' + x)];
+  ? ['/nologo', '/O2', '/EHsc', '/std:c++17', floatingPoint.msvc, '/DNDEBUG', ...defines.map(x => '/D' + x), ...includes.map(x => '/I' + x)]
+  : ['-O3', process.platform === 'win32' ? '-std=c++17' : '-std=c++11', floatingPoint.clang, '-DNDEBUG', ...defines.map(x => '-D' + x), ...includes.map(x => '-I' + x)];
 if (msvc) {
   const objects = join(directory, 'obj-cpu'); mkdirSync(objects, { recursive: true });
   run(compiler, [...cpuFlags, ...sources, '/Fo' + objects + '/', '/Fe' + cpuOutput], env);
@@ -105,9 +95,9 @@ if (values.cuda) {
     if (lstatSync(path, { throwIfNoEntry: false })?.isFile()) toolchains.vendorHeaders[`<cuda>/include/${name}`] = hash(path);
   }
   const output = join(directory, process.platform === 'win32' ? 'lpx-encode-cuda.exe' : 'lpx-encode-cuda');
-  const flags = ['-O3', '-std=c++17', '--fmad=false', '-arch=' + values.arch,
+  const flags = ['-O3', '-std=c++17', floatingPoint.cuda, '-arch=' + values.arch,
     '-DLPX_ENCODER_ENABLE_CUDA=1', '-DNDEBUG', ...defines.map(x => '-D' + x), ...includes.map(x => '-I' + x),
-    '-Xcompiler', process.platform === 'win32' ? '/fp:strict,/EHsc' : '-ffp-contract=off'];
+    '-Xcompiler', process.platform === 'win32' ? `${floatingPoint.msvc},/EHsc` : floatingPoint.clang];
   const objects = join(directory, 'obj-cuda'); mkdirSync(objects, { recursive: true });
   const objectPaths = [];
   for (const source of sources) {

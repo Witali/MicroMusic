@@ -4,6 +4,9 @@ import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createHash } from 'node:crypto';
+import { coreSource, seedSources, wasmRuntimeSources, hostSources, wasmApiSources,
+  coreInputs, seedInputs, hostInputs, workspaceHeader, portableDefines, includes,
+  floatingPoint, buildConfigPath } from './lib/lpx-build.mjs';
 
 const { values } = parseArgs({ options: { emsdk: { type: 'string' }, clang: { type: 'string' },
   'reference-encoder': { type: 'boolean', default: false },
@@ -16,15 +19,12 @@ if (!sdk) throw new Error('Pass --emsdk <SDK directory> or set EMSDK. The SDK is
 const upstream = join(resolve(sdk), 'upstream');
 const compiler = values.clang || join(upstream, 'bin', process.platform === 'win32' ? 'clang.exe' : 'clang');
 const sysroot = join(upstream, 'emscripten/cache/sysroot');
-const sources = ['Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp', 'web-player/lpx/native/decoder.cpp'];
+const sources = [coreSource, 'web-player/lpx/native/decoder.cpp'];
 const exports = ['__wasm_call_ctors', 'lpx_reserve', 'lpx_input', 'lpx_output', 'lpx_samples', 'lpx_rate', 'lpx_decode', 'lpx_decode_begin', 'lpx_decode_read'];
 const flags = ['--target=wasm32-unknown-unknown', '-O3', '-std=c++11', '-ffreestanding', '-nostdlib',
   '-fno-exceptions', '-fno-rtti', '-fno-threadsafe-statics', '--sysroot=' + sysroot,
-  '-isystem', join(sysroot, 'include'), '-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src',
-  '-ICodecs/LPX/01_ACTIVE_Q0_CODEC/host', '-ffp-contract=off',
-  '-DLPX4_ENABLE_ASM=0', '-DLPX4_FLOAT_SYNTHESIS=0', '-DLPX4_ENABLE_SPEECH=1',
-  '-DLPX4_ENABLE_SPEECH_COMPACT=1', '-DLPX4_COMPACT_ONLY=1', '-DLPX4_COMPACT_VERSION=9',
-  '-DLPX4_SAMPLE_RATE=0', '-DLPX4_EXTENDED_SAMPLE_RATES=1', '-DLPX4_ENABLE_WIDE_V9=1',
+  '-isystem', join(sysroot, 'include'), ...includes.map(path=>'-I'+path), floatingPoint.clang,
+  ...portableDefines.map(value=>'-D'+value),
   '-Wl,--no-entry', '-Wl,--export-memory', '-Wl,--initial-memory=262144', '-Wl,--max-memory=268435456',
   '-Wl,-z,stack-size=32768', '-Wl,--strip-all', ...exports.map(name => '-Wl,--export=' + name)];
 function run(args) {
@@ -39,9 +39,7 @@ const binary = readFileSync(output);
 const module = await WebAssembly.compile(binary);
 if (WebAssembly.Module.imports(module).length) throw new Error('Decoder must have no host imports');
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
-const inputs = [...sources, 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxHostWorkspace.h', 'web-player/scripts/build-lpx-wasm.mjs',
-  ...['Lpx4HybridCore.h', 'Lpx4Math.h', 'Lpx4MemoryProfiles.h', 'Lpx4MultiplyC.h', 'cos_table.inc', 'scale_table.inc']
-    .map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/src/' + name)];
+const inputs = [...sources,workspaceHeader,'web-player/scripts/build-lpx-wasm.mjs',buildConfigPath,...coreInputs];
 const manifest = { schema: 'micromusic-lpx-v9-wasm-v1', compiler: run(['--version']).split(/\r?\n/)[0],
   flags: flags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
   inputs: Object.fromEntries(inputs.map(path => [path, hash(readFileSync(join(root, path), 'utf8').replaceAll('\r\n', '\n'))])),
@@ -51,8 +49,7 @@ const manifest = { schema: 'micromusic-lpx-v9-wasm-v1', compiler: run(['--versio
 writeFileSync(join(root, 'web-player/lpx/build.json'), JSON.stringify(manifest, null, 2) + '\n');
 console.log(`LPX V9 C → WebAssembly: ${binary.length} bytes, no host imports`);
 
-const encoderSources = ['Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp',
-  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxWasmMemory.cpp'];
+const encoderSources = [...seedSources,...wasmRuntimeSources];
 const encoderExports = ['enc_reserve', 'enc_input', 'enc_output', 'enc_begin', 'enc_step', 'enc_finish'];
 const encoderFlags = flags.filter(flag => !flag.startsWith('-Wl,--export=') && !flag.startsWith('-Wl,--initial-memory=') && !flag.startsWith('-Wl,--max-memory='));
 encoderFlags.push('-Wl,--initial-memory=262144', '-Wl,--max-memory=1073741824', ...encoderExports.map(name => '-Wl,--export=' + name));
@@ -61,9 +58,7 @@ run([...encoderFlags, ...encoderSources, '-L' + join(sysroot, 'lib/wasm32-emscri
 const encoderBinary = readFileSync(encoderOutput);
 if (WebAssembly.Module.imports(await WebAssembly.compile(encoderBinary)).length) throw new Error('Encoder must have no host imports');
 const encoderInputs = [...new Set([...inputs.filter(path => !path.endsWith('native/decoder.cpp')), ...encoderSources,
-  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.h', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderContext.h',
-  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderOptions.h', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderSimd.h',
-  'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSeed.h', 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectrumQuantizer.h',
+  ...seedInputs,
   ...['speech_v4.py', 'wav_lpc.py', 'q0_model.py', 'speech_v9.py', 'speech_compact.py'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/tools/' + name)])];
 writeFileSync(join(root, 'web-player/lpx/encoder-build.json'), JSON.stringify({ ...manifest,
   flags: encoderFlags.map(flag => flag.replaceAll(sysroot, '<emsdk>/upstream/emscripten/cache/sysroot')),
@@ -121,10 +116,7 @@ if (values['simd-selftest']) {
 
 // Same adaptive C++ translation units as the offline native executable.
 // Python source files below are provenance/test oracles, not runtime imports.
-const adaptiveNames = ['LpxAdaptiveDsp.cpp', 'LpxAccuracy.cpp', 'LpxPacking.cpp', 'LpxStreaming.cpp', 'LpxQuality.cpp', 'LpxStoi.cpp', 'LpxCandidateEvaluation.cpp',
-  'LpxRefinement.cpp', 'LpxAdaptiveController.cpp', 'LpxAdaptiveApi.cpp', 'LpxStreamingApi.cpp', 'LpxLoudness.cpp', 'LpxBitrateProfiles.cpp',
-  'LpxProfileQuality.cpp', 'LpxPulseLookahead.cpp', 'LpxFullBand.cpp', 'LpxSpectralPulses.cpp', 'LpxLpcRefine.cpp', 'LpxPitchGuard.cpp'];
-const adaptiveSources = adaptiveNames.map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name);
+const adaptiveSources = [...hostSources,...wasmApiSources];
 // Export the initializer explicitly so wasm-ld does not wrap every API export
 // with constructors. The host calls it once after instantiation; otherwise a
 // getter could reconstruct (and erase) the static output vector/report.
@@ -141,11 +133,7 @@ const adaptiveFlags = ['-isystem', join(sysroot, 'include/c++/v1'),
 adaptiveFlags.push('-Wl,--initial-memory=524288', '-Wl,-z,stack-size=262144', '-DLPX_ADAPTIVE_ENCODER=1',
   ...adaptiveExports.map(name => '-Wl,--export=' + name));
 const adaptiveInputs = [...new Set([...encoderInputs, ...adaptiveSources,
-  ...['LpxAdaptive.h', 'LpxAccuracy.h', 'LpxEncodingPolicy.h', 'LpxCandidateEvaluation.h', 'LpxSpectrumQuantizer.h', 'LpxPacking.h', 'LpxStreaming.h', 'LpxQuality.h', 'LpxRefinement.h', 'LpxAdaptiveController.h',
-    'stoi-resample.inc', 'stoi-resample-12k.inc', 'stoi-resample-16k.inc',
-    'quality-resample-12k.inc', 'quality-resample-16k.inc',
-    'LpxProfileQuality.h', 'LpxPulseLookahead.h', 'LpxFullBand.h', 'LpxSpectralPulses.h', 'LpxLpcRefine.h', 'LpxPitchGuard.h',
-    'LICENSE-pystoi.txt', 'LpxLoudness.h', 'LpxBitrateProfiles.h', 'LICENSE-libebur128.txt'].map(name => 'Codecs/LPX/01_ACTIVE_Q0_CODEC/host/' + name),
+  ...hostInputs,
   ...['adaptive_speech_voice.py', 'encode_speech_voice.py', 'refine_speech_compact.py', 'enhance_speech_compact.py',
     'refine_speech_lpc.py', 'refine_speech_extras.py', 'speech_rate_allocation.py', 'speech_voice_objective.py',
     'speech_noise_objective.py', 'voice_character.py', 'standard_metrics.py', 'voice_input.py']

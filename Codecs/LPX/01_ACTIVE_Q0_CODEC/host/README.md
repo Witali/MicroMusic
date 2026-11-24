@@ -6,6 +6,10 @@ needed only for the independent regression oracle, never for encoding here.
 P4/P6 and 8/12/16 kHz are supported. Recordings over 64000 samples use one
 continuous V9 Long stream; no reset-file segmentation is performed.
 
+See [shared policies and context ownership](ENCODER_UNIFICATION.md) for the
+precision/bitrate distinction, reusable seed, bounded evaluator cache and
+common native/WASM build description.
+
 ## Build
 
 Use an installed Clang or GCC compiler. Windows builds use Clang with the

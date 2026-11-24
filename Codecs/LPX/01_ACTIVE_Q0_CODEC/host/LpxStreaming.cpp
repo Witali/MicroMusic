@@ -129,7 +129,7 @@ std::vector<uint8_t> StreamingEncoder::getHeader(bool candidate) const {
     if(!ended || error || (candidate && !candidateLive))return {};
     const auto& writer=candidate?candidateWriter:controlWriter;
     const auto& context=candidate?candidateContext:controlContext;
-    return v9Header(total,profile==3?4:profile==8?6:profile,rate,context.pre,context.bright,accuracy&&profile==8,(writer.bits()+7)/8);
+    return v9Header(total,policy.wireProfile,rate,context.pre,context.bright,policy.corrections,(writer.bits()+7)/8);
 }
 int StreamingEncoder::verifyPut(int kind,uint32_t offset,const int16_t* pcm,int count) {
     if(!ended || error || kind<0 || kind>2 || count<1 || count>kLpxStreamWindow || offset!=received[kind]

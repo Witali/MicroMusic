@@ -3,13 +3,13 @@ import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-u
 
 export function createStreamSession(api, settings) {
   const {samples,profile,sampleRate,sizeAllowancePercent=0,normalization='preserve',targetLufs=-18,maxGainDb=12,calls=4}=settings;
-  const policy=encodingPolicy(profile,!!settings.accuracy);
   if(!api.enc_stream_create)throw Error('Обновите страницу: потоковое кодирование недоступно.');
   if(!Number.isInteger(samples)||samples<1||samples>MAX_SAMPLES||![3,4,6,8].includes(profile)||![8000,12000,16000].includes(sampleRate)
     ||!Number.isInteger(sizeAllowancePercent)||sizeAllowancePercent<0||sizeAllowancePercent>100
     ||!['preserve','loudness'].includes(normalization)||!Number.isInteger(targetLufs)||targetLufs<-30||targetLufs>-9
     ||!Number.isInteger(maxGainDb)||maxGainDb<0||maxGainDb>24||!Number.isInteger(calls)||calls<0||calls>4)
     throw Error('Некорректные настройки потокового кодирования.');
+  const policy=encodingPolicy(profile,!!settings.accuracy);
   if(settings.accuracy&&sizeAllowancePercent!==0)throw Error('Уровни точности не используют допуск размера.');
   if(policy.targetBitrate&&(sampleRate!==8000||sizeAllowancePercent!==0))throw Error('Профили 3/8 используют 8 кГц без допуска размера.');
   const checked=(value,stage)=>{if(value<0)throw Error(`Потоковый энкодер: ${stage} (${value}).`);return value;};
