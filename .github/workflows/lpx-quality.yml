@@ -1,0 +1,70 @@
+name: LPX quality regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Codecs/LPX/**'
+      - 'web-player/lpx/**'
+      - 'web-player/tests/**'
+      - 'web-player/scripts/lib/lpx-build.mjs'
+      - '.github/workflows/lpx-quality.yml'
+  pull_request:
+    paths:
+      - 'Codecs/LPX/**'
+      - 'web-player/lpx/**'
+      - 'web-player/tests/**'
+      - 'web-player/scripts/lib/lpx-build.mjs'
+      - '.github/workflows/lpx-quality.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lpx-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22.22.3'
+          package-manager-cache: false
+      - name: Build portable source and spectrum contracts
+        shell: bash
+        run: |
+          mkdir -p build
+          mapfile -t lpx_sources < <(node --input-type=module -e "import {seedSources,hostSources} from './web-player/scripts/lib/lpx-build.mjs'; console.log([...seedSources,...hostSources,'web-player/tests/helpers/lpx-unification-selftest.cpp'].join('\n'));")
+          mapfile -t lpx_flags < <(node --input-type=module -e "import {portableDefines,includes} from './web-player/scripts/lib/lpx-build.mjs'; console.log([...portableDefines.map(v=>'-D'+v),...includes.map(v=>'-I'+v)].join('\n'));")
+          g++ -O2 -std=c++17 -ffp-contract=off "${lpx_flags[@]}" "${lpx_sources[@]}" -o build/lpx-quality-contracts
+          build/lpx-quality-contracts
+      - name: Verify source fixture contracts
+        run: node --test --test-name-pattern='burst sources' web-player/tests/lpx-continuation-safety.test.mjs
+
+  quality:
+    needs: contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        rate: [8000, 12000, 16000]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22.22.3'
+          package-manager-cache: false
+      - name: Verify whole and streamed accuracy output and quality
+        env:
+          LPX_QUALITY_TEST_RATE: ${{ matrix.rate }}
+        run: node --test web-player/tests/lpx-continuation-safety.test.mjs

@@ -1,7 +1,7 @@
 # Preventing false LPX source-spectrum rejection
 
 Baseline: `0b02d12dd7d18bf37897e9e0c8675d2f46503c8b`.
-The wire format, decoder and shared scalar/CPU arithmetic are unchanged.
+The wire format, decoder and shared integer synthesis arithmetic are unchanged.
 Private recordings, paths, fingerprints and per-recording measurements are
 excluded; retained regressions use generated sources only.
 
