@@ -1,6 +1,7 @@
-import { MAX_SAMPLES } from './codec.js?v=20261124-stream-quality';
-import { createStreamSession } from './streaming.js?v=20261124-stream-quality';
-import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-stream-quality';
+import { qualityTargetCode, callQualityEncoder } from './quality-target.js?v=20261126-quality-target';
+import { MAX_SAMPLES } from './codec.js?v=20261126-quality-target';
+import { createStreamSession } from './streaming.js?v=20261126-quality-target';
+import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261126-quality-target';
 
 export async function createEncoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);
@@ -14,6 +15,8 @@ export async function createEncoder(binary) {
   });
   const encode = (pcm, sampleRate, profile, progress = () => {}, options = {}) => {
     encode.loudness = null;
+    const qualityTarget = qualityTargetCode(options.qualityTarget);
+    const call = (name, ...args) => callQualityEncoder(api, name, args, qualityTarget);
     if (!(pcm instanceof Int16Array) || !pcm.length || pcm.length > MAX_SAMPLES) throw new Error('Запись должна содержать от 1 до 32 000 000 отсчётов.');
     if (![8000, 12000, 16000].includes(sampleRate) || ![3, 4, 6, 8].includes(profile)) throw new Error('Некорректные параметры кодирования.');
     const allowance = options.sizeAllowancePercent ?? 0;
@@ -32,7 +35,7 @@ export async function createEncoder(binary) {
     if (!api.enc_reserve(pcm.length)) throw new Error('Недостаточно памяти для кодирования этой записи.');
     new Int16Array(api.memory.buffer, api.enc_input(), pcm.length).set(pcm);
     if(accuracy){
-      progress(0);const size=api.enc_accuracy(pcm.length,profile,sampleRate,options.calls??4,normalization==='loudness'?1:0,targetLufs,maxGainDb);
+      progress(0);const size=call('enc_accuracy',pcm.length,profile,sampleRate,options.calls??4,normalization==='loudness'?1:0,targetLufs,maxGainDb);
       if(size<13)throw Error(`Энкодер уровня точности не прошёл проверку (${size}).`);
       const bytes=new Uint8Array(api.memory.buffer,api.enc_adaptive_output(),size).slice();
       if(normalization==='loudness')encode.loudness=loudnessReport();progress(1);return bytes;
@@ -40,8 +43,8 @@ export async function createEncoder(binary) {
     if (bitratePreset) {
       progress(0);
       const size = normalization === 'loudness'
-        ? api.enc_bitrate_level(pcm.length, profile, sampleRate, 4, targetLufs, maxGainDb)
-        : api.enc_bitrate(pcm.length, profile, sampleRate, 0, 4);
+        ? call('enc_bitrate_level',pcm.length, profile, sampleRate, 4, targetLufs, maxGainDb)
+        : call('enc_bitrate',pcm.length, profile, sampleRate, 0, 4);
       if (size < 13) throw new Error(`Не удалось уложить полный поток в ${profile} кбит/с (${size}).`);
       const cap = bitrateBudget(pcm.length, policy, sampleRate);
       if (size > cap) throw new Error('Кодировщик превысил предел размера полного файла.');
@@ -53,10 +56,10 @@ export async function createEncoder(binary) {
     if (api.enc_adaptive) {
       progress(0);
       const size = normalization === 'loudness'
-        ? api.enc_adaptive_level(pcm.length, profile, sampleRate, 0, 4, allowance, options.extendedSearch !== false ? 1 : 0, targetLufs, maxGainDb)
+        ? call('enc_adaptive_level',pcm.length, profile, sampleRate, 0, 4, allowance, options.extendedSearch !== false ? 1 : 0, targetLufs, maxGainDb)
         : options.extendedSearch !== false && api.enc_adaptive_extended
-        ? api.enc_adaptive_extended(pcm.length, profile, sampleRate, 0, 0, 4, allowance)
-        : api.enc_adaptive(pcm.length, profile, sampleRate, 0, 0, 4);
+        ? call('enc_adaptive_extended',pcm.length, profile, sampleRate, 0, 0, 4, allowance)
+        : call('enc_adaptive',pcm.length, profile, sampleRate, 0, 0, 4);
       if (size < 13) throw new Error(`Адаптивный энкодер не прошёл проверку полного потока (${size}).`);
       // Memory can grow during the search. Construct the view only after it ends.
       const bytes = new Uint8Array(api.memory.buffer, api.enc_adaptive_output(), size).slice();
@@ -64,6 +67,7 @@ export async function createEncoder(binary) {
       progress(1);
       return bytes;
     }
+    if (qualityTarget === 0) throw new Error('Обновите страницу: этот WASM-энкодер не поддерживает выбор выхода PCM.');
     const blocks = api.enc_begin(pcm.length, profile, sampleRate);
     if (blocks < 1) throw new Error('Некорректные параметры кодирования.');
     for (let i = 0; i < blocks; i++) {

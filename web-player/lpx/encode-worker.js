@@ -1,7 +1,8 @@
-import { createEncoderBackend } from './encoder-backend.js?v=20261124-stream-quality';
-import { encodeStreaming } from './streaming.js?v=20261124-stream-quality';
-import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261124-stream-quality';
-import { MAX_SAMPLES, MAX_STREAM_SAMPLES } from './codec.js?v=20261124-stream-quality';
+import { qualityTargetCode } from './quality-target.js?v=20261126-quality-target';
+import { createEncoderBackend } from './encoder-backend.js?v=20261126-quality-target';
+import { encodeStreaming } from './streaming.js?v=20261126-quality-target';
+import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261126-quality-target';
+import { MAX_SAMPLES, MAX_STREAM_SAMPLES } from './codec.js?v=20261126-quality-target';
 const readBinary=async url=>{const response=await fetch(url);if(!response.ok)throw Error('Не удалось загрузить модуль обработки звука.');return response.arrayBuffer();};
 async function encodeSource(data){
   if(!validTemporaryName(data.temporaryName)||!navigator.locks?.request)throw Error('Браузер не поддерживает безопасную временную обработку аудио.');
@@ -46,6 +47,7 @@ self.onmessage = async ({ data }) => {
     return;
   }
   try {
+    qualityTargetCode(data.qualityTarget);
     if(data.source){const result=await encodeSource(data);self.postMessage({result},[result.bytes.buffer]);return;}
     const { encode, backend } = await createEncoderBackend(data.backend ?? 'auto');
     if(data.processing==='stream') {
@@ -60,7 +62,7 @@ self.onmessage = async ({ data }) => {
     const started = performance.now();
     const bytes = encode(pcm, data.sampleRate, data.profile, progress => self.postMessage({ progress }),
       { sizeAllowancePercent: data.sizeAllowancePercent ?? 0, normalization: data.normalization ?? 'preserve',
-        targetLufs: data.targetLufs ?? -18, maxGainDb: data.maxGainDb ?? 12,accuracy:data.accuracy===true });
+        qualityTarget:data.qualityTarget,calls:data.calls??4,targetLufs: data.targetLufs ?? -18, maxGainDb: data.maxGainDb ?? 12,accuracy:data.accuracy===true });
     const elapsedMs = performance.now() - started;
     self.postMessage({ result: { bytes, samples: pcm.length, long: !!(bytes[2] & 64), backend, elapsedMs, loudness: encode.loudness } }, [bytes.buffer]);
   } catch (error) {

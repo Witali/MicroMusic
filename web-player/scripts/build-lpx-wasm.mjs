@@ -125,6 +125,8 @@ const adaptiveExports = ['__wasm_call_ctors', 'enc_accuracy', 'enc_stream_create
   'enc_normalize_loudness', 'enc_adaptive_loudness', 'enc_loudness_status', 'enc_loudness_limited',
   'enc_loudness_input', 'enc_loudness_prepared', 'enc_loudness_decoded', 'enc_loudness_gain_db',
   'enc_adaptive_level', 'enc_bitrate_level', 'enc_normalize_level', 'enc_loudness_gain_limited'];
+adaptiveExports.push('enc_accuracy_target','enc_adaptive_target','enc_adaptive_extended_target','enc_adaptive_loudness_target','enc_adaptive_level_target',
+ 'enc_bitrate_target','enc_bitrate_loudness_target','enc_bitrate_level_target','enc_stream_create_target','enc_stream_create_accuracy_target');
 adaptiveExports.push('enc_stream_create','enc_stream_input','enc_stream_window','enc_stream_measure','enc_stream_plan',
  'enc_stream_process','enc_stream_finish','enc_stream_bytes','enc_stream_size','enc_stream_pcm','enc_stream_pcm_size',
  'enc_stream_header','enc_stream_header_size','enc_stream_candidate','enc_stream_processed','enc_stream_verify_put',
@@ -159,9 +161,10 @@ for (const simd of [false, true]) {
     bitratePresetBudget: 'exact complete V9 file bytes, including its header',
     quality: { seedPre: [0, 8192, 13926], refinementCalls: 4, lpcPreset: 'expanded',
       headerTrials: 256, headerFinalists: 16, extraHorizon: 320, extraFinalists: 6,
-      extraFullEvaluations: 128, ranking: 'mean of PCM16/PWM voice + noise',
+      extraFullEvaluations: 128, ranking: 'selected quality target: PCM16 only, or mean of PCM16/PWM voice + noise',
+      targets: ['pcm', 'pwm'], defaultTarget: 'pwm', targetScope: 'explicit per encode/session; host policy only',
       protectedPostSearch: { bandwidth: [0.94, 0.99], pairFrames: 24,
-        rateAwareEvaluation: true, spectralGuard: 'source-frozen native-rate 1 kHz bands, PCM16 and PWM',
+        rateAwareEvaluation: true, spectralGuard: 'source-frozen native-rate 1 kHz bands on the selected quality paths',
         objective: 'incumbent-relative spectral2, temporal2, voice1, noise1, SSE1, STOI1, period1, shape1',
         waveformSse: 'objective component and diagnostic, not a bit-identity requirement',
         spectralPulseRegions: 4, spectralPulseHorizon: 768, spectralPulseBackoff: ['all', 2, 1] },

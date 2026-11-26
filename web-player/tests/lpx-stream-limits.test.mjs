@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 import {MAX_SAMPLES,MAX_STREAM_SAMPLES,MAX_DECODE_SAMPLES,MAX_FILE_BYTES,parseHeader,createIncrementalDecoder,streamingSampleLimit} from '../lpx/codec.js';
 import {createStreamSession} from '../lpx/streaming.js';
+import {qualityTargetCode} from '../lpx/quality-target.js';
 import {decodePackets,prepareAudio} from '../lpx/audio-source.js';
 
 const root=new URL('../lpx/',import.meta.url),binary=name=>readFileSync(new URL(name,root));
@@ -114,7 +115,7 @@ test('source worker chooses 64M only for fast accuracy Auto/stream jobs',async()
   for(const processingSelection of ['auto','stream','full','stream-refine'])for(const accuracy of [false,true]) {
     let limit;
     const messages=[],self={postMessage:message=>messages.push(message)};
-    const context={self,MAX_SAMPLES,MAX_STREAM_SAMPLES,validTemporaryName:()=>true,
+    const context={self,MAX_SAMPLES,MAX_STREAM_SAMPLES,qualityTargetCode,validTemporaryName:()=>true,
       navigator:{locks:{async request(name,callback){return callback();}}},
       prepareAudio:async(...args)=>{limit=args[6];throw Error('limit probe');}};
     runInNewContext(workerSource,context);
@@ -128,7 +129,7 @@ test('full source worker rejects an oversized prepared result before allocating 
   const workerSource=binary('encode-worker.js').toString().replace(/^import .*;\r?\n/gm,'').replaceAll('import.meta.url',JSON.stringify(new URL('encode-worker.js',root).href));
   let allocations=0,reads=0,encodes=0,disposed=false;
   const messages=[],self={postMessage:message=>messages.push(message)};
-  const context={self,MAX_SAMPLES,MAX_STREAM_SAMPLES,validTemporaryName:()=>true,performance:{now:()=>0},
+  const context={self,MAX_SAMPLES,MAX_STREAM_SAMPLES,qualityTargetCode,validTemporaryName:()=>true,performance:{now:()=>0},
     Int16Array:function(){allocations++;throw Error('Unexpected whole PCM allocation');},
     navigator:{locks:{async request(name,callback){return callback();}}},
     createEncoderBackend:async()=>({backend:'scalar',encode(){encodes++;}}),
