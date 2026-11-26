@@ -1,0 +1,22 @@
+{
+  "schema": "lpx-p3-paired-retained-validation-v1",
+  "method": "Rechecked retained build inputs, binaries, prepared sources and every LPX/PCM/model hash. Every raw-fixed and protected artifact is byte-identical to its own original baseline. No audio quality metric was rerun or relabeled.",
+  "artifact_hash_checks": 90,
+  "phases": [
+    {
+      "phase": "pilot",
+      "cases": 2,
+      "result_sha256": "170206296d22ae01504207db73ec7d08df8285dd4d01abe91c99dbacd5739533"
+    },
+    {
+      "phase": "matrix",
+      "cases": 8,
+      "result_sha256": "c9c4d75bdebcb6ca80e376fc053e1a456389bc667f5f67505eb3bd2f796bdcf1"
+    }
+  ],
+  "original_cpp_sha256": "c38d113e1c39a5dc0701b5cec87237c9a1611f207f2864e68772eaba684bbfcc",
+  "fixed_cpp_sha256": "cba09bfaab7092612befeab2e2f5af9304787ad7131efa88740bcb58abb1f8a7",
+  "same_binary_pair_both_phases": true,
+  "unchanged_production_inputs": 61,
+  "size_diagnostics_sha256": "23fd8878e06563b1c1af9c2d03df49ca09c353fc15307bf1513547a4651490a8"
+}

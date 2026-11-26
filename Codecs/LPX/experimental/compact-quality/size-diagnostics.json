@@ -1,0 +1,3361 @@
+{
+  "schema": "lpx-p3-canonical-size-diagnostics-v1",
+  "matrix_sha256": "c9c4d75bdebcb6ca80e376fc053e1a456389bc667f5f67505eb3bd2f796bdcf1",
+  "method": "Posthoc deterministic accounting only, no new encoding/search. Native packet bit totals are retained in matrix. An independent ordered-LSF Rice calculation matches each spectral total. First active extra costs ceil((used_payload_and_header_bits+ceil(n/40)+10)/8)-B0 bytes when extras are absent; source/error frame splits are descriptive and do not isolate causal spectral distortion.",
+  "cases": [
+    {
+      "name": "chego-p3-pcm",
+      "Bseed": 461,
+      "B0": 461,
+      "C": 478,
+      "unused_policy_bytes": 17,
+      "first_active_extra_bytes": 32,
+      "first_active_extra_fits_policy_budget": false,
+      "active_extras": 0,
+      "frames": 31,
+      "updated": 8,
+      "held": 23,
+      "spectral_bits": 268,
+      "spectral_fraction_complete_bits": 0.07266811279826464,
+      "main_pulse_fraction_complete_bits": 0.6670281995661606,
+      "canonical_even_rank_and_hold_verified": true,
+      "hold_run_lengths": [
+        5,
+        5,
+        5,
+        5,
+        4,
+        2,
+        3,
+        2
+      ],
+      "per_frame": [
+        {
+          "frame": 0,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 10,
+          "source_rms": 277.2918926871105,
+          "pcm_sse": 18663650
+        },
+        {
+          "frame": 1,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 635.1931989560342,
+          "pcm_sse": 113228148
+        },
+        {
+          "frame": 2,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3291.9054128080593,
+          "pcm_sse": 3150338103
+        },
+        {
+          "frame": 3,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4860.841140237459,
+          "pcm_sse": 4662734289
+        },
+        {
+          "frame": 4,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4400.335547219666,
+          "pcm_sse": 4621156877
+        },
+        {
+          "frame": 5,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 10322.540420422194,
+          "pcm_sse": 20575022978
+        },
+        {
+          "frame": 6,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10352.769904565397,
+          "pcm_sse": 26352894687
+        },
+        {
+          "frame": 7,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1773.3894718166114,
+          "pcm_sse": 834700474
+        },
+        {
+          "frame": 8,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 123.99170839213403,
+          "pcm_sse": 4468034
+        },
+        {
+          "frame": 9,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 233.98657814071302,
+          "pcm_sse": 18840942
+        },
+        {
+          "frame": 10,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 9,
+          "source_rms": 4464.47432165871,
+          "pcm_sse": 767484634
+        },
+        {
+          "frame": 11,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2350.592582201348,
+          "pcm_sse": 250736076
+        },
+        {
+          "frame": 12,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1669.2573301845944,
+          "pcm_sse": 73882455
+        },
+        {
+          "frame": 13,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3821.3305323538816,
+          "pcm_sse": 1331208768
+        },
+        {
+          "frame": 14,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6163.075387945534,
+          "pcm_sse": 9770840940
+        },
+        {
+          "frame": 15,
+          "changed": true,
+          "spectral_bits": 30,
+          "changed_indices": 4,
+          "source_rms": 6225.116422355087,
+          "pcm_sse": 2443238735
+        },
+        {
+          "frame": 16,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8241.915095261538,
+          "pcm_sse": 4485950796
+        },
+        {
+          "frame": 17,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6779.539284217623,
+          "pcm_sse": 1265390826
+        },
+        {
+          "frame": 18,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6435.755596907406,
+          "pcm_sse": 929308625
+        },
+        {
+          "frame": 19,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4884.065306880631,
+          "pcm_sse": 6277591091
+        },
+        {
+          "frame": 20,
+          "changed": true,
+          "spectral_bits": 30,
+          "changed_indices": 7,
+          "source_rms": 4122.909851897686,
+          "pcm_sse": 2282420599
+        },
+        {
+          "frame": 21,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4307.795243436601,
+          "pcm_sse": 963510867
+        },
+        {
+          "frame": 22,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3038.656197133035,
+          "pcm_sse": 560005911
+        },
+        {
+          "frame": 23,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1611.1286950070128,
+          "pcm_sse": 923717423
+        },
+        {
+          "frame": 24,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 9,
+          "source_rms": 946.2394434681953,
+          "pcm_sse": 227661611
+        },
+        {
+          "frame": 25,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 665.7990429739292,
+          "pcm_sse": 72887589
+        },
+        {
+          "frame": 26,
+          "changed": true,
+          "spectral_bits": 30,
+          "changed_indices": 8,
+          "source_rms": 1684.740079173936,
+          "pcm_sse": 78262935
+        },
+        {
+          "frame": 27,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1683.7725777996268,
+          "pcm_sse": 63715118
+        },
+        {
+          "frame": 28,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1117.993227282706,
+          "pcm_sse": 93186714
+        },
+        {
+          "frame": 29,
+          "changed": true,
+          "spectral_bits": 30,
+          "changed_indices": 6,
+          "source_rms": 869.9738088730028,
+          "pcm_sse": 36414205
+        },
+        {
+          "frame": 30,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 355.672145837533,
+          "pcm_sse": 7362630
+        }
+      ],
+      "updated_frame_pcm_sse": 26429169347,
+      "held_frame_pcm_sse": 66827657383
+    },
+    {
+      "name": "chego-p3-pwm",
+      "Bseed": 461,
+      "B0": 461,
+      "C": 478,
+      "unused_policy_bytes": 17,
+      "first_active_extra_bytes": 32,
+      "first_active_extra_fits_policy_budget": false,
+      "active_extras": 0,
+      "frames": 31,
+      "updated": 8,
+      "held": 23,
+      "spectral_bits": 268,
+      "spectral_fraction_complete_bits": 0.07266811279826464,
+      "main_pulse_fraction_complete_bits": 0.6670281995661606,
+      "canonical_even_rank_and_hold_verified": true,
+      "hold_run_lengths": [
+        5,
+        5,
+        5,
+        5,
+        4,
+        2,
+        3,
+        2
+      ],
+      "per_frame": [
+        {
+          "frame": 0,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 10,
+          "source_rms": 277.2918926871105,
+          "pcm_sse": 18663650
+        },
+        {
+          "frame": 1,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 635.1931989560342,
+          "pcm_sse": 113228148
+        },
+        {
+          "frame": 2,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3291.9054128080593,
+          "pcm_sse": 3150338103
+        },
+        {
+          "frame": 3,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4860.841140237459,
+          "pcm_sse": 4662734289
+        },
+        {
+          "frame": 4,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4400.335547219666,
+          "pcm_sse": 4621156877
+        },
+        {
+          "frame": 5,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 10322.540420422194,
+          "pcm_sse": 20575022978
+        },
+        {
+          "frame": 6,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10352.769904565397,
+          "pcm_sse": 26352894687
+        },
+        {
+          "frame": 7,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1773.3894718166114,
+          "pcm_sse": 834700474
+        },
+        {
+          "frame": 8,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 123.99170839213403,
+          "pcm_sse": 4468034
+        },
+        {
+          "frame": 9,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 233.98657814071302,
+          "pcm_sse": 18840942
+        },
+        {
+          "frame": 10,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 9,
+          "source_rms": 4464.47432165871,
+          "pcm_sse": 767484634
+        },
+        {
+          "frame": 11,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2350.592582201348,
+          "pcm_sse": 250736076
+        },
+        {
+          "frame": 12,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1669.2573301845944,
+          "pcm_sse": 73882455
+        },
+        {
+          "frame": 13,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3821.3305323538816,
+          "pcm_sse": 1331208768
+        },
+        {
+          "frame": 14,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6163.075387945534,
+          "pcm_sse": 9770840940
+        },
+        {
+          "frame": 15,
+          "changed": true,
+          "spectral_bits": 30,
+          "changed_indices": 4,
+          "source_rms": 6225.116422355087,
+          "pcm_sse": 2443238735
+        },
+        {
+          "frame": 16,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8241.915095261538,
+          "pcm_sse": 4485950796
+        },
+        {
+          "frame": 17,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6779.539284217623,
+          "pcm_sse": 1265390826
+        },
+        {
+          "frame": 18,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6435.755596907406,
+          "pcm_sse": 929308625
+        },
+        {
+          "frame": 19,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4884.065306880631,
+          "pcm_sse": 6277591091
+        },
+        {
+          "frame": 20,
+          "changed": true,
+          "spectral_bits": 30,
+          "changed_indices": 7,
+          "source_rms": 4122.909851897686,
+          "pcm_sse": 2282420599
+        },
+        {
+          "frame": 21,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4307.795243436601,
+          "pcm_sse": 963510867
+        },
+        {
+          "frame": 22,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3038.656197133035,
+          "pcm_sse": 560005911
+        },
+        {
+          "frame": 23,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1611.1286950070128,
+          "pcm_sse": 923717423
+        },
+        {
+          "frame": 24,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 9,
+          "source_rms": 946.2394434681953,
+          "pcm_sse": 227661611
+        },
+        {
+          "frame": 25,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 665.7990429739292,
+          "pcm_sse": 72887589
+        },
+        {
+          "frame": 26,
+          "changed": true,
+          "spectral_bits": 30,
+          "changed_indices": 8,
+          "source_rms": 1684.740079173936,
+          "pcm_sse": 78262935
+        },
+        {
+          "frame": 27,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1683.7725777996268,
+          "pcm_sse": 63715118
+        },
+        {
+          "frame": 28,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1117.993227282706,
+          "pcm_sse": 93186714
+        },
+        {
+          "frame": 29,
+          "changed": true,
+          "spectral_bits": 30,
+          "changed_indices": 6,
+          "source_rms": 869.9738088730028,
+          "pcm_sse": 36414205
+        },
+        {
+          "frame": 30,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 355.672145837533,
+          "pcm_sse": 7362630
+        }
+      ],
+      "updated_frame_pcm_sse": 26429169347,
+      "held_frame_pcm_sse": 66827657383
+    },
+    {
+      "name": "otvechaesh-p3-pcm",
+      "Bseed": 400,
+      "B0": 400,
+      "C": 418,
+      "unused_policy_bytes": 18,
+      "first_active_extra_bytes": 28,
+      "first_active_extra_fits_policy_budget": false,
+      "active_extras": 0,
+      "frames": 27,
+      "updated": 6,
+      "held": 21,
+      "spectral_bits": 204,
+      "spectral_fraction_complete_bits": 0.06375,
+      "main_pulse_fraction_complete_bits": 0.6625,
+      "canonical_even_rank_and_hold_verified": true,
+      "hold_run_lengths": [
+        2,
+        15,
+        2,
+        1,
+        1,
+        6
+      ],
+      "per_frame": [
+        {
+          "frame": 0,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 10,
+          "source_rms": 418.7029898985676,
+          "pcm_sse": 34745678
+        },
+        {
+          "frame": 1,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 213.61684449031634,
+          "pcm_sse": 12576146
+        },
+        {
+          "frame": 2,
+          "changed": true,
+          "spectral_bits": 28,
+          "changed_indices": 4,
+          "source_rms": 9285.9895926942,
+          "pcm_sse": 6070654674
+        },
+        {
+          "frame": 3,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 15449.353311506278,
+          "pcm_sse": 10564915435
+        },
+        {
+          "frame": 4,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5981.590665585953,
+          "pcm_sse": 4899463117
+        },
+        {
+          "frame": 5,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1538.8511024868521,
+          "pcm_sse": 539304353
+        },
+        {
+          "frame": 6,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 295.8075916030554,
+          "pcm_sse": 22514890
+        },
+        {
+          "frame": 7,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6490.2607541030275,
+          "pcm_sse": 6074031598
+        },
+        {
+          "frame": 8,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8787.333294293554,
+          "pcm_sse": 2999532168
+        },
+        {
+          "frame": 9,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7186.639221499852,
+          "pcm_sse": 603972980
+        },
+        {
+          "frame": 10,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 12435.823211970126,
+          "pcm_sse": 18026086531
+        },
+        {
+          "frame": 11,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 11647.099035945603,
+          "pcm_sse": 10129238553
+        },
+        {
+          "frame": 12,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 9814.598227735814,
+          "pcm_sse": 5643451575
+        },
+        {
+          "frame": 13,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1450.3733646461521,
+          "pcm_sse": 310751691
+        },
+        {
+          "frame": 14,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1149.1305245706424,
+          "pcm_sse": 206608236
+        },
+        {
+          "frame": 15,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1724.3871909681422,
+          "pcm_sse": 123228435
+        },
+        {
+          "frame": 16,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4286.342143585251,
+          "pcm_sse": 783102643
+        },
+        {
+          "frame": 17,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 1750.3162151808456,
+          "pcm_sse": 156097209
+        },
+        {
+          "frame": 18,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 279.84285210632055,
+          "pcm_sse": 15503583
+        },
+        {
+          "frame": 19,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 6,
+          "source_rms": 1684.054725580496,
+          "pcm_sse": 443517038
+        },
+        {
+          "frame": 20,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 4,
+          "source_rms": 2029.3292765098522,
+          "pcm_sse": 1332239376
+        },
+        {
+          "frame": 21,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 6367.883110284767,
+          "pcm_sse": 8425653550
+        },
+        {
+          "frame": 22,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2117.2631102734963,
+          "pcm_sse": 665707057
+        },
+        {
+          "frame": 23,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1781.6694497366789,
+          "pcm_sse": 504106425
+        },
+        {
+          "frame": 24,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1186.2762339038072,
+          "pcm_sse": 147047277
+        },
+        {
+          "frame": 25,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 509.1087831937296,
+          "pcm_sse": 37445197
+        },
+        {
+          "frame": 26,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 0.0,
+          "pcm_sse": 63372
+        }
+      ],
+      "updated_frame_pcm_sse": 16462907525,
+      "held_frame_pcm_sse": 62308651262
+    },
+    {
+      "name": "otvechaesh-p3-pwm",
+      "Bseed": 400,
+      "B0": 400,
+      "C": 418,
+      "unused_policy_bytes": 18,
+      "first_active_extra_bytes": 28,
+      "first_active_extra_fits_policy_budget": false,
+      "active_extras": 0,
+      "frames": 27,
+      "updated": 6,
+      "held": 21,
+      "spectral_bits": 204,
+      "spectral_fraction_complete_bits": 0.06375,
+      "main_pulse_fraction_complete_bits": 0.6625,
+      "canonical_even_rank_and_hold_verified": true,
+      "hold_run_lengths": [
+        2,
+        15,
+        2,
+        1,
+        1,
+        6
+      ],
+      "per_frame": [
+        {
+          "frame": 0,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 10,
+          "source_rms": 418.7029898985676,
+          "pcm_sse": 34745678
+        },
+        {
+          "frame": 1,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 213.61684449031634,
+          "pcm_sse": 12576146
+        },
+        {
+          "frame": 2,
+          "changed": true,
+          "spectral_bits": 28,
+          "changed_indices": 4,
+          "source_rms": 9285.9895926942,
+          "pcm_sse": 6070654674
+        },
+        {
+          "frame": 3,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 15449.353311506278,
+          "pcm_sse": 10564915435
+        },
+        {
+          "frame": 4,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5981.590665585953,
+          "pcm_sse": 4899463117
+        },
+        {
+          "frame": 5,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1538.8511024868521,
+          "pcm_sse": 539304353
+        },
+        {
+          "frame": 6,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 295.8075916030554,
+          "pcm_sse": 22514890
+        },
+        {
+          "frame": 7,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6490.2607541030275,
+          "pcm_sse": 6074031598
+        },
+        {
+          "frame": 8,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8787.333294293554,
+          "pcm_sse": 2999532168
+        },
+        {
+          "frame": 9,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7186.639221499852,
+          "pcm_sse": 603972980
+        },
+        {
+          "frame": 10,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 12435.823211970126,
+          "pcm_sse": 18026086531
+        },
+        {
+          "frame": 11,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 11647.099035945603,
+          "pcm_sse": 10129238553
+        },
+        {
+          "frame": 12,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 9814.598227735814,
+          "pcm_sse": 5643451575
+        },
+        {
+          "frame": 13,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1450.3733646461521,
+          "pcm_sse": 310751691
+        },
+        {
+          "frame": 14,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1149.1305245706424,
+          "pcm_sse": 206608236
+        },
+        {
+          "frame": 15,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1724.3871909681422,
+          "pcm_sse": 123228435
+        },
+        {
+          "frame": 16,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4286.342143585251,
+          "pcm_sse": 783102643
+        },
+        {
+          "frame": 17,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 1750.3162151808456,
+          "pcm_sse": 156097209
+        },
+        {
+          "frame": 18,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 279.84285210632055,
+          "pcm_sse": 15503583
+        },
+        {
+          "frame": 19,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 6,
+          "source_rms": 1684.054725580496,
+          "pcm_sse": 443517038
+        },
+        {
+          "frame": 20,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 4,
+          "source_rms": 2029.3292765098522,
+          "pcm_sse": 1332239376
+        },
+        {
+          "frame": 21,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 6367.883110284767,
+          "pcm_sse": 8425653550
+        },
+        {
+          "frame": 22,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2117.2631102734963,
+          "pcm_sse": 665707057
+        },
+        {
+          "frame": 23,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1781.6694497366789,
+          "pcm_sse": 504106425
+        },
+        {
+          "frame": 24,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1186.2762339038072,
+          "pcm_sse": 147047277
+        },
+        {
+          "frame": 25,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 509.1087831937296,
+          "pcm_sse": 37445197
+        },
+        {
+          "frame": 26,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 0.0,
+          "pcm_sse": 63372
+        }
+      ],
+      "updated_frame_pcm_sse": 16462907525,
+      "held_frame_pcm_sse": 62308651262
+    },
+    {
+      "name": "vinni-p3-pcm",
+      "Bseed": 1083,
+      "B0": 1095,
+      "C": 1138,
+      "unused_policy_bytes": 43,
+      "first_active_extra_bytes": 76,
+      "first_active_extra_fits_policy_budget": false,
+      "active_extras": 0,
+      "frames": 75,
+      "updated": 15,
+      "held": 60,
+      "spectral_bits": 530,
+      "spectral_fraction_complete_bits": 0.06050228310502283,
+      "main_pulse_fraction_complete_bits": 0.678082191780822,
+      "canonical_even_rank_and_hold_verified": true,
+      "hold_run_lengths": [
+        1,
+        1,
+        4,
+        7,
+        17,
+        2,
+        3,
+        4,
+        3,
+        9,
+        8,
+        9,
+        1,
+        1,
+        5
+      ],
+      "per_frame": [
+        {
+          "frame": 0,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 10,
+          "source_rms": 221.99741693317065,
+          "pcm_sse": 8778689
+        },
+        {
+          "frame": 1,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 2195.4862687454915,
+          "pcm_sse": 1273974870
+        },
+        {
+          "frame": 2,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 8,
+          "source_rms": 7660.917704492067,
+          "pcm_sse": 6937156916
+        },
+        {
+          "frame": 3,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8019.321497561374,
+          "pcm_sse": 6828862886
+        },
+        {
+          "frame": 4,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7120.58134301547,
+          "pcm_sse": 6122763480
+        },
+        {
+          "frame": 5,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7041.249390422484,
+          "pcm_sse": 11700054893
+        },
+        {
+          "frame": 6,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 6312.743564608022,
+          "pcm_sse": 4965697440
+        },
+        {
+          "frame": 7,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6213.568990272418,
+          "pcm_sse": 2937598079
+        },
+        {
+          "frame": 8,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5861.584529534228,
+          "pcm_sse": 2370593211
+        },
+        {
+          "frame": 9,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6885.336755562505,
+          "pcm_sse": 4510987632
+        },
+        {
+          "frame": 10,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5195.408776025232,
+          "pcm_sse": 4302508600
+        },
+        {
+          "frame": 11,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3324.414870037282,
+          "pcm_sse": 1545164925
+        },
+        {
+          "frame": 12,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2260.266329025188,
+          "pcm_sse": 925638353
+        },
+        {
+          "frame": 13,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 801.6044613773055,
+          "pcm_sse": 106100008
+        },
+        {
+          "frame": 14,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 838.8083604882584,
+          "pcm_sse": 74288189
+        },
+        {
+          "frame": 15,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 563.8002499777735,
+          "pcm_sse": 34054955
+        },
+        {
+          "frame": 16,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 324.8755963826769,
+          "pcm_sse": 13313537
+        },
+        {
+          "frame": 17,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8473.249189729404,
+          "pcm_sse": 10456446050
+        },
+        {
+          "frame": 18,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8474.62853592268,
+          "pcm_sse": 7872712231
+        },
+        {
+          "frame": 19,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7083.895711180043,
+          "pcm_sse": 4738084867
+        },
+        {
+          "frame": 20,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6556.004246347389,
+          "pcm_sse": 4422641357
+        },
+        {
+          "frame": 21,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3296.5448806288077,
+          "pcm_sse": 993458340
+        },
+        {
+          "frame": 22,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1781.2105951781782,
+          "pcm_sse": 350818151
+        },
+        {
+          "frame": 23,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2116.99827659944,
+          "pcm_sse": 608446441
+        },
+        {
+          "frame": 24,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2108.1200340884293,
+          "pcm_sse": 274988277
+        },
+        {
+          "frame": 25,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1550.0194797163035,
+          "pcm_sse": 115326124
+        },
+        {
+          "frame": 26,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 691.1170012197645,
+          "pcm_sse": 56941183
+        },
+        {
+          "frame": 27,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 485.0696792729886,
+          "pcm_sse": 20093374
+        },
+        {
+          "frame": 28,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 444.66243516852194,
+          "pcm_sse": 28962074
+        },
+        {
+          "frame": 29,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 358.6986897104588,
+          "pcm_sse": 20176624
+        },
+        {
+          "frame": 30,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 6,
+          "source_rms": 4773.47935799978,
+          "pcm_sse": 4964681070
+        },
+        {
+          "frame": 31,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1457.4072901474728,
+          "pcm_sse": 502159399
+        },
+        {
+          "frame": 32,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 7,
+          "source_rms": 810.0741671291586,
+          "pcm_sse": 133823098
+        },
+        {
+          "frame": 33,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3261.066016274433,
+          "pcm_sse": 1555104480
+        },
+        {
+          "frame": 34,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7678.935842818652,
+          "pcm_sse": 9428820337
+        },
+        {
+          "frame": 35,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 7831.872382091973,
+          "pcm_sse": 5287813023
+        },
+        {
+          "frame": 36,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7349.4518928284715,
+          "pcm_sse": 4241669444
+        },
+        {
+          "frame": 37,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7821.063750579265,
+          "pcm_sse": 6988051701
+        },
+        {
+          "frame": 38,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6821.621035813262,
+          "pcm_sse": 7562562954
+        },
+        {
+          "frame": 39,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 7123.043649180103,
+          "pcm_sse": 5601630021
+        },
+        {
+          "frame": 40,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7052.504596329591,
+          "pcm_sse": 4181795414
+        },
+        {
+          "frame": 41,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5400.565339619548,
+          "pcm_sse": 4806480232
+        },
+        {
+          "frame": 42,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 5,
+          "source_rms": 4209.361360037292,
+          "pcm_sse": 2667422327
+        },
+        {
+          "frame": 43,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3119.4105422739726,
+          "pcm_sse": 1018669646
+        },
+        {
+          "frame": 44,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1468.2023904676767,
+          "pcm_sse": 429926163
+        },
+        {
+          "frame": 45,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 254.2497726154342,
+          "pcm_sse": 16894879
+        },
+        {
+          "frame": 46,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 142.37455004318716,
+          "pcm_sse": 6406624
+        },
+        {
+          "frame": 47,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 92.37078813131346,
+          "pcm_sse": 2631524
+        },
+        {
+          "frame": 48,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 73.66159956177981,
+          "pcm_sse": 1514274
+        },
+        {
+          "frame": 49,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 121.58064453275448,
+          "pcm_sse": 4727377
+        },
+        {
+          "frame": 50,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 28.175399287321554,
+          "pcm_sse": 237825
+        },
+        {
+          "frame": 51,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 15.751488024945452,
+          "pcm_sse": 105115
+        },
+        {
+          "frame": 52,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 18.589227391153187,
+          "pcm_sse": 139151
+        },
+        {
+          "frame": 53,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 14.178108124852201,
+          "pcm_sse": 97478
+        },
+        {
+          "frame": 54,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10.418133230094535,
+          "pcm_sse": 61932
+        },
+        {
+          "frame": 55,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10.411982280046388,
+          "pcm_sse": 51083
+        },
+        {
+          "frame": 56,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10.790620927453618,
+          "pcm_sse": 46244
+        },
+        {
+          "frame": 57,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 13.164701857619107,
+          "pcm_sse": 58035
+        },
+        {
+          "frame": 58,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 14.921565769047161,
+          "pcm_sse": 79961
+        },
+        {
+          "frame": 59,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 1926.1431094612362,
+          "pcm_sse": 695338197
+        },
+        {
+          "frame": 60,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3177.7091964967467,
+          "pcm_sse": 1330470772
+        },
+        {
+          "frame": 61,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3024.745289379752,
+          "pcm_sse": 529235725
+        },
+        {
+          "frame": 62,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4738.79344183464,
+          "pcm_sse": 1795133923
+        },
+        {
+          "frame": 63,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5327.17081749309,
+          "pcm_sse": 1764761542
+        },
+        {
+          "frame": 64,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3282.1630324947296,
+          "pcm_sse": 1021459967
+        },
+        {
+          "frame": 65,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1599.052531970104,
+          "pcm_sse": 170193196
+        },
+        {
+          "frame": 66,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2540.342863793193,
+          "pcm_sse": 1233969829
+        },
+        {
+          "frame": 67,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3817.7544733455557,
+          "pcm_sse": 1499084318
+        },
+        {
+          "frame": 68,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 6,
+          "source_rms": 2980.230412652686,
+          "pcm_sse": 1109577660
+        },
+        {
+          "frame": 69,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 4,
+          "source_rms": 2090.277194536648,
+          "pcm_sse": 719752176
+        },
+        {
+          "frame": 70,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 7,
+          "source_rms": 4339.103331190674,
+          "pcm_sse": 2301694366
+        },
+        {
+          "frame": 71,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4691.790762864431,
+          "pcm_sse": 2352048132
+        },
+        {
+          "frame": 72,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2800.814376547471,
+          "pcm_sse": 1132561171
+        },
+        {
+          "frame": 73,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 944.5740409041528,
+          "pcm_sse": 191218186
+        },
+        {
+          "frame": 74,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 0.0,
+          "pcm_sse": 36204
+        }
+      ],
+      "updated_frame_pcm_sse": 36773544976,
+      "held_frame_pcm_sse": 125093282955
+    },
+    {
+      "name": "vinni-p3-pwm",
+      "Bseed": 1083,
+      "B0": 1083,
+      "C": 1138,
+      "unused_policy_bytes": 55,
+      "first_active_extra_bytes": 75,
+      "first_active_extra_fits_policy_budget": false,
+      "active_extras": 0,
+      "frames": 75,
+      "updated": 15,
+      "held": 60,
+      "spectral_bits": 518,
+      "spectral_fraction_complete_bits": 0.059787626962142196,
+      "main_pulse_fraction_complete_bits": 0.685595567867036,
+      "canonical_even_rank_and_hold_verified": true,
+      "hold_run_lengths": [
+        2,
+        9,
+        1,
+        4,
+        1,
+        2,
+        11,
+        2,
+        7,
+        4,
+        8,
+        8,
+        10,
+        1,
+        5
+      ],
+      "per_frame": [
+        {
+          "frame": 0,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 10,
+          "source_rms": 221.99741693317065,
+          "pcm_sse": 12961429
+        },
+        {
+          "frame": 1,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2195.4862687454915,
+          "pcm_sse": 1188547214
+        },
+        {
+          "frame": 2,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 8,
+          "source_rms": 7660.917704492067,
+          "pcm_sse": 7644385724
+        },
+        {
+          "frame": 3,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8019.321497561374,
+          "pcm_sse": 4246977630
+        },
+        {
+          "frame": 4,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7120.58134301547,
+          "pcm_sse": 5875855224
+        },
+        {
+          "frame": 5,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7041.249390422484,
+          "pcm_sse": 8823887793
+        },
+        {
+          "frame": 6,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6312.743564608022,
+          "pcm_sse": 7102038912
+        },
+        {
+          "frame": 7,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6213.568990272418,
+          "pcm_sse": 6125091991
+        },
+        {
+          "frame": 8,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5861.584529534228,
+          "pcm_sse": 4400095163
+        },
+        {
+          "frame": 9,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6885.336755562505,
+          "pcm_sse": 9225021416
+        },
+        {
+          "frame": 10,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5195.408776025232,
+          "pcm_sse": 7578521204
+        },
+        {
+          "frame": 11,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 3324.414870037282,
+          "pcm_sse": 2077524437
+        },
+        {
+          "frame": 12,
+          "changed": true,
+          "spectral_bits": 22,
+          "changed_indices": 2,
+          "source_rms": 2260.266329025188,
+          "pcm_sse": 839079449
+        },
+        {
+          "frame": 13,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 801.6044613773055,
+          "pcm_sse": 81636560
+        },
+        {
+          "frame": 14,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 838.8083604882584,
+          "pcm_sse": 78996997
+        },
+        {
+          "frame": 15,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 563.8002499777735,
+          "pcm_sse": 47221099
+        },
+        {
+          "frame": 16,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 324.8755963826769,
+          "pcm_sse": 10246133
+        },
+        {
+          "frame": 17,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 8473.249189729404,
+          "pcm_sse": 5463164890
+        },
+        {
+          "frame": 18,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8474.62853592268,
+          "pcm_sse": 2971327315
+        },
+        {
+          "frame": 19,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 6,
+          "source_rms": 7083.895711180043,
+          "pcm_sse": 3582759527
+        },
+        {
+          "frame": 20,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6556.004246347389,
+          "pcm_sse": 3221685497
+        },
+        {
+          "frame": 21,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3296.5448806288077,
+          "pcm_sse": 1301521980
+        },
+        {
+          "frame": 22,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1781.2105951781782,
+          "pcm_sse": 477843935
+        },
+        {
+          "frame": 23,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2116.99827659944,
+          "pcm_sse": 592898933
+        },
+        {
+          "frame": 24,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2108.1200340884293,
+          "pcm_sse": 264498193
+        },
+        {
+          "frame": 25,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1550.0194797163035,
+          "pcm_sse": 96341192
+        },
+        {
+          "frame": 26,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 691.1170012197645,
+          "pcm_sse": 66382671
+        },
+        {
+          "frame": 27,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 485.0696792729886,
+          "pcm_sse": 26926562
+        },
+        {
+          "frame": 28,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 444.66243516852194,
+          "pcm_sse": 27074642
+        },
+        {
+          "frame": 29,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 358.6986897104588,
+          "pcm_sse": 20193184
+        },
+        {
+          "frame": 30,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 6,
+          "source_rms": 4773.47935799978,
+          "pcm_sse": 5364443466
+        },
+        {
+          "frame": 31,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1457.4072901474728,
+          "pcm_sse": 776167135
+        },
+        {
+          "frame": 32,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 810.0741671291586,
+          "pcm_sse": 136180494
+        },
+        {
+          "frame": 33,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3261.066016274433,
+          "pcm_sse": 2336729420
+        },
+        {
+          "frame": 34,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7678.935842818652,
+          "pcm_sse": 8773146173
+        },
+        {
+          "frame": 35,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7831.872382091973,
+          "pcm_sse": 6902839879
+        },
+        {
+          "frame": 36,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7349.4518928284715,
+          "pcm_sse": 7420362668
+        },
+        {
+          "frame": 37,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7821.063750579265,
+          "pcm_sse": 15369271429
+        },
+        {
+          "frame": 38,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6821.621035813262,
+          "pcm_sse": 7627827142
+        },
+        {
+          "frame": 39,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 4,
+          "source_rms": 7123.043649180103,
+          "pcm_sse": 10220826757
+        },
+        {
+          "frame": 40,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7052.504596329591,
+          "pcm_sse": 4202034494
+        },
+        {
+          "frame": 41,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5400.565339619548,
+          "pcm_sse": 5188957004
+        },
+        {
+          "frame": 42,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4209.361360037292,
+          "pcm_sse": 4809621543
+        },
+        {
+          "frame": 43,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 3119.4105422739726,
+          "pcm_sse": 1967485406
+        },
+        {
+          "frame": 44,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1468.2023904676767,
+          "pcm_sse": 444744071
+        },
+        {
+          "frame": 45,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 254.2497726154342,
+          "pcm_sse": 14566267
+        },
+        {
+          "frame": 46,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 142.37455004318716,
+          "pcm_sse": 3623380
+        },
+        {
+          "frame": 47,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 92.37078813131346,
+          "pcm_sse": 1883976
+        },
+        {
+          "frame": 48,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 73.66159956177981,
+          "pcm_sse": 1539242
+        },
+        {
+          "frame": 49,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 121.58064453275448,
+          "pcm_sse": 2525881
+        },
+        {
+          "frame": 50,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 28.175399287321554,
+          "pcm_sse": 280321
+        },
+        {
+          "frame": 51,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 6,
+          "source_rms": 15.751488024945452,
+          "pcm_sse": 78111
+        },
+        {
+          "frame": 52,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 18.589227391153187,
+          "pcm_sse": 95555
+        },
+        {
+          "frame": 53,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 14.178108124852201,
+          "pcm_sse": 62998
+        },
+        {
+          "frame": 54,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10.418133230094535,
+          "pcm_sse": 43840
+        },
+        {
+          "frame": 55,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10.411982280046388,
+          "pcm_sse": 43347
+        },
+        {
+          "frame": 56,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10.790620927453618,
+          "pcm_sse": 46692
+        },
+        {
+          "frame": 57,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 13.164701857619107,
+          "pcm_sse": 62967
+        },
+        {
+          "frame": 58,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 14.921565769047161,
+          "pcm_sse": 74477
+        },
+        {
+          "frame": 59,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 1926.1431094612362,
+          "pcm_sse": 722728129
+        },
+        {
+          "frame": 60,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3177.7091964967467,
+          "pcm_sse": 1509722936
+        },
+        {
+          "frame": 61,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3024.745289379752,
+          "pcm_sse": 541604957
+        },
+        {
+          "frame": 62,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4738.79344183464,
+          "pcm_sse": 1268195143
+        },
+        {
+          "frame": 63,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5327.17081749309,
+          "pcm_sse": 3048246166
+        },
+        {
+          "frame": 64,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3282.1630324947296,
+          "pcm_sse": 1086784543
+        },
+        {
+          "frame": 65,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1599.052531970104,
+          "pcm_sse": 218444496
+        },
+        {
+          "frame": 66,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2540.342863793193,
+          "pcm_sse": 1168796237
+        },
+        {
+          "frame": 67,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3817.7544733455557,
+          "pcm_sse": 2017726166
+        },
+        {
+          "frame": 68,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2980.230412652686,
+          "pcm_sse": 2081575624
+        },
+        {
+          "frame": 69,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 2090.277194536648,
+          "pcm_sse": 814247376
+        },
+        {
+          "frame": 70,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 4339.103331190674,
+          "pcm_sse": 2468547638
+        },
+        {
+          "frame": 71,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4691.790762864431,
+          "pcm_sse": 2727969012
+        },
+        {
+          "frame": 72,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2800.814376547471,
+          "pcm_sse": 1291220103
+        },
+        {
+          "frame": 73,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 944.5740409041528,
+          "pcm_sse": 161745046
+        },
+        {
+          "frame": 74,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 0.0,
+          "pcm_sse": 163152
+        }
+      ],
+      "updated_frame_pcm_sse": 41324658966,
+      "held_frame_pcm_sse": 144839328789
+    },
+    {
+      "name": "bread-p3-pcm",
+      "Bseed": 873,
+      "B0": 873,
+      "C": 913,
+      "unused_policy_bytes": 40,
+      "first_active_extra_bytes": 61,
+      "first_active_extra_fits_policy_budget": false,
+      "active_extras": 0,
+      "frames": 60,
+      "updated": 12,
+      "held": 48,
+      "spectral_bits": 428,
+      "spectral_fraction_complete_bits": 0.06128293241695303,
+      "main_pulse_fraction_complete_bits": 0.6872852233676976,
+      "canonical_even_rank_and_hold_verified": true,
+      "hold_run_lengths": [
+        7,
+        4,
+        3,
+        2,
+        12,
+        9,
+        1,
+        2,
+        2,
+        7,
+        8,
+        3
+      ],
+      "per_frame": [
+        {
+          "frame": 0,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 10,
+          "source_rms": 0.5645794895318107,
+          "pcm_sse": 4754
+        },
+        {
+          "frame": 1,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1.0650704202070396,
+          "pcm_sse": 5015
+        },
+        {
+          "frame": 2,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1.7148250639642517,
+          "pcm_sse": 6117
+        },
+        {
+          "frame": 3,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5.3976267933231545,
+          "pcm_sse": 12683
+        },
+        {
+          "frame": 4,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1504.5322092763586,
+          "pcm_sse": 655657722
+        },
+        {
+          "frame": 5,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 705.7387928617783,
+          "pcm_sse": 139562890
+        },
+        {
+          "frame": 6,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4871.65822833971,
+          "pcm_sse": 5620715694
+        },
+        {
+          "frame": 7,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 7527.516713490247,
+          "pcm_sse": 6679405159
+        },
+        {
+          "frame": 8,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5781.198258957653,
+          "pcm_sse": 7508468447
+        },
+        {
+          "frame": 9,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 11453.919091570797,
+          "pcm_sse": 24706994638
+        },
+        {
+          "frame": 10,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8671.618915498131,
+          "pcm_sse": 21838922977
+        },
+        {
+          "frame": 11,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 7,
+          "source_rms": 5551.087723928527,
+          "pcm_sse": 8784955574
+        },
+        {
+          "frame": 12,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7566.825154291924,
+          "pcm_sse": 11352240909
+        },
+        {
+          "frame": 13,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10109.353831198858,
+          "pcm_sse": 24684611443
+        },
+        {
+          "frame": 14,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 5,
+          "source_rms": 4535.125397246475,
+          "pcm_sse": 2806988982
+        },
+        {
+          "frame": 15,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6858.751885137339,
+          "pcm_sse": 6911972943
+        },
+        {
+          "frame": 16,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 9,
+          "source_rms": 15951.847605567513,
+          "pcm_sse": 22862247991
+        },
+        {
+          "frame": 17,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 16735.17775338822,
+          "pcm_sse": 18645424553
+        },
+        {
+          "frame": 18,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 14258.977520429891,
+          "pcm_sse": 13993622469
+        },
+        {
+          "frame": 19,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 12733.396908695457,
+          "pcm_sse": 41279369730
+        },
+        {
+          "frame": 20,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 11294.854864328714,
+          "pcm_sse": 30401697986
+        },
+        {
+          "frame": 21,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8806.470623567082,
+          "pcm_sse": 19201785374
+        },
+        {
+          "frame": 22,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5263.461579013378,
+          "pcm_sse": 7836882762
+        },
+        {
+          "frame": 23,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 605.0723820337531,
+          "pcm_sse": 113959180
+        },
+        {
+          "frame": 24,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 308.3731961844284,
+          "pcm_sse": 22134829
+        },
+        {
+          "frame": 25,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 231.74725591687164,
+          "pcm_sse": 12867045
+        },
+        {
+          "frame": 26,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 119.23614961495528,
+          "pcm_sse": 3751451
+        },
+        {
+          "frame": 27,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 20.667758707707037,
+          "pcm_sse": 112546
+        },
+        {
+          "frame": 28,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 5,
+          "source_rms": 3.356895887572327,
+          "pcm_sse": 56250
+        },
+        {
+          "frame": 29,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4.3767853500028995,
+          "pcm_sse": 34866
+        },
+        {
+          "frame": 30,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 18.381206434834468,
+          "pcm_sse": 124674
+        },
+        {
+          "frame": 31,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5.003436319171056,
+          "pcm_sse": 26863
+        },
+        {
+          "frame": 32,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4.6327637539594,
+          "pcm_sse": 22444
+        },
+        {
+          "frame": 33,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5.86435205286995,
+          "pcm_sse": 18169
+        },
+        {
+          "frame": 34,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4.444448784720103,
+          "pcm_sse": 15149
+        },
+        {
+          "frame": 35,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3.212281120948165,
+          "pcm_sse": 14146
+        },
+        {
+          "frame": 36,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 14.02464348922995,
+          "pcm_sse": 144437
+        },
+        {
+          "frame": 37,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 7,
+          "source_rms": 1639.976060229234,
+          "pcm_sse": 599618917
+        },
+        {
+          "frame": 38,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 5,
+          "source_rms": 1958.2772834177492,
+          "pcm_sse": 654947306
+        },
+        {
+          "frame": 39,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7874.879328638947,
+          "pcm_sse": 9458936237
+        },
+        {
+          "frame": 40,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 8,
+          "source_rms": 7852.7479105644925,
+          "pcm_sse": 9716291339
+        },
+        {
+          "frame": 41,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3194.4095811080647,
+          "pcm_sse": 2498975135
+        },
+        {
+          "frame": 42,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 6,
+          "source_rms": 4465.415260294948,
+          "pcm_sse": 3755143915
+        },
+        {
+          "frame": 43,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4992.22675297557,
+          "pcm_sse": 5423198977
+        },
+        {
+          "frame": 44,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5387.233180457757,
+          "pcm_sse": 7083986913
+        },
+        {
+          "frame": 45,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1418.9321953497285,
+          "pcm_sse": 536925276
+        },
+        {
+          "frame": 46,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1847.2113923763573,
+          "pcm_sse": 1222839877
+        },
+        {
+          "frame": 47,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5444.592637998732,
+          "pcm_sse": 6440227058
+        },
+        {
+          "frame": 48,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7677.155239532089,
+          "pcm_sse": 11360611223
+        },
+        {
+          "frame": 49,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 7617.692450596506,
+          "pcm_sse": 12211052199
+        },
+        {
+          "frame": 50,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6961.653385017456,
+          "pcm_sse": 6449536841
+        },
+        {
+          "frame": 51,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7474.706685716838,
+          "pcm_sse": 10135839716
+        },
+        {
+          "frame": 52,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1781.0209449217605,
+          "pcm_sse": 689577622
+        },
+        {
+          "frame": 53,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 191.34314725121462,
+          "pcm_sse": 9745440
+        },
+        {
+          "frame": 54,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 45.16988764652841,
+          "pcm_sse": 542550
+        },
+        {
+          "frame": 55,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5.703069349043548,
+          "pcm_sse": 45512
+        },
+        {
+          "frame": 56,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2.3907373339620563,
+          "pcm_sse": 39301
+        },
+        {
+          "frame": 57,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 7,
+          "source_rms": 1.4469796128487782,
+          "pcm_sse": 41222
+        },
+        {
+          "frame": 58,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1.0231690964840563,
+          "pcm_sse": 23855
+        },
+        {
+          "frame": 59,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 0.4905354217587146,
+          "pcm_sse": 22653
+        }
+      ],
+      "updated_frame_pcm_sse": 68070753608,
+      "held_frame_pcm_sse": 296242254337
+    },
+    {
+      "name": "bread-p3-pwm",
+      "Bseed": 873,
+      "B0": 873,
+      "C": 913,
+      "unused_policy_bytes": 40,
+      "first_active_extra_bytes": 61,
+      "first_active_extra_fits_policy_budget": false,
+      "active_extras": 0,
+      "frames": 60,
+      "updated": 12,
+      "held": 48,
+      "spectral_bits": 428,
+      "spectral_fraction_complete_bits": 0.06128293241695303,
+      "main_pulse_fraction_complete_bits": 0.6872852233676976,
+      "canonical_even_rank_and_hold_verified": true,
+      "hold_run_lengths": [
+        7,
+        4,
+        3,
+        2,
+        12,
+        9,
+        1,
+        2,
+        2,
+        7,
+        8,
+        3
+      ],
+      "per_frame": [
+        {
+          "frame": 0,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 10,
+          "source_rms": 0.5645794895318107,
+          "pcm_sse": 4754
+        },
+        {
+          "frame": 1,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1.0650704202070396,
+          "pcm_sse": 5015
+        },
+        {
+          "frame": 2,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1.7148250639642517,
+          "pcm_sse": 6117
+        },
+        {
+          "frame": 3,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5.3976267933231545,
+          "pcm_sse": 12683
+        },
+        {
+          "frame": 4,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1504.5322092763586,
+          "pcm_sse": 655657722
+        },
+        {
+          "frame": 5,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 705.7387928617783,
+          "pcm_sse": 139562890
+        },
+        {
+          "frame": 6,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4871.65822833971,
+          "pcm_sse": 5620715694
+        },
+        {
+          "frame": 7,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 7,
+          "source_rms": 7527.516713490247,
+          "pcm_sse": 6679405159
+        },
+        {
+          "frame": 8,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5781.198258957653,
+          "pcm_sse": 7508468447
+        },
+        {
+          "frame": 9,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 11453.919091570797,
+          "pcm_sse": 24706994638
+        },
+        {
+          "frame": 10,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8671.618915498131,
+          "pcm_sse": 21838922977
+        },
+        {
+          "frame": 11,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 7,
+          "source_rms": 5551.087723928527,
+          "pcm_sse": 8784955574
+        },
+        {
+          "frame": 12,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7566.825154291924,
+          "pcm_sse": 11352240909
+        },
+        {
+          "frame": 13,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 10109.353831198858,
+          "pcm_sse": 24684611443
+        },
+        {
+          "frame": 14,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 5,
+          "source_rms": 4535.125397246475,
+          "pcm_sse": 2806988982
+        },
+        {
+          "frame": 15,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6858.751885137339,
+          "pcm_sse": 6911972943
+        },
+        {
+          "frame": 16,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 9,
+          "source_rms": 15951.847605567513,
+          "pcm_sse": 22862247991
+        },
+        {
+          "frame": 17,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 16735.17775338822,
+          "pcm_sse": 18645424553
+        },
+        {
+          "frame": 18,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 14258.977520429891,
+          "pcm_sse": 13993622469
+        },
+        {
+          "frame": 19,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 12733.396908695457,
+          "pcm_sse": 41279369730
+        },
+        {
+          "frame": 20,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 11294.854864328714,
+          "pcm_sse": 30401697986
+        },
+        {
+          "frame": 21,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 8806.470623567082,
+          "pcm_sse": 19201785374
+        },
+        {
+          "frame": 22,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5263.461579013378,
+          "pcm_sse": 7836882762
+        },
+        {
+          "frame": 23,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 605.0723820337531,
+          "pcm_sse": 113959180
+        },
+        {
+          "frame": 24,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 308.3731961844284,
+          "pcm_sse": 22134829
+        },
+        {
+          "frame": 25,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 231.74725591687164,
+          "pcm_sse": 12867045
+        },
+        {
+          "frame": 26,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 119.23614961495528,
+          "pcm_sse": 3751451
+        },
+        {
+          "frame": 27,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 20.667758707707037,
+          "pcm_sse": 112546
+        },
+        {
+          "frame": 28,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 5,
+          "source_rms": 3.356895887572327,
+          "pcm_sse": 56250
+        },
+        {
+          "frame": 29,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4.3767853500028995,
+          "pcm_sse": 34866
+        },
+        {
+          "frame": 30,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 18.381206434834468,
+          "pcm_sse": 124674
+        },
+        {
+          "frame": 31,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5.003436319171056,
+          "pcm_sse": 26863
+        },
+        {
+          "frame": 32,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4.6327637539594,
+          "pcm_sse": 22444
+        },
+        {
+          "frame": 33,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5.86435205286995,
+          "pcm_sse": 18169
+        },
+        {
+          "frame": 34,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4.444448784720103,
+          "pcm_sse": 15149
+        },
+        {
+          "frame": 35,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3.212281120948165,
+          "pcm_sse": 14146
+        },
+        {
+          "frame": 36,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 14.02464348922995,
+          "pcm_sse": 144437
+        },
+        {
+          "frame": 37,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 7,
+          "source_rms": 1639.976060229234,
+          "pcm_sse": 599618917
+        },
+        {
+          "frame": 38,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 5,
+          "source_rms": 1958.2772834177492,
+          "pcm_sse": 654947306
+        },
+        {
+          "frame": 39,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7874.879328638947,
+          "pcm_sse": 9458936237
+        },
+        {
+          "frame": 40,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 8,
+          "source_rms": 7852.7479105644925,
+          "pcm_sse": 9716291339
+        },
+        {
+          "frame": 41,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 3194.4095811080647,
+          "pcm_sse": 2498975135
+        },
+        {
+          "frame": 42,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 6,
+          "source_rms": 4465.415260294948,
+          "pcm_sse": 3755143915
+        },
+        {
+          "frame": 43,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 4992.22675297557,
+          "pcm_sse": 5423198977
+        },
+        {
+          "frame": 44,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5387.233180457757,
+          "pcm_sse": 7083986913
+        },
+        {
+          "frame": 45,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1418.9321953497285,
+          "pcm_sse": 536925276
+        },
+        {
+          "frame": 46,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1847.2113923763573,
+          "pcm_sse": 1222839877
+        },
+        {
+          "frame": 47,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5444.592637998732,
+          "pcm_sse": 6440227058
+        },
+        {
+          "frame": 48,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7677.155239532089,
+          "pcm_sse": 11360611223
+        },
+        {
+          "frame": 49,
+          "changed": true,
+          "spectral_bits": 31,
+          "changed_indices": 5,
+          "source_rms": 7617.692450596506,
+          "pcm_sse": 12211052199
+        },
+        {
+          "frame": 50,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 6961.653385017456,
+          "pcm_sse": 6449536841
+        },
+        {
+          "frame": 51,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 7474.706685716838,
+          "pcm_sse": 10135839716
+        },
+        {
+          "frame": 52,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1781.0209449217605,
+          "pcm_sse": 689577622
+        },
+        {
+          "frame": 53,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 191.34314725121462,
+          "pcm_sse": 9745440
+        },
+        {
+          "frame": 54,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 45.16988764652841,
+          "pcm_sse": 542550
+        },
+        {
+          "frame": 55,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 5.703069349043548,
+          "pcm_sse": 45512
+        },
+        {
+          "frame": 56,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 2.3907373339620563,
+          "pcm_sse": 39301
+        },
+        {
+          "frame": 57,
+          "changed": true,
+          "spectral_bits": 32,
+          "changed_indices": 7,
+          "source_rms": 1.4469796128487782,
+          "pcm_sse": 41222
+        },
+        {
+          "frame": 58,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 1.0231690964840563,
+          "pcm_sse": 23855
+        },
+        {
+          "frame": 59,
+          "changed": false,
+          "spectral_bits": 1,
+          "changed_indices": 0,
+          "source_rms": 0.4905354217587146,
+          "pcm_sse": 22653
+        }
+      ],
+      "updated_frame_pcm_sse": 68070753608,
+      "held_frame_pcm_sse": 296242254337
+    }
+  ]
+}
