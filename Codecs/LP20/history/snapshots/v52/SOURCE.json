@@ -1,0 +1,699 @@
+{
+  "schema": "lp20-source-snapshot-v1",
+  "version": "v52",
+  "status": "original_archive_source_only_with_partial_inherited_sources",
+  "provenance": {
+    "kind": "original_archive",
+    "archive_name": "LP20-v52-Z80 (1).zip",
+    "archive_sha256": "0eb125ec3cfb0c236d2a6666bdd31da739c7ccc802d7063e117d8a4162449238",
+    "archive_bytes": 27734287,
+    "archive_crc_verified": true,
+    "extraction_inventory_verified": true,
+    "selected_member_bytes_reverified": true
+  },
+  "path_policy": "All retained paths are original archive-relative paths, or original direct-download filenames for v19.",
+  "files": [
+    {
+      "path": "LP20-v52-Z80/README.md",
+      "bytes": 9435,
+      "sha256": "bc9bc086fee8fba622f571eef8da1fe0c9c270cb3dd2941b4dac83da1c4ee268"
+    },
+    {
+      "path": "LP20-v52-Z80/build_pwm.py",
+      "bytes": 9295,
+      "sha256": "f8ab62cdce72e21776dddd0760a096b9f62c66cc7c152d4549694e80fffc9bb5"
+    },
+    {
+      "path": "LP20-v52-Z80/comparison.csv",
+      "bytes": 2857,
+      "sha256": "968f7dabe5377b972ae5e4dff67a8c51096e096934291ba6af7e3fded7a436ea"
+    },
+    {
+      "path": "LP20-v52-Z80/make_release.py",
+      "bytes": 4958,
+      "sha256": "a6d666787a0f0063d2a5c6cc95ce951e0fa7cf9df8e97a685b5296c0be3ba9db"
+    },
+    {
+      "path": "LP20-v52-Z80/native_build.py",
+      "bytes": 2037,
+      "sha256": "e8c4b5e5ab89039c78a2796d895fdad3476bf793e2dc738c35571f66c2c96508"
+    },
+    {
+      "path": "LP20-v52-Z80/rom-pages.csv",
+      "bytes": 557,
+      "sha256": "aa900b780ea419f77d6e7c9b9aed36faf24819da1324abad1bbe611b555ae7da"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/adaptive45.py",
+      "bytes": 12115,
+      "sha256": "97554cb20685a5d3e8ff71f4a34df0687b00dcd4bab4de2d8d89e3e6789e00fd"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/hybrid.py",
+      "bytes": 10768,
+      "sha256": "ed2272f4e869f7bee679a131bc7c0ddf1ad3f3bfa57ba66afa04e25afcf5e1bf"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/lp4s.py",
+      "bytes": 4846,
+      "sha256": "a41679b94b0a59dc4c9ab6e5b56c400fe3ebe89d5857dd88dba96526f936f0b1"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/packed.py",
+      "bytes": 7510,
+      "sha256": "2ab89f50cee4cda993e14ac5150407d22f2a1a790b53fe19479f90d05b351662"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/peak_audit.py",
+      "bytes": 2644,
+      "sha256": "a79c5354989cff4e704c34030976ceab87f31ce65f970eef1656ba923089e607"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/rd44.py",
+      "bytes": 10696,
+      "sha256": "4def891f938c11a91397ac62ca9a3b4535987509254cede1400f76a3a1fbf2de"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/repack.py",
+      "bytes": 3107,
+      "sha256": "3437cb4b2b9dd88eef394a84c0f9a430191f9fa6b9c55c02610bff74ed9c74c3"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/study.py",
+      "bytes": 3440,
+      "sha256": "13c42abddf6b22a5fe9ac715fb6e0bbcbab5340b8485ed31993adc73707d0817"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/trellis42.py",
+      "bytes": 6432,
+      "sha256": "5ccb114700a5bc392eb76eb696ee3b0db9d5b077c846ba63fa49113137f5de82"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v45/v42.py",
+      "bytes": 9952,
+      "sha256": "9b5f068c9d58642208b3b0582248533345470301e589dcdd7acfec0bc262f668"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v50/augment50.py",
+      "bytes": 2681,
+      "sha256": "fea39f7839078dca21dbcd01949423d4dc42df1ba39ee7e0c6b2c37919b999c2"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20-v50/study50.py",
+      "bytes": 5370,
+      "sha256": "ad798d5ed66178112c4c6de11dc5eaa5e31ff4671011e3b93f95e6ab2fa778db"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v15/build_16k.py",
+      "bytes": 15417,
+      "sha256": "70a990d0372fadfb717fc7a42f144696750e650a38883c005a23887aba5300e5"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v15/common.py",
+      "bytes": 3759,
+      "sha256": "7034696021907e1022ef194184c4bc04e197c6eaada50201e4fe640429c8deb4"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v15/pattern_balance.py",
+      "bytes": 1083,
+      "sha256": "7aac12022f8c8de33063bf0a2da68061d8907277ff2778c7d25dc211bedce1d2"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v15/period_share.py",
+      "bytes": 2541,
+      "sha256": "ba562c8f98d23e1d087af3c8bc0fb8d999d8a91e3cb60b1e502bc007327f0cbf"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v15/render_demo.py",
+      "bytes": 988,
+      "sha256": "efc291db3d05d80cb1834ac0a3693bfcbc425a1ddd6b5d265a2a6094048740a6"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v15/scan_quality.py",
+      "bytes": 2051,
+      "sha256": "2f860233b6f72dee2036616bfce9a77f7d356c8d66d082b691978421c609386e"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v15/share_tails.py",
+      "bytes": 1954,
+      "sha256": "919adade0fa6ecee516f3b832d4cc38324c05689d33903d58f608c5037790766"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/balanced.py",
+      "bytes": 3554,
+      "sha256": "758dde41139cfa3e57c298e2e9154ab44da894fb8d1634d48d0f3a9a8a51ed12"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/build_fractional.py",
+      "bytes": 9863,
+      "sha256": "e55b5854b502606815b4e2cbfa8bfe0e226ec36d518650cd96e28041603f298f"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/encode_universal.py",
+      "bytes": 4284,
+      "sha256": "330f85ed6ff09539bb7911d66e6e8f6277536b81e9990ae396d6ce8abdfe522d"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/eval_models.py",
+      "bytes": 2115,
+      "sha256": "f87357977c3850283cf69ef287b3a2a6912b49798ccb2f681458902bbb6c9584"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/feedback_v7.py",
+      "bytes": 6250,
+      "sha256": "f34a043a2b485442167541f4a1d689b232af43f41660367bf8ec648ba87d829a"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/fixed_rate.py",
+      "bytes": 2831,
+      "sha256": "9eb47fe46e1d95260c987a51b8f437b9776657451d767825ab0f883a1affb320"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/fractional.py",
+      "bytes": 5564,
+      "sha256": "707c95e5b8e76d6947177401cec1c10eff02f56251b19e84dda97232a4b96820"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/local_pareto.py",
+      "bytes": 3018,
+      "sha256": "0e9e328cd4722d582e1ed8f25384f66e3e6a46f5a405f1ffd4654b37ae74c911"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/lp20_encode.py",
+      "bytes": 2528,
+      "sha256": "bf003a4d1fd88183ebdb61625b8caf5aa862435d17746f1aadf430d7e0d747ff"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/pack_fractional.py",
+      "bytes": 2272,
+      "sha256": "bea01837a026c86367e06506eb96e7263c23e813204d6c6de5144f9d44d3b48f"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/pwm_lut.py",
+      "bytes": 3099,
+      "sha256": "4a4d5fe29ad9e9de79e3aa6ea783dc8d54d573a7ab9e4034ede1e4793012e604"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/refine_banks.py",
+      "bytes": 2387,
+      "sha256": "598b98b139c0695a90ceaff8198cb9f856a7baf14f4f3309dcdd7e36ea4f44eb"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/refine_joint.py",
+      "bytes": 3591,
+      "sha256": "d0e25d20975c472649bef8673b4548a1c1a0262c5e603d39039c719e0771ae58"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/study.py",
+      "bytes": 10164,
+      "sha256": "96e4df44336a108df4275d0edbc8fccbee9dae09230c2ee9994c58ebe8461e62"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/beam_vbr.py",
+      "bytes": 3089,
+      "sha256": "ce7c7e4b3a7f5987ec8d068cac29b1108c579df1c59d12ae1319b9b2c87b5ecf"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/build.py",
+      "bytes": 10685,
+      "sha256": "553870beaa8b89380c359d987754098923443189abf51488f3d5c24fdb624c21"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/build_ext.py",
+      "bytes": 8459,
+      "sha256": "cc0214ee2deb998b87b8cbe82225629e146788d358b685a4b1e559177dfb88d7"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/build_h10.py",
+      "bytes": 10824,
+      "sha256": "2282f90e472c265621a0393377f630d0fe7758415274b226133d0a474b537bbe"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/build_packed.py",
+      "bytes": 7039,
+      "sha256": "557f6d6254a3378691ffc271908bab7c08bc21d23d71c2a41269248c1ecaf659"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/compact_container.py",
+      "bytes": 2937,
+      "sha256": "894837610aa297da95901e0347eb9a9837f75e634604a3e69057571f0c9ce0b0"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/compact_gain_pitch.py",
+      "bytes": 5459,
+      "sha256": "f2ce718ef5e9129d78475d20614fe9b6c26c12ed230e42096dbc8d5bdbe2d35c"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/encode.py",
+      "bytes": 5588,
+      "sha256": "9c0a6a8a39076ccac8e8cf51129f7c7be8bd20293b0d56228025130fed9ffd9b"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/encoder_core.py",
+      "bytes": 9619,
+      "sha256": "6bef567b1958a9f9e307fdc3314517096d62a18c8d6db1f0329993542be4086a"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/experiment.py",
+      "bytes": 4606,
+      "sha256": "d3bfcafcdd16a67aada07926f7d766b304ec906e774ccbfcc78eab44d790986e"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/fractional_pwm_study.py",
+      "bytes": 2969,
+      "sha256": "1393d75e843d635e09001007022f0c4f10182b848e7406e79ae47cd9df2078c9"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/fullrange8.py",
+      "bytes": 2419,
+      "sha256": "cbfb55ead638e892148d30bb8a72a85109df99d265a7e1857f9cbc6787ed6ce5"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/loud.py",
+      "bytes": 3156,
+      "sha256": "253df60ccbb8df2e5cbf9de4cd832cc948ef832c202c362b792d836659dddcc3"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/nonuniform_h10.py",
+      "bytes": 6510,
+      "sha256": "0655b199047d52cb9a4ac103e270993139765fa89dcdd0de9a6b49bfa120b3a2"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/opt_build.py",
+      "bytes": 12271,
+      "sha256": "27146886b5810027ded5d8d8b7ff3d001ee398c84aa12ddedaf3be984332f16e"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/pack_h10.py",
+      "bytes": 2189,
+      "sha256": "0de595e45bc9787fb5fdba8d8ae1712f64db185bfd190c8e92202eaffad33e92"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/precision_study.py",
+      "bytes": 6887,
+      "sha256": "b243556be5964d207186a6526aebee7a5e5581f494ebea07e5adf84746d66743"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/refine_beam.py",
+      "bytes": 529,
+      "sha256": "223734e19f4be65b18b4bc300d87a46601fcf05717e9baf712af69e15e8ad1af"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/release_audio.py",
+      "bytes": 978,
+      "sha256": "e9438151c2e3fa28a55ea37c0d6fff9892ec62675d9ccf09e385f14c03ded25f"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/search.py",
+      "bytes": 1971,
+      "sha256": "d492ff4f2c35a071fbc64ad357f5a04c1b7bda07d5ccab362aa34a0abb922ab0"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/study125.py",
+      "bytes": 2151,
+      "sha256": "8d339e6e41bc4a761880b55ecda049dfac95dd5bdba9dd81e355d0fcaa0b883c"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/study_v4.py",
+      "bytes": 5903,
+      "sha256": "0b0d04fae48b7f4bc4d24619af0d66676f1c1cc9cfcbd743e427eeea5176b9ec"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/test_fullrange.py",
+      "bytes": 284,
+      "sha256": "bb79e52d75125c8f527bd0074931aa61b01e2b87fa733ebb11aa2b448e3f17f7"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/train_h10.py",
+      "bytes": 515,
+      "sha256": "d22eefc0f9f0550012cede64734557f8a591caa662fef4388f66883c3cd71631"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/tools/verify.py",
+      "bytes": 2414,
+      "sha256": "869b129837443e18dda1b0f0cd11e067ae50a2ec506d360e9e0c9287ccb22fcb"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/train_class.py",
+      "bytes": 9360,
+      "sha256": "2a5d0805bec89639e7dc400ce7be835a97aadd3b054fe3a1b73d380264b96c60"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/train_wavs.py",
+      "bytes": 512,
+      "sha256": "8dd4d5bf7e10d96d120c2d0bbef3f7565fffbb3534d6ee0eedbff8039533e673"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v15/LP20_v9/train_wavs_v9.py",
+      "bytes": 1296,
+      "sha256": "57d2fc1f738342237ef45894adf46c58da6551a5cd8bd7c35eed20b392ee56da"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v17_gain/adapt.py",
+      "bytes": 6166,
+      "sha256": "4c781c23a59cb46c8903582ce2fd1a1ea633463be2dd3c1ca5350bd7b5202739"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v17_gain/build_context_fast.py",
+      "bytes": 18770,
+      "sha256": "a670e59af85b3f9261274f40abaa5e7f6be67166259ca54771e30d8edc2f3308"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v17_gain/pack_context.py",
+      "bytes": 3500,
+      "sha256": "50c3a70983e2111d130c570b2f86f29e9f535699afb927d37509b35b079edeae"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v17_gain/reuse_context.py",
+      "bytes": 3454,
+      "sha256": "ecb75ef6e4dbbf626e783e16b6f5178de316d9d2f6b09b95fb546219d4c30433"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v18_noise/noise_study.py",
+      "bytes": 7193,
+      "sha256": "57349e74cb66df7173b02361f53382936dfd15df796722784de10e7f2b9ea17a"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v19_pitch/build_rom.py",
+      "bytes": 1602,
+      "sha256": "79477a929e31413e2373f2612dc2a0877ba60929e879c718ba85f3a6983adccf"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v19_pitch/finish_pitch.py",
+      "bytes": 2051,
+      "sha256": "ece686a91ebc384f52c5b0500165bdaee339d46fc8822e9038d5ce311ce664d9"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v19_pitch/pitch.py",
+      "bytes": 4158,
+      "sha256": "a980859561aa8889db8862e1778cf67f7e62fc0bc38434942ea6698671facc0f"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v19_pitch/study_pitch.py",
+      "bytes": 9172,
+      "sha256": "af063e2e7a09617576e1cd458b2362ff6f3beb6142250c8001c4da8e0b72542c"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v20_study/decode_ph20.py",
+      "bytes": 2015,
+      "sha256": "921af01ace0593837353be2c430cc2784cde8da7175d160dfc376ab0a32806a2"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v20_study/entropy_search.py",
+      "bytes": 6399,
+      "sha256": "d72f7219d240addd3131e018e5fec5a92c9c50b1574c6417956e5acf63ebdcd1"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v20_study/finish.py",
+      "bytes": 1948,
+      "sha256": "6e8c8300f47768d73f58a481c891c8b69c552ecc3ac69a7f33f7f30f72cb2dcb"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v20_study/harmonic.py",
+      "bytes": 5528,
+      "sha256": "a303d969ce0d3b6ff3e7d871a3e73f5d12adac290021186c02f9a9486d479842"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v20_study/local_kernel.py",
+      "bytes": 1853,
+      "sha256": "e2b692540dad476938d3623b95e5404f493dfcf90e57f28a178732cd3ef3a9cd"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v20_study/local_rate.py",
+      "bytes": 4264,
+      "sha256": "9c39850a76c76671c47803e479a31b39f627a423903aa0df5b9530b4c1ef06c9"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v20_study/refine_harmonic.py",
+      "bytes": 2159,
+      "sha256": "0dcab6628d9f9a04b40391293cd6fbd4e922b2d0869e5c5b5268bf531576739f"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v21_rollout/finish_rom.py",
+      "bytes": 2952,
+      "sha256": "9663bcb2f9470ba262ac81ab4eca515d62ecb891303d3488d9ff7bf43f1d424f"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v21_rollout/rollout.py",
+      "bytes": 9898,
+      "sha256": "3327e1780612f1131f3b6d2626861a4929b336580714f6c4c689c56678ff26b1"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v21_rollout/rollout_v1.py",
+      "bytes": 8273,
+      "sha256": "c6109c96c2cc68d17a09a4b57528e342c60e4e60af9720e7394ae2db988e4cc0"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/alias8_test.py",
+      "bytes": 262,
+      "sha256": "3e2f5726af40df73747bcd8eb0a1702c6e42e0ffa0e22b03e62259c442083359"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/alias_test.py",
+      "bytes": 334,
+      "sha256": "8e5b2182a42919be4ac6846cde4a75383737dc9e3dfd235e3fd030a123024ff0"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/build_packed7.py",
+      "bytes": 23289,
+      "sha256": "361c55fc01905467023fd72934e2af310cc4990ceac018b64a74b0d96b19fff1"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/build_v22.py",
+      "bytes": 19736,
+      "sha256": "449a70631c23ff863150d57891a2279ae0e42d3ea516e53677ab3b2ba833315a"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/drop_bank.py",
+      "bytes": 4076,
+      "sha256": "4b7dbe5d129b59a0280b23aba611eb4e6f558c659b8979692e35c9a89b2141ef"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/exact_bank_study.py",
+      "bytes": 1331,
+      "sha256": "e1d31f53d4f526bf7637983c45cfad5444715727790358ea9c3b36b877564f91"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/free_slots.py",
+      "bytes": 1137,
+      "sha256": "9739a59a49c1b6bb5656fa8aa7b80f73a7f4d89d56dd0a81958709c98bded4fb"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/make_packed_builder.py",
+      "bytes": 4540,
+      "sha256": "105d6c6a5248bd4b5e1dde78c836b5eb529b07ea365287f1962225039a15a7d9"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/make_packed_builder_initial.py",
+      "bytes": 4253,
+      "sha256": "6a2cd3e4f953b4e609ef8fa5fb557d16a279cfc9a85caf5e59421075aaf0bc2e"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/packed7_test.py",
+      "bytes": 877,
+      "sha256": "2679f79d36115d37a07e98733574b5df611384cf85c5d5c13f0ffb637451513f"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/repack.py",
+      "bytes": 6581,
+      "sha256": "aa9c8e94e1b9866569069245776052e7c5f31b4a57960d7491902730dff8bc0f"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/train_long.py",
+      "bytes": 5217,
+      "sha256": "dd14c383f7afa2aa3273a5b4a2fcd6d5ddef466c1957a613f9abc5872834cee0"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v22/verify_release.py",
+      "bytes": 2750,
+      "sha256": "3f825674d042a8ee8218d4f4b76b112f41011c4c9791cdf92d263298623dc70d"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v25/build.py",
+      "bytes": 2268,
+      "sha256": "d1b657e48163444cdad57b9750ae9a84623b19a716107914c458388d706c0498"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v25/contexts.py",
+      "bytes": 3368,
+      "sha256": "f6e4f8f3b22358dbea6d04d07315c45e3315add72a4edbee78cc4ba1f54f1eff"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v25/layout_builder.py",
+      "bytes": 22247,
+      "sha256": "322d78119f5cd8f823da99093c5e0ed2efa10a83ce8c7c0d69e3eaeb925336f3"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v25/make_layout.py",
+      "bytes": 2453,
+      "sha256": "15b4c097679f68346faaa456ae25d1e455a8aa6f1689fc3431b637cbc15c519a"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v25/pwm_compact.py",
+      "bytes": 2179,
+      "sha256": "0adc2383e8038e7688aa81ca8407c63dc1f1ef436f5fc17703ca65a445583ba2"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v25/pwm_exact.py",
+      "bytes": 5821,
+      "sha256": "1ba2c956ab32340384a338a4169e6d21b6449cdd35da06e2b6935ba4e8313510"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v25/ranges.py",
+      "bytes": 3228,
+      "sha256": "0b5258b88b36b75c46cc86078749d87595bef7001f9b3747b4e6d3cf360cbcc9"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v25/ranges_extra.py",
+      "bytes": 3206,
+      "sha256": "ff55065ff3d746dd9c1cea3d6b972e676e0b11846fe2d0e494df4e478dadd6ad"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v25/study.py",
+      "bytes": 6686,
+      "sha256": "ce6b81d86d1d8c6e9323992b8fc382dda64741aaf4dea77a9f71be8f467e6199"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/entropy_study.py",
+      "bytes": 3973,
+      "sha256": "2008f1d892129e89b5b331a33c291f3f661b08e3980d3ea75aa9ab0724023874"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/make_packed_builder.py",
+      "bytes": 1704,
+      "sha256": "a3177b80eb1bcf082196ea42d9c287cc1d2a798021c69a1c3453760564018e6a"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/make_rle_builder.py",
+      "bytes": 2437,
+      "sha256": "12d32dd26b1480587fe14a2a7b31ad5aa62c87781edfe0e41f8ec70d4d46ce2d"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/make_zero_builder.py",
+      "bytes": 1241,
+      "sha256": "8ab9a2093b119246244e98a86e7b0aa6bd335d15b2d5a4d39b37ffacb1e37658"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/packed_builder.py",
+      "bytes": 23000,
+      "sha256": "12bfc3a78a81914acff752660b37174106633e6b15a32d8dd54661a611910579"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/probe.py",
+      "bytes": 723,
+      "sha256": "0ae27c83e06879c60764760cb44af5be3e977af778a52d843e8c8ce1495396fd"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/rle_builder.py",
+      "bytes": 24700,
+      "sha256": "42b85039a936aebebe2add625f45fb227e5c2f4d9941e2e6d224edf81a0933e3"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/rle_unsplit.py",
+      "bytes": 24543,
+      "sha256": "cfec5345ea4074f9c829cd2a61ae229725f89e2fed182b2ebbb40abeea673df3"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/run_packed.py",
+      "bytes": 1448,
+      "sha256": "2621140bee6768134e7b162b4da108fc64bdb46aa4ca98872fada5144e9f9cf5"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/run_rle.py",
+      "bytes": 1549,
+      "sha256": "d5d153a2bbdcd82108c1827ab501bf24451b0864b649085a816322c231d1ed46"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/run_schedule.py",
+      "bytes": 1417,
+      "sha256": "f97ff15ab712293546ec8b46b120b8030d828644241cf5c292d93a872966f5c9"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/run_zero.py",
+      "bytes": 1567,
+      "sha256": "5297be473c47bb0b85d4d62b3c95d0d4b1a81b1502f9f39a5a18c8971cc62480"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/sched_probe.py",
+      "bytes": 457,
+      "sha256": "7e4b3eadabf9baec203f9e116393a8e0dd2a4f38190cd13bdb9eb598de5216b1"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/schedule_opt.py",
+      "bytes": 3390,
+      "sha256": "e2850a7b0eb2e4ce76bfa7397786be7635d59f7c4050ba6193fd0bfccd250d16"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/zero_builder.py",
+      "bytes": 23287,
+      "sha256": "e6a489106c2690c3447bf2a5508acf0bd345077f6be7ac4293d70622ea73267f"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/zero_builder255.py",
+      "bytes": 22953,
+      "sha256": "6010bdeb627bbce8e1e38f2c9ab5ba0ae9c2ee2a7a96972511fd44bc7b57623e"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/LP20_v38/zero_builder52.py",
+      "bytes": 23340,
+      "sha256": "adfcb94f00145c9815f373490fea4746f6d885bf9d7eda1e57bc471d104e4d95"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/make255.py",
+      "bytes": 2574,
+      "sha256": "9da18ac980a9e117af3dc329597a8e5a20b85908cb0e88e475d7056784bed767"
+    },
+    {
+      "path": "LP20-v52-Z80/sources/test_lpc.cpp",
+      "bytes": 7360,
+      "sha256": "f493bb4a0a6c04693abba5bd0144436b4c8fe2b78f095ec8dbbfe55ebf70259f"
+    },
+    {
+      "path": "LP20-v52-Z80/test_all.py",
+      "bytes": 1260,
+      "sha256": "225553a85c1f60c9ad819244eb1d87247ddd891acaf62400f5401d9d06ae2b69"
+    },
+    {
+      "path": "LP20-v52-Z80/test_pwm.cpp",
+      "bytes": 6855,
+      "sha256": "0d2fb2970eeeab07395c06160a2e46a35423bc3ddab0b40268e105099f3df515"
+    }
+  ],
+  "exclusions": {
+    "policy": [
+      "No audio, images, video, PCM/PWM samples or encoded voice streams.",
+      "No binary executables, ROM images, voice-trained models or dictionaries.",
+      "No generated assembly, per-recording JSON, logs or caches.",
+      "No chat transcripts, identifiers, URLs or MIDI.",
+      "Only generic code, source/release READMEs and anonymous technical comparison CSVs are retained."
+    ],
+    "member_counts_by_reason": {
+      "binary_model_dictionary_or_generated_machine_artifact": 60,
+      "media_or_generated_audio_data": 32,
+      "not_selected_source_or_anonymous_comparison": 1,
+      "per_recording_generated_metadata_or_log": 35
+    },
+    "excluded_member_extensions": {
+      ".asm": 13,
+      ".bin": 21,
+      ".expected": 4,
+      ".idx": 9,
+      ".json": 28,
+      ".log": 7,
+      ".lp4v": 2,
+      ".map": 4,
+      ".npy": 11,
+      ".npz": 5,
+      ".threads": 4,
+      ".wav": 10,
+      ".widths": 9,
+      "<none>": 1
+    }
+  },
+  "material_gaps": [
+    "Source-only snapshot; media, binary executables, trained models/dictionaries and generated per-recording data are deliberately absent.",
+    "Preserved source has not been executed; historical quality, hardware timing and reproducibility claims have not been revalidated.",
+    "Historical files under LP20-v52-Z80/sources, including nested v9/v15/v17, are inherited partial source excerpts, not complete original releases of those versions.",
+    "Some historical sibling imports, model inputs and training artifacts are absent; for example inherited v17 references LP20_v16_factor not present in this archive."
+  ]
+}
