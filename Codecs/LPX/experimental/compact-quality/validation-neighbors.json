@@ -1,0 +1,23 @@
+{
+  "schema": "lpx-p3-grid-retained-validation-v1",
+  "method": "Rechecked all retained source/build/binary/media/model hashes and exact equality of every raw neighbor and protected artifact to its SAME stored original baseline. No quality metrics were rerun or relabeled.",
+  "artifact_hash_checks": 90,
+  "original_matrix_sha256": "c9c4d75bdebcb6ca80e376fc053e1a456389bc667f5f67505eb3bd2f796bdcf1",
+  "source_override_sha256": "b37f6a8d16b969ad1af97350431ed9630cfdc496146d5fbdc5c30961397ac87b",
+  "binary_sha256": "7e4babfa813fd99efc024d92ff5458eda8357eb8e0276f5a8696d9cea45db23e",
+  "same_binary_all_phases": true,
+  "production_source_sha256": "cba09bfaab7092612befeab2e2f5af9304787ad7131efa88740bcb58abb1f8a7",
+  "independent_test_receipt_sha256": "79f9662c462370197619eb7efbcef8485b64b5a528d0c6b8642ae639631f567d",
+  "phases": [
+    {
+      "phase": "pilot",
+      "cases": 2,
+      "result_sha256": "0456ff3f0f891f1ab95a6734d5a845c6931966f377399e5bddfa8c27a80b3c92"
+    },
+    {
+      "phase": "matrix",
+      "cases": 8,
+      "result_sha256": "2bb57d254ca4d1a8b7e6ca9b8b0a06d08e467c12b01116ff8e95dfd602b4933d"
+    }
+  ]
+}
