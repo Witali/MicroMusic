@@ -1,6 +1,6 @@
 # Branch catalog
 
-Local snapshot: 2026-11-26. Covers local branches and remote-tracking refs already present in this clone; no network refresh was performed.
+Local snapshot: 2026-11-26. Covers local branches and remote-tracking refs already present in this clone. Only origin/main was refreshed for this integration; other remote information may be stale.
 
 Descriptions state the branch purpose when recorded. Other initial descriptions name the latest recorded work; refine them when resuming that branch. Availability in `origin` means a local remote-tracking ref exists and does not certify current server state. A listed branch may be an experiment or retained history; this table does not assert merge or release status.
 
@@ -79,7 +79,7 @@ Branches: 231. Symbolic aliases such as `origin/HEAD` are excluded.
 | `codex/lpx-avr-deadline` | local, origin | Latest recorded work: Retain exact LPX Q12 dot and history fusion technique |
 | `codex/lpx-bfp-trajectories` | local | Experimental shared-exponent groups and logarithmic trajectories; compare size, quality and full AVR cost. |
 | `codex/lpx-compact-format` | local | Latest recorded work: Add smaller lossless LPX v9 playback for Tiny88 |
-| `codex/lpx-compact-quality` | local | Retained P3/2 kbit/s experiments and storage guidance; 20-second Long study: development gains, no held-out benefit. |
+| `codex/lpx-compact-quality` | local | Integrated into main: P3/2 kbit/s experiments and storage guidance; retained Long study found no held-out benefit. |
 | `codex/lpx-cuda-encoder` | local | Latest recorded work: Record CUDA corpus speedups and exact output validation |
 | `codex/lpx-decoder-refactor` | local, origin | Latest recorded work: Reduce LPX Flash with shared readers and LPC conversion |
 | `codex/lpx-encoder-unification` | local | Latest recorded work: Refresh LPX browser asset versions for the unified encoder |
@@ -88,7 +88,7 @@ Branches: 231. Symbolic aliases such as `origin/HEAD` are excluded.
 | `codex/lpx-fixed-rate` | local | Latest recorded work: Rebuild WebUI LPX firmware for fixed 8 kHz playback |
 | `codex/lpx-global-rate` | local, origin | Latest recorded work: Retain LPX entropy cost and Q12 refinement lessons |
 | `codex/lpx-headroom-quality` | local, origin | Latest recorded work: Retain LPX static anchor caching and compact loop measurements |
-| `codex/lpx-intelligibility` | local | Experimental P3 immediate spectral updates; listener reports clearer speech on one known excerpt; legacy policy retained. |
+| `codex/lpx-intelligibility` | local | Integrated into main: P3 immediate spectral updates and rebuilt browser assets; clearer speech reported on one excerpt; legacy policy retained. |
 | `codex/lpx-local-noise` | local | Experimental source-frozen excitation noise ranking; paired PCM/PWM comparison found no admitted gain. |
 | `codex/lpx-lossless-compression` | local, origin | Latest recorded work: Record LPX compression tradeoffs and complete five-step validation |
 | `codex/lpx-lowrate-avr25` | local, origin | Latest recorded work: Refresh Nano LPX release provenance after codec integration |
