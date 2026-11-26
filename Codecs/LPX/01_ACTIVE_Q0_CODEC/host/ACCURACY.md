@@ -8,10 +8,18 @@ adaptive proposals, whole-output admission and packet writer.
 
 | Preset | Existing V9 alphabet | Spectral precision | Extra detail search |
 | --- | --- | --- | --- |
-| P3 | P4 | Even rank-residual grid and temporal dead zone | Common budgeted residual corrections |
+| P3 | P4 | Even rank-residual grid, immediate quantized updates | Common budgeted residual corrections |
 | P4 | P4 | Established 5-bit LSF grid | Common budgeted residual corrections |
 | P6 | P6 | Established 6-bit LSF grid | Common budgeted residual corrections |
 | P8 | P6 | Same spectral grid as P6 | Common budgeted residual corrections |
+
+The intelligibility experiment transmits P3's quantized spectral changes
+immediately. The earlier extra two-index temporal dead zone could hold a
+changing envelope for hundreds of milliseconds. Explicit
+`LPX_ENCODER_P3_TEMPORAL_DEADZONE=2` retains that legacy policy; the experimental
+default is `0`. This can grow the seed floor and increase spectral-conversion
+work. It is not a same-bitrate or AVR-cycle claim. See the
+[bounded listening investigation](../../experimental/intelligibility/README.md).
 
 P4/P6 names and wire syntax are retained. Their new accuracy-mode search may
 improve; exact legacy API behavior is independently retained. All four presets

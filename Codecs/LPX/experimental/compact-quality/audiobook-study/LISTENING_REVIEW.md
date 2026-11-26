@@ -26,8 +26,10 @@ Read-only follow-up checks found:
 
 Export identity and decoder/model agreement establish correct reproduction
 of the measured signals; speech quality still requires listening evidence.
-The original-rate and prepared references are being checked with the user to
-separate source/preparation quality from LPX distortion before attributing
-the cause. No source membership, policy, guard or held-out result was changed.
+The user subsequently confirmed both original-rate and prepared references
+intelligible. The problem therefore occurs after LPX processing in this example.
+The separate [intelligibility investigation](../../intelligibility/README.md)
+records the bounded diagnosis and candidate correction. No source membership,
+guard or historical held-out result was changed.
 This feedback is an informal local listening observation, not a controlled
 listening-test score.
