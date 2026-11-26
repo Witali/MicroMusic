@@ -1,0 +1,369 @@
+{
+  "schema": "lsf1-exact-cost-analysis-v1",
+  "method": "Actual current calls=4 models; native Rice competitor and complete escaped group bits, one-bit repeat retained, 13-byte header unchanged. Native reserialization matches every payload byte and final zero padding.",
+  "width_codes": "0=zero,1..7=mantissa bits",
+  "exponent_bits": 3,
+  "escape_marker": "2**grid_bits-9",
+  "rows": [
+    {
+      "name": "chego-p4",
+      "bytes": 522,
+      "model_sha256": "298ea2f046b3b9b43633da1295c7db105cdfe2f5f5801b1fbb5353f9b2801d2b",
+      "lpx_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+      "frames": 31,
+      "native_spectral_bits": 697,
+      "forced_group_spectral_bits": 1446,
+      "adaptive_spectral_bits": 697,
+      "forced_group_file_bytes": 615,
+      "adaptive_file_bytes": 522,
+      "selected_adaptive_group_packets": 0,
+      "native_modes": {
+        "gap": 8,
+        "delta": 23
+      },
+      "changed_indices_histogram": {
+        "2": 2,
+        "3": 3,
+        "4": 3,
+        "5": 4,
+        "6": 8,
+        "7": 4,
+        "8": 6
+      },
+      "forced_plan_histogram": {
+        "0": 29,
+        "1": 2
+      },
+      "forced_kind_histogram": {
+        "0": 16,
+        "1": 15
+      },
+      "forced_exponent_histogram": {
+        "0": 31,
+        "1": 2
+      },
+      "adaptive_exponent_histogram": {},
+      "native_useful_payload_bits": 4066,
+      "native_reserialization_byte_exact": true
+    },
+    {
+      "name": "chego-p6",
+      "bytes": 937,
+      "model_sha256": "a3759d3003eae4ee3fcb363a5b70fa582142d4c61a65b1a2034a2c1b5f3eeb7e",
+      "lpx_sha256": "d631bb2093c8fd5282592a9165f59310c86e35f6e594ad1171ab85aaf21f8567",
+      "frames": 31,
+      "native_spectral_bits": 1003,
+      "forced_group_spectral_bits": 1735,
+      "adaptive_spectral_bits": 1003,
+      "forced_group_file_bytes": 1028,
+      "adaptive_file_bytes": 937,
+      "selected_adaptive_group_packets": 0,
+      "native_modes": {
+        "gap": 12,
+        "delta": 19
+      },
+      "changed_indices_histogram": {
+        "4": 2,
+        "5": 2,
+        "6": 6,
+        "7": 4,
+        "8": 9,
+        "9": 5,
+        "10": 2
+      },
+      "forced_plan_histogram": {
+        "0": 26,
+        "1": 5
+      },
+      "forced_kind_histogram": {
+        "0": 11,
+        "1": 20
+      },
+      "forced_exponent_histogram": {
+        "0": 34,
+        "1": 2
+      },
+      "adaptive_exponent_histogram": {},
+      "native_useful_payload_bits": 7387,
+      "native_reserialization_byte_exact": true
+    },
+    {
+      "name": "otvechaesh-p4",
+      "bytes": 545,
+      "model_sha256": "fcb1c74468cfa82a5d58a94727283ade20f48b8902df3a50b7be843ae5ad19bb",
+      "lpx_sha256": "e75369c4512d4e886c3b35647855e3a107355790466c57524fd079f91e5aed82",
+      "frames": 27,
+      "native_spectral_bits": 602,
+      "forced_group_spectral_bits": 1220,
+      "adaptive_spectral_bits": 602,
+      "forced_group_file_bytes": 622,
+      "adaptive_file_bytes": 545,
+      "selected_adaptive_group_packets": 0,
+      "native_modes": {
+        "gap": 6,
+        "delta": 21
+      },
+      "changed_indices_histogram": {
+        "1": 1,
+        "2": 2,
+        "3": 1,
+        "4": 4,
+        "5": 7,
+        "6": 4,
+        "7": 4,
+        "8": 3
+      },
+      "forced_plan_histogram": {
+        "0": 20,
+        "2": 1,
+        "1": 6
+      },
+      "forced_kind_histogram": {
+        "0": 13,
+        "1": 14
+      },
+      "forced_exponent_histogram": {
+        "0": 29,
+        "1": 2
+      },
+      "adaptive_exponent_histogram": {},
+      "native_useful_payload_bits": 4252,
+      "native_reserialization_byte_exact": true
+    },
+    {
+      "name": "otvechaesh-p6",
+      "bytes": 671,
+      "model_sha256": "05f7e5273dca44cf043082ab54a6583800a42b0306a6e4c8678821fa8289b069",
+      "lpx_sha256": "abbb18c4b1da77990b049caab94a94cf51a16e8ee39cbd3e01642fe9b5659880",
+      "frames": 27,
+      "native_spectral_bits": 872,
+      "forced_group_spectral_bits": 1528,
+      "adaptive_spectral_bits": 872,
+      "forced_group_file_bytes": 753,
+      "adaptive_file_bytes": 671,
+      "selected_adaptive_group_packets": 0,
+      "native_modes": {
+        "gap": 7,
+        "delta": 20
+      },
+      "changed_indices_histogram": {
+        "4": 2,
+        "5": 4,
+        "6": 3,
+        "7": 5,
+        "8": 6,
+        "9": 4,
+        "10": 2
+      },
+      "forced_plan_histogram": {
+        "0": 20,
+        "1": 6,
+        "2": 1
+      },
+      "forced_kind_histogram": {
+        "0": 11,
+        "1": 16
+      },
+      "forced_exponent_histogram": {
+        "0": 32,
+        "1": 3
+      },
+      "adaptive_exponent_histogram": {},
+      "native_useful_payload_bits": 5257,
+      "native_reserialization_byte_exact": true
+    },
+    {
+      "name": "vinni-p4",
+      "bytes": 1200,
+      "model_sha256": "3b841d12bb64c1618907b846a5b0c806a01c1584d668df32b12195fcaee0fbe8",
+      "lpx_sha256": "1b9d60dde416b0d8e4f7d7c7da98d80a0022865894f6795bf07161e30a0a6de0",
+      "frames": 75,
+      "native_spectral_bits": 1516,
+      "forced_group_spectral_bits": 3204,
+      "adaptive_spectral_bits": 1516,
+      "forced_group_file_bytes": 1411,
+      "adaptive_file_bytes": 1200,
+      "selected_adaptive_group_packets": 0,
+      "native_modes": {
+        "gap": 12,
+        "delta": 60,
+        "repeat": 3
+      },
+      "changed_indices_histogram": {
+        "0": 3,
+        "1": 4,
+        "2": 4,
+        "3": 12,
+        "4": 18,
+        "5": 8,
+        "6": 9,
+        "7": 4,
+        "8": 8,
+        "9": 2,
+        "10": 2
+      },
+      "forced_plan_histogram": {
+        "0": 56,
+        "1": 15,
+        "2": 1
+      },
+      "forced_kind_histogram": {
+        "0": 35,
+        "1": 37
+      },
+      "forced_exponent_histogram": {
+        "0": 74,
+        "1": 4
+      },
+      "adaptive_exponent_histogram": {},
+      "native_useful_payload_bits": 9495,
+      "native_reserialization_byte_exact": true
+    },
+    {
+      "name": "vinni-p6",
+      "bytes": 2239,
+      "model_sha256": "0e20e375dc3df80e387abffb89a60f190be1fd7944103ce362d94e47b4ff6659",
+      "lpx_sha256": "c3a1933d98577a363c343c3609a7da46f767c1d035d3baa797c3c7d038a7d3dd",
+      "frames": 75,
+      "native_spectral_bits": 2295,
+      "forced_group_spectral_bits": 4116,
+      "adaptive_spectral_bits": 2295,
+      "forced_group_file_bytes": 2466,
+      "adaptive_file_bytes": 2239,
+      "selected_adaptive_group_packets": 0,
+      "native_modes": {
+        "gap": 10,
+        "delta": 65
+      },
+      "changed_indices_histogram": {
+        "2": 2,
+        "3": 1,
+        "4": 3,
+        "5": 11,
+        "6": 13,
+        "7": 15,
+        "8": 15,
+        "9": 9,
+        "10": 5
+      },
+      "forced_plan_histogram": {
+        "0": 60,
+        "1": 12,
+        "2": 2,
+        "3": 1
+      },
+      "forced_kind_histogram": {
+        "0": 22,
+        "1": 53
+      },
+      "forced_exponent_histogram": {
+        "0": 87,
+        "1": 4
+      },
+      "adaptive_exponent_histogram": {},
+      "native_useful_payload_bits": 17802,
+      "native_reserialization_byte_exact": true
+    },
+    {
+      "name": "bread-p4",
+      "bytes": 994,
+      "model_sha256": "e7d02e07c2ee8d6a7350f1b5349d46660eddd6976d70f6d9b9709baadd56847d",
+      "lpx_sha256": "388c2eeadff700f24814efbce3d01ab32e270a7ea75ca0be822b82122737dc0e",
+      "frames": 60,
+      "native_spectral_bits": 1295,
+      "forced_group_spectral_bits": 2703,
+      "adaptive_spectral_bits": 1295,
+      "forced_group_file_bytes": 1170,
+      "adaptive_file_bytes": 994,
+      "selected_adaptive_group_packets": 0,
+      "native_modes": {
+        "gap": 8,
+        "delta": 52
+      },
+      "changed_indices_histogram": {
+        "1": 3,
+        "2": 7,
+        "3": 4,
+        "4": 5,
+        "5": 14,
+        "6": 9,
+        "7": 12,
+        "8": 4,
+        "9": 1
+      },
+      "forced_plan_histogram": {
+        "0": 50,
+        "1": 9,
+        "2": 1
+      },
+      "forced_kind_histogram": {
+        "0": 30,
+        "1": 30
+      },
+      "forced_exponent_histogram": {
+        "0": 61,
+        "1": 2
+      },
+      "adaptive_exponent_histogram": {},
+      "native_useful_payload_bits": 7846,
+      "native_reserialization_byte_exact": true
+    },
+    {
+      "name": "bread-p6",
+      "bytes": 1479,
+      "model_sha256": "4e3dcba3b3163a585aadf984f1f4a7f26f40792c124510d2f40f0661eccc92d6",
+      "lpx_sha256": "e21f0b2e32edf769fb166d9b8bd2b03db2e85f91c7cb831f2217bd94061c7533",
+      "frames": 60,
+      "native_spectral_bits": 1866,
+      "forced_group_spectral_bits": 3252,
+      "adaptive_spectral_bits": 1866,
+      "forced_group_file_bytes": 1652,
+      "adaptive_file_bytes": 1479,
+      "selected_adaptive_group_packets": 0,
+      "native_modes": {
+        "gap": 4,
+        "delta": 56
+      },
+      "changed_indices_histogram": {
+        "4": 5,
+        "5": 3,
+        "6": 12,
+        "7": 10,
+        "8": 17,
+        "9": 8,
+        "10": 4
+      },
+      "forced_plan_histogram": {
+        "0": 58,
+        "1": 2
+      },
+      "forced_kind_histogram": {
+        "0": 20,
+        "1": 40
+      },
+      "forced_exponent_histogram": {
+        "0": 61,
+        "1": 1
+      },
+      "adaptive_exponent_histogram": {},
+      "native_useful_payload_bits": 11721,
+      "native_reserialization_byte_exact": true
+    }
+  ],
+  "totals": {
+    "bytes": 8587,
+    "frames": 386,
+    "native_spectral_bits": 10146,
+    "forced_group_spectral_bits": 19204,
+    "adaptive_spectral_bits": 10146,
+    "forced_group_file_bytes": 9717,
+    "adaptive_file_bytes": 8587,
+    "selected_adaptive_group_packets": 0
+  },
+  "selftest": {
+    "invalid_models_rejected": 8,
+    "invalid_native_files_rejected": 6,
+    "native_payload_and_padding_byte_exact": true
+  },
+  "source_sha256": "600ca3162dc2cfeacedad02ba449d921aac90d7c1fc6ef8fafb5332b9fc70672"
+}
