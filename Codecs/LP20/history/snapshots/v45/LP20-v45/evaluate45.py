@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+"""Ablation with identical candidate and quantization cost, precise rate bracket."""
+from adaptive45 import *
+def main(clip):
+ out=ROOT/clip;base=BASE/'input'/clip;h,ln,blocks=pickle.load(open(out/'candidates.pkl','rb'));book=(base/'book.bin').read_bytes();_,_,_,old=decode_s(BASE/clip/'6k-SNR.lp4s',book);d=dict(np.load(base/'model.npz'));meta=json.loads((base/'decoder.json').read_text());ref=wavfile.read(base/'reference.wav')[1];n=h[0];filtered=[[a for a in b if i%2==0 and a[0]==256 and (a[1],a[2])==tuple(old[i//2][:2])] for i,b in enumerate(blocks)];rows=[]
+ for tag,variable,rate,hf,pk,pool in [('fixed-control',False,6,0,0,filtered),('joint256-tight',False,6,0,0,blocks),('adaptive-tight',True,6,0,0,blocks),('adaptive-peak-tight',True,6,.13,3,blocks),('adaptive58-tight',True,5.8,0,0,blocks)]:
+  frames,used,budget=alloc(h,prepare(h,pool,variable),ln,rate,variable,hf,pk);path=out/(tag+('.lp4v' if variable else '.lp4s'));bits=write_v(path,h,frames,ln.tolist(),variable);assert used==bits;assert path.stat().st_size<=int(n*rate*1000/(8*FS));y,dec,b2=decode_v(path,book);assert bits==b2 and np.array_equal(y,np.concatenate([p+idct(q*SCALES[s],norm='ortho') for _,_,_,p,s,q in frames]));wav=render(y,d,meta);wavfile.write(out/(tag+'.wav'),48000,wav);row=dict(clip=clip,profile=tag,bytes=path.stat().st_size,kbps=path.stat().st_size*8*FS/n/1000,lengths=dict(Counter(f[0] for f in frames)),modes=dict(Counter(f[1] for f in frames)),**metrics(ref,wav));rows.append(row);(out/'ablation.json').write_text(json.dumps(rows,indent=2));print('RESULT',row,flush=True)
+if __name__=='__main__':main(sys.argv[1])
