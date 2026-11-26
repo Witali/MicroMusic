@@ -24,6 +24,14 @@ void setRun(Stream& stream,const Run& run,const Spectrum& spectrum) {
 // One preceding spectrum reproduces the decoder's interpolation at the run
 // boundary. The extra leading 320 samples are metadata context, never audio.
 void localCoefficients(const Stream& stream,int start,int end,std::vector<Coefficients>& output) {
+    // P3's dead zone depends on the complete previously transmitted sequence,
+    // not merely the preceding raw analysis frame. Resolve it before cropping.
+    if(stream.accuracy==3) {
+        auto canonical=canonicalAccuracy(stream);
+        canonical.accuracy=0; // Do not quantize the synthetic context again.
+        localCoefficients(canonical,start,end,output);
+        return;
+    }
     Stream local;local.qualityTarget=stream.qualityTarget;local.profile=stream.profile;local.samples=320+end-start;
     local.spectra.resize((local.samples+319)/320);
     for(int i=0;i<int(local.spectra.size());++i) {
