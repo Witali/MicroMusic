@@ -12,6 +12,11 @@ See [shared policies and context ownership](ENCODER_UNIFICATION.md) for the
 precision/bitrate distinction, reusable seed, bounded evaluator cache and
 common native/WASM build description.
 
+Quality evaluation can target decoded PCM or the existing combined PCM/AVR PWM
+objective. Use `--quality-target pcm` for computer, I2S or DAC playback;
+`--quality-target pwm` retains the default. Accuracy, bitrate and file syntax
+are independent of this choice. See [target semantics and APIs](QUALITY_TARGET.md).
+
 ## Build
 
 Use an installed Clang or GCC compiler. Windows builds use Clang with the
@@ -48,6 +53,7 @@ node web-player/scripts/encode-lpx-native.mjs input.wav new-output-larger.lpx --
 node web-player/scripts/encode-lpx-native.mjs reference.pcm new-reference-output.lpx --legacy --profile 6 --pcm --search reference
 node web-player/scripts/encode-lpx-native.mjs reference.pcm new-output.lpx --pcm --rate 8000 --profile 6 --repeat 5
 node web-player/scripts/encode-lpx-native.mjs input.wav normalized.lpx --normalize --target-lufs -18 --max-gain-db 12
+node web-player/scripts/encode-lpx-native.mjs input.wav output-pcm.lpx --quality-target pcm
 ```
 
 The Node wrapper uses FFmpeg/FFprobe for audio-file input. It explicitly averages

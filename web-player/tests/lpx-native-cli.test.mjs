@@ -243,3 +243,47 @@ test('native build output cannot escape the ignored build directory', () => {
     assert.notEqual(result.status, 0); assert.match(result.stderr, /must be a subdirectory/);
   }
 });
+
+test('native quality-target selection matches WASM and retains the PWM default', { skip: !enabled }, async () => {
+  const encode = await createEncoder(readFileSync(new URL('../lpx/encoder-adaptive.wasm', import.meta.url)));
+  const pcm = signal(641);
+  for (const rate of [8000, 12000, 16000]) for (const qualityTarget of ['pcm', 'pwm']) {
+    const args = ['--accuracy', '6', '--rate', String(rate), '--calls', '1', '--quality-target', qualityTarget];
+    const actual = success(native, pcm, args);
+    assert.equal(actual.report.qualityTarget, qualityTarget);
+    assert.deepEqual(actual.bytes, Buffer.from(encode(pcm, rate, 6, undefined,
+      { accuracy:true, calls:1, qualityTarget })));
+  }
+  const args = ['--accuracy', '4', '--calls', '1'];
+  assert.deepEqual(success(native, pcm, args).bytes, success(native, pcm, [...args, '--quality-target', 'pwm']).bytes);
+  for (const value of ['', 'PCM', 'dac', '2']) {
+    const result = run(native, pcm, ['--quality-target', value]);
+    assert.notEqual(result.status, 0);
+    assert.equal(result.stdout.length, 0);
+    assert.match(JSON.parse(result.stderr.toString()).error, /Quality target/);
+  }
+});
+
+test('native file wrapper forwards the selected target and rejects invalid targets', { skip: !enabled }, () => {
+  mkdirSync(join(root, 'build'), { recursive:true });
+  const directory = mkdtempSync(join(root, 'build/lpx-cli-target-'));
+  try {
+    const pcm = signal(641), input = join(directory, 'input.pcm');
+    writeFileSync(input, Buffer.from(pcm.buffer));
+    const wrapper = join(root, 'web-player/scripts/encode-lpx-native.mjs');
+    for (const qualityTarget of ['pcm', 'pwm']) {
+      const output = join(directory, qualityTarget + '.lpx');
+      const result = spawnSync(process.execPath, [wrapper, input, output, '--pcm', '--encoder', native,
+        '--accuracy', '6', '--calls', '1', '--quality-target', qualityTarget], { cwd:root, encoding:'utf8' });
+      assert.equal(result.status, 0, result.stderr);
+      assert.equal(JSON.parse(result.stdout.trim()).qualityTarget, qualityTarget);
+      assert.deepEqual(readFileSync(output), success(native, pcm,
+        ['--accuracy', '6', '--calls', '1', '--quality-target', qualityTarget]).bytes);
+    }
+    const output = join(directory, 'invalid.lpx');
+    const invalid = spawnSync(process.execPath, [wrapper, input, output, '--pcm', '--encoder', native,
+      '--quality-target', 'dac'], { cwd:root, encoding:'utf8' });
+    assert.notEqual(invalid.status, 0);
+    assert.equal(existsSync(output), false);
+  } finally { removeTemporary(directory); }
+});
