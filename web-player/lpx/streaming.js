@@ -1,6 +1,6 @@
-import { qualityTargetCode, callQualityEncoder } from './quality-target.js?v=20261126-quality-target';
-import { createIncrementalDecoder, streamingSampleLimit } from './codec.js?v=20261126-quality-target';
-import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261126-quality-target';
+import { qualityTargetCode, callQualityEncoder } from './quality-target.js?v=20261126-p3-intelligibility';
+import { createIncrementalDecoder, streamingSampleLimit } from './codec.js?v=20261126-p3-intelligibility';
+import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261126-p3-intelligibility';
 
 export function createStreamSession(api, settings) {
   const qualityTarget=qualityTargetCode(settings.qualityTarget);
@@ -66,7 +66,7 @@ export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},re
   }
   append(session.finish());
   const candidate=session.hasCandidate;
-  const decoder=await createIncrementalDecoder(await readBinary(new URL('./decoder.wasm?v=20261126-quality-target',import.meta.url)));
+  const decoder=await createIncrementalDecoder(await readBinary(new URL('./decoder.wasm?v=20261126-p3-intelligibility',import.meta.url)));
   const output=[];let memoryFallback=false;
   for(const kind of candidate?[0,1]:[0]) {
     if(kind && memoryFallback)break;

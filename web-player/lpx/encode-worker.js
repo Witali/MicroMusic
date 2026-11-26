@@ -1,8 +1,8 @@
-import { qualityTargetCode } from './quality-target.js?v=20261126-quality-target';
-import { createEncoderBackend } from './encoder-backend.js?v=20261126-quality-target';
-import { encodeStreaming } from './streaming.js?v=20261126-quality-target';
-import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261126-quality-target';
-import { MAX_SAMPLES, MAX_STREAM_SAMPLES } from './codec.js?v=20261126-quality-target';
+import { qualityTargetCode } from './quality-target.js?v=20261126-p3-intelligibility';
+import { createEncoderBackend } from './encoder-backend.js?v=20261126-p3-intelligibility';
+import { encodeStreaming } from './streaming.js?v=20261126-p3-intelligibility';
+import { prepareAudio, validTemporaryName } from './audio-source.js?v=20261126-p3-intelligibility';
+import { MAX_SAMPLES, MAX_STREAM_SAMPLES } from './codec.js?v=20261126-p3-intelligibility';
 const readBinary=async url=>{const response=await fetch(url);if(!response.ok)throw Error('Не удалось загрузить модуль обработки звука.');return response.arrayBuffer();};
 async function encodeSource(data){
   if(!validTemporaryName(data.temporaryName)||!navigator.locks?.request)throw Error('Браузер не поддерживает безопасную временную обработку аудио.');

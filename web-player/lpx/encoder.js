@@ -1,7 +1,7 @@
-import { qualityTargetCode, callQualityEncoder } from './quality-target.js?v=20261126-quality-target';
-import { MAX_SAMPLES } from './codec.js?v=20261126-quality-target';
-import { createStreamSession } from './streaming.js?v=20261126-quality-target';
-import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261126-quality-target';
+import { qualityTargetCode, callQualityEncoder } from './quality-target.js?v=20261126-p3-intelligibility';
+import { MAX_SAMPLES } from './codec.js?v=20261126-p3-intelligibility';
+import { createStreamSession } from './streaming.js?v=20261126-p3-intelligibility';
+import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261126-p3-intelligibility';
 
 export async function createEncoder(binary) {
   const { instance } = await WebAssembly.instantiate(binary);

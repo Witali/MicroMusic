@@ -51,7 +51,7 @@ against the earlier selected proposal. On 2026-11-26 the user subsequently
 reported this exact candidate **clearer than the preceding examples**. This
 informal rating covers one known development example; complete intelligibility
 and generalization remain unestablished. `results.json` preserves its original
-pre-listening status. This remains an isolated experimental branch.
+pre-listening status. The user subsequently requested integration into `main`.
 
 Synthetic tests pass for default 0 and legacy 2: small spectral changes,
 10,000 ordered vectors per configuration, idempotence and unchanged non-P3
@@ -81,3 +81,11 @@ source-confirmed development failure, mechanistic checks and this candidate.
 No new corpus sweep, unseen-quality claim, old held-out tuning, WASM execution
 or AVR timing measurement was performed. More frequent spectral updates can
 increase existing decoder work even though decoder source is unchanged.
+
+For the subsequent authorized merge/publication, scalar and SIMD WebAssembly
+assets were rebuilt with the existing Emscripten 6.0.12 toolchain. Both actual
+browser backends reproduce the native candidate's 8,207 LPX bytes and all
+160,000 PCM samples exactly on this same development excerpt. Twenty-one
+quality-target, bitrate, worker and stream-limit tests pass against the rebuilt
+assets. This adds execution/packaging evidence, not a new independent listening
+or corpus-quality result. AVR interrupt timing remains unmeasured.

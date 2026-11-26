@@ -1,4 +1,4 @@
-import { createEncoder } from './encoder.js?v=20261126-quality-target';
+import { createEncoder } from './encoder.js?v=20261126-p3-intelligibility';
 
 // Minimal module returning a v128.const. Validation runs no code or imports.
 const simdProbe = new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,
@@ -8,7 +8,7 @@ export function supportsSimd() {
 }
 async function fetchBinary(backend) {
   const name = backend === 'simd' ? 'encoder-adaptive-simd.wasm' : 'encoder-adaptive.wasm';
-  const response = await fetch(new URL(`./${name}?v=20261126-quality-target`, import.meta.url));
+  const response = await fetch(new URL(`./${name}?v=20261126-p3-intelligibility`, import.meta.url));
   if (!response.ok) throw new Error('Не удалось загрузить WASM-кодировщик.');
   return response.arrayBuffer();
 }
