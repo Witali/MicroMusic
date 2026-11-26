@@ -79,7 +79,7 @@ Branches: 230. Symbolic aliases such as `origin/HEAD` are excluded.
 | `codex/lpx-avr-deadline` | local, origin | Latest recorded work: Retain exact LPX Q12 dot and history fusion technique |
 | `codex/lpx-bfp-trajectories` | local | Experimental shared-exponent groups and logarithmic trajectories; compare size, quality and full AVR cost. |
 | `codex/lpx-compact-format` | local | Latest recorded work: Add smaller lossless LPX v9 playback for Tiny88 |
-| `codex/lpx-compact-quality` | local | Active experiment: automatic compact P3 candidates and joint parameter/pulse search for strict 2 kbit/s; decoder unchanged. |
+| `codex/lpx-compact-quality` | local | Active P3 quality improvement; retained strict 2 kbit/s joint experiment matches coordinate controls. Decoder unchanged. |
 | `codex/lpx-cuda-encoder` | local | Latest recorded work: Record CUDA corpus speedups and exact output validation |
 | `codex/lpx-decoder-refactor` | local, origin | Latest recorded work: Reduce LPX Flash with shared readers and LPC conversion |
 | `codex/lpx-encoder-unification` | local | Latest recorded work: Refresh LPX browser asset versions for the unified encoder |

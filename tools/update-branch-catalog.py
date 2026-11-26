@@ -29,7 +29,7 @@ def main():
     defaults = {
         'main': 'Integrated project baseline and GitHub Pages source.',
         'codex/lpx-lp20-study': 'Retained LP20/LPX-Z80 source history and transfer review; five recovered source snapshots, with current LPX unchanged.',
-        'codex/lpx-compact-quality': 'Active experiment: automatic compact P3 candidates and joint parameter/pulse search for strict 2 kbit/s; decoder unchanged.',
+        'codex/lpx-compact-quality': 'Active P3 quality improvement; retained strict 2 kbit/s joint experiment matches coordinate controls. Decoder unchanged.',
         'codex/lpx-local-noise': 'Experimental source-frozen excitation noise ranking; paired PCM/PWM comparison found no admitted gain.',
         'codex/lpx-pcm-quality': 'Selectable PCM or PWM encoder quality target, with unchanged LPX format and decoder.',
         'codex/lpx-lsf-groups': 'LSF grouping and packing study, AVR tuning checks, and initial Z80 transfer review.',
