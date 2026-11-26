@@ -8,6 +8,8 @@
 #endif
 
 namespace lpx{
+// Host policy limit: one continuous 20-second stream at the phase's 8 kHz rate.
+static constexpr int kCompactEnsembleMaxSamples=160000;
 struct BitrateReport;
 enum CompactEnsembleStatus {
     CompactDisabled=0,CompactIneligible=1,CompactUnchanged=2,

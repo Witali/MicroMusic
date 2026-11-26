@@ -14,7 +14,7 @@ bool resetCompactState(const Stream& s) {
 }
 bool validCompactModel(const Stream& s) {
     if(!validQualityTarget(s.qualityTarget) || (s.accuracy!=3 && s.accuracy!=4)
-        || s.samples<1 || s.samples>64000 || s.rate!=8000 || s.profile!=4
+        || s.samples<1 || s.samples>kCompactEnsembleMaxSamples || s.rate!=8000 || s.profile!=4
         || s.pre<0 || s.pre>16384 || s.bright<0 || s.bright>11469
         || !resetCompactState(s))return false;
     const int frames=(s.samples+319)/320;
@@ -48,7 +48,7 @@ bool compactEnsembleEnabled() {
 bool compactEnsembleEligible(const Stream& completed,int calls,const Stream* prefix) {
     return !prefix && calls==4 && validQualityTarget(completed.qualityTarget)
         && completed.accuracy==3 && completed.profile==4
-        && completed.rate==8000 && completed.samples>=1 && completed.samples<=64000
+        && completed.rate==8000 && completed.samples>=1 && completed.samples<=kCompactEnsembleMaxSamples
         && resetCompactState(completed);
 }
 Stream selectCompactEnsembleCandidate(const Stream& completed,const Pcm& reference,
