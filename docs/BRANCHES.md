@@ -95,7 +95,7 @@ Branches: 229. Symbolic aliases such as `origin/HEAD` are excluded.
 | `codex/lpx-lowrate-quality-final` | local, origin | Latest recorded work: Clarify LPX decoder tradeoffs and isolated reproduction branches |
 | `codex/lpx-lowrate-quality-next` | local | Latest recorded work: Record guarded LPX quality corpus and firmware validation |
 | `codex/lpx-lowrate-v9` | local, origin | Latest recorded work: Use bounded hardware products for AVR5 LSF conversion |
-| `codex/lpx-lp20-study` | local | Reconstruct LP20 and LPX-Z80 version history from original chat archives; assess quality improvements transferable to current LPX. |
+| `codex/lpx-lp20-study` | local | Retained LP20/LPX-Z80 source history and transfer review; five recovered source snapshots, with current LPX unchanged. |
 | `codex/lpx-lsf-groups` | local | LSF grouping and packing study, AVR tuning checks, and initial Z80 transfer review. |
 | `codex/lpx-m4a-streaming` | local | Latest recorded work: Encode long recordings through continuous bounded search windows |
 | `codex/lpx-main-merge` | local, origin | Latest recorded work: Merge verified LPX speech profiles and compact packing |
