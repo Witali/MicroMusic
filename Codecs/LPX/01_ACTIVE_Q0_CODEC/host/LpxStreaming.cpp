@@ -8,14 +8,15 @@
 #include <cmath>
 
 namespace lpx {
-StreamingEncoder::StreamingEncoder(uint32_t samples,int selected,int sampleRate,int sizeAllowance,int refinements,bool normalization,bool accuracyMode)
+StreamingEncoder::StreamingEncoder(uint32_t samples,int selected,int sampleRate,int sizeAllowance,int refinements,bool normalization,bool accuracyMode,QualityTarget target)
     :total(samples),profile(selected),rate(sampleRate),allowance(sizeAllowance),calls(refinements),
-     header(v9HeaderBytes(samples)),policy(encodingPolicy(selected,accuracyMode)),normalize(normalization),accuracy(accuracyMode),controlWriter(policy.corrections),candidateWriter(policy.corrections),sourceMeter(rate),preparedMeter(rate),controlMeter(rate),candidateMeter(rate) {
+     header(v9HeaderBytes(samples)),policy(encodingPolicy(selected,accuracyMode)),qualityTarget(target),normalize(normalization),accuracy(accuracyMode),controlWriter(policy.corrections),candidateWriter(policy.corrections),sourceMeter(rate),preparedMeter(rate),controlMeter(rate),candidateMeter(rate) {
+    controlContext.qualityTarget=candidateContext.qualityTarget=qualityTarget;
     controlContext.allowExtras=candidateContext.allowExtras=accuracy;
     if(accuracy)controlContext.accuracy=candidateContext.accuracy=profile;
     planned=!normalize;
     const uint32_t sampleLimit=accuracyMode && !refinements?kLpxMaxStreamingSamples:kLpxMaxSamples;
-    if(!total || total>sampleLimit || !policy.supports(rate,allowance) || calls<0 || calls>4)error=-1;
+    if((target!=QualityTarget::Pcm && target!=QualityTarget::Pwm) || !total || total>sampleLimit || !policy.supports(rate,allowance) || calls<0 || calls>4)error=-1;
     if(!error && !enc_reserve(kLpxStreamWindow+320))error=-2;
     if(!calls)candidateLive=false;
 }
@@ -36,7 +37,7 @@ Pcm StreamingEncoder::scaled(const Pcm& input) const {
     return pcm;
 }
 Stream StreamingEncoder::nextContext(const Stream& stream,const Pcm& input,const std::vector<Coefficients>& co,const SynthesisState& state) {
-    Stream context;context.allowExtras=stream.allowExtras;context.accuracy=stream.accuracy;context.continuation=true;context.pre=stream.pre;context.bright=stream.bright;
+    Stream context;context.qualityTarget=stream.qualityTarget;context.allowExtras=stream.allowExtras;context.accuracy=stream.accuracy;context.continuation=true;context.pre=stream.pre;context.bright=stream.bright;
     context.initial=state;context.previousSpectrum=stream.spectra.back();
     std::copy(input.end()-172,input.end(),context.previousInput.begin());
     std::copy(co.end()-8,co.end(),context.previousCoefficients.begin());return context;
@@ -58,20 +59,20 @@ int StreamingEncoder::process(const Pcm& input,const Pcm& future,StreamingChunk&
     controlContext.lookahead=lookahead;candidateContext.lookahead=lookahead;
     Stream control;
     const int wire=policy.wireProfile;
-    if(accuracy){AdaptiveReport report;control=encodeAccuracy(reference,profile,rate,report,0,&controlContext);if(report.error)return error=report.error;}
+    if(accuracy){AdaptiveReport report;control=encodeAccuracy(reference,profile,rate,report,0,&controlContext,qualityTarget);if(report.error)return error=report.error;}
     else if(policy.targetBitrate) {
         uint64_t cumulative=bitrateBudget(done+reference.size(),policy.targetBitrate,rate);
         int available=int(cumulative)-header-int((controlWriter.bits()+7)/8)-1+13;
         if(available<13)return error=-6;
         if(profile==3) {
-            BitrateReport report;control=encodeThreeK(reference,available,report,.97,nullptr,&controlContext);
+            BitrateReport report;control=encodeThreeK(reference,available,report,.97,nullptr,&controlContext,qualityTarget);
             if(report.error)return error=report.error;
         } else {
-            AdaptiveReport report;control=adaptiveEncode(reference,wire,rate,report,false,available+9,0,true,false,0,false,&controlContext);
+            AdaptiveReport report;control=adaptiveEncode(reference,wire,rate,report,false,available+9,0,true,false,0,false,&controlContext,nullptr,nullptr,qualityTarget);
             if(report.error)return error=report.error;
         }
     } else {
-        control=fitSeed(reference,wire,rate,13926,false,.97,&controlContext);
+        control=fitSeed(reference,wire,rate,13926,false,.97,&controlContext,nullptr,nullptr,qualityTarget);
         if(control.samples!=int(reference.size()))return error=-7;
     }
     auto co=coefficientTrace(control);auto controlState=control.initial;
@@ -86,14 +87,14 @@ int StreamingEncoder::process(const Pcm& input,const Pcm& future,StreamingChunk&
         int available=int(cumulative)-header-int((candidateWriter.bits()+7)/8)-1+13;
         Stream candidate;int failed=0;bool unsafeSeed=false;
         if(accuracy){
-            AdaptiveReport report;candidate=encodeAccuracy(reference,profile,rate,report,calls,&candidateContext);
+            AdaptiveReport report;candidate=encodeAccuracy(reference,profile,rate,report,calls,&candidateContext,qualityTarget);
             failed=report.error;
             unsafeSeed=failed==-7 && report.originalSeedStatus==SeedFitStatus::Unsafe;
             available=accuracyPacketBound(reference.size(),profile);
         }
         else if(available<13)failed=-6;
         else if(profile==3) {
-            BitrateReport report;candidate=encodeThreeK(reference,available,report,.97,nullptr,&candidateContext);failed=report.error;
+            BitrateReport report;candidate=encodeThreeK(reference,available,report,.97,nullptr,&candidateContext,qualityTarget);failed=report.error;
             if(!failed && calls) { ProfileQualityReport quality;candidate=refineProfileQuality(candidate,reference,available,true,quality,true);failed=quality.error; }
 #if LPX_ENCODER_JOINT_REFINEMENT
             if(!failed && calls) {
@@ -104,7 +105,7 @@ int StreamingEncoder::process(const Pcm& input,const Pcm& future,StreamingChunk&
 #endif
         } else {
             AdaptiveReport report;
-            candidate=adaptiveEncode(reference,wire,rate,report,false,available+9,calls,true,true,0,false,&candidateContext);failed=report.error;
+            candidate=adaptiveEncode(reference,wire,rate,report,false,available+9,calls,true,true,0,false,&candidateContext,nullptr,nullptr,qualityTarget);failed=report.error;
         }
         // A separately carried candidate may reject its seed while the complete
         // continuous control remains admissible. Keep that entire control;
@@ -153,7 +154,7 @@ int StreamingEncoder::verifyPut(int kind,uint32_t offset,const int16_t* pcm,int 
 }
 int StreamingEncoder::admit() {
     if(!ended || error || received[1]!=total || (candidateLive && (received[0]!=total || received[2]!=total)))return -1;
-    choice=candidateLive && profileQualityAdmission(verification[0],verification[1],verification[2],rate)?1:0;
+    choice=candidateLive && profileQualityAdmission(verification[0],verification[1],verification[2],rate,true,false,qualityTarget)?1:0;
     for(auto& pcm:verification)Pcm{}.swap(pcm);
     return choice;
 }

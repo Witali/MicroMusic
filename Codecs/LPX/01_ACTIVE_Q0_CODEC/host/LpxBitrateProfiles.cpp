@@ -262,14 +262,16 @@ void fitExcitation(Stream& s, const Pcm& reference, const std::vector<int>& peri
 }
 
 Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
-                    double bandwidth, const Stream* incumbent,const Stream* prefix) {
+                    double bandwidth, const Stream* incumbent,const Stream* prefix,QualityTarget target) {
     report = BitrateReport{};
-    if (reference.empty() || reference.size() > lpxSeedCapacity() || maxBytes < 13
+    if (!validQualityTarget(target) || (prefix && prefix->qualityTarget!=target)
+        || (incumbent && incumbent->qualityTarget!=target)
+        || reference.empty() || reference.size() > lpxSeedCapacity() || maxBytes < 13
         || !(bandwidth > 0 && bandwidth <= 1)) {
         report.error = -1; return Stream{};
     }
     const auto periods = sourcePeriods(reference);
-    QualityContext context(reference); Measurement baseline, selectedMeasurement;
+    QualityContext context(reference,true,8000,target); Measurement baseline, selectedMeasurement;
     Stream selected; size_t selectedBytes = 0;
     auto add = [&](const Stream& candidate) {
         auto bytes = packV9(candidate);
@@ -281,7 +283,7 @@ Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
         bool admissible = noRegression(measurement.quality, baseline.quality)
             && measurement.clipped <= baseline.clipped
             && measurement.diagnostic[0].within >= baseline.diagnostic[0].within
-            && measurement.diagnostic[1].within >= baseline.diagnostic[1].within;
+            && (target==QualityTarget::Pcm || measurement.diagnostic[1].within >= baseline.diagnostic[1].within);
         if (admissible && (!selected.samples || measurement.score < selectedMeasurement.score
             || (measurement.score == selectedMeasurement.score && bytes.size() < selectedBytes))) {
             selected = candidate; selectedMeasurement = measurement; selectedBytes = bytes.size(); report.selected = ordinal;
@@ -294,11 +296,11 @@ Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
         }
         add(*incumbent);
         if (report.error) return Stream{};
-        if (!selectedMeasurement.quality.error[0] && !selectedMeasurement.quality.error[1]) return selected;
+        if (qualityIsExact(selectedMeasurement.quality)) return selected;
     }
     for (int pre : {13926, 11469, 8192}) {
         if(prefix && prefix->continuation && pre!=prefix->pre)continue;
-        Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth,prefix);
+        Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth,prefix,nullptr,nullptr,target);
         if (!seed.samples) { report.error = -7; return Stream{}; }
         // The complete existing seed is a legitimate candidate when V9's exact
         // zero-gain/tail omissions already place it under the requested cap.
@@ -306,7 +308,7 @@ Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
         if (report.error) return Stream{};
         // Neither waveform floor can improve beyond an exact PCM/PWM match.
         // In particular, do not exhaustively refit every silent innovation.
-        if (selected.samples && !selectedMeasurement.quality.error[0] && !selectedMeasurement.quality.error[1]) return selected;
+        if (selected.samples && qualityIsExact(selectedMeasurement.quality)) return selected;
         auto plans = spectralPlans(seed, reference, maxBytes);
         for (const auto& spectra : plans) {
             Stream candidate = seed; candidate.spectra = spectra;
@@ -321,7 +323,7 @@ Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
         // it is not used to displace any already feasible ordinary candidate.
         for (int pre : {13926, 11469, 8192}) {
             if(prefix && prefix->continuation && pre!=prefix->pre)continue;
-            Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth,prefix);
+            Stream seed = fitSeed(reference, 4, 8000, pre, true, bandwidth,prefix,nullptr,nullptr,target);
             if (!seed.samples) { report.error = -7; return Stream{}; }
             auto plans = spectralPlans(seed, reference, maxBytes, true);
             for (const auto& spectra : plans) {

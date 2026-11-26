@@ -11,6 +11,7 @@ const { values, positionals, tokens } = parseArgs({ allowPositionals: true, toke
   profile: { type: 'string', default: '6' }, rate: { type: 'string', default: '8000' },
   accuracy: { type: 'string' }, legacy: { type: 'boolean', default: false }, help: { type: 'boolean', default: false },
   backend: { type: 'string', default: 'cpu' }, quality: { type: 'string', default: 'adaptive' },
+  'quality-target': { type: 'string', default: 'pwm' },
   search: { type: 'string', default: 'expanded' }, 'size-allowance': { type: 'string', default: '0' },
   calls: { type: 'string', default: '4' }, 'max-bytes': { type: 'string', default: '0' },
   repeat: { type: 'string', default: '1' }, 'auto-quiet': { type: 'boolean', default: false },
@@ -20,7 +21,7 @@ const { values, positionals, tokens } = parseArgs({ allowPositionals: true, toke
 } });
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const [source, destination] = positionals;
-const usage = 'Usage: node web-player/scripts/encode-lpx-native.mjs input-audio new-output.lpx [--accuracy 3|4|6|8 | --profile 3|4|6|8] [--encoder executable] [--pcm] [--backend cpu|cuda] [--quality fast|adaptive]';
+const usage = 'Usage: node web-player/scripts/encode-lpx-native.mjs input-audio new-output.lpx [--accuracy 3|4|6|8 | --profile 3|4|6|8] [--encoder executable] [--pcm] [--backend cpu|cuda] [--quality fast|adaptive] [--quality-target pcm|pwm]';
 if (values.help) {
   console.log(`${usage}\nDefault: the shared Web UI accuracy engine, level 6; --profile is an alias.\nLegacy compatibility: --legacy --profile 4|6 [--search expanded|reference] [--size-allowance 0..100] [--max-bytes N] [--auto-quiet] [--non-speech].`);
   process.exit(0);
@@ -42,6 +43,7 @@ if (values.legacy) {
 }
 if (!['8000', '12000', '16000'].includes(values.rate)
     || !['cpu', 'cuda'].includes(values.backend) || !['fast', 'adaptive'].includes(values.quality)
+    || !['pcm', 'pwm'].includes(values['quality-target'])
     || !['expanded', 'reference'].includes(values.search)) throw new Error('Invalid encoding options.');
 if (!/^[0-4]$/.test(values.calls) || !/^(?:[1-9]|1[0-9]|20)$/.test(values.repeat)
     || !/^\d+$/.test(values['max-bytes']) || Number(values['max-bytes']) > 104857600
@@ -104,6 +106,7 @@ try {
   const args = [...(values.legacy ? ['--legacy', '--profile', values.profile] : ['--accuracy', level]),
     '--rate', values.rate, '--backend', values.backend, '--quality', values.quality,
     '--calls', values.calls, '--repeat', values.repeat,
+    ...(specified.has('quality-target') ? ['--quality-target', values['quality-target']] : []),
     ...(values.legacy ? ['--search', values.search, '--size-allowance', values['size-allowance'], '--max-bytes', values['max-bytes'],
       ...(values['auto-quiet'] ? ['--auto-quiet'] : []), ...(values['non-speech'] ? ['--non-speech'] : [])] : []),
     ...(values.normalize ? ['--normalize','--target-lufs',values['target-lufs'],'--max-gain-db',values['max-gain-db']] : [])];

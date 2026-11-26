@@ -1,0 +1,64 @@
+{
+  "schema": "lpx-local-noise-retained-validation-v1",
+  "method": "Rechecked every retained media/model, source and build-input SHA256. All completed model/native comparisons were asserted in benchmark. Each final-noise and final-sse artifact is byte-identical to its own baseline; source-only descriptors are identical across target and accuracy cases. No metrics were rerun or relabeled.",
+  "artifact_hash_checks": 330,
+  "same_binary_all_phases": true,
+  "binary_sha256": "6483170ecab3d7504e594de9065d2d6c2ac0410cc3564deda4ba6d262d65e7c0",
+  "pinned_baseline_revision": "644e19d0fd8db47fcae7d6ad64787d6c89ead28d",
+  "context_header_sha256": "ed6423c2eda7251195743b15588782eddd2f34057a8532bbae1caae5cc834e49",
+  "context_cpp_sha256": "06536010d43181cb18492d0f67025855bace3f3ecf2a16aa94762081c268ee3a",
+  "benchmark_sha256": "5a2fc3de572469975179ee73331b4e1e6c7fb14542b6b4cfcfeebf6d6e681a7d",
+  "compare_sha256": "05c79caa9cda6eeed410309dc11da9ca0a7d4b72a130854aedaaad8226e436c0",
+  "production_source_hashes_verified_against_baseline": 62,
+  "unique_source_descriptor_sets": 6,
+  "phases": {
+    "pilot": {
+      "cases": 2,
+      "generated_proposals": 16,
+      "rejections": {
+        "size": 0,
+        "native": 0,
+        "stability": 0,
+        "level": 0,
+        "spectrum": 0,
+        "quality": 16,
+        "fullband": 0,
+        "old_noise": 0,
+        "complete": 0
+      },
+      "result_sha256": "4e3d7cbf0b1d53d53543517c8025f7c49fc91db920e44d36ae839953a91419b9"
+    },
+    "matrix": {
+      "cases": 16,
+      "generated_proposals": 125,
+      "rejections": {
+        "size": 0,
+        "native": 0,
+        "stability": 0,
+        "level": 0,
+        "spectrum": 0,
+        "quality": 97,
+        "fullband": 28,
+        "old_noise": 0,
+        "complete": 0
+      },
+      "result_sha256": "4bc16b81a5e8092c9f8ba1b45564e318788532dccdfb92809a0f7135f0335c0a"
+    },
+    "heldout": {
+      "cases": 4,
+      "generated_proposals": 32,
+      "rejections": {
+        "size": 0,
+        "native": 0,
+        "stability": 0,
+        "level": 0,
+        "spectrum": 0,
+        "quality": 26,
+        "fullband": 6,
+        "old_noise": 0,
+        "complete": 0
+      },
+      "result_sha256": "afc09b81913aed3b9c40ff4b9d7b2aa0d32d227aba9dfe17234a9fcf2cf279d5"
+    }
+  }
+}

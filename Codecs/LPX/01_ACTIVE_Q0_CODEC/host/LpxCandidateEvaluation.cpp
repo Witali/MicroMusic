@@ -3,14 +3,15 @@
 #include <algorithm>
 
 namespace lpx {
-CandidateEvaluation::CandidateEvaluation(const Pcm& source,int sampleRate,bool isSpeech)
-    : reference(source),rate(sampleRate),speech(isSpeech),quality(source,isSpeech,sampleRate),spectrum(source,sampleRate) {}
-bool CandidateEvaluation::matches(const Pcm& source,int sampleRate,bool isSpeech) const {
-    return &reference==&source && rate==sampleRate && speech==isSpeech;
+CandidateEvaluation::CandidateEvaluation(const Pcm& source,int sampleRate,bool isSpeech,QualityTarget target)
+    : reference(source),rate(sampleRate),speech(isSpeech),quality(source,isSpeech,sampleRate,target),spectrum(source,sampleRate,target) {}
+bool CandidateEvaluation::matches(const Pcm& source,int sampleRate,bool isSpeech,QualityTarget target) const {
+    return &reference==&source && rate==sampleRate && speech==isSpeech && quality.target==target && validQualityTarget(target);
 }
 bool CandidateEvaluation::measure(const Stream& stream,const std::vector<uint8_t>& packed,
     Measurement& measured,FullBandMeasurement& spectral,Pcm* supplied) {
-    if(stream.samples!=int(reference.size()) || stream.rate!=rate || packed.empty())return false;
+    if(stream.samples!=int(reference.size()) || stream.rate!=rate || packed.empty()
+        || stream.qualityTarget!=quality.target || !validQualityTarget(quality.target))return false;
     // Equal packets alone are insufficient for continuation: rendering also
     // depends on the preceding LPC spectrum and the complete synthesis state.
     const Spectrum previous=stream.continuation?stream.previousSpectrum:Spectrum{};

@@ -45,6 +45,13 @@ the P6 alphabet; packets are not literal truncatable bit-prefix layers.
 See [allocation and quality rules](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/ACCURACY.md).
 Explicit legacy APIs retain strict3/8 kbit/s modes and their byte contracts.
 
+**Оценка качества** selects `PCM + ШИМ AVR` (the existing default) or
+`Только PCM · компьютер / I2S / ЦАП`. PCM mode chooses and admits parameters
+using decoded PCM, without the modeled AVR PWM constraints. The choice applies
+to both ordinary/SIMD backends and full/streamed processing. LPX syntax and
+playback are independent of the encoding target; no target marker is added to
+the file. See [quality target APIs and validation](../../Codecs/LPX/01_ACTIVE_Q0_CODEC/host/QUALITY_TARGET.md).
+
 The entire recording is encoded with continuous pitch history,
 LPC interpolation and output-filter state. Standard 13-byte V9 is retained for
 up to 64000 samples; longer recordings get one 17-byte V9 Long header and one

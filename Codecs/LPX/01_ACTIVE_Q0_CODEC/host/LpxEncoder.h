@@ -22,6 +22,19 @@ const char* enc_backend_error(void);
 // Complete-file 3/8 kbit/s presets, currently calibrated for 8000 Hz.
 // Read bytes with enc_adaptive_output(); -6 means bounded search found no fit.
 int enc_bitrate(int samples, int kbps, int sampleRate, int autoQuiet, int calls);
+// Explicit quality policy: PCM computer/I2S/DAC=0, AVR PWM=1. Existing APIs use PWM.
+// Invalid qualityTarget values return -1; policy is captured by each encode/session.
+enum LpxQualityTarget { LPX_QUALITY_PCM=0, LPX_QUALITY_PWM=1 };
+int enc_accuracy_target(int samples,int level,int rate,int calls,int normalize,int target,int maximum,int qualityTarget);
+int enc_adaptive_target(int samples,int profile,int rate,int autoQuiet,int maxBytes,int calls,int qualityTarget);
+int enc_adaptive_extended_target(int samples,int profile,int rate,int autoQuiet,int maxBytes,int calls,int allowancePercent,int qualityTarget);
+int enc_adaptive_loudness_target(int samples,int profile,int rate,int maxBytes,int calls,int allowancePercent,int expanded,int qualityTarget);
+int enc_adaptive_level_target(int samples,int profile,int rate,int maxBytes,int calls,int allowancePercent,int expanded,int targetLufs,int maxGainDb,int qualityTarget);
+int enc_bitrate_target(int samples,int kbps,int rate,int autoQuiet,int calls,int qualityTarget);
+int enc_bitrate_loudness_target(int samples,int kbps,int rate,int calls,int qualityTarget);
+int enc_bitrate_level_target(int samples,int kbps,int rate,int calls,int targetLufs,int maxGainDb,int qualityTarget);
+int enc_stream_create_target(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum,int qualityTarget);
+int enc_stream_create_accuracy_target(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum,int qualityTarget);
 #ifdef __cplusplus
 }
 #endif

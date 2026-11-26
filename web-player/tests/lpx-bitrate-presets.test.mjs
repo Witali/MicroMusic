@@ -110,6 +110,8 @@ test('converter uses accuracy levels at every rate without a complete-file bitra
   }
   element('source-file').files = [{ name: 'synthetic.ogg', size: 10, arrayBuffer: async () => new ArrayBuffer(0) }];
   element('encode-level').checked = true;
+  assert.equal(element('encode-quality-target').value,'pwm');
+  element('encode-quality-target').value='pcm';
   element('source-file').onchange();
   await element('convert').onclick();
   assert.deepEqual(rates, [16000]);
@@ -118,6 +120,8 @@ test('converter uses accuracy levels at every rate without a complete-file bitra
   assert.equal(workers[0].message.accuracy,true);
   assert.equal(workers[0].message.sizeAllowancePercent, 0);
   assert.equal(workers[0].message.normalization, 'loudness');
+  assert.equal(workers[0].message.qualityTarget,'pcm');
+  assert.equal(element('encode-quality-target').disabled,true);
   assert.equal(workers[0].message.targetLufs, -18);
   assert.equal(workers[0].message.maxGainDb, 12);
   assert.equal(element('encode-level').disabled, true);
@@ -125,6 +129,7 @@ test('converter uses accuracy levels at every rate without a complete-file bitra
   assert.equal(workers[0].terminated, true);
   assert.equal(element('encode-profile').disabled, false);
   assert.equal(element('encode-level').disabled, false);
+  assert.equal(element('encode-quality-target').disabled,false);
   assert.equal(element('encode-rate').disabled, false);
   assert.equal(element('encode-allowance').disabled, true);
   element('encode-profile').value = '6'; element('encode-profile').onchange();

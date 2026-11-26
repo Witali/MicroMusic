@@ -5,6 +5,7 @@ namespace lpx {
 // Native-rate diagnostic/admission view; independent of the legacy 8 kHz
 // Measurement. The exact prospective rule is documented in full-band-quality.md.
 struct FullBandMeasurement {
+    QualityTarget target = QualityTarget::Pwm;
     bool valid = false;
     int bands = 0;
     double sourcePower[8] = {};
@@ -18,7 +19,8 @@ struct FullBandMeasurement {
 };
 class FullBandContext {
 public:
-    FullBandContext(const Pcm& reference, int sampleRate);
+    FullBandContext(const Pcm& reference, int sampleRate,QualityTarget target = QualityTarget::Pwm);
+    const QualityTarget target;
     FullBandMeasurement measure(const Pcm& candidate) const;
     bool accepts(const FullBandMeasurement& next, const FullBandMeasurement& incumbent) const;
 private:

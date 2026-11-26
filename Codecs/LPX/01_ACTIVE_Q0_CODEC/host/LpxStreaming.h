@@ -14,6 +14,7 @@ class StreamingEncoder {
     uint32_t total,done=0,measured=0;
     int profile,rate,allowance,calls,header,error=0;
     EncodingPolicy policy;
+    const QualityTarget qualityTarget;
     bool normalize,planned=false,ended=false,candidateLive=true,accuracy=false;
     Stream controlContext,candidateContext;
     V9PacketWriter controlWriter{false},candidateWriter{false};
@@ -27,7 +28,8 @@ class StreamingEncoder {
     Pcm scaled(const Pcm& source) const;
 public:
     StreamingEncoder(uint32_t samples,int profile,int sampleRate,int allowance,
-                     int calls,bool normalize,bool accuracy=false);
+                     int calls,bool normalize,bool accuracy=false,
+                     QualityTarget target=QualityTarget::Pwm);
     int measure(const Pcm& pcm);
     int plan(int targetLufs,int maxGainDb);
     int process(const Pcm& source,const Pcm& lookahead,StreamingChunk& output);

@@ -181,15 +181,16 @@ Pcm pwm(const Pcm& input) {
     }
     return out;
 }
-Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,double bandwidth,const Stream* context,SeedEncoder* encoder,SeedFitStatus* status) {
+Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,double bandwidth,const Stream* context,SeedEncoder* encoder,SeedFitStatus* status,QualityTarget target) {
     if(status)*status=SeedFitStatus::Failure;
     auto& kernel=encoder?*encoder:defaultSeedEncoder();
     auto rejected=[&]() {
         if(status && kernel.failure==-8)*status=SeedFitStatus::Unsafe;
         return Stream{};
     };
-    if(reference.size()>kernel.reservedSamples)return Stream{};
-    Stream s=context?*context:Stream{};s.samples=reference.size();s.profile=profile;s.rate=rate;s.pre=pre;
+    if(reference.size()>kernel.reservedSamples || !validQualityTarget(target)
+        || (context && context->qualityTarget!=target))return Stream{};
+    Stream s=context?*context:Stream{};s.qualityTarget=target;s.samples=reference.size();s.profile=profile;s.rate=rate;s.pre=pre;
     // Workspace was reserved by the public entry point before any adaptive
     // allocations. Avoid moving it while callers retain views into WASM memory.
     memcpy(kernel.source,reference.data(),reference.size()*2);
@@ -240,10 +241,10 @@ Stream fitSeed(const Pcm& reference,int profile,int rate,int pre,bool zeroScale,
             // A two-pole recovery can retain a single ring yet lose another
             // legal partial. Compare every bounded model-order alternative,
             // with actual-rate magnitude and temporal errors, before choosing.
-            if(!recoveryQuality)recoveryQuality.reset(new FullBandContext(reference,rate));
+            if(!recoveryQuality)recoveryQuality.reset(new FullBandContext(reference,rate,target));
             const auto measured=recoveryQuality->measure(output);
-            const double score=measured.balancedError[0]+measured.balancedTemporalError[0]
-                +measured.balancedError[1]+measured.balancedTemporalError[1];
+            double score=measured.balancedError[0]+measured.balancedTemporalError[0];
+            if(target==QualityTarget::Pwm)score=score+measured.balancedError[1]+measured.balancedTemporalError[1];
             if((spectrumSafe&&!bestSpectrumSafe)||(spectrumSafe==bestSpectrumSafe&&score<bestRecoveryScore)) {
                 bestRecovery=s;bestRecoveryScore=score;bestSpectrumSafe=spectrumSafe;
             }

@@ -14,7 +14,7 @@ bool completeGate(const Measurement& next, const Measurement& baseline) {
         && noRegression(next.quality, baseline.quality)
         && next.clipped <= baseline.clipped
         && next.diagnostic[0].within >= baseline.diagnostic[0].within
-        && next.diagnostic[1].within >= baseline.diagnostic[1].within;
+        && (next.quality.target==QualityTarget::Pcm || next.diagnostic[1].within >= baseline.diagnostic[1].within);
 }
 
 std::vector<int> anchors(const Pcm& reference, const Pcm& pcm) {
@@ -85,7 +85,8 @@ RefinementResult refinePulseLookahead(const Stream& input,
     const QualityContext& context, int cap, bool finalV9Budget) {
     RefinementResult result;
     result.selected = result.raw = input;
-    if ((input.profile != 4 && input.profile != 6) || input.samples < 1
+    if (input.qualityTarget!=context.target || !validQualityTarget(context.target)
+        || (input.profile != 4 && input.profile != 6) || input.samples < 1
         || size_t(input.samples) != context.reference.size()) return result;
     const auto cost = [&](const Stream& stream) {
         return finalV9Budget ? int(packV9(stream).size()) : compactBytes(stream);

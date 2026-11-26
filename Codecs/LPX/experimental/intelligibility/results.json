@@ -1,0 +1,385 @@
+{
+  "schema": "lpx-intelligibility-development-diagnostic-v1",
+  "ordinal": 3,
+  "source_original_and_8k_confirmed_intelligible_by_user": true,
+  "current_and_previous_selected_reported_unintelligible": true,
+  "former_development_example_only": true,
+  "no_fresh_heldout_claim": true,
+  "new_candidate_audible_status": "not_yet_rated",
+  "new_candidate_default_policy": "no temporal deadzone; original even-rank grid retained",
+  "cases": [
+    {
+      "mode": "3",
+      "samples": 160000,
+      "bytes": 7225,
+      "pre": 13926,
+      "brightness": 0,
+      "profile": 4,
+      "spectral_updates": 119,
+      "active_extras": 0,
+      "seconds": 1.636046893,
+      "pcm_sse": 54554144671,
+      "pwm_sse": 55648641271,
+      "stoi": [
+        0.7350728863160764,
+        0.7250009450582067
+      ],
+      "voice": [
+        0.2829273875358858,
+        0.34859683022187327
+      ],
+      "noise": [
+        0.13556530052984658,
+        0.17311772710462436
+      ],
+      "balanced_error": [
+        0.688246656123144,
+        0.724773981391161
+      ],
+      "balanced_temporal": [
+        0.88002951204773,
+        0.9096877422823145
+      ],
+      "native_exact": true,
+      "clipped": 0,
+      "policy": "legacy"
+    },
+    {
+      "mode": "4",
+      "samples": 160000,
+      "bytes": 10016,
+      "pre": 13926,
+      "brightness": 0,
+      "profile": 4,
+      "spectral_updates": 498,
+      "active_extras": 1114,
+      "seconds": 1.450980611,
+      "pcm_sse": 40270681115,
+      "pwm_sse": 41641645303,
+      "stoi": [
+        0.8203582311941005,
+        0.7939212487814178
+      ],
+      "voice": [
+        0.16164393643605293,
+        0.2472776355853669
+      ],
+      "noise": [
+        0.08306113589723657,
+        0.12975237677258644
+      ],
+      "balanced_error": [
+        0.3006534363966735,
+        0.3209685021478133
+      ],
+      "balanced_temporal": [
+        0.4789114324501281,
+        0.5050680051671763
+      ],
+      "native_exact": true,
+      "clipped": 0,
+      "policy": "legacy"
+    },
+    {
+      "mode": "6",
+      "samples": 160000,
+      "bytes": 12212,
+      "pre": 13926,
+      "brightness": 0,
+      "profile": 6,
+      "spectral_updates": 500,
+      "active_extras": 0,
+      "seconds": 3.07834134,
+      "pcm_sse": 26993923795,
+      "pwm_sse": 27810013943,
+      "stoi": [
+        0.8423544179413082,
+        0.8142074832328802
+      ],
+      "voice": [
+        0.11660791133863153,
+        0.20019790931124037
+      ],
+      "noise": [
+        0.06256603734623711,
+        0.11071384272081927
+      ],
+      "balanced_error": [
+        0.27786693102807275,
+        0.29201978936991335
+      ],
+      "balanced_temporal": [
+        0.4094701829653481,
+        0.43186031844422135
+      ],
+      "native_exact": true,
+      "clipped": 0,
+      "policy": "legacy"
+    },
+    {
+      "mode": "8",
+      "samples": 160000,
+      "bytes": 12212,
+      "pre": 13926,
+      "brightness": 0,
+      "profile": 6,
+      "spectral_updates": 500,
+      "active_extras": 0,
+      "seconds": 3.094742681,
+      "pcm_sse": 26993923795,
+      "pwm_sse": 27810013943,
+      "stoi": [
+        0.8423544179413082,
+        0.8142074832328802
+      ],
+      "voice": [
+        0.11660791133863153,
+        0.20019790931124037
+      ],
+      "noise": [
+        0.06256603734623711,
+        0.11071384272081927
+      ],
+      "balanced_error": [
+        0.27786693102807275,
+        0.29201978936991335
+      ],
+      "balanced_temporal": [
+        0.4094701829653481,
+        0.43186031844422135
+      ],
+      "native_exact": true,
+      "clipped": 0,
+      "policy": "legacy"
+    },
+    {
+      "mode": "4-nopre",
+      "samples": 160000,
+      "bytes": 8121,
+      "pre": 0,
+      "brightness": 0,
+      "profile": 4,
+      "spectral_updates": 497,
+      "active_extras": 0,
+      "seconds": 0.329485059,
+      "pcm_sse": 39262794447,
+      "pwm_sse": 40130577655,
+      "stoi": [
+        0.8090272935188859,
+        0.7872283027753141
+      ],
+      "voice": [
+        0.16424756633698503,
+        0.24669114581182608
+      ],
+      "noise": [
+        0.0874003386925776,
+        0.1330245213674921
+      ],
+      "balanced_error": [
+        0.31718585291531226,
+        0.3395380114168061
+      ],
+      "balanced_temporal": [
+        0.49250410741854134,
+        0.520758827885552
+      ],
+      "native_exact": true,
+      "clipped": 0,
+      "policy": "legacy"
+    },
+    {
+      "mode": "3",
+      "samples": 160000,
+      "bytes": 8207,
+      "pre": 13926,
+      "brightness": 0,
+      "profile": 4,
+      "spectral_updates": 489,
+      "active_extras": 0,
+      "seconds": 0.316208877,
+      "pcm_sse": 44564938439,
+      "pwm_sse": 45397341943,
+      "stoi": [
+        0.7874646010512817,
+        0.7707414840837091
+      ],
+      "voice": [
+        0.20244549369350812,
+        0.28330068477294684
+      ],
+      "noise": [
+        0.10427425269083956,
+        0.14973165603923844
+      ],
+      "balanced_error": [
+        0.41504695703585137,
+        0.4433864467962673
+      ],
+      "balanced_temporal": [
+        0.6334025083765588,
+        0.6595789933202971
+      ],
+      "native_exact": true,
+      "clipped": 0,
+      "policy": "immediate"
+    },
+    {
+      "mode": "3-full",
+      "samples": 160000,
+      "bytes": 8207,
+      "pre": 13926,
+      "brightness": 0,
+      "profile": 4,
+      "spectral_updates": 489,
+      "active_extras": 0,
+      "seconds": 55.276375791,
+      "pcm_sse": 44564938439,
+      "pwm_sse": 45397341943,
+      "stoi": [
+        0.7874646010512817,
+        0.7707414840837091
+      ],
+      "voice": [
+        0.20244549369350812,
+        0.28330068477294684
+      ],
+      "noise": [
+        0.10427425269083956,
+        0.14973165603923844
+      ],
+      "balanced_error": [
+        0.41504695703585137,
+        0.4433864467962673
+      ],
+      "balanced_temporal": [
+        0.6334025083765588,
+        0.6595789933202971
+      ],
+      "native_exact": true,
+      "clipped": 0,
+      "policy": "immediate"
+    }
+  ],
+  "old_full": {
+    "bytes": 7236,
+    "quality": {
+      "clipped": 0,
+      "fullband_error": [
+        0.57810869401097,
+        0.60812759210903
+      ],
+      "fullband_temporal_error": [
+        0.77024419363908,
+        0.79616470671136
+      ],
+      "level_safe": true,
+      "noise": [
+        0.13467085342713,
+        0.17173741035812
+      ],
+      "pcm_sse": 50625173643,
+      "period": [
+        0.13764615345738,
+        0.14436694152668
+      ],
+      "pitch_collapsed": [
+        0,
+        17
+      ],
+      "pitch_within": [
+        144,
+        136
+      ],
+      "pwm_sse": 51522441463,
+      "shape": [
+        8.0759888892007,
+        10.239521605082
+      ],
+      "spectrum_safe": true,
+      "stable": true,
+      "stoi": [
+        0.73574435551208,
+        0.72504372756476
+      ],
+      "voice": [
+        0.27987455295434,
+        0.34422047437389
+      ]
+    }
+  },
+  "previous_selected": {
+    "bytes": 7195,
+    "quality": {
+      "clipped": 0,
+      "fullband_error": [
+        0.35191222350516,
+        0.36842705433292
+      ],
+      "fullband_temporal_error": [
+        0.52664882195,
+        0.54806832135439
+      ],
+      "level_safe": true,
+      "noise": [
+        0.10807409135836,
+        0.14157569211571
+      ],
+      "pcm_sse": 36657203515,
+      "period": [
+        0.10684941453939,
+        0.11387363958489
+      ],
+      "pitch_collapsed": [
+        0,
+        15
+      ],
+      "pitch_within": [
+        183,
+        173
+      ],
+      "pwm_sse": 37512913655,
+      "shape": [
+        6.4044691379509,
+        8.9301632809076
+      ],
+      "spectrum_safe": true,
+      "stable": true,
+      "stoi": [
+        0.7764841859658,
+        0.75799477375526
+      ],
+      "voice": [
+        0.21815596942558,
+        0.27621756524631
+      ]
+    }
+  },
+  "native_full_candidate_exact": true,
+  "legacy_control_pcm_and_lpx_byte_identical": true,
+  "temporal_tests": {
+    "configurations": [
+      0,
+      2
+    ],
+    "ordered_vectors_per_configuration": 10000,
+    "passed": true
+  },
+  "scope": "One listener-reported development failure, mechanistic ablations and a candidate fix. The candidate grows bytes and does not improve every metric against the earlier fine-grid proposal. No audible, broad corpus or AVR timing claim.",
+  "software": {
+    "sources": {
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectrumQuantizer.h": "2f71a1000989a4a8e1751d48821a9ed1c99a6954806c1e9eb64766cd222d19e8",
+      "Codecs/LPX/experimental/intelligibility/controls.cpp": "1e00e6af2c32a06e4c07ff75e7d4e0fb338f99519bb6fc46f2f277e7263a036a",
+      "web-player/scripts/lib/lpx-build.mjs": "1d6b28490f58ededfc2cd0dabf3e46897fca0b93127420584d0fa6f580ef7683"
+    },
+    "compiler": "g++ (Ubuntu 13.3.0) 13.3.0",
+    "flags": [
+      "-O3",
+      "-std=c++11",
+      "-ffp-contract=off"
+    ],
+    "arithmetic": "portable scalar C/C++",
+    "temporal_deadzone": 0,
+    "legacy_comparison_deadzone": 2
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "lpx-p3-existing-encoder-ensemble-retained-validation-v1",
+  "method": "Rechecked all retained source/build/binary/media/model hashes and every protected artifact against its SAME stored original P3 baseline. The raw ensemble is the existing routine return before the stricter experimental wrapper, not all internal trials. No encoding or metric search was repeated in this validation.",
+  "artifact_hash_checks": 90,
+  "original_matrix_sha256": "c9c4d75bdebcb6ca80e376fc053e1a456389bc667f5f67505eb3bd2f796bdcf1",
+  "prior_neighbor_matrix_sha256": "2bb57d254ca4d1a8b7e6ca9b8b0a06d08e467c12b01116ff8e95dfd602b4933d",
+  "adapter_sha256": "93ad5a02dacdb91f643dde70b26270df3d73d405d3bc88a9dfa86424ce426a81",
+  "runner_sha256": "ec2885aea28cbaf657d14d8b968487ece45336ca8a8b4df71d63f68ef568eb43",
+  "protocol_sha256": "13d945e4528bcea27b63b7726b7027d67b48a592bc358bb4f854226eafe466e9",
+  "binary_sha256": "9c1b225cd5e02f748d613972291b1de9ab28b5dddadf6b682af9992055a2e55b",
+  "production_source_sha256": "cba09bfaab7092612befeab2e2f5af9304787ad7131efa88740bcb58abb1f8a7",
+  "independent_test_receipt_sha256": "bf0127431712515000342c3ce2f892644f10616520a349b6676c67880fcfffec",
+  "same_binary_all_phases": true,
+  "all_protected_outputs_equal_original": true,
+  "phases": [
+    {
+      "phase": "pilot",
+      "cases": 2,
+      "result_sha256": "8e7a5b6f27e3081b39359300ace91c46e0100d30f8fa304d00142989e223bf74"
+    },
+    {
+      "phase": "matrix",
+      "cases": 8,
+      "result_sha256": "349ca6c74828d7e23b5eb3036dfc5e109f76523b6757b07d3fcf4abceea67a24"
+    }
+  ]
+}

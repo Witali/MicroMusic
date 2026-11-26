@@ -15,9 +15,10 @@ constexpr int fftSamples=512, hopSamples=256, scoreFrames=3;
 struct RegionView {
     const Pcm& original;
     int rate,begin,end;
+    QualityTarget target;
     double window[fftSamples],source[scoreFrames][257],denominator[8];
     RegionView(const Pcm& reference,const Pcm& pcm,int sampleRate,int start,const FullBandMeasurement& full):
-        original(pcm),rate(sampleRate),begin(start),end(std::min(int(reference.size()),start+horizon)) {
+        original(pcm),rate(sampleRate),begin(start),end(std::min(int(reference.size()),start+horizon)),target(full.target) {
         double total=0;for(int b=0;b<rate/2000;++b)total+=full.sourcePower[b];
         for(int b=0;b<rate/2000;++b)denominator[b]=total>0?std::max(full.sourcePower[b],total*1e-4):1.;
         for(int i=0;i<fftSamples;++i)window[i]=.5-.5*std::cos(2*3.14159265358979323846*i/511);
@@ -30,7 +31,7 @@ struct RegionView {
     }
     double score(const Pcm& patch,int patchStart) const {
         double loss=0;
-        for(int path=0;path<2;++path) {
+        for(int path=0;path<qualityPathCount(target);++path) {
             double previous[257]={};
             for(int f=0;f<scoreFrames;++f) {
                 double input[fftSamples],power[257];int at=begin-hopSamples+f*hopSamples;
@@ -68,7 +69,7 @@ struct Patch { int start;std::vector<Pulse> pulses;double benefit; };
 }
 SpectralPulseProposals proposeSpectralPulses(const Stream& input,const Pcm& reference) {
     SpectralPulseProposals result;
-    if(input.samples<1 || size_t(input.samples)!=reference.size()
+    if(!validQualityTarget(input.qualityTarget) || input.samples<1 || size_t(input.samples)!=reference.size()
         || (input.profile!=4&&input.profile!=6)
         || (input.rate!=8000&&input.rate!=12000&&input.rate!=16000))return result;
     const int frames=(input.samples+319)/320;
@@ -76,7 +77,7 @@ SpectralPulseProposals proposeSpectralPulses(const Stream& input,const Pcm& refe
         || input.pulses.size()!=size_t(frames*16)||input.extras.size()!=size_t(frames*8))return result;
     const auto bytes=packV9(input).size();const int compact=compactBytes(input);
     const auto co=coefficientTrace(input);const auto originalPcm=render(input);
-    FullBandContext context(reference,input.rate);const auto source=context.measure(originalPcm);
+    FullBandContext context(reference,input.rate,input.qualityTarget);const auto source=context.measure(originalPcm);
     std::vector<std::pair<double,int>> order;
     for(int at=0;at<input.samples;at+=hopSamples) {
         RegionView view(reference,originalPcm,input.rate,at,source);

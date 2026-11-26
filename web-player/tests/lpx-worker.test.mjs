@@ -84,3 +84,22 @@ test('shipped worker loads adaptive assets, forwards allowances and returns one 
     } finally { await worker.terminate(); }
   }
 });
+
+
+test('worker forwards PCM quality selection and reports invalid targets', async () => {
+  const worker=new Worker(workerSource,{eval:true,workerData:new URL('../lpx/encode-worker.js',import.meta.url).href});
+  try {
+    const pcm=Int16Array.from({length:641},(_,i)=>Math.round(2500*Math.sin(i*.143)));
+    const settings={accuracy:true,calls:0,qualityTarget:'pcm',normalization:'loudness',targetLufs:-24,maxGainDb:9};
+    const expected=reference(pcm,16000,6,()=>{},settings);
+    const result=await new Promise((resolve,reject)=>{
+      worker.once('error',reject);
+      const receive=data=>{if(data.error){worker.off('message',receive);reject(Error(data.error));}if(data.result){worker.off('message',receive);resolve(data.result);}};
+      worker.on('message',receive);
+      worker.postMessage({pcm:pcm.buffer,sampleRate:16000,profile:6,backend:'scalar',...settings});
+    });
+    assert.deepEqual(result.bytes,expected);
+    const error=await new Promise(resolve=>{worker.once('message',resolve);worker.postMessage({qualityTarget:'wrong'});});
+    assert.match(error.error,/PCM/);
+  } finally {await worker.terminate();}
+});

@@ -18,6 +18,7 @@ static Pcm filtered(const std::vector<int>& signal,int pre,int bright) {
 }
 RefinementResult refineHeader(const Stream& input,const QualityContext& context) {
     RefinementResult result;result.selected=result.raw=input;
+    if(input.qualityTarget!=context.target || !validQualityTarget(context.target))return result;
     if(input.continuation)return result; // One fixed header for the whole file.
     auto co=coefficientTrace(input);auto state=input.initial;std::vector<int> signal;
     auto pcm=advance(input,co,0,input.samples,state,&signal);auto before=context.quality(pcm),after=before;
@@ -28,7 +29,10 @@ RefinementResult refineHeader(const Stream& input,const QualityContext& context)
     auto score=[&](Pair p)->int {
         int index=find(p);if(index>=0)return index;
         if(cache.size()>=256 || p.first<0 || p.first>16384 || p.second<0 || p.second>11469)return -1;
-        auto out=filtered(signal,p.first,p.second);cache.push_back({p,{sse(context.reference,out),sse(context.reference,pwm(out))}});return cache.size()-1;
+        auto out=filtered(signal,p.first,p.second);
+        // The inactive component is constant, so PCM ties never consult PWM.
+        const uint64_t pwmError=context.target==QualityTarget::Pwm?sse(context.reference,pwm(out)):0;
+        cache.push_back({p,{sse(context.reference,out),pwmError}});return cache.size()-1;
     };
     Pair initial(input.pre,input.bright),current=initial;score(initial);
     const int directions[8][2]={{-1,0},{1,0},{0,-1},{0,1},{-1,-1},{-1,1},{1,-1},{1,1}};
@@ -64,6 +68,7 @@ static uint64_t trialLoss(const Stream& s,const std::vector<Coefficients>& co,
 }
 RefinementResult enhanceExtras(const Stream& input,const QualityContext& context,int cap) {
     RefinementResult result;result.selected=result.raw=input;
+    if(input.qualityTarget!=context.target || !validQualityTarget(context.target))return result;
     Stream working=input;for(auto& pulse:working.extras)pulse=Pulse{{-1,0}};
     auto co=coefficientTrace(input); // Frozen for this operator.
     auto initial=context.quality(render(working)),current=initial;
@@ -185,6 +190,7 @@ static std::vector<int> frameOrder(const Pcm& reference,const Pcm& pcm) {
 }
 RefinementResult refineLpc(const Stream& input,const QualityContext& context,int cap) {
     RefinementResult result;result.selected=result.raw=input;
+    if(input.qualityTarget!=context.target || !validQualityTarget(context.target))return result;
     Stream working=input;auto co=coefficientTrace(working);auto pcm=render(working);
     auto before=context.quality(pcm),after=before;uint64_t rawLoss=before.error[0];
     for(int pass=0;pass<2 && before.error[0];++pass) {
@@ -223,10 +229,11 @@ static bool completeGate(const Measurement& next,const Measurement& baseline) {
     return next.score<=baseline.score+1e-12 && noRegression(next.quality,baseline.quality)
         && next.clipped<=baseline.clipped
         && next.diagnostic[0].within>=baseline.diagnostic[0].within
-        && next.diagnostic[1].within>=baseline.diagnostic[1].within;
+        && (next.quality.target==QualityTarget::Pcm || next.diagnostic[1].within>=baseline.diagnostic[1].within);
 }
 RefinementResult refinePitchGain(const Stream& input,const QualityContext& context,int cap) {
     RefinementResult result;result.selected=result.raw=input;
+    if(input.qualityTarget!=context.target || !validQualityTarget(context.target))return result;
     auto co=coefficientTrace(input);auto pcm=render(input);auto baseline=context.measure(pcm);
     if(!baseline.quality.error[0] || compactBytes(input)>cap)return result;
     // LPC-whiten the actual reference, using the stream's frozen coefficient

@@ -1,7 +1,9 @@
-import { createIncrementalDecoder, streamingSampleLimit } from './codec.js?v=20261124-stream-quality';
-import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261124-stream-quality';
+import { qualityTargetCode, callQualityEncoder } from './quality-target.js?v=20261126-p3-intelligibility';
+import { createIncrementalDecoder, streamingSampleLimit } from './codec.js?v=20261126-p3-intelligibility';
+import { encodingPolicy, bitrateBudget } from './encoding-policy.js?v=20261126-p3-intelligibility';
 
 export function createStreamSession(api, settings) {
+  const qualityTarget=qualityTargetCode(settings.qualityTarget);
   const {samples,profile,sampleRate,sizeAllowancePercent=0,normalization='preserve',targetLufs=-18,maxGainDb=12,calls=4}=settings;
   if(!api.enc_stream_create)throw Error('Обновите страницу: потоковое кодирование недоступно.');
   if(!Number.isInteger(samples)||samples<1||samples>streamingSampleLimit(settings.accuracy,calls)||![3,4,6,8].includes(profile)||![8000,12000,16000].includes(sampleRate)
@@ -13,9 +15,8 @@ export function createStreamSession(api, settings) {
   if(settings.accuracy&&sizeAllowancePercent!==0)throw Error('Уровни точности не используют допуск размера.');
   if(policy.targetBitrate&&(sampleRate!==8000||sizeAllowancePercent!==0))throw Error('Профили 3/8 используют 8 кГц без допуска размера.');
   const checked=(value,stage)=>{if(value<0)throw Error(`Потоковый энкодер: ${stage} (${value}).`);return value;};
-  const create=settings.accuracy?api.enc_stream_create_accuracy:api.enc_stream_create;
-  if(!create)throw Error('Обновите страницу: выбранный энкодер недоступен.');
-  checked(create(samples,profile,sampleRate,sizeAllowancePercent,calls,normalization==='loudness'?1:0,targetLufs,maxGainDb),'подготовка');
+  const create=settings.accuracy?'enc_stream_create_accuracy':'enc_stream_create';
+  checked(callQualityEncoder(api,create,[samples,profile,sampleRate,sizeAllowancePercent,calls,normalization==='loudness'?1:0,targetLufs,maxGainDb],qualityTarget),'подготовка');
   const window=api.enc_stream_window();
   const put=pcm=>{
     if(!(pcm instanceof Int16Array)||!pcm.length||pcm.length>window+48)throw Error('Некорректная порция PCM.');
@@ -27,6 +28,7 @@ export function createStreamSession(api, settings) {
       pcm:new Int16Array(api.memory.buffer,api.enc_stream_pcm(kind),count).slice()};
   });
   return {
+    qualityTarget:qualityTarget===0?'pcm':'pwm',
     window, measure(pcm){put(pcm);return checked(api.enc_stream_measure(pcm.length),'измерение громкости');},
     plan(){return checked(api.enc_stream_plan(targetLufs,maxGainDb),'план нормализации');},
     process(pcm,count){put(pcm);checked(api.enc_stream_process(count,pcm.length-count),'обработка порции');return take();},
@@ -64,7 +66,7 @@ export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},re
   }
   append(session.finish());
   const candidate=session.hasCandidate;
-  const decoder=await createIncrementalDecoder(await readBinary(new URL('./decoder.wasm?v=20261124-stream-quality',import.meta.url)));
+  const decoder=await createIncrementalDecoder(await readBinary(new URL('./decoder.wasm?v=20261126-p3-intelligibility',import.meta.url)));
   const output=[];let memoryFallback=false;
   for(const kind of candidate?[0,1]:[0]) {
     if(kind && memoryFallback)break;
@@ -94,6 +96,6 @@ export async function encodeStreaming(encode,settings,readPcm,progress=()=>{},re
   } else if(!memoryFallback)choice=session.admit();
   if(memoryFallback)choice=0; // The original, completely verified control remains admissible.
   progress('done',1);
-  return {bytes:output[choice],samples:n,long:n>64000,processing:'stream',refinementRequested:settings.calls!==0,windows,workingMemoryBytes:peakWorking,
+  return {bytes:output[choice],samples:n,qualityTarget:session.qualityTarget,long:n>64000,processing:'stream',refinementRequested:settings.calls!==0,windows,workingMemoryBytes:peakWorking,
     accuracyLevel:settings.accuracy?settings.profile:undefined,usedControl:choice===0,memoryFallback,loudness:session.loudness};
 }

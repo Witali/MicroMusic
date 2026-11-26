@@ -1,0 +1,4 @@
+from repack import *
+import build_packed7
+for name in ['first','second']:
+ p=HERE/name/'long127_12_5';d=dict(np.load(p/'model.npz'));m=json.loads((HERE.parent/'LP20_v21_rollout'/name/'decoder.json').read_text());out=HERE/name/'packed7';out.mkdir(exist_ok=True,parents=True);prefix=out/'decoder';meta=build_packed7.build(p/'model.npz',prefix,period=320,grid=m['grid'],alpha=.001);cpu=HERE.parent/'LP20_v17_gain'/'test_fast';test=json.loads(subprocess.check_output([str(cpu),str(prefix.with_suffix('.bin')),str(prefix.with_suffix('.map')),str(prefix.with_suffix('.expected')),'320','8','0','16',str(prefix.with_suffix('.threads'))],text=True));test.update(core_bytes=meta['core_bytes'],occupied_rom=meta['used'],stream_bytes=meta['stream_bytes'],packed_padding=meta['packed_padding']);(out/'test.json').write_text(json.dumps(test,indent=2));print('PACKED7',name,test,flush=True)

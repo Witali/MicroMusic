@@ -1,0 +1,683 @@
+{
+  "schema": "lbg1-paired-full-avr-summary-v1",
+  "method": "Sums of complete decode/producer foreground CPU cycles divided by sums of corresponding calls, paired on identical full files that physically linked. No timing is inferred for Flash-overflow cases. Begin/startup outside the original sample regions is not included. C slow controls are not realtime admissions.",
+  "paired": [
+    {
+      "target": "attiny88",
+      "backend": "asm",
+      "variant": "exact",
+      "paired_full_files": 4,
+      "admitted": 4,
+      "omitted_physical_fit_failures": 4,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 1426.4499644750506,
+        "experimental": 1636.2831885008472,
+        "change_percent": 14.710170651027198
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 1447.4499644750506,
+        "experimental": 1675.2836257309941,
+        "change_percent": 15.740347980772684
+      },
+      "flash_bytes_range": [
+        6624,
+        7138
+      ],
+      "program_excluding_audio_bytes_range": [
+        5025,
+        5026
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        42,
+        42
+      ],
+      "stack_margin_range": [
+        49,
+        49
+      ],
+      "output_gap_min_range": [
+        1990,
+        1991
+      ],
+      "output_gap_max_range": [
+        2010,
+        2010
+      ],
+      "decode_cpu_max_range": [
+        14211,
+        15437
+      ],
+      "producer_cpu_max_range": [
+        14250,
+        15476
+      ],
+      "tiny_bootloader_fits": 0
+    },
+    {
+      "target": "attiny88",
+      "backend": "asm",
+      "variant": "fine",
+      "paired_full_files": 7,
+      "admitted": 7,
+      "omitted_physical_fit_failures": 1,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 1366.6175532399673,
+        "experimental": 1552.3899808609533,
+        "change_percent": 13.59359296831495
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 1387.6175532399673,
+        "experimental": 1591.3902644023858,
+        "change_percent": 14.685077360590238
+      },
+      "flash_bytes_range": [
+        6092,
+        7584
+      ],
+      "program_excluding_audio_bytes_range": [
+        5025,
+        5026
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        42,
+        42
+      ],
+      "stack_margin_range": [
+        49,
+        49
+      ],
+      "output_gap_min_range": [
+        1990,
+        1991
+      ],
+      "output_gap_max_range": [
+        2009,
+        2010
+      ],
+      "decode_cpu_max_range": [
+        12421,
+        14307
+      ],
+      "producer_cpu_max_range": [
+        12460,
+        14346
+      ],
+      "tiny_bootloader_fits": 0
+    },
+    {
+      "target": "attiny88",
+      "backend": "asm",
+      "variant": "compact",
+      "paired_full_files": 7,
+      "admitted": 7,
+      "omitted_physical_fit_failures": 1,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 1366.6175532399673,
+        "experimental": 1549.1153811100646,
+        "change_percent": 13.35397949758752
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 1387.6175532399673,
+        "experimental": 1588.1156646514971,
+        "change_percent": 14.449090164893352
+      },
+      "flash_bytes_range": [
+        5958,
+        7254
+      ],
+      "program_excluding_audio_bytes_range": [
+        5025,
+        5026
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        42,
+        42
+      ],
+      "stack_margin_range": [
+        49,
+        49
+      ],
+      "output_gap_min_range": [
+        1990,
+        1991
+      ],
+      "output_gap_max_range": [
+        2009,
+        2010
+      ],
+      "decode_cpu_max_range": [
+        11752,
+        13432
+      ],
+      "producer_cpu_max_range": [
+        11791,
+        13471
+      ],
+      "tiny_bootloader_fits": 2
+    },
+    {
+      "target": "attiny88",
+      "backend": "c",
+      "variant": "exact",
+      "paired_full_files": 5,
+      "admitted": 0,
+      "omitted_physical_fit_failures": 3,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 5023.080134064595,
+        "experimental": 4945.881743556655,
+        "change_percent": -1.5368735605950201
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 5065.0808509875615,
+        "experimental": 4988.8821020181385,
+        "change_percent": -1.5043935370659733
+      },
+      "flash_bytes_range": [
+        6010,
+        7780
+      ],
+      "program_excluding_audio_bytes_range": [
+        4411,
+        4412
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        43,
+        43
+      ],
+      "stack_margin_range": [
+        48,
+        48
+      ],
+      "output_gap_min_range": [
+        1984,
+        1984
+      ],
+      "output_gap_max_range": [
+        2016,
+        2016
+      ],
+      "decode_cpu_max_range": [
+        21623,
+        24095
+      ],
+      "producer_cpu_max_range": [
+        21666,
+        24138
+      ],
+      "tiny_bootloader_fits": 1
+    },
+    {
+      "target": "attiny88",
+      "backend": "c",
+      "variant": "fine",
+      "paired_full_files": 8,
+      "admitted": 0,
+      "omitted_physical_fit_failures": 0,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 5095.629795605185,
+        "experimental": 4987.824542070722,
+        "change_percent": -2.1156413997626355
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 5137.6303180200475,
+        "experimental": 5030.824803278153,
+        "change_percent": -2.078886726576612
+      },
+      "flash_bytes_range": [
+        5478,
+        7956
+      ],
+      "program_excluding_audio_bytes_range": [
+        4411,
+        4412
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        43,
+        43
+      ],
+      "stack_margin_range": [
+        48,
+        48
+      ],
+      "output_gap_min_range": [
+        1984,
+        1984
+      ],
+      "output_gap_max_range": [
+        2016,
+        2016
+      ],
+      "decode_cpu_max_range": [
+        19004,
+        21713
+      ],
+      "producer_cpu_max_range": [
+        19047,
+        21756
+      ],
+      "tiny_bootloader_fits": 4
+    },
+    {
+      "target": "attiny88",
+      "backend": "c",
+      "variant": "compact",
+      "paired_full_files": 8,
+      "admitted": 0,
+      "omitted_physical_fit_failures": 0,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 5095.629795605185,
+        "experimental": 4951.486825350181,
+        "change_percent": -2.8287567197154417
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 5137.6303180200475,
+        "experimental": 4994.487086557612,
+        "change_percent": -2.786172274022247
+      },
+      "flash_bytes_range": [
+        5344,
+        7588
+      ],
+      "program_excluding_audio_bytes_range": [
+        4411,
+        4412
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        43,
+        43
+      ],
+      "stack_margin_range": [
+        48,
+        48
+      ],
+      "output_gap_min_range": [
+        1984,
+        1985
+      ],
+      "output_gap_max_range": [
+        2015,
+        2016
+      ],
+      "decode_cpu_max_range": [
+        18395,
+        20822
+      ],
+      "producer_cpu_max_range": [
+        18438,
+        20865
+      ],
+      "tiny_bootloader_fits": 4
+    },
+    {
+      "target": "atmega328p",
+      "backend": "asm",
+      "variant": "exact",
+      "paired_full_files": 8,
+      "admitted": 8,
+      "omitted_physical_fit_failures": 0,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 626.6568387370621,
+        "experimental": 765.1996277794103,
+        "change_percent": 22.10823858901174
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 648.6568387370621,
+        "experimental": 804.1998889868416,
+        "change_percent": 23.97925080889034
+      },
+      "flash_bytes_range": [
+        5872,
+        9382
+      ],
+      "program_excluding_audio_bytes_range": [
+        4273,
+        4276
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        42,
+        42
+      ],
+      "stack_margin_range": [
+        1585,
+        1585
+      ],
+      "output_gap_min_range": [
+        1991,
+        1996
+      ],
+      "output_gap_max_range": [
+        2004,
+        2010
+      ],
+      "decode_cpu_max_range": [
+        13368,
+        14790
+      ],
+      "producer_cpu_max_range": [
+        13407,
+        14829
+      ],
+      "tiny_bootloader_fits": null
+    },
+    {
+      "target": "atmega328p",
+      "backend": "asm",
+      "variant": "fine",
+      "paired_full_files": 8,
+      "admitted": 8,
+      "omitted_physical_fit_failures": 0,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 626.6568387370621,
+        "experimental": 746.4015492865772,
+        "change_percent": 19.108498167967582
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 648.6568387370621,
+        "experimental": 785.4018104940086,
+        "change_percent": 21.08125029918586
+      },
+      "flash_bytes_range": [
+        5340,
+        7818
+      ],
+      "program_excluding_audio_bytes_range": [
+        4273,
+        4274
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        42,
+        42
+      ],
+      "stack_margin_range": [
+        1585,
+        1585
+      ],
+      "output_gap_min_range": [
+        1990,
+        1995
+      ],
+      "output_gap_max_range": [
+        2005,
+        2010
+      ],
+      "decode_cpu_max_range": [
+        12061,
+        14207
+      ],
+      "producer_cpu_max_range": [
+        12100,
+        14246
+      ],
+      "tiny_bootloader_fits": null
+    },
+    {
+      "target": "atmega328p",
+      "backend": "asm",
+      "variant": "compact",
+      "paired_full_files": 8,
+      "admitted": 8,
+      "omitted_physical_fit_failures": 0,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 626.6568387370621,
+        "experimental": 742.1553531197962,
+        "change_percent": 18.43090304663475
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 648.6568387370621,
+        "experimental": 781.1556143272276,
+        "change_percent": 20.426636655545206
+      },
+      "flash_bytes_range": [
+        5206,
+        7450
+      ],
+      "program_excluding_audio_bytes_range": [
+        4273,
+        4274
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        42,
+        42
+      ],
+      "stack_margin_range": [
+        1585,
+        1585
+      ],
+      "output_gap_min_range": [
+        1990,
+        1995
+      ],
+      "output_gap_max_range": [
+        2005,
+        2010
+      ],
+      "decode_cpu_max_range": [
+        11350,
+        13421
+      ],
+      "producer_cpu_max_range": [
+        11389,
+        13460
+      ],
+      "tiny_bootloader_fits": null
+    },
+    {
+      "target": "atmega328p",
+      "backend": "c",
+      "variant": "exact",
+      "paired_full_files": 8,
+      "admitted": 8,
+      "omitted_physical_fit_failures": 0,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 1661.482376661116,
+        "experimental": 1604.2020765990792,
+        "change_percent": -3.447541837738066
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 1701.482703170405,
+        "experimental": 1638.202141900937,
+        "change_percent": -3.719142201772385
+      },
+      "flash_bytes_range": [
+        5888,
+        9398
+      ],
+      "program_excluding_audio_bytes_range": [
+        4289,
+        4292
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        36,
+        36
+      ],
+      "stack_margin_range": [
+        1591,
+        1591
+      ],
+      "output_gap_min_range": [
+        1992,
+        1993
+      ],
+      "output_gap_max_range": [
+        2006,
+        2008
+      ],
+      "decode_cpu_max_range": [
+        15016,
+        16467
+      ],
+      "producer_cpu_max_range": [
+        15050,
+        16501
+      ],
+      "tiny_bootloader_fits": null
+    },
+    {
+      "target": "atmega328p",
+      "backend": "c",
+      "variant": "fine",
+      "paired_full_files": 8,
+      "admitted": 8,
+      "omitted_physical_fit_failures": 0,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 1661.482376661116,
+        "experimental": 1585.3677719006105,
+        "change_percent": -4.581126217749231
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 1701.482703170405,
+        "experimental": 1619.3678372024683,
+        "change_percent": -4.82607703357375
+      },
+      "flash_bytes_range": [
+        5356,
+        7834
+      ],
+      "program_excluding_audio_bytes_range": [
+        4289,
+        4290
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        36,
+        36
+      ],
+      "stack_margin_range": [
+        1591,
+        1591
+      ],
+      "output_gap_min_range": [
+        1992,
+        1992
+      ],
+      "output_gap_max_range": [
+        2008,
+        2008
+      ],
+      "decode_cpu_max_range": [
+        13395,
+        15034
+      ],
+      "producer_cpu_max_range": [
+        13429,
+        15068
+      ],
+      "tiny_bootloader_fits": null
+    },
+    {
+      "target": "atmega328p",
+      "backend": "c",
+      "variant": "compact",
+      "paired_full_files": 8,
+      "admitted": 8,
+      "omitted_physical_fit_failures": 0,
+      "decode_cpu_cycles_per_sample": {
+        "baseline": 1661.482376661116,
+        "experimental": 1581.0460949489013,
+        "change_percent": -4.841235925346243
+      },
+      "producer_cpu_cycles_per_sample": {
+        "baseline": 1701.482703170405,
+        "experimental": 1615.0461602507592,
+        "change_percent": -5.0800717961215325
+      },
+      "flash_bytes_range": [
+        5222,
+        7466
+      ],
+      "program_excluding_audio_bytes_range": [
+        4289,
+        4290
+      ],
+      "static_ram_bytes_range": [
+        420,
+        420
+      ],
+      "stack_bytes_range": [
+        36,
+        36
+      ],
+      "stack_margin_range": [
+        1591,
+        1591
+      ],
+      "output_gap_min_range": [
+        1992,
+        1993
+      ],
+      "output_gap_max_range": [
+        2006,
+        2008
+      ],
+      "decode_cpu_max_range": [
+        12604,
+        14242
+      ],
+      "producer_cpu_max_range": [
+        12638,
+        14276
+      ],
+      "tiny_bootloader_fits": null
+    }
+  ],
+  "baseline": {
+    "requested": 32,
+    "measured": 32,
+    "admitted": 24,
+    "failed": 0
+  },
+  "experimental": {
+    "requested": 96,
+    "measured": 87,
+    "admitted": 66,
+    "failed": 9
+  },
+  "controls": {
+    "requested": 22,
+    "measured": 22,
+    "admitted": 19
+  }
+}

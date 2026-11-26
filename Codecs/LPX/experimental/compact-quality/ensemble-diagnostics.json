@@ -1,0 +1,850 @@
+{
+  "schema": "lpx-ensemble-posthoc-guard-diagnostics-v1",
+  "posthoc": true,
+  "method": "Measurement only of the three changed saved raw outputs. No encoder, search, normalization, gain/delay fitting, criterion change or acceptance relaxation. Exact existing FullBand and PitchGuard decisions are cross-checked against the frozen rejection bits. Only active admission paths are listed: PCM only for the PCM target; PCM and PWM for the PWM target.",
+  "definitions": {
+    "band_error": "Squared FFT-magnitude mismatch normalized by that source band power; lower is better. Band boundaries and source support use existing FullBandContext.",
+    "retention": "min(1, sqrt(output band power / source band power)); the guard rejects any supported-band decrease beyond its existing 1e-12 tolerance. This capped amplitude proxy is distinct from actual error.",
+    "source_support": "Band source power exceeds 1e-4 of total source power; whole-file source-fixed support.",
+    "octave_window": "80 ms (640 samples), 20 ms hop (160 samples), existing source-frozen period estimator. Label bit1 means near half source frequency; bit2 means near double source frequency, each within100 cents. Labels are heuristic period observations, not verified true F0 or proof of audible pitch.",
+    "window_counts": "Overlapping windows are not independent events. Report start/end sample locations instead of treating counts as disjoint duration.",
+    "interpretation": "This posthoc diagnosis explains reasons for rejection; it does not change frozen decisions or establish audible severity. Any retained raw tradeoff remains rejected."
+  },
+  "frozen_matrix_sha256": "349ca6c74828d7e23b5eb3036dfc5e109f76523b6757b07d3fcf4abceea67a24",
+  "build": {
+    "schema": "lpx-ensemble-posthoc-diagnostic-build-v1",
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "command": [
+      "g++",
+      "-O3",
+      "-std=c++11",
+      "-ffp-contract=off",
+      "-DNDEBUG",
+      "-DLPX4_ENABLE_ASM=0",
+      "-DLPX4_FLOAT_SYNTHESIS=0",
+      "-DLPX4_ENABLE_SPEECH=1",
+      "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+      "-DLPX4_COMPACT_ONLY=1",
+      "-DLPX4_COMPACT_VERSION=9",
+      "-DLPX4_SAMPLE_RATE=0",
+      "-DLPX4_EXTENDED_SAMPLE_RATES=1",
+      "-DLPX4_ENABLE_WIDE_V9=1",
+      "-include",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxHostWorkspace.h",
+      "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src",
+      "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/host",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveDsp.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAccuracy.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPacking.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStreaming.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStoi.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCandidateEvaluation.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxBitrateProfiles.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxProfileQuality.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPulseLookahead.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxFullBand.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectralPulses.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcRefine.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPitchGuard.cpp",
+      "Codecs/LPX/experimental/compact-quality/ensemble_diagnostics.cpp",
+      "-o",
+      "build/compact-quality/bin/ensemble-diagnostics"
+    ],
+    "sources": {
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAccuracy.cpp": "773e6010f1355106bcd68bf1d1e2ea255b9f857015c8eb7c7e9ed3cd6a480bba",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAccuracy.h": "34b91058adc7d681f4c6a5e92d300b1353f4d42e9e5a3e1dd5245c46d4cd6c56",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptive.h": "c91d03e3e9b65d9ea5a469bea1431313a6567b39107d9c8a54a0bd51e2f17a05",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.cpp": "6f8545c2a2d56bb68dd07abfda5dd687b88a9a24cc1dc434bad93d6579fd1852",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.h": "f6524f39873d8971b6a49f322126f20b002fbe1ca144ad4000f823fddfe2411b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveDsp.cpp": "605d1d69028702ef0dbc5f1bd5ff4d2dbf9966c0f3c926ed910bc3e7dff80d99",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxBitrateProfiles.cpp": "c86c118807d9a2ef901f777111401df901a5e59e608299cc4d4baace31ddf2a5",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxBitrateProfiles.h": "dba357892177b22fc896a0d0c3be4c7e8a1c80442b366646a0c2540b9c0b39ac",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCandidateEvaluation.cpp": "0e52d80772911d2191bff3242693164bd930b8386916b8be58e4213474b47166",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCandidateEvaluation.h": "559c6fe1a49555b2a54d14ecbf3d098325c1cd761f5b72b34150914c8f6be035",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCuda.h": "d9a6877d407354998c289fa435f6a8fb3cdc3941eeb58777120443800038c3f9",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp": "0736a65915482b697bc23c4cb487e382799fd6782a90adf5878b2d040e11a7d2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.h": "90e442c043bfad416f7b6d3bd2cbe7d287039b7ec787d8c32673435e244bd01f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderContext.h": "3a4ca7bf0d8d588ffdd121b867674620ff68f7600b1f339c35a9a8943afc4185",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderOptions.h": "2a80aebfbd4415e8e331377ed606d0f78b46b6c26d0210cf001511f41e22531e",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderSimd.h": "cc7724eb3cf1ea8a93e9859409c0d47fd09ad2a07de31a6166a0877516d0738f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncodingPolicy.h": "cd23b184f601a154b5be2c9714872db9b6b999deb6998fe300de3231ffc234c1",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxFullBand.cpp": "30cef6546530290f82235ffc3eb6aa303108dc350a9d88be475c1574b750f345",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxFullBand.h": "1d846d113b6aa5bef879cad93c192e140db8504193e26bf7868a481b51b0df42",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxHostWorkspace.h": "e9010faccd24d2f869299a3016abd2e07a67615cece1c9a6d0e0a93d87625f40",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.cpp": "fa91231a6bc2887221e489699cf14917808b075b249f21f2a441d8c668334f51",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.h": "150fdf819a1a262f1b54656efc1d0a57c789e8163a20330697cdb406cba86191",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcRefine.h": "f85e772fc407eba83d35a43a4f9eb7043514b53b97e4311edca41c90aabfe18f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcStability.h": "14db2c49d0ba65b30880dd267b6cf15b4c9547682a959c338f8c58f6c7b74fa4",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPacking.cpp": "1ff03ba23764a6118a0652b92bc316e7003f9002f6665637303db6dbc6c79036",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPacking.h": "36a7edd3fa39e57390cd61e6cc52bc51b73ac5d74bcad6be14fed91881d95fe2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPitchGuard.cpp": "f7fffed8a2f310ad424619ad9b2585bcfcb42766a22c8fa6e4fd0a943b1760c5",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPitchGuard.h": "718dead6d1f748208fc6b096fc7293ce62cf37d59b57ef63fc5fbf7eccd4bb12",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxProfileQuality.cpp": "76ead1a2fa1202bb4460f258d109823dd01a4c8070dcf4407338f463bc5835d8",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxProfileQuality.h": "0cf62f7e32cfa6424547796c5bf8861f04fddbb8f482594946f778ab663f512f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPulseLookahead.cpp": "484af1f4af350c08f88aabea7b88b7bbe4d2fec8e0982e1bc25eba659572b23e",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPulseLookahead.h": "fcb66b56ae19f02ab1f9ed43a2bbc6bd3817c20300038f8627f5826106d88db2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.cpp": "a7f306db7414112221ea508bfde9769e16c6481f91e333643f5921ff6329e7f7",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.h": "c319e8ce32c046ee784755e3e12f26b10787bf0b0e179bf2119ba96f3660257c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.cpp": "03c00a1979e3d60afea118514650b3ea3eba1a88d036d51c01ea7a469bbfccf6",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.h": "db71eb87a28aaf08cb5e02ee8846d5f0c982480bd3ae1b61e769956d85a93898",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSeed.h": "1a3c20907ca0159aecd95552d1b7978be5ca8580c4ea7069cdbd0f7d0557b30b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectralPulses.cpp": "ac0a30d3339f1274308c35ef939e69ae436b85fc5c427a78a2677bcdddbdb9b5",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectralPulses.h": "5400be23daa1e2151afc6e3e827a548d326fac260c01b442155bd64215ecd77b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectrumQuantizer.h": "9873b622507336620bc0d508c681e5ea2bc417b0b2ab75aaa9c0d675b9664c48",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStoi.cpp": "45bc02a35f7605f341ef508f38f0a85c2fd3aece0339889ce11731517fd564c8",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStreaming.cpp": "4b13616e41f8f5a3ebc02e0a5e17b290704f72d10eaccc9cd1890fb1706f6480",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStreaming.h": "68d6838d428ba4b4dd13fd46734c31943be2b5aeddcb264aa0499f64a2c24fcc",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/quality-resample-12k.inc": "29abbe05c25fb0b706c0a0710229fb98b0f0e021e7fcd0181e6b2333c69796d2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/quality-resample-16k.inc": "490a5afa8a99905d909771d0c7b01a42e59225917b34ffebc32168f8dc36045b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample-12k.inc": "67e9e365d1d557a886b986d9c26c9f345bde6f35cc3b1101dabf0d2ebf36fc23",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample-16k.inc": "081bb46823df76b4def5d23190429c1de19f051ad3fb1a06b25ab8166219a296",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample.inc": "73452977972395c88eb1879815d6c57fee4e391dad5f42a970c4000c04d8c23c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4ConvertAvr25.inc": "c10e62b7175acf75afd6ecd525bb57e155c8450a49b1c7d1ed8b01fae4643053",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Float.h": "56798a887b9035d0c3c64665651357684c5431a7375a6d94546b04b33df25b93",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "5dbaa8d5d711139a81a9bd7b61618d11472a32073ded24722e9eb2e29cd2b57c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "69faaacf5f23700809591a77e9a54259106b15e192c81f71ed0efc47b70fc10f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyAvr.h": "6ccc6e49733ec87df7f621532e96cd30a56c0b24e0160ca6bfa57459744b2dba",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "7c4b4105be4af701aa4d3c600f966c8b32aa0848cb6d56f16098487d9578a18d",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "web-player/scripts/lib/lpx-build.mjs": "1d6b28490f58ededfc2cd0dabf3e46897fca0b93127420584d0fa6f580ef7683",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcRefine.cpp": "cba09bfaab7092612befeab2e2f5af9304787ad7131efa88740bcb58abb1f8a7",
+      "Codecs/LPX/experimental/compact-quality/benchmark.cpp": "b55f54434acc58cf1acfd8d53a8c8e3587a83125b2b152f088a471bb14209a01",
+      "Codecs/LPX/experimental/compact-quality/compare.py": "22c9f57439293a30fa2aaab77503f4215ab91d422f7ad631720dd6b0eac70caf",
+      "Codecs/LPX/experimental/compact-quality/PROTOCOL.md": "54f3cf989b5501493aef272f2aef9e7fd96b12281ec7d33b68122a8b4aeb3183",
+      "Codecs/LPX/research/lbg1-2026-11-26/probe.cpp": "6a8741077ab5ff7bc4d6f590c78842bfa51ead65fdb0b2044c2820c413d1721f",
+      "Codecs/LPX/experimental/compact-quality/benchmark_ensemble.cpp": "93ad5a02dacdb91f643dde70b26270df3d73d405d3bc88a9dfa86424ce426a81",
+      "Codecs/LPX/experimental/compact-quality/compare_ensemble.py": "ec2885aea28cbaf657d14d8b968487ece45336ca8a8b4df71d63f68ef568eb43",
+      "Codecs/LPX/experimental/compact-quality/P3_ENSEMBLE_PROTOCOL.md": "13d945e4528bcea27b63b7726b7027d67b48a592bc358bb4f854226eafe466e9",
+      "Codecs/LPX/experimental/compact-quality/ensemble_diagnostics.cpp": "894e1a2315929496df53494d02b0258b6f6fe8e68029e72524360f616bca5294",
+      "Codecs/LPX/experimental/compact-quality/diagnose_ensemble.py": "1cc5fbf69459e2433aff30800c09760894d1c3f3d140222f71c7a009e6d3e9bf"
+    },
+    "binary_sha256": "c680b63501660f0e3851a9a9f18f584668a9671ffc32294a983c0a6e56a91c09",
+    "frozen_ensemble_binary_sha256": "9c1b225cd5e02f748d613972291b1de9ab28b5dddadf6b682af9992055a2e55b",
+    "environment": {
+      "system": "Linux",
+      "release": "6.6.114.1-microsoft-standard-WSL2",
+      "machine": "x86_64",
+      "python": "3.12.3",
+      "logical_cpus": 12,
+      "cpu_model": "AMD Ryzen 5 5600X 6-Core Processor"
+    }
+  },
+  "saved_artifact_hash_checks": 27,
+  "cases": [
+    {
+      "fullband": [
+        {
+          "path": "pcm",
+          "total_error_baseline": 0.3234496415386543,
+          "total_error_raw": 0.1316416991757353,
+          "total_error_regressed": false,
+          "bands": [
+            {
+              "low_hz": 0,
+              "high_hz": 1000,
+              "supported": true,
+              "source_power": 15514478.079363216,
+              "source_power_fraction": 0.7974562607188521,
+              "baseline_error": 0.20490300552641796,
+              "raw_error": 0.06488420507968484,
+              "error_delta": -0.14001880044673312,
+              "error_relative_delta_percent": -68.33418577097476,
+              "error_floor_rejected": false,
+              "baseline_retention": 0.9604908001243717,
+              "raw_retention": 0.9712137097589782,
+              "retention_delta_percentage_points": 1.0722909634606537,
+              "retention_relative_db": 0.09643189822111876,
+              "retention_floor_rejected": false,
+              "baseline_output_rms_over_source": 0.9604908001243717,
+              "raw_output_rms_over_source": 0.9712137097589782
+            },
+            {
+              "low_hz": 1000,
+              "high_hz": 2000,
+              "supported": true,
+              "source_power": 3048595.3954365845,
+              "source_power_fraction": 0.15670017850767126,
+              "baseline_error": 0.6662108083848703,
+              "raw_error": 0.31888059242217426,
+              "error_delta": -0.3473302159626961,
+              "error_relative_delta_percent": -52.13518177598272,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.8664284935951658,
+              "retention_delta_percentage_points": -13.357150640483418,
+              "retention_relative_db": -1.2453454765081255,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.0516598804753134,
+              "raw_output_rms_over_source": 0.8664284935951658
+            },
+            {
+              "low_hz": 2000,
+              "high_hz": 3000,
+              "supported": true,
+              "source_power": 707571.0544167411,
+              "source_power_fraction": 0.036369703470632606,
+              "baseline_error": 1.1801117122684586,
+              "raw_error": 0.659403167570899,
+              "error_delta": -0.5207085446975596,
+              "error_relative_delta_percent": -44.12366552117617,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.7123797623461628,
+              "retention_delta_percentage_points": -28.762023765383717,
+              "retention_relative_db": -2.9457685339296615,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.0771645929779194,
+              "raw_output_rms_over_source": 0.7123797623461628
+            },
+            {
+              "low_hz": 3000,
+              "high_hz": 4000,
+              "supported": true,
+              "source_power": 184313.49616528736,
+              "source_power_fraction": 0.009473857302844012,
+              "baseline_error": 1.3439923042335573,
+              "raw_error": 0.6278794366105581,
+              "error_delta": -0.7161128676229992,
+              "error_relative_delta_percent": -53.282512508981895,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.885824257427339,
+              "retention_delta_percentage_points": -11.417574257266105,
+              "retention_relative_db": -1.0530486232109395,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.2430046076101977,
+              "raw_output_rms_over_source": 0.885824257427339
+            }
+          ]
+        }
+      ],
+      "octaves": [
+        {
+          "path": "pcm",
+          "all_windows": 58,
+          "finite_source_period_windows": 47,
+          "baseline_octave_windows": 0,
+          "raw_octave_windows": 1,
+          "removed_octave_windows": 0,
+          "added_octave_windows": 1,
+          "additions": [
+            {
+              "start_sample": 6080,
+              "end_sample_exclusive": 6720,
+              "start_seconds": 0.76,
+              "end_seconds": 0.84,
+              "source_period_samples": 17.602580260037993,
+              "baseline_period_samples": null,
+              "raw_period_samples": 35.151778750881036,
+              "source_estimated_hz": 454.4788253664087,
+              "baseline_estimated_hz": null,
+              "raw_estimated_hz": 227.5845002523376,
+              "baseline_cents": null,
+              "raw_cents": -1197.372928523581,
+              "baseline_mask": 0,
+              "raw_mask": 1,
+              "added_mask": 1
+            }
+          ]
+        }
+      ],
+      "native_model_exact": true,
+      "fullband_rule_crosscheck": true,
+      "pitch_rule_crosscheck": true,
+      "name": "chego-p3-pcm",
+      "target": "pcm",
+      "source": "build/local-noise/sources/chego.source.pcm",
+      "source_sha256": "0a44903c1199c4818857d4d32c80e98e5efe8ca002040557612ec054630dc4a8",
+      "artifacts": {
+        "baseline": {
+          "lpx": {
+            "path": "build/compact-quality/runs/frozen-v1/matrix/chego-p3-pcm/baseline.lpx",
+            "sha256": "b0bcac0e4117a712242bf733671eaebe55da5852ec6b9b614761b1c00ebfb7d6"
+          },
+          "pcm": {
+            "path": "build/compact-quality/runs/frozen-v1/matrix/chego-p3-pcm/baseline.pcm",
+            "sha256": "5936a7ce504bf193665af65b659d37cdba1362178ee115073344a980ddab0db9"
+          },
+          "model": {
+            "path": "build/compact-quality/runs/frozen-v1/matrix/chego-p3-pcm/baseline.model",
+            "sha256": "41ba1167b4c685d0fe0a8e348b71d0883e1ed7cbe9724521ea274dc5232c1614"
+          }
+        },
+        "raw-ensemble": {
+          "lpx": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pcm/ensemble-raw.lpx",
+            "sha256": "212d9ff0940af46d5484844b138053baa38c3bff57204e1d59853ed712433d94"
+          },
+          "pcm": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pcm/ensemble-raw.pcm",
+            "sha256": "bcf7df2a55540d6d28c60bc5cb2343249fa8076ff44d42418f994a2506316334"
+          },
+          "model": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pcm/ensemble-raw.model",
+            "sha256": "4db3a3ac7a1f987393a87c1d5ddce462bdac1a8ac59aa39feec261a737aa1a9d"
+          }
+        },
+        "protected": {
+          "lpx": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pcm/ensemble-protected.lpx",
+            "sha256": "b0bcac0e4117a712242bf733671eaebe55da5852ec6b9b614761b1c00ebfb7d6"
+          },
+          "pcm": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pcm/ensemble-protected.pcm",
+            "sha256": "5936a7ce504bf193665af65b659d37cdba1362178ee115073344a980ddab0db9"
+          },
+          "model": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pcm/ensemble-protected.model",
+            "sha256": "41ba1167b4c685d0fe0a8e348b71d0883e1ed7cbe9724521ea274dc5232c1614"
+          }
+        }
+      },
+      "frozen_rejection_bits": 536,
+      "existing_selector_chose_raw": false,
+      "strict_protection_chose_raw": false
+    },
+    {
+      "fullband": [
+        {
+          "path": "pcm",
+          "total_error_baseline": 0.3234496415386543,
+          "total_error_raw": 0.1316416991757353,
+          "total_error_regressed": false,
+          "bands": [
+            {
+              "low_hz": 0,
+              "high_hz": 1000,
+              "supported": true,
+              "source_power": 15514478.079363216,
+              "source_power_fraction": 0.7974562607188521,
+              "baseline_error": 0.20490300552641796,
+              "raw_error": 0.06488420507968484,
+              "error_delta": -0.14001880044673312,
+              "error_relative_delta_percent": -68.33418577097476,
+              "error_floor_rejected": false,
+              "baseline_retention": 0.9604908001243717,
+              "raw_retention": 0.9712137097589782,
+              "retention_delta_percentage_points": 1.0722909634606537,
+              "retention_relative_db": 0.09643189822111876,
+              "retention_floor_rejected": false,
+              "baseline_output_rms_over_source": 0.9604908001243717,
+              "raw_output_rms_over_source": 0.9712137097589782
+            },
+            {
+              "low_hz": 1000,
+              "high_hz": 2000,
+              "supported": true,
+              "source_power": 3048595.3954365845,
+              "source_power_fraction": 0.15670017850767126,
+              "baseline_error": 0.6662108083848703,
+              "raw_error": 0.31888059242217426,
+              "error_delta": -0.3473302159626961,
+              "error_relative_delta_percent": -52.13518177598272,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.8664284935951658,
+              "retention_delta_percentage_points": -13.357150640483418,
+              "retention_relative_db": -1.2453454765081255,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.0516598804753134,
+              "raw_output_rms_over_source": 0.8664284935951658
+            },
+            {
+              "low_hz": 2000,
+              "high_hz": 3000,
+              "supported": true,
+              "source_power": 707571.0544167411,
+              "source_power_fraction": 0.036369703470632606,
+              "baseline_error": 1.1801117122684586,
+              "raw_error": 0.659403167570899,
+              "error_delta": -0.5207085446975596,
+              "error_relative_delta_percent": -44.12366552117617,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.7123797623461628,
+              "retention_delta_percentage_points": -28.762023765383717,
+              "retention_relative_db": -2.9457685339296615,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.0771645929779194,
+              "raw_output_rms_over_source": 0.7123797623461628
+            },
+            {
+              "low_hz": 3000,
+              "high_hz": 4000,
+              "supported": true,
+              "source_power": 184313.49616528736,
+              "source_power_fraction": 0.009473857302844012,
+              "baseline_error": 1.3439923042335573,
+              "raw_error": 0.6278794366105581,
+              "error_delta": -0.7161128676229992,
+              "error_relative_delta_percent": -53.282512508981895,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.885824257427339,
+              "retention_delta_percentage_points": -11.417574257266105,
+              "retention_relative_db": -1.0530486232109395,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.2430046076101977,
+              "raw_output_rms_over_source": 0.885824257427339
+            }
+          ]
+        },
+        {
+          "path": "pwm",
+          "total_error_baseline": 0.32748455945080074,
+          "total_error_raw": 0.13251002593321007,
+          "total_error_regressed": false,
+          "bands": [
+            {
+              "low_hz": 0,
+              "high_hz": 1000,
+              "supported": true,
+              "source_power": 15514478.079363216,
+              "source_power_fraction": 0.7974562607188521,
+              "baseline_error": 0.20692134599195408,
+              "raw_error": 0.06534004970929316,
+              "error_delta": -0.14158129628266092,
+              "error_relative_delta_percent": -68.42276015745914,
+              "error_floor_rejected": false,
+              "baseline_retention": 0.9752410426669541,
+              "raw_retention": 0.9862991338808885,
+              "retention_delta_percentage_points": 1.1058091213934418,
+              "retention_relative_db": 0.09793363253094231,
+              "retention_floor_rejected": false,
+              "baseline_output_rms_over_source": 0.9752410426669541,
+              "raw_output_rms_over_source": 0.9862991338808885
+            },
+            {
+              "low_hz": 1000,
+              "high_hz": 2000,
+              "supported": true,
+              "source_power": 3048595.3954365845,
+              "source_power_fraction": 0.15670017850767126,
+              "baseline_error": 0.675781038131454,
+              "raw_error": 0.320825530475801,
+              "error_delta": -0.354955507655653,
+              "error_relative_delta_percent": -52.52522453679833,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.8798804083502174,
+              "retention_delta_percentage_points": -12.011959164978258,
+              "retention_relative_db": -1.1115270461575,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.066420006871527,
+              "raw_output_rms_over_source": 0.8798804083502174
+            },
+            {
+              "low_hz": 2000,
+              "high_hz": 3000,
+              "supported": true,
+              "source_power": 707571.0544167411,
+              "source_power_fraction": 0.036369703470632606,
+              "baseline_error": 1.1952563140980699,
+              "raw_error": 0.6631903788382837,
+              "error_delta": -0.5320659352597862,
+              "error_relative_delta_percent": -44.51479812188054,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.7254220427621824,
+              "retention_delta_percentage_points": -27.457795723781764,
+              "retention_relative_db": -2.788185040605588,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.0922467859915936,
+              "raw_output_rms_over_source": 0.7254220427621824
+            },
+            {
+              "low_hz": 3000,
+              "high_hz": 4000,
+              "supported": true,
+              "source_power": 184313.49616528736,
+              "source_power_fraction": 0.009473857302844012,
+              "baseline_error": 1.383566288967005,
+              "raw_error": 0.6344552916949262,
+              "error_delta": -0.7491109972720789,
+              "error_relative_delta_percent": -54.143484359638336,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.9021461064767922,
+              "retention_delta_percentage_points": -9.785389352320784,
+              "retention_relative_db": -0.8944624177177012,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.2676458899520493,
+              "raw_output_rms_over_source": 0.9021461064767922
+            }
+          ]
+        }
+      ],
+      "octaves": [
+        {
+          "path": "pcm",
+          "all_windows": 58,
+          "finite_source_period_windows": 47,
+          "baseline_octave_windows": 0,
+          "raw_octave_windows": 1,
+          "removed_octave_windows": 0,
+          "added_octave_windows": 1,
+          "additions": [
+            {
+              "start_sample": 6080,
+              "end_sample_exclusive": 6720,
+              "start_seconds": 0.76,
+              "end_seconds": 0.84,
+              "source_period_samples": 17.602580260037993,
+              "baseline_period_samples": null,
+              "raw_period_samples": 35.151778750881036,
+              "source_estimated_hz": 454.4788253664087,
+              "baseline_estimated_hz": null,
+              "raw_estimated_hz": 227.5845002523376,
+              "baseline_cents": null,
+              "raw_cents": -1197.372928523581,
+              "baseline_mask": 0,
+              "raw_mask": 1,
+              "added_mask": 1
+            }
+          ]
+        },
+        {
+          "path": "pwm",
+          "all_windows": 58,
+          "finite_source_period_windows": 47,
+          "baseline_octave_windows": 0,
+          "raw_octave_windows": 1,
+          "removed_octave_windows": 0,
+          "added_octave_windows": 1,
+          "additions": [
+            {
+              "start_sample": 6080,
+              "end_sample_exclusive": 6720,
+              "start_seconds": 0.76,
+              "end_seconds": 0.84,
+              "source_period_samples": 17.602580260037993,
+              "baseline_period_samples": null,
+              "raw_period_samples": 35.153201923760335,
+              "source_estimated_hz": 454.4788253664087,
+              "baseline_estimated_hz": null,
+              "raw_estimated_hz": 227.575286522982,
+              "baseline_cents": null,
+              "raw_cents": -1197.4430187312178,
+              "baseline_mask": 0,
+              "raw_mask": 1,
+              "added_mask": 1
+            }
+          ]
+        }
+      ],
+      "native_model_exact": true,
+      "fullband_rule_crosscheck": true,
+      "pitch_rule_crosscheck": true,
+      "name": "chego-p3-pwm",
+      "target": "pwm",
+      "source": "build/local-noise/sources/chego.source.pcm",
+      "source_sha256": "0a44903c1199c4818857d4d32c80e98e5efe8ca002040557612ec054630dc4a8",
+      "artifacts": {
+        "baseline": {
+          "lpx": {
+            "path": "build/compact-quality/runs/frozen-v1/matrix/chego-p3-pwm/baseline.lpx",
+            "sha256": "b0bcac0e4117a712242bf733671eaebe55da5852ec6b9b614761b1c00ebfb7d6"
+          },
+          "pcm": {
+            "path": "build/compact-quality/runs/frozen-v1/matrix/chego-p3-pwm/baseline.pcm",
+            "sha256": "5936a7ce504bf193665af65b659d37cdba1362178ee115073344a980ddab0db9"
+          },
+          "model": {
+            "path": "build/compact-quality/runs/frozen-v1/matrix/chego-p3-pwm/baseline.model",
+            "sha256": "41ba1167b4c685d0fe0a8e348b71d0883e1ed7cbe9724521ea274dc5232c1614"
+          }
+        },
+        "raw-ensemble": {
+          "lpx": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pwm/ensemble-raw.lpx",
+            "sha256": "212d9ff0940af46d5484844b138053baa38c3bff57204e1d59853ed712433d94"
+          },
+          "pcm": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pwm/ensemble-raw.pcm",
+            "sha256": "bcf7df2a55540d6d28c60bc5cb2343249fa8076ff44d42418f994a2506316334"
+          },
+          "model": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pwm/ensemble-raw.model",
+            "sha256": "4db3a3ac7a1f987393a87c1d5ddce462bdac1a8ac59aa39feec261a737aa1a9d"
+          }
+        },
+        "protected": {
+          "lpx": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pwm/ensemble-protected.lpx",
+            "sha256": "b0bcac0e4117a712242bf733671eaebe55da5852ec6b9b614761b1c00ebfb7d6"
+          },
+          "pcm": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pwm/ensemble-protected.pcm",
+            "sha256": "5936a7ce504bf193665af65b659d37cdba1362178ee115073344a980ddab0db9"
+          },
+          "model": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/chego-p3-pwm/ensemble-protected.model",
+            "sha256": "41ba1167b4c685d0fe0a8e348b71d0883e1ed7cbe9724521ea274dc5232c1614"
+          }
+        }
+      },
+      "frozen_rejection_bits": 536,
+      "existing_selector_chose_raw": false,
+      "strict_protection_chose_raw": false
+    },
+    {
+      "fullband": [
+        {
+          "path": "pcm",
+          "total_error_baseline": 0.2619981932844623,
+          "total_error_raw": 0.14460496138719703,
+          "total_error_regressed": false,
+          "bands": [
+            {
+              "low_hz": 0,
+              "high_hz": 1000,
+              "supported": true,
+              "source_power": 12634960.725112664,
+              "source_power_fraction": 0.7073954130551233,
+              "baseline_error": 0.21684264938369785,
+              "raw_error": 0.12453558165771733,
+              "error_delta": -0.09230706772598052,
+              "error_relative_delta_percent": -42.56868655143822,
+              "error_floor_rejected": false,
+              "baseline_retention": 0.8179977958866286,
+              "raw_retention": 0.9089369594656651,
+              "retention_delta_percentage_points": 9.093916357903653,
+              "retention_relative_db": 0.9156325947421551,
+              "retention_floor_rejected": false,
+              "baseline_output_rms_over_source": 0.8179977958866286,
+              "raw_output_rms_over_source": 0.9089369594656651
+            },
+            {
+              "low_hz": 1000,
+              "high_hz": 2000,
+              "supported": true,
+              "source_power": 4968205.954883398,
+              "source_power_fraction": 0.2781556808967704,
+              "baseline_error": 0.295981688902915,
+              "raw_error": 0.1717916443456437,
+              "error_delta": -0.12419004455727128,
+              "error_relative_delta_percent": -41.95869177501953,
+              "error_floor_rejected": false,
+              "baseline_retention": 0.7518702618467522,
+              "raw_retention": 0.8629982790764404,
+              "retention_delta_percentage_points": 11.112801722968824,
+              "retention_relative_db": 1.1973404366883302,
+              "retention_floor_rejected": false,
+              "baseline_output_rms_over_source": 0.7518702618467522,
+              "raw_output_rms_over_source": 0.8629982790764404
+            },
+            {
+              "low_hz": 2000,
+              "high_hz": 3000,
+              "supported": true,
+              "source_power": 126797.50056131835,
+              "source_power_fraction": 0.007099030399489527,
+              "baseline_error": 2.1299854079194107,
+              "raw_error": 0.6414989109133192,
+              "error_delta": -1.4884864970060914,
+              "error_relative_delta_percent": -69.88247391140857,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.9446021628521655,
+              "retention_delta_percentage_points": -5.539783714783453,
+              "retention_relative_db": -0.49502128711343074,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.7821352875572276,
+              "raw_output_rms_over_source": 0.9446021628521655
+            },
+            {
+              "low_hz": 3000,
+              "high_hz": 4000,
+              "supported": true,
+              "source_power": 131277.90828281263,
+              "source_power_fraction": 0.007349875648616611,
+              "baseline_error": 1.517696205752571,
+              "raw_error": 0.5673864817032026,
+              "error_delta": -0.9503097240493683,
+              "error_relative_delta_percent": -62.615279688212965,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.7359423557426339,
+              "retention_delta_percentage_points": -26.40576442573661,
+              "retention_relative_db": -2.663124027470282,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.3948843555555064,
+              "raw_output_rms_over_source": 0.7359423557426339
+            }
+          ]
+        },
+        {
+          "path": "pwm",
+          "total_error_baseline": 0.2610424541239876,
+          "total_error_raw": 0.14395359423309026,
+          "total_error_regressed": false,
+          "bands": [
+            {
+              "low_hz": 0,
+              "high_hz": 1000,
+              "supported": true,
+              "source_power": 12634960.725112664,
+              "source_power_fraction": 0.7073954130551233,
+              "baseline_error": 0.21515239690294766,
+              "raw_error": 0.12389379950919041,
+              "error_delta": -0.09125859739375725,
+              "error_relative_delta_percent": -42.41579397087673,
+              "error_floor_rejected": false,
+              "baseline_retention": 0.8309394494303514,
+              "raw_retention": 0.9231783937051091,
+              "retention_delta_percentage_points": 9.223894427475777,
+              "retention_relative_db": 0.9143250740686493,
+              "retention_floor_rejected": false,
+              "baseline_output_rms_over_source": 0.8309394494303514,
+              "raw_output_rms_over_source": 0.9231783937051091
+            },
+            {
+              "low_hz": 1000,
+              "high_hz": 2000,
+              "supported": true,
+              "source_power": 4968205.954883398,
+              "source_power_fraction": 0.2781556808967704,
+              "baseline_error": 0.29389113133477185,
+              "raw_error": 0.17068617804481317,
+              "error_delta": -0.12320495328995867,
+              "error_relative_delta_percent": -41.92197046926731,
+              "error_floor_rejected": false,
+              "baseline_retention": 0.7639859024662154,
+              "raw_retention": 0.8765988386173935,
+              "retention_delta_percentage_points": 11.261293615117808,
+              "retention_relative_db": 1.1943109230011693,
+              "retention_floor_rejected": false,
+              "baseline_output_rms_over_source": 0.7639859024662154,
+              "raw_output_rms_over_source": 0.8765988386173935
+            },
+            {
+              "low_hz": 2000,
+              "high_hz": 3000,
+              "supported": true,
+              "source_power": 126797.50056131835,
+              "source_power_fraction": 0.007099030399489527,
+              "baseline_error": 2.201622515349718,
+              "raw_error": 0.6540257233060317,
+              "error_delta": -1.5475967920436862,
+              "error_relative_delta_percent": -70.29346680704059,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.9649419143608041,
+              "retention_delta_percentage_points": -3.505808563919588,
+              "retention_relative_db": -0.30997657316198607,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.81130311114346,
+              "raw_output_rms_over_source": 0.9649419143608041
+            },
+            {
+              "low_hz": 3000,
+              "high_hz": 4000,
+              "supported": true,
+              "source_power": 131277.90828281263,
+              "source_power_fraction": 0.007349875648616611,
+              "baseline_error": 1.5602661983229111,
+              "raw_error": 0.5702695377692198,
+              "error_delta": -0.9899966605536913,
+              "error_relative_delta_percent": -63.450497204759834,
+              "error_floor_rejected": false,
+              "baseline_retention": 1,
+              "raw_retention": 0.7537516555183009,
+              "retention_delta_percentage_points": -24.624834448169906,
+              "retention_relative_db": -2.455434419578513,
+              "retention_floor_rejected": true,
+              "baseline_output_rms_over_source": 1.4204873069156818,
+              "raw_output_rms_over_source": 0.7537516555183009
+            }
+          ]
+        }
+      ],
+      "octaves": [
+        {
+          "path": "pcm",
+          "all_windows": 145,
+          "finite_source_period_windows": 10,
+          "baseline_octave_windows": 0,
+          "raw_octave_windows": 0,
+          "removed_octave_windows": 0,
+          "added_octave_windows": 0,
+          "additions": []
+        },
+        {
+          "path": "pwm",
+          "all_windows": 145,
+          "finite_source_period_windows": 10,
+          "baseline_octave_windows": 0,
+          "raw_octave_windows": 0,
+          "removed_octave_windows": 0,
+          "added_octave_windows": 0,
+          "additions": []
+        }
+      ],
+      "native_model_exact": true,
+      "fullband_rule_crosscheck": true,
+      "pitch_rule_crosscheck": true,
+      "name": "vinni-p3-pwm",
+      "target": "pwm",
+      "source": "build/local-noise/sources/vinni.source.pcm",
+      "source_sha256": "e831f1c597bc0cb4f055e98237107b063aa3dd15646af82689ba6ab716c4c9b9",
+      "artifacts": {
+        "baseline": {
+          "lpx": {
+            "path": "build/compact-quality/runs/frozen-v1/matrix/vinni-p3-pwm/baseline.lpx",
+            "sha256": "0999e748428856b70e74c9e52658e16a54e33daafd34877a157b716f7429c5ee"
+          },
+          "pcm": {
+            "path": "build/compact-quality/runs/frozen-v1/matrix/vinni-p3-pwm/baseline.pcm",
+            "sha256": "9877502bd03dd948f1a43499df6937c01eb160ddd482b15a45a881459e96a95d"
+          },
+          "model": {
+            "path": "build/compact-quality/runs/frozen-v1/matrix/vinni-p3-pwm/baseline.model",
+            "sha256": "2726573441368e76784531fdd402b1b0d599e28711a78e2956ddd3a98ecc979c"
+          }
+        },
+        "raw-ensemble": {
+          "lpx": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/vinni-p3-pwm/ensemble-raw.lpx",
+            "sha256": "8bedfd28ccb4fbd6dbe28d4a6cc8d0cfed870106380c83821c82b622746580f9"
+          },
+          "pcm": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/vinni-p3-pwm/ensemble-raw.pcm",
+            "sha256": "4de6d18b699dec262985c00b3ee884d5dbe65d00abb0970e1f77e9b958222f1b"
+          },
+          "model": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/vinni-p3-pwm/ensemble-raw.model",
+            "sha256": "49307799409d672960801e895e53601d259cc5be27e9a3a585e7076b527d21bf"
+          }
+        },
+        "protected": {
+          "lpx": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/vinni-p3-pwm/ensemble-protected.lpx",
+            "sha256": "0999e748428856b70e74c9e52658e16a54e33daafd34877a157b716f7429c5ee"
+          },
+          "pcm": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/vinni-p3-pwm/ensemble-protected.pcm",
+            "sha256": "9877502bd03dd948f1a43499df6937c01eb160ddd482b15a45a881459e96a95d"
+          },
+          "model": {
+            "path": "build/compact-quality/runs/ensemble-v1/matrix/vinni-p3-pwm/ensemble-protected.model",
+            "sha256": "2726573441368e76784531fdd402b1b0d599e28711a78e2956ddd3a98ecc979c"
+          }
+        }
+      },
+      "frozen_rejection_bits": 8,
+      "existing_selector_chose_raw": true,
+      "strict_protection_chose_raw": false
+    }
+  ]
+}

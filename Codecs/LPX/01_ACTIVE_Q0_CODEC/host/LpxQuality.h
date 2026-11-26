@@ -9,6 +9,9 @@ struct Diagnostic {
     double shape = std::numeric_limits<double>::quiet_NaN();
 };
 struct Quality {
+    QualityTarget target = QualityTarget::Pwm;
+    // Inactive PCM-target PWM error is UINT64_MAX; other inactive metrics
+    // are NaN. Reports must use target rather than display these as scores.
     uint64_t error[2] = {};
     double stoi[2] = {std::numeric_limits<double>::quiet_NaN(),std::numeric_limits<double>::quiet_NaN()};
 };
@@ -19,15 +22,23 @@ struct Measurement {
     int clipped = 0;
 };
 bool noRegression(const Quality& next, const Quality& baseline);
+inline bool qualityIsExact(const Quality& quality) {
+    if(!validQualityTarget(quality.target))return false;
+    for(int path=0;path<qualityPathCount(quality.target);++path)if(quality.error[path])return false;
+    return true;
+}
 bool voiceGate(const Diagnostic& next, const Diagnostic& baseline);
+bool voiceGate(const Measurement& next, const Measurement& baseline);
 class QualityContext {
 public:
     // The default retains the original 8 kHz evaluator exactly. Other supported
     // rates (12/16 kHz) use antialiased double analysis, never rounded PCM.
-    explicit QualityContext(const Pcm& reference, bool speech = true, int sampleRate = 8000);
+    explicit QualityContext(const Pcm& reference, bool speech = true, int sampleRate = 8000,
+                            QualityTarget target = QualityTarget::Pwm);
     Quality quality(const Pcm& candidate) const;
     Measurement measure(const Pcm& candidate) const;
     const Pcm& reference;
+    const QualityTarget target;
 private:
     bool speech;
     int sampleRate;

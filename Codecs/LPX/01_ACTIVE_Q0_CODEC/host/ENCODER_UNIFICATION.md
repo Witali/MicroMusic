@@ -41,8 +41,8 @@ silently replace an explicitly requested backend.
 
 ## Candidate evaluation lifetime and bounds
 
-One `CandidateEvaluation` belongs to an immutable reference object, sample rate
-and speech policy. It can share actual-rate reference analysis across quality,
+One `CandidateEvaluation` belongs to an immutable reference object, sample rate,
+speech policy and [PCM/PWM quality target](QUALITY_TARGET.md). It can share actual-rate reference analysis across quality,
 joint and final-selection stages. Each stage still freezes its own incumbent;
 relative objectives are never reused as if their denominators were identical.
 Legacy controller measurements remain a separate 8 kHz contract.
@@ -50,7 +50,8 @@ Legacy controller measurements remain a separate 8 kHz contract.
 The cache retains at most eight summaries and 65536 bytes of exact packed keys.
 It never retains candidate PCM. Large keys bypass storage. Keys additionally
 include the continuation flag, preceding spectrum and complete synthesis state;
-wire equality alone cannot establish continuous-output equality. Entries are
+wire equality alone cannot establish continuous-output equality. A target
+mismatch is rejected before cache lookup. Entries are
 discarded with the session, so another source/rate cannot inherit them.
 
 A reused evaluation can avoid synthesis, metrics and repeated intermediate

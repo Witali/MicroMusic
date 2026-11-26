@@ -24,7 +24,15 @@ void setRun(Stream& stream,const Run& run,const Spectrum& spectrum) {
 // One preceding spectrum reproduces the decoder's interpolation at the run
 // boundary. The extra leading 320 samples are metadata context, never audio.
 void localCoefficients(const Stream& stream,int start,int end,std::vector<Coefficients>& output) {
-    Stream local;local.profile=stream.profile;local.samples=320+end-start;
+    // P3's dead zone depends on the complete previously transmitted sequence,
+    // not merely the preceding raw analysis frame. Resolve it before cropping.
+    if(stream.accuracy==3) {
+        auto canonical=canonicalAccuracy(stream);
+        canonical.accuracy=0; // Do not quantize the synthetic context again.
+        localCoefficients(canonical,start,end,output);
+        return;
+    }
+    Stream local;local.qualityTarget=stream.qualityTarget;local.profile=stream.profile;local.samples=320+end-start;
     local.spectra.resize((local.samples+319)/320);
     for(int i=0;i<int(local.spectra.size());++i) {
         int frame=clamp(start/320+i-1,0,int(stream.spectra.size())-1);
@@ -35,12 +43,13 @@ void localCoefficients(const Stream& stream,int start,int end,std::vector<Coeffi
 }
 double localScore(const FullBandContext& context,const Pcm& pcm) {
     const auto measured=context.measure(pcm);
+    if(context.target==QualityTarget::Pcm)return measured.balancedError[0]+measured.balancedTemporalError[0];
     return measured.balancedError[0]+measured.balancedError[1]
         +measured.balancedTemporalError[0]+measured.balancedTemporalError[1];
 }
 bool sameBytes(const Stream& a,const Stream& b) { return packV9(a)==packV9(b); }
 bool sameContinuation(const Stream& a,const Stream& b) {
-    return a.continuation==b.continuation&&a.allowExtras==b.allowExtras&&a.accuracy==b.accuracy
+    return a.qualityTarget==b.qualityTarget&&a.continuation==b.continuation&&a.allowExtras==b.allowExtras&&a.accuracy==b.accuracy
         &&a.previousSpectrum==b.previousSpectrum&&a.previousInput==b.previousInput
         &&a.previousCoefficients==b.previousCoefficients&&a.lookahead==b.lookahead
         &&a.initial.dd==b.initial.dd&&a.initial.cc==b.initial.cc
@@ -50,7 +59,7 @@ bool sameContinuation(const Stream& a,const Stream& b) {
 }
 LpcRunProposals proposeLpcRuns(const Stream& input,const Pcm& reference,int cap,bool finalV9Budget) {
     LpcRunProposals result;
-    if(input.samples<1||size_t(input.samples)!=reference.size()||(input.profile!=4&&input.profile!=6)
+    if(!validQualityTarget(input.qualityTarget)||input.samples<1||size_t(input.samples)!=reference.size()||(input.profile!=4&&input.profile!=6)
         ||(input.rate!=8000&&input.rate!=12000&&input.rate!=16000))return result;
     const int frames=(input.samples+319)/320;
     if(input.spectra.size()!=size_t(frames)||input.parameters.size()!=size_t(frames*2)
@@ -77,7 +86,7 @@ LpcRunProposals proposeLpcRuns(const Stream& input,const Pcm& reference,int cap,
         while(cursor<start) {int stop=std::min(start,cursor+4096);advance(input,baselineCo,cursor,stop,prefix);cursor=stop;}
         ++result.runs;
         Pcm source(reference.begin()+start,reference.begin()+end),initial(baselinePcm.begin()+start,baselinePcm.begin()+end);
-        FullBandContext context(source,input.rate);const double baselineLoss=localScore(context,initial);
+        FullBandContext context(source,input.rate,input.qualityTarget);const double baselineLoss=localScore(context,initial);
         if(!baselineLoss)continue;
         const auto originalSpectrum=input.spectra[run.first];Stream trial=input;std::vector<Shape> shapes;
         for(int field=0;field<10;++field)for(int delta:{-1,1}) {

@@ -4,6 +4,14 @@
 #include <stdint.h>
 
 namespace lpx {
+// Host search policy only; this never changes the wire format or playback.
+enum class QualityTarget { Pcm = 0, Pwm = 1 };
+inline bool validQualityTarget(QualityTarget target) {
+    return target == QualityTarget::Pcm || target == QualityTarget::Pwm;
+}
+inline int qualityPathCount(QualityTarget target) {
+    return target == QualityTarget::Pcm ? 1 : target == QualityTarget::Pwm ? 2 : 0;
+}
 struct SeedEncoder;
 using Spectrum = std::array<int, 10>;
 using Coefficients = std::array<int16_t, 10>;
@@ -12,6 +20,7 @@ using Pulse = std::array<int, 2>;
 using Pcm = std::vector<int16_t>;
 struct SynthesisState { int h[10] = {}, ring[256] = {}, dd = 0, cc = 0; };
 struct Stream {
+    QualityTarget qualityTarget = QualityTarget::Pwm;
     int samples = 0, rate = 8000, profile = 6, pre = 13926, bright = 0;
     int accuracy = 0; // Host-only policy; zero retains every legacy API.
     std::vector<Spectrum> spectra;
@@ -48,5 +57,5 @@ std::vector<uint8_t> packV9(const Stream& stream);
 enum class SeedFitStatus { Success, Unsafe, Failure };
 Stream fitSeed(const Pcm& reference, int profile, int rate, int pre, bool zeroScale,
                double bandwidth = .97,const Stream* context = nullptr,SeedEncoder* encoder=nullptr,
-               SeedFitStatus* status=nullptr);
+               SeedFitStatus* status=nullptr,QualityTarget target=QualityTarget::Pwm);
 }

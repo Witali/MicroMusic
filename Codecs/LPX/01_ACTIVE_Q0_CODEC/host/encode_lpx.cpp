@@ -32,6 +32,7 @@ struct Options {
     bool cuda = false, adaptive = true, autoQuiet = false, speech = true, expandedSearch = true, normalize = false;
     bool legacy = false, profileSpecified = false, accuracySpecified = false, legacyOptions = false;
     int targetLufs = -18, maxGainDb = 12, accuracy = 0;
+    lpx::QualityTarget qualityTarget = lpx::QualityTarget::Pwm;
 };
 void jsonString(FILE* out, const char* value) {
     fputc('"', out);
@@ -58,10 +59,11 @@ int run(int argc, char** argv) {
         const char* name = argv[i];
         if (!strcmp(name, "--help")) {
             puts("Usage: lpx-encode [--accuracy 3|4|6|8 | --profile 3|4|6|8] [--rate 8000|12000|16000]"
-                 " [--backend cpu|cuda] [--quality fast|adaptive] [--calls 0..4]"
+                 " [--backend cpu|cuda] [--quality fast|adaptive] [--quality-target pcm|pwm] [--calls 0..4]"
                  " [--repeat 1..20]"
                  " [--normalize] [--target-lufs -30..-9] [--max-gain-db 0..24]\n"
                  "Default: the shared Web UI accuracy engine, level 6; --profile is an alias.\n"
+                 "Quality target: pwm (default) scores PCM and AVR PWM; pcm scores decoded PCM only.\n"
                  "Legacy compatibility: --legacy --profile 4|6 [--search expanded|reference]"
                  " [--size-allowance 0..100] [--max-bytes N] [--auto-quiet] [--non-speech].\n"
                  "Input: mono PCM16 little-endian on stdin, 1..32000000 samples.\n"
@@ -81,6 +83,9 @@ int run(int argc, char** argv) {
         } else if (!strcmp(name, "--quality")) {
             if (strcmp(value, "fast") && strcmp(value, "adaptive")) return fail("Quality must be fast or adaptive");
             options.adaptive = !strcmp(value, "adaptive");
+        } else if (!strcmp(name, "--quality-target")) {
+            if (strcmp(value, "pcm") && strcmp(value, "pwm")) return fail("Quality target must be pcm or pwm");
+            options.qualityTarget = !strcmp(value, "pcm") ? lpx::QualityTarget::Pcm : lpx::QualityTarget::Pwm;
         } else if (!strcmp(name, "--search")) {
             if (strcmp(value, "expanded") && strcmp(value, "reference")) return fail("Search must be expanded or reference");
             options.expandedSearch = !strcmp(value, "expanded");
@@ -157,12 +162,13 @@ int run(int argc, char** argv) {
       if (!enc_reserve(uint32_t(pcm.size()))) return fail("Cannot reserve encoder memory", 6);
       std::vector<uint8_t> current;
       if(!options.legacy){
-        auto stream=lpx::encodeAccuracy(reference,options.accuracy,options.rate,report,options.adaptive?options.calls:0);
+        auto stream=lpx::encodeAccuracy(reference,options.accuracy,options.rate,report,options.adaptive?options.calls:0,nullptr,options.qualityTarget);
         if(report.error||!lpx::verifyStream(stream,lpx::render(stream)))return fail("Accuracy output failed native verification",7);
         current=lpx::packV9(stream);
       }else if (options.adaptive) {
         auto stream = lpx::adaptiveEncode(reference, options.profile, options.rate, report,
-            options.autoQuiet, options.maxBytes, options.calls, options.speech, options.expandedSearch, options.sizeAllowance);
+            options.autoQuiet, options.maxBytes, options.calls, options.speech, options.expandedSearch, options.sizeAllowance,
+            false,nullptr,nullptr,nullptr,options.qualityTarget);
         if (report.error || stream.samples != int(pcm.size())) return fail("Adaptive encoding or complete-size admission failed", 7);
         auto expected = lpx::render(stream);
         if (!lpx::verifyStream(stream, expected)) return fail("Adaptive output failed native decoder verification", 7);
@@ -211,7 +217,8 @@ int run(int argc, char** argv) {
         std::vector<double> warm(timings.begin() + 1, timings.end()); std::sort(warm.begin(), warm.end());
         fprintf(stderr, "%.6f", (warm[(warm.size() - 1) / 2] + warm[warm.size() / 2]) / 2);
     } else fputs("null", stderr);
-    fprintf(stderr,",\"normalized\":%s,\"inputGainDb\":%.6f,\"accuracyLevel\":%d}",options.normalize?"true":"false",report.loudness.gainDb,options.accuracy);fputc('\n',stderr);
+    fprintf(stderr,",\"normalized\":%s,\"inputGainDb\":%.6f,\"accuracyLevel\":%d,\"qualityTarget\":\"%s\"}",options.normalize?"true":"false",report.loudness.gainDb,options.accuracy,
+        options.qualityTarget==lpx::QualityTarget::Pcm?"pcm":"pwm");fputc('\n',stderr);
     return 0;
 }
 }

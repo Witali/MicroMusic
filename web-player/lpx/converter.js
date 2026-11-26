@@ -1,6 +1,6 @@
-import { MAX_SAMPLES, MAX_STREAM_SAMPLES } from './codec.js?v=20261124-stream-quality';
-import { supportsSimd } from './encoder-backend.js?v=20261124-stream-quality';
-import { removeTemporaryInput, recoverTemporaryInputs } from './audio-source.js?v=20261124-stream-quality';
+import { MAX_SAMPLES, MAX_STREAM_SAMPLES } from './codec.js?v=20261126-p3-intelligibility';
+import { supportsSimd } from './encoder-backend.js?v=20261126-p3-intelligibility';
+import { removeTemporaryInput, recoverTemporaryInputs } from './audio-source.js?v=20261126-p3-intelligibility';
 
 const $ = id => document.getElementById(id);
 if (!supportsSimd()) {
@@ -54,7 +54,7 @@ $('source-drop').addEventListener('drop', event => {
 });
 function busy(value) {
   running = value;
-  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-processing', 'encode-allowance', 'encode-level', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
+  ['source-open', 'source-file', 'encode-profile', 'encode-rate', 'encode-backend', 'encode-quality-target', 'encode-processing', 'encode-allowance', 'encode-level', 'convert'].forEach(id => { $(id).disabled = value || (id === 'convert' && !source); });
   applyProfileConstraints();
   applyLevelSettings();
   $('cancel-convert').hidden = !value;
@@ -104,6 +104,7 @@ $('convert').onclick = async () => {
   const id = ++job, rate = Number($('encode-rate').value), profile = Number($('encode-profile').value), backend = $('encode-backend').value;
   const sizeAllowancePercent = Number($('encode-allowance').value);
   const processing = $('encode-processing').value;
+  const qualityTarget = $('encode-quality-target').value;
   const normalization = $('encode-level').checked ? 'loudness' : 'preserve';
   const targetLufs = Number($('encode-target').value), maxGainDb = Number($('encode-max-gain').value);
   output = { stem: baseName(source.name), rate, profile };
@@ -143,7 +144,7 @@ $('convert').onclick = async () => {
     };
     pcm = streaming ? null : pcmRange(0, audio.length, true);
     $('source-summary').textContent = streamingAudio ? 'Читаем аудио по порциям…' : `${audio.duration.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} с · ${channels.length} кан. → моно · ${rate / 1000} кГц${clipped ? ` · насыщение ${clipped} отсч.` : ''}`;
-    worker = new Worker(new URL('./encode-worker.js?v=20261124-stream-quality', import.meta.url), { type: 'module' });
+    worker = new Worker(new URL('./encode-worker.js?v=20261126-p3-intelligibility', import.meta.url), { type: 'module' });
     worker.onerror = event => { event.preventDefault(); if (id === job) { stop(); status('Не удалось запустить энкодер. Обновите страницу и повторите.', true); } };
     worker.onmessage = ({ data }) => {
       if (id !== job) return;
@@ -174,7 +175,7 @@ $('convert').onclick = async () => {
         status(`Готово: один файл · ${(data.result.bytes.length / 1024).toLocaleString('ru-RU', { maximumFractionDigits: 2 })} КБ · ${name} · кодирование ${elapsed} с.`);
       }
     };
-    const settings = { sampleRate: rate, profile, backend, sizeAllowancePercent:0, normalization, targetLufs, maxGainDb,accuracy:true };
+    const settings = { sampleRate: rate, profile, backend, sizeAllowancePercent:0, normalization, targetLufs, maxGainDb,qualityTarget,accuracy:true };
     if(streamingAudio)worker.postMessage({...settings,source,temporaryName,processingSelection:processing});
     else if (streaming) worker.postMessage({ ...settings, processing: 'stream', samples: audio.length, calls: processing === 'stream-refine' ? 4 : 0 });
     else worker.postMessage({ ...settings, pcm: pcm.buffer }, [pcm.buffer]);

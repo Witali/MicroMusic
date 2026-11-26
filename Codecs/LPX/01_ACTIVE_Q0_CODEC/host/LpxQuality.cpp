@@ -109,7 +109,7 @@ static double coarseShape(const double* powerA,const double* powerB) {
     }
     return std::sqrt(sum/24);
 }
-QualityContext::QualityContext(const Pcm& ref,bool assessSpeech,int rate):reference(ref),speech(assessSpeech),sampleRate(rate) {
+QualityContext::QualityContext(const Pcm& ref,bool assessSpeech,int rate,QualityTarget selectedTarget):reference(ref),target(selectedTarget),speech(assessSpeech),sampleRate(rate) {
     if(rate!=8000)analysisReference=qualityAnalysis8k(ref,rate);
     int count=rate==8000?int(ref.size()):int(analysisReference.size());
     for(int at=0;at+640<=count;at+=160) {
@@ -118,18 +118,29 @@ QualityContext::QualityContext(const Pcm& ref,bool assessSpeech,int rate):refere
     }
 }
 Quality QualityContext::quality(const Pcm& candidate) const {
-    Quality q;Pcm fixed=pwm(candidate);q.error[0]=sse(reference,candidate);q.error[1]=sse(reference,fixed);
-    if(speech) { q.stoi[0]=stoi(reference,candidate,sampleRate);q.stoi[1]=stoi(reference,fixed,sampleRate); }
+    Quality q;q.target=target;q.error[0]=sse(reference,candidate);
+    if(speech)q.stoi[0]=stoi(reference,candidate,sampleRate);
+    if(target==QualityTarget::Pwm) {
+        const Pcm fixed=pwm(candidate);q.error[1]=sse(reference,fixed);
+        if(speech)q.stoi[1]=stoi(reference,fixed,sampleRate);
+    } else q.error[1]=std::numeric_limits<uint64_t>::max();
     return q;
 }
 bool noRegression(const Quality& q,const Quality& baseline) {
-    for(int i=0;i<2;++i)if(q.error[i]>baseline.error[i] || (std::isfinite(baseline.stoi[i]) && (!std::isfinite(q.stoi[i]) || q.stoi[i]<baseline.stoi[i]-1e-12)))return false;
+    if(q.target!=baseline.target || !validQualityTarget(q.target))return false;
+    for(int i=0;i<qualityPathCount(q.target);++i)if(q.error[i]>baseline.error[i] || (std::isfinite(baseline.stoi[i]) && (!std::isfinite(q.stoi[i]) || q.stoi[i]<baseline.stoi[i]-1e-12)))return false;
     return true;
 }
 bool voiceGate(const Diagnostic& q,const Diagnostic& baseline) {
     if(q.within<baseline.within || q.collapsed>baseline.collapsed)return false;
     if(std::isfinite(baseline.period) && (!std::isfinite(q.period) || q.period>baseline.period+1e-12))return false;
     return !std::isfinite(baseline.shape) || (std::isfinite(q.shape) && q.shape<=baseline.shape+1e-12);
+}
+bool voiceGate(const Measurement& q,const Measurement& baseline) {
+    if(q.quality.target!=baseline.quality.target || !validQualityTarget(q.quality.target))return false;
+    for(int path=0;path<qualityPathCount(q.quality.target);++path)
+        if(!voiceGate(q.diagnostic[path],baseline.diagnostic[path]))return false;
+    return true;
 }
 template<class Samples>
 static void assess8k(const Samples& reference,const Samples& candidate,const std::vector<double>& periods,const std::vector<double>& rms,double& voice,double& noise,Diagnostic& diagnostic) {
@@ -185,9 +196,15 @@ void QualityContext::assess(const Pcm& candidate,double& voice,double& noise,Dia
     else voice=noise=nan;
 }
 Measurement QualityContext::measure(const Pcm& candidate) const {
-    Measurement m;m.quality=quality(candidate);Pcm fixed=pwm(candidate);
-    assess(candidate,m.voice[0],m.noise[0],m.diagnostic[0]);assess(fixed,m.voice[1],m.noise[1],m.diagnostic[1]);
-    m.score=(m.voice[0]+m.noise[0]+m.voice[1]+m.noise[1])/2;
+    Measurement m;m.quality=quality(candidate);
+    assess(candidate,m.voice[0],m.noise[0],m.diagnostic[0]);
+    if(target==QualityTarget::Pwm) {
+        const Pcm fixed=pwm(candidate);assess(fixed,m.voice[1],m.noise[1],m.diagnostic[1]);
+        m.score=(m.voice[0]+m.noise[0]+m.voice[1]+m.noise[1])/2;
+    } else {
+        m.voice[1]=m.noise[1]=nan;
+        m.score=m.voice[0]+m.noise[0];
+    }
     for(int16_t sample:candidate)m.clipped+=sample<=-32768 || sample>=32767;
     return m;
 }
