@@ -1,0 +1,31 @@
+{
+  "schema": "lp20-history-recovery-validation-v1",
+  "date": "2026-11-26",
+  "mode": "Source and provenance inspection; no historical program execution",
+  "task_baseline_revision": "50f7a8c6",
+  "lpx_baseline_revision": "644e19d0",
+  "original_archives_crc_and_sha256_verified": 4,
+  "retained_original_files": 199,
+  "retained_original_bytes": 1125847,
+  "provenance_manifests": 5,
+  "files_by_snapshot": {
+    "v19": 2,
+    "v45": 17,
+    "v49": 26,
+    "v51": 25,
+    "v52": 129
+  },
+  "exact_working_file_hashes_verified": 199,
+  "exact_git_index_original_and_provenance_blobs_verified": 204,
+  "original_crlf_csv_files_preserved": 9,
+  "independent_archive_member_and_scope_audit": "PASS",
+  "unresolved_sensitive_content_findings": 0,
+  "scope": "Generic original source, source documentation and anonymous aggregate comparison summaries; no source audio, encoded voice payloads, learned recording models, per-recording generated ASM/JSON, binaries, MIDI or full chat transcripts",
+  "material_limits": [
+    "v19 contains two direct source files, not a complete release archive.",
+    "Earlier v9/v15/v17 trees inherited in v52 are partial source excerpts, not separately recovered original releases.",
+    "Some historical dependencies, models, media and generated data are absent; historical scripts are not asserted to be runnable from these snapshots.",
+    "Historical quality, cycle, RAM, ROM and emulator claims were source-audited, not independently rerun.",
+    "No physical-board, AVR runtime, new LPX quality or bitrate improvement is established."
+  ]
+}
