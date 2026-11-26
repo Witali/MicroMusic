@@ -47,8 +47,11 @@ On the complete 20-second example, with the same ordinary four-call pipeline:
 The candidate updates 489/500 spectral frames, has no PCM clipping and matches
 the complete native decoder output. Its WAV readback is byte-exact. It grows
 the file by 13.42% against the current P3 and does not improve every metric
-against the earlier selected proposal. Audible intelligibility is **not yet
-confirmed**. This is an isolated experimental branch, not a production release.
+against the earlier selected proposal. On 2026-11-26 the user subsequently
+reported this exact candidate **clearer than the preceding examples**. This
+informal rating covers one known development example; complete intelligibility
+and generalization remain unestablished. `results.json` preserves its original
+pre-listening status. This remains an isolated experimental branch.
 
 Synthetic tests pass for default 0 and legacy 2: small spectral changes,
 10,000 ordered vectors per configuration, idempotence and unchanged non-P3
