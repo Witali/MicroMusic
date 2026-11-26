@@ -9,14 +9,16 @@ std::vector<uint8_t> headers[2];
 bool validKind(int kind) { return kind==0 || kind==1; }
 }
 extern "C" {
-static int create(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum,bool accuracy) {
-    if(samples<1 || (normalize!=0 && normalize!=1) || target<-30 || target>-9 || maximum<0 || maximum>24)return -1;
-    session.reset(new lpx::StreamingEncoder(samples,profile,rate,allowance,calls,normalize!=0,accuracy));
+static int create(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum,bool accuracy,int qualityTarget) {
+    if((qualityTarget!=0 && qualityTarget!=1) || samples<1 || (normalize!=0 && normalize!=1) || target<-30 || target>-9 || maximum<0 || maximum>24)return -1;
+    session.reset(new lpx::StreamingEncoder(samples,profile,rate,allowance,calls,normalize!=0,accuracy,lpx::QualityTarget(qualityTarget)));
     if(session->status())return session->status();
     transfer.resize(lpx::kLpxStreamWindow+48);chunk=lpx::StreamingChunk{};headers[0].clear();headers[1].clear();return 1;
 }
-int enc_stream_create(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum){return create(samples,profile,rate,allowance,calls,normalize,target,maximum,false);}
-int enc_stream_create_accuracy(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum){return create(samples,profile,rate,allowance,calls,normalize,target,maximum,true);}
+int enc_stream_create_target(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum,int qualityTarget){return create(samples,profile,rate,allowance,calls,normalize,target,maximum,false,qualityTarget);}
+int enc_stream_create(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum){return enc_stream_create_target(samples,profile,rate,allowance,calls,normalize,target,maximum,1);}
+int enc_stream_create_accuracy_target(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum,int qualityTarget){return create(samples,profile,rate,allowance,calls,normalize,target,maximum,true,qualityTarget);}
+int enc_stream_create_accuracy(int samples,int profile,int rate,int allowance,int calls,int normalize,int target,int maximum){return enc_stream_create_accuracy_target(samples,profile,rate,allowance,calls,normalize,target,maximum,1);}
 int16_t* enc_stream_input() { return transfer.data(); }
 int enc_stream_window() { return lpx::kLpxStreamWindow; }
 int enc_stream_measure(int samples) {

@@ -39,18 +39,21 @@ Pcm prepareInputLevel(const Pcm& input,bool autoQuiet,int& gainExponent) {
     return reference;
 }
 Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& report,
-                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize,const Stream* prefix,const Stream* preparedSeed,CandidateEvaluation* evaluation) {
+                      bool autoQuiet,int cap,int calls,bool speech,bool expandedSearch,int sizeAllowancePercent,bool normalize,const Stream* prefix,const Stream* preparedSeed,CandidateEvaluation* evaluation,QualityTarget target) {
     report=AdaptiveReport{};
-    if(sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize) || (prefix && (autoQuiet || normalize))
+    if(!validQualityTarget(target) || (prefix && prefix->qualityTarget!=target)
+        || sizeAllowancePercent<0 || sizeAllowancePercent>100 || (autoQuiet && normalize) || (prefix && (autoQuiet || normalize))
         || (preparedSeed && (autoQuiet || normalize || preparedSeed->samples!=int(input.size())
-            || preparedSeed->profile!=profile || preparedSeed->rate!=rate))) { report.error=-1;return Stream{}; }
+            || preparedSeed->profile!=profile || preparedSeed->rate!=rate || preparedSeed->qualityTarget!=target))) { report.error=-1;return Stream{}; }
     Pcm prepared;
     if(autoQuiet || normalize)prepared=prepareInputLevel(input,autoQuiet,report.gainExponent);
     if(normalize)report.loudness=normalizeLoudness(prepared,rate);
     const Pcm& reference=autoQuiet || normalize?prepared:input;
-    QualityContext context(reference,speech);
+    // Preserve the legacy controller at its original analysis rate. A newly
+    // selected PCM policy evaluates speech at the actual playback rate.
+    QualityContext context(reference,speech,target==QualityTarget::Pcm?rate:8000,target);
     const int fixedPre=prefix && prefix->continuation?prefix->pre:13926;
-    std::vector<Stream> seeds;seeds.push_back(preparedSeed?*preparedSeed:fitSeed(reference,profile,rate,fixedPre,false,.97,prefix));
+    std::vector<Stream> seeds;seeds.push_back(preparedSeed?*preparedSeed:fitSeed(reference,profile,rate,fixedPre,false,.97,prefix,nullptr,nullptr,target));
     if(!seeds.back().samples) { report.error=-7;return Stream{}; }
     if(!cap)cap=int(int64_t(compactBytes(seeds[0]))*(100+sizeAllowancePercent)/100);report.cap=cap;
     auto originalPcm=render(seeds[0]);auto original=context.measure(originalPcm);
@@ -58,7 +61,7 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
     for(int pre:{0,8192,13926}) {
         if(prefix && prefix->continuation && pre!=prefix->pre)continue;
         SeedFitStatus fitStatus;
-        auto alternative=fitSeed(reference,profile,rate,pre,true,.97,prefix,nullptr,&fitStatus);
+        auto alternative=fitSeed(reference,profile,rate,pre,true,.97,prefix,nullptr,&fitStatus,target);
         if(!alternative.samples) {
             if(seeds[0].accuracy && fitStatus==SeedFitStatus::Unsafe)continue;
             report.error=-7;return Stream{};
@@ -66,7 +69,7 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
         seeds.push_back(std::move(alternative));
         auto pcm=render(seeds.back());auto m=context.measure(pcm);
         if(compactBytes(seeds.back())<=cap && noRegression(m.quality,original.quality)
-            && voiceGate(m.diagnostic[0],original.diagnostic[0]) && voiceGate(m.diagnostic[1],original.diagnostic[1])
+            && voiceGate(m,original)
             && m.voice[0]<selectedScore) { anchor=seeds.back();selectedScore=m.voice[0]; }
     }
     struct Candidate { Stream stream;Measurement measured;int bytes,origin;bool attempted[3]={}; };
@@ -82,7 +85,8 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
     auto allowed=[&](int i)->bool {
         const auto& m=pool[i].measured;const auto& base=pool[0].measured;
         return pool[i].bytes<=cap && m.score<=base.score+1e-12 && noRegression(m.quality,base.quality)
-            && m.clipped<=base.clipped && m.diagnostic[0].within>=base.diagnostic[0].within && m.diagnostic[1].within>=base.diagnostic[1].within;
+            && m.clipped<=base.clipped && m.diagnostic[0].within>=base.diagnostic[0].within
+            && (target==QualityTarget::Pcm || m.diagnostic[1].within>=base.diagnostic[1].within);
     };
     for(const auto& seed:seeds)if(add(seed,-2)<0)return Stream{};
     auto ranked=[&](bool preferAllowed)->std::vector<int> {
@@ -137,7 +141,7 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
 #if LPX_ENCODER_QUALITY_SEARCH
         if(expandedSearch) {
             std::unique_ptr<CandidateEvaluation> owned;
-            if(!evaluation) { owned.reset(new CandidateEvaluation(reference,rate,speech));evaluation=owned.get(); }
+            if(!evaluation) { owned.reset(new CandidateEvaluation(reference,rate,speech,target));evaluation=owned.get(); }
             selected=refineProfileQuality(selected,reference,cap,false,report.qualitySearch,false,speech,evaluation);
             if(report.qualitySearch.error) { report.error=report.qualitySearch.error;return Stream{}; }
 #if LPX_ENCODER_JOINT_REFINEMENT

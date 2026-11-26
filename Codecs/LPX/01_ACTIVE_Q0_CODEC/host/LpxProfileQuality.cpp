@@ -25,7 +25,10 @@ double relativeError(double value,double baseline) {
 double objective(const Measurement& m,const FullBandMeasurement& spectrum,
                  const Measurement& floor,const FullBandMeasurement& spectralFloor) {
     double total=0,weight=0;
-    for(int path=0;path<2;++path) {
+    if(m.quality.target!=floor.quality.target || spectrum.target!=floor.quality.target
+        || spectralFloor.target!=floor.quality.target || !validQualityTarget(floor.quality.target))
+        return std::numeric_limits<double>::infinity();
+    for(int path=0;path<qualityPathCount(floor.quality.target);++path) {
         // Spectral and temporal losses each carry twice an ordinary metric's
         // weight. All comparisons use the same frozen incumbent denominators.
         total+=2*relativeError(spectrum.balancedError[path],spectralFloor.balancedError[path]);
@@ -51,8 +54,10 @@ double objective(const Measurement& m,const FullBandMeasurement& spectrum,
 }
 bool safety(const Measurement& m,const FullBandMeasurement& spectrum,
             const Measurement& floor,const FullBandMeasurement& spectralFloor) {
-    if(!spectrum.valid || m.clipped>floor.clipped)return false;
-    for(int path=0;path<2;++path) {
+    if(!spectrum.valid || m.clipped>floor.clipped || m.quality.target!=floor.quality.target
+        || spectrum.target!=floor.quality.target || spectralFloor.target!=floor.quality.target
+        || !validQualityTarget(floor.quality.target))return false;
+    for(int path=0;path<qualityPathCount(floor.quality.target);++path) {
         if(std::isfinite(floor.quality.stoi[path]) && (!std::isfinite(m.quality.stoi[path])
             || m.quality.stoi[path]<floor.quality.stoi[path]-1e-12))return false;
         if(m.diagnostic[path].within<floor.diagnostic[path].within
@@ -85,21 +90,21 @@ public:
     QualitySelection(const Stream& incumbent, const Pcm& reference, int cap,
         bool finalV9Budget, ProfileQualityReport& report, bool speech, bool protectOctaves=false,CandidateEvaluation* shared=nullptr)
         : cap(cap), finalV9Budget(finalV9Budget), requireStable(incumbent.accuracy!=0),report(report),
-          ownedEvaluation(shared?nullptr:new CandidateEvaluation(reference,incumbent.rate,speech)),
+          ownedEvaluation(shared?nullptr:new CandidateEvaluation(reference,incumbent.rate,speech,incumbent.qualityTarget)),
           evaluation(shared?*shared:*ownedEvaluation),initialPcm(render(incumbent)),
           quality(evaluation.quality), selected(incumbent) {
-        if(!evaluation.matches(reference,incumbent.rate,speech)) { report.error=-1;return; }
+        if(!evaluation.matches(reference,incumbent.rate,speech,incumbent.qualityTarget)) { report.error=-1;return; }
         auto packed=packV9(incumbent);
         if(!evaluation.measure(incumbent,packed,baseline,baselineSpectrum,&initialPcm)) { report.error=-3;return; }
         selectedObjective=objective(baseline,baselineSpectrum,baseline,baselineSpectrum);
         selectedBytes=finalV9Budget?int(packed.size()):compactBytes(incumbent);
         seen.push_back(std::move(packed));
-        if(protectOctaves)pitchGuard.reset(new PitchGuardContext(reference,initialPcm,incumbent.rate));
+        if(protectOctaves)pitchGuard.reset(new PitchGuardContext(reference,initialPcm,incumbent.rate,incumbent.qualityTarget));
         report.initialObjective=report.finalObjective=selectedObjective;
     }
     bool add(const Stream& candidate,double* safeScore=nullptr) {
         if(safeScore)*safeScore=std::numeric_limits<double>::infinity();
-        if(!candidate.samples)return false;
+        if(!candidate.samples || candidate.qualityTarget!=selected.qualityTarget)return false;
         if(requireStable&&!stableLpcStream(candidate))return false;
         auto packed=packV9(candidate);
         const int count=finalV9Budget?int(packed.size()):compactBytes(candidate);
@@ -142,9 +147,9 @@ Stream selectQualityProposals(const Stream& incumbent,const Pcm& reference,
     }
     return report.finalObjective<report.initialObjective-1e-12?selection.selected:incumbent;
 }
-bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,const Pcm& candidate,int rate,bool speech,bool strictlyBetter) {
-    if(reference.size()!=incumbent.size() || reference.size()!=candidate.size())return false;
-    QualityContext quality(reference,speech,rate);FullBandContext spectrum(reference,rate);
+bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,const Pcm& candidate,int rate,bool speech,bool strictlyBetter,QualityTarget target) {
+    if(!validQualityTarget(target) || reference.size()!=incumbent.size() || reference.size()!=candidate.size())return false;
+    QualityContext quality(reference,speech,rate,target);FullBandContext spectrum(reference,rate,target);
     const auto baseline=quality.measure(incumbent),next=quality.measure(candidate);
     const auto spectralFloor=spectrum.measure(incumbent),proposal=spectrum.measure(candidate);
     const double score=objective(next,proposal,baseline,spectralFloor),floor=objective(baseline,spectralFloor,baseline,spectralFloor);
@@ -154,7 +159,7 @@ bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,const Pcm
     // Window-local guards cannot see every boundary-crossing pitch window.
     // The assembled continuous output gets the same source-frozen check.
     if(admitted) {
-        const PitchGuardContext pitch(reference,incumbent,rate);
+        const PitchGuardContext pitch(reference,incumbent,rate,target);
         return pitch.accepts(candidate);
     }
 #endif
@@ -182,20 +187,20 @@ Stream refineProfileQuality(const Stream& incumbent, const Pcm& reference,
     auto add=[&](const Stream& candidate) { selection.add(candidate); };
     // Fixed prospective proposals, not corpus-fitted coefficients. All other
     // seed callers retain .97 and the protected incumbent is always available.
-    if (baseline.quality.error[0] || baseline.quality.error[1]) {
+    if (!qualityIsExact(baseline.quality)) {
         for (double bandwidth : {.94, .99}) {
             Stream proposal;
             if (threeK) {
                 BitrateReport search;
                 proposal = encodeThreeK(reference, cap, search, bandwidth, &incumbent,
-                    incumbent.continuation || !incumbent.allowExtras || incumbent.accuracy?&incumbent:nullptr);
+                    incumbent.continuation || !incumbent.allowExtras || incumbent.accuracy?&incumbent:nullptr,incumbent.qualityTarget);
                 if (search.error) { report.error = search.error; return Stream{}; }
             } else {
                 SeedFitStatus fitStatus;
                 proposal = fitSeed(reference, incumbent.profile, incumbent.rate,
                     incumbent.pre, true, bandwidth,
                     incumbent.continuation || !incumbent.allowExtras || incumbent.accuracy?&incumbent:nullptr,
-                    nullptr, &fitStatus);
+                    nullptr, &fitStatus,incumbent.qualityTarget);
                 if (!proposal.samples) {
                     if(incumbent.accuracy && fitStatus==SeedFitStatus::Unsafe)continue;
                     report.error = -7; return Stream{};
@@ -244,7 +249,7 @@ Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
     }
     QualitySelection selection(incumbent,reference,cap,finalV9Budget,report.selection,speech,true,evaluation);
     if(report.selection.error)return Stream{};
-    if(!selection.baseline.quality.error[0] && !selection.baseline.quality.error[1])return incumbent;
+    if(qualityIsExact(selection.baseline.quality))return incumbent;
     auto header=[&]() {
         if(incumbent.continuation)return; // A continuous file has one header.
         // Header coefficients cost no additional payload bytes. This existing

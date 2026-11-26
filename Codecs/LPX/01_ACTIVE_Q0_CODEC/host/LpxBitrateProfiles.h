@@ -11,5 +11,5 @@ struct BitrateReport {
 // A successful result is ordinary P4 syntax; no decoder extension is needed.
 Stream encodeThreeK(const Pcm& reference, int maxBytes, BitrateReport& report,
                     double bandwidth = .97, const Stream* incumbent = nullptr,
-                    const Stream* prefix = nullptr);
+                    const Stream* prefix = nullptr,QualityTarget target=QualityTarget::Pwm);
 }

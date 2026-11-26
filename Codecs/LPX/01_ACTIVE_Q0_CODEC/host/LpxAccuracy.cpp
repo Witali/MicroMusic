@@ -66,16 +66,16 @@ Stream refineAccuracyCorrections(const Stream& input,const Pcm& reference,int bu
     if(int(packV9(work).size())>budget)return input;
     return work;
 }
-Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& report,int calls,const Stream* prefix){
+Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& report,int calls,const Stream* prefix,QualityTarget target){
     report=AdaptiveReport{};const auto policy=accuracyPolicy(level);
-    if(!policy.level||reference.empty()||(rate!=8000&&rate!=12000&&rate!=16000)||calls<0||calls>4){report.error=-1;return Stream{};}
-    Stream context=prefix?*prefix:Stream{};context.accuracy=level;
+    if(!validQualityTarget(target)||(prefix&&prefix->qualityTarget!=target)||!policy.level||reference.empty()||(rate!=8000&&rate!=12000&&rate!=16000)||calls<0||calls>4){report.error=-1;return Stream{};}
+    Stream context=prefix?*prefix:Stream{};context.accuracy=level;context.qualityTarget=target;
     // One base model and one detail operator for every level and transport.
     // The exact bit budget decides how many ranked residual symbols survive.
     context.allowExtras=true;
     const int pre=context.continuation?context.pre:13926;
     SeedFitStatus seedStatus;
-    const Stream seed=fitSeed(reference,policy.wireProfile,rate,pre,false,.97,&context,nullptr,&seedStatus);
+    const Stream seed=fitSeed(reference,policy.wireProfile,rate,pre,false,.97,&context,nullptr,&seedStatus,target);
     report.originalSeedStatus=seedStatus;
     Stream control=seed;
     if(control.samples!=int(reference.size())){report.error=-7;return Stream{};}
@@ -86,13 +86,13 @@ Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& re
     if(packV9(corrected)!=packV9(control)) {
         const auto originalPcm=render(control),detailPcm=render(corrected);
         if(safeSynthesisLevel(corrected,reference,detailPcm)&&safeSynthesisSpectrum(reference,detailPcm)
-            &&profileQualityAdmission(reference,originalPcm,detailPcm,rate,true,true))control=std::move(corrected);
+            &&profileQualityAdmission(reference,originalPcm,detailPcm,rate,true,true,target))control=std::move(corrected);
     }
     if(!calls)return control;
     // Internal controller accounting is v5; independently enforce final V9
     // bytes below, including its header, flags, repeats and padding.
-    CandidateEvaluation evaluation(reference,rate,true);
-    Stream candidate=adaptiveEncode(reference,policy.wireProfile,rate,report,false,std::max(budget+9,compactBytes(seed)),calls,true,true,0,false,&context,&seed,&evaluation);
+    CandidateEvaluation evaluation(reference,rate,true,target);
+    Stream candidate=adaptiveEncode(reference,policy.wireProfile,rate,report,false,std::max(budget+9,compactBytes(seed)),calls,true,true,0,false,&context,&seed,&evaluation,target);
     report.originalSeedStatus=seedStatus;
     if(report.error==-6) {
         // The complete common control already fits this profile. Internal

@@ -23,8 +23,8 @@ class CandidateEvaluation {
 public:
     QualityContext quality;
     FullBandContext spectrum;
-    CandidateEvaluation(const Pcm& reference,int rate,bool speech);
-    bool matches(const Pcm& source,int sampleRate,bool isSpeech) const;
+    CandidateEvaluation(const Pcm& reference,int rate,bool speech,QualityTarget target = QualityTarget::Pwm);
+    bool matches(const Pcm& source,int sampleRate,bool isSpeech,QualityTarget target = QualityTarget::Pwm) const;
     bool measure(const Stream& stream,const std::vector<uint8_t>& packed,
                  Measurement& measured,FullBandMeasurement& spectral,Pcm* pcm=nullptr);
     size_t hits() const { return hitCount; }

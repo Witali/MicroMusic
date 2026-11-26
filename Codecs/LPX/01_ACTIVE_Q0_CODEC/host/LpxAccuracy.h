@@ -7,5 +7,5 @@ int accuracyPacketBound(int samples,int level);
 int accuracyBudget(int samples,int level,int originalBytes);
 Stream refineAccuracyCorrections(const Stream& input,const Pcm& reference,int completeV9Budget);
 Stream encodeAccuracy(const Pcm& reference,int level,int rate,AdaptiveReport& report,
-                      int calls=4,const Stream* prefix=nullptr);
+                      int calls=4,const Stream* prefix=nullptr,QualityTarget target=QualityTarget::Pwm);
 }

@@ -50,7 +50,8 @@ Stream refineJointQuality(const Stream& incumbent, const Pcm& reference,
     bool speech = true,CandidateEvaluation* evaluation=nullptr);
 // Same frozen whole-output safety/objective for a finalized streaming proposal.
 bool profileQualityAdmission(const Pcm& reference,const Pcm& incumbent,
-                             const Pcm& candidate,int sampleRate,bool speech=true,bool strictlyBetter=false);
+                             const Pcm& candidate,int sampleRate,bool speech=true,bool strictlyBetter=false,
+                             QualityTarget target=QualityTarget::Pwm);
 // Compare completed proposals against one immutable floor, never a chain of
 // relative scores. A tie retains that floor, even if a proposal is smaller.
 Stream selectQualityProposals(const Stream& incumbent,const Pcm& reference,

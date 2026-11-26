@@ -21,7 +21,7 @@ Stream adaptiveEncode(const Pcm& input,int profile,int rate,AdaptiveReport& repo
                       bool autoQuiet=false,int maxBytes=0,int calls=4,bool speech=true,
                       bool expandedSearch=false,int sizeAllowancePercent=0,bool normalize=false,
                       const Stream* prefix=nullptr,const Stream* preparedSeed=nullptr,
-                      CandidateEvaluation* evaluation=nullptr);
+                      CandidateEvaluation* evaluation=nullptr,QualityTarget target=QualityTarget::Pwm);
 // preparedSeed is the unmodified fixed-pre/zeroScale=false/.97 fit for this
 // exact reference and prefix. Input-level preparation must already be complete.
 bool verifyStream(const Stream& stream,const Pcm& expected);
