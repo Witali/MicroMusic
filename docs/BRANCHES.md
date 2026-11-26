@@ -6,7 +6,7 @@ Descriptions state the branch purpose when recorded. Other initial descriptions 
 
 Refresh from the main worktree with `python tools/update-branch-catalog.py --date YYYY-MM-DD`. Edited descriptions are preserved. Update this catalog when branches are created, renamed, deleted or repurposed, and commit the documentation separately.
 
-Branches: 230. Symbolic aliases such as `origin/HEAD` are excluded.
+Branches: 231. Symbolic aliases such as `origin/HEAD` are excluded.
 
 | Branch | Available refs | Short description |
 | --- | --- | --- |
@@ -88,6 +88,7 @@ Branches: 230. Symbolic aliases such as `origin/HEAD` are excluded.
 | `codex/lpx-fixed-rate` | local | Latest recorded work: Rebuild WebUI LPX firmware for fixed 8 kHz playback |
 | `codex/lpx-global-rate` | local, origin | Latest recorded work: Retain LPX entropy cost and Q12 refinement lessons |
 | `codex/lpx-headroom-quality` | local, origin | Latest recorded work: Retain LPX static anchor caching and compact loop measurements |
+| `codex/lpx-intelligibility` | local | Active diagnosis and correction of speech intelligibility loss; source-confirmed audiobook example, frozen earlier study retained. |
 | `codex/lpx-local-noise` | local | Experimental source-frozen excitation noise ranking; paired PCM/PWM comparison found no admitted gain. |
 | `codex/lpx-lossless-compression` | local, origin | Latest recorded work: Record LPX compression tradeoffs and complete five-step validation |
 | `codex/lpx-lowrate-avr25` | local, origin | Latest recorded work: Refresh Nano LPX release provenance after codec integration |
