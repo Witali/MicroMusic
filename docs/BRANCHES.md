@@ -6,7 +6,7 @@ Descriptions state the branch purpose when recorded. Other initial descriptions 
 
 Refresh from the main worktree with `python tools/update-branch-catalog.py --date YYYY-MM-DD`. Edited descriptions are preserved. Update this catalog when branches are created, renamed, deleted or repurposed, and commit the documentation separately.
 
-Branches: 229. Symbolic aliases such as `origin/HEAD` are excluded.
+Branches: 230. Symbolic aliases such as `origin/HEAD` are excluded.
 
 | Branch | Available refs | Short description |
 | --- | --- | --- |
@@ -79,6 +79,7 @@ Branches: 229. Symbolic aliases such as `origin/HEAD` are excluded.
 | `codex/lpx-avr-deadline` | local, origin | Latest recorded work: Retain exact LPX Q12 dot and history fusion technique |
 | `codex/lpx-bfp-trajectories` | local | Experimental shared-exponent groups and logarithmic trajectories; compare size, quality and full AVR cost. |
 | `codex/lpx-compact-format` | local | Latest recorded work: Add smaller lossless LPX v9 playback for Tiny88 |
+| `codex/lpx-compact-quality` | local | Study quality of the most compact LPX profile at fixed file size, with separate PCM/PWM assessment and an unchanged decoder. |
 | `codex/lpx-cuda-encoder` | local | Latest recorded work: Record CUDA corpus speedups and exact output validation |
 | `codex/lpx-decoder-refactor` | local, origin | Latest recorded work: Reduce LPX Flash with shared readers and LPC conversion |
 | `codex/lpx-encoder-unification` | local | Latest recorded work: Refresh LPX browser asset versions for the unified encoder |
