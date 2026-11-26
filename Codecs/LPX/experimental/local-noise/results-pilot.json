@@ -1,0 +1,2385 @@
+{
+  "schema": "lpx-local-noise-paired-v1",
+  "phase": "pilot",
+  "run": "frozen-v1",
+  "experiment_head": "644e19d0fd8db47fcae7d6ad64787d6c89ead28d",
+  "build": {
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "command": [
+      "g++",
+      "-O3",
+      "-std=c++11",
+      "-ffp-contract=off",
+      "-DNDEBUG",
+      "-DLPX4_ENABLE_ASM=0",
+      "-DLPX4_FLOAT_SYNTHESIS=0",
+      "-DLPX4_ENABLE_SPEECH=1",
+      "-DLPX4_ENABLE_SPEECH_COMPACT=1",
+      "-DLPX4_COMPACT_ONLY=1",
+      "-DLPX4_COMPACT_VERSION=9",
+      "-DLPX4_SAMPLE_RATE=0",
+      "-DLPX4_EXTENDED_SAMPLE_RATES=1",
+      "-DLPX4_ENABLE_WIDE_V9=1",
+      "-include",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxHostWorkspace.h",
+      "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/src",
+      "-ICodecs/LPX/01_ACTIVE_Q0_CODEC/host",
+      "-ICodecs/LPX/experimental/local-noise",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveDsp.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAccuracy.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPacking.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStreaming.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStoi.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCandidateEvaluation.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxBitrateProfiles.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxProfileQuality.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPulseLookahead.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxFullBand.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectralPulses.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcRefine.cpp",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPitchGuard.cpp",
+      "Codecs/LPX/experimental/local-noise/LocalNoise.cpp",
+      "Codecs/LPX/experimental/local-noise/benchmark.cpp",
+      "-o",
+      "build/local-noise/benchmark"
+    ],
+    "sources": {
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAccuracy.cpp": "773e6010f1355106bcd68bf1d1e2ea255b9f857015c8eb7c7e9ed3cd6a480bba",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAccuracy.h": "34b91058adc7d681f4c6a5e92d300b1353f4d42e9e5a3e1dd5245c46d4cd6c56",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptive.h": "c91d03e3e9b65d9ea5a469bea1431313a6567b39107d9c8a54a0bd51e2f17a05",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.cpp": "6f8545c2a2d56bb68dd07abfda5dd687b88a9a24cc1dc434bad93d6579fd1852",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.h": "f6524f39873d8971b6a49f322126f20b002fbe1ca144ad4000f823fddfe2411b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveDsp.cpp": "605d1d69028702ef0dbc5f1bd5ff4d2dbf9966c0f3c926ed910bc3e7dff80d99",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxBitrateProfiles.cpp": "c86c118807d9a2ef901f777111401df901a5e59e608299cc4d4baace31ddf2a5",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxBitrateProfiles.h": "dba357892177b22fc896a0d0c3be4c7e8a1c80442b366646a0c2540b9c0b39ac",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCandidateEvaluation.cpp": "0e52d80772911d2191bff3242693164bd930b8386916b8be58e4213474b47166",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCandidateEvaluation.h": "559c6fe1a49555b2a54d14ecbf3d098325c1cd761f5b72b34150914c8f6be035",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCuda.h": "d9a6877d407354998c289fa435f6a8fb3cdc3941eeb58777120443800038c3f9",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp": "0736a65915482b697bc23c4cb487e382799fd6782a90adf5878b2d040e11a7d2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.h": "90e442c043bfad416f7b6d3bd2cbe7d287039b7ec787d8c32673435e244bd01f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderContext.h": "3a4ca7bf0d8d588ffdd121b867674620ff68f7600b1f339c35a9a8943afc4185",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderOptions.h": "2a80aebfbd4415e8e331377ed606d0f78b46b6c26d0210cf001511f41e22531e",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderSimd.h": "cc7724eb3cf1ea8a93e9859409c0d47fd09ad2a07de31a6166a0877516d0738f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncodingPolicy.h": "cd23b184f601a154b5be2c9714872db9b6b999deb6998fe300de3231ffc234c1",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxFullBand.cpp": "30cef6546530290f82235ffc3eb6aa303108dc350a9d88be475c1574b750f345",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxFullBand.h": "1d846d113b6aa5bef879cad93c192e140db8504193e26bf7868a481b51b0df42",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxHostWorkspace.h": "e9010faccd24d2f869299a3016abd2e07a67615cece1c9a6d0e0a93d87625f40",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.cpp": "fa91231a6bc2887221e489699cf14917808b075b249f21f2a441d8c668334f51",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.h": "150fdf819a1a262f1b54656efc1d0a57c789e8163a20330697cdb406cba86191",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcRefine.cpp": "c38d113e1c39a5dc0701b5cec87237c9a1611f207f2864e68772eaba684bbfcc",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcRefine.h": "f85e772fc407eba83d35a43a4f9eb7043514b53b97e4311edca41c90aabfe18f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcStability.h": "14db2c49d0ba65b30880dd267b6cf15b4c9547682a959c338f8c58f6c7b74fa4",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPacking.cpp": "1ff03ba23764a6118a0652b92bc316e7003f9002f6665637303db6dbc6c79036",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPacking.h": "36a7edd3fa39e57390cd61e6cc52bc51b73ac5d74bcad6be14fed91881d95fe2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPitchGuard.cpp": "f7fffed8a2f310ad424619ad9b2585bcfcb42766a22c8fa6e4fd0a943b1760c5",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPitchGuard.h": "718dead6d1f748208fc6b096fc7293ce62cf37d59b57ef63fc5fbf7eccd4bb12",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxProfileQuality.cpp": "76ead1a2fa1202bb4460f258d109823dd01a4c8070dcf4407338f463bc5835d8",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxProfileQuality.h": "0cf62f7e32cfa6424547796c5bf8861f04fddbb8f482594946f778ab663f512f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPulseLookahead.cpp": "484af1f4af350c08f88aabea7b88b7bbe4d2fec8e0982e1bc25eba659572b23e",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPulseLookahead.h": "fcb66b56ae19f02ab1f9ed43a2bbc6bd3817c20300038f8627f5826106d88db2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.cpp": "a7f306db7414112221ea508bfde9769e16c6481f91e333643f5921ff6329e7f7",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.h": "c319e8ce32c046ee784755e3e12f26b10787bf0b0e179bf2119ba96f3660257c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.cpp": "03c00a1979e3d60afea118514650b3ea3eba1a88d036d51c01ea7a469bbfccf6",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.h": "db71eb87a28aaf08cb5e02ee8846d5f0c982480bd3ae1b61e769956d85a93898",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSeed.h": "1a3c20907ca0159aecd95552d1b7978be5ca8580c4ea7069cdbd0f7d0557b30b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectralPulses.cpp": "ac0a30d3339f1274308c35ef939e69ae436b85fc5c427a78a2677bcdddbdb9b5",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectralPulses.h": "5400be23daa1e2151afc6e3e827a548d326fac260c01b442155bd64215ecd77b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectrumQuantizer.h": "9873b622507336620bc0d508c681e5ea2bc417b0b2ab75aaa9c0d675b9664c48",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStoi.cpp": "45bc02a35f7605f341ef508f38f0a85c2fd3aece0339889ce11731517fd564c8",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStreaming.cpp": "4b13616e41f8f5a3ebc02e0a5e17b290704f72d10eaccc9cd1890fb1706f6480",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStreaming.h": "68d6838d428ba4b4dd13fd46734c31943be2b5aeddcb264aa0499f64a2c24fcc",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/quality-resample-12k.inc": "29abbe05c25fb0b706c0a0710229fb98b0f0e021e7fcd0181e6b2333c69796d2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/quality-resample-16k.inc": "490a5afa8a99905d909771d0c7b01a42e59225917b34ffebc32168f8dc36045b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample-12k.inc": "67e9e365d1d557a886b986d9c26c9f345bde6f35cc3b1101dabf0d2ebf36fc23",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample-16k.inc": "081bb46823df76b4def5d23190429c1de19f051ad3fb1a06b25ab8166219a296",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample.inc": "73452977972395c88eb1879815d6c57fee4e391dad5f42a970c4000c04d8c23c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4ConvertAvr25.inc": "c10e62b7175acf75afd6ecd525bb57e155c8450a49b1c7d1ed8b01fae4643053",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Float.h": "56798a887b9035d0c3c64665651357684c5431a7375a6d94546b04b33df25b93",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "5dbaa8d5d711139a81a9bd7b61618d11472a32073ded24722e9eb2e29cd2b57c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "69faaacf5f23700809591a77e9a54259106b15e192c81f71ed0efc47b70fc10f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyAvr.h": "6ccc6e49733ec87df7f621532e96cd30a56c0b24e0160ca6bfa57459744b2dba",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "7c4b4105be4af701aa4d3c600f966c8b32aa0848cb6d56f16098487d9578a18d",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "ef207f7eaa1b9e433fa229f1414b5332e31979b8e9ae5f2a8d3faec98ad6eb8f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "Codecs/LPX/experimental/local-noise/LocalNoise.cpp": "06536010d43181cb18492d0f67025855bace3f3ecf2a16aa94762081c268ee3a",
+      "Codecs/LPX/experimental/local-noise/LocalNoise.h": "ed6423c2eda7251195743b15588782eddd2f34057a8532bbae1caae5cc834e49",
+      "Codecs/LPX/experimental/local-noise/benchmark.cpp": "5a2fc3de572469975179ee73331b4e1e6c7fb14542b6b4cfcfeebf6d6e681a7d",
+      "Codecs/LPX/experimental/local-noise/compare.py": "05c79caa9cda6eeed410309dc11da9ca0a7d4b72a130854aedaaad8226e436c0",
+      "web-player/scripts/lib/lpx-build.mjs": "1d6b28490f58ededfc2cd0dabf3e46897fca0b93127420584d0fa6f580ef7683"
+    },
+    "binary_sha256": "6483170ecab3d7504e594de9065d2d6c2ac0410cc3564deda4ba6d262d65e7c0",
+    "baseline_revision": "644e19d0fd8db47fcae7d6ad64787d6c89ead28d",
+    "baseline_sources_normalized_sha256": {
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAccuracy.cpp": "773e6010f1355106bcd68bf1d1e2ea255b9f857015c8eb7c7e9ed3cd6a480bba",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAccuracy.h": "34b91058adc7d681f4c6a5e92d300b1353f4d42e9e5a3e1dd5245c46d4cd6c56",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptive.h": "c91d03e3e9b65d9ea5a469bea1431313a6567b39107d9c8a54a0bd51e2f17a05",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.cpp": "6f8545c2a2d56bb68dd07abfda5dd687b88a9a24cc1dc434bad93d6579fd1852",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveController.h": "f6524f39873d8971b6a49f322126f20b002fbe1ca144ad4000f823fddfe2411b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxAdaptiveDsp.cpp": "605d1d69028702ef0dbc5f1bd5ff4d2dbf9966c0f3c926ed910bc3e7dff80d99",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxBitrateProfiles.cpp": "c86c118807d9a2ef901f777111401df901a5e59e608299cc4d4baace31ddf2a5",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxBitrateProfiles.h": "dba357892177b22fc896a0d0c3be4c7e8a1c80442b366646a0c2540b9c0b39ac",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCandidateEvaluation.cpp": "0e52d80772911d2191bff3242693164bd930b8386916b8be58e4213474b47166",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCandidateEvaluation.h": "559c6fe1a49555b2a54d14ecbf3d098325c1cd761f5b72b34150914c8f6be035",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxCuda.h": "d9a6877d407354998c289fa435f6a8fb3cdc3941eeb58777120443800038c3f9",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.cpp": "0736a65915482b697bc23c4cb487e382799fd6782a90adf5878b2d040e11a7d2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoder.h": "90e442c043bfad416f7b6d3bd2cbe7d287039b7ec787d8c32673435e244bd01f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderContext.h": "3a4ca7bf0d8d588ffdd121b867674620ff68f7600b1f339c35a9a8943afc4185",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderOptions.h": "2a80aebfbd4415e8e331377ed606d0f78b46b6c26d0210cf001511f41e22531e",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncoderSimd.h": "cc7724eb3cf1ea8a93e9859409c0d47fd09ad2a07de31a6166a0877516d0738f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxEncodingPolicy.h": "cd23b184f601a154b5be2c9714872db9b6b999deb6998fe300de3231ffc234c1",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxFullBand.cpp": "30cef6546530290f82235ffc3eb6aa303108dc350a9d88be475c1574b750f345",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxFullBand.h": "1d846d113b6aa5bef879cad93c192e140db8504193e26bf7868a481b51b0df42",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxHostWorkspace.h": "e9010faccd24d2f869299a3016abd2e07a67615cece1c9a6d0e0a93d87625f40",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.cpp": "fa91231a6bc2887221e489699cf14917808b075b249f21f2a441d8c668334f51",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLoudness.h": "150fdf819a1a262f1b54656efc1d0a57c789e8163a20330697cdb406cba86191",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcRefine.cpp": "c38d113e1c39a5dc0701b5cec87237c9a1611f207f2864e68772eaba684bbfcc",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcRefine.h": "f85e772fc407eba83d35a43a4f9eb7043514b53b97e4311edca41c90aabfe18f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxLpcStability.h": "14db2c49d0ba65b30880dd267b6cf15b4c9547682a959c338f8c58f6c7b74fa4",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPacking.cpp": "1ff03ba23764a6118a0652b92bc316e7003f9002f6665637303db6dbc6c79036",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPacking.h": "36a7edd3fa39e57390cd61e6cc52bc51b73ac5d74bcad6be14fed91881d95fe2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPitchGuard.cpp": "f7fffed8a2f310ad424619ad9b2585bcfcb42766a22c8fa6e4fd0a943b1760c5",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPitchGuard.h": "718dead6d1f748208fc6b096fc7293ce62cf37d59b57ef63fc5fbf7eccd4bb12",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxProfileQuality.cpp": "76ead1a2fa1202bb4460f258d109823dd01a4c8070dcf4407338f463bc5835d8",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxProfileQuality.h": "0cf62f7e32cfa6424547796c5bf8861f04fddbb8f482594946f778ab663f512f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPulseLookahead.cpp": "484af1f4af350c08f88aabea7b88b7bbe4d2fec8e0982e1bc25eba659572b23e",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxPulseLookahead.h": "fcb66b56ae19f02ab1f9ed43a2bbc6bd3817c20300038f8627f5826106d88db2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.cpp": "a7f306db7414112221ea508bfde9769e16c6481f91e333643f5921ff6329e7f7",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxQuality.h": "c319e8ce32c046ee784755e3e12f26b10787bf0b0e179bf2119ba96f3660257c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.cpp": "03c00a1979e3d60afea118514650b3ea3eba1a88d036d51c01ea7a469bbfccf6",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxRefinement.h": "db71eb87a28aaf08cb5e02ee8846d5f0c982480bd3ae1b61e769956d85a93898",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSeed.h": "1a3c20907ca0159aecd95552d1b7978be5ca8580c4ea7069cdbd0f7d0557b30b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectralPulses.cpp": "ac0a30d3339f1274308c35ef939e69ae436b85fc5c427a78a2677bcdddbdb9b5",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectralPulses.h": "5400be23daa1e2151afc6e3e827a548d326fac260c01b442155bd64215ecd77b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxSpectrumQuantizer.h": "9873b622507336620bc0d508c681e5ea2bc417b0b2ab75aaa9c0d675b9664c48",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStoi.cpp": "45bc02a35f7605f341ef508f38f0a85c2fd3aece0339889ce11731517fd564c8",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStreaming.cpp": "4b13616e41f8f5a3ebc02e0a5e17b290704f72d10eaccc9cd1890fb1706f6480",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/LpxStreaming.h": "68d6838d428ba4b4dd13fd46734c31943be2b5aeddcb264aa0499f64a2c24fcc",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/quality-resample-12k.inc": "29abbe05c25fb0b706c0a0710229fb98b0f0e021e7fcd0181e6b2333c69796d2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/quality-resample-16k.inc": "490a5afa8a99905d909771d0c7b01a42e59225917b34ffebc32168f8dc36045b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample-12k.inc": "67e9e365d1d557a886b986d9c26c9f345bde6f35cc3b1101dabf0d2ebf36fc23",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample-16k.inc": "081bb46823df76b4def5d23190429c1de19f051ad3fb1a06b25ab8166219a296",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/host/stoi-resample.inc": "73452977972395c88eb1879815d6c57fee4e391dad5f42a970c4000c04d8c23c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx3AvrCore.h": "a501a40c131dbf99c766885d1f67ba9e9a813ef8410ca2fe6ed355a38227f555",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4ConvertAvr25.inc": "c10e62b7175acf75afd6ecd525bb57e155c8450a49b1c7d1ed8b01fae4643053",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Float.h": "56798a887b9035d0c3c64665651357684c5431a7375a6d94546b04b33df25b93",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.cpp": "5dbaa8d5d711139a81a9bd7b61618d11472a32073ded24722e9eb2e29cd2b57c",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4HybridCore.h": "69faaacf5f23700809591a77e9a54259106b15e192c81f71ed0efc47b70fc10f",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4Math.h": "c3ac741eb21af6aeb562f337b6bd4de72c474da52bcfe4793dcec7c2b5a116c2",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MemoryProfiles.h": "5baba3a1ba81161ee23f6a0e3c3946b55f42cc3b69e8578ef64518b2be4c2046",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyAvr.h": "f635c4a341c1730594834f7ea6976c4eb6cbc6a3611743bdf2d0e8bf278f65ac",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/Lpx4MultiplyC.h": "4a4ced85102ae29ca605311ebbf21ed171a2b5cb96d569c5b6cdb27e7964f69e",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_half_table.inc": "48923d2ddd3c45135d9c33dd3e36c9ef221f98f155bb2e9421f472aa51250a7a",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/cos_table.inc": "2ffae790df81cfdbf0f5026c402876627484d7235e4f6e296933f04dace1174b",
+      "Codecs/LPX/01_ACTIVE_Q0_CODEC/src/scale_table.inc": "9a48e9ae1c235e7b720c050d5f951bb8dd53d16c9e07e5250f02bceeb537a081",
+      "web-player/scripts/lib/lpx-build.mjs": "93aa7c949f7d53e2ee23eeffee5214a6b11efa68fc1bc55bd64ddf7440dafc2e"
+    },
+    "experiment_head": "644e19d0fd8db47fcae7d6ad64787d6c89ead28d"
+  },
+  "retained_pwm_reference": "Codecs/LPX/research/lbg1-2026-11-26/results.json",
+  "retained_pwm_reference_sha256": "ad015ed96773c5fc17d6a99901a9445c116134024b8d8d99f95fffe92fa0718d",
+  "source_manifest": {
+    "schema": "local-noise-public-sources-v1",
+    "sources": [
+      {
+        "clip": "chego",
+        "source": "web-player/audio/originals/chego.wav",
+        "source_sha256": "c6cdbd26696bdd11695f2491f1558dd246a6f8109fd400e37d292a4d38cdb08c",
+        "source_rate": 7500,
+        "rate": 8000,
+        "samples": 9831,
+        "pcm_sha256": "0a44903c1199c4818857d4d32c80e98e5efe8ca002040557612ec054630dc4a8",
+        "scipy_cross_checked": true,
+        "pcm": "build/local-noise/sources/chego.source.pcm"
+      },
+      {
+        "clip": "otvechaesh",
+        "source": "web-player/audio/originals/otvechaesh.wav",
+        "source_sha256": "96c09f80396643dd80efb9c5c8557d83359eeb829a0b855a7f8f5c32bbff0b96",
+        "source_rate": 7500,
+        "rate": 8000,
+        "samples": 8466,
+        "pcm_sha256": "1a8ac5f57a2965a100b94478d8730cc33c5500e5b1b644b4d8aeb2c5780d3918",
+        "scipy_cross_checked": true,
+        "pcm": "build/local-noise/sources/otvechaesh.source.pcm"
+      },
+      {
+        "clip": "vinni",
+        "source": "web-player/audio/originals/vinni.wav",
+        "source_sha256": "749d710e639070750f7b91016672b8030f07fa0494a2275db2eb073b33a99e03",
+        "source_rate": 7500,
+        "rate": 8000,
+        "samples": 23757,
+        "pcm_sha256": "e831f1c597bc0cb4f055e98237107b063aa3dd15646af82689ba6ab716c4c9b9",
+        "scipy_cross_checked": true,
+        "pcm": "build/local-noise/sources/vinni.source.pcm"
+      },
+      {
+        "clip": "bread",
+        "source": "web-player/audio/lpx-bread/original.wav",
+        "source_sha256": "f744f2f8aa554c0da3361f309f9226d86484ca06d5cfd7b2925afad444a19d31",
+        "source_rate": 8000,
+        "rate": 8000,
+        "samples": 19200,
+        "pcm_sha256": "956dbaa711da84b68624a31e04562c75e22e8d8ae37499e876675fcd4f3b08b8",
+        "scipy_cross_checked": true,
+        "pcm": "build/local-noise/sources/bread.source.pcm"
+      }
+    ],
+    "method": "Pinned complete public8k inputs; identical scalar Kaiser5 resampling, previously cross-checked against SciPy. No fitted gain/delay.",
+    "preparation_sha256": "2c1c5276f3c348526036edc007194710bc94e5b1709a63d57c3bfe377e6e2ecd",
+    "resampler_sha256": "56fc48a8a21ff6286f77d1daa00c9a58ca827def90f2024141bc337438c8d11b",
+    "pinned_reference_sha256": "ad015ed96773c5fc17d6a99901a9445c116134024b8d8d99f95fffe92fa0718d"
+  },
+  "source_manifest_sha256": "8a979cd4f39c159b95f98d7a8fb1cd163603d1fbb9e69214bd1464985cb4ed72",
+  "method": "Each case encodes its own fresh calls4 baseline for the selected quality target. Raw proposals are not admitted gains. The independently admitted active-SSE selection control uses the same shared trial pool and frozen baseline; this is a paired ranking ablation, not a wholly noise-free encoder. Both output paths are reported post hoc; PWM diagnostics are inactive for PCM admission. Refinement time includes the shared search and both independent admissions. No decoder, format, coefficient, pitch, scale or extra pulse change.",
+  "complete": true,
+  "cases": [
+    {
+      "experiment_version": "local-noise-v1",
+      "metric_paths": [
+        "pcm",
+        "pwm"
+      ],
+      "samples": 9831,
+      "sample_rate": 8000,
+      "accuracy_level": 4,
+      "quality_target": "pcm",
+      "calls": 4,
+      "native_model_exact": true,
+      "pulse_only_same_complete_bytes": true,
+      "baseline_seconds": 1.640912485,
+      "refinement_seconds": 0.119363829,
+      "baseline_cpu_seconds": 1.646192,
+      "refinement_cpu_seconds": 0.119953,
+      "baseline_search": {
+        "candidates": 37,
+        "stages": 4,
+        "selected": 32,
+        "seed_status": 0,
+        "quality_local_evaluations": 15648,
+        "quality_full_evaluations": 4,
+        "joint_header_full_evaluations": 0,
+        "joint_lpc_proposals": 7
+      },
+      "constants": {
+        "fft_samples": 512,
+        "hop_samples": 256,
+        "score_windows": 3,
+        "max_regions": 4,
+        "pairs_per_region": 4,
+        "sse_shortlist": 8,
+        "max_first_choices": 4,
+        "max_horizon": 808,
+        "quiet_rms": 64,
+        "min_periodicity": 0.75,
+        "max_slice_energy_ratio": 4,
+        "min_harmonic_fraction": 0.7,
+        "noise_weight": 2
+      },
+      "search": {
+        "error": 0,
+        "regions": 4,
+        "pairs": 16,
+        "local_evaluations": 1504,
+        "noise_evaluations": 315,
+        "synthesized_samples": 1073152,
+        "proposals": 8,
+        "full_evaluations": 8,
+        "admitted_proposals": 0,
+        "accepted": 0,
+        "noise_patches": 11,
+        "sse_patches": 8,
+        "noise_proposals": 4,
+        "sse_proposals": 4,
+        "admitted_noise_proposals": 0,
+        "admitted_sse_proposals": 0,
+        "selected_noise": 0,
+        "selected_sse": 0,
+        "pcm_sse_evaluations": 1504,
+        "pwm_sse_evaluations": 0,
+        "active_sse_evaluations": 1504,
+        "initial_objective": 0,
+        "final_objective": 0,
+        "sse_initial_objective": 0,
+        "sse_final_objective": 0,
+        "rejections": {
+          "size": 0,
+          "native": 0,
+          "stability": 0,
+          "level": 0,
+          "spectrum": 0,
+          "quality": 8,
+          "fullband": 0,
+          "old_noise": 0,
+          "complete": 0
+        }
+      },
+      "source_windows": [
+        {
+          "start": -256,
+          "supported": false,
+          "voiced": false,
+          "quiet": true,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 401866752,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 0,
+          "supported": false,
+          "voiced": false,
+          "quiet": false,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 12312427536.41,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 256,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 36766366192.605,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 512,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 529898172998.41,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 768,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 16.19140712143,
+          "periodicity": 0.9309335057384,
+          "harmonic_fraction": 0.88695403556574,
+          "normalization": 2880489418261.3,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 1024,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 15.971242385616,
+          "periodicity": 0.96914327138868,
+          "harmonic_fraction": 0.91319731437209,
+          "normalization": 1355228408506.2,
+          "interharmonic_mask": "01111111111111111111111111111110001111111111111111111111111111100011111111111111111111111111111000111111111111111111111111111110001111111111111111111111111111100011111111111111111111111111111000111111111111111111111111111110001111111111111111111111111111100"
+        },
+        {
+          "start": 1280,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 15.542881523899,
+          "periodicity": 0.88254410684141,
+          "harmonic_fraction": 0.85454542483545,
+          "normalization": 2861167751992.5,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 1536,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 14.950520586345,
+          "periodicity": 0.96510400170036,
+          "harmonic_fraction": 0.86626634152707,
+          "normalization": 12194510606212,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 1792,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 14.839891819641,
+          "periodicity": 0.96976400565492,
+          "harmonic_fraction": 0.89902487913239,
+          "normalization": 11417795551965,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 2048,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 14.919361464857,
+          "periodicity": 0.94481569407501,
+          "harmonic_fraction": 0.49875037070546,
+          "normalization": 1828872021616,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 2304,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 4803947394.3588,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 2560,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 1187594228.5738,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 2816,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 13527493821.639,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 3072,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 20.129172400792,
+          "periodicity": 0.97518328512875,
+          "harmonic_fraction": 0.90340288805157,
+          "normalization": 1985315145073.9,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 3328,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 20.386086540841,
+          "periodicity": 0.96609756529411,
+          "harmonic_fraction": 0.86112748096436,
+          "normalization": 955411848123.94,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 3584,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 21.956872892009,
+          "periodicity": 0.95114919721625,
+          "harmonic_fraction": 0.94322551764515,
+          "normalization": 330730919888.64,
+          "interharmonic_mask": "01111111111111111111110001111111111111111111110001111111111111111111100011111111111111111111000111111111111111111111000111111111111111111110001111111111111111111100011111111111111111111100011111111111111111111000111111111111111111110001111111111111111111110"
+        },
+        {
+          "start": 3840,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 23.32283774502,
+          "periodicity": 0.85300215453265,
+          "harmonic_fraction": 0.96474264774599,
+          "normalization": 256388498491.84,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 4096,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 20.719393369766,
+          "periodicity": 0.96151994273911,
+          "harmonic_fraction": 0.84627726818723,
+          "normalization": 1645416076353.1,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 4352,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 20.431718415949,
+          "periodicity": 0.98423054841675,
+          "harmonic_fraction": 0.98843839983083,
+          "normalization": 3491895927564.1,
+          "interharmonic_mask": "01111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111100011111111111111111111110001111"
+        },
+        {
+          "start": 4608,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 20.232380966125,
+          "periodicity": 0.99205146888759,
+          "harmonic_fraction": 0.98127656081848,
+          "normalization": 3952806979912.6,
+          "interharmonic_mask": "01111111111111111111111100011111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111111000111111111111111111111100011"
+        },
+        {
+          "start": 4864,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 20.251788860141,
+          "periodicity": 0.99600378923649,
+          "harmonic_fraction": 0.97794160156448,
+          "normalization": 4325765825741.8,
+          "interharmonic_mask": "01111111111111111111111100011111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111111000111111111111111111111100011"
+        },
+        {
+          "start": 5120,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 20.265341775441,
+          "periodicity": 0.99005298401465,
+          "harmonic_fraction": 0.98363526438526,
+          "normalization": 7213464254519,
+          "interharmonic_mask": "01111111111111111111111100011111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111100011"
+        },
+        {
+          "start": 5376,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 19.702054811005,
+          "periodicity": 0.97858965052496,
+          "harmonic_fraction": 0.96434295419653,
+          "normalization": 4219269618306.4,
+          "interharmonic_mask": "01111111111111111111111110001111111111111111111111100011111111111111111111111000111111111111111111111110001111111111111111111111100011111111111111111111111000111111111111111111111110001111111111111111111111100011111111111111111111111000111111111111111111111"
+        },
+        {
+          "start": 5632,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 18.897194816224,
+          "periodicity": 0.96390274750264,
+          "harmonic_fraction": 0.98008552189657,
+          "normalization": 4175320456262.9,
+          "interharmonic_mask": "01111111111111111111111111000111111111111111111111111000111111111111111111111111000111111111111111111111111000111111111111111111111111000111111111111111111111111100011111111111111111111111100011111111111111111111111100011111111111111111111111100011111111111"
+        },
+        {
+          "start": 5888,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 17.956519011078,
+          "periodicity": 0.96700850014721,
+          "harmonic_fraction": 0.84058764300389,
+          "normalization": 2702868121090.1,
+          "interharmonic_mask": "01111111111111111111111111110001111111111111111111111111000111111111111111111111111110001111111111111111111111111000111111111111111111111111110001111111111111111111111111000111111111111111111111111110001111111111111111111111111000111111111111111111111111110"
+        },
+        {
+          "start": 6144,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 17.602580260038,
+          "periodicity": 0.98319549190866,
+          "harmonic_fraction": 0.98096045190831,
+          "normalization": 1920772516305.4,
+          "interharmonic_mask": "01111111111111111111111111110001111111111111111111111111100011111111111111111111111111000111111111111111111111111110001111111111111111111111111100011111111111111111111111111100011111111111111111111111111000111111111111111111111111110001111111111111111111111"
+        },
+        {
+          "start": 6400,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 18.001239782338,
+          "periodicity": 0.86774229838549,
+          "harmonic_fraction": 0.81975802817345,
+          "normalization": 1657106056911.1,
+          "interharmonic_mask": "01111111111111111111111111100011111111111111111111111111000111111111111111111111111100011111111111111111111111111000111111111111111111111111100011111111111111111111111111000111111111111111111111111100011111111111111111111111111000111111111111111111111111100"
+        },
+        {
+          "start": 6656,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": false,
+          "period": 19.277445858884,
+          "periodicity": 0.81576962855652,
+          "harmonic_fraction": 0.55407384834761,
+          "normalization": 1836707239815.6,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 6912,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 20.829459273047,
+          "periodicity": 0.83197104371562,
+          "harmonic_fraction": 0.37300322558414,
+          "normalization": 995999710311.07,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 7168,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 22.852375388105,
+          "periodicity": 0.91193843888556,
+          "harmonic_fraction": 0.71229502350809,
+          "normalization": 373756082941.99,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 7424,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 24.269713218529,
+          "periodicity": 0.8524485038804,
+          "harmonic_fraction": 0.47091731912757,
+          "normalization": 119364538968.94,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 7680,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 77455543260.557,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 7936,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 34412059189.139,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 8192,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 28.213405087699,
+          "periodicity": 0.98639694759395,
+          "harmonic_fraction": 0.97359988047564,
+          "normalization": 243109390743.99,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 8448,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 28.355808387284,
+          "periodicity": 0.99001731563858,
+          "harmonic_fraction": 0.99257055683384,
+          "normalization": 336018796324.05,
+          "interharmonic_mask": "01111111111111111000111111111111111000111111111111111000111111111111111000111111111111111000111111111111111000111111111111111000111111111111111000111111111111111100011111111111111100011111111111111100011111111111111100011111111111111100011111111111111100011"
+        },
+        {
+          "start": 8704,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 28.613904471166,
+          "periodicity": 0.98366521637691,
+          "harmonic_fraction": 0.98063926162236,
+          "normalization": 180116509330.88,
+          "interharmonic_mask": "01111111111111111000111111111111111000111111111111111000111111111111111000111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111"
+        },
+        {
+          "start": 8960,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 28.628469270427,
+          "periodicity": 0.96138848699132,
+          "harmonic_fraction": 0.95158681490682,
+          "normalization": 104130619203.28,
+          "interharmonic_mask": "01111111111111111000111111111111111000111111111111111000111111111111111000111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111100011111111111111100011111"
+        },
+        {
+          "start": 9216,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 28.542443160618,
+          "periodicity": 0.9438891210905,
+          "harmonic_fraction": 0.93064857978479,
+          "normalization": 68697544586.951,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 9472,
+          "supported": false,
+          "voiced": false,
+          "quiet": false,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 11377262299.671,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 9728,
+          "supported": false,
+          "voiced": false,
+          "quiet": true,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 401866752,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "outputs": {
+        "baseline": {
+          "bytes": 522,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": true,
+          "fullband_acceptance_both_paths": true,
+          "fullband_acceptance_selected_target": true,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": true,
+          "old_noise_floor_selected_target": true,
+          "voice_floor_selected_target": true,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "voice": [
+            0.17154461843086,
+            0.17392781701797
+          ],
+          "noise": [
+            0.075911098857916,
+            0.076902297350793
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.34733454717796,
+            0.35240982498729
+          ],
+          "fullband_temporal_error": [
+            0.49662819893048,
+            0.50239953716995
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              0.15340512016617
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              0.023277943083972
+            ],
+            "score": 0.19620986915041
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              null
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              null
+            ],
+            "score": 0.19245873196671
+          }
+        },
+        "raw-noise": {
+          "bytes": 522,
+          "changed_positions": 14,
+          "changed_amplitudes": 4,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": false,
+          "fullband_acceptance_both_paths": false,
+          "fullband_acceptance_selected_target": false,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": false,
+          "old_noise_floor_selected_target": true,
+          "voice_floor_selected_target": true,
+          "pcm_sse": 42473877937,
+          "pwm_sse": 43183422918,
+          "stoi": [
+            0.68646796090152,
+            0.68457870277594
+          ],
+          "voice": [
+            0.16921667446398,
+            0.17171497649932
+          ],
+          "noise": [
+            0.074986661913636,
+            0.075655374589397
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.3477744647762,
+            0.35305292970974
+          ],
+          "fullband_temporal_error": [
+            0.49284261842081,
+            0.49883927215921
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14426539857072,
+              0.14931297177257
+            ],
+            "interharmonic": [
+              0.021774670744701,
+              0.022746036456469
+            ],
+            "score": 0.19130989237281
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14426539857072,
+              null
+            ],
+            "interharmonic": [
+              0.021774670744701,
+              null
+            ],
+            "score": 0.18781474006012
+          }
+        },
+        "raw-sse": {
+          "bytes": 522,
+          "changed_positions": 1,
+          "changed_amplitudes": 1,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": false,
+          "fullband_acceptance_both_paths": false,
+          "fullband_acceptance_selected_target": false,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": false,
+          "old_noise_floor_selected_target": false,
+          "voice_floor_selected_target": false,
+          "pcm_sse": 42013093069,
+          "pwm_sse": 42685831110,
+          "stoi": [
+            0.69070791095218,
+            0.68903105310758
+          ],
+          "voice": [
+            0.17069591620051,
+            0.17301842431433
+          ],
+          "noise": [
+            0.076061766284396,
+            0.077036383412006
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.34746457764881,
+            0.35294435760258
+          ],
+          "fullband_temporal_error": [
+            0.49573722363172,
+            0.50129613051149
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14767946125214,
+              0.15338963080472
+            ],
+            "interharmonic": [
+              0.022428762200311,
+              0.023335798991283
+            ],
+            "score": 0.19629910722003
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14767946125214,
+              null
+            ],
+            "interharmonic": [
+              0.022428762200311,
+              null
+            ],
+            "score": 0.19253698565277
+          }
+        },
+        "final-noise": {
+          "bytes": 522,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": true,
+          "fullband_acceptance_both_paths": true,
+          "fullband_acceptance_selected_target": true,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": true,
+          "old_noise_floor_selected_target": true,
+          "voice_floor_selected_target": true,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "voice": [
+            0.17154461843086,
+            0.17392781701797
+          ],
+          "noise": [
+            0.075911098857916,
+            0.076902297350793
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.34733454717796,
+            0.35240982498729
+          ],
+          "fullband_temporal_error": [
+            0.49662819893048,
+            0.50239953716995
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              0.15340512016617
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              0.023277943083972
+            ],
+            "score": 0.19620986915041
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              null
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              null
+            ],
+            "score": 0.19245873196671
+          }
+        },
+        "final-sse": {
+          "bytes": 522,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": true,
+          "fullband_acceptance_both_paths": true,
+          "fullband_acceptance_selected_target": true,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": true,
+          "old_noise_floor_selected_target": true,
+          "voice_floor_selected_target": true,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "voice": [
+            0.17154461843086,
+            0.17392781701797
+          ],
+          "noise": [
+            0.075911098857916,
+            0.076902297350793
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.34733454717796,
+            0.35240982498729
+          ],
+          "fullband_temporal_error": [
+            0.49662819893048,
+            0.50239953716995
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              0.15340512016617
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              0.023277943083972
+            ],
+            "score": 0.19620986915041
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              null
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              null
+            ],
+            "score": 0.19245873196671
+          }
+        }
+      },
+      "name": "chego-p4-pcm",
+      "source": "build/local-noise/sources/chego.source.pcm",
+      "source_sha256": "0a44903c1199c4818857d4d32c80e98e5efe8ca002040557612ec054630dc4a8",
+      "command": [
+        "build/local-noise/benchmark",
+        "build/local-noise/sources/chego.source.pcm",
+        "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm",
+        "4",
+        "8000",
+        "pcm",
+        "4"
+      ],
+      "harness_wall_seconds": 2.375141640999999,
+      "artifacts": {
+        "baseline": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.baseline.lpx",
+          "lpx_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.baseline.pcm",
+          "pcm_sha256": "823d20263bf8c1d36a97547842c627d484cd38e8b2cd40506b78e81b89ba02b9",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.baseline.model",
+          "model_sha256": "9969184cd39abd487d4e36d90c5c8c37087bb8e049a37f993cec0491330f8259"
+        },
+        "raw-noise": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.raw-noise.lpx",
+          "lpx_sha256": "4288f6e61f70210d015a567d58808e68529209409614cf92c09678429597a324",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.raw-noise.pcm",
+          "pcm_sha256": "620156c7f342a17e3dc4477c7825ab2f8ad91343d7a01c118928b2880eb526cd",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.raw-noise.model",
+          "model_sha256": "e1be7e980db0de30231ce277393a81ab9d37302adcfedb87b4798436c58c9a12"
+        },
+        "raw-sse": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.raw-sse.lpx",
+          "lpx_sha256": "2e0fbaa929c07f5cf74cac1e6aebe270afa5d3513871e17c905b0c6e6eafbd04",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.raw-sse.pcm",
+          "pcm_sha256": "38e60c8b1f05c207751efefeea2b4204b020656f0fb267085945610a5a70e293",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.raw-sse.model",
+          "model_sha256": "ea6e3da265b1231548e67cbe6fc86f0ba1486f7ca97d8ed98e43458d6e06109c"
+        },
+        "final-noise": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.final-noise.lpx",
+          "lpx_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.final-noise.pcm",
+          "pcm_sha256": "823d20263bf8c1d36a97547842c627d484cd38e8b2cd40506b78e81b89ba02b9",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.final-noise.model",
+          "model_sha256": "9969184cd39abd487d4e36d90c5c8c37087bb8e049a37f993cec0491330f8259"
+        },
+        "final-sse": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.final-sse.lpx",
+          "lpx_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.final-sse.pcm",
+          "pcm_sha256": "823d20263bf8c1d36a97547842c627d484cd38e8b2cd40506b78e81b89ba02b9",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pcm.final-sse.model",
+          "model_sha256": "9969184cd39abd487d4e36d90c5c8c37087bb8e049a37f993cec0491330f8259"
+        }
+      }
+    },
+    {
+      "experiment_version": "local-noise-v1",
+      "metric_paths": [
+        "pcm",
+        "pwm"
+      ],
+      "samples": 9831,
+      "sample_rate": 8000,
+      "accuracy_level": 4,
+      "quality_target": "pwm",
+      "calls": 4,
+      "native_model_exact": true,
+      "pulse_only_same_complete_bytes": true,
+      "baseline_seconds": 2.478429428,
+      "refinement_seconds": 0.20820478,
+      "baseline_cpu_seconds": 2.490111,
+      "refinement_cpu_seconds": 0.209369,
+      "baseline_search": {
+        "candidates": 37,
+        "stages": 4,
+        "selected": 30,
+        "seed_status": 0,
+        "quality_local_evaluations": 16224,
+        "quality_full_evaluations": 4,
+        "joint_header_full_evaluations": 0,
+        "joint_lpc_proposals": 7
+      },
+      "constants": {
+        "fft_samples": 512,
+        "hop_samples": 256,
+        "score_windows": 3,
+        "max_regions": 4,
+        "pairs_per_region": 4,
+        "sse_shortlist": 8,
+        "max_first_choices": 4,
+        "max_horizon": 808,
+        "quiet_rms": 64,
+        "min_periodicity": 0.75,
+        "max_slice_energy_ratio": 4,
+        "min_harmonic_fraction": 0.7,
+        "noise_weight": 2
+      },
+      "search": {
+        "error": 0,
+        "regions": 4,
+        "pairs": 16,
+        "local_evaluations": 1536,
+        "noise_evaluations": 319,
+        "synthesized_samples": 1100288,
+        "proposals": 8,
+        "full_evaluations": 8,
+        "admitted_proposals": 0,
+        "accepted": 0,
+        "noise_patches": 9,
+        "sse_patches": 7,
+        "noise_proposals": 4,
+        "sse_proposals": 4,
+        "admitted_noise_proposals": 0,
+        "admitted_sse_proposals": 0,
+        "selected_noise": 0,
+        "selected_sse": 0,
+        "pcm_sse_evaluations": 1536,
+        "pwm_sse_evaluations": 1536,
+        "active_sse_evaluations": 1536,
+        "initial_objective": 0,
+        "final_objective": 0,
+        "sse_initial_objective": 0,
+        "sse_final_objective": 0,
+        "rejections": {
+          "size": 0,
+          "native": 0,
+          "stability": 0,
+          "level": 0,
+          "spectrum": 0,
+          "quality": 8,
+          "fullband": 0,
+          "old_noise": 0,
+          "complete": 0
+        }
+      },
+      "source_windows": [
+        {
+          "start": -256,
+          "supported": false,
+          "voiced": false,
+          "quiet": true,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 401866752,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 0,
+          "supported": false,
+          "voiced": false,
+          "quiet": false,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 12312427536.41,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 256,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 36766366192.605,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 512,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 529898172998.41,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 768,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 16.19140712143,
+          "periodicity": 0.9309335057384,
+          "harmonic_fraction": 0.88695403556574,
+          "normalization": 2880489418261.3,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 1024,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 15.971242385616,
+          "periodicity": 0.96914327138868,
+          "harmonic_fraction": 0.91319731437209,
+          "normalization": 1355228408506.2,
+          "interharmonic_mask": "01111111111111111111111111111110001111111111111111111111111111100011111111111111111111111111111000111111111111111111111111111110001111111111111111111111111111100011111111111111111111111111111000111111111111111111111111111110001111111111111111111111111111100"
+        },
+        {
+          "start": 1280,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 15.542881523899,
+          "periodicity": 0.88254410684141,
+          "harmonic_fraction": 0.85454542483545,
+          "normalization": 2861167751992.5,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 1536,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 14.950520586345,
+          "periodicity": 0.96510400170036,
+          "harmonic_fraction": 0.86626634152707,
+          "normalization": 12194510606212,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 1792,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 14.839891819641,
+          "periodicity": 0.96976400565492,
+          "harmonic_fraction": 0.89902487913239,
+          "normalization": 11417795551965,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 2048,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 14.919361464857,
+          "periodicity": 0.94481569407501,
+          "harmonic_fraction": 0.49875037070546,
+          "normalization": 1828872021616,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 2304,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 4803947394.3588,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 2560,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 1187594228.5738,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 2816,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 13527493821.639,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 3072,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 20.129172400792,
+          "periodicity": 0.97518328512875,
+          "harmonic_fraction": 0.90340288805157,
+          "normalization": 1985315145073.9,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 3328,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 20.386086540841,
+          "periodicity": 0.96609756529411,
+          "harmonic_fraction": 0.86112748096436,
+          "normalization": 955411848123.94,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 3584,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 21.956872892009,
+          "periodicity": 0.95114919721625,
+          "harmonic_fraction": 0.94322551764515,
+          "normalization": 330730919888.64,
+          "interharmonic_mask": "01111111111111111111110001111111111111111111110001111111111111111111100011111111111111111111000111111111111111111111000111111111111111111110001111111111111111111100011111111111111111111100011111111111111111111000111111111111111111110001111111111111111111110"
+        },
+        {
+          "start": 3840,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 23.32283774502,
+          "periodicity": 0.85300215453265,
+          "harmonic_fraction": 0.96474264774599,
+          "normalization": 256388498491.84,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 4096,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 20.719393369766,
+          "periodicity": 0.96151994273911,
+          "harmonic_fraction": 0.84627726818723,
+          "normalization": 1645416076353.1,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 4352,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 20.431718415949,
+          "periodicity": 0.98423054841675,
+          "harmonic_fraction": 0.98843839983083,
+          "normalization": 3491895927564.1,
+          "interharmonic_mask": "01111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111100011111111111111111111110001111"
+        },
+        {
+          "start": 4608,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 20.232380966125,
+          "periodicity": 0.99205146888759,
+          "harmonic_fraction": 0.98127656081848,
+          "normalization": 3952806979912.6,
+          "interharmonic_mask": "01111111111111111111111100011111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111111000111111111111111111111100011"
+        },
+        {
+          "start": 4864,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 20.251788860141,
+          "periodicity": 0.99600378923649,
+          "harmonic_fraction": 0.97794160156448,
+          "normalization": 4325765825741.8,
+          "interharmonic_mask": "01111111111111111111111100011111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111111000111111111111111111111100011"
+        },
+        {
+          "start": 5120,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 20.265341775441,
+          "periodicity": 0.99005298401465,
+          "harmonic_fraction": 0.98363526438526,
+          "normalization": 7213464254519,
+          "interharmonic_mask": "01111111111111111111111100011111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111000111111111111111111111110001111111111111111111111000111111111111111111111100011111111111111111111110001111111111111111111111100011"
+        },
+        {
+          "start": 5376,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 19.702054811005,
+          "periodicity": 0.97858965052496,
+          "harmonic_fraction": 0.96434295419653,
+          "normalization": 4219269618306.4,
+          "interharmonic_mask": "01111111111111111111111110001111111111111111111111100011111111111111111111111000111111111111111111111110001111111111111111111111100011111111111111111111111000111111111111111111111110001111111111111111111111100011111111111111111111111000111111111111111111111"
+        },
+        {
+          "start": 5632,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 18.897194816224,
+          "periodicity": 0.96390274750264,
+          "harmonic_fraction": 0.98008552189657,
+          "normalization": 4175320456262.9,
+          "interharmonic_mask": "01111111111111111111111111000111111111111111111111111000111111111111111111111111000111111111111111111111111000111111111111111111111111000111111111111111111111111100011111111111111111111111100011111111111111111111111100011111111111111111111111100011111111111"
+        },
+        {
+          "start": 5888,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 17.956519011078,
+          "periodicity": 0.96700850014721,
+          "harmonic_fraction": 0.84058764300389,
+          "normalization": 2702868121090.1,
+          "interharmonic_mask": "01111111111111111111111111110001111111111111111111111111000111111111111111111111111110001111111111111111111111111000111111111111111111111111110001111111111111111111111111000111111111111111111111111110001111111111111111111111111000111111111111111111111111110"
+        },
+        {
+          "start": 6144,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 17.602580260038,
+          "periodicity": 0.98319549190866,
+          "harmonic_fraction": 0.98096045190831,
+          "normalization": 1920772516305.4,
+          "interharmonic_mask": "01111111111111111111111111110001111111111111111111111111100011111111111111111111111111000111111111111111111111111110001111111111111111111111111100011111111111111111111111111100011111111111111111111111111000111111111111111111111111110001111111111111111111111"
+        },
+        {
+          "start": 6400,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 18.001239782338,
+          "periodicity": 0.86774229838549,
+          "harmonic_fraction": 0.81975802817345,
+          "normalization": 1657106056911.1,
+          "interharmonic_mask": "01111111111111111111111111100011111111111111111111111111000111111111111111111111111100011111111111111111111111111000111111111111111111111111100011111111111111111111111111000111111111111111111111111100011111111111111111111111111000111111111111111111111111100"
+        },
+        {
+          "start": 6656,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": false,
+          "period": 19.277445858884,
+          "periodicity": 0.81576962855652,
+          "harmonic_fraction": 0.55407384834761,
+          "normalization": 1836707239815.6,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 6912,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 20.829459273047,
+          "periodicity": 0.83197104371562,
+          "harmonic_fraction": 0.37300322558414,
+          "normalization": 995999710311.07,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 7168,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 22.852375388105,
+          "periodicity": 0.91193843888556,
+          "harmonic_fraction": 0.71229502350809,
+          "normalization": 373756082941.99,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 7424,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 24.269713218529,
+          "periodicity": 0.8524485038804,
+          "harmonic_fraction": 0.47091731912757,
+          "normalization": 119364538968.94,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 7680,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 77455543260.557,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 7936,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 34412059189.139,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 8192,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 28.213405087699,
+          "periodicity": 0.98639694759395,
+          "harmonic_fraction": 0.97359988047564,
+          "normalization": 243109390743.99,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 8448,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 28.355808387284,
+          "periodicity": 0.99001731563858,
+          "harmonic_fraction": 0.99257055683384,
+          "normalization": 336018796324.05,
+          "interharmonic_mask": "01111111111111111000111111111111111000111111111111111000111111111111111000111111111111111000111111111111111000111111111111111000111111111111111000111111111111111100011111111111111100011111111111111100011111111111111100011111111111111100011111111111111100011"
+        },
+        {
+          "start": 8704,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 28.613904471166,
+          "periodicity": 0.98366521637691,
+          "harmonic_fraction": 0.98063926162236,
+          "normalization": 180116509330.88,
+          "interharmonic_mask": "01111111111111111000111111111111111000111111111111111000111111111111111000111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111"
+        },
+        {
+          "start": 8960,
+          "supported": true,
+          "voiced": true,
+          "quiet": false,
+          "transient": false,
+          "period": 28.628469270427,
+          "periodicity": 0.96138848699132,
+          "harmonic_fraction": 0.95158681490682,
+          "normalization": 104130619203.28,
+          "interharmonic_mask": "01111111111111111000111111111111111000111111111111111000111111111111111000111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111110001111111111111100011111111111111100011111"
+        },
+        {
+          "start": 9216,
+          "supported": true,
+          "voiced": false,
+          "quiet": false,
+          "transient": true,
+          "period": 28.542443160618,
+          "periodicity": 0.9438891210905,
+          "harmonic_fraction": 0.93064857978479,
+          "normalization": 68697544586.951,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 9472,
+          "supported": false,
+          "voiced": false,
+          "quiet": false,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 11377262299.671,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "start": 9728,
+          "supported": false,
+          "voiced": false,
+          "quiet": true,
+          "transient": false,
+          "period": null,
+          "periodicity": 0,
+          "harmonic_fraction": 0,
+          "normalization": 401866752,
+          "interharmonic_mask": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "outputs": {
+        "baseline": {
+          "bytes": 522,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": true,
+          "fullband_acceptance_both_paths": true,
+          "fullband_acceptance_selected_target": true,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": true,
+          "old_noise_floor_selected_target": true,
+          "voice_floor_selected_target": true,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "voice": [
+            0.17154461843086,
+            0.17392781701797
+          ],
+          "noise": [
+            0.075911098857916,
+            0.076902297350793
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.34733454717796,
+            0.35240982498729
+          ],
+          "fullband_temporal_error": [
+            0.49662819893048,
+            0.50239953716995
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              0.15340512016617
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              0.023277943083972
+            ],
+            "score": 0.19620986915041
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              0.15340512016617
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              0.023277943083972
+            ],
+            "score": 0.19620986915041
+          }
+        },
+        "raw-noise": {
+          "bytes": 522,
+          "changed_positions": 12,
+          "changed_amplitudes": 3,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": false,
+          "fullband_acceptance_both_paths": false,
+          "fullband_acceptance_selected_target": false,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": false,
+          "old_noise_floor_selected_target": true,
+          "voice_floor_selected_target": false,
+          "pcm_sse": 42473975165,
+          "pwm_sse": 43179947974,
+          "stoi": [
+            0.68636684122266,
+            0.68449707426919
+          ],
+          "voice": [
+            0.16921320150348,
+            0.17191705467368
+          ],
+          "noise": [
+            0.075070518949744,
+            0.07567103979424
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.34776444877018,
+            0.35300420711856
+          ],
+          "fullband_temporal_error": [
+            0.49279970442651,
+            0.49864676479129
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14454210399295,
+              0.1493927755627
+            ],
+            "interharmonic": [
+              0.021767107919331,
+              0.022701470524052
+            ],
+            "score": 0.19143601822121
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14454210399295,
+              0.1493927755627
+            ],
+            "interharmonic": [
+              0.021767107919331,
+              0.022701470524052
+            ],
+            "score": 0.19143601822121
+          }
+        },
+        "raw-sse": {
+          "bytes": 522,
+          "changed_positions": 2,
+          "changed_amplitudes": 2,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": false,
+          "fullband_acceptance_both_paths": false,
+          "fullband_acceptance_selected_target": false,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": false,
+          "old_noise_floor_selected_target": false,
+          "voice_floor_selected_target": false,
+          "pcm_sse": 41989440969,
+          "pwm_sse": 42617588166,
+          "stoi": [
+            0.69010982642779,
+            0.6874602695403
+          ],
+          "voice": [
+            0.17283373742999,
+            0.17515069684199
+          ],
+          "noise": [
+            0.077173943055206,
+            0.078026584872458
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.34694961574897,
+            0.35165065495728
+          ],
+          "fullband_temporal_error": [
+            0.49892390495771,
+            0.50465449653692
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14858685557446,
+              0.15413498452808
+            ],
+            "interharmonic": [
+              0.02292428793893,
+              0.023853373189179
+            ],
+            "score": 0.19813858117938
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14858685557446,
+              0.15413498452808
+            ],
+            "interharmonic": [
+              0.02292428793893,
+              0.023853373189179
+            ],
+            "score": 0.19813858117938
+          }
+        },
+        "final-noise": {
+          "bytes": 522,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": true,
+          "fullband_acceptance_both_paths": true,
+          "fullband_acceptance_selected_target": true,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": true,
+          "old_noise_floor_selected_target": true,
+          "voice_floor_selected_target": true,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "voice": [
+            0.17154461843086,
+            0.17392781701797
+          ],
+          "noise": [
+            0.075911098857916,
+            0.076902297350793
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.34733454717796,
+            0.35240982498729
+          ],
+          "fullband_temporal_error": [
+            0.49662819893048,
+            0.50239953716995
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              0.15340512016617
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              0.023277943083972
+            ],
+            "score": 0.19620986915041
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              0.15340512016617
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              0.023277943083972
+            ],
+            "score": 0.19620986915041
+          }
+        },
+        "final-sse": {
+          "bytes": 522,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "changed_spectral_indices": 0,
+          "changed_parameters": 0,
+          "changed_extras": 0,
+          "stable": true,
+          "level_safe": true,
+          "spectrum_safe": true,
+          "quality_admission_selected_target": true,
+          "fullband_acceptance_both_paths": true,
+          "fullband_acceptance_selected_target": true,
+          "pitch_guard_selected_target": true,
+          "sse_stoi_floor_selected_target": true,
+          "old_noise_floor_selected_target": true,
+          "voice_floor_selected_target": true,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "voice": [
+            0.17154461843086,
+            0.17392781701797
+          ],
+          "noise": [
+            0.075911098857916,
+            0.076902297350793
+          ],
+          "clipped": 1,
+          "fullband_error": [
+            0.34733454717796,
+            0.35240982498729
+          ],
+          "fullband_temporal_error": [
+            0.49662819893048,
+            0.50239953716995
+          ],
+          "local_noise_diagnostic": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              0.15340512016617
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              0.023277943083972
+            ],
+            "score": 0.19620986915041
+          },
+          "local_noise_selected_target": {
+            "valid": true,
+            "windows": 40,
+            "voiced_windows": 14,
+            "quiet_windows": 2,
+            "transient_windows": 20,
+            "unsupported_windows": 4,
+            "magnitude": [
+              0.14780137070045,
+              0.15340512016617
+            ],
+            "interharmonic": [
+              0.022328680633131,
+              0.023277943083972
+            ],
+            "score": 0.19620986915041
+          }
+        }
+      },
+      "name": "chego-p4-pwm",
+      "source": "build/local-noise/sources/chego.source.pcm",
+      "source_sha256": "0a44903c1199c4818857d4d32c80e98e5efe8ca002040557612ec054630dc4a8",
+      "command": [
+        "build/local-noise/benchmark",
+        "build/local-noise/sources/chego.source.pcm",
+        "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm",
+        "4",
+        "8000",
+        "pwm",
+        "4"
+      ],
+      "harness_wall_seconds": 3.468737611999984,
+      "artifacts": {
+        "baseline": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.baseline.lpx",
+          "lpx_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.baseline.pcm",
+          "pcm_sha256": "823d20263bf8c1d36a97547842c627d484cd38e8b2cd40506b78e81b89ba02b9",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.baseline.model",
+          "model_sha256": "59d4306a4d3046ba17e44576c3c4ff5b204075ebad25b54300cdf9e6376c83d9"
+        },
+        "raw-noise": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.raw-noise.lpx",
+          "lpx_sha256": "f57516a7aa88c4e6856c2f56eb78e4cd4e459e3f8db8197551aa05d6310f8308",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.raw-noise.pcm",
+          "pcm_sha256": "ec4f2e04ae05edeb2ffba4110060aa96cc573d265ed728c30cf16c7a7b3fa5c2",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.raw-noise.model",
+          "model_sha256": "da2567916b079cf6c95a057a734bc101abc51d12a7ca15a42a3c90b07a92fb91"
+        },
+        "raw-sse": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.raw-sse.lpx",
+          "lpx_sha256": "a49b51dff96afeec6b4616ac93a61e3afa90670df518f334bc916cdcd5f57752",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.raw-sse.pcm",
+          "pcm_sha256": "8c9ff2c96b2d0dc98fe1540c289bd4425b06e54e9851ef7c647345af6fcb22b2",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.raw-sse.model",
+          "model_sha256": "e275d43d2fd5d4fde20ad2936b690da8b7e2d946015938a472bb109e7f89a2ec"
+        },
+        "final-noise": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.final-noise.lpx",
+          "lpx_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.final-noise.pcm",
+          "pcm_sha256": "823d20263bf8c1d36a97547842c627d484cd38e8b2cd40506b78e81b89ba02b9",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.final-noise.model",
+          "model_sha256": "59d4306a4d3046ba17e44576c3c4ff5b204075ebad25b54300cdf9e6376c83d9"
+        },
+        "final-sse": {
+          "lpx": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.final-sse.lpx",
+          "lpx_sha256": "25b4d0427290d631b19cb4ac319b8bc83f0be4730ac2d0c8d7013c3de8b3cce1",
+          "pcm": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.final-sse.pcm",
+          "pcm_sha256": "823d20263bf8c1d36a97547842c627d484cd38e8b2cd40506b78e81b89ba02b9",
+          "model": "build/local-noise/runs/frozen-v1/pilot/chego-p4-pwm.final-sse.model",
+          "model_sha256": "59d4306a4d3046ba17e44576c3c4ff5b204075ebad25b54300cdf9e6376c83d9"
+        }
+      },
+      "baseline_matches_retained_pwm": true
+    }
+  ],
+  "summary": {
+    "pcm": {
+      "cases": 1,
+      "baseline_seconds": 1.640912485,
+      "refinement_seconds": 0.119363829,
+      "outputs": {
+        "baseline": {
+          "bytes": 522,
+          "changed_cases": 0,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "mean_stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "mean_selected_target_local_score": 0.19245873196671
+        },
+        "raw-noise": {
+          "bytes": 522,
+          "changed_cases": 1,
+          "changed_positions": 14,
+          "changed_amplitudes": 4,
+          "pcm_sse": 42473877937,
+          "pwm_sse": 43183422918,
+          "mean_stoi": [
+            0.68646796090152,
+            0.68457870277594
+          ],
+          "mean_selected_target_local_score": 0.18781474006012
+        },
+        "raw-sse": {
+          "bytes": 522,
+          "changed_cases": 1,
+          "changed_positions": 1,
+          "changed_amplitudes": 1,
+          "pcm_sse": 42013093069,
+          "pwm_sse": 42685831110,
+          "mean_stoi": [
+            0.69070791095218,
+            0.68903105310758
+          ],
+          "mean_selected_target_local_score": 0.19253698565277
+        },
+        "final-noise": {
+          "bytes": 522,
+          "changed_cases": 0,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "mean_stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "mean_selected_target_local_score": 0.19245873196671
+        },
+        "final-sse": {
+          "bytes": 522,
+          "changed_cases": 0,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "mean_stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "mean_selected_target_local_score": 0.19245873196671
+        }
+      }
+    },
+    "pwm": {
+      "cases": 1,
+      "baseline_seconds": 2.478429428,
+      "refinement_seconds": 0.20820478,
+      "outputs": {
+        "baseline": {
+          "bytes": 522,
+          "changed_cases": 0,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "mean_stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "mean_selected_target_local_score": 0.19620986915041
+        },
+        "raw-noise": {
+          "bytes": 522,
+          "changed_cases": 1,
+          "changed_positions": 12,
+          "changed_amplitudes": 3,
+          "pcm_sse": 42473975165,
+          "pwm_sse": 43179947974,
+          "mean_stoi": [
+            0.68636684122266,
+            0.68449707426919
+          ],
+          "mean_selected_target_local_score": 0.19143601822121
+        },
+        "raw-sse": {
+          "bytes": 522,
+          "changed_cases": 1,
+          "changed_positions": 2,
+          "changed_amplitudes": 2,
+          "pcm_sse": 41989440969,
+          "pwm_sse": 42617588166,
+          "mean_stoi": [
+            0.69010982642779,
+            0.6874602695403
+          ],
+          "mean_selected_target_local_score": 0.19813858117938
+        },
+        "final-noise": {
+          "bytes": 522,
+          "changed_cases": 0,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "mean_stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "mean_selected_target_local_score": 0.19620986915041
+        },
+        "final-sse": {
+          "bytes": 522,
+          "changed_cases": 0,
+          "changed_positions": 0,
+          "changed_amplitudes": 0,
+          "pcm_sse": 42209186745,
+          "pwm_sse": 42861932998,
+          "mean_stoi": [
+            0.69077762718684,
+            0.68903813876994
+          ],
+          "mean_selected_target_local_score": 0.19620986915041
+        }
+      }
+    }
+  }
+}
