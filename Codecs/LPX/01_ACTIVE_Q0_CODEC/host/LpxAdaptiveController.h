@@ -4,6 +4,15 @@
 #include "LpxProfileQuality.h"
 
 namespace lpx {
+// Optional completed-P3 phase. Its counters and failure status never replace
+// the preceding successful controller's legacy report fields.
+struct CompactEnsembleReport {
+    int enabled=0,eligible=0,attempted=0,searchCalls=0,status=0,error=0;
+    int policyBudget=0,baselineBytes=0,rawBytes=0,selectedBytes=0,rawValid=0,rawChanged=0,selected=0;
+    int searchCandidates=0,searchSelected=0;
+    uint64_t parameterTrials=0,pulseTrials=0;
+    ProfileQualityReport selection;
+};
 struct AdaptiveReport {
     int candidates=0,stages=0,selected=0,cap=0,gainExponent=0,error=0;
     SeedFitStatus originalSeedStatus=SeedFitStatus::Failure;
@@ -13,6 +22,7 @@ struct AdaptiveReport {
     LoudnessReport loudness;
     ProfileQualityReport qualitySearch;
     JointQualityReport jointQuality;
+    CompactEnsembleReport compactEnsemble;
 };
 // Whole-input controller. Original input is retained; no reset-file splitting.
 // maxBytes=0 uses the original v5 control's actual complete size as the budget,
