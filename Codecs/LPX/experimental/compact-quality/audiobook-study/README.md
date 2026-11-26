@@ -6,8 +6,8 @@ V9 Long stream. The completed P3 file is the immutable baseline and actual
 byte ceiling B0. Candidate generation and all production selection guards
 remain the preceding implementation; no decoder or wire-format code changed.
 
-The extension selected three development improvements and **zero of eight
-held-out improvements**. The held-out files and decoded output remain exactly
+The extension automatically selected three development candidates with better
+measured metrics and **zero of eight held-out changes**. The held-out files and decoded output remain exactly
 the baseline, while the extra encoder search still consumes time. This study
 does not justify promoting the Long extension as a default quality improvement.
 Its frozen source and evidence are retained as an experiment; the guards are
@@ -61,6 +61,9 @@ The [final policy declaration](POLICY_FREEZE.md) retains this initial arm
 without retuning before held-out evaluation. The first admitted development
 example is 7,236 → 7,195 bytes, PCM STOI .735744 → .776484 and PWM STOI
 .725044 → .757995. Its local listening export is posthoc development evidence.
+The user subsequently reported **both current and selected files unintelligible**.
+This example is not an audibly confirmed improvement; see the
+[listening review](LISTENING_REVIEW.md) and its export/source checks.
 
 Development band replay covers only the three changed selected outputs:
 24 supported band/case/path entries, all with lower magnitude error, no
