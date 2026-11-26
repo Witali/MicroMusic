@@ -1,0 +1,51 @@
+{
+  "schema": "lp20-source-snapshot-v1",
+  "version": "v19",
+  "status": "partial_original_source_files",
+  "provenance": {
+    "kind": "individually_downloaded_original_source_files",
+    "original_archive_available": false,
+    "identification": "Browser-confirmed v19 file-preview downloads; no original v19 archive retained.",
+    "direct_files": [
+      {
+        "name": "pitch.py",
+        "bytes": 4158,
+        "sha256": "a980859561aa8889db8862e1778cf67f7e62fc0bc38434942ea6698671facc0f"
+      },
+      {
+        "name": "study_pitch.py",
+        "bytes": 9172,
+        "sha256": "af063e2e7a09617576e1cd458b2362ff6f3beb6142250c8001c4da8e0b72542c"
+      }
+    ]
+  },
+  "path_policy": "All retained paths are original archive-relative paths, or original direct-download filenames for v19.",
+  "files": [
+    {
+      "path": "pitch.py",
+      "bytes": 4158,
+      "sha256": "a980859561aa8889db8862e1778cf67f7e62fc0bc38434942ea6698671facc0f"
+    },
+    {
+      "path": "study_pitch.py",
+      "bytes": 9172,
+      "sha256": "af063e2e7a09617576e1cd458b2362ff6f3beb6142250c8001c4da8e0b72542c"
+    }
+  ],
+  "exclusions": {
+    "policy": [
+      "No audio, images, video, PCM/PWM samples or encoded voice streams.",
+      "No binary executables, ROM images, voice-trained models or dictionaries.",
+      "No generated assembly, per-recording JSON, logs or caches.",
+      "No chat transcripts, identifiers, URLs or MIDI.",
+      "Only generic code, source/release READMEs and anonymous technical comparison CSVs are retained."
+    ],
+    "member_counts_by_reason": {},
+    "excluded_member_extensions": {}
+  },
+  "material_gaps": [
+    "Source-only snapshot; media, binary executables, trained models/dictionaries and generated per-recording data are deliberately absent.",
+    "Preserved source has not been executed; historical quality, hardware timing and reproducibility claims have not been revalidated.",
+    "Only pitch.py and study_pitch.py were recovered; this is not a complete original v19 release or archive."
+  ]
+}
